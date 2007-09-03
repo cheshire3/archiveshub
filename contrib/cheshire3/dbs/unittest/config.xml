@@ -1,0 +1,375 @@
+
+
+<config type="database" id="db_test">
+  <objectType>database.SimpleDatabase</objectType>
+  <paths>
+    <!-- Where this database lives -->
+    <path type="defaultPath">dbs/unittest</path>
+    <!-- database level metadata, eg average words per record -->
+    <path type="metadataPath">metadata.bdb</path>
+    <!-- Where records live -->
+    <object type="recordStore" ref="testRecordStore"/>
+    <!-- Where indexes live -->
+    <object type="indexStore" ref="testIndexStore"/>
+  </paths>
+
+  <options>
+    <!-- Allow all sorts of DL protocols -->
+    <setting type="srw">1</setting>
+    <setting type="oai-pmh">1</setting>
+    <setting type="z3950">1</setting>
+  </options>
+
+  <subConfigs>
+
+
+    <!-- We may want to store newly configured objects -->
+    <subConfig type="configStore" id="defaultConfigStore">
+      <objectType>objectStore.BdbObjectStore</objectType>
+      <paths>
+        <!-- this will inherit defaultPath from db -->
+        <path type="databasePath">configStore.bdb</path>
+      </paths>
+    </subConfig>
+
+    <!-- We may want to store documents (raw data) -->
+    <subConfig type="documentStore" id="documentStore">
+      <objectType>documentStore.BdbDocumentStore</objectType>
+      <paths>
+        <!-- file for storage -->
+        <path type="databasePath">documentStore.bdb</path>
+        <!-- How to normalise our identifiers for storage -->
+        <object type="idNormaliser" ref="StringIntNormaliser"/>
+      </paths>
+    </subConfig>
+    
+    <subConfig type="recordStore" id="testRecordStore">
+      <objectType>recordStore.BdbRecordStore</objectType>
+      <paths>
+        <path type="databasePath">recordStore.bdb</path>
+        <object type="idNormaliser" ref="StringIntNormaliser"/>
+        <!-- How to transform the record before storing -->
+        <object type="inTransformer" ref="XmlTransformer"/>
+        <!-- How to parse the transformed record again -->
+        <object type="outParser" ref="LxmlParser"/>
+      </paths>
+      <options>
+        <!-- Maintain checksums using SHA algorithm -->
+        <setting type="digest">sha</setting>
+        <!-- Maintain pointers to deleted records -->
+	<setting type="storeDeletions">1</setting>
+      </options>
+    </subConfig>
+
+    <subConfig type="indexStore" id="testIndexStore">
+      <objectType>indexStore.BdbIndexStore</objectType>
+      <paths>
+         <!-- append to our default path -->
+         <path type="defaultPath">indexes</path>
+         <!-- space for temporary files. eg indexes/temp -->
+         <path type="tempPath">temp</path>
+         <!-- Which recstores will exist in our indexes -->
+         <path type="recordStoreHash">testRecordStore</path>  
+      </paths> 
+    </subConfig>
+
+
+<!-- Some transformers -->
+
+    <!-- need at least this for OAI -->
+    <subConfig type="transformer" id="dublinCoreTxr">
+      <!-- need to be Lxml as our recs are too -->
+      <objectType>transformer.LxmlXsltTransformer</objectType>
+      <paths>
+         <path type="xsltPath">dc.xsl</path>
+      </paths>
+    </subConfig>
+
+
+    <!-- and one for HTML for fun --> 
+    <subConfig type="transformer" id="htmlTxr">
+      <objectType>transformer.LxmlXsltTransformer</objectType>
+      <paths>
+         <path type="xsltPath">html.xsl</path>
+      </paths>
+    </subConfig>
+
+
+<!-- We need a mapping from CQL to our indexes -->
+<!-- Handily this also gives us our Explain for SRU -->
+
+    <subConfig type="protocolMap" id="CQLProtocolMap">
+      <objectType>protocolMap.CQLProtocolMap</objectType>
+      <paths>
+        <path type="zeerexPath">zeerex_srw.xml</path>
+      </paths>
+    </subConfig>
+
+    <subConfig type="protocolMap" id="OaiProtocolMap">
+      <objectType>protocolMap.OAIPMHProtocolMap</objectType>
+      <paths>
+        <path type="zeerexPath">zeerex_oai.xml</path>
+      </paths>
+    </subConfig>
+
+    <subConfig type="protocolMap" id="Z3950ProtocolMap">
+       <objectType>protocolMap.Z3950ProtocolMap</objectType>
+       <paths>
+          <path type="zeerexPath">zeerex_z3950.xml</path>
+       </paths>
+    </subConfig>
+
+
+<!-- XPath Objects to extract information from record -->
+
+    <!-- If you need namespaces, add to xpath element -->
+    <subConfig type="XPathObject" id="textXPath">
+      <objectType>xpathObject.XPathObject</objectType>
+      <source>
+        <xpath xmlns:oai="http://copper.ist.psu.edu/oai/oai_citeseer/" 
+	       xmlns:dc ="http://purl.org/dc/elements/1.1/">
+	metadata/oai:oai_citeseer/dc:description</xpath>
+      </source>
+    </subConfig>
+
+    <!-- You may not need namespaces... -->
+    <subConfig type="XPathObject" id="identifierXPath">
+      <objectType>xpathObject.XPathObject</objectType>
+      <source>
+        <xpath>/record/header/identifier</xpath>
+      </source>
+    </subConfig>
+
+    <!-- They're optional if names are unique using SAX... -->
+    <subConfig type="XPathObject" id="saxTitleXPath">
+      <objectType>xpathObject.XPathObject</objectType>
+      <source>
+        <xpath>/record/metadata/oai_citeseer/title</xpath>
+      </source>
+    </subConfig>
+
+    <!-- But not for the other XML parsers -->
+    <subConfig type="XPathObject" id="titleXPath">
+      <objectType>xpathObject.XPathObject</objectType>
+      <source>
+        <xpath xmlns:oai="http://copper.ist.psu.edu/oai/oai_citeseer/" 
+	       xmlns:dc ="http://purl.org/dc/elements/1.1/">/record/metadata/oai:oai_citeseer/dc:title</xpath>
+      </source>
+    </subConfig>
+
+    <!-- No need to give the full path -->
+    <subConfig type="XPathObject" id="dateXPath">
+      <objectType>xpathObject.XPathObject</objectType>
+      <source>
+        <xpath xmlns:dc="http://purl.org/dc/elements/1.1/">dc:date</xpath>
+      </source>
+    </subConfig>
+
+    <!-- Attributes are fine... -->
+    <subConfig type="XPathObject" id="authorXPath">
+      <objectType>xpathObject.XPathObject</objectType>
+      <source>
+        <xpath xmlns:oai="http://copper.ist.psu.edu/oai/oai_citeseer/">oai:author/@name</xpath>
+      </source>
+    </subConfig>
+
+
+    <!-- As are other cute XPathy things -->
+    <subConfig type="XPathObject" id="firstAuthorXPath">
+      <objectType>xpathObject.XPathObject</objectType>
+      <source>
+        <xpath xmlns:oai="http://copper.ist.psu.edu/oai/oai_citeseer/">oai:author[1]/@name</xpath>
+      </source>
+    </subConfig>
+
+    <!-- Metadata level XPaths also possible -->
+    <subConfig type="XPathObject" id="wordCountXPath">
+      <objectType>xpathObject.MetadataXPath</objectType>
+      <source>
+        <xpath>wordCount</xpath>
+      </source>
+    </subConfig>
+
+    <!-- 'now' is magic for current time in MetadataXPath -->
+    <subConfig type="XPathObject" id="nowTimeXPath">
+      <objectType>xpathObject.MetadataXPath</objectType>
+      <source>
+        <xpath>now</xpath>
+      </source>
+    </subConfig>
+
+
+    <!-- And you can avoid these objects by putting them
+         directly into the index definition, but it's often
+         useful and efficient to have them defined explicitly 
+         (they just get created by the index anyway)
+         -->
+
+
+<!-- Indexes to extract and process our access points -->
+
+
+    <subConfig type="index" id = "idx-text-kwd">
+      <objectType>index.ProximityIndex</objectType>
+      <paths>
+        <!-- Where are we going to be stored -->
+        <object type="indexStore" ref="testIndexStore"/>
+      </paths>
+      <source>
+        <!-- object to use to extract data -->
+        <xpath ref="textXPath"/>
+        <!-- How to process the data afterwards -->
+        <process>
+          <object type="extracter"  ref="ProximityExtracter"/>
+          <object type="normaliser" ref="CaseNormaliser"/>
+        </process>
+      </source>
+    </subConfig>
+
+
+    <subConfig type="index" id = "idx-text-kwd-stem">
+      <objectType>index.ProximityArrayIndex</objectType>
+      <paths>
+        <object type="indexStore" ref="testIndexStore"/>
+        <!-- Array indexes need to know their recordStore too -->
+        <object type="recordStore" ref="testRecordStore"/>
+      </paths>
+      <source>
+        <!-- Here we reuse existing object, rather than duplicating -->
+        <xpath ref="textXPath"/>
+        <process>
+          <object type="extracter"  ref="ProximityExtracter"/>
+          <object type="normaliser" ref="CaseNormaliser"/>
+          <object type="normaliser" ref="PossessiveNormaliser"/>
+          <object type="normaliser" ref="EnglishStemNormaliser"/>
+        </process>
+      </source>
+      <options>
+        <!-- record vector of terms/frequencies for this index -->
+	<!-- Also create vector with extra proximity info -->
+        <setting type="vectors">1</setting>
+	<setting type="proxVectors">1</setting>
+      </options>
+    </subConfig>
+
+    <subConfig type="index" id = "idx-identifier">
+      <objectType>index.SimpleIndex</objectType>
+      <paths>
+        <object type="indexStore" ref="testIndexStore"/>
+      </paths> 
+      <source>
+        <!-- oops, duplicate xpath... never mind -->
+        <xpath>header/identifier</xpath>
+        <process>
+          <object type="extracter"  ref="ExactExtracter"/>
+        </process>
+      </source>
+    </subConfig>
+
+    <!-- Bitmaps are good for very limited range of values in data -->
+    <subConfig type="index" id = "idx-format">
+      <objectType>index.BitmapIndex</objectType>
+      <paths>
+        <object type="indexStore" ref="testIndexStore"/>
+        <!-- bitmaps need recordStore too -->
+        <object type="recordStore" ref="testRecordStore"/>
+      </paths> 
+      <source>
+        <!-- And can have xmlns mappings here too -->
+        <xpath xmlns:dc="http://purl.org/dc/elements/1.1/">dc:format</xpath>
+        <process>
+          <object type="extracter"  ref="ExactExtracter"/>
+          <object type="normaliser" ref="CaseNormaliser"/>        
+        </process>
+      </source>
+    </subConfig>
+
+
+    <subConfig type="index" id = "idx-date">
+      <objectType>index.ArrayIndex</objectType>
+      <paths>
+        <object type="indexStore" ref="testIndexStore"/>
+        <object type="recordStore" ref="testRecordStore"/>
+      </paths> 
+      <source>
+        <xpath ref="dateXPath"/>
+        <process>
+          <!-- Note the special extracter for dates -->
+          <object type="extracter"  ref="DateExtracter"/>
+          <object type="normaliser" ref="DateStringNormaliser"/>        
+        </process>
+      </source>
+    </subConfig>
+
+    <!-- Magic index that refers only to the internal identifier
+         assigned by Cheshire3 to the record -->
+    <subConfig type="index" id = "idx-recid">
+      <objectType>index.RecordIdentifierIndex</objectType>
+      <paths>
+        <object type="indexStore" ref="testIndexStore"/>
+        <object type="recordStore" ref="testRecordStore"/>
+      </paths> 
+      <!-- No need for a data source -->
+      <source/>
+    </subConfig>
+
+    <!-- metadata index -->
+    <subConfig type="index" id = "idx-wordcount">
+      <objectType>index.SimpleIndex</objectType>
+      <paths>
+        <object type="indexStore" ref="testIndexStore"/>
+        <object type="recordStore" ref="testRecordStore"/>
+      </paths> 
+      <source>
+        <xpath ref="wordCountXPath"/>
+        <process>
+          <object type="extracter"  ref="ExactExtracter"/>
+          <object type="normaliser" ref="StringIntNormaliser"/>        
+        </process>
+      </source>
+    </subConfig>
+
+    <!-- date metadata (for OAI) -->
+    <subConfig type="index" id="idx-creationDate">
+      <objectType>index.SimpleIndex</objectType>
+        <paths>
+          <object type="indexStore" ref="testIndexStore" />
+        </paths>
+        <source>
+          <xpath ref="nowTimeXPath"/>
+          <process>
+            <object type="extracter" ref="DateExtracter"/>
+            <object type="normaliser" ref="DateStringNormaliser" />
+          </process>
+        </source>
+        <options>
+	  <!-- don't index or unindex in db.[un]index_record() -->	
+          <setting type="noIndexDefault">1</setting>
+          <setting type="noUnindexDefault">1</setting>
+	  <!-- We need vectors to unindex these -->
+	  <setting type="vectors">1</setting>
+        </options>
+      </subConfig>
+
+    <subConfig type="index" id="idx-modificationDate">
+      <objectType>index.SimpleIndex</objectType>
+        <paths>
+          <object type="indexStore" ref="testIndexStore" />
+        </paths>
+        <source>
+          <xpath ref="nowTimeXPath"/>
+          <process>
+            <object type="extracter" ref="DateExtracter"/>
+            <object type="normaliser" ref="DateStringNormaliser" />
+          </process>
+        </source>
+        <options>
+	  <!-- We need vectors to unindex -->
+          <setting type="vectors">1</setting>
+        </options>
+      </subConfig>
+    
+  </subConfigs>
+
+</config>
+

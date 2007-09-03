@@ -1,0 +1,55 @@
+
+<explain id="org.o-r-g.srw-card" authoritative="true" 
+  xmlns="http://explain.z3950.org/dtd/2.0/"
+  xmlns:c3="http://www.cheshire3.org/schemas/explain/">
+    <serverInfo protocol="srw/u" version="1.1" transport="http">
+     <host>localhost</host>
+     <port>8080</port>
+     <database numRecs="4" lastUpdate="2002-11-26 23:30:00">services/dc</database>
+  </serverInfo>
+
+  <databaseInfo>
+     <title lang="en" primary="true">Sample Dublin Core Database</title>
+     <description lang="en" primary="true">
+A database containing some sample dublin core records.        
+     </description>
+  </databaseInfo>
+
+  <metaInfo>
+     <dateModified>2004-10-10 12:00:00</dateModified>
+  </metaInfo>
+
+  <indexInfo>
+     <set identifier="info:srw/cql-context-set/1/dc-v1.1" name="dc"/>
+     <set identifier="info:srw/cql-context-set/1/cql-v1.1" name="cql"/>
+     <set identifier="http://srw.cheshire3.org/contextSets/rel/1.0" name="rel"/>
+
+  </indexInfo>
+
+ <schemaInfo>
+     <schema identifier="info:srw/schema/1/dc-v1.1"
+             location="http://www.loc.gov/zing/srw/dc.xsd"
+             sort="true" retrieve="true" name="dc">
+        <title>Dublin Core</title>
+     </schema>
+  </schemaInfo>
+
+  <configInfo>
+     <default type="numberOfRecords">1</default>
+     <default type="contextSet">dc</default>
+     <default type="index">dc.title</default>
+     <default type="relation">all</default>
+     <default type="sortSchema">dc</default>
+     <default type="retrieveSchema">dc</default>
+     <default type="sortCaseSensitive">false</default>
+     <default type="sortAscending">true</default>
+     <default type="sortMissingValue">HighValue</default>
+     <setting type="maximumRecords">50</setting>
+
+     <supports type="proximity"/>
+     <supports type="resultSets"/>
+     <supports type="sort"/>
+     <supports type="relationModifier">relevant</supports>
+     <supports type="relationModifier">stem</supports>
+  </configInfo>
+</explain>

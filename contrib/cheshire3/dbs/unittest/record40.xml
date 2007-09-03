@@ -1,0 +1,72 @@
+<record>
+<header>
+<identifier>oai:CiteSeerPSU:20001</identifier>
+<datestamp>1994-05-04</datestamp>
+<setSpec>CiteSeerPSUset</setSpec>
+</header>
+<metadata>
+<oai_citeseer:oai_citeseer xmlns:oai_citeseer="http://copper.ist.psu.edu/oai/oai_citeseer/" xmlns:dc ="http://purl.org/dc/elements/1.1/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://copper.ist.psu.edu/oai/oai_citeseer/ http://copper.ist.psu.edu/oai/oai_citeseer.xsd ">
+   <dc:title>MIRAGE: A Kernel Implementation of Distributed Shared Memory on a Network of Personal Computers</dc:title>
+   <oai_citeseer:author name="Brett D. Fleisch">
+   </oai_citeseer:author>
+   <oai_citeseer:author name="Randall L. Hyde">
+   </oai_citeseer:author>
+   <oai_citeseer:author name="Niels Christian Juul">
+   </oai_citeseer:author>
+   <dc:subject>Brett D. Fleisch,Randall L. Hyde,Niels Christian Juul MIRAGE: A Kernel Implementation of Distributed Shared Memory on a Network of Personal Computers</dc:subject>
+   <dc:description>We describe the evolution of a distributed shared memory (DSM) system, Mirage,
+and the difficulties encountered when moving the system from a Unix-based
+1
+kernel on
+the VAX to a UNIX-based kernel on personal computers. Mirage provides a network
+transparent form of shared memory for a loosely coupled environment. The system hides
+network boundaries for processes that are accessing shared memory and is upward compatible
+with the Unix System V Interface Definition.
+This paper addresses the architectural dependencies in the design of the system and
+evaluates performance of the implementation. The new version, Mirage
++
+, performs
+well compared to Mirage even though eight times the amount of data is sent on each
+page fault because of the larger page size used in the implementation. We show that
+performance of systems with a large page size to network packet size can be dramatically
+improved on conventional hardware by applying three well-known techniques: packet
+blasting, compression, an...</dc:description>
+   <dc:contributor>The Pennsylvania State University CiteSeer Archives</dc:contributor>
+   <dc:publisher>unknown</dc:publisher>
+   <dc:date>1994-05-04</dc:date>
+   <oai_citeseer:pubyear>1994</oai_citeseer:pubyear>
+   <dc:format>ps</dc:format>
+   <dc:identifier>http://citeseer.ist.psu.edu/20001.html</dc:identifier>
+   <dc:source>ftp://ftp.diku.dk/pub/diku/reports/1994/diku-94-13.ps.gz</dc:source>
+   <dc:language>en</dc:language>
+   <oai_citeseer:relation type="References">
+      <oai_citeseer:uri>oai:CiteSeerPSU:39023</oai_citeseer:uri>
+   </oai_citeseer:relation>
+   <oai_citeseer:relation type="References">
+      <oai_citeseer:uri>oai:CiteSeerPSU:129354</oai_citeseer:uri>
+   </oai_citeseer:relation>
+   <oai_citeseer:relation type="References">
+      <oai_citeseer:uri>oai:CiteSeerPSU:149865</oai_citeseer:uri>
+   </oai_citeseer:relation>
+   <oai_citeseer:relation type="References">
+      <oai_citeseer:uri>oai:CiteSeerPSU:54720</oai_citeseer:uri>
+   </oai_citeseer:relation>
+   <oai_citeseer:relation type="References">
+      <oai_citeseer:uri>oai:CiteSeerPSU:74016</oai_citeseer:uri>
+   </oai_citeseer:relation>
+   <oai_citeseer:relation type="References">
+      <oai_citeseer:uri>oai:CiteSeerPSU:581086</oai_citeseer:uri>
+   </oai_citeseer:relation>
+   <oai_citeseer:relation type="References">
+      <oai_citeseer:uri>oai:CiteSeerPSU:581086</oai_citeseer:uri>
+   </oai_citeseer:relation>
+   <oai_citeseer:relation type="References">
+      <oai_citeseer:uri>oai:CiteSeerPSU:493348</oai_citeseer:uri>
+   </oai_citeseer:relation>
+   <oai_citeseer:relation type="References">
+      <oai_citeseer:uri>oai:CiteSeerPSU:577550</oai_citeseer:uri>
+   </oai_citeseer:relation>
+   <dc:rights>unrestricted</dc:rights>
+</oai_citeseer:oai_citeseer>
+</metadata>
+</record>
