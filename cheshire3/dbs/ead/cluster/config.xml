@@ -1,0 +1,95 @@
+
+<config type="database" id="db_ead_cluster">
+
+<!-- 
+	This file was produced, and released as part of Cheshire for Archives v3.x.
+	Copyright &copy; 2005, 2006, 2007 the University of Liverpool
+-->
+	
+  <objectType>database.SimpleDatabase</objectType>
+
+  <options>
+    <setting type="srw">1</setting>
+    <setting type="z3950">1</setting>
+  </options>
+
+  <paths>
+    <path type="defaultPath">dbs/ead/cluster</path>
+    <path type="metadataPath">stores/metadata.bdb</path>
+    <path type="indexStoreList">eadClusterIndexStore</path>
+    <object type="recordStore" ref="eadClusterStore"/>
+    <object type="protocolMap" ref="eadClusterCQLProtocolMap"/>
+ </paths>
+
+  <subConfigs>
+    
+    <!-- protocol maps -->
+    <subConfig type="protocolMap" id="eadClusterCQLProtocolMap">
+      <objectType>protocolMap.CQLProtocolMap</objectType>
+      <paths>
+        <path type="zeerexPath">zeerex_srw.xml</path>
+      </paths>
+    </subConfig>
+    
+<!--    <subConfig type="protocolMap" id="eadClusterZProtocolMap">-->
+<!--      <objectType>protocolMap.Z3950ProtocolMap</objectType>-->
+<!--      <paths>-->
+<!--        <path type="zeerexPath">zeerex_z3950.xml</path>-->
+<!--      </paths>-->
+<!--    </subConfig>-->
+    
+    <!-- recordStores -->
+    <subConfig type="recordStore" id="eadClusterStore">
+      <objectType>recordStore.BdbRecordStore</objectType>
+      <paths>
+		<path type="defaultPath">stores</path>
+        <path type="databasePath">clusterStore.bdb</path>
+		<object type="idNormaliser" ref="StringIntNormaliser"/>
+      </paths>
+      <options>
+        <setting type="digest">sha</setting>
+      </options>
+    </subConfig>
+
+    <!-- indexes -->
+    <subConfig type="indexStore" id="eadClusterIndexStore">
+      <objectType>indexStore.BdbIndexStore</objectType>
+      <paths>
+         <path type="defaultPath">indexes</path>
+         <path type="tempPath">temp</path>
+        <path type="recordStoreHash">eadClusterStore</path>
+      </paths> 
+    </subConfig>
+    
+    <subConfig type="transformer" id="tpgrsTxr">
+		<objectType>transformer.GrsMapTransformer</objectType>
+		<transform>
+			<map>
+				<xpath>#RAWRELEVANCE#</xpath>
+				<xpath>10</xpath>
+			</map>
+			<map>
+				<xpath>#DOCID#</xpath>
+				<xpath>5</xpath>
+			</map>
+			<map>
+				<xpath>/cluster/key/text()</xpath>
+				<xpath>1</xpath>
+			</map>
+			<map>
+				<xpath>/cluster/subjects/text()</xpath>
+				<xpath>7</xpath>
+			</map>	
+		</transform>
+	</subConfig>
+
+    <!-- indexes -->
+    <path type="includeConfigs">idxConfigs.xml</path>
+
+    <!-- workflows - override default workflows -->
+    <path type="includeConfigs">workflow.xml</path>
+
+  </subConfigs>
+
+</config>
+
