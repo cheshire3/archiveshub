@@ -26,7 +26,7 @@ from document import StringDocument
 from PyZ3950 import CQLParser
 import c3errors
 
-from wwwSearch import *
+from www_utils import *
 # import customisable variables
 from localConfig import *
 
