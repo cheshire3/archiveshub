@@ -1,12 +1,12 @@
 #
 # Program:   eadSearchHandler.py
-# Version:   0.27
+# Version:   0.28a
 # Description:
 #            Web interface for searching a cheshire 3 database of EAD finding aids
 #            - part of Cheshire for Archives v3
 #
 # Required externals:
-#            Py: localConfig.py, wwwSearch.py
+#            Py: localConfig.py, www_utils.py
 #            HTML: browse.html, email.html, help.html, index.html, subject.html, template.ssi
 #            CSS: struc.css, style.css
 #            Javascript: ead.js
@@ -17,7 +17,7 @@
 #
 # Language:  Python
 # Author:    JH - John Harrison <john.harrison@liv.ac.uk>
-# Date:      18 July 2007
+# Date:      xx September 2007
 #
 # Copyright: &copy; University of Liverpool 2005-2007
 #
@@ -82,6 +82,7 @@
 #                        - show/hide python traceback added to error page
 # 0.27 - 18/07/2007 - JH - Fixed email, and similar search bugs.
 #                        - Accented characters normalised for emailing record.
+# 0.28 - **/09/2007 - JH - Account for refactoring of wwwSearch --> www_utils
 #
 #
 
@@ -104,7 +105,7 @@ from baseObjects import Session
 from document import StringDocument
 import c3errors
 # C3 web search utils
-from wwwSearch import *
+from www_utils import *
 # email modules
 from email import Message, MIMEMultipart, MIMEText
 
