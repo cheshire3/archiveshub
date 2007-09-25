@@ -34,10 +34,30 @@
 			</options>
 		</subConfig>
 		
+		<subConfig type="xpathObject" id="componentXPath">
+			<objectType>xpathObject.XPathObject</objectType>
+			<source>
+				<xpath>c</xpath>
+				<xpath>c01</xpath>
+				<xpath>c02</xpath>
+				<xpath>c03</xpath>
+				<xpath>c04</xpath>
+				<xpath>c05</xpath>
+				<xpath>c06</xpath>
+				<xpath>c07</xpath>
+				<xpath>c08</xpath>
+				<xpath>c09</xpath>
+				<xpath>c10</xpath>
+				<xpath>c11</xpath>
+				<xpath>c12</xpath>				
+			</source>
+		</subConfig>
+		
 		<subConfig type="documentFactory" id="componentDocumentFactory">
 			<objectType>documentFactory.ComponentDocumentFactory</objectType>
 			<source>
-				<xpath>*[regexp(name(), '^c([0-1][0-9])?$')]</xpath>
+<!--				<xpath>*[regexp(name(), '^c([0-1][0-9])?$')]</xpath>-->
+				<xpath ref="componentXPath" />
 			</source>
 			<options>
 				<default type="cache">0</default>
@@ -79,6 +99,8 @@
 	      	<path type="defaultPath">stores</path>
 	        <path type="databasePath">recordStore.bdb</path>
 	        <path type="metadataPath">recordStoreMetadata.bdb</path>
+	        <object type="inTransformer" ref="XmlTransformer" />
+	        <object type="outParser" ref="LxmlParser" />
 	      </paths>
 	      <options>
 	        <setting type="digest">sha</setting>
@@ -91,18 +113,22 @@
 	      	<path type="defaultPath">stores</path>
 	        <path type="databasePath">dcStore.bdb</path>
 	        <path type="metadataPath">dcStoreMetadata.bdb</path>
+	        <object type="inTransformer" ref="XmlTransformer" />
+	        <object type="outParser" ref="LxmlParser" />
 	      </paths>
 	      <options>
 	        <setting type="digest">sha</setting>
 	      </options>
 	    </subConfig>
-	
+		
 	    <subConfig type="recordStore" id="componentStore">
 	      <objectType>recordStore.BdbRecordStore</objectType>
 	      <paths>
 			<path type="defaultPath">stores</path>
 	        <path type="databasePath">compStore.bdb</path>
 	        <path type="metadataPath">compStoreMetadata.bdb</path>
+	        <object type="inTransformer" ref="XmlTransformer" />
+	        <object type="outParser" ref="LxmlParser" />
 	      </paths>
 	      <options>
 	        <setting type="digest">sha</setting>
@@ -130,14 +156,14 @@
 	    
 	    <!-- special cluster and component stuff -->
 	
-	    <subConfig type="groupTransformer" id="componentExtractionTxr">
-	      <objectType>groupTransformer.XPathGroupTransformer</objectType>
-	      <paths>
-			<path type="tempPath">tempComponents.data</path>
-			<object type="database" ref="db_ead"/>
-	      </paths>      
-	      <source><xpath>*[regexp(name(), '^c([0-1][0-9])?$')]</xpath></source>
-	    </subConfig>
+<!--	    <subConfig type="groupTransformer" id="componentExtractionTxr">-->
+<!--	      <objectType>groupTransformer.XPathGroupTransformer</objectType>-->
+<!--	      <paths>-->
+<!--			<path type="tempPath">tempComponents.data</path>-->
+<!--			<object type="database" ref="db_ead"/>-->
+<!--	      </paths>      -->
+<!--	      <source><xpath>*[regexp(name(), '^c([0-1][0-9])?$')]</xpath></source>-->
+<!--	    </subConfig>-->
 	
 	    <subConfig type="index" id="clusterExtractionIndex">
 	      <objectType>index.ClusterExtractionIndex</objectType>
@@ -176,49 +202,49 @@
 	
 	    <!-- transformers -->
 		<subConfig type="transformer" id="stripAudienceInternalTxr">
-	      <objectType>transformer.XsltTransformer</objectType>
+	      <objectType>transformer.LxmlXsltTransformer</objectType>
 	      <paths>
 	         <path type="xsltPath">xsl/stripAudienceInternalTxr.xsl</path>
 	      </paths>
 	    </subConfig>
 	    
 	    <subConfig type="transformer" id="htmlFullTxr">
-	      <objectType>transformer.XsltTransformer</objectType>
+	      <objectType>transformer.LxmlXsltTransformer</objectType>
 	      <paths>
 	         <path type="xsltPath">xsl/full.xsl</path>
 	      </paths>
 	    </subConfig>
 	
 	    <subConfig type="transformer" id="htmlFullSplitTxr">
-	      <objectType>transformer.XsltTransformer</objectType>
+	      <objectType>transformer.LxmlXsltTransformer</objectType>
 	      <paths>
 	         <path type="xsltPath">xsl/fullSplit.xsl</path>
 	      </paths>
 	    </subConfig>
 	
 	    <subConfig type="transformer" id="htmlSummaryTxr">
-	      <objectType>transformer.XsltTransformer</objectType>
+	      <objectType>transformer.LxmlXsltTransformer</objectType>
 	      <paths>
 	         <path type="xsltPath">xsl/summary.xsl</path>
 	      </paths>
 	    </subConfig>
 	
 	    <subConfig type="transformer" id="textTxr">
-	      <objectType>transformer.XsltTransformer</objectType>
+	      <objectType>transformer.LxmlXsltTransformer</objectType>
 	      <paths>
 	         <path type="xsltPath">xsl/text.xsl</path>
 	      </paths>
 	    </subConfig>
 	
 	    <subConfig type="transformer" id="eadDublinCoreTxr">
-	      <objectType>transformer.XsltTransformer</objectType>
+	      <objectType>transformer.LxmlXsltTransformer</objectType>
 	      <paths>
-	         <path type="xsltPath">xsl/ead2dc.xsl</path>
+	         <path type="xsltPath">xsl/ead2sru_dc.xsl</path>
 	      </paths>
 	    </subConfig>
 	    
 	    <subConfig type="transformer" id="OAIDublinCoreTransformer">
-	      <objectType>transformer.XsltTransformer</objectType>
+	      <objectType>transformer.LxmlXsltTransformer</objectType>
 	      <paths>
 	         <path type="xsltPath">xsl/ead2oai_dc.xsl</path>
 	      </paths>
