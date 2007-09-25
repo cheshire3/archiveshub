@@ -50,7 +50,7 @@
 		<!-- input type:  document -->
 		<object type="workflow" ref="preParserWorkflow"/>
 		<try>
-		  <object type="parser" ref="SaxParser"/>
+		  <object type="parser" ref="LxmlParser"/>
 		</try>
 		<except>
 	  		<log>"*** " + str(input.filename) + " unparsable: " + str(err)</log>
@@ -70,7 +70,7 @@
         <object type="transformer" ref="eadDublinCoreTxr"/>
         <!-- type: document -->
         <try>
-          <object type="parser" ref="NsSaxParser"/>
+          <object type="parser" ref="LxmlParser"/>
         </try>
         <except>
 			<log>"" + str(err)</log>
@@ -116,7 +116,7 @@
     			<!-- type: document -->
     			<object type="workflow" ref="preParserWorkflow"/>
     			<try>
-    				<object type="parser" ref="SaxParser" />
+    				<object type="parser" ref="LxmlParser" />
     			</try>
     			<except>
     				<log>"*** Unparsable Components"</log>
@@ -125,7 +125,7 @@
     			</except>
     			<!-- type: record -->
     			<try>
-	    			<object type="workflow" ref="assignXPathIdentifierWorkflow"/>
+	    			<object type="workflow" ref="assignDataIdentifierWorkflow"/>
 	    		</try>
 	    		<except>
 	    			<assign from="recid + '-' + str(VAR_ctr)" to="input.id" />
@@ -155,13 +155,12 @@
     	</workflow>
     </subConfig>
 
-	<subConfig type="workflow" id="assignXPathIdentifierWorkflow">
+	<subConfig type="workflow" id="assignDataIdentifierWorkflow">
 		<objectType>workflow.CachingWorkflow</objectType>
 		<workflow>
 			<!-- input type: record -->
 			<!-- first put record aside so we can re-assign it later -->
 			<assign from="input" to="myRecord"/>
-			<!-- get space-stripped identifier, assign to input -->
 			<try>
 				<assign from="input.process_xpath('/ead/eadheader/eadid[1]/text()')[0]" to="input"/>
 			</try>
@@ -171,12 +170,20 @@
 				<assign from="parentid.split('/', 1)[-1]" to="parentid"/>
 				<assign from="parentid + '-' + input.process_xpath('did[1]/unitid/text()')[0]" to="input"/>
 			</except>
+			<object type="workflow" ref="normalizeDataIdentifierWorkflow" />
+			<assign from="input" to="myRecord.id"/>
+			<assign from="myRecord" to="input"/>
+		</workflow>
+	</subConfig>
+	
+	<subConfig type="workflow" id="normalizeDataIdentifierWorkflow">
+		<objectType>workflow.CachingWorkflow</objectType>
+		<workflow>
 			<object type="normaliser" ref="DiacriticNormaliser" function="process_string"/>
 			<object type="normaliser" ref="CaseNormaliser" function="process_string"/>
 			<object type="normaliser" ref="SpaceNormaliser" function="process_string"/>
-			<assign from="input.replace(' ', '').replace('/', '-')" to="myRecord.id"/>
-			<assign from="myRecord" to="input"/>
-		</workflow>
+			<assign from="input.replace(' ', '').replace('/', '-')" to="input" />
+		</workflow>	
 	</subConfig>
 
     <subConfig type="workflow" id="indexRecordWorkflow">
@@ -184,7 +191,7 @@
 	  <workflow>
 	    <!-- input type:  record -->
 	    <!-- assign identifier -->
-		<object type="workflow" ref="assignXPathIdentifierWorkflow"/>
+		<object type="workflow" ref="assignDataIdentifierWorkflow"/>
 		<object type="recordStore" function="store_record"/>
 		<object type="database" function="add_record"/>
 		<try>
