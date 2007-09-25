@@ -1,11 +1,7 @@
 #!/home/cheshire/cheshire3/install/bin/python
 
-import time, sys, os, re, getpass, traceback
+import sys, os, re, getpass, time, traceback
 from crypt import crypt
-
-osp = sys.path
-sys.path = ["../../code", "../../www/ead"]
-sys.path.extend(osp)
 
 # quick check if they asked for options
 if ('-h' in sys.argv) or ('--help' in sys.argv) or ('--options' in sys.argv):
@@ -18,7 +14,11 @@ if ('-h' in sys.argv) or ('--help' in sys.argv) or ('--options' in sys.argv):
         '-cluster'.ljust(20) + 'complete cluster indexing (used by subject finder)',
         '-cache'.ljust(20) + 'build HTML copies of larger records'
         ])
-    sys.exit()
+    sys.exit()    
+    
+osp = sys.path
+sys.path = ["../../code", "../../www/ead"]
+sys.path.extend(osp)
 
 from baseObjects import Session
 from server import SimpleServer
@@ -44,6 +44,7 @@ clusRecordStore = clusDb.get_object(session, 'eadClusterStore')
 #compDocFac = db.get_object(session, 'componentDocumentFactory')
 
 sax = db.get_object(session, 'SaxParser')
+lxmlp = db.get_object(session, 'LxmlParser')
 authStore = db.get_object(session, 'eadAuthStore')
 
 
