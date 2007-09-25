@@ -145,7 +145,7 @@
 	<!-- EADHEADER -->
 	<xsl:template match="eadheader">
 		<strong>About This Record</strong> <xsl:text> </xsl:text>
-		<a class="jscall" onclick="toggleShow(this, 'eadheader');">[ show ]</a>
+		<a class="jscall" href="javascript:;" onclick="toggleShow(this, 'eadheader');">[ show ]</a>
 		<div id="eadheader" class="eadheader">
 			<xsl:apply-templates select="filedesc"/>
 			<xsl:apply-templates select="profiledesc"/>
