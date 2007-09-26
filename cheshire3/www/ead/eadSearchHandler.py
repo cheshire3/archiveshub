@@ -1,6 +1,6 @@
 #
 # Program:   eadSearchHandler.py
-# Version:   0.28a
+# Version:   0.28
 # Description:
 #            Web interface for searching a cheshire 3 database of EAD finding aids
 #            - part of Cheshire for Archives v3
@@ -82,7 +82,10 @@
 #                        - show/hide python traceback added to error page
 # 0.27 - 18/07/2007 - JH - Fixed email, and similar search bugs.
 #                        - Accented characters normalised for emailing record.
-# 0.28 - **/09/2007 - JH - Account for refactoring of wwwSearch --> www_utils
+# 0.28 - **/09/2007 - JH - Compatible with Cheshire3 v0.9.9 API
+#                        - Account for refactoring of wwwSearch --> www_utils
+#                        - Accomodate switch from SaxRecord to LxmlRecord
+#                        - Implement reverse hierarchy walk for parent links
 #
 #
 
@@ -103,6 +106,7 @@ from server import SimpleServer
 from PyZ3950 import CQLParser, SRWDiagnostics
 from baseObjects import Session
 from document import StringDocument
+from utils import flattenTexts
 import c3errors
 # C3 web search utils
 from www_utils import *
@@ -131,7 +135,7 @@ class EadSearchHandler:
                               '%SCRIPT%': script
                               }
 
-    #- end __init__() ----------------------------------------------------------
+        #- end __init__() ----------------------------------------------------------
     
     def send_html(self, data, req, code=200):
         req.content_type = 'text/html'
@@ -142,7 +146,34 @@ class EadSearchHandler:
         req.write(data)
         req.flush()
         
-    #- end send_html() ---------------------------------------------------------
+        #- end send_html() ---------------------------------------------------------
+
+    def _backwalkTitles(self, rec, path):
+        global normIdFlow
+        titles = []
+        pathParts = path.split('/') 
+        while pathParts[-1] != 'dsc':
+            try: t = rec.process_xpath('/'.join(pathParts) + '/did/unittitle')[0]
+            except IndexError: t = '(untitled)'
+            else: t = flattenTexts(t)
+            try: i = rec.process_xpath('/'.join(pathParts) + '/did/unitid')[0]
+            except IndexError: i = None
+            else:
+                i = flattenTexts(i)
+                i = rec.id + '-' + normIdFlow.process(session, i) 
+            titles.append((i, t.strip()))
+            pathParts.pop(-1)
+            
+        try: t = rec.process_xpath('/*/*/did/unittitle')[0]
+        except IndexError: t = '(untitled)'
+        else: t = flattenTexts(t)
+
+        titles.append((rec.id, t.strip()))
+        titles.reverse()
+        return titles
+    
+        # end _backwalkTitles() ----------------------------------------------------
+
 
     def _parentTitle(self, id):
         try:
@@ -154,10 +185,10 @@ class EadSearchHandler:
                 return None
                 
         try:
-            parentTitle = rec.process_xpath('/sru_dc:dc/dc:title/text()', namespaceUriHash)[0]
+            parentTitle = rec.process_xpath('/srw_dc:dc/dc:title/text()', namespaceUriHash)[0]
         except IndexError:
             try:
-                parentTitle = rec.process_xpath('did[1]/unittitle/text()')[0]
+                parentTitle = rec.process_xpath('/*/*/did/unittitle/text()')[0]
             except IndexError:
                 try:
                     parentTitle = rec.process_xpath('/ead/eadheader/filedesc/titlestmt/titleproper/text()')[0]
@@ -173,8 +204,7 @@ class EadSearchHandler:
 
         return parentTitle
 
-    
-    #- end _parentTitle() ---------------------------------------------------------
+        #- end _parentTitle() ---------------------------------------------------------
 
 
     def format_resultSet(self, rs, firstrec=1, numreq=20, highlight=1):
@@ -187,12 +217,10 @@ class EadSearchHandler:
         # check scaledWeights not horked (i.e. check they're not all 0.5)
         try:
             assert (rs[0].scaledWeight <> 0.5 and rs[-1].scaledWeight <> 0.5)
+            useScaledWeights = True
         except: 
             useScaledWeights = False
-             # get relevance of best record
-            topWeight = rs[0].weight
-        else: 
-            useScaledWeights = True
+            topWeight = rs[0].weight # get relevance of best record
         
         if (firstrec-1 >= len(rs)):
             return '<div class="hitreport">Your search resulted in <strong>%d</strong> hits, however you requested to begin displaying at result <strong>%d</strong>.</div>' % (hits, firstrec)
@@ -206,44 +234,31 @@ class EadSearchHandler:
                 '\n<table id="results" class="results">']
 
         parentTitles = {}
+        parentRecs = {}
         rsidCgiString = '&amp;rsid=%s' % cgi_encode(rsid)
 
         for x in range(firstrec-1, min(len(rs), firstrec -1 + numreq)):
             r = rs[x]
             try:
-                try:
-                    rec = dcRecordStore.fetch_record(session, r.docid);
-                except AttributeError:
-                    # API change
-                    rec = dcRecordStore.fetch_record(session, r.id);
-                    
+                rec = dcRecordStore.fetch_record(session, r.id);
             except (c3errors.FileDoesNotExistException, c3errors.ObjectDoesNotExistException):
                 # no DC record, probably component
                 try:
                     rec = r.fetch_record(session)
                 except (c3errors.FileDoesNotExistException, c3errors.ObjectDoesNotExistException):
-                    try:
-                        self.logger.log('Unable to retrieve record: %s' % (r.docid))
-                    except:
-                        # API change
-                        self.logger.log('Unable to retrieve record: %s' % (r.id))
+                    self.logger.log('Unable to retrieve record: %s' % (r.id))
                     continue
                 else:
                     try:
-                        title = rec.process_xpath('did[1]/unittitle/text()')[0]
+                        title = rec.process_xpath('/*/*/did/unittitle/text()')[0]
                     except IndexError:
-                        try:
-                            title = rec.process_xpath('/ead/eadheader/filedesc/titlestmt/titleproper/text()')[0]
-                        except IndexError:
-                            title = '(untitled)'
+                        try: title = rec.process_xpath('/ead/eadheader/filedesc/titlestmt/titleproper/text()')[0]
+                        except IndexError: title = '(untitled)'
             else:
-                try:
-                    title = rec.process_xpath('/sru_dc:dc/dc:title/text()', namespaceUriHash)[0]
-                except IndexError:
-                    title = '(untitled)'
+                try: title = rec.process_xpath('/srw_dc:dc/dc:title/text()', namespaceUriHash)[0]
+                except IndexError: title = '(untitled)'
             
             title = nonAsciiRe.sub(_asciiFriendly, title)
-
             if ( display_relevance ) and (rs[0].weight > rs[-1].weight):
                 # format relevance measure for display
                 if (useScaledWeights):
@@ -341,7 +356,7 @@ class EadSearchHandler:
        
         return '\n'.join(rows)
         
-    #- end format_resultSet() ---------------------------------------------------------
+        #- end format_resultSet() ---------------------------------------------------------
 
 
     def search(self, form, maxResultSetSize=None):
@@ -432,7 +447,8 @@ class EadSearchHandler:
             
         return self.format_resultSet(rs, firstrec, numreq, highlight)
 
-    #- end search() ------------------------------------------------------------
+        #- end search() ------------------------------------------------------------
+    
     
     def _cleverTitleCase(self, txt):
         global stopwords
@@ -442,7 +458,7 @@ class EadSearchHandler:
                 words[x] = words[x].title()
         return ' '.join(words)
     
-    #- end _cleverTitleCase() --------------------------------------------------
+        #- end _cleverTitleCase() --------------------------------------------------
     
 
     def browse(self, form):
@@ -606,7 +622,7 @@ class EadSearchHandler:
             self.htmlTitle.append('Error')
             return '<p class="error">No terms retrieved from index. You may be browsing outside the range of terms within the index.</p>'
 
-    #- end browse() ------------------------------------------------------------
+        #- end browse() ------------------------------------------------------------
 
 
     def subject_resolve(self, form):
@@ -697,7 +713,7 @@ class EadSearchHandler:
         session.database = 'db_ead'
         return content
         
-    #- end subject_resolve() ---------------------------------------------------
+        #- end subject_resolve() ---------------------------------------------------
 
     def display_summary(self, rec, paramDict, proxInfo=None, highlight=1):
         recid = rec.id
@@ -1017,22 +1033,36 @@ class EadSearchHandler:
         try:
             parentId = rec.process_xpath('/c3component/@parent')[0]
         except IndexError:
+            hierachy = ''
             parentLink = ''
         else:
             # OK, must be a component record
             parentId = parentId.split('/')[-1]
+            parentPath = rec.process_xpath('/c3component/@xpath')[0]
+            parentRec = recordStore.fetch_record(session, parentId)
             isComponent = True
-            parentTitle = self._parentTitle(parentId)
-            if parentTitle:
-                parentTitle = nonAsciiRe.sub(_asciiFriendly, parentTitle)
-                try:
-                    parentTitle = parentTitle.encode('utf-8');
-                except:
-                    parentTitle = '[Could not encode parent title into Unicode]';
+            titles = self._backwalkTitles(parentRec, parentPath)
+            hierarchy = []
+            for x,t in enumerate(titles[:-1]):
+                if t[0]:
+                    html = '<a href="%s?operation=full&amp;recid=%s" onclick="SPLASH">%s</a>' % (script, t[0] , t[1])
+                else:
+                    html = t[1]
+                    
+                hierarchy.append(('&nbsp;&nbsp;&nbsp;&nbsp;' * x) + folder_open_tag + html)
             
-                parentLink = '<a href="%s?operation=full&amp;recid=%s" title="Link to Complete Collection Description" onclick="SPLASH">%s</a>' % (script, parentId , parentTitle)
-            else:
-                parentLink = '(unable to locate parent document)'
+            parentLink = '<br/>'.join(hierarchy)
+#            parentTitle = self._parentTitle(parentId)
+#            if parentTitle:
+#                parentTitle = nonAsciiRe.sub(_asciiFriendly, parentTitle)
+#                try:
+#                    parentTitle = parentTitle.encode('utf-8');
+#                except:
+#                    parentTitle = '[Could not encode parent title into Unicode]';
+#            
+#                parentLink = '<a href="%s?operation=full&amp;recid=%s" title="Link to Complete Collection Description" onclick="SPLASH">%s</a>' % (script, parentId , parentTitle)
+#            else:
+#                parentLink = '(unable to locate parent document)'
                 
             if (display_splash_screen_popup ):
                 parentLink = parentLink.replace('SPLASH', ' onclick="splashScreen()"')
@@ -1093,7 +1123,7 @@ class EadSearchHandler:
             
         return (True, page)
 
-    #- end display_record() ----------------------------------------------------
+        #- end display_record() ----------------------------------------------------
 
 
     def email_record(self, form):
@@ -1426,9 +1456,9 @@ In: %s
         page = multiReplace(page, self.globalReplacements)
         self.send_html(page, req)                                            # send the page
 
-    #- end handle() ------------------------------------------------------------
+        #- end handle() ------------------------------------------------------------
 
-#- end class EadSearchHandler --------------------------------------------------
+    #- end class EadSearchHandler --------------------------------------------------
 
 #- Some stuff to do on initialisation
 rebuild = True
@@ -1446,6 +1476,7 @@ summaryTxr = None
 fullTxr = None
 fullSplitTxr = None
 textTxr = None
+normIdFlow = None
 exactExtracter = None
 diacriticNormaliser = None
 
@@ -1470,7 +1501,7 @@ logfilepath = searchlogfilepath
 
 # data argument provided for when request does clean-up - always None
 def build_architecture(data=None):
-    global session, serv, db, clusDb, recordStore, dcRecordStore, compStore, textStore, resultSetStore, summaryTxr, fullTxr, fullSplitTxr, textTxr, rebuild, exactExtracter, diacriticNormaliser
+    global session, serv, db, clusDb, recordStore, dcRecordStore, compStore, textStore, resultSetStore, summaryTxr, fullTxr, fullSplitTxr, textTxr, rebuild, normIdFlow, exactExtracter, diacriticNormaliser
     # Discover objects...
     session = Session()
     session.database = 'db_ead'
@@ -1489,6 +1520,7 @@ def build_architecture(data=None):
     fullTxr = db.get_object(session, 'htmlFullTxr')
     fullSplitTxr = db.get_object(session, 'htmlFullSplitTxr')
     textTxr = db.get_object(session, 'textTxr')
+    if not (normIdFlow): normIdFlow = db.get_object(session, 'normalizeDataIdentifierWorkflow')
     if not (exactExtracter): exactExtracter = db.get_object(session, 'ExactExtracter')
     if not (diacriticNormaliser): diacriticNormaliser = db.get_object(session, 'DiacriticNormaliser')
     rebuild = False
@@ -1505,7 +1537,7 @@ def handler(req):
         except:
             # architecture not built
             build_architecture()
-        
+
         remote_host = req.get_remote_host(apache.REMOTE_NOLOOKUP)                   # get the remote host's IP for logging
         os.chdir(os.path.join(cheshirePath, 'cheshire3','www','ead','html'))        # cd to where html fragments are
         lgr = FileLogger(logfilepath, remote_host)                                  # initialise logger object

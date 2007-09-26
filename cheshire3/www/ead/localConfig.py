@@ -47,7 +47,7 @@ display_splash_screen_popup = False
 cheshirePath = "/home/cheshire/cheshire3"
 
 # Institutionally specific configurables
-repository_name = "Cheshire for Archives 3.2.2"
+repository_name = "Cheshire for Archives 3.3 Development"
 repository_link = "http://www.archiveshub.ac.uk"                        # must begin http://
 repository_logo = "http://www.archiveshub.ac.uk/loopsmall2.gif"             # should begin http:// unless on this server
 
@@ -85,8 +85,8 @@ toc_cache_url = '/ead/tocs'
 
 # useful URIs
 namespaceUriHash = {
-    'dc': 'http://purl.org/dc/elements/1.0',
-    'srw_dc': "info:srw/schema/1/dc-v1.1"
+    'dc': 'http://purl.org/dc/elements/1.0'
+    ,'srw_dc': 'info:srw/schema/1/dc-v1.1'
     }
 
 # List of words which should not be used when conducting similar searches

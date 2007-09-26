@@ -1,17 +1,18 @@
 #
 # Script:     htmlFragments.py
-# Version:    0.01
+# Version:    0.02
 # Description:
 #            HTML fragments used by Cheshire for Archives
 #
 # Language:  Python
 # Author:    John Harrison <john.harrison@liv.ac.uk>
-# Date:      3 January 2007
+# Date:      25 September 2007
 #
 # Copyright: &copy; University of Liverpool 2005-2007
 #
 # Version History:
 # 0.01 - 03/01/2006 - JH - HTML Fragments migrated from localConfig.py
+# 0.02 - 26/09/2007 - JH - Mods to component search display to accomodate hierarchy of titles
 #
 # NB:
 # - If you are not experieced in editing HTML you are advised not to edit any of the HTML fragments
@@ -32,6 +33,9 @@
 full_tag = '<img src="/images/v3_full.gif" alt="Full"/>'
 email_tag = '<img src="/images/v3_email.gif" alt="e-mail"/>'
 similar_tag = '<img src="/images/v3_simlr.gif" alt="Similar"/>'
+
+folder_closed_tag = '<img src="/images/folderClosed.jpg" alt="[+]"/>'
+folder_open_tag = '<img src="/images/folderOpen.jpg" alt="[-]"/>'
 
 # Result rows
 browse_result_row = '''
@@ -76,18 +80,21 @@ search_result_row = '''
       </td>
     </tr>'''
 
+    
 search_component_row = '''
     <tr>
       <td class="comphit">
         <table width="100%">
           <tr>
             <td colspan="4">
-              In <em>%PARENT%</em>
+                ''' + folder_closed_tag + '''<em>%PARENT%</em>
             </td>
+          </tr>
+          <tr class="comphier" id="comphier%HITPOSITION%">
+              <td colspan="4">%HIERARCHY%</td>
           </tr>
           <tr>
             <td colspan="4">
-              <img src="/images/folderClosed.jpg" alt="[+]" title="Component record"/>
               <a href="SCRIPT?operation=summary%RSID%&amp;hitposition=%HITPOSITION%" title="Display record summary" %SPLASH%><strong>%TITLE%</strong></a>
             </td>
           </tr>
@@ -106,6 +113,7 @@ search_component_row = '''
         </table>
       </td>
     </tr>'''
+    
 
 toc_scripts = '''
 <script type="text/javascript" src="/javascript/collapsibleLists.js"></script>

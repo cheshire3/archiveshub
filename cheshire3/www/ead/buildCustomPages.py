@@ -7,7 +7,7 @@ osp = sys.path
 sys.path = ["/home/cheshire/cheshire3/cheshire3/code", "."]
 sys.path.extend(osp)
 
-from wwwSearch import *
+from www_utils import *
 # import customisable variables
 from localConfig import *
 
