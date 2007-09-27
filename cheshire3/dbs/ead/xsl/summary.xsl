@@ -113,8 +113,8 @@
 
   <!-- for component records -->
   <xsl:template match="/c3component">
-    <!-- link to collection level -->
-    <xsl:text>In: LINKTOPARENT</xsl:text>
+    <!-- links to higher levels -->
+    <xsl:text>LINKTOPARENT</xsl:text>
    
     <!-- Core information about described material from <did> -->
     <xsl:apply-templates select="./*/did"/>

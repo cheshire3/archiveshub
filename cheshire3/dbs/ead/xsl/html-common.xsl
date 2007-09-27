@@ -620,83 +620,132 @@
 			</xsl:otherwise>
 		</xsl:choose>
 		
+		<table>
+		
 		 <!-- Subjects -->
 		<xsl:if test="subject">
-		  <strong><xsl:text>Subjects</xsl:text></strong><br/>
+		  <tr><td colspan="2"><strong><xsl:text>Subjects</xsl:text></strong></td></tr>
 		  <xsl:for-each select="subject">
-		    <xsl:call-template name="browselink">
-		      <xsl:with-param name="index">
-		        <xsl:text>dc.subject</xsl:text>
-		      </xsl:with-param>
-		    </xsl:call-template>
-		    <br/>
+		  	<tr>
+		  		<td>
+				    <xsl:call-template name="browselink">
+				      <xsl:with-param name="index">
+				        <xsl:text>dc.subject</xsl:text>
+				      </xsl:with-param>
+				    </xsl:call-template>
+				</td>
+				<td><!-- cross-search links --></td>
+			</tr>
 		  </xsl:for-each>
 		</xsl:if>
 		
 		<!-- Personal Names -->
 		<xsl:if test="persname">
-		  <strong><xsl:text>Personal Names</xsl:text></strong><br/>
+		  <tr><td colspan="2"><strong><xsl:text>Personal Names</xsl:text></strong></td></tr>
+		  
 		  <xsl:for-each select="persname">
-		    <xsl:call-template name="browselink">
-		      <xsl:with-param name="index">
-		        <xsl:text>bath.personalName</xsl:text>
-		      </xsl:with-param>
-		    </xsl:call-template>
-		    <br/>
+		  	<tr>
+		  		<td>
+				    <xsl:call-template name="browselink">
+				      <xsl:with-param name="index">
+				        <xsl:text>bath.personalName</xsl:text>
+				      </xsl:with-param>
+				    </xsl:call-template>
+			    </td>
+			    <td>
+				    <xsl:if test="$link_to_wikipedia">
+						<xsl:call-template name="wikipedialink"/>		    	
+				    </xsl:if>
+		    	</td>
+		    </tr>
 		  </xsl:for-each>
 		</xsl:if>
 		
 		<!-- Family Names -->
 		<xsl:if test="famname">
-		  <strong><xsl:text>Family Names</xsl:text></strong><br/>
+		  <tr><td colspan="2"><strong><xsl:text>Family Names</xsl:text></strong></td></tr>
 		  <xsl:for-each select="famname">
-		  	<xsl:call-template name="browselink">
-		      <xsl:with-param name="index">
-		        <xsl:text>ead.familyName</xsl:text>
-		      </xsl:with-param>
-		    </xsl:call-template>
-				<br/>
+		  	<tr>
+				<td>
+				  	<xsl:call-template name="browselink">
+				      <xsl:with-param name="index">
+				        <xsl:text>ead.familyName</xsl:text>
+				      </xsl:with-param>
+				    </xsl:call-template>
+				</td>
+				<td>
+					<xsl:if test="$link_to_wikipedia">
+						<xsl:call-template name="wikipedialink"/>		    	
+				    </xsl:if>
+				</td>
+			</tr>
 		  </xsl:for-each>
 		</xsl:if>
 		
 		<!-- Corporate Names -->
 		<xsl:if test="corpname">
-		  <strong><xsl:text>Corporate Names</xsl:text></strong><br/>
+		  <tr><td colspan="2"><strong><xsl:text>Corporate Names</xsl:text></strong></td></tr>
 		  <xsl:for-each select="corpname">
-		    <xsl:call-template name="browselink">
-		      <xsl:with-param name="index">
-		        <xsl:text>bath.corporateName</xsl:text>
-		      </xsl:with-param>
-		    </xsl:call-template>
-		    <br/>
+		  	<tr>
+			  	<td>
+				    <xsl:call-template name="browselink">
+				      <xsl:with-param name="index">
+				        <xsl:text>bath.corporateName</xsl:text>
+				      </xsl:with-param>
+				    </xsl:call-template>
+				</td>
+				<td>
+					<xsl:if test="$link_to_wikipedia">
+						<xsl:call-template name="wikipedialink"/>		    	
+				    </xsl:if>
+				</td>
+			</tr>
 		  </xsl:for-each>
 		</xsl:if>
 		
 		<!-- Geographical Names -->
 		<xsl:if test="geogname">
-		  <strong><xsl:text>Geographical Names</xsl:text></strong><br/>
+		  <tr><td colspan="2"><strong><xsl:text>Geographical Names</xsl:text></strong></td></tr>
 		  <xsl:for-each select="geogname">
-		    <xsl:call-template name="browselink">
-		      <xsl:with-param name="index">
-		        <xsl:text>bath.geographicName</xsl:text>
-		      </xsl:with-param>
-		    </xsl:call-template>
-		    <br/>
+		  	<tr>
+		  		<td>
+				    <xsl:call-template name="browselink">
+				      <xsl:with-param name="index">
+				        <xsl:text>bath.geographicName</xsl:text>
+				      </xsl:with-param>
+				    </xsl:call-template>
+				</td>
+				<td>
+					<!--  cross search links -->
+				    <xsl:if test="$link_to_googlemaps">
+						<xsl:call-template name="googlemapslink"/>
+				    </xsl:if>
+				</td>
+			</tr>
 		  </xsl:for-each>
 		</xsl:if>
 		
 		<xsl:if test="title">
-		  <strong><xsl:text>Titles</xsl:text></strong><br/>
+		  <tr><td colspan="2"><strong><xsl:text>Titles</xsl:text></strong></td></tr>
 		  <xsl:for-each select="title">
-			<xsl:apply-templates/>
-			<br/>
+		  	<tr>
+				<td><xsl:apply-templates/></td>
+				<td class="">
+					<xsl:if test="$link_to_amazon">
+						<xsl:call-template name="amazonlink"/>								    	
+				    </xsl:if>
+				</td>
+			</tr>
 		  </xsl:for-each>
 		</xsl:if>
 		
 		<xsl:if test="function">
-		  <strong><xsl:text>Functions</xsl:text></strong><br/>
+		  <tr><td colspan="2"><strong><xsl:text>Functions</xsl:text></strong></td></tr>
 		  <xsl:for-each select="function">
-		    <xsl:value-of select = "."/><br/>
+		  	<tr>
+			    <td><xsl:value-of select = "."/></td>
+			    <td><!-- cross search links --></td>
+			</tr>
 		  </xsl:for-each>
 		</xsl:if> 
 		
@@ -718,6 +767,8 @@
 				<xsl:value-of select = "."/><br/>
 			</xsl:for-each>
 		</xsl:if>
+		
+		</table>
 
 	</xsl:template>
 	
@@ -1144,6 +1195,24 @@
 	    	<xsl:with-param name="replacement"><xsl:text></xsl:text></xsl:with-param>
 	   	</xsl:call-template>
 	</xsl:template>
+	
+	<!-- Template for making string Wikipedia friendly -->
+	<xsl:template name="wikipediacgiencode">
+	    <xsl:param name="text"/>
+	    <xsl:call-template name="replace-substring">
+		    <xsl:with-param name="original">
+			    <xsl:call-template name="replace-substring">
+		  		  <xsl:with-param name="original">
+			    		<xsl:value-of select="translate(normalize-space($text),' ', '_')"/>
+	    			</xsl:with-param>
+			    	<xsl:with-param name="substring"><xsl:text>THGLHGH</xsl:text></xsl:with-param>
+	    			<xsl:with-param name="replacement"><xsl:text></xsl:text></xsl:with-param>
+	   			</xsl:call-template>
+	    	</xsl:with-param>
+	    	<xsl:with-param name="substring"><xsl:text>HGHLGHT</xsl:text></xsl:with-param>
+	    	<xsl:with-param name="replacement"><xsl:text></xsl:text></xsl:with-param>
+	   	</xsl:call-template>
+	</xsl:template>
   
   
 	<!--  template to carry out recursive string replacements -->
@@ -1199,31 +1268,93 @@
   
   
 	<!-- template for constructing browse links, given the name of the index to browse -->
-  <xsl:template name="browselink">
-    <xsl:param name="index"/>
-    <a>
-      <xsl:attribute name="href">
-        <xsl:value-of select="$script"/>
-        <xsl:text>?</xsl:text>
-        <xsl:text>operation=browse</xsl:text>
-        <xsl:text>&amp;fieldidx1=</xsl:text>
-        <xsl:value-of select="$index"/>
-        <xsl:text>&amp;fieldcont1=</xsl:text>
-        <xsl:call-template name="cgiencode">
-          <xsl:with-param name="text">
-            <xsl:apply-templates select="."/>
-          </xsl:with-param>
-        </xsl:call-template>
-      </xsl:attribute>
-      <xsl:attribute name="title">
-        <xsl:text>Browse </xsl:text>
-        <xsl:value-of select="$index"/>
-        <xsl:text> index</xsl:text>
-      </xsl:attribute>
-      <xsl:apply-templates select="."/>
-    </a>
-  </xsl:template>
-
+	<xsl:template name="browselink">
+    	<xsl:param name="index"/>
+	    <a>
+	      <xsl:attribute name="href">
+	        <xsl:value-of select="$script"/>
+	        <xsl:text>?</xsl:text>
+	        <xsl:text>operation=browse</xsl:text>
+	        <xsl:text>&amp;fieldidx1=</xsl:text>
+	        <xsl:value-of select="$index"/>
+	        <xsl:text>&amp;fieldcont1=</xsl:text>
+	        <xsl:call-template name="cgiencode">
+	          <xsl:with-param name="text">
+	            <xsl:apply-templates select="."/>
+	          </xsl:with-param>
+	        </xsl:call-template>
+	      </xsl:attribute>
+	      <xsl:attribute name="title">
+	        <xsl:text>Browse </xsl:text>
+	        <xsl:value-of select="$index"/>
+	        <xsl:text> index</xsl:text>
+	      </xsl:attribute>
+	      <xsl:apply-templates select="."/>
+	    </a>
+	</xsl:template>
+  
+	<xsl:template name="amazonlink">
+	  	<a target="_new">
+	  		<xsl:attribute name="href">
+	  			<xsl:value-of select="$amazon_search_url"/>
+	  			<xsl:call-template name="cgiencode">
+		          <xsl:with-param name="text">
+		            <xsl:apply-templates select="."/>
+		          </xsl:with-param>
+		        </xsl:call-template>
+			</xsl:attribute>
+			<xsl:attribute name="title">
+		        <xsl:text>Search Amazon</xsl:text>
+		    </xsl:attribute>
+		    <img alt="Amazon">
+		    	<xsl:attribute name="src">
+		    		<xsl:value-of select="$amazon_search_icon"/>
+		    	</xsl:attribute>
+		    </img>
+	  	</a>
+	</xsl:template>
+  
+	<xsl:template name="googlemapslink">
+	  	<a target="_new">
+	  		<xsl:attribute name="href">
+	  			<xsl:value-of select="$googlemaps_search_url"/>
+	  			<xsl:call-template name="cgiencode">
+		          <xsl:with-param name="text">
+		            <xsl:apply-templates select="."/>
+		          </xsl:with-param>
+		        </xsl:call-template>
+			</xsl:attribute>
+			<xsl:attribute name="title">
+		        <xsl:text>Plot in Google Maps</xsl:text>
+		    </xsl:attribute>
+		    <img alt="Google Maps">
+		    	<xsl:attribute name="src">
+		    		<xsl:value-of select="$googlemaps_search_icon"/>
+		    	</xsl:attribute>
+		    </img>
+	  	</a>
+	</xsl:template>
+  
+	<xsl:template name="wikipedialink">
+		<a target="_new">
+	  		<xsl:attribute name="href">
+	  			<xsl:value-of select="$wikipedia_search_url"/>
+	  			<xsl:call-template name="wikipediacgiencode">
+		          <xsl:with-param name="text">
+		            <xsl:apply-templates select="."/>
+		          </xsl:with-param>
+		        </xsl:call-template>
+			</xsl:attribute>
+			<xsl:attribute name="title">
+		        <xsl:text>Search Wikipedia</xsl:text>
+		    </xsl:attribute>
+		    <img alt="Wikipedia">
+		    	<xsl:attribute name="src">
+		    		<xsl:value-of select="$wikipedia_search_icon"/>
+		    	</xsl:attribute>
+		    </img>
+	  	</a>
+	</xsl:template>
   
   	<xsl:template match="eadid" mode="tocFileName">
 		<xsl:param name="uc" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ'"/>
