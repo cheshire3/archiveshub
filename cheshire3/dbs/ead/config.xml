@@ -239,7 +239,7 @@
 	    <subConfig type="transformer" id="eadDublinCoreTxr">
 	      <objectType>transformer.LxmlXsltTransformer</objectType>
 	      <paths>
-	         <path type="xsltPath">xsl/ead2sru_dc.xsl</path>
+	         <path type="xsltPath">xsl/ead2srw_dc.xsl</path>
 	      </paths>
 	    </subConfig>
 	    
@@ -262,7 +262,7 @@
 					<xpath>5</xpath>
 				</map>
 				<map>
-					<xpath>archdesc/did/unittitle/text()</xpath>
+					<xpath>/ead/archdesc/did/unittitle/text()</xpath>
 					<xpath>1</xpath>
 				</map>
 				<map>
