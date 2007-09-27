@@ -168,7 +168,10 @@
 				<!-- component record -->
 				<assign from="input.process_xpath('/c3component/@parent')[0]" to="parentid"/>
 				<assign from="parentid.split('/', 1)[-1]" to="parentid"/>
-				<assign from="parentid + '-' + input.process_xpath('did[1]/unitid/text()')[0]" to="input"/>
+				<assign from="input.process_xpath('/*/*/did/unitid')[0]" to="input"/>
+				<object type="extracter" ref="ExactExtracter" function="process_node"/>
+				<assign from="input.keys()[0]" to="input"/>
+				<assign from="parentid + '-' + input" to="input"/>
 			</except>
 			<object type="workflow" ref="normalizeDataIdentifierWorkflow" />
 			<assign from="input" to="myRecord.id"/>
@@ -179,6 +182,7 @@
 	<subConfig type="workflow" id="normalizeDataIdentifierWorkflow">
 		<objectType>workflow.CachingWorkflow</objectType>
 		<workflow>
+			<!-- input type: String -->
 			<object type="normaliser" ref="DiacriticNormaliser" function="process_string"/>
 			<object type="normaliser" ref="CaseNormaliser" function="process_string"/>
 			<object type="normaliser" ref="SpaceNormaliser" function="process_string"/>
