@@ -82,15 +82,11 @@ search_result_row = '''
 search_component_row = '''
     <tr>
       <td class="comphit">
+        <a href="javascript:;" onclick="toggleShow(this, \'comphier%HITPOSITION%\', \'folders');">''' + folder_closed_tag + '''</a><em>%PARENT%</em>
+        <div class="comphier" id="comphier%HITPOSITION%">
+          %HIERARCHY%
+        </div>
         <table width="100%">
-          <tr>
-            <td colspan="4">
-                ''' + folder_closed_tag + '''<em>%PARENT%</em>
-            </td>
-          </tr>
-          <tr class="comphier" id="comphier%HITPOSITION%">
-              <td colspan="4">%HIERARCHY%</td>
-          </tr>
           <tr>
             <td colspan="4">
               <a href="SCRIPT?operation=summary%RSID%&amp;hitposition=%HITPOSITION%" title="Display record summary" %SPLASH%><strong>%TITLE%</strong></a>

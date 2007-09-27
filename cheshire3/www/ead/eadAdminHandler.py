@@ -1,23 +1,25 @@
 #
-# Program:   eadAdminHandler.py
-# Version:   0.19
+# Script:    eadAdminHandler.py
+# Version:   0.23
+# Date:      27 September 2007
+# Copyright: &copy; University of Liverpool 2005-2007
 # Description:
 #            Web interface for administering a cheshire 3 database of EAD finding aids
-#            - part of Cheshire for Archives v3.
+#            - part of Cheshire for Archives v3
 #
+# Author(s): JH - John Harrison <john.harrison@liv.ac.uk>
+#            CS - Catherine Smith <catherine.smith@liv.ac.uk>
+#
+# Language:  Python
 # Required externals:
-#            Py: localConfig.py, wwwSearch.py
-#            HTML: adminmenu.html, adminhelp.html, database.html, footer.html, header.html, template.ssi, upload.html.
+#            cheshire3-base, cheshire3-web
+#            Py: localConfig.py, htmlFragments.py
+#            HTML: adduser.html, adminmenu.html, adminhelp.html, database.html, edituser.html, footer.html, header.html, preview.html, template.ssi, upload.html.
 #            CSS: struc.css, style.css
 #            Javascript: ead.js
 #            Images: c3_black.gif
+#                    folderClosed.jpg, folderOpen.jpg folderItem.jpg
 #                    closed.gif, open.gif, tBar.gif
-#
-# Language:  Python
-# Author:    JH - John Harrison <john.harrison@liv.ac.uk>
-# Date:      03 July 2007
-#
-# Copyright: &copy; University of Liverpool 2005-2007
 #
 # Version History:
 # 0.01 - 06/12/2005 - JH - Basic administration navigations and menus
@@ -48,8 +50,17 @@
 # 0.18 - 28/06/2007 - JH - Minor tweaks to upload and unindexing.
 #                        - show/hide python traceback added to error page
 # 0.19 - 03/07/2007 - JH - a little more debugging...
+# 0.20 - 06/08/2007 - CS - Option buttons changed to checkboxes in Admin/Files interface
+#                        - Rewrite of rename function in Admin/Files interface to allow for multiple files to be renamed at once
+# 0.21 - 09/08/2007 - CS - Rewrite of delete function to enable multiple file deletion and unindexing
+#                        - Bug fixing in interfaces and file preview
+#                        - Minor changes to files interface - includes change to 'upload.html' and 'adminhelp.html'
+# 0.22 - 20/08/2007 - CS - Redesign of Database Menu and navigation added to delete stats result page - includes changes to 'style.css' and 'database.html'
+# 0.23 - 27/09/2007 - JH - Rename wwwSearch --> www_utils
 #
 #
+#
+    
 
 from mod_python import apache, Cookie
 from mod_python.util import FieldStorage
@@ -72,7 +83,7 @@ from baseObjects import Session
 import c3errors
 
 # C3 web search utils
-from wwwSearch import *
+from www_utils import *
 from eadSearchHandler import _unescapeCharent, nonAsciiRe, _asciiFriendly, anchorRe, overescapedAmpRe
 
 # script specific globals
@@ -515,7 +526,7 @@ class EadAdminHandler:
             else:
                 fp = os.path.join(d,f)
                 outF.extend(['<li>'
-                            ,'<span class="fileops"><input type="radio" name="filepath" value="%s"/></span>' % (fp)
+                            ,'<span class="fileops"><input type="checkbox" name="filepath" value="%s"/></span>' % (fp)
                             ,'<span class="filename"><a href="files.html?operation=view&amp;filepath=%s" title="View file contents">%s</a></span>' % (cgi_encode(fp), f)
                             ,'</li>'
                             ])
@@ -523,15 +534,22 @@ class EadAdminHandler:
         return outD + outF
     #- end walk_directory()
 
-    def review_records(self):
+    def review_records(self, version='full'):
         global sourceDir
         self.htmlTitle.append('File Management')
-        fileformsubmits = '''<input type="submit" name="operation" value="rename" onmousedown="op=this.value;"/>
-        <input type="submit" name="operation" value="unindex" onmousedown="op=this.value;"/>
-        <input type="submit" name="operation" value="delete" onmousedown="op=this.value;"/>'''
-        out = ['<h3 class="bar">Upload</h3>', 
-               read_file('upload.html'),
-               '<script type="text/javascript" src="/javascript/cookies.js"></script>',
+        out = []
+        if (version=='full'):
+            header = 'Existing Files'
+            fileformsubmits = '''<input type="submit" name="operation" value="rename" onmousedown="op=this.value;"/>            
+            <input type="submit" name="operation" value="delete" onmousedown="op=this.value;"/>
+            <input type="submit" name="operation" value="unindex + delete" onmousedown="op=this.value;"/>'''
+        else :
+            fileformsubmits = '''<input type="submit" name="operation" value="%s" onmousedown="op=this.value;"/>''' % version
+            header = 'Please select file(s) to %s' % version
+        if (version=='full'):
+            out.extend(['<h3 class="bar">Upload <a href="/ead/admin/help.html#files_upload" title="What is this?"><img src="/images/whatisthis.gif" alt="[What is this?]"/></a></h3>', 
+               read_file('upload.html'), '<br/>'])    
+        out.extend(['<script type="text/javascript" src="/javascript/cookies.js"></script>',
                '<script type="text/javascript" src="/javascript/collapsibleLists.js"></script>',
                '''<script type="text/javascript">
                <!--
@@ -544,14 +562,14 @@ class EadAdminHandler:
                -->
                </script>
                ''',
-               '<br/><h3 class="bar">Existing Files</h3>',
+               '<h3 class="bar">%s  <a href="/ead/admin/help.html#existing_files" title="What is this?"><img src="/images/whatisthis.gif" alt="[What is this?]"/></a></h3>' % (header), 
                '<form action="files.html" name="fileops" method="post" onsubmit="return confirmOp();">',
                fileformsubmits,
                '<ul class="unmarked"><li><img src="/images/folderOpen.jpg" alt=""/>' + sourceDir,
                '<ul id="sourceDirTree" class="unmarked">'
-               ]
+               ])
         out.extend(self._walk_directory(sourceDir))
-        out.extend(['</li>','</ul>', fileformsubmits, '</form>'])
+        out.extend(['</li>','</ul>', '</ul>', fileformsubmits, '</form>'])
         self.logger.log('File options')
         return '\n'.join(out)
     #- end review_records()
@@ -717,7 +735,7 @@ class EadAdminHandler:
             self.logger.log('HTML generated by non-splitting XSLT')
             # resolve anchors to only page
             doc = doc.replace('PAGE#', '%s/RECID-p1.shtml#' % cache_url)
-            page = tmpl.replace('%CONTENT%', doc)
+            page = tmpl.replace('%CONTENT%', toc_scripts + doc)
             for k, v in paramDict.iteritems():
                 page = page.replace(k, v)
 
@@ -846,7 +864,7 @@ class EadAdminHandler:
         fnparts = fn.split('.')
         newname = '%s-%s-%s.%s' % ('.'.join(fnparts[:-1]), session.user.username, self._get_timeStamp(), fnparts[-1])
         write_file(os.path.join(sourceDir,newname), f.value)
-        req.write('File <span class="sys">%s</span> uploaded and stored on server as <span class="sys">%s</span><br/>\n' % (f.filename, newname))
+        req.write('File <code>%s</code> uploaded and stored on server as <code>%s</code><br/>\n' % (f.filename, newname))
         if (op == 'insert'):
             # 'open' all dbs and recordStores
             db.begin_indexing(session)
@@ -896,171 +914,239 @@ class EadAdminHandler:
         rebuild = True                    # flag for rebuild architecture
         return None 
     #- end upload_file()
-
+    
+    
+    
     def delete_file(self, req, form):
         global ppFlow, sax, db, recordStore, dcStore, compStore, rebuild
         self.htmlTitle.append('File Management')
         self.htmlNav.append('<a href="files.html" title="File Management" class="navlink">Files</a>')
-        operation = form.get('operation', 'unindex')
-        filepath = form.get('filepath', None)
-        if not filepath:
-            self.htmlTitle.append('Error')
-            return 'Could not locate specified file path'
-        
+        operation = form.get('operation', 'unindex')        
+        filepaths = form.getlist('filepath')
         # setup http headers etc
         req.content_type = 'text/html'
         req.send_http_header()
         head = self._get_genericHtml('header.html')
-        req.write(head + '<div id="wrapper">')
-        # first we have to find the recid by parsing the record
-        req.write('Reading original file ...')
-        try:
-            doc = StringDocument(read_file(filepath))
-        except IOError:
-            req.write('<span class="error">[ERROR]</span> - File not present on disk')
-        else:
-            req.write('<span class="ok">[OK]</span><br/>\nDeleting file from disk ...')
-            # remove file
-            os.remove(filepath)
-            req.write('<span class="ok">[OK]</span>')
-            self.logger.log('File Delete: %s removed from disk' % (filepath))
-            if (operation == 'unindex'):
-                req.write('<br/>\nProcessing...')
-                doc = ppFlow.process(session, doc)
-                rec = sax.process_document(session, doc)
-                rec = assignXPathIdFlow.process(session, rec)
-                recid = rec.id
-                req.write('<br/>\nUnindexing record: %s ...' % recid)
-                try:
-                    rec = recordStore.fetch_record(session, recid)
-                except (c3errors.FileDoesNotExistException, c3errors.ObjectDoesNotExistException):
-                    # hmm record doesn't exists, simply remove file from disk (already done!)
-                    req.write('<span class="error">[ERROR]</span> - Record not present in recordStore<br/>\n')
-                else:
-                    # delete from indexes
-                    db.unindex_record(session, rec)
-                    db.remove_record(session, rec)
-                    req.write('<span class="ok">[OK]</span><br/>\nDeleting record from stores ...')
-                    # delete from recordStore
-                    recordStore.begin_storing(session)
-                    recordStore.delete_record(session, rec.id)
-                    recordStore.commit_storing(session)
-                    # delete DC in dcStore
-                    dcStore.begin_storing(session)
-                    try: dcStore.delete_record(session, rec.id)
-                    except: pass
-                    else: dcStore.commit_storing(session)
-                    req.write('<span class="ok">[OK]</span><br/>\n')
-                    
-                if len(rec.process_xpath('dsc')):
-                    # now the tricky bit - component records
-                    compStore.begin_storing(session)
-                    q = CQLParser.parse('ead.parentid exact "%s/%s"' % (rec.recordStore, rec.id))
-                    rs = db.search(session, q)
-                    req.write('Unindexing %d component records .' % (len(rs)))
-                    dotcount = 0
-                    for r in rs:
-                        try:
-                            compRec = r.fetch_record(session)
-                        except (c3errors.FileDoesNotExistException, c3errors.ObjectDoesNotExistException):
-                            pass
-                        else:
-                            db.unindex_record(session, compRec)
-                            db.remove_record(session, compRec)
-                            compStore.delete_record(session, compRec.id)
+        req.write(head + '<div id="wrapper">')     
+        if (len(filepaths) == 0):
+            return '%s<br />\n<br /><a href="files.html" title="File Management" class="navlink">Back to \'File Management\' Page</a>' % self.review_records(operation)     
+        deletedTotal = 0
+        unindexedTotal = 0
+        errorTotal = 0
+        for i, filepath in enumerate(filepaths):
+            if not filepath:
+                self.htmlTitle.append('Error')
+                return 'Could not locate specified file path'     
+            # first we have to find the recid by parsing the record
+            req.write('Reading original file (<code>%s</code>) ...' % filepath)
+            try:
+                doc = StringDocument(read_file(filepath))
+            except IOError:
+                req.write('<span class="error">[ERROR]</span> - File not present on disk<br/>')
+            else:
+                req.write('<span class="ok">[OK]</span><br/>\nDeleting file from disk ...')
+                # remove file
+                os.remove(filepath)
+                req.write('<span class="ok">[OK]</span><br/>\n')
+                deletedTotal += 1;
+                self.logger.log('File Delete: %s removed from disk' % (filepath))               
+                if (operation == 'unindex'):
+                    req.write('Processing...')
+                    doc = ppFlow.process(session, doc)
+                    rec = sax.process_document(session, doc)
+                    rec = assignDataIdFlow.process(session, rec)
+                    recid = rec.id
+                    req.write('<br/>\nUnindexing record: %s ...' % recid)
+                    try:
+                        rec = recordStore.fetch_record(session, recid)
+                    except (c3errors.FileDoesNotExistException, c3errors.ObjectDoesNotExistException):
+                        # hmm record doesn't exists, simply remove file from disk (already done!)
+                        req.write('<span class="error">[ERROR]</span> - Record not present in recordStore<br/>\n')
+                        errorTotal += 1
+                    else:
+                        # delete from indexes
+                        db.unindex_record(session, rec)
+                        db.remove_record(session, rec)
+                        req.write('<span class="ok">[OK]</span><br/>\nDeleting record from stores ...')
+                        # delete from recordStore
+                        recordStore.begin_storing(session)
+                        recordStore.delete_record(session, rec.id)
+                        recordStore.commit_storing(session)
+                        # delete DC in dcStore
+                        dcStore.begin_storing(session)
+                        try: dcStore.delete_record(session, rec.id)
+                        except: pass
+                        else: dcStore.commit_storing(session)
+                        req.write('<span class="ok">[OK]</span><br/>\n')
                         
-                        req.write('.')
-                        dotcount +=1
-                        if (dotcount % 200 == 0):
-                            req.write('<br/>')
-                
-                    compStore.commit_storing(session)
-                    req.write('<span class="ok">[OK]</span><br/>\n')
-                
-                req.write('Merging modified indexes...')
-                try:
-                    db.commit_indexing(session)
-                except c3errors.FileDoesNotExistException:
-                    # FIXME: R to investigate Cheshire3 quirk
-                    req.write('<span class="ok">[OK]</span><br/>\n')
-                except:
-                    req.write('<span class="ok">[INCOMPLETE]</span> - File may still be available until the database is rebuilt.<br/>\n')
-                else:
-                    req.write('<span class="ok">[OK]</span><br/>\n')
-                    db.commit_metadata(session)
+                    if len(rec.process_xpath('dsc')):
+                        # now the tricky bit - component records
+                        compStore.begin_storing(session)
+                        q = CQLParser.parse('ead.parentid exact "%s/%s"' % (rec.recordStore, rec.id))
+                        rs = db.search(session, q)
+                        req.write('Unindexing %d component records .' % (len(rs)))
+                        dotcount = 0
+                        for r in rs:
+                            try:
+                                compRec = r.fetch_record(session)
+                            except (c3errors.FileDoesNotExistException, c3errors.ObjectDoesNotExistException):
+                                pass
+                            else:
+                                db.unindex_record(session, compRec)
+                                db.remove_record(session, compRec)
+                                compStore.delete_record(session, compRec.id)
+                            
+                            req.write('.')
+                            dotcount +=1
+                            if (dotcount % 200 == 0):
+                                req.write('<br/>')
                     
-                req.write('FILE DELETE COMPLETE')
-                self.logger.log('File Delete: %s removed from database' % (rec.id))
-                rebuild = True
-            
-            req.write('\n<p><a href="/ead/admin/files.html">Back to \'File Management\' page.</a></p>')
+                        compStore.commit_storing(session)
+                        req.write('<span class="ok">[OK]</span><br/>\n')
+                    
+                    req.write('Merging modified indexes...')
+                    try:
+                        db.commit_indexing(session)
+                    except c3errors.FileDoesNotExistException:
+                        # FIXME: R to investigate Cheshire3 quirk
+                        req.write('<span class="ok">[OK]</span><br/>\n')
+                        unindexedTotal += 1
+                    except:
+                        req.write('<span class="ok">[INCOMPLETE]</span> - File may still be available until the database is rebuilt.<br/>\n')
+                        unindexTotal +=1
+                        errorTotal += 1
+                    else:
+                        req.write('<span class="ok">[OK]</span><br/>\n')
+                        db.commit_metadata(session)
+                        unindexedTotal += 1
+                    self.logger.log('File Delete: %s removed from database' % (rec.id))
+                    rebuild = True
+        if (operation == 'unindex'):
+            req.write('\n<strong>%d file(s) unindexed and deleted</strong>' % unindexedTotal)
+        else :
+            req.write('\n<strong>%d file(s) deleted</strong>' % deletedTotal)
+            req.write('\n<p>Files will remain in the database until the database is rebuilt. This can be done from the <a href="/ead/admin/database.html">\'Database Management\'</a> page</p>')
+        if (errorTotal > 0):
+            req.write('\n<strong> with %d possible error(s) (see above for details)</strong>' %errorTotal)
+        req.write('\n<p><a href="/ead/admin/files.html">Back to \'File Management\' page.</a></p>')
                 
         foot = self._get_genericHtml('footer.html')          
         req.write('</div>' + foot)
         return None
     #- end delete_file()
+            
 
+    
     def rename_file(self, form):
-        global script
-        p = form.get('filepath', None)
-        d,base  = os.path.split(p)
-        fn, ext = os.path.splitext(base)
-        ext = form.get('extension', ext)
-        nn = form.get('newname', None)
-        if not nn:
-            self.htmlTitle.append('File Management')
-            self.htmlTitle.append('Rename File')
-            self.htmlNav.append('<a href="files.html" title="File Management" class="navlink">Files</a>')
+        global script, rename_notes        
+        fileNames = form.getlist('filepath')
+        newNames = form.getlist('newname')
+        self.htmlTitle.append('File Management')
+        self.htmlTitle.append('Rename File')
+        self.htmlNav.append('<a href="files.html" title="File Management" class="navlink">Files</a>')
+        notes = rename_notes
+        #if no file is selected and we have no new names (i.e. are coming from main menu)
+        if (len(newNames) == 0 and len(fileNames) == 0):
+            return '''%s<br />
+                        \n<br />
+                        <a href="files.html" title="File Management" class="navlink">Back to \'File Management\' Page</a>
+                    ''' % self.review_records('rename')
+        #if a file is selected and we have no new names (i.e. are coming from main menu)             
+        elif (len(newNames) == 0 and len(fileNames) > 0):             
+            fileRename = []          
+            for i in range(len(fileNames)):
+                xmlSelected = ''
+                sgmlSelected = ''
+                p = fileNames[i]
+                d,base = os.path.split(p)
+                fn, ext = os.path.splitext(base)
+                if (ext == '.xml'):
+                    xmlSelected = ' selected="selected"'
+                else :
+                    sgmlSelected = ' selected="selected"'                    
+                fileRename.append('''<input type="hidden" name="filepath%d" value="%s"/>
+                                     <p><strong>%s%s</strong><br />
+                                     <input type="text" name="newname" size="50" value="%s"/>
+                                     <select name="extension%d">
+                                         <option value=".sgml"%s>.sgml</option>
+                                         <option value=".xml"%s>.xml</option>
+                                     </select>
+                              ''' % (i, p, fn, ext, fn, i, sgmlSelected, xmlSelected))
+                    
             return '''
-            <p>Please choose a new name for the file: <strong>%s</strong></p>
-            <strong>Notes</strong>: 
-            <em>
-            <ul>
-              <li>You should avoid using spaces, accented characters, or punctuation in the filename. e.g. slashes, full-stops etc. Dashes are OK.</li>
-              <li>as a file extension (e.g. \'sgml\', \'xml\') is essential, this will be added automatically. You may choose which of these is appropriate to the file.</li>
-            </ul>
-            </em>
+            %s
             <form action="files.html" method="post">
-              <input type="hidden" name="operation" value="rename"/>
-              <input type="hidden" name="filepath" value="%s"/>
-              <p>
-                  <input type="text" name="newname" size="50" value="%s"/>
-                  <select name="extension">
-                    <option value=".sgml" selected="selected">.sgml</option>
-                    <option value=".xml">.xml</option>
-                  </select>
-              </p>
-              <p><input type="submit" name="submit" value="Submit"/></p>
-            </form>
-            ''' % (base, p, fn)
+                <input type="hidden" name="operation" value="rename"/> 
+                %s
+                <p><input type="submit" name="submit" value="Submit"/></p>
+            </form>''' % (notes, ''.join(fileRename))
             self.logger.log('Rename File: form returned')
+        #if we have new names (i.e. are coming from rename interface) we make changes if possible and report actions    
+        elif (len(newNames) > 0):
+            errorCounter = 0
+            #setup the report to detail actions/failures
+            self.htmlTitle.append('Action Report')
+            errors = ['''<div id="actionReport">
+                            <h3 class="redheading">There were errors renaming the following files:</h3>
+                            %s
+                            <form action="files.html" method="post">
+                            <input type="hidden" name="operation" value="rename"/>
+                    ''' % notes]
+            changedFiles = ['<div id="actionReport"><h3 class="greenheading">The following files were successfully renamed:</h3>']
+            for i in range(len(newNames)):
+                xmlSelected = ''
+                sgmlSelected = ''
+                p = form.get('filepath%d' % i, None)
+                d,base = os.path.split(p)
+                fn, ext = os.path.splitext(base)
+                ne = form.get('extension%d' % i, None)
+                nn = newNames[i]  
+                errorMsg = None
+                errorDetail = ''
+                if (nn ==fn and ne == ext) :
+                    errorMsg = 'New filename not provided.'
+                else :
+                    if (os.path.exists(os.path.join(d,nn + ne))):
+                        errorMsg = 'Filename already exists:' 
+                        errorDetail = '<code>%s</code>' % os.path.join(nn + ne)
+                        self.logger.log('Rename File: ERROR - %s already exists' % os.path.join(d,nn + ne))
+                    else :
+                        try :
+                            os.rename(p, os.path.join(d,nn + ne))
+                        except OSError :
+                            errorMsg = 'Directory path does not exist:'
+                            errorDetail = '<code>%s</code>' % os.path.join(nn + ne)
+                            self.logger.log('Rename File: ERROR - %s directory does not exist' % os.path.join(d,nn + ne)) 
+                        else :
+                            # log result
+                            self.logger.log('Rename File: %s --> %s' % (p, os.path.join(d,nn + ne)))
+                            changedFiles.append('<p><code>%s%s</code><span class="ok"> renamed </span><code>%s%s</code><br /></p>' % (fn, ext, nn, ne))
+                if (errorMsg):
+                    if (ext == '.xml'):
+                        xmlSelected = ' selected="selected"'
+                    else :
+                        sgmlSelected = ' selected="selected"'
+                    errors.append('''<input type="hidden" name="filepath%d" value="%s"/>
+                                    <p>
+                                        <span class="error">%s</span> 
+                                        %s<br />
+                                        <input type="text" name="newname" size="50" value="%s"/>
+                                        <select name="extension%d"><option value=".sgml"%s>.sgml</option><option value=".xml"%s>.xml</option></select>
+                                    </p>''' % (errorCounter, p, errorMsg, errorDetail, fn, errorCounter, sgmlSelected, xmlSelected))
+                    errorCounter += 1
 
-        elif os.path.exists(os.path.join(d,nn + ext)):
-            self.htmlTitle.append('File Management')
-            self.htmlTitle.append('Rename File')
-            self.htmlTitle.append('Error')
-            self.htmlNav.append('<a href="files.html" title="File Management" class="navlink">Files</a>')
-            # log result
-            self.logger.log('Rename File: ERROR - %s already exists' % os.path.join(d,nn + ext))
-            return 'The file <span class="sys">%s</span> already exists and cannot be overwritten here. If you wish to replace this file you should first remove the existing copy.' % os.path.join(d,nn + ext)
+            output = []
+            if (len(changedFiles) > 1): 
+                changedFiles.append('</div>')          
+                output.append(''.join(changedFiles))
+            if (len(errors) > 1):
+                errors.append('<p><input type="submit" name="submit" value="Submit"/></form></p></div>')
+                output.append(''.join(errors))    
+            output.append('<br /><a href="files.html" title="File Management" class="navlink">Back to \'File Management\' Page</a>')
+            return ''.join(output)
+    #- end rename_file()        
+            
 
-        else:
-            self.htmlTitle.append('File Management')
-            self.htmlTitle.append('Rename File')
-            self.htmlTitle.append('Successful')
-            self.htmlNav.append('<a href="files.html" title="File Management" class="navlink">Files</a>')
-            cont = read_file(p)
-            # remove before writing, incase they didn't change the name - don't want to delete only copy
-            os.remove(p)
-            write_file(os.path.join(d, nn + ext), cont)
-            # log result
-            self.logger.log('Rename File: %s --> %s' % (p, os.path.join(d,nn + ext)))
-            return '''
-            <p><span class="sys">%s</span></p>
-            <p>has been re-named</p>
-            <p><span class="sys">%s</span></p>
-            ''' % (p, os.path.join(d, nn + ext))
-    #- end rename_file()
     
     def view_file(self, form):
         global script
@@ -1266,7 +1352,10 @@ class EadAdminHandler:
         self._clear_dir(toc_cache_path)
         self.logger.log('Cached HTML deleted by: %s' % (session.user.username))
         self.htmlTitle.append('Successful')
-        return '<div id="single">Cached HTML copies of records deleted successfully</div>'
+        return '''<div id="single">Cached HTML copies of records deleted successfully
+                    <br />
+                        <a href="database.html" title="Database Management" class="navlink">Back to \'Database Management\' Page</a>
+                  </div>'''
     #- end delete_html()
     
     def rebuild_html(self, req):
@@ -1291,14 +1380,14 @@ class EadAdminHandler:
             req.write('COMPLETED')
         else:
             req.write('<span class="error">An error occured. HTML may not have been built.<br/>%s</span>' % (t.error))
-        
+        req.write('<br /><a href="database.html" title="Database Management" class="navlink">Back to \'Database Management\' Page</a>')
         foot = self._get_genericHtml('footer.html')          
         req.write('</div><!--end single--></div><!--end wrapper-->' + foot)
     #- end rebuild_html()
         
-    def view_statistics(self):
+    def view_statistics(self, file='current'):
         # parse the search logfile and present stats nicely
-        global searchlogfilepath, firstlog_re, loginstance_re, timeTaken_re, recid_re, emailRe
+        global searchlogfilepath, firstlog_re, loginstance_re, timeTaken_re, recid_re, emailRe, logpath
         self.logger.log('View Search Statistics')
         self.htmlTitle.append('Search Statistics')
         try: 
@@ -1306,7 +1395,7 @@ class EadAdminHandler:
         except: 
             self.htmlTitle.append('Error')
             self.logger.log('No logfile present at %s' % (searchlogfilepath))
-            return 'No logfile present at specified location <span class="sys">%s</span>' % (searchlogfilepath)
+            return 'No logfile present at specified location <code>%s</code>' % (searchlogfilepath)
         try: filestarted = firstlog_re.search(allstring).group(1)
         except: return 'No requests logged in current logfile.'
         
@@ -1361,9 +1450,18 @@ class EadAdminHandler:
         '</table>',
         '<form action="statistics.html?operation=reset" method="post" onsubmit="return confirm(\'This operation will reset all staticstics. The existing logfile will be moved and will only be accessible by logging onto the server directly. Are you sure you want to continue?\');">',
         '<p><input type="submit" name="resetstats" value=" Reset Statistics "/></p>',
-        '</form>',
-        '</div>'])
-
+        '</form>'])
+        files = os.listdir(logpath)
+        rows.append('<div id="loglist"><table>')
+        regex = re.compile('searchHandler\S')
+        files.sort(reverse=True)
+        for f in files :
+            if(regex.match(f)):
+            #add regex that tests for searchHandler and displays all of them and maybe has links for all but not the current one
+                rows.append('<tr><td class="link" onclick="javascript:openStats()">%s</td></tr>' % f)
+        rows.append('</table></div>')
+        rows.append('</div>')     
+        
         # League tables
         rows.extend([
         '<div id="rightcol">',
@@ -1379,7 +1477,10 @@ class EadAdminHandler:
             for reqs, id in tops:
                 rows.append('<tr><td>%d</td><td>%s</td></tr>' % (reqs, id))
                  
-        rows.extend(['</table>', '</div>'])
+        rows.extend(['</table>','</div>'])
+
+
+
         return '\n'.join(rows)
     #- end view_statistics() 
     
@@ -1389,13 +1490,13 @@ class EadAdminHandler:
         if not os.path.exists(searchlogfilepath): 
             self.htmlTitle.append('Error')
             self.logger.log('No logfile present at %s' % (searchlogfilepath))
-            return 'No logfile present at specified location <span class="sys">%s</span>' % (searchlogfilepath)
+            return 'No logfile present at specified location <code>%s</code>' % (searchlogfilepath)
         
         os.rename(searchlogfilepath, newfilepath)
         file(searchlogfilepath, 'w').close()
         self.logger.log('Search Statistics Reset')
         self.htmlTitle.append('Search Statistics')
-        return 'Statistics reset. New logfile started. Old logfile can still be found at <span class="sys">%s</span>' % (newfilepath)
+        return 'Statistics reset. New logfile started. Old logfile can still be found at <code>%s</code><br \>\n<br \>\n<a href="/ead/admin/index.html" class="navlink">Back to \'Administration Menu\'</a>' % (newfilepath)
     #- end reset_statistics()
 
     def handle(self, req):
@@ -1437,11 +1538,15 @@ class EadAdminHandler:
                         content = self.view_file(form)
                     elif (operation == 'preview'):
                         content = self.preview_file(form)
-                        if not (content): content = read_file(path)
+                        if not (content): 
+                            content = read_file(path)
+                        else :
+                            self.send_html(content, req)
+                            return 1
                     elif (operation == 'upload' or operation == 'insert'):
                         content = self.upload_file(req, form)
                         if not content: return
-                    elif (operation == 'delete' or operation == 'unindex'):
+                    elif (operation == 'delete' or operation == 'unindex + delete'):
                         content = self.delete_file(req, form)
                         if not content: return
                     elif (operation == 'rename'):
@@ -1449,7 +1554,7 @@ class EadAdminHandler:
                     else:
                         #invalid operation selected
                         self.htmlTitle.append('Error')
-                        content = 'An invalid operation was attempted. Valid operations are:<br/>view, upload, delete, rename'
+                        content = 'An invalid operation was attempted. Valid operations are:<br/>view, upload, insert, unidex + delete, delete, rename'
                 else:
                     content = self.review_records()
                     
@@ -1478,8 +1583,8 @@ class EadAdminHandler:
                     else:
                         self.htmlTitle.append('Error')
                         content = 'An invalid operation was attempted. Valid operations are:<br/>reset'
-                else:
-                    content = self.view_statistics()                
+                else:    
+                    content = self.view_statistics(form.get('fileName', 'current'))                
             elif (len(path)):
                 # 404
                 self.htmlTitle.append('Page Not Found')
@@ -1510,7 +1615,7 @@ class EadAdminHandler:
             # return the home/quick search page
             content = read_file('adminmenu.html')
             self.logger.log('Administration options')
-
+            
         content = '<div id="wrapper">%s</div>' % (content)
         page = multiReplace(tmpl, {'%REP_NAME%': repository_name,
                      '%REP_LINK%': repository_link,
@@ -1543,7 +1648,7 @@ sax = None
 ppFlow = None
 buildFlow = None
 buildSingleFlow = None
-assignXPathIdFlow = None
+assignDataIdFlow = None
 clusFlow = None
 compFlow = None
 indexRecordFlow = None
@@ -1566,7 +1671,7 @@ recid_re['email'] = re.compile(': Record (.+?) emailed to (.+)$', re.MULTILINE)
 # data argument provided for when request does clean-up - always None
 def build_architecture(data=None):
     global serv, session, authStore, db, dbPath, baseDocFac, sourceDir, recordStore, dcStore, compStore, clusDb, clusStore
-    global sax, ppFlow, buildFlow, buildSingleFlow, assignXPathIdFlow, compFlow, compRecordFlow, clusFlow, fullTxr, fullSplitTxr, rebuild
+    global sax, ppFlow, buildFlow, buildSingleFlow, assignDataIdFlow, compFlow, compRecordFlow, clusFlow, fullTxr, fullSplitTxr, rebuild
     # maintain user info
     if (session): u = session.user
     else: u = None
@@ -1597,9 +1702,9 @@ def build_architecture(data=None):
     if not (buildSingleFlow):
         buildSingleFlow = db.get_object(session, 'buildIndexSingleWorkflow')
         buildSingleFlow.load_cache(session, db)
-    if not (assignXPathIdFlow):
-        assignXPathIdFlow = db.get_object(session, 'assignXPathIdentifierWorkflow')
-        assignXPathIdFlow.load_cache(session, db)
+    if not (assignDataIdFlow):
+        assignDataIdFlow = db.get_object(session, 'assignDataIdentifierWorkflow')
+        assignDataIdFlow.load_cache(session, db)
     if not (compFlow):
         compFlow = db.get_object(session, 'buildAllComponentWorkflow')
         compFlow.load_cache(session, db)

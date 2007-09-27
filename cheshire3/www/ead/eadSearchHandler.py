@@ -1,25 +1,25 @@
 #
-# Program:   eadSearchHandler.py
+# Script:    eadSearchHandler.py
 # Version:   0.28
+# Date:      27 September 2007
+# Copyright: &copy; University of Liverpool 2005-2007
 # Description:
 #            Web interface for searching a cheshire 3 database of EAD finding aids
 #            - part of Cheshire for Archives v3
 #
+# Author(s): JH - John Harrison <john.harrison@liv.ac.uk>
+#
+# Language:  Python
 # Required externals:
-#            Py: localConfig.py, www_utils.py
-#            HTML: browse.html, email.html, help.html, index.html, subject.html, template.ssi
+#            cheshire3-base, cheshire3-sql, cheshire3-web
+#            Py: localConfig.py, htmlFragments.py
+#            HTML: about.html, browse.html, email.html, help.html, index.html, subject.html, template.ssi
 #            CSS: struc.css, style.css
-#            Javascript: ead.js
+#            Javascript: collapsibleLists.js, cookies.js, ead.js, email.js, searchForm.js
 #            Images: c3_black.gif, v3_full.gif, v3_email.gif, v3_simlr.gif, 
 #                    folderClosed.jpg, folderOpen.jpg folderItem.jpg
 #                    barPlus.gif, barMinus.gif, barT.gif, barLast.gif
 #                    fback.gif, back.gif, forward.gif fforward.gif
-#
-# Language:  Python
-# Author:    JH - John Harrison <john.harrison@liv.ac.uk>
-# Date:      xx September 2007
-#
-# Copyright: &copy; University of Liverpool 2005-2007
 #
 # Version History:
 # 0.01 - 13/04/2005 - JH - Basic search, browse and display functions.
@@ -82,10 +82,11 @@
 #                        - show/hide python traceback added to error page
 # 0.27 - 18/07/2007 - JH - Fixed email, and similar search bugs.
 #                        - Accented characters normalised for emailing record.
-# 0.28 - **/09/2007 - JH - Compatible with Cheshire3 v0.9.9 API
+# 0.28 - 27/09/2007 - JH - Compatible with Cheshire3 v0.9.9 API
 #                        - Account for refactoring of wwwSearch --> www_utils
 #                        - Accomodate switch from SaxRecord to LxmlRecord
 #                        - Implement reverse hierarchy walk for parent links
+#                        - Rearrangement of display_record
 #
 #
 
@@ -149,13 +150,15 @@ class EadSearchHandler:
         #- end send_html() ---------------------------------------------------------
 
     def _backwalkTitles(self, rec, path):
-        global normIdFlow
+        global nonAsciiRe, _asciiFriendly, normIdFlow
         titles = []
         pathParts = path.split('/') 
         while pathParts[-1] != 'dsc':
             try: t = rec.process_xpath('/'.join(pathParts) + '/did/unittitle')[0]
             except IndexError: t = '(untitled)'
-            else: t = flattenTexts(t)
+            else:
+                t = flattenTexts(t)
+                t = nonAsciiRe.sub(_asciiFriendly, t)
             try: i = rec.process_xpath('/'.join(pathParts) + '/did/unitid')[0]
             except IndexError: i = None
             else:
@@ -166,7 +169,9 @@ class EadSearchHandler:
             
         try: t = rec.process_xpath('/*/*/did/unittitle')[0]
         except IndexError: t = '(untitled)'
-        else: t = flattenTexts(t)
+        else:
+            t = flattenTexts(t)
+            t = nonAsciiRe.sub(_asciiFriendly, t)
 
         titles.append((rec.id, t.strip()))
         titles.reverse()
@@ -249,15 +254,74 @@ class EadSearchHandler:
                     self.logger.log('Unable to retrieve record: %s' % (r.id))
                     continue
                 else:
-                    try:
-                        title = rec.process_xpath('/*/*/did/unittitle/text()')[0]
+                    try: titleEl = rec.process_xpath('/*/*/did/unittitle')[0]
                     except IndexError:
-                        try: title = rec.process_xpath('/ead/eadheader/filedesc/titlestmt/titleproper/text()')[0]
-                        except IndexError: title = '(untitled)'
+                        try: titleEl = rec.process_xpath('/ead/eadheader/filedesc/titlestmt/titleproper')[0]
+                        except IndexError: titleEl = '(untitled)'
+                    
+
             else:
-                try: title = rec.process_xpath('/srw_dc:dc/dc:title/text()', namespaceUriHash)[0]
-                except IndexError: title = '(untitled)'
-            
+                try: titleEl = rec.process_xpath('/srw_dc:dc/dc:title', namespaceUriHash)[0]
+                except IndexError: titleEl = '(untitled)'
+                
+            try: title = flattenTexts(titleEl)
+            except AttributeError: title = titleEl
+            del titleEl
+                
+            try:
+                parentId = rec.process_xpath('/c3component/@parent')[0]
+            except IndexError:
+                # full record
+                row = search_result_row
+                parentLink = hierarchyLinks = ''
+                
+            else:
+                # OK, must be a component record
+                row = search_component_row
+#                parentId = parentId.split('/')[-1]
+#                
+#                try:
+#                    parentTitle = parentTitles[parentId];
+#                except KeyError:
+#                    parentTitle = self._parentTitle(parentId)
+#                    parentTitles[parentId] = parentTitle
+#                
+#                if parentTitle:
+#                    parentLink = '<a href="%s?operation=full&amp;recid=%s" title="Link to Complete Collection Description" onclick="SPLASH">%s</a>' % (script, parentId , parentTitle)
+#                else:
+#                    parentLink = '(unable to locate parent document)'
+                parentId = parentId.split('/')[-1]
+                try: parentRec = parentRecs[parentId]
+                except KeyError: 
+                    parentRec = recordStore.fetch_record(session, parentId)
+                    parentRecs[parentId] = parentRec
+                    
+                parentPath = rec.process_xpath('/c3component/@xpath')[0]
+                titles = self._backwalkTitles(parentRec, parentPath)
+                t = titles.pop(0)
+                parentLink = html = '<a href="%s?operation=full&amp;rsid=%%RSID%%&amp;recid=%s" onclick="SPLASH">%s</a>' % (script, t[0] , t[1])
+                hierarchy = []
+                for x,t in enumerate(titles[:-1]):
+                    if t[0]:
+                        if rsid:
+                            html = '<a href="%s?operation=full&amp;rsid=%%RSID%%&amp;recid=%s" onclick="SPLASH">%s</a>' % (script, t[0] , t[1])
+                        else:
+                            html = '<a href="%s?operation=full&amp;recid=%s" onclick="SPLASH">%s</a>' % (script, t[0] , t[1])
+                        
+                    else:
+                        html = t[1]
+                        
+                    hierarchy.append(('&nbsp;&nbsp;&nbsp;' * (x+1)) + folder_open_tag + html)
+                
+                hierarchyLinks = '<br/>'.join(hierarchy)
+                    
+                if (display_splash_screen_popup ):
+                    parentLink = parentLink.replace('SPLASH', ' onclick="splashScreen()"')
+                    hierarchyLinks = hierarchyLinks.replace('SPLASH', ' onclick="splashScreen()"')
+                else:
+                    parentLink = parentLink.replace('SPLASH', '')
+                    hierarchyLinks = hierarchyLinks.replace('SPLASH', '')
+                    
             title = nonAsciiRe.sub(_asciiFriendly, title)
             if ( display_relevance ) and (rs[0].weight > rs[-1].weight):
                 # format relevance measure for display
@@ -281,34 +345,16 @@ class EadSearchHandler:
             else:
                 relv = ''
             
-            try:
-                parentId = rec.process_xpath('/c3component/@parent')[0]
-            except IndexError:
-                # full record
-                row = search_result_row
-                parentLink = ''
-            else:
-                # OK, must be a component record
-                row = search_component_row
-                parentId = parentId.split('/')[-1]
-                try:
-                    parentTitle = parentTitles[parentId];
-                except KeyError:
-                    parentTitle = self._parentTitle(parentId)
-                    parentTitles[parentId] = parentTitle
-                
-                if parentTitle:
-                    parentLink = '<a href="%s?operation=full&amp;recid=%s" title="Link to Complete Collection Description" onclick="SPLASH">%s</a>' % (script, parentId , parentTitle)
-                else:
-                    parentLink = '(unable to locate parent document)'
+            
             
             if (display_splash_screen_popup ):
                 splash = 'splashScreen();'
             else:
                 splash = ''
-
+                
+            row = row.replace('%PARENT%', parentLink)
+            row = row.replace('%HIERARCHY%', hierarchyLinks)
             replHash = {'%RECID%': rec.id
-                       ,'%PARENT%': parentLink
                        ,'%TITLE%': title
                        ,'%RELV%': relv
                        ,'%RSID%': '%s&amp;firstrec=%d&amp;numreq=%d&amp;highlight=%d' % (rsidCgiString, firstrec, numreq, highlight)
@@ -769,7 +815,7 @@ class EadSearchHandler:
         del rec
         summ = doc.get_raw()
         summ = nonAsciiRe.sub(_asciiFriendly, summ)
-        summ = overescapedAmpRe.sub(_unescapeCharent, summ)
+        #summ = overescapedAmpRe.sub(_unescapeCharent, summ)
         self.logger.log('Record transformed to HTML')
         try:
             summ = summ.encode('utf-8', 'latin-1')
@@ -777,23 +823,25 @@ class EadSearchHandler:
             #pass # hope for the best! 
             return (False, '<div id="padder"><div id="rightcol"><p class="error">Record contains non-ascii characters and cannot be transformed to HTML.</p></div></div><div id="leftcol" class="results">%s</div>' % (searchResults))
             
+        summ = summ.replace('LINKTOPARENT', paramDict['LINKTOPARENT'])
         summ = '<div id="padder"><div id="rightcol">%s</div></div>' % (summ)
         # get template, insert info and return
         tmpl = read_file(self.templatePath)
-        page = tmpl.replace('%CONTENT%', '<div id="leftcol">LEFTSIDE</div>%s' % (summ))
-        for k, v in paramDict.iteritems():
-            page = page.replace(k, v)
-            
-        return page
+        page = tmpl.replace('%CONTENT%', '<div id="leftcol">%s</div>%s' % (paramDict['LEFTSIDE'], summ))
+        return multiReplace(page, paramDict)
 
 
     def display_full(self, rec, paramDict, isComponent):
         global toc_cache_path, max_page_size_bytes, cache_url, overescapedAmpRe, toc_scripts, anchorRe
         recid = rec.id
         if (len(rec.get_xml()) < max_page_size_bytes) or isComponent:
+            # Nice and short record/component - do it the easy way
+            self.logger.log('HTML generated by non-splitting XSLT')
             doc = fullTxr.process_record(session, rec)
         else:
             doc = fullSplitTxr.process_record(session, rec)
+            # Long record - have to do splitting, link resolving etc.
+            self.logger.log('HTML generated by splitting XSLT')
 
         # open, read, and delete tocfile NOW to avoid overwriting screwups
         try:
@@ -824,20 +872,16 @@ class EadSearchHandler:
         doc = overescapedAmpRe.sub(_unescapeCharent, doc)
         tmpl = read_file(self.templatePath)
         if (len(rec.get_xml()) < max_page_size_bytes) or isComponent:
-            # Nice and short record/component - do it the easy way
-            self.logger.log('HTML generated by non-splitting XSLT')
             # resolve anchors to only page
             doc = doc.replace('PAGE#', '%s/RECID-p1.shtml#' % cache_url)
             doc = nonAsciiRe.sub(_asciiFriendly, doc)
+            doc = doc.replace('LINKTOPARENT', paramDict['LINKTOPARENT'])
             page = tmpl.replace('%CONTENT%', toc_scripts + doc)
-            for k, v in paramDict.iteritems():
-                page = page.replace(k, v)
-
+            self.logger.log(repr(paramDict))
+            page = multiReplace(page, paramDict)
             write_file(os.path.join(cache_path, recid + '-p1.shtml'), page)
             
         else:
-            # Long record - have to do splitting, link resolving etc.
-            self.logger.log('HTML generated by splitting XSLT')
             # before we split need to find all internal anchors
             anchors = anchorRe.findall(doc)
             pseudopages = doc.split('<p style="page-break-before: always"></p>')
@@ -955,10 +999,39 @@ class EadSearchHandler:
         operation = form.get('operation', 'full')
         recid = form.getfirst('recid', None)
         rsid = form.getfirst('rsid', None)
+        qString = form.get('query', form.get('cqlquery', None))
         firstrec = int(form.get('firstrec', 1))
+        hitposition = int(form.getfirst('hitposition', 0))
         numreq = int(form.get('numreq', 20))
         highlight = int(form.get('highlight', 1))
-        hitposition = int(form.getfirst('hitposition', 0))
+        rs = None
+        
+        if (qString):
+            try:
+                q = CQLParser.parse(qString);
+            except:
+                return (False, '<div id="wrapper"><p class="error">Invalid CQL query.</p></div>')
+        elif (rsid):
+            #self.htmlNav.append('<a href="%s?operation=search&amp;rsid=%s&amp;firstrec=%d&amp;numreq=%d" title="Back to search results">Back to results</a>' % (script, rsid, firstrec, numreq))
+            rsid = cgi_decode(rsid)
+            try:
+                rs = resultSetStore.fetch_resultSet(session, rsid)
+            except (c3errors.FileDoesNotExistException, c3errors.ObjectDoesNotExistException):
+                try:
+                    qString = rsid
+                    q = CQLParser.parse(qString)
+                except:
+                    self.logger.log('Unretrievable resultSet %s' % (rsid))
+                    if not self.redirected:
+                        self.htmlTitle.append('Error')
+                    return (False, '<p class="error">Could not retrieve resultSet. Please re-submit your search</p>')
+                
+        if qString:
+            self.logger.log('Re-submitting CQL query to generate resultSet: %s' % (qString))
+            rs = db.search(session, q)
+            rsid = rs.id = qString
+        elif rs:
+            self.logger.log('Retrieved resultSet "%s"' % (rsid))
 
         if (recid):
             try: 
@@ -969,71 +1042,28 @@ class EadSearchHandler:
                 except (c3errors.FileDoesNotExistException, c3errors.ObjectDoesNotExistException):
                     self.htmlTitle.append('Error')
                     return (False, '<div id="wrapper"><p class="error">The record you requested is not available.</p></div>')
-        else:
-            if (rsid):
-                if (rsid):
-                    try:
-                        rs = resultSetStore.fetch_resultSet(session, rsid)
-                    except:
-                        rsid = cgi_decode(rsid)
-                        try:
-                            query = CQLParser.parse(cgi_decode(rsid))
-                        except:
-                            self.logger.log('Unretrievable resultSet %s' % (rsid))
-                            if not self.redirected:
-                                self.htmlTitle.append('Error')
-                            return (False, '<p class="error">Could not retrieve resultSet from resultSetStore. Please re-submit your search</p>')
-                        else:
-                            self.logger.log('Re-submitting CQL query: %s' % (rsid))
-                            rs = db.search(session, query)
-                    else:
-                        self.logger.log('Retrieved resultSet "%s"' % (rsid))
-                        
-                    rs.id = rsid
-                    
-                if not rs:
-                    try: 
-                        query = CQLParser.parse(rsid)
-                        rs = db.search(session, query)
-                    except:
-                        self.logger.log('Unretrievable resultSet %s' % (rsid))
-                        return (False, '<div id="wrapper"><p class="error">Could not retrieve resultSet from resultSetStore. Please re-submit your search</p></div>')
-                self.logger.log('Retrieved resultSet "%s"' % (rsid))
-                rs.id = rsid
-            else:
-                qString = form.get('query', form.get('cqlquery', None))
-                if not qString:
-                    qString = generate_cqlQuery(form)
-                    
-                try:
-                    query = CQLParser.parse(qString);
-                except:
-                    return (False, '<div id="wrapper"><p class="error">Could not generate CQL query.</p></div>')
-                        
-                rs = db.search(session, query)
-                rs.id = qString
-            
+
+        elif rs:
             try:
                 r = rs[hitposition]
             except IndexError:
                 self.logger.log('Index %d not in range %d' % (hitposition, len(rs)))
                 self.htmlTitle.append('Error')
                 return (False, '<div id="wrapper"><p class="error">Could not retrieve requested record.</p></div>')
-            else:
-                try:
-                    rec = r.fetch_record(session)
-                except (c3errors.FileDoesNotExistException, c3errors.ObjectDoesNotExistException):
-                    self.logger.log('*** Unable to retrieve record: %s' % (r))
-                    self.htmlTitle.append('Error')
-                    return (False, '<div id="wrapper"><p class="error">Could not retrieve requested record.</p></div>')
-                else:
-                    recid = str(rec.id)
+            
+            try:
+                rec = r.fetch_record(session)
+            except (c3errors.FileDoesNotExistException, c3errors.ObjectDoesNotExistException):
+                self.logger.log('*** Unable to retrieve record: %s' % (r))
+                self.htmlTitle.append('Error')
+                return (False, '<div id="wrapper"><p class="error">Could not retrieve requested record.</p></div>')
 
+            recid = str(rec.id)
+                
         # Resolve link to parent if a component
         try:
             parentId = rec.process_xpath('/c3component/@parent')[0]
         except IndexError:
-            hierachy = ''
             parentLink = ''
         else:
             # OK, must be a component record
@@ -1045,24 +1075,17 @@ class EadSearchHandler:
             hierarchy = []
             for x,t in enumerate(titles[:-1]):
                 if t[0]:
-                    html = '<a href="%s?operation=full&amp;recid=%s" onclick="SPLASH">%s</a>' % (script, t[0] , t[1])
+                    if rsid:
+                        html = '<a href="%s?operation=full&amp;RSID&amp;recid=%s" onclick="SPLASH">%s</a>' % (script, t[0] , t[1])
+                    else:
+                        html = '<a href="%s?operation=full&amp;recid=%s" onclick="SPLASH">%s</a>' % (script, t[0] , t[1])
+                    
                 else:
                     html = t[1]
                     
                 hierarchy.append(('&nbsp;&nbsp;&nbsp;&nbsp;' * x) + folder_open_tag + html)
             
             parentLink = '<br/>'.join(hierarchy)
-#            parentTitle = self._parentTitle(parentId)
-#            if parentTitle:
-#                parentTitle = nonAsciiRe.sub(_asciiFriendly, parentTitle)
-#                try:
-#                    parentTitle = parentTitle.encode('utf-8');
-#                except:
-#                    parentTitle = '[Could not encode parent title into Unicode]';
-#            
-#                parentLink = '<a href="%s?operation=full&amp;recid=%s" title="Link to Complete Collection Description" onclick="SPLASH">%s</a>' % (script, parentId , parentTitle)
-#            else:
-#                parentLink = '(unable to locate parent document)'
                 
             if (display_splash_screen_popup ):
                 parentLink = parentLink.replace('SPLASH', ' onclick="splashScreen()"')
@@ -1086,15 +1109,16 @@ class EadSearchHandler:
                          ,'%NAVBAR%':' | '.join(self.htmlNav)
                          })
         
+        if (rsid): paramDict['RSID'] = 'rsid=%s&amp;firstrec=%d&amp;numreq=%d&amp;hitposition=%s&amp;highlight=%d' % (cgi_encode(rsid), firstrec, numreq, hitposition, highlight)
+        else: paramDict['RSID'] = 'recid=%s' % (recid)
+        
         if (operation == 'summary'):
-            if (rsid): paramDict['RSID'] = 'rsid=%s&amp;firstrec=%d&amp;numreq=%d&amp;hitposition=%s&amp;highlight=%d' % (cgi_encode(rsid), firstrec, numreq, hitposition, highlight)
-            else: paramDict['RSID'] = 'recid=%s' % (recid)
             paramDict['HGHLGHT'] = '<span class="highlight">'
             paramDict['THGLHGH'] = '</span>'
             paramDict['LEFTSIDE'] = searchResults
             try:
                 page = self.display_summary(rec, paramDict, r.proxInfo, highlight)
-            except:
+            except AttributeError:
                 page = self.display_summary(rec, paramDict)
         else:
             # full record
