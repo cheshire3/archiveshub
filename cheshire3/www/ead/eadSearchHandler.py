@@ -299,19 +299,19 @@ class EadSearchHandler:
                 parentPath = rec.process_xpath('/c3component/@xpath')[0]
                 titles = self._backwalkTitles(parentRec, parentPath)
                 t = titles.pop(0)
-                parentLink = html = '<a href="%s?operation=full&amp;rsid=%%RSID%%&amp;recid=%s" onclick="SPLASH">%s</a>' % (script, t[0] , t[1])
+                parentLink = html = '<a href="%s?operation=full&amp;rsid=%%RSID%%&amp;recid=%s" onclick="SPLASH">%s</a>' % (script, cgi_encode(t[0]) , t[1])
                 hierarchy = []
-                for x,t in enumerate(titles[:-1]):
+                for level,t in enumerate(titles[:-1]):
                     if t[0]:
                         if rsid:
-                            html = '<a href="%s?operation=full&amp;rsid=%%RSID%%&amp;recid=%s" onclick="SPLASH">%s</a>' % (script, t[0] , t[1])
+                            html = '<a href="%s?operation=full&amp;rsid=%%RSID%%&amp;recid=%s" onclick="SPLASH">%s</a>' % (script, cgi_encode(t[0]) , t[1])
                         else:
-                            html = '<a href="%s?operation=full&amp;recid=%s" onclick="SPLASH">%s</a>' % (script, t[0] , t[1])
+                            html = '<a href="%s?operation=full&amp;recid=%s" onclick="SPLASH">%s</a>' % (script, cgi_encode(t[0]) , t[1])
                         
                     else:
                         html = t[1]
                         
-                    hierarchy.append(('&nbsp;&nbsp;&nbsp;' * (x+1)) + folder_open_tag + html)
+                    hierarchy.append(('&nbsp;&nbsp;&nbsp;' * (level+1)) + folder_open_tag + html)
                 
                 hierarchyLinks = '<br/>'.join(hierarchy)
                     
@@ -813,16 +813,10 @@ class EadSearchHandler:
         #self.logger.log(rec.get_xml())
         doc = summaryTxr.process_record(session, rec)
         del rec
-        summ = doc.get_raw()
+        summ = unicode(doc.get_raw(), 'utf-8')
         summ = nonAsciiRe.sub(_asciiFriendly, summ)
-        #summ = overescapedAmpRe.sub(_unescapeCharent, summ)
+        summ = overescapedAmpRe.sub(_unescapeCharent, summ)
         self.logger.log('Record transformed to HTML')
-        try:
-            summ = summ.encode('utf-8', 'latin-1')
-        except:
-            #pass # hope for the best! 
-            return (False, '<div id="padder"><div id="rightcol"><p class="error">Record contains non-ascii characters and cannot be transformed to HTML.</p></div></div><div id="leftcol" class="results">%s</div>' % (searchResults))
-            
         summ = summ.replace('LINKTOPARENT', paramDict['LINKTOPARENT'])
         summ = '<div id="padder"><div id="rightcol">%s</div></div>' % (summ)
         # get template, insert info and return
@@ -845,31 +839,22 @@ class EadSearchHandler:
 
         # open, read, and delete tocfile NOW to avoid overwriting screwups
         try:
-            tocfile = read_file(os.path.join(toc_cache_path, 'foo.bar'))
+            tocfile = unicode(read_file(os.path.join(toc_cache_path, 'foo.bar')), 'utf-8')
         except IOError:
             tocfile = None
         else:
             os.remove(os.path.join(toc_cache_path, 'foo.bar'))
             tocfile = nonAsciiRe.sub(_asciiFriendly, tocfile)
-            try: 
-                tocfile = tocfile.encode('utf-8', 'latin-1')
+            try: tocfile = tocfile.encode('utf-8', 'latin-1')
             except:
-                try:
-                    tocfile = tocfile.encode('utf-16')
-                except:
-                    pass # hope for the best
+                try: tocfile = tocfile.encode('utf-16')
+                except: pass # hope for the best
             
             tocfile = tocfile.replace('RECID', recid)
             tocfile = overescapedAmpRe.sub(_unescapeCharent, tocfile)
         
-        doc = doc.get_raw()
-        if type(doc) == unicode:
-            try: doc = doc.encode('utf-8', 'latin-1')
-            except:
-                try: doc = doc.encode('utf-16')
-                except: pass # hope for the best!
-                
-        doc = overescapedAmpRe.sub(_unescapeCharent, doc)
+        doc = unicode(doc.get_raw(), 'utf-8')
+        #doc = overescapedAmpRe.sub(_unescapeCharent, doc)
         tmpl = read_file(self.templatePath)
         if (len(rec.get_xml()) < max_page_size_bytes) or isComponent:
             # resolve anchors to only page
@@ -1076,9 +1061,9 @@ class EadSearchHandler:
             for x,t in enumerate(titles[:-1]):
                 if t[0]:
                     if rsid:
-                        html = '<a href="%s?operation=full&amp;RSID&amp;recid=%s" onclick="SPLASH">%s</a>' % (script, t[0] , t[1])
+                        html = '<a href="%s?operation=full&amp;RSID&amp;recid=%s" onclick="SPLASH">%s</a>' % (script, cgi_encode(t[0]) , t[1])
                     else:
-                        html = '<a href="%s?operation=full&amp;recid=%s" onclick="SPLASH">%s</a>' % (script, t[0] , t[1])
+                        html = '<a href="%s?operation=full&amp;recid=%s" onclick="SPLASH">%s</a>' % (script, cgi_encode(t[0]) , t[1])
                     
                 else:
                     html = t[1]
@@ -1129,6 +1114,7 @@ class EadSearchHandler:
                 self.logger.log('Full-text requested for record: ' + recid)
             
             try:
+                assert(False)
                 page = read_file(path)
                 self.logger.log('Retrieved from cache')
             except:
