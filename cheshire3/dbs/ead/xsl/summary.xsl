@@ -4,8 +4,8 @@
     ]>
 
 <!-- 
-	This file was produced, and released as part of Cheshire for Archives v3.0.
-	Copyright &copy; 2005, 2006 the University of Liverpool
+	This file was produced, and released as part of Cheshire for Archives v3.x.
+	Copyright &copy; 2005-2007 the University of Liverpool
 -->
 
 <xsl:stylesheet
@@ -50,7 +50,7 @@
 	    <xsl:if test="$count_subordinates_in_summary">
 	    	<xsl:variable name="sub_count" select="count(./archdesc/dsc/c|./archdesc/dsc/c01)"/>
 		    <xsl:if test="$sub_count &gt; 0">
-			    <h3 class="cheshireaddedheading">Additional Information About Your Chosen Collection</h3>
+			    <h3 class="redheading">Additional Information About Your Chosen Collection</h3>
 	  		  	<p>
 		    		<xsl:text>This item contains </xsl:text>
 	  	  			<xsl:value-of select="$sub_count"/>
@@ -135,7 +135,7 @@
     <xsl:if test="$count_subordinates_in_summary">
     	<xsl:variable name="sub_count" select="count(./c/c|./c01/c02|./c02/c03|./c03/c04|./c04/c05|./c05/c06|./c06/c07|./c07/c08|./c08/c09|./c09/c10|./c10/c11|./c11/c12)"/>
 	    <xsl:if test="$sub_count &gt; 0">
-			<h3 class="cheshireaddedheading">Additional Information About Your Chosen Item</h3>
+			<h3 class="redheading">Additional Information About Your Chosen Item</h3>
 			<p>
 	    		<xsl:text>This item contains </xsl:text>
   	  			<xsl:value-of select="$sub_count"/>

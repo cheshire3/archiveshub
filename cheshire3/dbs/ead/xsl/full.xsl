@@ -4,8 +4,8 @@
     ]>
     
 <!-- 
-	This file was produced, and released as part of Cheshire for Archives v3.0.
-	Copyright &copy; 2005, 2006 the University of Liverpool
+	This file was produced, and released as part of Cheshire for Archives v3.x.
+	Copyright &copy; 2005-2007 the University of Liverpool
 -->
 
 <xsl:stylesheet

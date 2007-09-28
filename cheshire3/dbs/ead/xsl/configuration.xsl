@@ -3,7 +3,7 @@
     
 <!-- 
 	This file was produced, and released as part of Cheshire for Archives v3.x.
-	Copyright &copy; 2005, 2006, 2007 the University of Liverpool
+	Copyright &copy; 2005-2007 the University of Liverpool
 -->
 
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
@@ -20,7 +20,7 @@
   <xsl:variable name="horizontal_rule_between_units" select="true()"/>
   <!-- external resource link switches -->
   <xsl:variable name="link_to_googlemaps" select="true()"/>
-  <xsl:variable name="link_to_wikipedia" select="true()"/>
+  <xsl:variable name="link_to_wikipedia" select="false()"/>
   <xsl:variable name="link_to_amazon" select="true()" />
 
   <!-- end of switches -->
