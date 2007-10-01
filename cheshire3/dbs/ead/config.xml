@@ -5,7 +5,7 @@
 	Copyright &copy; 2005-2007 the University of Liverpool
  -->
 
-  <objectType>database.SimpleDatabase</objectType>
+  <objectType>database.OptimisingDatabase</objectType>
 
   <options>
     <setting type="srw">1</setting>
@@ -155,15 +155,6 @@
 	    </subConfig>
 	    
 	    <!-- special cluster and component stuff -->
-	
-<!--	    <subConfig type="groupTransformer" id="componentExtractionTxr">-->
-<!--	      <objectType>groupTransformer.XPathGroupTransformer</objectType>-->
-<!--	      <paths>-->
-<!--			<path type="tempPath">tempComponents.data</path>-->
-<!--			<object type="database" ref="db_ead"/>-->
-<!--	      </paths>      -->
-<!--	      <source><xpath>*[regexp(name(), '^c([0-1][0-9])?$')]</xpath></source>-->
-<!--	    </subConfig>-->
 	
 	    <subConfig type="index" id="clusterExtractionIndex">
 	      <objectType>index.ClusterExtractionIndex</objectType>
