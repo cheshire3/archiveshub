@@ -22,6 +22,8 @@
     	<xsl:text>
 </xsl:text>
 	</xsl:variable>
+	
+	<xsl:variable name="tab"><xsl:text>    </xsl:text></xsl:variable>
 
   <xsl:template match="/">
     <xsl:apply-templates/>
@@ -604,102 +606,111 @@
 <!--		  <xsl:text>Subjects</xsl:text>-->
 <!--			<xsl:value-of select="$newline"/>-->
     	<xsl:for-each select="subject">
-      	<xsl:text>- </xsl:text>
-      	<xsl:apply-templates select="."/>
-      	<xsl:value-of select="$newline"/>
+	   	    <xsl:value-of select="$tab"/>
+	      	<xsl:text>- </xsl:text>
+	      	<xsl:apply-templates select="."/>
+	      	<xsl:value-of select="$newline"/>
     	</xsl:for-each>
-		</xsl:if>
+	</xsl:if>
 
-  <!-- Personal Names -->
-  <xsl:if test="persname">
+	<!-- Personal Names -->
+	<xsl:if test="persname">
 <!--    <xsl:text>Personal Names</xsl:text>-->
 <!--    <xsl:value-of select="$newline"/>-->
-    <xsl:for-each select="persname">
-      <xsl:apply-templates select="."/>
-      <xsl:value-of select="$newline"/>
-    </xsl:for-each>
-  </xsl:if>
+    	<xsl:for-each select="persname">
+    		<xsl:value-of select="$tab"/>
+			<xsl:apply-templates select="."/>
+			<xsl:value-of select="$newline"/>
+    	</xsl:for-each>
+	</xsl:if>
 
-  <!-- Family Names -->
-  <xsl:if test="famname">
+	<!-- Family Names -->
+	<xsl:if test="famname">
 <!--    <xsl:text>Family Names</xsl:text>-->
 <!--    <xsl:value-of select="$newline"/>-->
-    <xsl:for-each select="famname">
-      <xsl:apply-templates select="."/>
-      <xsl:value-of select="$newline"/>
-    </xsl:for-each>
-  </xsl:if>
+    	<xsl:for-each select="famname">
+			<xsl:value-of select="$tab"/>
+			<xsl:apply-templates select="."/>
+			<xsl:value-of select="$newline"/>
+	    </xsl:for-each>
+	</xsl:if>
 
-  <!-- Corporate Names -->
-  <xsl:if test="corpname">
+	<!-- Corporate Names -->
+	<xsl:if test="corpname">
 <!--    <xsl:text>Corporate Names</xsl:text>-->
 <!--    <xsl:value-of select="$newline"/>-->
-    <xsl:for-each select="corpname">
-      <xsl:apply-templates select="."/>
-      <xsl:value-of select="$newline"/>
-    </xsl:for-each>
-  </xsl:if>
+    	<xsl:for-each select="corpname">
+    		<xsl:value-of select="$tab"/>
+      		<xsl:apply-templates select="."/>
+			<xsl:value-of select="$newline"/>
+    	</xsl:for-each>
+	</xsl:if>
 
-  <!-- Geographical Names -->
-  <xsl:if test="geogname">
+	<!-- Geographical Names -->
+	<xsl:if test="geogname">
 <!--    <xsl:text>Geographical Names</xsl:text>-->
 <!--    <xsl:value-of select="$newline"/>-->
-    <xsl:for-each select="geogname">
-      <xsl:apply-templates select="."/>
-      <xsl:value-of select="$newline"/>
-    </xsl:for-each>
-  </xsl:if>
+    	<xsl:for-each select="geogname">
+    		<xsl:value-of select="$tab"/>
+			<xsl:apply-templates select="."/>
+			<xsl:value-of select="$newline"/>
+    	</xsl:for-each>
+	</xsl:if>
 
-  <xsl:if test="title">
+	<xsl:if test="title">
 <!--    <xsl:text>Titles</xsl:text>-->
-<!--      <xsl:value-of select="$newline"/>-->
-    <xsl:for-each select="title">
-      <xsl:apply-templates select="."/>
-      <xsl:value-of select="$newline"/>
-    </xsl:for-each>
-  </xsl:if>
+<!--    <xsl:value-of select="$newline"/>-->
+    	<xsl:for-each select="title">
+    		<xsl:value-of select="$tab"/>
+			<xsl:apply-templates select="."/>
+			<xsl:value-of select="$newline"/>
+    	</xsl:for-each>
+	</xsl:if>
 
-  <xsl:if test="function">
+	<xsl:if test="function">
 <!--    <xsl:text>Functions</xsl:text>-->
 <!--    <xsl:value-of select="$newline"/>-->
-    <xsl:for-each select="function">
-      <xsl:apply-templates select="."/>
-      <xsl:value-of select="$newline"/>
-    </xsl:for-each>
-  </xsl:if> 
+    	<xsl:for-each select="function">
+    		<xsl:value-of select="$tab"/>
+			<xsl:apply-templates select="."/>
+			<xsl:value-of select="$newline"/>
+    	</xsl:for-each>
+	</xsl:if> 
 
-  <xsl:if test="genreform">
+	<xsl:if test="genreform">
 <!--    <xsl:text>Genre/Form</xsl:text>-->
 <!--    <xsl:value-of select="$newline"/>-->
-    <xsl:for-each select="genreform">
-      <xsl:apply-templates select="."/>
-      <xsl:value-of select="$newline"/>
-    </xsl:for-each>
-  </xsl:if>
+		<xsl:for-each select="genreform">
+			<xsl:value-of select="$tab"/>
+			<xsl:apply-templates select="."/>
+			<xsl:value-of select="$newline"/>
+    	</xsl:for-each>
+	</xsl:if>
 
-  <xsl:if test="occupation">
+	<xsl:if test="occupation">
 <!--    <xsl:text>Occupation</xsl:text>-->
 <!--    <xsl:value-of select="$newline"/>-->
-    <xsl:for-each select="occupation">
-      <xsl:apply-templates select="."/>
-      <xsl:value-of select="$newline"/>
-    </xsl:for-each>
-  </xsl:if> 
+    	<xsl:for-each select="occupation">
+    		<xsl:value-of select="$tab"/>
+			<xsl:apply-templates select="."/>
+			<xsl:value-of select="$newline"/>
+    	</xsl:for-each>
+	</xsl:if> 
   
-</xsl:template>
+  </xsl:template>
 
 
- <xsl:template match="extref[@href]">
-   <xsl:apply-templates/>
-   <xsl:text> &lt;</xsl:text>
-   <xsl:value-of select="./@href"/>
-   <xsl:text>&gt; </xsl:text>
- </xsl:template>
+  <xsl:template match="extref[@href]">
+	<xsl:apply-templates/>
+	<xsl:text> &lt;</xsl:text>
+	<xsl:value-of select="./@href"/>
+	<xsl:text>&gt; </xsl:text>
+  </xsl:template>
  
- <!--LINE BREAKS-->
- <xsl:template match="//lb">
-   <xsl:value-of select="$newline"/>
- </xsl:template> 
+  <!--LINE BREAKS-->
+  <xsl:template match="//lb">
+	<xsl:value-of select="$newline"/>
+  </xsl:template> 
 
 <!-- 
  <xsl:template match="*">
