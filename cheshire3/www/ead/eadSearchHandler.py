@@ -1,7 +1,7 @@
 #
 # Script:    eadSearchHandler.py
 # Version:   0.28
-# Date:      27 September 2007
+# Date:      28 September 2007
 # Copyright: &copy; University of Liverpool 2005-2007
 # Description:
 #            Web interface for searching a cheshire 3 database of EAD finding aids
@@ -82,7 +82,7 @@
 #                        - show/hide python traceback added to error page
 # 0.27 - 18/07/2007 - JH - Fixed email, and similar search bugs.
 #                        - Accented characters normalised for emailing record.
-# 0.28 - 27/09/2007 - JH - Compatible with Cheshire3 v0.9.9 API
+# 0.28 - 28/09/2007 - JH - Compatible with Cheshire3 v0.9.9 API
 #                        - Account for refactoring of wwwSearch --> www_utils
 #                        - Accomodate switch from SaxRecord to LxmlRecord
 #                        - Implement reverse hierarchy walk for parent links
@@ -220,10 +220,9 @@ class EadSearchHandler:
             self.htmlTitle.append('Results')
             
         # check scaledWeights not horked (i.e. check they're not all 0.5)
-        try:
-            assert (rs[0].scaledWeight <> 0.5 and rs[-1].scaledWeight <> 0.5)
+        if (rs[0].scaledWeight <> 0.5 and rs[-1].scaledWeight <> 0.5):
             useScaledWeights = True
-        except: 
+        else: 
             useScaledWeights = False
             topWeight = rs[0].weight # get relevance of best record
         
@@ -845,11 +844,6 @@ class EadSearchHandler:
         else:
             os.remove(os.path.join(toc_cache_path, 'foo.bar'))
             tocfile = nonAsciiRe.sub(_asciiFriendly, tocfile)
-            try: tocfile = tocfile.encode('utf-8', 'latin-1')
-            except:
-                try: tocfile = tocfile.encode('utf-16')
-                except: pass # hope for the best
-            
             tocfile = tocfile.replace('RECID', recid)
             tocfile = overescapedAmpRe.sub(_unescapeCharent, tocfile)
         
@@ -1114,7 +1108,6 @@ class EadSearchHandler:
                 self.logger.log('Full-text requested for record: ' + recid)
             
             try:
-                assert(False)
                 page = read_file(path)
                 self.logger.log('Retrieved from cache')
             except:
@@ -1567,4 +1560,3 @@ def handler(req):
         return apache.OK
     
 #- end handler()
-
