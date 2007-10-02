@@ -10,6 +10,7 @@
   <options>
     <setting type="srw">1</setting>
     <setting type="z3950">1</setting>
+    <setting type="oai-pmh">1</setting>
   </options>
 
   <paths>
@@ -89,6 +90,13 @@
 	      <objectType>protocolMap.Z3950ProtocolMap</objectType>
 	      <paths>
 	        <path type="zeerexPath">zeerex_z3950.xml</path>
+	      </paths>
+	    </subConfig>
+	    
+	    <subConfig type="protocolMap" id="eadOAIProtocolMap">
+	      <objectType>protocolMap.OAIPMHProtocolMap</objectType>
+	      <paths>
+	        <path type="zeerexPath">zeerex_oai.xml</path>
 	      </paths>
 	    </subConfig>
 	    

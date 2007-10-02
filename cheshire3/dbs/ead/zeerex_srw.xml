@@ -277,6 +277,34 @@
 	      <supports type="relation" c3:index="ead-idx-dateRange">encloses</supports>
 	    </configInfo>
 	  </index>
+	  
+		<index c3:index="ead-idx-creationDate">
+			<title>Creation Date</title>
+			<map>
+				<name set="rec">creationDate</name>
+			</map>
+			<configInfo>
+				<supports type="relation">=</supports>
+				<supports type="relation">&lt;</supports>
+				<supports type="relation">&lt;=</supports>
+				<supports type="relation">&gt;</supports>
+				<supports type="relation">&gt;=</supports>
+			</configInfo>
+		</index>
+		
+		<index c3:index="ead-idx-modificationDate">
+			<title>Last Modification Date</title>
+			<map>
+				<name set="rec">lastModificationDate</name>
+			</map>
+			<configInfo>
+				<supports type="relation">=</supports>
+				<supports type="relation">&lt;</supports>
+				<supports type="relation">&lt;=</supports>
+				<supports type="relation">&gt;</supports>
+				<supports type="relation">&gt;=</supports>
+			</configInfo>
+		</index>
 	
 	</indexInfo>
 

@@ -6,6 +6,21 @@
  -->
 
 	<subConfigs>
+	
+		<!-- XPaths -->
+		<subConfig type="xpathObject" id="identifierXPath">
+			<objectType>xpathObject.MetadataXPath</objectType>
+			<source>
+				<xpath>id</xpath>
+			</source>
+		</subConfig>
+
+		<subConfig type="xpathObject" id="nowTimeXPath">
+			<objectType>xpathObject.MetadataXPath</objectType>
+			<source>
+				<xpath>now</xpath>
+			</source>
+		</subConfig>
 		
 		<!-- preparser for stripping xx in normalised dates - do as pre-process for indexing -->
 		<subConfig type="preParser" id="NormalisedDateXStripPreParser">
@@ -16,6 +31,13 @@
 		</subConfig>
 		
 		<!-- Custom normalisers -->
+		<subConfig type="normaliser" id="GeocodeNormaliser">
+			<objectType>geo.GoogleMapsGeocodeNormaliser</objectType>
+			<options>
+				<setting type="apiKey">ABQIAAAAMTCXfqkeqpTdxlIMWOHmExR-Q2WEe91j7vBt361ikSR1RCErExTKXAu5Uc_wg9YcGofYU8bOHMlcWQ</setting>
+			</options>
+		</subConfig>
+		
 		<subConfig type="normaliser" id="StoplistNormaliser">
 			<objectType>normaliser.StoplistNormaliser</objectType>
 			<paths>
@@ -71,6 +93,23 @@
 				<object type="normaliser" ref="StoplistNormaliser" />
 				<object type="normaliser" ref="EnglishStemNormaliser" />
 			</workflow>
+		</subConfig>
+		
+		
+		<!-- Indexes -->
+		
+		<!-- record identifier index -->
+		<subConfig type="index" id="ead-idx-id">
+			<objectType>index.SimpleIndex</objectType>
+			<paths>
+				<object type="indexStore" ref="indexStore" />
+			</paths>
+			<source>
+				<xpath ref="identifierXPath" />
+				<process>
+					<object type="extracter" ref="ExactExtracter" />
+				</process>
+			</source>
 		</subConfig>
 		
 		<!-- docid index - for Z39.50 access -->
@@ -652,6 +691,11 @@
 				<setting type="recordStoreSizes">1</setting>
 			</options>
 		</subConfig>
+		
+		<!-- Geographic locations (Lat Long coordinates) -->
+<!--		<subConfig type="index" id="ead-idx-gps">-->
+<!--			-->
+<!--		</subConfig>-->
 
 		<!-- geographic names -->
 		<subConfig type="index" id="ead-idx-geogname">
@@ -752,6 +796,47 @@
 			</options>
 		</subConfig>
 		
+		
+		<!-- metadata indexes for OAI -->
+		<subConfig type="index" id="ead-idx-creationDate">
+			<objectType>index.SimpleIndex</objectType>
+			<paths>
+			  <object type="indexStore" ref="indexStore" />
+			</paths>
+	        <source>
+	          <xpath ref="nowTimeXPath"/>
+	          <process>
+	            <object type="extracter" ref="DateExtracter"/>
+	            <object type="normaliser" ref="DateStringNormaliser" />
+	          </process>
+	        </source>
+	        <options>
+				<!-- don't index or unindex in db.[un]index_record() -->	
+				<setting type="noIndexDefault">1</setting>
+				<setting type="noUnindexDefault">1</setting>
+				<!-- We need vectors to unindex these -->
+				<setting type="vectors">1</setting>
+			</options>
+		</subConfig>
+
+		<subConfig type="index" id="ead-idx-modificationDate">
+      		<objectType>index.SimpleIndex</objectType>
+	        <paths>
+	          <object type="indexStore" ref="indexStore" />
+	        </paths>
+	        <source>
+				<xpath ref="nowTimeXPath"/>
+				<process>
+				  <object type="extracter" ref="DateExtracter"/>
+				  <object type="normaliser" ref="DateStringNormaliser" />
+				</process>
+	        </source>
+	        <options>
+		  		<!-- We need vectors to unindex -->
+	          	<setting type="vectors">1</setting>
+	        </options>
+      </subConfig>
+
 	</subConfigs>
 
 </config>
