@@ -2,7 +2,7 @@
 
 <!-- 
 	This file was produced, and released as part of Cheshire for Archives v3.x.
-	Copyright &copy; 2005, 2006, 2007 the University of Liverpool
+	Copyright &copy; 2005-2007 the University of Liverpool
 -->
 
   <subConfigs>
@@ -26,8 +26,10 @@
 	<subConfig type="workflow" id="buildClusterSingleWorkflow">
 		<objectType>workflow.CachingWorkflow</objectType>
 		<workflow>
-		  <!-- input type: document -->
-		  <object type="preParser" ref="AmpPreParser"/>
+			<!-- input type: document -->
+			<object type="preParser" ref="PrintableOnlyPreParser"/>
+			<object type="preParser" ref="CharacterEntityPreParser"/>
+			<object type="preParser" ref="AmpPreParser"/>
 			<try>
 			  <object type="parser" ref="SaxParser"/>
 			</try>
