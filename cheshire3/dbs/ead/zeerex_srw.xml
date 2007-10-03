@@ -305,6 +305,24 @@
 				<supports type="relation">&gt;=</supports>
 			</configInfo>
 		</index>
+		
+		<index c3:index="ead-idx-recid">
+			<title>Record Identifier</title>
+			<map>
+				<name set="rec">identifier</name>
+			</map>
+			<configInfo>
+				<supports type="relation">=</supports>
+				<supports type="relation">&lt;</supports>
+				<supports type="relation">&lt;=</supports>
+				<supports type="relation">&gt;</supports>
+				<supports type="relation">&gt;=</supports>
+				<supports type="relation">any</supports>
+				<supports type="relation">all</supports>
+				<supports type="relation">exact</supports>
+				<supports type="relation">within</supports>
+			</configInfo>
+		</index>
 	
 	</indexInfo>
 
