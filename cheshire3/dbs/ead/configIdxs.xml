@@ -99,7 +99,7 @@
 		<!-- Indexes -->
 		
 		<!-- record identifier index -->
-		<subConfig type="index" id="ead-idx-id">
+		<subConfig type="index" id="ead-idx-recid">
 			<objectType>index.SimpleIndex</objectType>
 			<paths>
 				<object type="indexStore" ref="indexStore" />
