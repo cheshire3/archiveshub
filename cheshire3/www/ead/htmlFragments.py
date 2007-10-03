@@ -1,7 +1,7 @@
 #
 # Script:      htmlFragments.py
-# Version:     0.02
-# Date:        25 September 2007
+# Version:     0.03
+# Date:        26 September 2007
 # Copyright:   &copy; University of Liverpool 2005-2007
 # Description:
 #            HTML fragments used by Cheshire for Archives
