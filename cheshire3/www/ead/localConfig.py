@@ -1,11 +1,12 @@
 #
 # Script:   localConfig.py
-# Version:   0.12
+# Version:   0.13
 # Description:
 #            Customisable elements for Cheshire for Archives v3.x
 #
 # Language:  Python
 # Author:    John Harrison <john.harrison@liv.ac.uk>
+# Author:    Catherine Smith <catherine.smith@liv.ac.uk>
 # Date:      18 June 2007
 #
 # Copyright: &copy; University of Liverpool 2005-2007
@@ -28,6 +29,7 @@
 #                        - script URL now defined here (overwritten in adminHandler)
 # 0.11 - 16/05/2007 - JH - Change to default settings for switches
 # 0.12 - 18/06/2007 - JH - sourceDir setting removed - now derived from documentFactory setting
+# 0.13 - 04/10/2007 - CS - editinglogfilepath added 
 #
 #
 # Changes to original:
@@ -64,6 +66,7 @@ outgoing_email_port = 25                           # 25 is the default for most 
 logpath = cheshirePath + '/cheshire3/www/ead/logs'
 searchlogfilepath = logpath + '/searchHandler.log'
 adminlogfilepath = logpath + '/adminHandler.log'
+editinglogfilepath = logpath + '/editingHandler.log'
 
 # Path where HTML fragments (browse.html, email.html, resolve.html, search.html)
 # and template.ssi are located
