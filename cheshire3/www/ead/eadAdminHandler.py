@@ -1,25 +1,24 @@
 #
-# Script:    eadAdminHandler.py
-# Version:   0.23
-# Date:      27 September 2007
-# Copyright: &copy; University of Liverpool 2005-2007
+# Program:   eadAdminHandler.py
+# Version:   0.20
 # Description:
 #            Web interface for administering a cheshire 3 database of EAD finding aids
-#            - part of Cheshire for Archives v3
+#            - part of Cheshire for Archives v3.
 #
-# Author(s): JH - John Harrison <john.harrison@liv.ac.uk>
-#            CS - Catherine Smith <catherine.smith@liv.ac.uk>
-#
-# Language:  Python
 # Required externals:
-#            cheshire3-base, cheshire3-web
-#            Py: localConfig.py, htmlFragments.py
-#            HTML: adduser.html, adminmenu.html, adminhelp.html, database.html, edituser.html, footer.html, header.html, preview.html, template.ssi, upload.html.
+#            Py: localConfig.py, wwwSearch.py
+#            HTML: adminmenu.html, adminhelp.html, database.html, footer.html, header.html, template.ssi, upload.html.
 #            CSS: struc.css, style.css
 #            Javascript: ead.js
 #            Images: c3_black.gif
-#                    folderClosed.jpg, folderOpen.jpg folderItem.jpg
 #                    closed.gif, open.gif, tBar.gif
+#
+# Language:  Python
+# Author:    JH - John Harrison <john.harrison@liv.ac.uk>
+# Author:    CS - Catherine Smith <catherine.smith@liv.ac.uk>
+# Date:      03 July 2007
+#
+# Copyright: &copy; University of Liverpool 2005-2007
 #
 # Version History:
 # 0.01 - 06/12/2005 - JH - Basic administration navigations and menus
@@ -56,10 +55,7 @@
 #                        - Bug fixing in interfaces and file preview
 #                        - Minor changes to files interface - includes change to 'upload.html' and 'adminhelp.html'
 # 0.22 - 20/08/2007 - CS - Redesign of Database Menu and navigation added to delete stats result page - includes changes to 'style.css' and 'database.html'
-# 0.23 - 27/09/2007 - JH - Rename wwwSearch --> www_utils
-#
-#
-#
+#                                                                                                    
     
 
 from mod_python import apache, Cookie
@@ -83,7 +79,7 @@ from baseObjects import Session
 import c3errors
 
 # C3 web search utils
-from www_utils import *
+from wwwSearch import *
 from eadSearchHandler import _unescapeCharent, nonAsciiRe, _asciiFriendly, anchorRe, overescapedAmpRe
 
 # script specific globals
@@ -954,7 +950,7 @@ class EadAdminHandler:
                     req.write('Processing...')
                     doc = ppFlow.process(session, doc)
                     rec = sax.process_document(session, doc)
-                    rec = assignDataIdFlow.process(session, rec)
+                    rec = assignXPathIdFlow.process(session, rec)
                     recid = rec.id
                     req.write('<br/>\nUnindexing record: %s ...' % recid)
                     try:
@@ -1385,17 +1381,17 @@ class EadAdminHandler:
         req.write('</div><!--end single--></div><!--end wrapper-->' + foot)
     #- end rebuild_html()
         
-    def view_statistics(self, file='current'):
+    def view_statistics(self, file='searchHandler.log'):
         # parse the search logfile and present stats nicely
         global searchlogfilepath, firstlog_re, loginstance_re, timeTaken_re, recid_re, emailRe, logpath
         self.logger.log('View Search Statistics')
         self.htmlTitle.append('Search Statistics')
         try: 
-            allstring = read_file(searchlogfilepath)
+            allstring = read_file(logpath + '/' +  file)
         except: 
             self.htmlTitle.append('Error')
-            self.logger.log('No logfile present at %s' % (searchlogfilepath))
-            return 'No logfile present at specified location <code>%s</code>' % (searchlogfilepath)
+            self.logger.log('No logfile present at %s' % (logpath + '/' +  file))
+            return 'No logfile present at specified location <code>%s</code>' % (logpath + '/' +  file)
         try: filestarted = firstlog_re.search(allstring).group(1)
         except: return 'No requests logged in current logfile.'
         
@@ -1458,7 +1454,7 @@ class EadAdminHandler:
         for f in files :
             if(regex.match(f)):
             #add regex that tests for searchHandler and displays all of them and maybe has links for all but not the current one
-                rows.append('<tr><td class="link" onclick="javascript:openStats()">%s</td></tr>' % f)
+                rows.append('<tr><td><a class="link" href="/ead/admin/statistics.html?fileName=%s">%s</a></td></tr>' % (f, f))
         rows.append('</table></div>')
         rows.append('</div>')     
         
@@ -1584,7 +1580,7 @@ class EadAdminHandler:
                         self.htmlTitle.append('Error')
                         content = 'An invalid operation was attempted. Valid operations are:<br/>reset'
                 else:    
-                    content = self.view_statistics(form.get('fileName', 'current'))                
+                    content = self.view_statistics(form.get('fileName', 'searchHandler.log'))                
             elif (len(path)):
                 # 404
                 self.htmlTitle.append('Page Not Found')
@@ -1648,7 +1644,7 @@ sax = None
 ppFlow = None
 buildFlow = None
 buildSingleFlow = None
-assignDataIdFlow = None
+assignXPathIdFlow = None
 clusFlow = None
 compFlow = None
 indexRecordFlow = None
@@ -1671,7 +1667,7 @@ recid_re['email'] = re.compile(': Record (.+?) emailed to (.+)$', re.MULTILINE)
 # data argument provided for when request does clean-up - always None
 def build_architecture(data=None):
     global serv, session, authStore, db, dbPath, baseDocFac, sourceDir, recordStore, dcStore, compStore, clusDb, clusStore
-    global sax, ppFlow, buildFlow, buildSingleFlow, assignDataIdFlow, compFlow, compRecordFlow, clusFlow, fullTxr, fullSplitTxr, rebuild
+    global sax, ppFlow, buildFlow, buildSingleFlow, assignXPathIdFlow, compFlow, compRecordFlow, clusFlow, fullTxr, fullSplitTxr, rebuild
     # maintain user info
     if (session): u = session.user
     else: u = None
@@ -1702,9 +1698,9 @@ def build_architecture(data=None):
     if not (buildSingleFlow):
         buildSingleFlow = db.get_object(session, 'buildIndexSingleWorkflow')
         buildSingleFlow.load_cache(session, db)
-    if not (assignDataIdFlow):
-        assignDataIdFlow = db.get_object(session, 'assignDataIdentifierWorkflow')
-        assignDataIdFlow.load_cache(session, db)
+    if not (assignXPathIdFlow):
+        assignXPathIdFlow = db.get_object(session, 'assignXPathIdentifierWorkflow')
+        assignXPathIdFlow.load_cache(session, db)
     if not (compFlow):
         compFlow = db.get_object(session, 'buildAllComponentWorkflow')
         compFlow.load_cache(session, db)
