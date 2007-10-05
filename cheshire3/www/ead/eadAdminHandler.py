@@ -1,24 +1,25 @@
 #
-# Program:   eadAdminHandler.py
-# Version:   0.20
+# Script:    eadAdminHandler.py
+# Version:   0.23
+# Date:      27 September 2007
+# Copyright: &copy; University of Liverpool 2005-2007
 # Description:
 #            Web interface for administering a cheshire 3 database of EAD finding aids
-#            - part of Cheshire for Archives v3.
+#            - part of Cheshire for Archives v3
 #
+# Author(s): JH - John Harrison <john.harrison@liv.ac.uk>
+#            CS - Catherine Smith <catherine.smith@liv.ac.uk>
+#
+# Language:  Python
 # Required externals:
-#            Py: localConfig.py, wwwSearch.py
-#            HTML: adminmenu.html, adminhelp.html, database.html, footer.html, header.html, template.ssi, upload.html.
+#            cheshire3-base, cheshire3-web
+#            Py: localConfig.py, htmlFragments.py
+#            HTML: adduser.html, adminmenu.html, adminhelp.html, database.html, edituser.html, footer.html, header.html, preview.html, template.ssi, upload.html.
 #            CSS: struc.css, style.css
 #            Javascript: ead.js
 #            Images: c3_black.gif
+#                    folderClosed.jpg, folderOpen.jpg folderItem.jpg
 #                    closed.gif, open.gif, tBar.gif
-#
-# Language:  Python
-# Author:    JH - John Harrison <john.harrison@liv.ac.uk>
-# Author:    CS - Catherine Smith <catherine.smith@liv.ac.uk>
-# Date:      03 July 2007
-#
-# Copyright: &copy; University of Liverpool 2005-2007
 #
 # Version History:
 # 0.01 - 06/12/2005 - JH - Basic administration navigations and menus
@@ -55,8 +56,11 @@
 #                        - Bug fixing in interfaces and file preview
 #                        - Minor changes to files interface - includes change to 'upload.html' and 'adminhelp.html'
 # 0.22 - 20/08/2007 - CS - Redesign of Database Menu and navigation added to delete stats result page - includes changes to 'style.css' and 'database.html'
-#                                                                                                    
-    
+# 0.23 - 27/09/2007 - JH - Rename wwwSearch --> www_utils
+#
+#
+#
+
 
 from mod_python import apache, Cookie
 from mod_python.util import FieldStorage
@@ -79,7 +83,7 @@ from baseObjects import Session
 import c3errors
 
 # C3 web search utils
-from wwwSearch import *
+from www_utils import *
 from eadSearchHandler import _unescapeCharent, nonAsciiRe, _asciiFriendly, anchorRe, overescapedAmpRe
 
 # script specific globals
@@ -950,7 +954,7 @@ class EadAdminHandler:
                     req.write('Processing...')
                     doc = ppFlow.process(session, doc)
                     rec = sax.process_document(session, doc)
-                    rec = assignXPathIdFlow.process(session, rec)
+                    rec = assignDataIdFlow.process(session, rec)
                     recid = rec.id
                     req.write('<br/>\nUnindexing record: %s ...' % recid)
                     try:
@@ -1644,7 +1648,7 @@ sax = None
 ppFlow = None
 buildFlow = None
 buildSingleFlow = None
-assignXPathIdFlow = None
+assignDataIdFlow = None
 clusFlow = None
 compFlow = None
 indexRecordFlow = None
@@ -1667,7 +1671,7 @@ recid_re['email'] = re.compile(': Record (.+?) emailed to (.+)$', re.MULTILINE)
 # data argument provided for when request does clean-up - always None
 def build_architecture(data=None):
     global serv, session, authStore, db, dbPath, baseDocFac, sourceDir, recordStore, dcStore, compStore, clusDb, clusStore
-    global sax, ppFlow, buildFlow, buildSingleFlow, assignXPathIdFlow, compFlow, compRecordFlow, clusFlow, fullTxr, fullSplitTxr, rebuild
+    global sax, ppFlow, buildFlow, buildSingleFlow, assignDataIdFlow, compFlow, compRecordFlow, clusFlow, fullTxr, fullSplitTxr, rebuild
     # maintain user info
     if (session): u = session.user
     else: u = None
@@ -1698,9 +1702,9 @@ def build_architecture(data=None):
     if not (buildSingleFlow):
         buildSingleFlow = db.get_object(session, 'buildIndexSingleWorkflow')
         buildSingleFlow.load_cache(session, db)
-    if not (assignXPathIdFlow):
-        assignXPathIdFlow = db.get_object(session, 'assignXPathIdentifierWorkflow')
-        assignXPathIdFlow.load_cache(session, db)
+    if not (assignDataIdFlow):
+        assignDataIdFlow = db.get_object(session, 'assignDataIdentifierWorkflow')
+        assignDataIdFlow.load_cache(session, db)
     if not (compFlow):
         compFlow = db.get_object(session, 'buildAllComponentWorkflow')
         compFlow.load_cache(session, db)
