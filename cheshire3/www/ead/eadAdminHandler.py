@@ -1,7 +1,7 @@
 #
 # Script:    eadAdminHandler.py
-# Version:   0.23
-# Date:      27 September 2007
+# Version:   0.24
+# Date:      08 October 2007
 # Copyright: &copy; University of Liverpool 2005-2007
 # Description:
 #            Web interface for administering a cheshire 3 database of EAD finding aids
@@ -16,7 +16,7 @@
 #            Py: localConfig.py, htmlFragments.py
 #            HTML: adduser.html, adminmenu.html, adminhelp.html, database.html, edituser.html, footer.html, header.html, preview.html, template.ssi, upload.html.
 #            CSS: struc.css, style.css
-#            Javascript: ead.js
+#            Javascript: ead.js, prototype.js
 #            Images: c3_black.gif
 #                    folderClosed.jpg, folderOpen.jpg folderItem.jpg
 #                    closed.gif, open.gif, tBar.gif
@@ -57,7 +57,7 @@
 #                        - Minor changes to files interface - includes change to 'upload.html' and 'adminhelp.html'
 # 0.22 - 20/08/2007 - CS - Redesign of Database Menu and navigation added to delete stats result page - includes changes to 'style.css' and 'database.html'
 # 0.23 - 27/09/2007 - JH - Rename wwwSearch --> www_utils
-#
+# 0.24 - 08/10/2007 - CS - Stats page modified to allow all previous searchHandler logfiles to be viewed
 #
 #
 
@@ -1386,8 +1386,10 @@ class EadAdminHandler:
     #- end rebuild_html()
         
     def view_statistics(self, file='searchHandler.log'):
-        # parse the search logfile and present stats nicely
+        # parse the relevant search logfile and present stats nicely
         global searchlogfilepath, firstlog_re, loginstance_re, timeTaken_re, recid_re, emailRe, logpath
+        regex = re.compile('searchHandler\S')
+        dateRegex = re.compile('[\S]*-(([\d]*)-([\d]*)-([\d]*))T([\d]{2})([\d]{2})([\d]{2}).log')
         self.logger.log('View Search Statistics')
         self.htmlTitle.append('Search Statistics')
         try: 
@@ -1396,11 +1398,35 @@ class EadAdminHandler:
             self.htmlTitle.append('Error')
             self.logger.log('No logfile present at %s' % (logpath + '/' +  file))
             return 'No logfile present at specified location <code>%s</code>' % (logpath + '/' +  file)
-        try: filestarted = firstlog_re.search(allstring).group(1)
-        except: return 'No requests logged in current logfile.'
+        try: 
+            filestarted = firstlog_re.search(allstring).group(1)
+        except: 
+            return 'No requests logged in current logfile.'
         
-        rows =['<div id="leftcol">',
-                '<h3>Statistics for period: %s to %s</h3>' % (filestarted, time.strftime("%Y-%m-%d %H:%M:%S")),
+        #create list of options for select menu
+        files = os.listdir(logpath)
+        files.sort(reverse=True)
+        options= []
+        for f in files :
+            if(regex.match(f)):       
+                date = re.findall(dateRegex, f)
+                if (f == 'searchHandler.log' and f == file):
+                    options.append('<option value="%s" selected="true">%s</option>' % (f, 'current'))
+                elif (f == 'searchHandler.log'):
+                    options.append('<option value="%s">%s</option>' % (f, 'current'))                                    
+                elif (f == file):
+                    options.append('<option value="%s" selected="true">%s-%s-%s</option>' % (f, date[0][1], date[0][2], date[0][3]))
+                else :
+                    options.append('<option value="%s">%s-%s-%s</option>' % (f, date[0][1], date[0][2], date[0][3]))
+        if (file == 'searchHandler.log'):
+            dateString = time.strftime("%Y-%m-%d %H:%M:%S")
+        else :
+            dateString = '%s %s:%s:%s' % (date[0][0], date[0][4], date[0][5], date[0][6])
+            
+        #create the html
+        rows = ['<div id="leftcol">', 
+                '<h3>Statistics for period ending: <select id="fileNameSelect" value="1" onChange="window.location.href=\'statistics.html?fileName=\' + this.value">%s</select></h3>' % ''.join(options),
+                '<h3>Period covered: %s to %s</h3>' % (filestarted, dateString),           
                '<table class="stats" width="100%%">',
                '<tr class="headrow"><th>Operation</th><th>Requests</th><th>Avg Time (secs)</th></tr>']
                
@@ -1447,19 +1473,13 @@ class EadAdminHandler:
 
         rows.extend([
         '<tr><td>Total</td><td>%d</td><td>%s</td></tr>' % (len(singlelogs), 'n/a'),
-        '</table>',
-        '<form action="statistics.html?operation=reset" method="post" onsubmit="return confirm(\'This operation will reset all staticstics. The existing logfile will be moved and will only be accessible by logging onto the server directly. Are you sure you want to continue?\');">',
-        '<p><input type="submit" name="resetstats" value=" Reset Statistics "/></p>',
-        '</form>'])
-        files = os.listdir(logpath)
-        rows.append('<div id="loglist"><table>')
-        regex = re.compile('searchHandler\S')
-        files.sort(reverse=True)
-        for f in files :
-            if(regex.match(f)):
-            #add regex that tests for searchHandler and displays all of them and maybe has links for all but not the current one
-                rows.append('<tr><td><a class="link" href="/ead/admin/statistics.html?fileName=%s">%s</a></td></tr>' % (f, f))
-        rows.append('</table></div>')
+        '</table>'])
+        
+        if (file == 'searchHandler.log'):
+            rows.extend(['<form action="statistics.html?operation=reset" method="post" onsubmit="return confirm(\'This operation will reset all statistics. The existing logfile will be moved and will only be accessible by logging onto the server directly. Are you sure you want to continue?\');">',
+                            '<p><input type="submit" name="resetstats" value=" Reset Statistics "/></p>',
+                        '</form>'])
+
         rows.append('</div>')     
         
         # League tables
@@ -1478,8 +1498,7 @@ class EadAdminHandler:
                 rows.append('<tr><td>%d</td><td>%s</td></tr>' % (reqs, id))
                  
         rows.extend(['</table>','</div>'])
-
-
+        
 
         return '\n'.join(rows)
     #- end view_statistics() 
