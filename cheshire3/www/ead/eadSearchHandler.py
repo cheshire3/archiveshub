@@ -1518,6 +1518,7 @@ def build_architecture(data=None):
     compStore = db.get_object(session, 'componentStore')
     #textStore = db.get_object(session, 'textDocStore')
     resultSetStore = db.get_object(session, 'eadResultSetStore')
+    resultSetStore.clean(session)
     # transformers
     summaryTxr = db.get_object(session, 'htmlSummaryTxr')
     fullTxr = db.get_object(session, 'htmlFullTxr')
