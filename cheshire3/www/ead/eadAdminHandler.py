@@ -78,7 +78,7 @@ sys.path = [os.path.join(cheshirePath, 'cheshire3', 'code')] + sys.path
 from server import SimpleServer
 from PyZ3950 import CQLParser
 from document import StringDocument
-from record import SaxRecord, FtDomRecord
+from record import LxmlRecord, SaxRecord, FtDomRecord
 from baseObjects import Session
 import c3errors
 
@@ -598,7 +598,7 @@ class EadAdminHandler:
     
         
     def _parse_upload(self, data):
-        global session, ppFlow, sax
+        global session, ppFlow, lxmlp
         if (type(data) == unicode):
             try: data = data.encode('utf-8')
             except:
@@ -608,13 +608,13 @@ class EadAdminHandler:
         doc = StringDocument(data)
         doc = ppFlow.process(session, doc)
         try:
-            rec = sax.process_document(session, doc)
+            rec = lxmlp.process_document(session, doc)
         except:
             newlineRe = re.compile('(\s\s+)')
             doc.text = newlineRe.sub('\n\g<1>', doc.get_raw())
             # repeat parse with correct line numbers
             try:
-                rec = sax.process_document(session, doc)
+                rec = lxmlp.process_document(session, doc)
             except:
                 self.htmlTitle.append('Error')
                 e = sys.exc_info()
@@ -670,16 +670,17 @@ class EadAdminHandler:
         self.htmlNav.append('<a href="/ead/admin/files.html" title="Preview File" class="navlink">Files</a>')
         f = form.get('eadfile', None)
         if not f or not len(f.value):
+            #here make it do all the header stuff too
             return read_file('preview.html')
         
         self.logger.log('Preview requested')
         rec = self._parse_upload(f.value)
-        if not isinstance(rec, SaxRecord):
+        if not isinstance(rec, LxmlRecord):
             return rec
         
-#        val = self._validate_isadg(rec)
-#        if (val): return val
-#        del val
+        val = self._validate_isadg(rec)
+        if (val): return val
+        del val
         
         # ensure restricted access directory exists
         try:
@@ -687,13 +688,13 @@ class EadAdminHandler:
             os.makedirs(os.path.join(toc_cache_path, 'preview'))
         except OSError:
             pass # already exists
-        
+
         recid = rec.id = 'preview/%s' % (session.user.username)    # assign rec.id so that html is stored in a restricted access directory
         if (len(rec.get_xml()) < max_page_size_bytes):
             doc = fullTxr.process_record(session, rec)
         else:
             doc = fullSplitTxr.process_record(session, rec)
-        
+        raise ValueError(doc.get_raw())
         # open, read, and delete tocfile NOW to avoid overwriting screwups
         try:
             tocfile = read_file(os.path.join(toc_cache_path, 'foo.bar'))
@@ -844,11 +845,12 @@ class EadAdminHandler:
         f = form.get('eadfile', None)
         op = form.get('operation', 'insert')
         if not f or not len(f.value):
+            #add in return header too etc.
             return read_file('upload.html')
         
         rec = self._parse_upload(f.value)
         # TODO: handle file not successfully parsed
-        if not isinstance(rec, SaxRecord):
+        if not isinstance(rec, LxmlRecord):
             return rec
         
         val = self._validate_isadg(rec)
@@ -918,10 +920,12 @@ class EadAdminHandler:
     
     
     def delete_file(self, req, form):
-        global ppFlow, sax, db, recordStore, dcStore, compStore, rebuild
+        global ppFlow, lxmlp, db, recordStore, dcStore, compStore, rebuild
         self.htmlTitle.append('File Management')
         self.htmlNav.append('<a href="files.html" title="File Management" class="navlink">Files</a>')
-        operation = form.get('operation', 'unindex')        
+        operation = form.get('operation', 'unindex') 
+        if (operation == 'unindex + delete'):
+            operation = 'unindex'      
         filepaths = form.getlist('filepath')
         # setup http headers etc
         req.content_type = 'text/html'
@@ -953,7 +957,7 @@ class EadAdminHandler:
                 if (operation == 'unindex'):
                     req.write('Processing...')
                     doc = ppFlow.process(session, doc)
-                    rec = sax.process_document(session, doc)
+                    rec = lxmlp.process_document(session, doc)
                     rec = assignDataIdFlow.process(session, rec)
                     recid = rec.id
                     req.write('<br/>\nUnindexing record: %s ...' % recid)
@@ -1149,6 +1153,7 @@ class EadAdminHandler:
 
     
     def view_file(self, form):
+
         global script
         self.htmlTitle.append('File Management')
 
@@ -1159,6 +1164,7 @@ class EadAdminHandler:
             return 'Could not locate specified file path'
 
         self.htmlTitle.append('View File')
+
         out = ['<div class="heading">%s</div>' % (filepath),'<pre>']
         out.append(html_encode(read_file(filepath)))
         out.append('</pre>')
@@ -1401,7 +1407,8 @@ class EadAdminHandler:
         try: 
             filestarted = firstlog_re.search(allstring).group(1)
         except: 
-            return 'No requests logged in current logfile.'
+            #return 'No requests logged in current logfile.'
+            filestarted = None
         
         #create list of options for select menu
         files = os.listdir(logpath)
@@ -1425,10 +1432,15 @@ class EadAdminHandler:
             
         #create the html
         rows = ['<div id="leftcol">', 
-                '<h3>Statistics for period ending: <select id="fileNameSelect" value="1" onChange="window.location.href=\'statistics.html?fileName=\' + this.value">%s</select></h3>' % ''.join(options),
-                '<h3>Period covered: %s to %s</h3>' % (filestarted, dateString),           
-               '<table class="stats" width="100%%">',
-               '<tr class="headrow"><th>Operation</th><th>Requests</th><th>Avg Time (secs)</th></tr>']
+                '<h3>Statistics for period ending: <select id="fileNameSelect" value="1" onChange="window.location.href=\'statistics.html?fileName=\' + this.value">%s</select></h3>' % ''.join(options)]
+        
+        if (filestarted != None):
+            rows.append('<h3>Period covered: %s to %s</h3>' % (filestarted, dateString))
+        else :
+            rows.append('<h3>Period covered: None</h3>')
+        
+        rows.extend(['<table class="stats" width="100%%">',
+               '<tr class="headrow"><th>Operation</th><th>Requests</th><th>Avg Time (secs)</th></tr>'])
                
         singlelogs = loginstance_re.findall(allstring)
         ops = {}
@@ -1476,7 +1488,7 @@ class EadAdminHandler:
         '</table>'])
         
         if (file == 'searchHandler.log'):
-            rows.extend(['<form action="statistics.html?operation=reset" method="post" onsubmit="return confirm(\'This operation will reset all statistics. The existing logfile will be moved and will only be accessible by logging onto the server directly. Are you sure you want to continue?\');">',
+            rows.extend(['<form action="statistics.html?operation=reset" method="post" onsubmit="return confirm(\'This operation will reset all statistics. The existing logfile will be moved and will be accessible from the drop down menu on the statistics page. Are you sure you want to continue?\');">',
                             '<p><input type="submit" name="resetstats" value=" Reset Statistics "/></p>',
                         '</form>'])
 
@@ -1515,7 +1527,7 @@ class EadAdminHandler:
         file(searchlogfilepath, 'w').close()
         self.logger.log('Search Statistics Reset')
         self.htmlTitle.append('Search Statistics')
-        return 'Statistics reset. New logfile started. Old logfile can still be found at <code>%s</code><br \>\n<br \>\n<a href="/ead/admin/index.html" class="navlink">Back to \'Administration Menu\'</a>' % (newfilepath)
+        return 'Statistics reset. New logfile started. \n<br />\nOld logfiles can still be viewed by selecting them from the drop down box on the statistics page.\n<br />\n<br />\n<a href="/ead/admin/index.html" class="navlink">Back to \'Administration Menu\'</a>'
     #- end reset_statistics()
 
     def handle(self, req):
@@ -1663,6 +1675,7 @@ dcStore = None
 compStore = None
 clusDb = None
 clusStore = None
+lxmlp = None
 sax = None
 ppFlow = None
 buildFlow = None
@@ -1677,7 +1690,7 @@ fullSplitTxr = None
 
 logfilepath = adminlogfilepath
 
-firstlog_re = re.compile('^\[(\d\d\d\d\-\d\d\-\d\d \d\d:\d\d:\d\d)\]', re.MULTILINE)
+firstlog_re = re.compile('^\[(\d\d\d\d\-\d\d\-\d\d \d\d:\d\d:\d\d)\]', re.MULTILINE) #first date and time stamp in file
 loginstance_re = re.compile('^\[.+?secs$', re.MULTILINE|re.DOTALL)
 timeTaken_re = re.compile('^\.\.\.Total time: (\d+\.\d+) secs$', re.MULTILINE)
 emailRe = re.compile('[^@\s]+(\.[^@\s])*@[^@\s]+\.[^@\s]+(\.[^@\s])*')
@@ -1690,7 +1703,7 @@ recid_re['email'] = re.compile(': Record (.+?) emailed to (.+)$', re.MULTILINE)
 # data argument provided for when request does clean-up - always None
 def build_architecture(data=None):
     global serv, session, authStore, db, dbPath, baseDocFac, sourceDir, recordStore, dcStore, compStore, clusDb, clusStore
-    global sax, ppFlow, buildFlow, buildSingleFlow, assignDataIdFlow, compFlow, compRecordFlow, clusFlow, fullTxr, fullSplitTxr, rebuild
+    global sax, lxmlp, ppFlow, buildFlow, buildSingleFlow, assignDataIdFlow, compFlow, compRecordFlow, clusFlow, fullTxr, fullSplitTxr, rebuild
     # maintain user info
     if (session): u = session.user
     else: u = None
@@ -1712,6 +1725,8 @@ def build_architecture(data=None):
     compStore = db.get_object(session, 'componentStore')
     if not (sax):
         sax = db.get_object(session, 'SaxParser')
+    if not (lxmlp):
+        lxmlp = db.get_object(session, 'LxmlParser')
     if not (ppFlow): 
         ppFlow = db.get_object(session, 'preParserWorkflow')
         ppFlow.load_cache(session, db)
