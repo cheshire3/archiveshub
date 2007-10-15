@@ -142,6 +142,13 @@
 	        <setting type="digest">sha</setting>
 	      </options>
 	    </subConfig>
+
+		<subConfig type="authStore" id="eadAuthStore">
+		  <objectType>objectStore.BdbObjectStore</objectType>
+		  <paths>
+		    <path type="databasePath">eadAuthStore.bdb</path>
+		  </paths>
+		</subConfig>
 	    
 	    <!-- pre-parsers -->  
 	    <subConfig type="preParser" id="emptyEmphTagStripPreParser">
@@ -361,12 +368,6 @@
 		<!-- workflows - override default workflows -->
 		<path type="includeConfigs">workflow.xml</path>
 
-		<subConfig type="authStore" id="eadAuthStore">
-		  <objectType>objectStore.BdbObjectStore</objectType>
-		  <paths>
-		    <path type="databasePath">eadAuthStore.bdb</path>
-		  </paths>
-		</subConfig>
 		
 	</subConfigs>
 
