@@ -666,7 +666,6 @@ class EadAdminHandler(EadHandler):
     #- end preview_file()
 
     def upload_file(self, req, form):
-        global session, sourceDir, recordStore, dcStore, compStore, db, indexRecordFlow, compRecordFlow, rebuild
         self.htmlTitle.append('File Management')
         self.htmlTitle.append('Upload File')
         self.htmlNav.append('<a href="files.html" title="File Management" class="navlink">Files</a>')
@@ -699,7 +698,7 @@ class EadAdminHandler(EadHandler):
             # 'open' all dbs and recordStores
             db.begin_indexing(session)
             recordStore.begin_storing(session)
-            dcStore.begin_storing(session)
+            dcRecordStore.begin_storing(session)
             
             # index record in thread to allow feedback
             req.write('Loading and Indexing record .')
@@ -711,7 +710,7 @@ class EadAdminHandler(EadHandler):
                 req.write('<span class="error">Parsing/Indexing exited abnormally with message:<br/>\n%s</span>' % t.error)
             else:
                 recordStore.commit_storing(session)
-                dcStore.commit_storing(session)
+                dcRecordStore.commit_storing(session)
                 if len(rec.process_xpath('dsc')):
                     req.write('Loading and Indexing components .')
                     compStore.begin_storing(session)
@@ -744,7 +743,6 @@ class EadAdminHandler(EadHandler):
     
     
     def delete_file(self, req, form):
-        global ppFlow, docParser, db, recordStore, dcStore, compStore, rebuild
         self.htmlTitle.append('File Management')
         self.htmlNav.append('<a href="files.html" title="File Management" class="navlink">Files</a>')
         operation = form.get('operation', 'unindex') 
@@ -800,11 +798,11 @@ class EadAdminHandler(EadHandler):
                         recordStore.begin_storing(session)
                         recordStore.delete_record(session, rec.id)
                         recordStore.commit_storing(session)
-                        # delete DC in dcStore
-                        dcStore.begin_storing(session)
-                        try: dcStore.delete_record(session, rec.id)
+                        # delete DC in dcRecordStore
+                        dcRecordStore.begin_storing(session)
+                        try: dcRecordStore.delete_record(session, rec.id)
                         except: pass
-                        else: dcStore.commit_storing(session)
+                        else: dcRecordStore.commit_storing(session)
                         req.write('<span class="ok">[OK]</span><br/>\n')
                         
                     if len(rec.process_xpath('dsc')):
@@ -1019,7 +1017,7 @@ class EadAdminHandler(EadHandler):
         
 
     def rebuild_database(self, req):
-        global dbPath, db, sourceDir, baseDocFac, recordStore, dcStore, buildFlow, buildSingleFlow
+        global dbPath, db, sourceDir, baseDocFac, recordStore, dcRecordStore, buildFlow, buildSingleFlow
         global clusDb, clusStore, clusFlow
         global compStore, compFlow, compRecordFlow, rebuild
         # setup http headers etc
@@ -1040,7 +1038,7 @@ class EadAdminHandler(EadHandler):
         # rebuild and reindex
         req.write('<span class="ok">[OK]</span><br/>Loading and Indexing records from <code>%s</code><br/>\n' % sourceDir)
         recordStore.begin_storing(session)
-        dcStore.begin_storing(session)
+        dcRecordStore.begin_storing(session)
         db.begin_indexing(session)
         # for some reason this doesn't work well in threads...
         start = time.time()
@@ -1058,7 +1056,7 @@ class EadAdminHandler(EadHandler):
             hours, mins = divmod(mins, 60)
             req.write('<span class="ok">[OK]</span> %dh %dm %ds<br/>' % (hours, mins, secs))
             recordStore.commit_storing(session)
-            dcStore.commit_storing(session)
+            dcRecordStore.commit_storing(session)
             db.commit_indexing(session)
             db.commit_metadata(session)
         except:
@@ -1507,7 +1505,7 @@ docParser = None
 # stores
 authStore = None
 recordStore = None
-dcStore = None
+dcRecordStore = None
 compStore = None
 resultSetStore = None
 # clusters
