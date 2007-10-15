@@ -90,67 +90,14 @@
 #
 #
 
+from eadHandler import * 
 
-# import mod_python stuffs
-from mod_python import apache, Cookie
-from mod_python.util import FieldStorage
-# import generally useful modules
-import sys, traceback, os, cgitb, urllib, time, smtplib, re
-# import customisable variables
-from localConfig import *
-# set sys paths 
-osp = sys.path
-sys.path = [os.path.join(cheshirePath, 'cheshire3', 'code')]
-sys.path.extend(osp)
-# import Cheshire3/PyZ3950 stuff
-from server import SimpleServer
-from PyZ3950 import CQLParser, SRWDiagnostics
-from baseObjects import Session
-from document import StringDocument
-from utils import flattenTexts
-import c3errors
-# C3 web search utils
-from www_utils import *
-# email modules
-from email import Message, MIMEMultipart, MIMEText
-
-
-class EadSearchHandler:
-    global repository_name, repository_link, repository_logo, htmlPath
-    templatePath = os.path.join(htmlPath, 'template.ssi')
-    htmlTitle = None
-    htmlNav = None
-    logger = None
-    globalReplacements = None
+class EadSearchHandler(EadHandler):
+    
     redirected = False
 
-    def __init__(self, lgr):
-        global repository_name, repository_link, repository_logo, script
-        self.htmlTitle = []
-        self.htmlNav = []
-        self.logger = lgr
-        self.globalReplacements = {'%REP_NAME%': repository_name,
-                              '%REP_LINK%': repository_link,
-                              '%REP_LOGO%': repository_logo,
-                              'SCRIPT': script,
-                              '%SCRIPT%': script
-                              }
-
-        #- end __init__() ----------------------------------------------------------
-    
-    def send_html(self, data, req, code=200):
-        req.content_type = 'text/html'
-        req.content_length = len(data)
-        req.send_http_header()
-        if (type(data) == unicode):
-          data = data.encode('utf-8')
-        req.write(data)
-        req.flush()
-        
-        #- end send_html() ---------------------------------------------------------
-
     def _backwalkTitles(self, rec, path):
-        global nonAsciiRe, _asciiFriendly, normIdFlow
+        global nonAsciiRe, asciiFriendly, normIdFlow
         titles = []
         pathParts = path.split('/') 
         while pathParts[-1] != 'dsc':
@@ -158,7 +105,7 @@ class EadSearchHandler:
             except IndexError: t = '(untitled)'
             else:
                 t = flattenTexts(t)
-                t = nonAsciiRe.sub(_asciiFriendly, t)
+                t = nonAsciiRe.sub(asciiFriendly, t)
             try: i = rec.process_xpath('/'.join(pathParts) + '/did/unitid')[0]
             except IndexError: i = None
             else:
@@ -171,7 +118,7 @@ class EadSearchHandler:
         except IndexError: t = '(untitled)'
         else:
             t = flattenTexts(t)
-            t = nonAsciiRe.sub(_asciiFriendly, t)
+            t = nonAsciiRe.sub(asciiFriendly, t)
 
         titles.append((rec.id, t.strip()))
         titles.reverse()
@@ -200,7 +147,7 @@ class EadSearchHandler:
                 except IndexError:
                     parentTitle = '(untitled)'
                 
-        parentTitle = nonAsciiRe.sub(_asciiFriendly, parentTitle)
+        parentTitle = nonAsciiRe.sub(asciiFriendly, parentTitle)
         if (type(parentTitle) == unicode):
             try:
                 parentTitle = parentTitle.encode('utf-8')
@@ -321,7 +268,7 @@ class EadSearchHandler:
                     parentLink = parentLink.replace('SPLASH', '')
                     hierarchyLinks = hierarchyLinks.replace('SPLASH', '')
                     
-            title = nonAsciiRe.sub(_asciiFriendly, title)
+            title = nonAsciiRe.sub(asciiFriendly, title)
             if ( display_relevance ) and (rs[0].weight > rs[-1].weight):
                 # format relevance measure for display
                 if (useScaledWeights):
@@ -405,7 +352,6 @@ class EadSearchHandler:
 
 
     def search(self, form, maxResultSetSize=None):
-        global recordStore, resultSetStore
         firstrec = int(form.get('firstrec', 1))
         numreq = int(form.get('numreq', 20))
         highlight = int(form.get('highlight', 1))
@@ -761,6 +707,7 @@ class EadSearchHandler:
         #- end subject_resolve() ---------------------------------------------------
 
     def display_summary(self, rec, paramDict, proxInfo=None, highlight=1):
+        global nonAsciiRe, asciiFriendly, overescapedAmpRe, unescapeCharent
         recid = rec.id
         self.logger.log('Summary requested for record: %s' % (recid))
         # highlight search terms in rec.sax
@@ -813,8 +760,8 @@ class EadSearchHandler:
         doc = summaryTxr.process_record(session, rec)
         del rec
         summ = unicode(doc.get_raw(), 'utf-8')
-        summ = nonAsciiRe.sub(_asciiFriendly, summ)
-        summ = overescapedAmpRe.sub(_unescapeCharent, summ)
+        summ = nonAsciiRe.sub(asciiFriendly, summ)
+        summ = overescapedAmpRe.sub(unescapeCharent, summ)
         self.logger.log('Record transformed to HTML')
         summ = summ.replace('LINKTOPARENT', paramDict['LINKTOPARENT'])
         summ = '<div id="padder"><div id="rightcol">%s</div></div>' % (summ)
@@ -824,127 +771,128 @@ class EadSearchHandler:
         return multiReplace(page, paramDict)
 
 
-    def display_full(self, rec, paramDict, isComponent):
-        global toc_cache_path, max_page_size_bytes, cache_url, overescapedAmpRe, toc_scripts, anchorRe
-        recid = rec.id
-        if (len(rec.get_xml()) < max_page_size_bytes) or isComponent:
-            # Nice and short record/component - do it the easy way
-            self.logger.log('HTML generated by non-splitting XSLT')
-            doc = fullTxr.process_record(session, rec)
-        else:
-            doc = fullSplitTxr.process_record(session, rec)
-            # Long record - have to do splitting, link resolving etc.
-            self.logger.log('HTML generated by splitting XSLT')
-
-        # open, read, and delete tocfile NOW to avoid overwriting screwups
-        try:
-            tocfile = unicode(read_file(os.path.join(toc_cache_path, 'foo.bar')), 'utf-8')
-        except IOError:
-            tocfile = None
-        else:
-            os.remove(os.path.join(toc_cache_path, 'foo.bar'))
-            tocfile = nonAsciiRe.sub(_asciiFriendly, tocfile)
-            tocfile = tocfile.replace('RECID', recid)
-            tocfile = overescapedAmpRe.sub(_unescapeCharent, tocfile)
-        
-        doc = unicode(doc.get_raw(), 'utf-8')
-        #doc = overescapedAmpRe.sub(_unescapeCharent, doc)
-        tmpl = read_file(self.templatePath)
-        if (len(rec.get_xml()) < max_page_size_bytes) or isComponent:
-            # resolve anchors to only page
-            doc = doc.replace('PAGE#', '%s/RECID-p1.shtml#' % cache_url)
-            doc = nonAsciiRe.sub(_asciiFriendly, doc)
-            doc = doc.replace('LINKTOPARENT', paramDict['LINKTOPARENT'])
-            page = tmpl.replace('%CONTENT%', toc_scripts + doc)
-            self.logger.log(repr(paramDict))
-            page = multiReplace(page, paramDict)
-            write_file(os.path.join(cache_path, recid + '-p1.shtml'), page)
-            
-        else:
-            # before we split need to find all internal anchors
-            anchors = anchorRe.findall(doc)
-            pseudopages = doc.split('<p style="page-break-before: always"></p>')
-            pages = []
-            while pseudopages:
-                page = '<div id="padder"><div id="rightcol" class="ead">%PAGENAV%'
-                while (len(page) < max_page_size_bytes):
-                    page = page + pseudopages.pop(0)
-                    if not pseudopages:
-                        break
-                
-                # append: pagenav, end rightcol div, padder div, left div (containing toc)
-                page = page + '%PAGENAV%<br/>\n<br/>\n</div>\n</div>\n<div id="leftcol" class="toc"><!--#include virtual="/ead/tocs/RECID.inc"--></div>'
-                pages.append(page)
-
-            start = 0
-            anchorPageHash = {}
-            for a in anchors:
-                if len(a.strip()) > 0:
-                    for x in range(start, len(pages), 1):
-                        if (pages[x].find('name="%s"' % a) > -1):
-                            anchorPageHash[a] = x + 1
-                            start = x                                  # next anchor must be on this page or later
-
-            self.logger.log('Links resolved over multiple pages (%d pages)' % (len(pages)))
-
-            for x in range(len(pages)):
-                doc = pages[x]
-                # now we know how many real pages there are, generate some page navigation links
-                if len(pages) > 1:
-                    pagenav = ['<div class="pagenav">', '<div class="backlinks">']
-                    if (x > 0):
-                        pagenav.extend(['<a href="%s/%s-p1.shtml" title="First page" onclick="setCookie(\'%s-tocstate\', stateToString(\'someId\'))"><img src="/images/fback.gif" alt="First"/></a>' % (cache_url, recid, recid), 
-                                        '<a href="%s/%s-p%d.shtml" title="Previous page" onclick="setCookie(\'%s-tocstate\', stateToString(\'someId\'))"><img src="/images/back.gif" alt="Previous"/></a>' % (cache_url, recid, x, recid)
-                                      ])
-                    pagenav.extend(['</div>', '<div class="forwardlinks">'])
-                    if (x < len(pages)-1):
-                        pagenav.extend(['<a href="%s/%s-p%d.shtml" title="Next page" onclick="setCookie(\'%s-tocstate\', stateToString(\'someId\'))"><img src="/images/forward.gif" alt="Next"/></a>' % (cache_url, recid, x+2, recid),
-                                        '<a href="%s/%s-p%d.shtml" title="Final page" onclick="setCookie(\'%s-tocstate\', stateToString(\'someId\'))"><img src="/images/fforward.gif" alt="Final"/></a>' % (cache_url, recid, len(pages), recid)
-                                      ])
-                    pagenav.extend(['</div>', '<div class="numnav">'])
-                    for y in range(len(pages)):
-                        if (y == x):
-                            pagenav.append('<strong>%d</strong>' % (y+1))
-                        else:
-                            pagenav.append('<a href="%s/%s-p%d.shtml" title="Page %d" onclick="setCookie(\'%s-tocstate\', stateToString(\'someId\'))">%d</a>' % (cache_url, recid, y+1, y+1, recid, y+1))
-                    pagenav.extend(['</div> <!--end numnav div -->', '</div> <!-- end pagenav div -->'])
-                else:
-                    pagenav = []
-                
-                doc = nonAsciiRe.sub(_asciiFriendly, doc)
-                pagex = tmpl.replace('%CONTENT%', toc_scripts + doc)
-                pagex = pagex.replace('%PAGENAV%', '\n'.join(pagenav))
-
-                #resolve internal ref links
-                for k, v in anchorPageHash.iteritems():
-                    pagex = pagex.replace('PAGE#%s"' % k, '%s/RECID-p%d.shtml#%s"' % (cache_url, v, k))
-
-                # any remaining links were not anchored - encoders fault :( - hope they're on page 1
-                pagex = pagex.replace('PAGE#', '%s/RECID-p1.shtml#' % (cache_url))
-                
-                for k, v in paramDict.iteritems():
-                    pagex = pagex.replace(k, v)
-                    
-                write_file(os.path.join(cache_path, recid + '-p%d.shtml' % (x+1)), pagex)
-                if (x == 0):
-                    page = pagex
-
-            self.logger.log('Multi-page navigation generated')
- 
-        del rec
-        if tocfile:
-            try:
-                for k, v in anchorPageHash.iteritems():
-                    tocfile = tocfile.replace('PAGE#%s"' % k, '%s/%s-p%d.shtml#%s"' % (cache_url, recid, v, k))
-            except UnboundLocalError:
-                pass
-            
-            # any remaining links were not anchored - encoders fault :( - hope they're on page 1
-            tocfile = multiReplace(tocfile, {'SCRIPT': script, 'PAGE#': '%s/%s-p1.shtml#' % (cache_url, recid)})
-            write_file(os.path.join(toc_cache_path, recid +'.inc'), tocfile)
-            os.chmod(os.path.join(toc_cache_path, recid + '.inc'), 0755)
- 
-        return page
+#    def display_full(self, rec, paramDict, isComponent):
+#        recid = rec.id
+#        if (len(rec.get_xml()) < max_page_size_bytes) or isComponent:
+#            # Nice and short record/component - do it the easy way
+#            self.logger.log('HTML generated by non-splitting XSLT')
+#            doc = fullTxr.process_record(session, rec)
+#        else:
+#            doc = fullSplitTxr.process_record(session, rec)
+#            # Long record - have to do splitting, link resolving etc.
+#            self.logger.log('HTML generated by splitting XSLT')
+#
+#        # open, read, and delete tocfile NOW to avoid overwriting screwups
+#        try:
+#            tocfile = unicode(read_file(os.path.join(toc_cache_path, 'foo.bar')), 'utf-8')
+#        except IOError:
+#            tocfile = None
+#        else:
+#            os.remove(os.path.join(toc_cache_path, 'foo.bar'))
+#            tocfile = nonAsciiRe.sub(asciiFriendly, tocfile)
+#            tocfile = tocfile.replace('RECID', recid)
+#            tocfile = overescapedAmpRe.sub(unescapeCharent, tocfile)
+#        
+#        doc = unicode(doc.get_raw(), 'utf-8')
+#        doc = nonAsciiRe.sub(asciiFriendly, doc)
+#        #doc = overescapedAmpRe.sub(unescapeCharent, doc)
+#        tmpl = read_file(self.templatePath)
+#        if (len(rec.get_xml()) < max_page_size_bytes) or isComponent:
+#            # resolve anchors to only page
+#            #doc = nonAsciiRe.sub(asciiFriendly, doc)
+#            doc = doc.replace('PAGE#', '%s/RECID-p1.shtml#' % cache_url)
+#            doc = doc.replace('LINKTOPARENT', paramDict['LINKTOPARENT'])
+#            page = tmpl.replace('%CONTENT%', toc_scripts + doc)
+#            self.logger.log(repr(paramDict))
+#            page = multiReplace(page, paramDict)
+#            write_file(os.path.join(cache_path, recid + '-p1.shtml'), page)
+#            
+#        else:
+#            # before we split need to find all internal anchors
+#            anchors = anchorRe.findall(doc)
+#            pseudopages = doc.split('<p style="page-break-before: always"></p>')
+#            pages = []
+#            while pseudopages:
+#                page = '<div id="padder"><div id="rightcol" class="ead">%PAGENAV%'
+#                while (len(page) < max_page_size_bytes):
+#                    page = page + pseudopages.pop(0)
+#                    if not pseudopages:
+#                        break
+#                
+#                # append: pagenav, end rightcol div, padder div, left div (containing toc)
+#                page = page + '%PAGENAV%<br/>\n<br/>\n</div>\n</div>\n<div id="leftcol" class="toc"><!--#include virtual="/ead/tocs/RECID.inc"--></div>'
+#                pages.append(page)
+#
+#            start = 0
+#            anchorPageHash = {}
+#            for a in anchors:
+#                if len(a.strip()) > 0:
+#                    for x in range(start, len(pages), 1):
+#                        if (pages[x].find('name="%s"' % a) > -1):
+#                            anchorPageHash[a] = x + 1
+#                            start = x                                  # next anchor must be on this page or later
+#
+#            self.logger.log('Links resolved over multiple pages (%d pages)' % (len(pages)))
+#
+#            for x in range(len(pages)):
+#                doc = pages[x]
+#                # now we know how many real pages there are, generate some page navigation links
+#                if len(pages) > 1:
+#                    pagenav = ['<div class="pagenav">', '<div class="backlinks">']
+#                    if (x > 0):
+#                        pagenav.extend(['<a href="%s/%s-p1.shtml" title="First page" onclick="setCookie(\'%s-tocstate\', stateToString(\'someId\'))"><img src="/images/fback.gif" alt="First"/></a>' % (cache_url, recid, recid), 
+#                                        '<a href="%s/%s-p%d.shtml" title="Previous page" onclick="setCookie(\'%s-tocstate\', stateToString(\'someId\'))"><img src="/images/back.gif" alt="Previous"/></a>' % (cache_url, recid, x, recid)
+#                                      ])
+#                    pagenav.extend(['</div>', '<div class="forwardlinks">'])
+#                    if (x < len(pages)-1):
+#                        pagenav.extend(['<a href="%s/%s-p%d.shtml" title="Next page" onclick="setCookie(\'%s-tocstate\', stateToString(\'someId\'))"><img src="/images/forward.gif" alt="Next"/></a>' % (cache_url, recid, x+2, recid),
+#                                        '<a href="%s/%s-p%d.shtml" title="Final page" onclick="setCookie(\'%s-tocstate\', stateToString(\'someId\'))"><img src="/images/fforward.gif" alt="Final"/></a>' % (cache_url, recid, len(pages), recid)
+#                                      ])
+#                    pagenav.extend(['</div>', '<div class="numnav">'])
+#                    for y in range(len(pages)):
+#                        if (y == x):
+#                            pagenav.append('<strong>%d</strong>' % (y+1))
+#                        else:
+#                            pagenav.append('<a href="%s/%s-p%d.shtml" title="Page %d" onclick="setCookie(\'%s-tocstate\', stateToString(\'someId\'))">%d</a>' % (cache_url, recid, y+1, y+1, recid, y+1))
+#                    pagenav.extend(['</div> <!--end numnav div -->', '</div> <!-- end pagenav div -->'])
+#                else:
+#                    pagenav = []
+#                
+#                #doc = nonAsciiRe.sub(asciiFriendly, doc)
+#                pagex = tmpl.replace('%CONTENT%', toc_scripts + doc)
+#                pagex = pagex.replace('%PAGENAV%', '\n'.join(pagenav))
+#
+#                #resolve internal ref links
+#                for k, v in anchorPageHash.iteritems():
+#                    pagex = pagex.replace('PAGE#%s"' % k, '%s/RECID-p%d.shtml#%s"' % (cache_url, v, k))
+#
+#                # any remaining links were not anchored - encoders fault :( - hope they're on page 1
+#                pagex = pagex.replace('PAGE#', '%s/RECID-p1.shtml#' % (cache_url))
+#                
+#                for k, v in paramDict.iteritems():
+#                    pagex = pagex.replace(k, v)
+#                    
+#                write_file(os.path.join(cache_path, recid + '-p%d.shtml' % (x+1)), pagex)
+#                if (x == 0):
+#                    page = pagex
+#
+#            self.logger.log('Multi-page navigation generated')
+# 
+#        del rec
+#        if tocfile:
+#            try:
+#                for k, v in anchorPageHash.iteritems():
+#                    tocfile = tocfile.replace('PAGE#%s"' % k, '%s/%s-p%d.shtml#%s"' % (cache_url, recid, v, k))
+#            except UnboundLocalError:
+#                pass
+#            
+#            # any remaining links were not anchored - encoders fault :( - hope they're on page 1
+#            tocfile = multiReplace(tocfile, {'SCRIPT': script, 'PAGE#': '%s/%s-p1.shtml#' % (cache_url, recid)})
+#            write_file(os.path.join(toc_cache_path, recid +'.inc'), tocfile)
+#            os.chmod(os.path.join(toc_cache_path, recid + '.inc'), 0755)
+# 
+#        return page
+    
     
     def display_toc(self, form):
         global toc_cache_path, printable_toc_scripts
@@ -1220,7 +1168,7 @@ class EadSearchHandler:
                 else:
                     parentTitle = parentRec.process_xpath('dc:title/text()', namespaceUriHash)[0]
 
-                parentTitle = nonAsciiRe.sub(_asciiFriendly, parentTitle)
+                parentTitle = nonAsciiRe.sub(asciiFriendly, parentTitle)
                 try:
                     parentTitle = parentTitle.encode('utf-8');
                 except:
@@ -1464,83 +1412,112 @@ In: %s
     #- end class EadSearchHandler --------------------------------------------------
 
 #- Some stuff to do on initialisation
-rebuild = True
-serv = None
 session = None
+serv = None
 db = None
+dbPath = None
+# ingest
+baseDocFac = None
+sourceDir = None
+docParser = None
+# stores
+authStore = None
 recordStore = None
 dcStore = None
 compStore = None
+resultSetStore = None
+# clusters
 clusDb = None
 clusStore = None
-textStore = None
-resultSetStore = None
+# transformers
 summaryTxr = None
 fullTxr = None
 fullSplitTxr = None
 textTxr = None
+# workflows
+ppFlow = None
+buildFlow = None
+buildSingleFlow = None
+indexRecordFlow = None
+assignDataIdFlow = None
 normIdFlow = None
+clusFlow = None
+compFlow = None
+compRecordFlow = None
+# other
 exactExtracter = None
 diacriticNormaliser = None
 
-# regexs
-#punctuationRe = re.compile('([@+=;!?:*"{}()\[\]\~/\\|\#\&\^]|[-.,\'][^\w]|[^\w][-.,\'])')
-# modified slightly from re used to extract keywords
-# spaces need to be maintained (not consumed) to maintain accuracy of offsets
-#punctuationRe = re.compile('([~`@+=;!?:*"{}()\[\]\~/\\|\#\&\^]|[-.,]([^\w]|$)|[^\w][-.\',])')
-#punctuationRe = re.compile('([@+=;!?:*"{}()\[\]\~/\\|\#\&\^]|[-.,\'](?=\s)|(?<=\s)[-.,\'])')
-#punctuationRe = re.compile('([@+=;!?:*"{}()\[\]\~/\\|\#\&\^](?!\.)|[-.,\'](?=\s)|(?<=\s)[-.,\'])')
-punctuationRe = re.compile('([@+=;!?:*"{}()\[\]\~/\\|\#\&\^]|[-.,\'](?=\s+)|(?<=\s)[-.,\'])')   # this busts when there are accented chars
-wordRe = re.compile('\s*\S+')
-#emailRe = re.compile('^[^@ ]+(\.[^@ ])*@[^@ ]+\.[^@ ]+(\.[^@ ])*$')                    # e.g. foo@bar.com
-emailRe = re.compile('^[a-zA-Z][^@ .]*(\.[^@ .]+)*@[^@ .]+\.[^@ .]+(\.[^@ .]+)*$')    # e.g. foo@bar.com
-anchorRe = re.compile('<a .*?name="(.*?)".*?>')
-overescapedAmpRe = re.compile('&amp;([^\s]*?);')
-def _unescapeCharent(mo): return '&%s;' % mo.group(1)
-nonAsciiRe = re.compile('([\x7b-\xff])')
-def _asciiFriendly(mo): return "&#%s;" % ord(mo.group(1))
+rebuild = True
 
-logfilepath = searchlogfilepath
-
-# data argument provided for when request does clean-up - always None
 def build_architecture(data=None):
-    global session, serv, db, clusDb, recordStore, dcRecordStore, compStore, textStore, resultSetStore, summaryTxr, fullTxr, fullSplitTxr, textTxr, rebuild, normIdFlow, exactExtracter, diacriticNormaliser
-    # Discover objects...
+    # data argument provided for when function run as clean-up - always None
+    global session, serv, db, dbPath, baseDocFac, sourceDir, docParser, \
+    authStore, recordStore, dcRecordStore, compStore, resultSetStore, \
+    clusDb, clusStore, clusFlow, \
+    summaryTxr, fullTxr, fullSplitTxr, textTxr, \
+    ppFlow, buildFlow, buildSingleFlow, indexRecordFlow, assignDataIdFlow, normIdFlow, compFlow, compRecordFlow, \
+    exactExtracter, diacriticNormaliser, \
+    rebuild
+    
+    # globals line 1: re-establish session; maintain user if possible
+    if (session): u = session.user
+    else: u = None
     session = Session()
     session.database = 'db_ead'
     session.environment = 'apache'
-    session.user = None
-    serv = SimpleServer(session, '/home/cheshire/cheshire3/cheshire3/configs/serverConfig.xml')
+    session.user = u
+    serv = SimpleServer(session, os.path.join(cheshirePath, 'cheshire3', 'configs', 'serverConfig.xml'))
     db = serv.get_object(session, 'db_ead')
-    clusDb = serv.get_object(session, 'db_ead_cluster')
+    dbPath = db.get_path(session, 'defaultPath')
+    baseDocFac = db.get_object(session, 'baseDocumentFactory')
+    sourceDir = baseDocFac.get_default(session, 'data')
+    docParser = db.get_object(session, 'LxmlParser')
+    # globals line 2: stores
+    authStore = db.get_object(session, 'eadAuthStore')
     recordStore = db.get_object(session, 'recordStore')
     dcRecordStore = db.get_object(session, 'eadDcStore')
     compStore = db.get_object(session, 'componentStore')
-    #textStore = db.get_object(session, 'textDocStore')
-    resultSetStore = db.get_object(session, 'eadResultSetStore')
-    resultSetStore.clean(session)
-    # transformers
+    resultSetStore = db.get_object(session, 'eadResultSetStore'); resultSetStore.clean(session) # clean expires resultSets 
+    # globals line 3: subject clusters
+    session.database = 'db_ead_cluster'
+    clusDb = serv.get_object(session, 'db_ead_cluster')
+    clusStore = clusDb.get_object(session, 'eadClusterStore')
+    clusFlow = clusDb.get_object(session, 'buildClusterWorkflow'); clusFlow.load_cache(session, clusDb) 
+    session.database = 'db_ead'
+    # globals line 4: transformers
     summaryTxr = db.get_object(session, 'htmlSummaryTxr')
     fullTxr = db.get_object(session, 'htmlFullTxr')
     fullSplitTxr = db.get_object(session, 'htmlFullSplitTxr')
     textTxr = db.get_object(session, 'textTxr')
-    if not (normIdFlow): normIdFlow = db.get_object(session, 'normalizeDataIdentifierWorkflow')
-    if not (exactExtracter): exactExtracter = db.get_object(session, 'ExactExtracter')
-    if not (diacriticNormaliser): diacriticNormaliser = db.get_object(session, 'DiacriticNormaliser')
+    # globals line 5: workflows
+    ppFlow = db.get_object(session, 'preParserWorkflow'); ppFlow.load_cache(session, db)
+    buildFlow = db.get_object(session, 'buildIndexWorkflow'); buildFlow.load_cache(session, db)
+    buildSingleFlow = db.get_object(session, 'buildIndexSingleWorkflow'); buildSingleFlow.load_cache(session, db)
+    indexRecordFlow = db.get_object(session, 'indexRecordWorkflow'); indexRecordFlow.load_cache(session, db)
+    assignDataIdFlow = db.get_object(session, 'assignDataIdentifierWorkflow'); assignDataIdFlow.load_cache(session, db)
+    normIdFlow = db.get_object(session, 'normalizeDataIdentifierWorkflow'); normIdFlow.load_cache(session, db)
+    compFlow = db.get_object(session, 'buildAllComponentWorkflow'); compFlow.load_cache(session, db)
+    compRecordFlow = db.get_object(session, 'buildComponentWorkflow'); compRecordFlow.load_cache(session, db)
+    # globals line 6: other
+    exactExtracter = db.get_object(session, 'ExactExtracter')
+    diacriticNormaliser = db.get_object(session, 'DiacriticNormaliser')
     rebuild = False
 
+logfilepath = searchlogfilepath
 
 def handler(req):
-    global rebuild, logfilepath, resultSetStore, db, cheshirePath
     req.register_cleanup(build_architecture)
     try:
-        try:
-            fp = recordStore.get_path(session, 'databasePath')    # attempt to find filepath for recordStore
-            assert (rebuild)
-            assert (os.path.exists(fp) and time.time() - os.stat(fp).st_mtime > 60*60)
-        except:
-            # architecture not built
+        if rebuild:
             build_architecture()
+        else:
+            try:
+                fp = recordStore.get_path(session, 'databasePath')    # attempt to find filepath for recordStore
+                assert (os.path.exists(fp) and time.time() - os.stat(fp).st_mtime > 60*60)
+            except:
+                # architecture not built
+                build_architecture()
 
         remote_host = req.get_remote_host(apache.REMOTE_NOLOOKUP)                   # get the remote host's IP for logging
         os.chdir(os.path.join(cheshirePath, 'cheshire3','www','ead','html'))        # cd to where html fragments are
