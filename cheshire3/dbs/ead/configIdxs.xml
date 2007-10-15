@@ -32,7 +32,7 @@
 		
 		<!-- Custom normalisers -->
 		<subConfig type="normaliser" id="GeocodeNormaliser">
-			<objectType>geo.GoogleMapsGeocodeNormaliser</objectType>
+			<objectType>geo.geoNormaliser.GoogleMapsGeocodeNormaliser</objectType>
 			<options>
 				<setting type="apiKey">ABQIAAAAMTCXfqkeqpTdxlIMWOHmExR-Q2WEe91j7vBt361ikSR1RCErExTKXAu5Uc_wg9YcGofYU8bOHMlcWQ</setting>
 			</options>
