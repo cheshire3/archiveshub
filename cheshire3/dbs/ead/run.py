@@ -23,7 +23,7 @@ sys.path.extend(osp)
 from baseObjects import Session
 from server import SimpleServer
 from document import StringDocument
-from PyZ3950 import CQLParser
+#from PyZ3950 import CQLParser
 import c3errors
 
 from www_utils import *
@@ -40,12 +40,9 @@ clusDb = serv.get_object(session, 'db_ead_cluster')
 recordStore = db.get_object(session, 'recordStore')
 compStore = db.get_object(session, 'componentStore')
 clusRecordStore = clusDb.get_object(session, 'eadClusterStore')
-
-#compDocFac = db.get_object(session, 'componentDocumentFactory')
-
-sax = db.get_object(session, 'SaxParser')
-lxmlp = db.get_object(session, 'LxmlParser')
 authStore = db.get_object(session, 'eadAuthStore')
+
+xmlp = db.get_object(session, 'SaxParser')
 
 
 def inputError(msg):
@@ -69,7 +66,7 @@ if ('-adduser' in sys.argv):
         else:
             xml = xml.replace(k, '')
     doc = StringDocument(xml)
-    rec = sax.process_document(session, doc)
+    rec = xmlp.process_document(session, doc)
     id = rec.process_xpath('/config/@id')[0]
     rec.id = id
     authStore.store_record(session, rec)
