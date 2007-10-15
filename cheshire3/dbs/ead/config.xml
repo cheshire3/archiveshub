@@ -143,21 +143,6 @@
 	      </options>
 	    </subConfig>
 	    
-	    <subConfig type="recordStore" id="editingStore">
-	      <objectType>recordStore.BdbRecordStore</objectType>
-	      <paths>
-	      	<path type="defaultPath">stores</path>
-	        <path type="databasePath">editingStore.bdb</path>
-	        <path type="metadataPath">editingStoreMetadata.bdb</path>
-	        <object type="idNormaliser" ref="StringIntNormaliser"/>
-	        <object type="outParser" ref="LxmlParser"/>
-	        <object type="inTransformer" ref="XmlTransformer"/>
-	      </paths>
-	     <!--  <options>
-	        <setting type="digest">sha</setting>
-	      </options> -->
-	    </subConfig>
-	
 	    <!-- pre-parsers -->  
 	    <subConfig type="preParser" id="emptyEmphTagStripPreParser">
 	    	<objectType>preParser.RegexpSmashPreParser</objectType>
@@ -322,13 +307,6 @@
 			</transform>
 		</subConfig>
 		
-		<subConfig type="transformer" id="formCreationTxr">
-	      <objectType>transformer.LxmlXsltTransformer</objectType>
-	      <paths>
-	         <path type="xsltPath">xsl/form.xsl</path>
-	      </paths>
-	    </subConfig>
-		
 		<!-- subConfig type="documentStore" id="textDocStore">
 		  <objectType>documentStore.BdbDocumentStore</objectType>
 		  <paths>
@@ -382,14 +360,14 @@
 		
 		<!-- workflows - override default workflows -->
 		<path type="includeConfigs">workflow.xml</path>
-		
+
 		<subConfig type="authStore" id="eadAuthStore">
 		  <objectType>objectStore.BdbObjectStore</objectType>
 		  <paths>
 		    <path type="databasePath">eadAuthStore.bdb</path>
 		  </paths>
 		</subConfig>
-
+		
 	</subConfigs>
 
 </config>
