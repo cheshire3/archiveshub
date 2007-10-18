@@ -1,0 +1,111 @@
+<explain id="DIST-V3-ead/cluster" authoritative="true"
+  xmlns="http://explain.z3950.org/dtd/2.0/"
+  xmlns:c3="http://www.cheshire3.org/schemas/explain/">
+  
+ 	<serverInfo protocol="z3950" version="3">
+		<host>localhost</host>
+		<port>2100</port>
+		<database>ead/cluster</database>
+	</serverInfo>
+	
+  <databaseInfo>
+     <title lang="en" primary="true">EAD Finding Aid Subject Cluster Database</title>
+    <description lang="en" primary="true">
+	A database containing subject cluster records derived from Encoded Archival Data (EAD) records
+    </description>
+  </databaseInfo>
+  
+  <metaInfo>
+  	<dateModified>2006-04-10 16:00:00</dateModified>
+  </metaInfo>
+  
+  <indexInfo>
+		<set name="BIB1" identifier="1.2.840.10003.3.1"/>
+		<set name="EXP1" identifier="1.2.840.10003.3.1"/>
+		<set name="UTIL" identifier="1.2.840.10003.3.11"/>
+		<set name="XD1" identifier="1.2.840.10003.3.12"/>
+		<set name="BIB2" identifier="1.2.840.10003.3.18"/>
+		<set name="ZRX1" identifier="1.2.840.10003.3.19"/>
+     
+		<index c3:index="ead-cluster-idx-all">
+      <title>Full-text Proximity Keywords</title>
+      <map><name>any</name></map>
+      <map><name>anywhere</name></map>
+      <map><name>anyword</name></map>
+      <map><attr type="1">1016</attr></map>
+      <map><attr type="1">1035</attr></map>
+      <configInfo>
+				<default type="attribute">
+					<map>
+      			<attr type="3">3</attr>
+      			<attr type="4">2</attr>
+      			<attr type="5">100</attr>
+      			<attr type="6">1</attr>
+					</map>
+				</default>
+      </configInfo>
+    </index>
+
+    <index c3:index="ead-cluster-idx-key">
+      <title>Key</title>
+      <map><name>key</name></map>
+      <map><attr type="1">12</attr></map>
+      <configInfo>
+      	<default>
+      		<map>
+      			<attr type="3">3</attr>
+      			<attr type="4">2</attr>
+      			<attr type="5">100</attr>
+      			<attr type="6">1</attr>
+      		</map>
+      	</default>
+      </configInfo>
+    </index>
+
+    <index c3:index="ead-cluster-idx-title">
+      <title>Title</title>
+     	<map><name>title</name></map>
+    	<map><attr type="1">4</attr></map>
+      <configInfo>
+				<default type="attribute">
+					<map>
+      			<attr type="3">3</attr>
+      			<attr type="4">2</attr>
+      			<attr type="5">100</attr>
+      			<attr type="6">1</attr>
+					</map>
+				</default>
+      </configInfo>
+    </index>
+
+    <index c3:index="ead-cluster-idx-description">
+      <title>Description Proximity Keywords</title>
+      <map><name>descriptionword</name></map>
+      <map><attr type="1">1100</attr></map>
+      <map><attr type="1">1014</attr></map>
+      <configInfo>
+				<default>
+      		<map>
+      			<attr type="3">3</attr>
+		      	<attr type="4">2</attr>
+    		  	<attr type="5">100</attr>
+      			<attr type="6">1</attr>		
+      		</map>
+      	</default>     
+      </configInfo>
+    </index>
+  </indexInfo>
+  
+  <recordInfo>
+    <!-- GRS1 -->
+    <recordSyntax identifier="1.2.840.10003.5.105">
+      <elementSet name="F" c3:transformer="GRS1Transformer"/>
+    </recordSyntax>
+    <recordSyntax identifier="1.2.840.10003.5.105">
+      <elementSet name="TPGRS" c3:transformer="tpgrsTxr"/>
+    </recordSyntax>
+  </recordInfo>
+  
+</explain>
+
+

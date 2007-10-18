@@ -1,0 +1,109 @@
+<explain id="localhost/services/ead/cluster" authoritative="true"
+  xmlns="http://explain.z3950.org/dtd/2.0/"
+  xmlns:c3="http://www.cheshire3.org/schemas/explain/">
+
+  <serverInfo protocol="srw/u" version="1.1" transport="http">
+    <host>localhost</host>
+    <port>80</port>
+    <database numRecs="1" lastUpdate="2005-03-10 15:00:00">services/ead/cluster</database>
+  </serverInfo>
+
+  <databaseInfo>
+     <title lang="en" primary="true">EAD Finding Aid Subject Cluster Database</title>
+    <description lang="en" primary="true">
+	A database containing subject cluster records derived from Encoded Archival Data (EAD) records
+    </description>
+  </databaseInfo>
+
+  <metaInfo>
+    <dateModified>2005-04-26 10:45:00</dateModified>
+  </metaInfo>
+
+  <indexInfo>
+    <set identifier="info:srw/cql-context-set/1/dc-v1.1" name="dc"/>
+    <set identifier="info:srw/cql-context-set/1/cql-v1.1" name="cql"/>
+
+    <index c3:index="ead-cluster-idx-all">
+      <title>Full-text Proximity Keywords</title>
+      <map>
+        <name set="cql">anywhere</name>
+      </map>
+      <configInfo>
+        <supports type="relation" c3:index="ead-cluster-idx-all">any</supports>
+        <supports type="relation" c3:index="ead-cluster-idx-all">all</supports>
+        <supports type="relationModifier" c3:index="ead-cluster-idx-all">stem</supports>
+      </configInfo>
+    </index>
+
+    <index c3:index="ead-cluster-idx-key">
+      <title>Key</title>
+      <map>
+        <name set="dc">key</name>
+      </map>
+      <configInfo>
+        <supports type="relation" c3:index="ead-cluster-idx-key">any</supports>
+        <supports type="relation" c3:index="ead-cluster-idx-key">all</supports>
+        <supports type="relationModifier" c3:index="ead-cluster-idx-key">stem</supports>
+      </configInfo>
+    </index>
+
+    <index c3:index="ead-cluster-idx-title">
+      <title>Title</title>
+      <map>
+        <name set="dc">title</name>
+      </map>
+      <configInfo>
+        <supports type="relation" c3:index="ead-cluster-idx-title">any</supports>
+        <supports type="relation" c3:index="ead-cluster-idx-title">all</supports>
+        <supports type="relationModifier" c3:index="ead-cluster-idx-title">stem</supports>
+      </configInfo>
+    </index>
+
+    <index c3:index="ead-cluster-idx-description">
+      <title>Description Proximity Keywords</title>
+      <map>
+        <name set="dc">description</name>
+      </map>
+      <configInfo>
+        <supports type="relation" c3:index="ead-cluster-idx-description">any</supports>
+        <supports type="relation" c3:index="ead-cluster-idx-description">all</supports>
+        <supports type="relationModifier" c3:index="ead-cluster-idx-description">stem</supports>
+      </configInfo>
+    </index>
+
+  </indexInfo>
+
+  <schemaInfo>
+    <schema identifier="http://libserv12.princeton.edu/ead/dtd/2002/"
+	    location="http://libserv12.princeton.edu/ead/dtd/2002/ead.xsd"
+	    sort="true" retrieve="true" name="ead">
+      <title>EAD Schema</title>
+    </schema>
+    <schema identifier="http://srw.o-r-g.org/schemas/ccg/1.0/" 
+	    location="http://srw.o-r-g.org/schemas/ccg/1.0/ccg.xsd" 
+	    sort="false" retrieve="true" name="ccg">
+      <title>Card Schema</title>
+    </schema>
+  </schemaInfo>
+
+  <configInfo>
+    <default type="numberOfRecords">1</default>
+    <default type="contextSet">dc</default>
+    <default type="index">dc.title</default>
+    <default type="relation">all</default>
+    <default type="sortSchema">ead</default>
+    <default type="retrieveSchema">ead</default>
+    <default type="sortCaseSensitive">false</default>
+    <default type="sortAscending">true</default>
+    <default type="sortMissingValue">HighValue</default>
+    <setting type="maximumRecords">50</setting>
+    <supports type="proximity"/>
+    <supports type="resultSets"/>
+    <supports type="sort"/>
+    <supports type="relationModifier">relevant</supports>
+    <supports type="relationModifier">stem</supports>
+  </configInfo>
+
+</explain>
+
+
