@@ -142,6 +142,19 @@
 	        <setting type="digest">sha</setting>
 	      </options>
 	    </subConfig>
+	    
+	    <subConfig type="recordStore" id="editingStore">
+	      <objectType>recordStore.BdbRecordStore</objectType>
+	      <paths>
+			<path type="defaultPath">stores</path>
+	        <path type="databasePath">editingStore.bdb</path>
+	        <path type="metadataPath">editingStoreMetadata.bdb</path>
+	        <object type="inTransformer" ref="XmlTransformer" />
+	        <object type="outParser" ref="LxmlParser" />
+	      </paths>
+	      <options>
+	      </options>
+	    </subConfig>
 
 		<subConfig type="authStore" id="eadAuthStore">
 		  <objectType>objectStore.BdbObjectStore</objectType>
@@ -239,6 +252,13 @@
 	      <objectType>transformer.LxmlXsltTransformer</objectType>
 	      <paths>
 	         <path type="xsltPath">xsl/text.xsl</path>
+	      </paths>
+	    </subConfig>
+	    
+	    <subConfig type="transformer" id="formCreationTxr">
+	      <objectType>transformer.LxmlXsltTransformer</objectType>
+	      <paths>
+	         <path type="xsltPath">xsl/form.xsl</path>
 	      </paths>
 	    </subConfig>
 	
