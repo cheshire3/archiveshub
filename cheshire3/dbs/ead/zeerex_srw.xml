@@ -1,0 +1,371 @@
+<explain id="138.253.81.174/services/ead" authoritative="true"
+  xmlns="http://explain.z3950.org/dtd/2.0/"
+  xmlns:c3="http://www.cheshire3.org/schemas/explain/">
+
+<!-- 
+	This file was produced, and released as part of Cheshire for Archives v3.x.
+	Copyright &copy; 2005-2007 the University of Liverpool
+ -->
+
+	<serverInfo protocol="srw/u" version="1.1" transport="http">
+	  <host>138.253.81.174</host>
+	  <port>80</port>
+	  <database>services/ead</database>
+	</serverInfo>
+
+	<databaseInfo>
+	  <title lang="en" primary="true">EAD Finding Aid Database</title>
+	  <description lang="en" primary="true">
+		A database containing Encoded Archival Data (EAD) records        
+	  </description>
+	</databaseInfo>
+
+	<metaInfo>
+		<dateModified>2007-06-28 15:00:00</dateModified>
+	</metaInfo>
+
+	<indexInfo>
+	
+	  <set identifier="info:srw/cql-context-set/1/dc-v1.1" name="dc"/>
+	  <set identifier="info:srw/cql-context-set/1/cql-v1.1" name="cql"/>
+	  <set identifier="http://zing.z3950.org/cql/bath/2.0/" name="bath"/>
+	  <set identifier="info:srw/cql-context-set/1/ead-v2002" name="ead"/>
+	  <set identifier="info:srw/cql-context-set/2/relevance-1.0" name="rel"/>
+	  <set identifier="info:srw/cql-context-set/2/rec-1.1" name="rec"/>
+	
+	  <index c3:index="ead-idx-istoplevel">
+	    <title>Is a top level EAD record</title>
+	    <map>
+	      <name set="ead">istoplevel</name>
+	    </map>
+	    <configInfo>
+	      <supports type="relation" c3:index="ead-idx-istoplevel">=</supports>
+	    </configInfo>
+	  </index>
+	  
+	  <index c3:index="ead-idx-parentid">
+	    <title>ID of parent document (including recordStore)</title>
+	    <map>
+	      <name set="ead">parentid</name>
+	    </map>
+	    <configInfo>
+	      <supports type="relation" c3:index="ead-idx-parentid">exact</supports>
+	      <supports type="relation" c3:index="ead-idx-parentid">=</supports>
+	    </configInfo>
+	  </index>
+	
+	  <index c3:index="ead-idx-unitid">
+	    <title>Unit Identifier / Reference Number</title>
+	    <map>
+	      <name set="dc">identifier</name>
+	    </map>
+	    <configInfo>
+	      <supports type="relation" c3:index="ead-idx-unitid">exact</supports>
+	      <supports type="relation" c3:index="ead-idx-unitid">=</supports>
+	      <supports type="relation" c3:index="ead-idx-unitid">within</supports>
+	      <supports type="relation" c3:index="ead-idx-unitidword">all</supports>
+	      <supports type="relation" c3:index="ead-idx-unitidword">any</supports>
+	      <supports type="relationModifier" c3:index="ead-idx-unitid">string</supports>
+	      <supports type="relationModifier" c3:index="ead-idx-unitidword">word</supports>
+	      <supports type="relationModifier" c3:index="ead-idx-unitidword">stem</supports>
+	    </configInfo>
+	  </index>
+	
+	  <index c3:index="ead-idx-title">
+	    <title>Title</title>
+	    <map>
+	      <name set="dc">title</name>
+	    </map>
+	    <configInfo>
+	      <supports type="relation" c3:index="ead-idx-title">exact</supports>
+	      <supports type="relation" c3:index="ead-idx-title">within</supports>
+	      <supports type="relation" c3:index="ead-idx-titleword">all</supports>
+	      <supports type="relation" c3:index="ead-idx-titleword">any</supports>
+	      <supports type="relation" c3:index="ead-idx-titleword">=</supports>
+	      <supports type="relationModifier" c3:index="ead-idx-title">string</supports>
+	      <supports type="relationModifier" c3:index="ead-idx-titleword">word</supports>
+	      <supports type="relationModifier" c3:index="ead-idx-titleword">stem</supports>
+	    </configInfo>
+	  </index>
+	
+	  <index c3:index="ead-idx-creator">
+	    <title>Creator</title>
+	    <map>
+	      <name set="dc">creator</name>
+	    </map>
+	    <configInfo>
+	      <supports type="relation" c3:index="ead-idx-creator">=</supports>
+	      <supports type="relation" c3:index="ead-idx-creator">exact</supports>
+	      <supports type="relation" c3:index="ead-idx-creator">within</supports>
+	      <supports type="relation" c3:index="ead-idx-creatorword">all</supports>
+	      <supports type="relation" c3:index="ead-idx-creatorword">any</supports>
+	      <supports type="relationModifier" c3:index="ead-idx-creator">string</supports>
+	    </configInfo>
+	  </index>
+	
+	  <index c3:index="ead-idx-description">
+	    <title>Description Proximity Keywords</title>
+	    <map>
+	      <name set="dc">description</name>
+	    </map>
+	    <configInfo>
+	      <supports type="relation" c3:index="ead-idx-description">any</supports>
+	      <supports type="relation" c3:index="ead-idx-description">all</supports>
+	      <supports type="relation" c3:index="ead-idx-description">=</supports>
+	      <supports type="relationModifier" c3:index="ead-idx-description">word</supports>
+	      <supports type="relationModifier" c3:index="ead-idx-description">stem</supports>
+	    </configInfo>
+	  </index>
+	
+	  <index c3:index="ead-idx-all">
+	    <title>Full-text Proximity Keywords</title>
+	    <map>
+	      <name set="cql">anywhere</name>
+	    </map>
+	    <configInfo>
+	      <supports type="relation" c3:index="ead-idx-all">any</supports>
+	      <supports type="relation" c3:index="ead-idx-all">all</supports>
+	      <supports type="relation" c3:index="ead-idx-all">=</supports>
+	      <supports type="relationModifier" c3:index="ead-idx-all">word</supports>
+	      <supports type="relationModifier" c3:index="ead-idx-all">stem</supports>
+	    </configInfo>
+	  </index>
+	
+	  <index c3:index="ead-idx-subject">
+	    <title>Subject</title>
+	    <map>
+	      <name set="dc">subject</name>
+	    </map>
+	    <configInfo>
+	      <supports type="relation" c3:index="ead-idx-subject">exact</supports>
+	      <supports type="relation" c3:index="ead-idx-subject">=</supports>
+	      <supports type="relation" c3:index="ead-idx-subject">within</supports>
+	      <supports type="relation" c3:index="ead-idx-subjectword">all</supports>
+	      <supports type="relation" c3:index="ead-idx-subjectword">any</supports>
+	      <supports type="relationModifier" c3:index="ead-idx-subject">string</supports>
+	      <supports type="relationModifier" c3:index="ead-idx-subjectword">word</supports>
+	      <supports type="relationModifier" c3:index="ead-idx-subjectword">stem</supports>
+	    </configInfo>
+	  </index>
+	
+	  <index c3:index="ead-idx-name">
+	    <title>Name</title>
+	    <map>
+	      <name set="bath">name</name>
+	    </map>
+	    <configInfo>
+	      <supports type="relation" c3:index="ead-idx-name">exact</supports>
+	      <supports type="relation" c3:index="ead-idx-name">=</supports>
+	      <supports type="relation" c3:index="ead-idx-name">within</supports>
+	      <supports type="relation" c3:index="ead-idx-nameword">all</supports>
+	      <supports type="relation" c3:index="ead-idx-nameword">any</supports>
+	      <supports type="relationModifier" c3:index="ead-idx-name">string</supports>
+	      <supports type="relationModifier" c3:index="ead-idx-nameword">word</supports>
+	    </configInfo>
+	  </index>
+	
+	  <index c3:index="ead-idx-persname">
+	    <title>Personal Name</title>
+	    <map>
+	      <name set="bath">personalName</name>
+	    </map>
+	    <configInfo>
+	      <supports type="relation" c3:index="ead-idx-persname">exact</supports>
+	      <supports type="relation" c3:index="ead-idx-persname">=</supports>
+	      <supports type="relation" c3:index="ead-idx-persname">within</supports>
+	      <supports type="relation" c3:index="ead-idx-persnameword">all</supports>
+	      <supports type="relation" c3:index="ead-idx-persnameword">any</supports>
+	      <supports type="relationModifier" c3:index="ead-idx-persname">string</supports>
+	      <supports type="relationModifier" c3:index="ead-idx-persnameword">word</supports>
+	      <!--<supports type="relationModifier" c3:index="ead-idx-persnameword">=</supports>
+	    --></configInfo>
+	  </index>
+	  
+	  <index c3:index="ead-idx-persnameepithet">
+	    <title>Personal Name</title>
+	    <map>
+	      <name set="ead">persnameEpithet</name>
+	    </map>
+	    <configInfo>
+	      <supports type="relation" c3:index="ead-idx-persnameepithet">exact</supports>
+	      <supports type="relation" c3:index="ead-idx-persnameepithet">=</supports>
+	      <supports type="relation" c3:index="ead-idx-persnameepithetword">any</supports>
+	      <supports type="relation" c3:index="ead-idx-persnameepithet">within</supports>
+	      <supports type="relation" c3:index="ead-idx-persnameepithetword">all</supports>
+	      <supports type="relationModifier" c3:index="ead-idx-persnameepithet">string</supports>
+	      <supports type="relationModifier" c3:index="ead-idx-persnameepithetword">word</supports>
+	    </configInfo>
+	  </index>
+	  
+	  
+	  <index c3:index="ead-idx-famname">
+	    <title>Family Name</title>
+	    <map>
+	      <name set="ead">familyName</name>
+	    </map>
+	    <configInfo>
+	      <supports type="relation" c3:index="ead-idx-famname">exact</supports>
+	      <supports type="relation" c3:index="ead-idx-famname">=</supports>
+	      <supports type="relation" c3:index="ead-idx-famname">within</supports>
+	      <supports type="relationModifier" c3:index="ead-idx-famname">string</supports>
+	    </configInfo>
+	  </index>
+	
+	  <index c3:index="ead-idx-corpname">
+	    <title>Corporate Name</title>
+	    <map>
+	      <name set="bath">corporateName</name>
+	    </map>
+	    <configInfo>
+	      <supports type="relation" c3:index="ead-idx-corpname">exact</supports>
+	      <supports type="relation" c3:index="ead-idx-corpname">=</supports>
+	      <supports type="relation" c3:index="ead-idx-corpname">within</supports>
+	      <supports type="relation" c3:index="ead-idx-corpnameword">all</supports>
+	      <supports type="relation" c3:index="ead-idx-corpnameword">any</supports>
+	      <supports type="relationModifier" c3:index="ead-idx-corpname">string</supports>
+	      <supports type="relationModifier" c3:index="ead-idx-corpnameword">word</supports>
+	    </configInfo>
+	  </index>
+	
+	  <index c3:index="ead-idx-geogname">
+	    <title>Geographical Name</title>
+	    <map>
+	      <name set="bath">geographicName</name>
+	    </map>
+	    <configInfo>
+	      <supports type="relation" c3:index="ead-idx-geogname">exact</supports>
+	      <supports type="relation" c3:index="ead-idx-geogname">=</supports>
+	      <supports type="relation" c3:index="ead-idx-geogname">within</supports>
+	      <supports type="relation" c3:index="ead-idx-geognameword">all</supports>
+	      <supports type="relation" c3:index="ead-idx-geognameword">any</supports>
+	      <supports type="relationModifier" c3:index="ead-idx-geogname">string</supports>
+	      <supports type="relationModifier" c3:index="ead-idx-geognameword">word</supports>
+	    </configInfo>
+	  </index>
+	
+	  <index c3:index="ead-idx-genreform">
+	    <title>Genreform (e.g. Photograph)</title>
+	    <map>
+	      <name set="bath">genreForm</name>
+	    </map>
+	    <configInfo>
+		  <supports type="relation" c3:index="ead-idx-genreform">exact</supports>
+	      <supports type="relation" c3:index="ead-idx-genreform">=</supports>
+	      <supports type="relation" c3:index="ead-idx-genreform">within</supports>
+	      <supports type="relation" c3:index="ead-idx-genreformword">all</supports>
+	      <supports type="relation" c3:index="ead-idx-genreformword">any</supports>
+	      <supports type="relationModifier" c3:index="ead-idx-genreform">string</supports>
+	      <supports type="relationModifier" c3:index="ead-idx-genreformword">word</supports>
+	    </configInfo>
+	  </index>
+	  
+	  <index c3:index="ead-idx-date">
+	    <title>Date Index</title>
+	    <map>
+	      <name set="dc">date</name>
+	    </map>
+	    <configInfo>
+	      <supports type="relation" c3:index="ead-idx-dateRange">=</supports>
+	      <supports type="relation" c3:index="ead-idx-date">&lt;</supports>
+	      <supports type="relation" c3:index="ead-idx-date">&lt;=</supports>
+	      <supports type="relation" c3:index="ead-idx-date">&gt;</supports>
+	      <supports type="relation" c3:index="ead-idx-date">&gt;=</supports>
+	      <supports type="relation" c3:index="ead-idx-date">any</supports>
+	      <supports type="relation" c3:index="ead-idx-date">all</supports>
+	      <supports type="relation" c3:index="ead-idx-date">exact</supports>
+	      <supports type="relation" c3:index="ead-idx-dateRange">within</supports>
+	      <supports type="relation" c3:index="ead-idx-dateRange">encloses</supports>
+	    </configInfo>
+	  </index>
+	  
+		<index c3:index="ead-idx-creationDate">
+			<title>Creation Date</title>
+			<map>
+				<name set="rec">creationDate</name>
+			</map>
+			<configInfo>
+				<supports type="relation">=</supports>
+				<supports type="relation">&lt;</supports>
+				<supports type="relation">&lt;=</supports>
+				<supports type="relation">&gt;</supports>
+				<supports type="relation">&gt;=</supports>
+			</configInfo>
+		</index>
+		
+		<index c3:index="ead-idx-modificationDate">
+			<title>Last Modification Date</title>
+			<map>
+				<name set="rec">lastModificationDate</name>
+			</map>
+			<configInfo>
+				<supports type="relation">=</supports>
+				<supports type="relation">&lt;</supports>
+				<supports type="relation">&lt;=</supports>
+				<supports type="relation">&gt;</supports>
+				<supports type="relation">&gt;=</supports>
+			</configInfo>
+		</index>
+		
+		<index c3:index="ead-idx-recid">
+			<title>Record Identifier</title>
+			<map>
+				<name set="rec">identifier</name>
+			</map>
+			<configInfo>
+				<supports type="relation">=</supports>
+				<supports type="relation">&lt;</supports>
+				<supports type="relation">&lt;=</supports>
+				<supports type="relation">&gt;</supports>
+				<supports type="relation">&gt;=</supports>
+				<supports type="relation">any</supports>
+				<supports type="relation">all</supports>
+				<supports type="relation">exact</supports>
+				<supports type="relation">within</supports>
+			</configInfo>
+		</index>
+	
+	</indexInfo>
+
+	<schemaInfo>
+		<schema identifier="http://www.loc.gov/ead/"
+		  location="http://www.loc.gov/ead/ead.xsd"
+		  sort="true" retrieve="true" name="ead"
+		  c3:transformer="stripAudienceInternalTxr">
+			<title>Encoded Archival Description (EAD)</title>
+		</schema>
+		<schema identifier="info:srw/schema/1/dc-v1.1"
+		  location="http://www.loc.gov/zing/srw/dc.xsd"
+		  sort="false" retrieve="true" name="dc"
+		  c3:transformer="eadDublinCoreTxr">
+			<title>Dublin Core</title>
+		</schema>
+		<schema identifier="http://www.openarchives.org/OAI/2.0/oai_dc/"
+		  location="http://www.openarchives.org/OAI/2.0/oai_dc.xsd"
+		  sort="false" retrieve="true" name="oai_dc"
+		  c3:transformer="OAIDublinCoreTransformer">
+			<title>OAI Unqualified Dublin Core</title>
+		</schema>
+	</schemaInfo>
+
+	<configInfo>
+	    <default type="numberOfRecords">1</default>
+	    <default type="contextSet">dc</default>
+	    <default type="index">dc.title</default>
+	    <default type="relation">all</default>
+	    <default type="sortSchema">ead</default>
+	    <default type="retrieveSchema">ead</default>
+	    <default type="sortCaseSensitive">false</default>
+	    <default type="sortAscending">true</default>
+	    <default type="sortMissingValue">HighValue</default>
+	    <setting type="maximumRecords">50</setting>
+	    <supports type="proximity"/>
+	    <supports type="resultSets"/>
+	    <supports type="sort"/>
+	    <supports type="relationModifier">relevant</supports>
+	    <supports type="relationModifier">stem</supports>
+	    <supports type="relationModifier">word</supports>
+
+	</configInfo>
+
+</explain>
+
