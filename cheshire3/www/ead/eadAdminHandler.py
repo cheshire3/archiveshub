@@ -626,6 +626,7 @@ class EadAdminHandler(EadHandler):
         self.htmlTitle.append('Preview File')
         self.htmlNav.append('<a href="/ead/admin/files.html" title="Preview File" class="navlink">Files</a>')
         f = form.get('eadfile', None)
+        pagenum = int(form.getfirst('pagenum', 1))
         if not f or not len(f.value):
             #here make it do all the header stuff too
             return read_file('preview.html')
@@ -652,7 +653,11 @@ class EadAdminHandler(EadHandler):
                          ,'%NAVBAR%': ' | '.join(self.htmlNav)
                          , 'RECID': recid
                          })
-        page = self.display_full(rec, paramDict)
+        try:
+            page = self.display_full(rec, paramDict)[pagenum-1]
+        except IndexError:
+            return 'No page number %d' % pagenum
+        
         if not (os.path.exists('%s/%s.inc' % (toc_cache_path, recid))):
             page = page.replace('<!--#include virtual="%s/%s.inc"-->' % (toc_cache_url, recid), 'There is no Table of Contents for this file.')
         else:

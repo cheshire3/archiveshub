@@ -158,7 +158,6 @@ class EadSearchHandler(EadHandler):
 
         #- end _parentTitle() ---------------------------------------------------------
 
-
     def format_resultSet(self, rs, firstrec=1, numreq=20, highlight=1):
         global search_result_row, search_component_row, display_relevance, graphical_relevance
         hits = len(rs)
@@ -224,18 +223,6 @@ class EadSearchHandler(EadHandler):
             else:
                 # OK, must be a component record
                 row = search_component_row
-#                parentId = parentId.split('/')[-1]
-#                
-#                try:
-#                    parentTitle = parentTitles[parentId];
-#                except KeyError:
-#                    parentTitle = self._parentTitle(parentId)
-#                    parentTitles[parentId] = parentTitle
-#                
-#                if parentTitle:
-#                    parentLink = '<a href="%s?operation=full&amp;recid=%s" title="Link to Complete Collection Description" onclick="SPLASH">%s</a>' % (script, parentId , parentTitle)
-#                else:
-#                    parentLink = '(unable to locate parent document)'
                 parentId = parentId.split('/')[-1]
                 try: parentRec = parentRecs[parentId]
                 except KeyError: 
@@ -320,16 +307,28 @@ class EadSearchHandler(EadHandler):
             
         if (hits > numreq):
             if (firstrec > 1):
-                hitlinks = ['<div class="backlinks"><a href="%s?operation=search%s&amp;firstrec=%d&amp;numreq=%d&amp;highlight=%d">Previous</a></div>'
-                                % (script, rsidCgiString, max(firstrec-numreq, 1), numreq, highlight)]
+                hitlinks = ['<div class="backlinks">'
+                           ,'<a href="%s?operation=search%s&amp;pagenum=1&amp;numreq=%d&amp;highlight=%d">First</a>' % (script, rsidCgiString, numreq, highlight) 
+                           ,'<a href="%s?operation=search%s&amp;firstrec=%d&amp;numreq=%d&amp;highlight=%d">Previous</a>' % (script, rsidCgiString, max(firstrec-numreq, 1), numreq, highlight)
+                           ,'</div>']
             else:
                 hitlinks = []
 
             if (hits > firstrec+numreq-1):
-                hitlinks.append('<div class="forwardlinks"><a href="%s?operation=search%s&amp;firstrec=%d&amp;numreq=%d&amp;highlight=%d">Next</a></div>'
-                                 % (script, rsidCgiString, firstrec+numreq, numreq, highlight))
+                hitlinks.extend(['<div class="forwardlinks">'
+                                ,'<a href="%s?operation=search%s&amp;firstrec=%d&amp;numreq=%d&amp;highlight=%d">Next</a>' % (script, rsidCgiString, firstrec+numreq, numreq, highlight)
+                                ,'<a href="%s?operation=search%s&amp;pagenum=%d&amp;numreq=%d&amp;highlight=%d">Last</a>' % (script, rsidCgiString, (hits/numreq)+1, numreq, highlight)
+                                ,'</div>'])
 
             numlinks = ['<div class="numnav">']
+            # new hub style
+#                       ,'<form action="%s">' % (script)
+#                       ,'<input type="hidden" name="operation" value="search"/>'
+#                       ,'<input type="hidden" name="rsid" value="%s"/>' % (rsid)
+#                       ,'Page: <input type="text" name="pagenum" size="3" value="%d"/> of %d' % ((firstrec / numreq)+1, (hits/numreq)+1)
+#                       ,'<input type="submit" value="Go!"/>'
+#                       ,'</form>'
+#                       ]
             for x in range(1, hits+1, numreq):
                 if (x == firstrec):
                     numlinks.append('<strong>%d-%d</strong>' % (x, min(x+numreq-1, hits)))
@@ -342,6 +341,7 @@ class EadSearchHandler(EadHandler):
 
             numlinks.append('</div>')
             hitlinks.append(' | '.join(numlinks))
+            
             rows.append('<div class="hitnav">%s</div>' % (' '.join(hitlinks)))
             del numlinks, hitlinks
         #- end hit navigation
@@ -349,7 +349,7 @@ class EadSearchHandler(EadHandler):
         return '\n'.join(rows)
         
         #- end format_resultSet() ---------------------------------------------------------
-
+        
 
     def search(self, form, maxResultSetSize=None):
         firstrec = int(form.get('firstrec', 1))
@@ -706,54 +706,113 @@ class EadSearchHandler(EadHandler):
         
         #- end subject_resolve() ---------------------------------------------------
 
+    def _get(self):
+        pass
+
+
     def display_summary(self, rec, paramDict, proxInfo=None, highlight=1):
         global nonAsciiRe, asciiFriendly, overescapedAmpRe, unescapeCharent
         recid = rec.id
         self.logger.log('Summary requested for record: %s' % (recid))
         # highlight search terms in rec.sax
         if (proxInfo) and highlight:
-            try:
-                # to save repeated calls to get_sax
-                saxEvnts = rec.get_sax()
-                # for each pair of terms in result.proxInfo
-                for x in range(0, len(proxInfo), 2):
-                    located = False
-                    wordCount = 0
-                    # for each subsequent sax event
-                    for y in range(proxInfo[x] + 1, len(saxEvnts)):
-                        if (saxEvnts[y][0] == '3') and not located:
-                            # keep leading space to find first word
-                            spaceline = punctuationRe.sub(' ', saxEvnts[y][2:])
-                            # Words ending in 's are treated as 2 words in proximityInfo - make it so!
-                            spaceline = spaceline.replace('\'s', ' s') 
-                            words = wordRe.findall(spaceline)
-                            try:
-                                start = sum(map(len, words[:proxInfo[x+1] - wordCount]))
-                                end = start + len(words[proxInfo[x+1] - wordCount])
-                                wp = 0
-                                while words[proxInfo[x+1] - wordCount][wp] == ' ':
-                                    wp += 1
-
-                                start += wp
-
-                                newSax = saxEvnts[y][:2+start] + 'HGHLGHT' + saxEvnts[y][2+start:2+end] + 'THGLHGH' + saxEvnts[y][2+end:]
-                                rec.sax[y] = newSax
-                                located = True
-                                break
-                            
-                            except IndexError:
-                                # haven't got to the occurence yet, but current text node has ended - go to next one
-                                wordCount += len(words)
-                                continue
-                            except:
-                                continue
-
-            except:
-                # hmm proxInfo busted - oh well
-                self.logger.log('unable to highlight')
+            nodeIdxs = proxInfo[::2]
+            wordIdxs = proxInfo[1::2]
+            xps = {}
+            tree = rec.dom.getroottree()
+            walker = rec.dom.getiterator()
+            for x, n in enumerate(walker):
+                if x in nodeIdxs:
+                    xps[x] = tree.getpath(n)
+                    
+            for x, ni in enumerate(nodeIdxs):
+                wi = wordIdxs[x] 
+                wordCount = 0
+                xp = xps[ni]
+                el = rec.dom.xpath(xp)[0]
+                located = None
+                for c in el.getiterator():
+                    if c.text:
+                        spaceline = punctuationRe.sub(' ', c.text)
+                        spaceline = spaceline.replace('\'s', ' s') # Words ending in 's are treated as 2 words in proximityInfo - make it so!
+                        words = wordRe.findall(spaceline)
+                        try:
+                            start = sum(map(len, words[:wi - wordCount]))
+                            end = start + len(words[wi - wordCount])
+                        except IndexError:
+                            wordCount += len(words)
+                        else:
+                            located = 'text'
+                            break
+                        
+                    if c.tail:
+                        spaceline = punctuationRe.sub(' ', c.tail)
+                        spaceline = spaceline.replace('\'s', ' s') # Words ending in 's are treated as 2 words in proximityInfo - make it so!
+                        words = wordRe.findall(spaceline)
+                        try:
+                            start = sum(map(len, words[:wi - wordCount]))
+                            end = start + len(words[wi - wordCount])
+                        except IndexError:
+                            wordCount += len(words)
+                        else:
+                            located = 'tail'
+                            break
+                        
+                if located:
+                    wp = 0
+                    while words[wi - wordCount][wp] == ' ':
+                        wp += 1
+                    start += wp
+                    if located == 'text':
+                        c.text = c.text[:start] + 'HGHLGHT' + c.text[start:end] + 'THGLHGH' + c.text[end:]
+                    elif located == 'tail':
+                        c.tail = c.tail[:start] + 'HGHLGHT' + c.tail[start:end] + 'THGLHGH' + c.tail[end:]
+                    else:
+                        # woops something went seriously wrong
+                        raise ValueError(located)
+                        
+#            try:
+#                # to save repeated calls to get_sax
+#                saxEvnts = rec.get_sax()
+#                # for each pair of terms in result.proxInfo
+#                for x in range(0, len(proxInfo), 2):
+#                    located = False
+#                    wordCount = 0
+#                    # for each subsequent sax event
+#                    for y in range(proxInfo[x] + 1, len(saxEvnts)):
+#                        if (saxEvnts[y][0] == '3') and not located:
+#                            # keep leading space to find first word
+#                            spaceline = punctuationRe.sub(' ', saxEvnts[y][2:])
+#                            # Words ending in 's are treated as 2 words in proximityInfo - make it so!
+#                            spaceline = spaceline.replace('\'s', ' s') 
+#                            words = wordRe.findall(spaceline)
+#                            try:
+#                                start = sum(map(len, words[:proxInfo[x+1] - wordCount]))
+#                                end = start + len(words[proxInfo[x+1] - wordCount])
+#                                wp = 0
+#                                while words[proxInfo[x+1] - wordCount][wp] == ' ':
+#                                    wp += 1
+#
+#                                start += wp
+#
+#                                newSax = saxEvnts[y][:2+start] + 'HGHLGHT' + saxEvnts[y][2+start:2+end] + 'THGLHGH' + saxEvnts[y][2+end:]
+#                                rec.sax[y] = newSax
+#                                located = True
+#                                break
+#                            
+#                            except IndexError:
+#                                # haven't got to the occurence yet, but current text node has ended - go to next one
+#                                wordCount += len(words)
+#                                continue
+#                            except:
+#                                continue
+#
+#            except:
+#                # hmm proxInfo busted - oh well
+#                self.logger.log('unable to highlight')
                 
             self.logger.log('Search terms highlighted')
-
+        
         # NEVER cache summaries - always generate on the fly - as we highlight search terms         
         # send record to transformer
         #self.logger.log(rec.get_xml())
@@ -770,129 +829,6 @@ class EadSearchHandler(EadHandler):
         page = tmpl.replace('%CONTENT%', '<div id="leftcol">%s</div>%s' % (paramDict['LEFTSIDE'], summ))
         return multiReplace(page, paramDict)
 
-
-#    def display_full(self, rec, paramDict, isComponent):
-#        recid = rec.id
-#        if (len(rec.get_xml()) < max_page_size_bytes) or isComponent:
-#            # Nice and short record/component - do it the easy way
-#            self.logger.log('HTML generated by non-splitting XSLT')
-#            doc = fullTxr.process_record(session, rec)
-#        else:
-#            doc = fullSplitTxr.process_record(session, rec)
-#            # Long record - have to do splitting, link resolving etc.
-#            self.logger.log('HTML generated by splitting XSLT')
-#
-#        # open, read, and delete tocfile NOW to avoid overwriting screwups
-#        try:
-#            tocfile = unicode(read_file(os.path.join(toc_cache_path, 'foo.bar')), 'utf-8')
-#        except IOError:
-#            tocfile = None
-#        else:
-#            os.remove(os.path.join(toc_cache_path, 'foo.bar'))
-#            tocfile = nonAsciiRe.sub(asciiFriendly, tocfile)
-#            tocfile = tocfile.replace('RECID', recid)
-#            tocfile = overescapedAmpRe.sub(unescapeCharent, tocfile)
-#        
-#        doc = unicode(doc.get_raw(), 'utf-8')
-#        doc = nonAsciiRe.sub(asciiFriendly, doc)
-#        #doc = overescapedAmpRe.sub(unescapeCharent, doc)
-#        tmpl = read_file(self.templatePath)
-#        if (len(rec.get_xml()) < max_page_size_bytes) or isComponent:
-#            # resolve anchors to only page
-#            #doc = nonAsciiRe.sub(asciiFriendly, doc)
-#            doc = doc.replace('PAGE#', '%s/RECID-p1.shtml#' % cache_url)
-#            doc = doc.replace('LINKTOPARENT', paramDict['LINKTOPARENT'])
-#            page = tmpl.replace('%CONTENT%', toc_scripts + doc)
-#            self.logger.log(repr(paramDict))
-#            page = multiReplace(page, paramDict)
-#            write_file(os.path.join(cache_path, recid + '-p1.shtml'), page)
-#            
-#        else:
-#            # before we split need to find all internal anchors
-#            anchors = anchorRe.findall(doc)
-#            pseudopages = doc.split('<p style="page-break-before: always"></p>')
-#            pages = []
-#            while pseudopages:
-#                page = '<div id="padder"><div id="rightcol" class="ead">%PAGENAV%'
-#                while (len(page) < max_page_size_bytes):
-#                    page = page + pseudopages.pop(0)
-#                    if not pseudopages:
-#                        break
-#                
-#                # append: pagenav, end rightcol div, padder div, left div (containing toc)
-#                page = page + '%PAGENAV%<br/>\n<br/>\n</div>\n</div>\n<div id="leftcol" class="toc"><!--#include virtual="/ead/tocs/RECID.inc"--></div>'
-#                pages.append(page)
-#
-#            start = 0
-#            anchorPageHash = {}
-#            for a in anchors:
-#                if len(a.strip()) > 0:
-#                    for x in range(start, len(pages), 1):
-#                        if (pages[x].find('name="%s"' % a) > -1):
-#                            anchorPageHash[a] = x + 1
-#                            start = x                                  # next anchor must be on this page or later
-#
-#            self.logger.log('Links resolved over multiple pages (%d pages)' % (len(pages)))
-#
-#            for x in range(len(pages)):
-#                doc = pages[x]
-#                # now we know how many real pages there are, generate some page navigation links
-#                if len(pages) > 1:
-#                    pagenav = ['<div class="pagenav">', '<div class="backlinks">']
-#                    if (x > 0):
-#                        pagenav.extend(['<a href="%s/%s-p1.shtml" title="First page" onclick="setCookie(\'%s-tocstate\', stateToString(\'someId\'))"><img src="/images/fback.gif" alt="First"/></a>' % (cache_url, recid, recid), 
-#                                        '<a href="%s/%s-p%d.shtml" title="Previous page" onclick="setCookie(\'%s-tocstate\', stateToString(\'someId\'))"><img src="/images/back.gif" alt="Previous"/></a>' % (cache_url, recid, x, recid)
-#                                      ])
-#                    pagenav.extend(['</div>', '<div class="forwardlinks">'])
-#                    if (x < len(pages)-1):
-#                        pagenav.extend(['<a href="%s/%s-p%d.shtml" title="Next page" onclick="setCookie(\'%s-tocstate\', stateToString(\'someId\'))"><img src="/images/forward.gif" alt="Next"/></a>' % (cache_url, recid, x+2, recid),
-#                                        '<a href="%s/%s-p%d.shtml" title="Final page" onclick="setCookie(\'%s-tocstate\', stateToString(\'someId\'))"><img src="/images/fforward.gif" alt="Final"/></a>' % (cache_url, recid, len(pages), recid)
-#                                      ])
-#                    pagenav.extend(['</div>', '<div class="numnav">'])
-#                    for y in range(len(pages)):
-#                        if (y == x):
-#                            pagenav.append('<strong>%d</strong>' % (y+1))
-#                        else:
-#                            pagenav.append('<a href="%s/%s-p%d.shtml" title="Page %d" onclick="setCookie(\'%s-tocstate\', stateToString(\'someId\'))">%d</a>' % (cache_url, recid, y+1, y+1, recid, y+1))
-#                    pagenav.extend(['</div> <!--end numnav div -->', '</div> <!-- end pagenav div -->'])
-#                else:
-#                    pagenav = []
-#                
-#                #doc = nonAsciiRe.sub(asciiFriendly, doc)
-#                pagex = tmpl.replace('%CONTENT%', toc_scripts + doc)
-#                pagex = pagex.replace('%PAGENAV%', '\n'.join(pagenav))
-#
-#                #resolve internal ref links
-#                for k, v in anchorPageHash.iteritems():
-#                    pagex = pagex.replace('PAGE#%s"' % k, '%s/RECID-p%d.shtml#%s"' % (cache_url, v, k))
-#
-#                # any remaining links were not anchored - encoders fault :( - hope they're on page 1
-#                pagex = pagex.replace('PAGE#', '%s/RECID-p1.shtml#' % (cache_url))
-#                
-#                for k, v in paramDict.iteritems():
-#                    pagex = pagex.replace(k, v)
-#                    
-#                write_file(os.path.join(cache_path, recid + '-p%d.shtml' % (x+1)), pagex)
-#                if (x == 0):
-#                    page = pagex
-#
-#            self.logger.log('Multi-page navigation generated')
-# 
-#        del rec
-#        if tocfile:
-#            try:
-#                for k, v in anchorPageHash.iteritems():
-#                    tocfile = tocfile.replace('PAGE#%s"' % k, '%s/%s-p%d.shtml#%s"' % (cache_url, recid, v, k))
-#            except UnboundLocalError:
-#                pass
-#            
-#            # any remaining links were not anchored - encoders fault :( - hope they're on page 1
-#            tocfile = multiReplace(tocfile, {'SCRIPT': script, 'PAGE#': '%s/%s-p1.shtml#' % (cache_url, recid)})
-#            write_file(os.path.join(toc_cache_path, recid +'.inc'), tocfile)
-#            os.chmod(os.path.join(toc_cache_path, recid + '.inc'), 0755)
-# 
-#        return page
-    
     
     def display_toc(self, form):
         global toc_cache_path, printable_toc_scripts
@@ -916,15 +852,15 @@ class EadSearchHandler(EadHandler):
                         self.htmlTitle.append('Error')
                         return ('<p class="error">The record you requested is not available.</p>')
                     
-                # TODO: finish this!
-            
             return printable_toc_scripts + page
+
 
     def display_record(self, form):
         global max_page_size_bytes, cache_path, cache_url, toc_cache_path, toc_cache_url, repository_name, repository_link, repository_logo, display_splash_screen_popup, punctuationRe, wordRe, anchorRe, highlightInLinkRe, overescapedAmpRe
         isComponent = None
         operation = form.get('operation', 'full')
         recid = form.getfirst('recid', None)
+        pagenum = int(form.getfirst('pagenum', 1))
         rsid = form.getfirst('rsid', None)
         qString = form.get('query', form.get('cqlquery', None))
         firstrec = int(form.get('firstrec', 1))
@@ -955,7 +891,11 @@ class EadSearchHandler(EadHandler):
                 
         if qString:
             self.logger.log('Re-submitting CQL query to generate resultSet: %s' % (qString))
-            rs = db.search(session, q)
+            try:
+                rs = db.search(session, q)
+            except SRWDiagnostics.Diagnostic16:
+                return (False, '<p class="error">Could not retrieve resultSet. Please re-submit your search via the <a href="/ead/index.html">search page</a></p>')
+            
             rsid = rs.id = qString
         elif rs:
             self.logger.log('Retrieved resultSet "%s"' % (rsid))
@@ -1046,10 +986,11 @@ class EadSearchHandler(EadHandler):
             try:
                 page = self.display_summary(rec, paramDict, r.proxInfo, highlight)
             except AttributeError:
+                raise
                 page = self.display_summary(rec, paramDict)
         else:
             # full record
-            path = os.path.join(cache_path, recid.replace('/', '-') + '-p1.shtml')
+            path = os.path.join(cache_path, recid.replace('/', '-') + '-p%d.shtml' % (pagenum))
             if (isComponent):
                 self.logger.log('Full-text requested for component: ' + recid)
             else:
@@ -1060,8 +1001,14 @@ class EadSearchHandler(EadHandler):
                 self.logger.log('Retrieved from cache')
             except:
                 paramDict['TOC_CACHE_URL'] = toc_cache_url
-                page = self.display_full(rec, paramDict, isComponent)
-            
+                pages = self.display_full(rec, paramDict)
+                try:
+                    page = pages[pagenum-1]
+                except IndexError:
+                    return (False, '<div id="wrapper"><p class="error">Specified page %d does not exist. This record has only %d pages.</p></div>' % (pagenum, len(pages)))
+                else:
+                    del pages
+                
             if (isComponent) or not (os.path.exists('%s/%s.inc' % (toc_cache_path, recid))):
                 page = page.replace('<!--#include virtual="%s/%s.inc"-->' % (toc_cache_url, recid), searchResults)
             else:
@@ -1073,7 +1020,6 @@ class EadSearchHandler(EadHandler):
         
             
         return (True, page)
-
         #- end display_record() ----------------------------------------------------
 
 

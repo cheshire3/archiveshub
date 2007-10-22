@@ -184,11 +184,21 @@ class EadHandler:
                                         '<a href="%s/%s-p%d.shtml" title="Final page" onclick="setCookie(\'%s-tocstate\', stateToString(\'someId\'))"><img src="/images/fforward.gif" alt="Final"/></a>' % (cache_url, recid, len(pages), recid)
                                       ])
                     pagenav.extend(['</div>', '<div class="numnav">'])
-                    for y in range(len(pages)):
-                        if (y == x):
-                            pagenav.append('<strong>%d</strong>' % (y+1))
-                        else:
-                            pagenav.append('<a href="%s/%s-p%d.shtml" title="Page %d" onclick="setCookie(\'%s-tocstate\', stateToString(\'someId\'))">%d</a>' % (cache_url, recid, y+1, y+1, recid, y+1))
+                    # individual number links
+#                    for y in range(len(pages)):
+#                        if (y == x):
+#                            pagenav.append('<strong>%d</strong>' % (y+1))
+#                        else:
+#                            pagenav.append('<a href="%s/%s-p%d.shtml" title="Page %d" onclick="setCookie(\'%s-tocstate\', stateToString(\'someId\'))">%d</a>' % (cache_url, recid, y+1, y+1, recid, y+1))
+                    # form style - Page: x of X
+                    pagenav.extend(['<form action="%s">Page: ' % (script)
+                                   ,'<input type="hidden" name="operation" value="full" />'
+                                   ,'<input type="hidden" name="recid" value="%s" />' % (recid)
+                                   ,'<input type="text" name="pagenum" size="2" maxlength="3" value="%d"/> of %d' % (x+1, len(pages))
+                                   ,'<input type="submit" value="Go!"/>'
+                                   ,'</form>' 
+                                   ])
+                    # end case
                     pagenav.extend(['</div> <!--end numnav div -->', '</div> <!-- end pagenav div -->'])
                 else:
                     pagenav = []
@@ -208,8 +218,6 @@ class EadHandler:
                     pagex = pagex.replace(k, v)
                     
                 write_file(os.path.join(cache_path, recid + '-p%d.shtml' % (x+1)), pagex)
-                if (x == 0):
-                    page = pagex
 
             self.logger.log('Multi-page navigation generated')
  
@@ -226,7 +234,8 @@ class EadHandler:
             write_file(os.path.join(toc_cache_path, recid +'.inc'), tocfile)
             os.chmod(os.path.join(toc_cache_path, recid + '.inc'), 0755)
  
-        return page
+        return pages
+    
         #- end display_full() -------------------------------------------------
         
     #- end EadHandler
