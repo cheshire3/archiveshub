@@ -19,9 +19,11 @@
   <xsl:variable name="count_subordinates_in_summary" select="true()"/>
   <xsl:variable name="horizontal_rule_between_units" select="true()"/>
   <!-- external resource link switches -->
+  <xsl:variable name="link_to_amazon" select="true()" />
+  <xsl:variable name="link_to_copac" select="true()"/>
   <xsl:variable name="link_to_googlemaps" select="true()"/>
   <xsl:variable name="link_to_wikipedia" select="false()"/>
-  <xsl:variable name="link_to_amazon" select="true()" />
+  
 
   <!-- end of switches -->
 
@@ -41,6 +43,19 @@
   </xsl:param>
   <xsl:param name="amazon_search_icon">
   	<xsl:value-of select="$amazon_base_url"/>
+  	<xsl:text>/favicon.ico</xsl:text>
+  </xsl:param>
+  
+  <!-- Copac -->
+  <xsl:param name="copac_base_url">
+  	<xsl:text>http://www.copac.ac.uk</xsl:text>
+  </xsl:param>
+  <xsl:param name="copac_search_url">
+  	<xsl:value-of select="$copac_base_url"/>
+  	<xsl:text>/wzgw?form=qs&amp;fs=Search&amp;ti=</xsl:text>
+  </xsl:param>
+  <xsl:param name="copac_search_icon">
+  	<xsl:value-of select="$copac_base_url"/>
   	<xsl:text>/favicon.ico</xsl:text>
   </xsl:param>
   

@@ -731,6 +731,11 @@
 		  	<tr>
 				<td><xsl:apply-templates/></td>
 				<td class="">
+					<xsl:if test="$link_to_copac">
+						<xsl:call-template name="copaclink"/>								    	
+				    </xsl:if>
+				</td>
+				<td class="">
 					<xsl:if test="$link_to_amazon">
 						<xsl:call-template name="amazonlink"/>								    	
 				    </xsl:if>
@@ -1309,6 +1314,27 @@
 		    <img alt="Amazon">
 		    	<xsl:attribute name="src">
 		    		<xsl:value-of select="$amazon_search_icon"/>
+		    	</xsl:attribute>
+		    </img>
+	  	</a>
+	</xsl:template>
+	
+	<xsl:template name="copaclink">
+	  	<a target="_new">
+	  		<xsl:attribute name="href">
+	  			<xsl:value-of select="$copac_search_url"/>
+	  			<xsl:call-template name="cgiencode">
+		          <xsl:with-param name="text">
+		            <xsl:apply-templates select="."/>
+		          </xsl:with-param>
+		        </xsl:call-template>
+			</xsl:attribute>
+			<xsl:attribute name="title">
+		        <xsl:text>Search Copac</xsl:text>
+		    </xsl:attribute>
+		    <img alt="Amazon">
+		    	<xsl:attribute name="src">
+		    		<xsl:value-of select="$copac_search_icon"/>
 		    	</xsl:attribute>
 		    </img>
 	  	</a>
