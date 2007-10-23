@@ -500,7 +500,7 @@ class EadAdminHandler(EadHandler):
             header = 'Existing Files'
             fileformsubmits = '''<input type="submit" name="operation" value="rename" onmousedown="op=this.value;"/>            
             <input type="submit" name="operation" value="delete" onmousedown="op=this.value;"/>
-            <input type="submit" name="operation" value="unindex + delete" onmousedown="op=this.value;"/>'''
+            <input type="submit" name="operation" value="unindex + delete" onmousedown="op='unindex';"/>'''
         else :
             fileformsubmits = '''<input type="submit" name="operation" value="%s" onmousedown="op=this.value;"/>''' % version
             header = 'Please select file(s) to %s' % version
