@@ -5,7 +5,7 @@
 	Copyright &copy; 2005-2007 the University of Liverpool
  -->
 
-  <objectType>database.OptimisingDatabase</objectType>
+  <objectType>database.SimpleDatabase</objectType>
 
   <options>
     <setting type="srw">1</setting>
