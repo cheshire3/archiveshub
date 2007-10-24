@@ -139,7 +139,7 @@ class EadHandler:
             doc = doc.replace('LINKTOPARENT', paramDict['LINKTOPARENT'])
             page = tmpl.replace('%CONTENT%', toc_scripts + doc)
             self.logger.log(repr(paramDict))
-            page = multiReplace(page, paramDict)
+            pages = [multiReplace(page, paramDict)]
             write_file(os.path.join(cache_path, recid + '-p1.shtml'), page)
             
         else:
