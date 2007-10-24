@@ -389,8 +389,9 @@
 				<object type="indexStore" ref="indexStore" />
 			</paths>
 			<source mode="data">
-				<xpath>/ead</xpath>
-				<xpath>/c3component</xpath>
+				<xpath>/ead/eadheader</xpath>
+				<xpath>/ead/archdesc/*</xpath>
+				<xpath>/c3component/*/*</xpath>
 				<process>
 					<object type="extracter" ref="ProximityExtracter" />
 					<object type="workflow" ref="Diacritic-Case-Possessive-Stoplist-EnglishStem-NormaliserWorkflow"/>
