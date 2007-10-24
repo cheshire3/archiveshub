@@ -1,7 +1,7 @@
 #
 # Script:    eadSearchHandler.py
-# Version:   0.28
-# Date:      28 September 2007
+# Version:   0.29
+# Date:      23 October 2007
 # Copyright: &copy; University of Liverpool 2005-2007
 # Description:
 #            Web interface for searching a cheshire 3 database of EAD finding aids
@@ -87,6 +87,7 @@
 #                        - Accomodate switch from SaxRecord to LxmlRecord
 #                        - Implement reverse hierarchy walk for parent links
 #                        - Rearrangement of display_record
+# 0.29 - 23/10/2007 - JH - Term highlighting for LxmlRecords implemented + optimised for summary display
 #
 #
 
@@ -417,7 +418,7 @@ class EadSearchHandler(EadHandler):
             self.logger.log('%d Hits' % (len(rs)))
             if (len(rs) > 5000):
                 # probably quicker to resubmit search than store/retrieve resultSet
-                self.logger.log('very large resultSet - passing CQL for repeat search')
+                self.logger.log('Large resultSet - passing CQL for repeat search')
                 rsid = rs.id = qString
             elif (len(rs)):
                 # store this resultSet and remember identifier
@@ -426,15 +427,15 @@ class EadSearchHandler(EadHandler):
                     rsid = rs.id = str(resultSetStore.create_resultSet(session, rs))
                     resultSetStore.commit_storing(session)
                 except c3errors.ObjectDoesNotExistException:
-                    self.logger.log('could not store resultSet - passing CQL for repeat search')
+                    self.logger.log('Cannot store resultSet - passing CQL for repeat search')
                     rsid = rs.id = qString
             else:
                 self.htmlTitle.append('No Matches')
                 return '<p>No records matched your search.</p>'
         
-        # disable highlighting if full-text search has been used - highlighting takes forever!
-        if qString and (qString.find('cql.anywhere') > -1):
-            highlight = 0
+        # FIXME: ??? disable highlighting if full-text search has been used - highlighting takes forever!
+#        if qString and (qString.find('cql.anywhere') > -1):
+#            highlight = 0
             
         return self.format_resultSet(rs, firstrec, numreq, highlight)
 
@@ -714,27 +715,37 @@ class EadSearchHandler(EadHandler):
         global nonAsciiRe, asciiFriendly, overescapedAmpRe, unescapeCharent
         recid = rec.id
         self.logger.log('Summary requested for record: %s' % (recid))
-        # highlight search terms in rec.sax
+        # highlight search terms in rec.dom
         if (proxInfo) and highlight:
-            nodeIdxs = proxInfo[::2]
-            wordIdxs = proxInfo[1::2]
+#            return repr(proxInfo)
+            # sort proxInfo so that nodeIdxs are sorted acsending
+            proxInfo2 = [(proxInfo[x], proxInfo[x+1]) for x in range(0, len(proxInfo), 2)]
+            proxInfo2.sort()
+            nodeIdxs = [x[0] for x in proxInfo2]
+            wordIdxs = [x[1] for x in proxInfo2]
             xps = {}
             tree = rec.dom.getroottree()
             walker = rec.dom.getiterator()
             for x, n in enumerate(walker):
+                if n.tag == 'dsc':
+                    break # no point highlighting any further down 
                 if x in nodeIdxs:
                     xps[x] = tree.getpath(n)
                     
             for x, ni in enumerate(nodeIdxs):
                 wi = wordIdxs[x] 
                 wordCount = 0
-                xp = xps[ni]
+                try:
+                    xp = xps[ni]
+                except KeyError:
+                    # no XPath - must have hit dsc
+                    break
+                
                 el = rec.dom.xpath(xp)[0]
                 located = None
                 for c in el.getiterator():
                     if c.text:
                         spaceline = punctuationRe.sub(' ', c.text)
-                        spaceline = spaceline.replace('\'s', ' s') # Words ending in 's are treated as 2 words in proximityInfo - make it so!
                         words = wordRe.findall(spaceline)
                         try:
                             start = sum(map(len, words[:wi - wordCount]))
@@ -747,7 +758,6 @@ class EadSearchHandler(EadHandler):
                         
                     if c.tail:
                         spaceline = punctuationRe.sub(' ', c.tail)
-                        spaceline = spaceline.replace('\'s', ' s') # Words ending in 's are treated as 2 words in proximityInfo - make it so!
                         words = wordRe.findall(spaceline)
                         try:
                             start = sum(map(len, words[:wi - wordCount]))
