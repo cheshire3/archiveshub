@@ -1,0 +1,45 @@
+<config>
+
+<!-- 
+	This file was produced, and released as part of Cheshire for Archives v3.x.
+	Copyright &copy; 2005-2007 the University of Liverpool
+ -->
+
+	<subConfigs>
+	
+		<subConfig type="xpathObject" id="identifierXPath">
+			<objectType>xpathObject.MetadataXPath</objectType>
+			<source>
+				<xpath>id</xpath>
+			</source>
+		</subConfig>
+
+		<subConfig type="xpathObject" id="nowTimeXPath">
+			<objectType>xpathObject.MetadataXPath</objectType>
+			<source>
+				<xpath>now</xpath>
+			</source>
+		</subConfig>
+		
+		<subConfig type="xpathObject" id="componentXPath">
+			<objectType>xpathObject.XPathObject</objectType>
+			<source>
+				<xpath>c</xpath>
+				<xpath>c01</xpath>
+				<xpath>c02</xpath>
+				<xpath>c03</xpath>
+				<xpath>c04</xpath>
+				<xpath>c05</xpath>
+				<xpath>c06</xpath>
+				<xpath>c07</xpath>
+				<xpath>c08</xpath>
+				<xpath>c09</xpath>
+				<xpath>c10</xpath>
+				<xpath>c11</xpath>
+				<xpath>c12</xpath>				
+			</source>
+		</subConfig>
+	
+	</subConfigs>
+	
+</config>

@@ -1,0 +1,72 @@
+<config>
+
+<!-- 
+	This file was produced, and released as part of Cheshire for Archives v3.x.
+	Copyright &copy; 2005-2007 the University of Liverpool
+ -->
+
+	<subConfigs>
+	
+		<subConfig type="documentFactory" id="baseDocumentFactory">
+			<objectType>documentFactory.BaseDocumentFactory</objectType>
+			<options>
+				<default type="data">/home/cheshire/cheshire3/cheshire3/dbs/ead/data</default>
+				<default type="format">dir</default>
+				<default type="schema">ead</default>
+				<default type="cache">0</default>
+				<!-- default type="codec">latin1</default-->
+			</options>
+		</subConfig>
+		
+		<subConfig type="documentFactory" id="componentDocumentFactory">
+			<objectType>documentFactory.ComponentDocumentFactory</objectType>
+			<source>
+<!--				<xpath>*[regexp(name(), '^c([0-1][0-9])?$')]</xpath>-->
+				<xpath ref="componentXPath" />
+			</source>
+			<options>
+				<default type="cache">0</default>
+				<default type="format">component</default>
+				<default type="codec">utf-8</default>
+			</options>
+		</subConfig>
+		
+		<subConfig type="documentFactory" id="clusterDocumentFactory">
+			<objectType>documentFactory.BaseDocumentFactory</objectType>
+			<options>
+				<default type="data">tempCluster.data</default>
+				<default type="cache">0</default>
+				<default type="format">cluster</default>
+				<default type="codec">utf-8</default>
+			</options>
+		</subConfig>
+		
+		<!-- pre-parsers -->  
+	    <subConfig type="preParser" id="emptyEmphTagStripPreParser">
+	    	<objectType>preParser.RegexpSmashPreParser</objectType>
+	    	<options>
+	    		<setting type="regexp">&lt;emph altrender="[a-z]"/&gt;</setting>
+	    	</options>
+	    </subConfig>
+	    
+	    <subConfig type="preParser" id="eadSgmlPreParser">
+	      <objectType>preParser.SgmlPreParser</objectType>
+	      <options>
+	        <setting type="emptyElements"> lb arc ptr prtloc extptr extptrloc colspec </setting>
+	      </options>
+	    </subConfig> 
+	
+	    <subConfig type="preParser" id="AmpPreParser">
+	      <objectType>preParser.AmpPreParser</objectType>
+	    </subConfig>
+	    
+	    <subConfig type="preParser" id="NormalisedDateXStripPreParser">
+			<objectType>preParser.RegexpSmashPreParser</objectType>
+			<options>
+				<setting type="regexp">(?&lt;=normal=")x+</setting>
+			</options>
+		</subConfig>
+	
+	</subConfigs>
+	
+</config>
