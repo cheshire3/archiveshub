@@ -47,6 +47,7 @@ import c3errors
 # C3 web search utils
 from www_utils import *
 
+tree = None
 
 class EadEditingHandler:
     global repository_name, repository_link, repository_logo, htmlPath
@@ -77,18 +78,57 @@ class EadEditingHandler:
     
     
     def build_ead(self, req):
+        global tree
+        self.logger.log('building ead')
         form = FieldStorage(req)
         ctype = form.get('ctype', None)
-        if (form.get('location', None) == 'collectionLevel'):
-            root = etree.fromstring('<ead><eadheader></eadheader><archdesc></archdesc></ead>')
+        level = form.get('location', None)
+        collection = False;
+        if (level == 'collectionLevel'):
+            collection = True;
+            tree = etree.fromstring('<ead><eadheader></eadheader><archdesc><did></did></archdesc></ead>')
         else :
-            root = etree.fromstring('<%s></%s>' % (ctype, ctype))
-        list = form.list           
+            tree = etree.fromstring('<%s><did></did></%s>' % (ctype, ctype))
+        list = form.list  
+        testlist = []         
         for field in list :
-            if field.name not in ['ctype','location','operation','newForm','nocache','recid']:
-                pass
-
+            if field.name not in ['ctype','location','operation','newForm','nocache','recid']:              
+                #do did level stuff
+                if (collection):
+                    node = tree.xpath('/ead/archdesc')[0]
+                else :
+                    node = tree.xpath('/*[not(name() = "ead")]')[0]
+                self.logger.log('pre-create_path')
+                targetNode = self._create_path(node, field.name)
+                self.logger.log('node returned to build ead: %s' % targetNode)
+              #  targetNode = node.xpath(field.name)[0]
+                targetNode.text = field.value
+                raise ValueError(etree.tostring(tree))
                 
+
+        
+
+    def _create_path(self, startNode, nodePath):  
+        global tree          
+        self.logger.log('the node path is %s' % nodePath)
+           
+        if (startNode.xpath(nodePath)):
+            self.logger.log('path matches')
+            self.logger.log('I return %s' % startNode.xpath(nodePath)[0])
+            return startNode.xpath(nodePath)[0]
+        else :
+            newNodePath = ''.join(nodePath[:nodePath.rfind('/')])
+            
+            self.logger.log('new node path is %s' % newNodePath)
+            newNode = etree.Element(''.join(nodePath[nodePath.find('/')+1:]))
+            self.logger.log('new node is %s' % newNode)
+            return self._append_element(self._create_path(startNode, newNodePath), newNode)
+            
+            
+    def _append_element(self, parentNode, childNode):    
+        parentNode.append(childNode)
+        return parentNode
+        
                 
     
     def build_ead_old(self, req):
