@@ -54,6 +54,13 @@
 	        </xsl:otherwise>
 	      </xsl:choose>
 		</h2>
+		
+		<xsl:if test="./dao|../dao|../odd/dao|./daogrp|../daogrp|../odd/daogrp">
+			<div class="daos">
+				<div class="daohead">Digital Objects</div>
+				<xsl:apply-templates select="./dao|../dao|../odd/dao|./daogrp|../daogrp|../odd/daogrp"/>
+			</div>
+		</xsl:if>
 
 	    <div class="did">
 			<strong>Reference Number</strong><xsl:text>: </xsl:text>
@@ -144,7 +151,7 @@
 
 	<!-- EADHEADER -->
 	<xsl:template match="eadheader">
-		<strong>About This Record</strong> <xsl:text> </xsl:text>
+		<strong>Cataloguing Info</strong> <xsl:text> </xsl:text>
 		<a class="jscall" href="javascript:;" onclick="toggleShow(this, 'eadheader');">[ show ]</a>
 		<div id="eadheader" class="eadheader">
 			<xsl:apply-templates select="filedesc"/>
@@ -218,6 +225,55 @@
 			<xsl:apply-templates/><br/>
 		</xsl:if>
 	</xsl:template>
+
+	<!--  ARCHDESC -->
+	<xsl:template match="archdesc">
+		<!--TEMPLATES FOR MAIN BODY-->
+		<xsl:apply-templates select="./did/abstract"/>
+		<xsl:apply-templates select="./scopecontent"/>
+		<xsl:apply-templates select="./bioghist"/>
+		<xsl:apply-templates select="./arrangement"/>
+		<xsl:apply-templates select="./descgrp" />
+	
+		<xsl:if test="./admininfo">
+			<div class="admininfo">
+		  	<xsl:apply-templates select="./admininfo" />
+			</div>
+		</xsl:if>
+		
+		<xsl:if test="./add">
+			<div class="add">
+		   <xsl:apply-templates select="./add" />
+		 </div>
+		</xsl:if>
+		
+		<!-- ACCESS + USE RESTRICTIONS -->
+		<xsl:apply-templates select="./accessrestrict"/>
+		<xsl:apply-templates select="./userestrict"/>
+		<!-- ADMINISTRATIVE INFORMATION / ARCHIVAL HISTORY-->
+		<xsl:apply-templates select="./appraisal"/>
+		<xsl:apply-templates select="./acqinfo"/>
+		<xsl:apply-templates select="./custodhist"/>
+		<xsl:apply-templates select="./accruals"/>
+		<xsl:apply-templates select="./processinfo"/>
+		<!-- USER INFO -->
+		<xsl:apply-templates select="./otherfindaid"/>
+		<xsl:apply-templates select="./originalsloc"/>
+		<xsl:apply-templates select="./altformavail"/>
+		<xsl:apply-templates select="./relatedmaterial"/>
+		<xsl:apply-templates select="./separatedmaterial"/>
+		<!-- BIBLIOGRAPHY / CITATIONS -->
+		<xsl:apply-templates select="./bibliography"/>
+		<xsl:apply-templates select="./prefercite"/>
+		<!-- MISCELLANEOUS -->
+		<xsl:apply-templates select="./odd"/>
+		<xsl:apply-templates select="./note"/>
+		
+		<!-- CONTROLACCESS -->
+		<xsl:apply-templates select="./controlaccess"/>
+		 
+	</xsl:template>
+
 
 	<xsl:template match="langmaterial|langusage">
 		<xsl:choose>
@@ -823,12 +879,15 @@
 	      		<xsl:apply-templates select="did/origination"/>
 	    	</xsl:if>
 	    </h2>
-	
+	    
+	    <xsl:apply-templates select="./dao|./did/dao|./odd/dao|./daogrp|./did/daogrp|./odd/daogrp"/>
+	    
 		<xsl:if test = "did/physloc">
 		  <xsl:value-of select="did/physloc"/>
 		</xsl:if>
 			
 		<xsl:apply-templates select="did/physdesc" mode="component"/>
+		
 		<xsl:apply-templates select="did/note"/>
 		<xsl:apply-templates select="scopecontent"/>
 		<xsl:apply-templates select="bioghist"/>
@@ -859,7 +918,8 @@
 		<!-- MISCELLANEOUS -->
 		<xsl:apply-templates select="odd"/>
 		
-		<xsl:apply-templates select="dao|did/dao"/>
+		<!-- CONTROLACCESS -->
+		<xsl:apply-templates select="controlaccess"/>
 				
 		<xsl:apply-templates select="c|c01|c02|c03|c04|c05|c06|c07|c08|c09|c10|c11|c12"/>
  	</xsl:template>
@@ -903,114 +963,241 @@
 	  <xsl:apply-templates/>
 	</xsl:template>
 	
-	<!--BUILDING REFS AND ANCS-->
-	<xsl:template match="ref[@target]">
-	  <a>
-	    <xsl:attribute name="href">
-	      <xsl:text>PAGE#</xsl:text>
-	      <xsl:value-of select="./@target"/>
-	    </xsl:attribute>
-	    <xsl:attribute name="target">
-	      <xsl:text>_top</xsl:text>
-	    </xsl:attribute>
-	    <xsl:apply-templates/>
-	  </a>
-	</xsl:template>
- 
-	<!--EXREFS-->
-  	<xsl:template match="extref">
-	    <xsl:element name="a">
+	<!-- Simple Link -->
+	<xsl:template name="simplelink">
+		<xsl:element name="a">
 			<xsl:attribute name="href">
 			  <xsl:value-of select="./@href"/>
 			</xsl:attribute>
 			<xsl:attribute name="target">
-				<xsl:choose>
-				 	<xsl:when test="./@show">
-					  	<xsl:value-of select="./@show"/>
-				 	</xsl:when>
-				 	<xsl:otherwise>
+      			<xsl:choose>
+	      			<xsl:when test="./@show='new'">
+	      				<xsl:text>_new</xsl:text>
+	      			</xsl:when>
+	      			<xsl:when test="./@show='replace'">
+	      				<xsl:text>_parent</xsl:text>
+	      			</xsl:when>
+	      			<xsl:otherwise>
 						<xsl:text>_blank</xsl:text>
 				 	</xsl:otherwise>
-				</xsl:choose>
-			</xsl:attribute>
-	      	<xsl:apply-templates/>
-	    </xsl:element>
-	</xsl:template>
-	
-	<!-- DAOGRP -->
-	<!-- TODO: activate daogrp links -->
-	<xsl:template match="daogrp">
-	  	<div class="daogrp">
-	  		<xsl:apply-templates select="daodesc" />
-	  	</div>
-	</xsl:template>
-  
-	<!--DAO - Digital Archival Objects-->  
-  	<xsl:template match="dao">
-    	<xsl:element name="a">
-      		<xsl:attribute name="href">
-        		<xsl:value-of select="./@href"/>
+	      		</xsl:choose>
       		</xsl:attribute>
       		<xsl:choose>
-      			<xsl:when test="daodesc">
-      				<xsl:apply-templates select="daodesc" />
+      			<xsl:when test="./text()">
+      				<xsl:apply-templates />
+      			</xsl:when>
+      			<xsl:when test="./@title">
+      				<xsl:value-of select="./@title"/>
       			</xsl:when>
       			<xsl:otherwise>
       				<xsl:value-of select="./@href"/>
       			</xsl:otherwise>
       		</xsl:choose>
-    	</xsl:element>
+	    </xsl:element>
 	</xsl:template>
-  
-  	<!-- IMAGES-->
-	<xsl:template name="images">
-		<xsl:param name="node" />
+
+	<!-- IMAGES-->
+	<xsl:template name="image">
 		<xsl:element name="img">
 			<xsl:attribute name="src">
-				<xsl:value-of select="$node/@href"/>
+				<xsl:value-of select="./@href"/>
 			</xsl:attribute>
 			<xsl:attribute name="alt">
-				<xsl:value-of select="$node"/>
+				<xsl:choose>
+					<xsl:when test="./daodesc">
+					      <xsl:value-of select="./daodesc"/>
+					</xsl:when>
+					<xsl:when test="./@title">
+					      <xsl:value-of select="./@title"/>
+					</xsl:when>
+				    <xsl:otherwise>
+						<xsl:value-of select="./@href"/>
+					</xsl:otherwise>
+				</xsl:choose>
 			</xsl:attribute>
 		</xsl:element>
+	</xsl:template>
+
+	<!--BUILDING REFS AND ANCS-->
+	<xsl:template match="ref[@target]">
+		<a>
+			<xsl:attribute name="href">
+				<xsl:text>PAGE#</xsl:text>
+				<xsl:value-of select="./@target"/>
+			</xsl:attribute>
+			<xsl:attribute name="target">
+				<xsl:text>_top</xsl:text>
+			</xsl:attribute>
+			<xsl:apply-templates />
+		</a>
+	</xsl:template>
+
+	<!--EXREFS-->
+  	<xsl:template match="extref">
+	    <xsl:call-template name="simplelink" />
 	</xsl:template>
 	
 	<!-- extptr -->
 	<xsl:template match="extptr">
   		<xsl:choose>
-			<xsl:when test="@show='embed'">
-				<xsl:element name="img">
-					<xsl:attribute name="src">
-					  <xsl:value-of select="./@href"/>
-					</xsl:attribute>
-					<xsl:attribute name="alt">
-					  <xsl:choose>
-					    <xsl:when test="./@title">
-					      <xsl:value-of select="./@title"/>
-					           </xsl:when>
-					    <xsl:otherwise>
-					      <xsl:value-of select="./@href"/>
-					    </xsl:otherwise>
-					  </xsl:choose>
-					</xsl:attribute>
-				</xsl:element>
-			</xsl:when>
-			<xsl:otherwise>
-				<xsl:element name="a">
-					<xsl:attribute name="href">
-					  <xsl:value-of select="./@href"/>
-					</xsl:attribute>
-					<xsl:if test="./@title">
-						<xsl:attribute name="title">
-					      <xsl:value-of select="./@title"/>
-					    </xsl:attribute>
-					</xsl:if>
-					<xsl:apply-templates/>
-				</xsl:element>
-			</xsl:otherwise>
-		</xsl:choose>
+  			<xsl:when test="./@audience = 'internal'" />
+  			<xsl:when test="./@href">
+  				<xsl:choose>
+  					<xsl:when test="@show='embed'">
+						<xsl:call-template name="image" />
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:call-template name="simplelink" />
+					</xsl:otherwise>
+  				</xsl:choose>
+		    </xsl:when>
+    	</xsl:choose>
+ 	</xsl:template>
+ 	
+	<!--DAO - Digital Archival Objects-->  
+  	<xsl:template match="dao">
+  		<div class="dao">
+	  		<xsl:choose>
+	  			<xsl:when test="./@audience = 'internal'" />
+	  			<xsl:when test="./@href">
+	  				<xsl:choose>
+	  					<xsl:when test="@show='embed'">
+							<xsl:call-template name="image" />
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:call-template name="simplelink" />
+						</xsl:otherwise>
+	  				</xsl:choose>
+			    </xsl:when>
+	    	</xsl:choose>
+	    </div>
 	</xsl:template>
 	
+	<!-- DAOGRPs -->
+	<xsl:template match="daogrp">
+		<div class="dao">
+	  		<xsl:choose>
+	  			<xsl:when test="./@audience = 'internal'" />
+	  			<xsl:when test="count(./daoloc) = 2">
+	  				<xsl:call-template name="daogrp-thumb"/>
+	  			</xsl:when>
+	  			<xsl:otherwise>
+  					<xsl:call-template name="daogrp-multi" />
+	  			</xsl:otherwise>
+			</xsl:choose>
+	  	</div>
+	</xsl:template>
+
+	<!-- DAOGRP - representing thumbnail link to main object -->
+	<xsl:template name="daogrp-thumb">
+		<xsl:element name="a">
+			<xsl:attribute name="href">
+				<xsl:value-of select="./daoloc[@label='reference']/@href"/>
+			</xsl:attribute>
+			<xsl:if test="./@title">
+			      <xsl:value-of select="./@title"/>
+			</xsl:if>
+			<xsl:attribute name="target">
+      			<xsl:choose>
+	      			<xsl:when test="./@show='new'">
+	      				<xsl:text>_new</xsl:text>
+	      			</xsl:when>
+	      			<xsl:when test="./@show='replace'">
+	      				<xsl:text>_parent</xsl:text>
+	      			</xsl:when>
+	      			<xsl:otherwise>
+						<xsl:text>_blank</xsl:text>
+				 	</xsl:otherwise>
+	      		</xsl:choose>
+      		</xsl:attribute>
+			<xsl:choose>
+				<xsl:when test="./daoloc/@label='thumb'">
+					<xsl:element name="img">
+						<xsl:attribute name="src">
+							<xsl:value-of select="./daoloc[@label='thumb']/@href"/>
+						</xsl:attribute>
+						<xsl:attribute name="alt">
+							<xsl:choose>
+								<xsl:when test="./daoloc[@label='thumb']/@title">
+								      <xsl:value-of select="./daoloc[@label='thumb']/@title"/>
+								</xsl:when>
+							    <xsl:otherwise>
+									<xsl:text>Thumbnail unavailable</xsl:text>
+								</xsl:otherwise>
+							</xsl:choose>
+						</xsl:attribute>
+					</xsl:element><br/>
+				</xsl:when>
+				<xsl:when test="./@title">
+			      <xsl:value-of select="./@title"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:text>Full image</xsl:text>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:element>			
+		<xsl:apply-templates select="./daodesc" />		
+	</xsl:template>
+	
+	<!-- DAOGRP - representing single, bundled or nested links + description -->
+	<xsl:template name="daogrp-multi">
+		<xsl:apply-templates select="./daodesc" />
+		<xsl:for-each select="daoloc">
+			<div class="dao">
+		  		<xsl:choose>
+		  			<xsl:when test="./@audience = 'internal'" />
+		  			<xsl:when test="./@href">
+		  				<xsl:choose>
+		  					<xsl:when test="../@show='embed'">
+								<xsl:call-template name="image" />
+							</xsl:when>
+							<xsl:when test="./@label='thumb'">
+								<xsl:call-template name="image" />
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:element name="a">
+									<xsl:attribute name="href">
+										<xsl:value-of select="./@href"/>
+									</xsl:attribute>
+									<xsl:attribute name="target">
+						      			<xsl:choose>
+							      			<xsl:when test="../@show='new'">
+							      				<xsl:text>_new</xsl:text>
+							      			</xsl:when>
+							      			<xsl:when test="../@show='replace'">
+							      				<xsl:text>_parent</xsl:text>
+							      			</xsl:when>
+							      			<xsl:otherwise>
+												<xsl:text>_blank</xsl:text>
+										 	</xsl:otherwise>
+							      		</xsl:choose>
+						      		</xsl:attribute>
+						      		<xsl:choose>
+						      			<xsl:when test="./daodesc">
+						      				<xsl:apply-templates />
+						      			</xsl:when>
+						      			<xsl:when test="./@title">
+						      				<xsl:value-of select="./@title"/>
+						      			</xsl:when>
+						      			<xsl:when test="../@title">
+						      				<xsl:value-of select="../@title"/>
+						      			</xsl:when>
+						      			<xsl:when test="./@label">
+						      				<xsl:value-of select="./@label"/>
+						      			</xsl:when>
+						      			<xsl:otherwise>
+						      				<xsl:value-of select="./@href"/>
+						      			</xsl:otherwise>
+						      		</xsl:choose>
+							    </xsl:element>
+							</xsl:otherwise>
+		  				</xsl:choose>
+				    </xsl:when>
+		    	</xsl:choose>
+		    </div>
+		</xsl:for-each>
+	</xsl:template>
+		
 	<!--LINE BREAKS-->
 	<xsl:template match="lb">
 	  <br/>
