@@ -309,7 +309,7 @@ class EadSearchHandler(EadHandler):
         if (hits > numreq):
             if (firstrec > 1):
                 hitlinks = ['<div class="backlinks">'
-                           ,'<a href="%s?operation=search%s&amp;pagenum=1&amp;numreq=%d&amp;highlight=%d">First</a>' % (script, rsidCgiString, numreq, highlight) 
+                           ,'<a href="%s?operation=search%s&amp;page=1&amp;numreq=%d&amp;highlight=%d">First</a>' % (script, rsidCgiString, numreq, highlight) 
                            ,'<a href="%s?operation=search%s&amp;firstrec=%d&amp;numreq=%d&amp;highlight=%d">Previous</a>' % (script, rsidCgiString, max(firstrec-numreq, 1), numreq, highlight)
                            ,'</div>']
             else:
@@ -318,7 +318,7 @@ class EadSearchHandler(EadHandler):
             if (hits > firstrec+numreq-1):
                 hitlinks.extend(['<div class="forwardlinks">'
                                 ,'<a href="%s?operation=search%s&amp;firstrec=%d&amp;numreq=%d&amp;highlight=%d">Next</a>' % (script, rsidCgiString, firstrec+numreq, numreq, highlight)
-                                ,'<a href="%s?operation=search%s&amp;pagenum=%d&amp;numreq=%d&amp;highlight=%d">Last</a>' % (script, rsidCgiString, (hits/numreq)+1, numreq, highlight)
+                                ,'<a href="%s?operation=search%s&amp;page=%d&amp;numreq=%d&amp;highlight=%d">Last</a>' % (script, rsidCgiString, (hits/numreq)+1, numreq, highlight)
                                 ,'</div>'])
 
             numlinks = ['<div class="numnav">']
@@ -326,7 +326,7 @@ class EadSearchHandler(EadHandler):
 #                       ,'<form action="%s">' % (script)
 #                       ,'<input type="hidden" name="operation" value="search"/>'
 #                       ,'<input type="hidden" name="rsid" value="%s"/>' % (rsid)
-#                       ,'Page: <input type="text" name="pagenum" size="3" value="%d"/> of %d' % ((firstrec / numreq)+1, (hits/numreq)+1)
+#                       ,'Page: <input type="text" name="page" size="3" value="%d"/> of %d' % ((firstrec / numreq)+1, (hits/numreq)+1)
 #                       ,'<input type="submit" value="Go!"/>'
 #                       ,'</form>'
 #                       ]
@@ -870,7 +870,7 @@ class EadSearchHandler(EadHandler):
         isComponent = None
         operation = form.get('operation', 'full')
         recid = form.getfirst('recid', None)
-        pagenum = int(form.getfirst('pagenum', 1))
+        pagenum = int(form.getfirst('page', 1))
         rsid = form.getfirst('rsid', None)
         qString = form.get('query', form.get('cqlquery', None))
         firstrec = int(form.get('firstrec', 1))

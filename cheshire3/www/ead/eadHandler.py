@@ -213,10 +213,8 @@ class EadHandler:
 
                 # any remaining links were not anchored - encoders fault :( - hope they're on page 1
                 pagex = pagex.replace('PAGE#', '%s/RECID-p1.shtml#' % (cache_url))
-                
-                for k, v in paramDict.iteritems():
-                    pagex = pagex.replace(k, v)
-                    
+                pagex = multiReplace(pagex, paramDict)
+                pages[x] = pagex
                 write_file(os.path.join(cache_path, recid + '-p%d.shtml' % (x+1)), pagex)
 
             self.logger.log('Multi-page navigation generated')

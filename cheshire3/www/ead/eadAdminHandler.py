@@ -651,6 +651,7 @@ class EadAdminHandler(EadHandler):
         paramDict = self.globalReplacements
         paramDict.update({'%TITLE%': ' :: '.join(self.htmlTitle)
                          ,'%NAVBAR%': ' | '.join(self.htmlNav)
+                         ,'LINKTOPARENT': ''
                          , 'RECID': recid
                          })
         try:
@@ -1598,15 +1599,15 @@ logfilepath = adminlogfilepath
 def handler(req):
     req.register_cleanup(build_architecture)
     try:
-        if rebuild:
-            build_architecture()
-        else:
-            try:
-                fp = recordStore.get_path(session, 'databasePath')    # attempt to find filepath for recordStore
-                assert (os.path.exists(fp) and time.time() - os.stat(fp).st_mtime > 60*60)
-            except:
-                # architecture not built
-                build_architecture()
+#        if rebuild:
+#            build_architecture()
+#        else:
+#            try:
+#                fp = recordStore.get_path(session, 'databasePath')    # attempt to find filepath for recordStore
+#                assert (os.path.exists(fp) and time.time() - os.stat(fp).st_mtime > 60*60)
+#            except:
+#                # architecture not built
+#                build_architecture()
 
         remote_host = req.get_remote_host(apache.REMOTE_NOLOOKUP)                   # get the remote host's IP for logging
         os.chdir(os.path.join(cheshirePath, 'cheshire3','www','ead','html'))        # cd to where html fragments are
