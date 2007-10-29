@@ -106,7 +106,7 @@
 				<xsl:apply-templates select="did/unittitle"/>
 			</xsl:when>
 			<xsl:otherwise>
-				<input type="text" onfocus="parent.setCurrent(this);" name="did/unittitle" id="cab" size="80" onchange="updateTitle()"></input>
+				<input type="text" onfocus="parent.setCurrent(this);" name="did/unittitle/test/test" id="cab" size="80" onchange="updateTitle()"></input>
 			</xsl:otherwise>
 		</xsl:choose>		
     </p>
@@ -193,7 +193,7 @@
       			<xsl:apply-templates select="acqinfo"/>
       		</xsl:when>
       		<xsl:otherwise>
-      			<strong><span class="isadg">3.2.4: </span>Immediate Source of Acquisition</strong> <a class="smalllink" id="linkcbd" title="add archival history" onclick="addElement('cbd')">add</a> [optional]
+      			<strong><span class="isadg">3.2.4: </span>Immediate Source of Acquisition </strong> <a class="smalllink" id="linkcbd" title="add archival history" onclick="addElement('cbd')">add</a> [optional]
 				<br/>
 				<textarea name="acqinfo" id="cbd" onfocus="parent.setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
       		</xsl:otherwise>
