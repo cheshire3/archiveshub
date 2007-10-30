@@ -969,6 +969,11 @@
 			<xsl:attribute name="href">
 			  <xsl:value-of select="./@href"/>
 			</xsl:attribute>
+			<xsl:if test="./@title">
+				<xsl:attribute name="title">
+			      <xsl:value-of select="./@title"/>
+			   	</xsl:attribute>
+			</xsl:if>
 			<xsl:attribute name="target">
       			<xsl:choose>
 	      			<xsl:when test="./@show='new'">
@@ -982,6 +987,7 @@
 				 	</xsl:otherwise>
 	      		</xsl:choose>
       		</xsl:attribute>
+      		<!-- inner HTML -->
       		<xsl:choose>
       			<xsl:when test="./text()">
       				<xsl:apply-templates />
@@ -1002,6 +1008,11 @@
 			<xsl:attribute name="src">
 				<xsl:value-of select="./@href"/>
 			</xsl:attribute>
+			<xsl:if test="./@title">
+				<xsl:attribute name="title">
+			      <xsl:value-of select="./@title"/>
+			   	</xsl:attribute>
+			</xsl:if>
 			<xsl:attribute name="alt">
 				<xsl:choose>
 					<xsl:when test="./daodesc">
@@ -1094,9 +1105,9 @@
 			<xsl:attribute name="href">
 				<xsl:value-of select="./daoloc[@label='reference']/@href"/>
 			</xsl:attribute>
-			<xsl:if test="./@title">
-			      <xsl:value-of select="./@title"/>
-			</xsl:if>
+			<xsl:attribute name="title">
+		      <xsl:text>View Full Image</xsl:text>
+		   	</xsl:attribute>
 			<xsl:attribute name="target">
       			<xsl:choose>
 	      			<xsl:when test="./@show='new'">
