@@ -1,7 +1,7 @@
 #
 # Script:    eadAdminHandler.py
-# Version:   0.24
-# Date:      08 October 2007
+# Version:   0.25
+# Date:      31 October 2007
 # Copyright: &copy; University of Liverpool 2005-2007
 # Description:
 #            Web interface for administering a cheshire 3 database of EAD finding aids
@@ -14,7 +14,7 @@
 # Required externals:
 #            cheshire3-base, cheshire3-web
 #            Py: localConfig.py, htmlFragments.py
-#            HTML: adduser.html, adminmenu.html, adminhelp.html, database.html, edituser.html, footer.html, header.html, preview.html, template.ssi, upload.html.
+#            HTML: adduser.html, adminmenu.html, adminhelp.html, database.html, edituser.html, deleteuser.html, footer.html, header.html, preview.html, template.ssi, upload.html.
 #            CSS: struc.css, style.css
 #            Javascript: ead.js, prototype.js
 #            Images: c3_black.gif
@@ -58,6 +58,8 @@
 # 0.22 - 20/08/2007 - CS - Redesign of Database Menu and navigation added to delete stats result page - includes changes to 'style.css' and 'database.html'
 # 0.23 - 27/09/2007 - JH - Rename wwwSearch --> www_utils
 # 0.24 - 08/10/2007 - CS - Stats page modified to allow all previous searchHandler logfiles to be viewed
+# 0.25 - 31/10/2007 - CS - Superuser status added with ability to create and delete users and superusers users only able to edit themselves
+#                        - Minor changes to navigation within Administration menu including addition of link to _error function
 #
 #
 
@@ -294,6 +296,13 @@ class EadAdminHandler(EadHandler):
 
     def list_users(self):
         global authStore
+        values = {'%USERNAME%' : '',
+                  '%FULLNAME%' : '',
+                  '%EMAIL%' : '',
+                  '%TELEPHONE%' : '',
+                  '%USER%' : 'checked="true"',
+                  '%SUPERUSER%' : ''
+                  }
         self.htmlTitle.append('User Management')
         lines = ['<table>',
                  '<tr class="headrow"><td>Username</td><td>Real Name</td><td>Email Address</td><td>Telephone</td><td>Operations</tr>']
@@ -308,13 +317,17 @@ class EadAdminHandler(EadHandler):
             cells = '<td>%s</td><td>%s</td><td>%s</td><td>%s</td>' % (uid, user.realName, user.email, user.tel)
             if (user.id == session.user.id):
                 cells = cells + '<td><a href="users.html?operation=edit&amp;userid=%s" class="fileop">EDIT</a></td>' % (uid)
+            elif (session.user.has_flag(session, 'info:srw/operation/1/delete', 'eadAuthStore')):
+                cells = cells + '<td><a href="users.html?operation=delete&amp;userid=%s&confirm=true" class="fileop">DELETE</a></td>' % (uid)  
             else:
                 cells = cells + '<td>N/A</td>'
             lines.append('<tr class="%s">%s</tr>' % (rowclass, cells))
-
-        lines.extend(['</table><br/>',
-                      '<h3 class="bar">Add New User</h3>',
-                      read_file('adduser.html'),])
+        lines.append('</table><br/>')
+        if (session.user.has_flag(session, 'info:srw/operation/1/create', 'eadAuthStore')):
+            lines.extend(['<h3 class="bar">Add New User</h3>',
+                      multiReplace(read_file('adduser.html'), values),])
+        
+                                                                
         return '\n'.join(lines)
     #- end list_users()
            
@@ -322,15 +335,17 @@ class EadAdminHandler(EadHandler):
         if (page == 'users.html'):
             self.htmlTitle.append('User Management')
             self.htmlNav.append('<a href="users.html" title="User Management" class="navlink">Users</a>')
+            link = '<a href="users.html">Return to \'User Management\' page</a>'
         elif (page == 'files.html'):
             self.htmlTitle.append('File Management')
             self.htmlNav.append('<a href="files.html" title="File Management" class="navlink">Files</a>')
+            link = '<a href="files.html">Return to \'File Management\' page</a>'
         elif (page == 'database.html'):
             self.htmlTitle.append('Database Management')
             self.htmlNav.append('<a href="database.html" title="Database Management" class="navlink">Database</a>')
-
+            link = '<a href="database.html">Return to \'Database Management\' page</a>'
         self.htmlTitle.append('Error')
-        return '<span class="error">%s</span>' % msg
+        return '<span class="error">%s</span><br/>\n<br/>%s' % (msg, link)
     
     def _modify_userDom(self, userDom, updateHash):
         global authStore
@@ -385,15 +400,33 @@ class EadAdminHandler(EadHandler):
         </table>''' % (user.id, user.realName, user.email, user.tel)
     
     def add_user(self, form):
+        values = {'%USERNAME%' : form.get('userid', ''),
+                  '%FULLNAME%' : form.get('realName', ''),
+                  '%EMAIL%' : form.get('email', ''),
+                  '%TELEPHONE%' : form.get('tel', '')
+                  }
         if (form.get('submit', None)):
             userid = form.get('userid', None)
+            usertype = form.get('usertype', 'user')
+            
             if not userid:
-                return self._error('Unable to add user - you MUST supply a username', 'users.html') + read_file('adduser.html')
+                output = [self._error('Unable to add user - you MUST supply a username', 'users.html')]
+                
+                adduser = multiReplace(read_file('adduser.html'), values)
+                if (usertype == 'user'):
+                    adduser = multiReplace(adduser, {'%USER%' : 'checked="true"', '%SUPERUSER%' : ''})
+                else : 
+                    adduser = multiReplace(adduser, {'%USER%' : '', '%SUPERUSER%' : 'checked="true"'})
+                output.append(adduser)
+                return ''.join(output)
             try:
                 user = authStore.fetch_object(session, userid)
             except:
                 # we do want to add this user
-                userRec = docParser.process_document(session, StringDocument(new_user_template.replace('%USERNAME%', userid)))
+                if (usertype == 'superuser'):
+                    userRec = domParser.process_document(session, StringDocument(new_superuser_template.replace('%USERNAME%', userid)))
+                else :
+                    userRec = domParser.process_document(session, StringDocument(new_user_template.replace('%USERNAME%', userid)))
                 userDom = userRec.get_dom()
                 passwd = form.get('passwd', None)
                 # check password
@@ -407,32 +440,46 @@ class EadAdminHandler(EadHandler):
                     if (passwd1 == passwd2):
                         newHash['password'] = crypt(passwd1, passwd1[:2])
                     else:
-                        return self._error('Unable to add user - passwords did not match.', 'users.html') + read_file('adduser.html')
+                        output = [self._error('Unable to add user - passwords did not match.', 'users.html')]   
+                        adduser = multiReplace(read_file('adduser.html'), values)
+                        if (usertype == 'user'):
+                            adduser = multiReplace(adduser, {'%USER%' : 'checked="true"', '%SUPERUSER%' : ''})
+                        else : 
+                            adduser = multiReplace(adduser, {'%USER%' : '', '%SUPERUSER%' : 'checked="true"'})
+                        output.append(adduser)
+                        return ''.join(output)            
                 else:
-                    return self._error('Unable to add user - password not supplied.', 'users.html') + read_file('adduser.html')
-                
+                    output = [self._error('Unable to add user - password not supplied.', 'users.html')]
+                    adduser = multiReplace(read_file('adduser.html'), values)
+                    if (usertype == 'user'):
+                        adduser = multiReplace(adduser, {'%USER%' : 'checked="true"', '%SUPERUSER%' : ''})
+                    else : 
+                        adduser = multiReplace(adduser, {'%USER%' : '', '%SUPERUSER%' : 'checked="true"'})
+                    output.append(adduser)
+                    return ''.join(output)               
                 # update DOM
                 userDom = self._modify_userDom(userDom, newHash)    
                 self._submit_userDom(userid, userDom)                    
                 user = authStore.fetch_object(session, userid)
                 return '<span class="ok">User successfully added.</span>' + self.list_users()
             else:
-                return self._error('User with username/id "%s" already exists! Please try again with a different username.' % (userid), 'users.html') + read_file('adduser.html')
+                return self._error('User with username/id "%s" already exists! Please try again with a different username.' % (userid), 'users.html') + multiReplace(read_file('adduser.html'), values)
                 
-        return read_file('adduser.html')
+        return multiReplace(read_file('adduser.html'), values)
     #- end add_user()
     
     def edit_user(self, form):
         global authStore, rebuild
-        self.htmlTitle.append('User Management')
-        self.htmlTitle.append('Edit')
-        self.htmlNav.append('<a href="users.html" title="User Management" class="navlink">Users</a>')
+        
         userid = form.get('userid', session.user.id)
         try:
             user = authStore.fetch_object(session, userid)
         except:
             return self._error('User with id "%s" does not exist!' % (userid), 'users.html')
         else:
+            self.htmlTitle.append('User Management')
+            self.htmlTitle.append('Edit')
+            self.htmlNav.append('<a href="users.html" title="User Management" class="navlink">Users</a>')
             if (form.get('submit', None)):
                 userRec = authStore.fetch_record(session, userid)
                 userDom = userRec.get_dom()
@@ -449,23 +496,54 @@ class EadAdminHandler(EadHandler):
                         if (passwd1 == passwd2):
                             newHash['password'] = crypt(passwd1, passwd1[:2])
                         else:
-                            return self._error('Unable to update details - new passwords did not match.', 'user.html')
+                            self.htmlTitle = self.htmlTitle[:-2]
+                            self.htmlNav = self.htmlNav[:-1]
+                            return self._error('Unable to update details - new passwords did not match.', 'users.html')
                     
                     # update DOM
                     userDom = self._modify_userDom(userDom, newHash)    
                     self._submit_userDom(userid, userDom)                    
                     user = authStore.fetch_object(session, userid)
-                    rebuild = True
-                    return '<h3 class="bar">Details successfully updated.</h3>' + self._confirm_userDetails(user)
+                    rebuild = True                   
+                    return '<h3 class="bar">Details successfully updated.</h3>' + self._confirm_userDetails(user) + '<br/><a href="users.html">Return to \'User Management\' Page<a/>'
                 else:
-                    return self._error('Unable to update details - current password missing or incorrect.', 'users.html')
-                
+                    self.htmlTitle = self.htmlTitle[:-2]
+                    self.htmlNav = self.htmlNav[:-1]
+                    return self._error('Unable to update details - current password missing or incorrect.', 'users.html')               
             form = read_file('edituser.html').replace('%USERNAME%', userid)
             for f in user.simpleNodes:
                 if hasattr(user,f): form = form.replace('%%%s%%' % f, getattr(user,f))
                 else: form = form.replace('%%%s%%' % f, '')
             return form
     #- end edit_user()
+    
+    def delete_user(self, form):
+        global authStore, rebuild               
+        userid = form.get('userid', session.user.id) 
+        confirm = form.get('confirm', None)
+        cancel = form.get('cancel', None)
+        if (confirm == 'true'):
+            self.htmlTitle.append('User Management')
+            self.htmlTitle.append('Delete')
+            self.htmlNav.append('<a href="users.html" title="User Management" class="navlink">Users</a>')
+            output = ['<h3 class="bar">Delete User Confirmation.</h3>', read_file('deleteuser.html').replace('%USERID%', userid)]
+            return ''.join(output)      
+        elif (cancel == 'Cancel'):
+            return self.list_users()
+        else :   
+            passwd = form.get('passwd', None)
+            if (passwd and crypt(passwd, passwd[:2]) == session.user.password):                   
+                try :
+                    authStore.delete_record(session, userid)
+                except :
+                    return self._error('Unable to delete user %s - user does not exist.' % (userid), 'users.html')
+                else :
+                    rebuild = True
+                    return '<span class="ok">User %s succesfully deleted.</span>' % (userid) + self.list_users()
+            else :
+                return self._error('Unable to delete user %s - incorrect password.' % (userid), 'users.html')
+               #return '<span class="error">Unable to delete user %s - incorrect password.</span>' % (userid) + self.list_users()
+    #- end delete_user()
 
     def _walk_directory(self, d):
         global script
@@ -505,8 +583,7 @@ class EadAdminHandler(EadHandler):
             fileformsubmits = '''<input type="submit" name="operation" value="%s" onmousedown="op=this.value;"/>''' % version
             header = 'Please select file(s) to %s' % version
         if (version=='full'):
-            out.extend(['<h3 class="bar">Upload <a href="/ead/admin/help.html#files_upload" title="What is this?"><img src="/images/whatisthis.gif" alt="[What is this?]"/></a></h3>', 
-               read_file('upload.html'), '<br/>'])    
+            out.extend([read_file('upload.html'), '<br/>'])    
         out.extend(['<script type="text/javascript" src="/javascript/cookies.js"></script>',
                '<script type="text/javascript" src="/javascript/collapsibleLists.js"></script>',
                '''<script type="text/javascript">
@@ -587,8 +664,8 @@ class EadAdminHandler(EadHandler):
         Please check the file at the suggested location and try again.</p>
         <code>%s: %s</code>
         <pre>
-%s
-<span class="error">%s</span>
+        %s
+        <span class="error">%s</span>
         </pre>
         <p><a href="files.html">Back to file page</a></p></div>
                 ''' % (e[0], e[1], html_encode(line[:posn+20]) + '...',  startspace + str('-'*(posn-len(startspace))) +'^')
@@ -628,8 +705,12 @@ class EadAdminHandler(EadHandler):
         f = form.get('eadfile', None)
         pagenum = int(form.getfirst('pagenum', 1))
         if not f or not len(f.value):
-            #here make it do all the header stuff too
-            return read_file('preview.html')
+            head = self._get_genericHtml('header.html')
+            output = head
+            output += read_file('preview.html')
+            foot = self._get_genericHtml('footer.html')          
+            output += foot
+            return output
         
         self.logger.log('Preview requested')
         rec = self._parse_upload(f.value)
@@ -1391,12 +1472,14 @@ class EadAdminHandler(EadHandler):
                         content = self.add_user(form)
                     elif (operation == 'edit'):
                         content = self.edit_user(form)
+                    elif (operation == 'delete'):
+                        content = self.delete_user(form)
                     elif (operation == 'logout'):
-                        content = self.logout_user(req)
+                        content = self.logout_user(req)                    
                     else:
                         #invalid operation selected
                         self.htmlTitle.append('Error')
-                        content = 'An invalid operation was attempted. Valid operations are:<br/>add, edit.'
+                        content = 'An invalid operation was attempted. Valid operations are:<br/>add, edit, delete.'
                 else:
                     content = self.list_users()
             elif (path == 'files.html'):
@@ -1508,6 +1591,7 @@ dbPath = None
 baseDocFac = None
 sourceDir = None
 docParser = None
+domParser = None
 # stores
 authStore = None
 recordStore = None
@@ -1538,9 +1622,10 @@ diacriticNormaliser = None
 
 rebuild = True
 
+
 def build_architecture(data=None):
     # data argument provided for when function run as clean-up - always None
-    global session, serv, db, dbPath, baseDocFac, sourceDir, docParser, \
+    global session, serv, db, dbPath, baseDocFac, sourceDir, docParser, domParser, \
     authStore, recordStore, dcRecordStore, compStore, resultSetStore, \
     clusDb, clusStore, clusFlow, \
     summaryTxr, fullTxr, fullSplitTxr, textTxr, \
@@ -1561,6 +1646,7 @@ def build_architecture(data=None):
     baseDocFac = db.get_object(session, 'baseDocumentFactory')
     sourceDir = baseDocFac.get_default(session, 'data')
     docParser = db.get_object(session, 'LxmlParser')
+    domParser = db.get_object(session, 'FtParser')
     # globals line 2: stores
     authStore = db.get_object(session, 'eadAuthStore')
     recordStore = db.get_object(session, 'recordStore')
@@ -1633,8 +1719,8 @@ def authenhandler(req):
     if (rebuild):
         build_architecture()                                                    # build the architecture
     pw = req.get_basic_auth_pw()
-    user = req.user
-    try: session.user = authStore.fetch_object(session, user)
+    un = req.user
+    try: session.user = authStore.fetch_object(session, un)
     except: return apache.HTTP_UNAUTHORIZED    
     if (session.user and session.user.password == crypt(pw, pw[:2])):
         return apache.OK
