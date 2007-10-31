@@ -1683,6 +1683,8 @@ logfilepath = adminlogfilepath
 
 
 def handler(req):
+    global script, rebuild
+    script = req.subprocess_env['SCRIPT_NAME']
     req.register_cleanup(build_architecture)
     try:
 #        if rebuild:
