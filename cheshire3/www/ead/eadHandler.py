@@ -80,6 +80,7 @@ class EadHandler:
     txrHash = {}
     
     def __init__(self, lgr):
+        global rebuild
         if (rebuild):
             build_architecture()
         self.logger = lgr
