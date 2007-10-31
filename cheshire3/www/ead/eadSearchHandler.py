@@ -88,6 +88,8 @@
 #                        - Implement reverse hierarchy walk for parent links
 #                        - Rearrangement of display_record
 # 0.29 - 23/10/2007 - JH - Term highlighting for LxmlRecords implemented + optimised for summary display
+# 0.30 - 31/10/2007 - JH - Minor precautionary change as result of Leeds' multiple interfaces on same machine problems
+#                        - script name now taken form request object
 #
 #
 
@@ -1463,6 +1465,8 @@ def build_architecture(data=None):
 logfilepath = searchlogfilepath
 
 def handler(req):
+    global script, rebuild
+    script = req.subprocess_env['SCRIPT_NAME']
     req.register_cleanup(build_architecture)
     try:
         if rebuild:
