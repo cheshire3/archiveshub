@@ -14,6 +14,7 @@
 # 0.02 - 06/08/2007 - CS - rename_notes added
 # 0.03 - 26/09/2007 - JH - Mods to component search display to accomodate hierarchy of titles
 #                        - Folder tags added
+# 0.04 - 30/10/2007 - CS - Config code for superuser and user added/modified
 #
 # NB:
 # - If you are not experieced in editing HTML you are advised not to edit any of the HTML fragments
@@ -137,11 +138,40 @@ new_user_template = '''
   <username>%USERNAME%</username>
   <flags>
     <flag>
+      <object>recordStore</object>
+      <value>c3r:administrator</value>     
+    </flag>
+    <flag>
+      <object>eadDCStore</object>
+      <value>c3r:administrator</value>
+    </flag>
+    <flag>
+      <object>componentStore</object>
+      <value>c3r:administrator</value>      
+    </flag>
+    <flag>
+      <object>eadAuthStore</object>
+        <value>info:srw/operation/2/retrieve</value>     
+    </flag>
+    <flag>
+      <object>eadAuthStore</object>
+        <value>info:srw/operation/1/replace</value>     
+    </flag>
+  </flags>
+</config>'''
+
+new_superuser_template = '''
+<config type="user" id="%USERNAME%">
+  <objectType>user.SimpleUser</objectType>
+  <username>%USERNAME%</username>
+  <flags>
+    <flag>
       <object/>
       <value>c3r:administrator</value>
     </flag>
   </flags>
 </config>'''
+
 
 rename_notes = '''
 <div id="notes">
@@ -153,3 +183,15 @@ rename_notes = '''
     </ul>
   </em>
 </div>'''
+#    <flag>
+#      <object>eadDCStore</object>
+#      <value>c3r:administrator</value>
+#    </flag>
+#    <flag>
+#      <object>componentStore</object>
+#      <value>c3r:administrator</value>      
+#    </flag>
+#    <flag>
+#      <object>eadAuthStore</object>
+#        <value>info:srw/operation/1/create</value>     
+#    </flag>
