@@ -272,7 +272,7 @@ clusFlow = None
 compFlow = None
 compRecordFlow = None
 # other
-exactExtracter = None
+extracter = None
 diacriticNormaliser = None
 
 rebuild = True
@@ -284,7 +284,7 @@ def build_architecture(data=None):
     clusDb, clusStore, clusFlow, \
     summaryTxr, fullTxr, fullSplitTxr, textTxr, \
     ppFlow, buildFlow, buildSingleFlow, indexRecordFlow, assignDataIdFlow, normIdFlow, compFlow, compRecordFlow, \
-    exactExtracter, diacriticNormaliser, \
+    extracter, diacriticNormaliser, \
     rebuild
     
     # globals line 1: re-establish session; maintain user if possible
@@ -327,7 +327,7 @@ def build_architecture(data=None):
     compFlow = db.get_object(session, 'buildAllComponentWorkflow'); compFlow.load_cache(session, db)
     compRecordFlow = db.get_object(session, 'buildComponentWorkflow'); compRecordFlow.load_cache(session, db)
     # globals line 6: other
-    exactExtracter = db.get_object(session, 'ExactExtracter')
+    extracter = db.get_object(session, 'SimpleExtracter')
     diacriticNormaliser = db.get_object(session, 'DiacriticNormaliser')
     
     rebuild = False

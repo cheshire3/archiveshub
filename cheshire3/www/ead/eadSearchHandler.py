@@ -721,10 +721,16 @@ class EadSearchHandler(EadHandler):
         if (proxInfo) and highlight:
 #            return repr(proxInfo)
             # sort proxInfo so that nodeIdxs are sorted acsending
-            proxInfo2 = [(proxInfo[x], proxInfo[x+1]) for x in range(0, len(proxInfo), 2)]
+            proxInfo2 = [(proxInfo[x], proxInfo[x+1], proxInfo[x+2]) for x in range(0, len(proxInfo), 3)]
             proxInfo2.sort()
-            nodeIdxs = [x[0] for x in proxInfo2]
-            wordIdxs = [x[1] for x in proxInfo2]
+            nodeIdxs = []
+            wordIdxs = []
+            wordOffsets = []
+            for x in proxInfo2:
+                nodeIdxs.append(x[0])
+                wordIdxs.append(x[1])
+                wordOffsets.append(x[2])
+                
             xps = {}
             tree = rec.dom.getroottree()
             walker = rec.dom.getiterator()
@@ -1189,8 +1195,8 @@ In: %s
     
     
     def similar_search(self, form):
-        global exactExtracter
-        if not (exactExtracter): exactExtracter = db.get_object(session, 'ExactExtracter') #ensure it's available
+        global extracter
+        if not (extracter): extracter = db.get_object(session, 'SimpleExtracter') #ensure it's available
         rsid = form.getfirst('rsid', None)
         hitposition = int(form.getfirst('hitposition', 0))
         highlight = form.getfirst('highlight', 0)
@@ -1355,7 +1361,7 @@ In: %s
             self.htmlTitle.append('Search')
             content = read_file('index.html')
 
-        tmpl = read_file(templatePath)                                        # read the template in
+        tmpl = read_file(self.templatePath)                                        # read the template in
         page = tmpl.replace("%CONTENT%", content)
         self.globalReplacements.update({
             "%TITLE%": ' :: '.join(self.htmlTitle)
@@ -1458,7 +1464,7 @@ def build_architecture(data=None):
     compFlow = db.get_object(session, 'buildAllComponentWorkflow'); compFlow.load_cache(session, db)
     compRecordFlow = db.get_object(session, 'buildComponentWorkflow'); compRecordFlow.load_cache(session, db)
     # globals line 6: other
-    exactExtracter = db.get_object(session, 'ExactExtracter')
+    extracter = db.get_object(session, 'SimpleExtracter')
     diacriticNormaliser = db.get_object(session, 'DiacriticNormaliser')
     rebuild = False
 
