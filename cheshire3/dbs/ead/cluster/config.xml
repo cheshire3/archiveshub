@@ -84,10 +84,10 @@
 	</subConfig>
 
     <!-- indexes -->
-    <path type="includeConfigs">idxConfigs.xml</path>
+    <path type="includeConfigs">configIdxs.xml</path>
 
     <!-- workflows - override default workflows -->
-    <path type="includeConfigs">workflow.xml</path>
+    <path type="includeConfigs">configWflows.xml</path>
 
   </subConfigs>
 

@@ -1,0 +1,68 @@
+<config>
+  <subConfigs>
+
+    <subConfig type="index" id="ead-cluster-idx-all">
+      <objectType>index.SimpleIndex</objectType>
+      <paths>
+        <object type="indexStore" ref="eadClusterIndexStore"/>
+      </paths>
+      <source>
+        <xpath>/cluster/key</xpath>
+        <xpath>/cluster/title</xpath>
+        <xpath>/cluster/desciption</xpath>
+        <process>
+          <object type="workflow" ref="KeywordExtracterWorkflow"/>
+          <object type="normaliser" ref="CaseNormaliser"/>
+          <object type="normaliser" ref="EnglishStemNormaliser"/>
+        </process>
+      </source>
+    </subConfig>
+
+    <subConfig type="index" id="ead-cluster-idx-key">
+      <objectType>index.SimpleIndex</objectType>
+      <paths>
+        <object type="indexStore" ref="eadClusterIndexStore"/>
+      </paths>
+      <source>
+        <xpath>/cluster/key</xpath>
+        <process>
+          <object type="workflow" ref="KeywordExtracterWorkflow"/>
+          <object type="normaliser" ref="CaseNormaliser"/>
+          <object type="normaliser" ref="EnglishStemNormaliser"/>
+        </process>
+      </source>
+    </subConfig>
+
+    <subConfig type="index" id="ead-cluster-idx-title">
+      <objectType>index.SimpleIndex</objectType>
+      <paths>
+        <object type="indexStore" ref="eadClusterIndexStore"/>
+      </paths>
+      <source>
+        <xpath>/cluster/title</xpath>
+        <process>
+          <object type="workflow" ref="KeywordExtracterWorkflow"/>
+          <object type="normaliser" ref="CaseNormaliser"/>
+          <object type="normaliser" ref="EnglishStemNormaliser"/>
+        </process>
+      </source>
+    </subConfig>
+
+    <subConfig type="index" id="ead-cluster-idx-description">
+      <objectType>index.SimpleIndex</objectType>
+      <paths>
+        <object type="indexStore" ref="eadClusterIndexStore"/>
+      </paths>
+      <source>
+        <xpath>/cluster/description</xpath>
+        <process>
+          <object type="workflow" ref="KeywordExtracterWorkflow"/>
+          <object type="normaliser" ref="CaseNormaliser"/>
+          <object type="normaliser" ref="EnglishStemNormaliser"/>
+        </process>
+      </source>
+    </subConfig>
+
+  </subConfigs>
+
+</config>
