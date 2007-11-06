@@ -1,7 +1,7 @@
 #
 # Script:    eadHandler.py
-# Version:   0.01
-# Date:      12 October 2007
+# Version:   0.02
+# Date:      6 November 2007
 # Copyright: &copy; University of Liverpool 2005-2007
 # Description:
 #            Globals and parent class web interfaces to a Cheshire3 database of EAD finding aids.
@@ -13,6 +13,7 @@
 #
 # Version History:
 # 0.01 - 12/10/2007 - JH - Globals migrated from separate files, parent class created
+# 0.02 - 06/11/2007 - JH - Migrated to new architecture: extracter --> tokenizer -- tokenMerge
 
 # import mod_python stuffs
 from mod_python import apache, Cookie
@@ -22,6 +23,7 @@ import sys, traceback, os, cgitb, urllib, time, smtplib, re
 from crypt import crypt
 from threading import Thread
 from email import Message, MIMEMultipart, MIMEText # email modules
+from lxml import etree # Lxml tree manipulation
 # import customisable variables
 from localConfig import *
 # set sys paths 

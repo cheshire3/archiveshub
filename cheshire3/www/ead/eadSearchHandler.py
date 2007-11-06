@@ -1,7 +1,7 @@
 #
 # Script:    eadSearchHandler.py
-# Version:   0.29
-# Date:      23 October 2007
+# Version:   0.31
+# Date:      6 November 2007
 # Copyright: &copy; University of Liverpool 2005-2007
 # Description:
 #            Web interface for searching a cheshire 3 database of EAD finding aids
@@ -90,6 +90,9 @@
 # 0.29 - 23/10/2007 - JH - Term highlighting for LxmlRecords implemented + optimised for summary display
 # 0.30 - 31/10/2007 - JH - Minor precautionary change as result of Leeds' multiple interfaces on same machine problems
 #                        - script name now taken form request object
+# 0.31 - 06/11/2007 - JH - Migrated to new architecture: extracter --> tokenizer -- tokenMerge
+#                        - Highlighting upgrade - now uses character offset info from proximity index
+#
 #
 #
 
@@ -719,10 +722,10 @@ class EadSearchHandler(EadHandler):
         self.logger.log('Summary requested for record: %s' % (recid))
         # highlight search terms in rec.dom
         if (proxInfo) and highlight:
-#            return repr(proxInfo)
-            # sort proxInfo so that nodeIdxs are sorted acsending
+            # sort proxInfo so that nodeIdxs are sorted descending (so that offsets don't get upset :)
             proxInfo2 = [(proxInfo[x], proxInfo[x+1], proxInfo[x+2]) for x in range(0, len(proxInfo), 3)]
             proxInfo2.sort()
+            proxInfo2.reverse()
             nodeIdxs = []
             wordIdxs = []
             wordOffsets = []
@@ -730,110 +733,58 @@ class EadSearchHandler(EadHandler):
                 nodeIdxs.append(x[0])
                 wordIdxs.append(x[1])
                 wordOffsets.append(x[2])
-                
+            
             xps = {}
             tree = rec.dom.getroottree()
             walker = rec.dom.getiterator()
             for x, n in enumerate(walker):
                 if n.tag == 'dsc':
-                    break # no point highlighting any further down 
+                    break # no point highlighting any further down - takes forever
                 if x in nodeIdxs:
                     xps[x] = tree.getpath(n)
                     
             for x, ni in enumerate(nodeIdxs):
-                wi = wordIdxs[x] 
+                wi = wordIdxs[x]
+                offset = wordOffsets[x] 
                 wordCount = 0
                 try:
                     xp = xps[ni]
                 except KeyError:
-                    # no XPath - must have hit dsc
-                    break
+                    continue # no XPath - must be below dsc
                 
                 el = rec.dom.xpath(xp)[0]
                 located = None
                 for c in el.getiterator():
                     if c.text:
-                        spaceline = punctuationRe.sub(' ', c.text)
-                        words = wordRe.findall(spaceline)
-                        try:
-                            start = sum(map(len, words[:wi - wordCount]))
-                            end = start + len(words[wi - wordCount])
-                        except IndexError:
-                            wordCount += len(words)
-                        else:
+                        text = c.text
+                        if len(c.text) > offset:
+                            start = offset
+                            end = text.find(' ', start)
+                            if end == -1:
+                                end = len(text)
                             located = 'text'
+                            c.text = text[:start] + 'HGHLGHT' + text[start:end] + 'THGLHGH' + text[end:]
                             break
+                        else:
+                            offset -= len(text)
                         
                     if c.tail:
-                        spaceline = punctuationRe.sub(' ', c.tail)
-                        words = wordRe.findall(spaceline)
-                        try:
-                            start = sum(map(len, words[:wi - wordCount]))
-                            end = start + len(words[wi - wordCount])
-                        except IndexError:
-                            wordCount += len(words)
-                        else:
+                        text = c.tail
+                        if len(c.tail) > offset:
+                            start = offset
+                            end = text.find(' ', start)
+                            if end == -1:
+                                end = len(text)
                             located = 'tail'
+                            c.tail = text[:start] + 'HGHLGHT' + text[start:end] + 'THGLHGH' + text[end:]
                             break
+                        else:
+                            offset -= len(text)
                         
-                if located:
-                    wp = 0
-                    while words[wi - wordCount][wp] == ' ':
-                        wp += 1
-                    start += wp
-                    if located == 'text':
-                        c.text = c.text[:start] + 'HGHLGHT' + c.text[start:end] + 'THGLHGH' + c.text[end:]
-                    elif located == 'tail':
-                        c.tail = c.tail[:start] + 'HGHLGHT' + c.tail[start:end] + 'THGLHGH' + c.tail[end:]
-                    else:
-                        # woops something went seriously wrong
-                        raise ValueError(located)
-                        
-#            try:
-#                # to save repeated calls to get_sax
-#                saxEvnts = rec.get_sax()
-#                # for each pair of terms in result.proxInfo
-#                for x in range(0, len(proxInfo), 2):
-#                    located = False
-#                    wordCount = 0
-#                    # for each subsequent sax event
-#                    for y in range(proxInfo[x] + 1, len(saxEvnts)):
-#                        if (saxEvnts[y][0] == '3') and not located:
-#                            # keep leading space to find first word
-#                            spaceline = punctuationRe.sub(' ', saxEvnts[y][2:])
-#                            # Words ending in 's are treated as 2 words in proximityInfo - make it so!
-#                            spaceline = spaceline.replace('\'s', ' s') 
-#                            words = wordRe.findall(spaceline)
-#                            try:
-#                                start = sum(map(len, words[:proxInfo[x+1] - wordCount]))
-#                                end = start + len(words[proxInfo[x+1] - wordCount])
-#                                wp = 0
-#                                while words[proxInfo[x+1] - wordCount][wp] == ' ':
-#                                    wp += 1
-#
-#                                start += wp
-#
-#                                newSax = saxEvnts[y][:2+start] + 'HGHLGHT' + saxEvnts[y][2+start:2+end] + 'THGLHGH' + saxEvnts[y][2+end:]
-#                                rec.sax[y] = newSax
-#                                located = True
-#                                break
-#                            
-#                            except IndexError:
-#                                # haven't got to the occurence yet, but current text node has ended - go to next one
-#                                wordCount += len(words)
-#                                continue
-#                            except:
-#                                continue
-#
-#            except:
-#                # hmm proxInfo busted - oh well
-#                self.logger.log('unable to highlight')
-                
             self.logger.log('Search terms highlighted')
         
         # NEVER cache summaries - always generate on the fly - as we highlight search terms         
         # send record to transformer
-        #self.logger.log(rec.get_xml())
         doc = summaryTxr.process_record(session, rec)
         del rec
         summ = unicode(doc.get_raw(), 'utf-8')
@@ -1258,10 +1209,10 @@ In: %s
         
         cqlClauses = []
         for cah, cal in controlaccess.iteritems():
-            for casax in cal:
-                key = exactExtracter.process_eventList(session, casax).keys()[0]
+            aps = extracter.process_xpathResult(session, cal)
+            for key in aps.keys():
                 cqlClauses.append('c3.ead-idx-%s exact "%s"' % (cah, key))
-        
+
         if len(cqlClauses):
             if highlight: cql = ' or/proxinfo '.join(cqlClauses)
             else: cql = ' or '.join(cqlClauses)
@@ -1279,7 +1230,7 @@ In: %s
                 terms = []
                 data = rec.process_xpath(xp) # we only want top level stuff to feed into similar search
                 for d in data:
-                    key = exactExtracter.process_eventList(session, d).keys()[0]
+                    key = extracter.process_eventList(session, d).keys()[0]
                     if (type(key) == unicode):
                         key = key.encode('utf-8')
                     terms.append(key)
@@ -1409,7 +1360,7 @@ clusFlow = None
 compFlow = None
 compRecordFlow = None
 # other
-exactExtracter = None
+extracter = None
 diacriticNormaliser = None
 
 rebuild = True
@@ -1421,7 +1372,7 @@ def build_architecture(data=None):
     clusDb, clusStore, clusFlow, \
     summaryTxr, fullTxr, fullSplitTxr, textTxr, \
     ppFlow, buildFlow, buildSingleFlow, indexRecordFlow, assignDataIdFlow, normIdFlow, compFlow, compRecordFlow, \
-    exactExtracter, diacriticNormaliser, \
+    extracter, diacriticNormaliser, \
     rebuild
     
     # globals line 1: re-establish session; maintain user if possible

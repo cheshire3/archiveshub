@@ -1,7 +1,7 @@
 #
 # Script:    eadAdminHandler.py
-# Version:   0.25
-# Date:      31 October 2007
+# Version:   0.26
+# Date:      6 November 2007
 # Copyright: &copy; University of Liverpool 2005-2007
 # Description:
 #            Web interface for administering a cheshire 3 database of EAD finding aids
@@ -60,6 +60,8 @@
 # 0.24 - 08/10/2007 - CS - Stats page modified to allow all previous searchHandler logfiles to be viewed
 # 0.25 - 31/10/2007 - CS - Superuser status added with ability to create and delete users and superusers users only able to edit themselves
 #                        - Minor changes to navigation within Administration menu including addition of link to _error function
+# 0.26 - 06/11/2007 - JH - Migrated to new architecture: extracter --> tokenizer -- tokenMerge
+#
 #
 #
 
@@ -1617,7 +1619,7 @@ clusFlow = None
 compFlow = None
 compRecordFlow = None
 # other
-exactExtracter = None
+extracter = None
 diacriticNormaliser = None
 
 rebuild = True
@@ -1630,7 +1632,7 @@ def build_architecture(data=None):
     clusDb, clusStore, clusFlow, \
     summaryTxr, fullTxr, fullSplitTxr, textTxr, \
     ppFlow, buildFlow, buildSingleFlow, indexRecordFlow, assignDataIdFlow, normIdFlow, compFlow, compRecordFlow, \
-    exactExtracter, diacriticNormaliser, \
+    extracter, diacriticNormaliser, \
     rebuild
     
     # globals line 1: re-establish session; maintain user if possible
@@ -1674,7 +1676,7 @@ def build_architecture(data=None):
     compFlow = db.get_object(session, 'buildAllComponentWorkflow'); compFlow.load_cache(session, db)
     compRecordFlow = db.get_object(session, 'buildComponentWorkflow'); compRecordFlow.load_cache(session, db)
     # globals line 6: other
-    exactExtracter = db.get_object(session, 'ExactExtracter')
+    extracter = db.get_object(session, 'SimpleExtracter')
     diacriticNormaliser = db.get_object(session, 'DiacriticNormaliser')
     
     rebuild = False
