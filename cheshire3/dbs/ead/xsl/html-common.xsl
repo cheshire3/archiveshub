@@ -298,21 +298,21 @@
 	</xsl:template>
 
 	<xsl:template match="bioghist">
-  	<xsl:if test="@id">
-  		<a name="{@id}"><xsl:text> </xsl:text></a>
-  	</xsl:if>
-	  <xsl:if test="not(head)">
-	  	<xsl:choose>
-	  		<xsl:when test="../../archdesc or ../../../c3component">
-	  			<h3 class="ead">Administrative / Biographical History</h3>
-	  		</xsl:when>
-			<xsl:otherwise>
-				<h4 class="ead">Administrative / Biographical History</h4>
-			</xsl:otherwise>
-		</xsl:choose>
-    </xsl:if>
-    <xsl:apply-templates/>
-  </xsl:template>
+		<xsl:if test="@id">
+			<a name="{@id}"><xsl:text> </xsl:text></a>
+		</xsl:if>
+		<xsl:if test="not(head)">
+		 	<xsl:choose>
+		 		<xsl:when test="../../archdesc or ../../../c3component">
+		 			<h3 class="ead">Administrative / Biographical History</h3>
+		 		</xsl:when>
+				<xsl:otherwise>
+					<h4 class="ead">Administrative / Biographical History</h4>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:if>
+		<xsl:apply-templates/>
+	</xsl:template>
 
 	<xsl:template match="scopecontent">
 	  	<xsl:if test="@id">
@@ -332,21 +332,21 @@
 	</xsl:template>
 
 	<xsl:template match="arrangement">
-  	<xsl:if test="@id">
-  		<a name="{@id}"><xsl:text> </xsl:text></a>
-  	</xsl:if>
-    <xsl:if test="not(head)">
-    	<xsl:choose>
-	  		<xsl:when test="../../archdesc  or ../../../c3component">
-	  			<h3 class="ead">Arrangement</h3>
-	  		</xsl:when>
-      	<xsl:otherwise>
-      		<h4 class="ead">Arrangement</h4>
-      	</xsl:otherwise>
-      </xsl:choose>
-    </xsl:if>
-    <xsl:apply-templates/>
-  </xsl:template>
+  		<xsl:if test="@id">
+  			<a name="{@id}"><xsl:text> </xsl:text></a>
+	  	</xsl:if>
+	    <xsl:if test="not(head)">
+	    	<xsl:choose>
+		  		<xsl:when test="../../archdesc  or ../../../c3component">
+		  			<h3 class="ead">Arrangement</h3>
+		  		</xsl:when>
+		      	<xsl:otherwise>
+		      		<h4 class="ead">Arrangement</h4>
+		      	</xsl:otherwise>
+		    </xsl:choose>
+    	</xsl:if>
+    	<xsl:apply-templates/>
+	</xsl:template>
 
 	<!-- ACCESS + USE RESTRICTIONS -->
   <xsl:template match="accessrestrict">
@@ -1378,6 +1378,13 @@
 			</xsl:otherwise>
 	    </xsl:choose>
     	<xsl:text> </xsl:text>
+	</xsl:template>
+	
+	<xsl:template match="span">
+		<xsl:copy>
+				<xsl:copy-of select="@*"/>
+				<xsl:apply-templates />
+		</xsl:copy>
 	</xsl:template>
 
 	
