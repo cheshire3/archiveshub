@@ -84,7 +84,7 @@
 				</map>
 				<map>
 					<xpath>count(/ead/archdesc/dsc)</xpath>
-          <xpath>17</xpath>
+					<xpath>17</xpath>
 				</map>					
 			</transform>
 		</subConfig>

@@ -18,12 +18,6 @@
 		</subConfig>
 	
 		<!-- Custom normalisers -->
-		<subConfig type="normaliser" id="GeocodeNormaliser">
-			<objectType>geo.geoNormaliser.GoogleMapsGeocodeNormaliser</objectType>
-			<options>
-				<setting type="apiKey">ABQIAAAAMTCXfqkeqpTdxlIMWOHmExR-Q2WEe91j7vBt361ikSR1RCErExTKXAu5Uc_wg9YcGofYU8bOHMlcWQ</setting>
-			</options>
-		</subConfig>
 		
 		<subConfig type="normaliser" id="StoplistNormaliser">
 			<objectType>normaliser.StoplistNormaliser</objectType>
@@ -32,7 +26,25 @@
 			</paths>
 		</subConfig>
 		
-		<!-- mini-workflows for normaliser chains -->
+		<!-- mini-workflows for processing chains -->
+		<subConfig type="workflow" id="PreserveMaskingKeywordExtracterWorkflow">
+			<objectType>workflow.CachingWorkflow</objectType>
+			<workflow>
+				<object type="extracter" ref="SimpleExtracter" />
+				<object type="tokenizer" ref="PreserveMaskingTokenizer" />
+				<object type="tokenMerge" ref="SimpleTokenMerge"/>
+			</workflow>
+		</subConfig>
+		
+		<subConfig type="workflow" id="ProximityExtracterWorkflow">
+			<objectType>workflow.CachingWorkflow</objectType>
+			<workflow>
+				<object type="extracter" ref="ProxExtracter" />
+				<object type="tokenizer" ref="RegexpFindOffsetTokenizer"/>
+				<object type="tokenMerge" ref="OffsetProxTokenMerge"/>
+			</workflow>
+		</subConfig>
+		
 		<subConfig type="workflow" id="Diacritic-Case-NormaliserWorkflow">
 			<objectType>workflow.CachingWorkflow</objectType>
 			<workflow>
@@ -94,7 +106,7 @@
 			<source>
 				<xpath ref="identifierXPath" />
 				<process>
-					<object type="extracter" ref="ExactExtracter" />
+					<object type="extracter" ref="SimpleExtracter" />
 				</process>
 			</source>
 		</subConfig>
@@ -124,7 +136,7 @@
 			<source>
 				<xpath>/ead</xpath>
 				<process>
-					<object type="extracter" ref="ExactExtracter" />
+					<object type="extracter" ref="SimpleExtracter" />
 					<object type="normaliser" ref="DataExistsNormaliser" />
 				</process>
 			</source>
@@ -139,7 +151,7 @@
 			<source>
 				<xpath>/c3component/@parent</xpath>
 				<process>
-					<object type="extracter" ref="ExactExtracter" />
+					<object type="extracter" ref="SimpleExtracter" />
 				</process>
 			</source>
 		</subConfig>
@@ -155,7 +167,7 @@
 				<xpath>/*/*/did/unitid/@identifier</xpath>
 				<xpath>/*/*/did/unitid</xpath>
 				<process>
-					<object type="extracter" ref="ExactExtracter" />
+					<object type="extracter" ref="SimpleExtracter" />
 					<object type="workflow" ref="Space-Diacritic-Case-NormaliserWorkflow"/>
 				</process>
 			</source>
@@ -173,19 +185,19 @@
 				<xpath>/*/*/did/unitid/@identifier</xpath>
 				<xpath>/*/*/did/unitid</xpath>
 				<process>
-					<object type="extracter" ref="KeywordExtracter" />
+					<object type="workflow" ref="KeywordExtracterWorkflow"/>
 					<object type="workflow" ref="Diacritic-Case-NormaliserWorkflow"/>
 				</process>
 			</source>
-			<source mode="all|any|=">
+			<source mode="all|any">
 				<process>
-					<object type="extracter" ref="PreserveMaskingKeywordExtracter" />
+					<object type="workflow" ref="PreserveMaskingKeywordExtracterWorkflow"/>
 					<object type="workflow" ref="Diacritic-Case-NormaliserWorkflow"/>
 				</process>
 			</source>
-			<source mode="exact">
+			<source mode="=|exact">
 				<process>
-					<object type="extracter" ref="ExactExtracter"/>
+					<object type="extracter" ref="SimpleExtracter"/>
 					<object type="workflow" ref="Space-Diacritic-Case-NormaliserWorkflow"/>
 				</process>
 			</source>
@@ -203,7 +215,7 @@
 			<source>
 				<xpath>/*/*/did/unittitle</xpath>
 				<process>
-					<object type="extracter" ref="ExactExtracter" />
+					<object type="extracter" ref="SimpleExtracter" />
 					<object type="workflow" ref="Space-Diacritic-Case-NormaliserWorkflow"/>
 				</process>
 			</source>
@@ -221,24 +233,25 @@
 			<source mode="data">
 				<xpath>/*/*/did/unittitle</xpath>
 				<process>
-					<object type="extracter" ref="ProximityExtracter" />
+					<object type="workflow" ref="ProximityExtracterWorkflow"/>
 					<object type="workflow" ref="Diacritic-Case-Possessive-Stoplist-EnglishStem-NormaliserWorkflow"/>
 				</process>
 			</source>
-			<source mode="all|any|=">
-				<process>
-					<object type="extracter" ref="PreserveMaskingProximityExtracter"/>
-					<object type="workflow" ref="Diacritic-Case-Possessive-Stoplist-EnglishStem-NormaliserWorkflow"/>
-				</process>
-			</source>
+<!--			<source mode="all|any|=">-->
+<!--				<process>-->
+<!--					<object type="extracter" ref="PreserveMaskingProximityExtracter"/>-->
+<!--					<object type="workflow" ref="Diacritic-Case-Possessive-Stoplist-EnglishStem-NormaliserWorkflow"/>-->
+<!--				</process>-->
+<!--			</source>-->
 			<source mode="exact">
 				<process>
-					<object type="extracter" ref="ExactExtracter"/>
+					<object type="extracter" ref="SimpleExtracter"/>
 					<object type="workflow" ref="Space-Diacritic-Case-NormaliserWorkflow"/>
 				</process>
 			</source>
 			<options>
 				<setting type="recordStoreSizes">1</setting>
+				<setting type="nProxInts">3</setting>
 			</options>
 		</subConfig>
 
@@ -251,7 +264,7 @@
 			<source>
 				<xpath>/*/*/did/origination</xpath>
 				<process>
-					<object type="extracter" ref="ExactExtracter" />
+					<object type="extracter" ref="SimpleExtracter" />
 					<object type="workflow" ref="Space-Diacritic-Case-NormaliserWorkflow"/>
 				</process>
 			</source>
@@ -269,19 +282,23 @@
 			<source mode="data">
 				<xpath>/*/*/did/origination</xpath>
 				<process>
-					<object type="extracter" ref="KeywordExtracter" />
+					<object type="extracter" ref="SimpleExtracter" />
+					<object type="tokenizer" ref="RegexpSubTokenizer"/>
+    				<object type="tokenMerge" ref="SimpleTokenMerge"/>
 					<object type="workflow" ref="Diacritic-Case-NormaliserWorkflow"/>
 				</process>
 			</source>
 			<source mode="all|any|=">
 				<process>
-					<object type="extracter" ref="PreserveMaskingKeywordExtracter" />
+					<object type="extracter" ref="SimpleExtracter" />
+					<object type="tokenizer" ref="PreserveMaskingTokenizer" />
+					<object type="tokenMerge" ref="SimpleTokenMerge"/>
 					<object type="workflow" ref="Diacritic-Case-NormaliserWorkflow"/>
 				</process>
 			</source>
 			<source mode="exact">
 				<process>
-					<object type="extracter" ref="ExactExtracter"/>
+					<object type="extracter" ref="SimpleExtracter"/>
 					<object type="workflow" ref="Space-Diacritic-Case-NormaliserWorkflow"/>
 				</process>
 			</source>
@@ -300,8 +317,9 @@
 				<xpath>/*/*/did/unitdate</xpath>
 				<xpath>/*/*/did/unitdate/@normal</xpath>
 				<process>
-					<object type="extracter" ref="DateExtracter" />
-					<object type="normaliser" ref="DateStringNormaliser" />
+					<object type="extracter" ref="SimpleExtracter"/>
+					<object type="tokenizer" ref="DateTokenizer" />
+					<object type="tokenMerge" ref="SimpleTokenMerge"/>
 				</process>
 			</source>
 			<options>
@@ -318,7 +336,9 @@
 				<xpath>/*/*/did/unitdate</xpath>
 				<xpath>/*/*/did/unitdate/@normal</xpath>
 				<process>
-					<object type="extracter" ref="DateRangeExtracter" />
+					<object type="extracter" ref="SimpleExtracter"/>
+					<object type="tokenizer" ref="DateTokenizer" />
+					<object type="tokenMerge" ref="SequenceRangeTokenMerge"/>
 				</process>
 			</source>
 			<options>
@@ -333,39 +353,27 @@
 				<object type="indexStore" ref="indexStore" />
 			</paths>
 			<source mode="data">
-				<xpath>/ead//did/unittitle</xpath>
-				<xpath>/ead//did/origination</xpath>
-				<xpath>/ead//scopecontent</xpath>
-				<xpath>/ead//controlaccess</xpath>
-				<xpath>/c3component/*/did/unittitle</xpath>
-				<xpath>/c3component/*/did/origination</xpath>
-				<xpath>/c3component/*/scopecontent</xpath>
-				<xpath>/c3component/*/controlaccess</xpath>
+				<xpath ref="descriptionXPath" />
 				<process>
-					<object type="extracter" ref="ProximityExtracter" />
+					<object type="workflow" ref="ProximityExtracterWorkflow"/>
 					<object type="workflow" ref="Diacritic-Case-Possessive-Stoplist-EnglishStem-NormaliserWorkflow"/>
 				</process>
 			</source>
-			<source mode="all|any|=">
-				<process>
-					<object type="extracter" ref="PreserveMaskingProximityExtracter"/>
-					<object type="workflow" ref="Diacritic-Case-Possessive-Stoplist-EnglishStem-NormaliserWorkflow"/>
-				</process>
-			</source>
-			<source mode="within|encloses">
-				<process>
-					<object type="extracter" ref="PreserveMaskingProximityExtracter"/>
-					<object type="workflow" ref="Diacritic-Case-Possessive-EnglishStem-NormaliserWorkflow"/>
-				</process>
-			</source>
+<!--			<source mode="all|any|=">-->
+<!--				<process>-->
+<!--					<object type="extracter" ref="PreserveMaskingProximityExtracter"/>-->
+<!--					<object type="workflow" ref="Diacritic-Case-Possessive-Stoplist-EnglishStem-NormaliserWorkflow"/>-->
+<!--				</process>-->
+<!--			</source>-->
 			<source mode="exact">
 				<process>
-					<object type="extracter" ref="ExactExtracter"/>
+					<object type="extracter" ref="SimpleExtracter"/>
 					<object type="workflow" ref="Space-Diacritic-Case-NormaliserWorkflow"/>
 				</process>
 			</source>
 			<options>
 				<setting type="recordStoreSizes">1</setting>
+				<setting type="nProxInts">3</setting>
 			</options>
 		</subConfig>
 
@@ -376,28 +384,27 @@
 				<object type="indexStore" ref="indexStore" />
 			</paths>
 			<source mode="data">
-				<xpath>/ead/eadheader/*</xpath>
-				<xpath>/ead/archdesc/*</xpath>
-				<xpath>/c3component</xpath>
+				<xpath ref="anywhereXPath"/>
 				<process>
-					<object type="extracter" ref="ProximityExtracter" />
+					<object type="workflow" ref="ProximityExtracterWorkflow"/>
 					<object type="workflow" ref="Diacritic-Case-Possessive-Stoplist-EnglishStem-NormaliserWorkflow"/>
 				</process>
 			</source>
-			<source mode="all|any|=">
-				<process>
-					<object type="extracter" ref="PreserveMaskingProximityExtracter"/>
-					<object type="workflow" ref="Diacritic-Case-Possessive-Stoplist-EnglishStem-NormaliserWorkflow"/>
-				</process>
-			</source>
+<!--			<source mode="all|any|=">-->
+<!--				<process>-->
+<!--					<object type="extracter" ref="PreserveMaskingProximityExtracter"/>-->
+<!--					<object type="workflow" ref="Diacritic-Case-Possessive-Stoplist-EnglishStem-NormaliserWorkflow"/>-->
+<!--				</process>-->
+<!--			</source>-->
 			<source mode="exact">
 				<process>
-					<object type="extracter" ref="ExactExtracter"/>
+					<object type="extracter" ref="SimpleExtracter"/>
 					<object type="workflow" ref="Space-Diacritic-Case-NormaliserWorkflow"/>
 				</process>
 			</source>
 			<options>
 				<setting type="recordStoreSizes">1</setting>
+				<setting type="nProxInts">3</setting>
 			</options>
 		</subConfig>
 
@@ -412,7 +419,7 @@
 				<!-- index subfields - ignoring geographic subfields -->
 				<xpath>subject/emph[@altrender!='z']</xpath>
 				<process>
-					<object type="extracter" ref="ExactExtracter" />
+					<object type="extracter" ref="SimpleExtracter" />
 					<object type="workflow" ref="Space-Diacritic-Case-NormaliserWorkflow"/>
 				</process>
 			</source>
@@ -429,19 +436,19 @@
 			<source mode="data">
 				<xpath>subject</xpath>
 				<process>
-					<object type="extracter" ref="KeywordExtracter" />
+					<object type="workflow" ref="KeywordExtracterWorkflow" />
 					<object type="workflow" ref="Diacritic-Case-Possessive-EnglishStem-NormaliserWorkflow"/>
 				</process>
 			</source>
 			<source mode="all|any|=">
 				<process>
-					<object type="extracter" ref="PreserveMaskingKeywordExtracter" />
+					<object type="workflow" ref="PreserveMaskingKeywordExtracterWorkflow" />
 					<object type="workflow" ref="Diacritic-Case-Possessive-EnglishStem-NormaliserWorkflow"/>
 				</process>
 			</source>
 			<source mode="exact">
 				<process>
-					<object type="extracter" ref="ExactExtracter"/>
+					<object type="extracter" ref="SimpleExtracter"/>
 					<object type="workflow" ref="Space-Diacritic-Case-NormaliserWorkflow"/>
 				</process>
 			</source>
@@ -473,7 +480,7 @@
 				<xpath>geogname/@normal</xpath>
 				
 				<process>
-					<object type="extracter" ref="ExactExtracter" />
+					<object type="extracter" ref="SimpleExtracter" />
 					<object type="workflow" ref="Space-Diacritic-Case-Possessive-NormaliserWorkflow"/>
 				</process>
 			</source>
@@ -494,19 +501,19 @@
 				<xpath>corpname</xpath>
 				<xpath>geogname</xpath>
 				<process>
-					<object type="extracter" ref="KeywordExtracter" />
+					<object type="workflow" ref="KeywordExtracterWorkflow" />
 					<object type="workflow" ref="Diacritic-Case-Possessive-NormaliserWorkflow"/>
 				</process>
 			</source>
 			<source mode="all|any|=">
 				<process>
-					<object type="extracter" ref="PreserveMaskingKeywordExtracter" />
+					<object type="workflow" ref="PreserveMaskingKeywordExtracterWorkflow" />
 					<object type="workflow" ref="Diacritic-Case-Possessive-NormaliserWorkflow"/>
 				</process>		
 			</source>
 			<source mode="exact">
 				<process>
-					<object type="extracter" ref="ExactExtracter"/>
+					<object type="extracter" ref="SimpleExtracter"/>
 					<object type="workflow" ref="Space-Diacritic-Case-NormaliserWorkflow"/>
 				</process>
 			</source>
@@ -525,7 +532,7 @@
 				<xpath>controlaccess/persname</xpath>
 				<xpath>persname/@normal</xpath>
 				<process>
-					<object type="extracter" ref="ExactExtracter" />
+					<object type="extracter" ref="SimpleExtracter" />
 					<object type="workflow" ref="Space-Diacritic-Case-Possessive-NormaliserWorkflow"/>
 				</process>
 			</source>
@@ -542,19 +549,19 @@
 			<source mode="data">
 				<xpath>persname</xpath>
 				<process>
-					<object type="extracter" ref="KeywordExtracter" />
+					<object type="workflow" ref="KeywordExtracterWorkflow" />
 					<object type="workflow" ref="Diacritic-Case-Possessive-NormaliserWorkflow"/>
 				</process>
 			</source>
 			<source mode="all|any|=">
 				<process>
-					<object type="extracter" ref="PreserveMaskingKeywordExtracter" />
+					<object type="workflow" ref="PreserveMaskingKeywordExtracterWorkflow" />
 					<object type="workflow" ref="Diacritic-Case-Possessive-NormaliserWorkflow"/>
 				</process>
 			</source>
 			<source mode="exact">
 				<process>
-					<object type="extracter" ref="ExactExtracter"/>
+					<object type="extracter" ref="SimpleExtracter"/>
 					<object type="workflow" ref="Space-Diacritic-Case-NormaliserWorkflow"/>
 				</process>
 			</source>
@@ -572,7 +579,7 @@
 			<source>
 				<xpath>persname/emph[@altrender='epithet']</xpath>
 				<process>
-					<object type="extracter" ref="ExactExtracter" />
+					<object type="extracter" ref="SimpleExtracter" />
 					<object type="workflow" ref="Space-Diacritic-Case-NormaliserWorkflow"/>
 				</process>
 			</source>
@@ -589,19 +596,19 @@
 			<source mode="data">
 				<xpath>persname/emph[@altrender='epithet']</xpath>
 				<process>
-					<object type="extracter" ref="KeywordExtracter" />
+					<object type="workflow" ref="KeywordExtracterWorkflow" />
 					<object type="workflow" ref="Diacritic-Case-NormaliserWorkflow"/>
 				</process>
 			</source>
 			<source mode="all|any|=">
 				<process>
-					<object type="extracter" ref="PreserveMaskingKeywordExtracter" />
+					<object type="workflow" ref="PreserveMaskingKeywordExtracterWorkflow" />
 					<object type="workflow" ref="Diacritic-Case-NormaliserWorkflow"/>
 				</process>
 			</source>
 			<source mode="exact">
 				<process>
-					<object type="extracter" ref="ExactExtracter"/>
+					<object type="extracter" ref="SimpleExtracter"/>
 					<object type="workflow" ref="Space-Diacritic-Case-NormaliserWorkflow"/>
 				</process>
 			</source>
@@ -620,7 +627,7 @@
 				<xpath>famname</xpath>
 				<xpath>persname/emph[@altrender='surname']</xpath>
 				<process>
-					<object type="extracter" ref="ExactExtracter" />
+					<object type="extracter" ref="SimpleExtracter" />
 					<object type="workflow" ref="Space-Diacritic-Case-Possessive-NormaliserWorkflow"/>
 				</process>
 			</source>
@@ -642,7 +649,7 @@
 				<!-- any normalised corpname -->
 				<xpath>corpname/@normal</xpath>
 				<process>
-					<object type="extracter" ref="ExactExtracter" />
+					<object type="extracter" ref="SimpleExtracter" />
 					<object type="workflow" ref="Space-Diacritic-Case-Possessive-NormaliserWorkflow"/>
 				</process>
 			</source>
@@ -659,19 +666,19 @@
 			<source mode="data">
 				<xpath>corpname</xpath>
 				<process>
-					<object type="extracter" ref="KeywordExtracter" />
+					<object type="workflow" ref="KeywordExtracterWorkflow" />
 					<object type="workflow" ref="Diacritic-Case-Possessive-NormaliserWorkflow"/>
 				</process>
 			</source>
 			<source mode="all|any|=">
 				<process>
-					<object type="extracter" ref="PreserveMaskingKeywordExtracter" />
+					<object type="workflow" ref="PreserveMaskingKeywordExtracterWorkflow" />
 					<object type="workflow" ref="Diacritic-Case-Possessive-NormaliserWorkflow"/>
 				</process>
 			</source>
 			<source mode="exact">
 				<process>
-					<object type="extracter" ref="ExactExtracter"/>
+					<object type="extracter" ref="SimpleExtracter"/>
 					<object type="workflow" ref="Space-Diacritic-Case-NormaliserWorkflow"/>
 				</process>
 			</source>
@@ -697,7 +704,7 @@
 				<xpath>geogname/emph</xpath>
 				<xpath>controlaccess/*/emph[@altrender='z']</xpath>
 				<process>
-					<object type="extracter" ref="ExactExtracter" />
+					<object type="extracter" ref="SimpleExtracter" />
 					<object type="workflow" ref="Space-Diacritic-Case-NormaliserWorkflow"/>
 				</process>
 			</source>
@@ -715,19 +722,19 @@
 				<xpath>geogname</xpath>
 				<xpath>controlaccess/*/emph[@altrender='z']</xpath>
 				<process>
-					<object type="extracter" ref="KeywordExtracter" />
+					<object type="workflow" ref="KeywordExtracterWorkflow" />
 					<object type="workflow" ref="Diacritic-Case-NormaliserWorkflow"/>
 				</process>
 			</source>
 			<source mode="all|any|=">
 				<process>
-					<object type="extracter" ref="PreserveMaskingKeywordExtracter" />
+					<object type="workflow" ref="PreserveMaskingKeywordExtracterWorkflow" />
 					<object type="workflow" ref="Diacritic-Case-NormaliserWorkflow"/>
 				</process>
 			</source>
 			<source mode="exact">
 				<process>
-					<object type="extracter" ref="ExactExtracter"/>
+					<object type="extracter" ref="SimpleExtracter"/>
 					<object type="workflow" ref="Space-Diacritic-Case-NormaliserWorkflow"/>
 				</process>
 			</source>
@@ -745,7 +752,7 @@
 			<source>
 				<xpath>genreform</xpath>
 				<process>
-					<object type="extracter" ref="ExactExtracter" />
+					<object type="extracter" ref="SimpleExtracter" />
 					<object type="workflow" ref="Space-Diacritic-Case-NormaliserWorkflow"/>
 				</process>
 			</source>
@@ -763,19 +770,19 @@
 			<source mode="data">
 				<xpath>genreform</xpath>
 				<process>
-					<object type="extracter" ref="KeywordExtracter" />
+					<object type="workflow" ref="KeywordExtracterWorkflow" />
 					<object type="workflow" ref="Diacritic-Case-NormaliserWorkflow"/>
 				</process>
 			</source>
 			<source mode="all|any|=">
 				<process>
-					<object type="extracter" ref="PreserveMaskingKeywordExtracter" />
+					<object type="workflow" ref="PreserveMaskingKeywordExtracterWorkflow" />
 					<object type="workflow" ref="Diacritic-Case-NormaliserWorkflow"/>
 				</process>
 			</source>
 			<source mode="exact">
 				<process>
-					<object type="extracter" ref="ExactExtracter"/>
+					<object type="extracter" ref="SimpleExtracter"/>
 					<object type="workflow" ref="Space-Diacritic-Case-NormaliserWorkflow"/>
 				</process>
 			</source>
@@ -794,8 +801,9 @@
 	        <source>
 	          <xpath ref="nowTimeXPath"/>
 	          <process>
-	            <object type="extracter" ref="DateExtracter"/>
-	            <object type="normaliser" ref="DateStringNormaliser" />
+	            <object type="extracter" ref="SimpleExtracter"/>
+					<object type="tokenizer" ref="DateTokenizer" />
+					<object type="tokenMerge" ref="SimpleTokenMerge"/>
 	          </process>
 	        </source>
 	        <options>
@@ -815,8 +823,9 @@
 	        <source>
 				<xpath ref="nowTimeXPath"/>
 				<process>
-				  <object type="extracter" ref="DateExtracter"/>
-				  <object type="normaliser" ref="DateStringNormaliser" />
+				  <object type="extracter" ref="SimpleExtracter"/>
+					<object type="tokenizer" ref="DateTokenizer" />
+					<object type="tokenMerge" ref="SimpleTokenMerge"/>
 				</process>
 	        </source>
 	        <options>
@@ -837,7 +846,7 @@
 	          <xpath>controlaccess/subject</xpath>
 	          <xpath>key</xpath>
 	          <process>
-	            <object type="extracter" ref="ExactExtracter"/>
+	            <object type="extracter" ref="SimpleExtracter"/>
 	            <object type="normaliser" ref="CaseNormaliser"/>
 	          </process>
 	        </map>
@@ -845,7 +854,7 @@
 	          <xpath>did/unittitle</xpath>
 	          <xpath>title</xpath>
 	          <process>
-	            <object type="extracter" ref="ExactExtracter"/>
+	            <object type="extracter" ref="SimpleExtracter"/>
 	            <object type="normaliser" ref="CaseNormaliser"/>
 	          </process>
 	        </map>
@@ -853,7 +862,7 @@
 	          <xpath>subject</xpath>
 	          <xpath>description</xpath>
 	          <process>
-	            <object type="extracter" ref="ExactExtracter"/>
+	            <object type="extracter" ref="SimpleExtracter"/>
 	            <object type="normaliser" ref="CaseNormaliser"/>
 	          </process>
 	        </map>

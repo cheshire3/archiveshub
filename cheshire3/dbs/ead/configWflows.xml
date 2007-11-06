@@ -169,7 +169,7 @@
 				<assign from="input.process_xpath('/c3component/@parent')[0]" to="parentid"/>
 				<assign from="parentid.split('/', 1)[-1]" to="parentid"/>
 				<assign from="input.process_xpath('/*/*/did/unitid')[0]" to="input"/>
-				<object type="extracter" ref="ExactExtracter" function="process_node"/>
+				<object type="extracter" ref="SimpleExtracter" function="process_node"/>
 				<assign from="input.keys()[0]" to="input"/>
 				<assign from="parentid + '-' + input" to="input"/>
 			</except>

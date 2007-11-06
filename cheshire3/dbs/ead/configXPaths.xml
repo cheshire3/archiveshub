@@ -21,6 +21,29 @@
 			</source>
 		</subConfig>
 		
+		<subConfig type="xpathObject" id="descriptionXPath">
+			<objectType>xpathObject.XPathObject</objectType>
+			<source>
+				<xpath>/ead//did/unittitle</xpath>
+				<xpath>/ead//did/origination</xpath>
+				<xpath>/ead//scopecontent</xpath>
+				<xpath>/ead//controlaccess</xpath>
+				<xpath>/c3component/*/did/unittitle</xpath>
+				<xpath>/c3component/*/did/origination</xpath>
+				<xpath>/c3component/*/scopecontent</xpath>
+				<xpath>/c3component/*/controlaccess</xpath>
+			</source>
+		</subConfig>
+		
+		<subConfig type="xpathObject" id="anywhereXPath">
+			<objectType>xpathObject.XPathObject</objectType>
+			<source>
+				<xpath>/ead/eadheader/*</xpath>
+				<xpath>/ead/archdesc/*</xpath>
+				<xpath>/c3component</xpath>
+			</source>
+		</subConfig>
+		
 		<subConfig type="xpathObject" id="componentXPath">
 			<objectType>xpathObject.XPathObject</objectType>
 			<source>
