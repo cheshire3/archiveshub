@@ -47,7 +47,6 @@ import c3errors
 # C3 web search utils
 from www_utils import *
 
-tree = None
 
 class EadEditingHandler:
     global repository_name, repository_link, repository_logo, htmlPath
@@ -56,6 +55,15 @@ class EadEditingHandler:
     htmlTitle = None
     htmlNav = None
     logger = None
+    
+    
+    altrenderDict = { 'surname' : 'a',
+                      'dates' : 'y',
+                      'other' : 'x',
+                      'loc' : 'z'                    
+                     }
+    
+    textareas = ['bioghist', 'custodhist', 'acqinfo', 'scopecontent', 'appraisal', 'accruals', 'arrangement']
 
     def __init__(self, lgr):
         self.htmlTitle = ['Data Creation and Editing']
@@ -76,21 +84,30 @@ class EadEditingHandler:
         
     #- end send_html()
     
+    def send_xml(self, data, req, code=200):
+        req.content_type = 'text/xml'
+        req.content_length = len(data)
+        req.send_http_header()
+        if (type(data) == unicode):
+            data = data.encode('utf-8')
+        req.write(data)
+        req.flush()
+        
+    #- end send_xml()
+    
     
     def build_ead(self, req):
-        global tree
         self.logger.log('building ead')
-        form = FieldStorage(req)
+        form = FieldStorage(req, True)
         ctype = form.get('ctype', None)
         level = form.get('location', None)
         collection = False;
         if (level == 'collectionLevel'):
             collection = True;
-            tree = etree.fromstring('<ead><eadheader></eadheader><archdesc><did></did></archdesc></ead>')
+            tree = etree.fromstring('<ead><eadheader></eadheader><archdesc></archdesc></ead>')
         else :
-            tree = etree.fromstring('<%s><did></did></%s>' % (ctype, ctype))
-        list = form.list  
-        testlist = []         
+            tree = etree.fromstring('<%s id="%s"></%s>' % (ctype, level, ctype))
+        list = form.list     
         for field in list :
             if field.name not in ['ctype','location','operation','newForm','nocache','recid']:              
                 #do did level stuff
@@ -98,93 +115,175 @@ class EadEditingHandler:
                     node = tree.xpath('/ead/archdesc')[0]
                 else :
                     node = tree.xpath('/*[not(name() = "ead")]')[0]
-                self.logger.log('pre-create_path')
-                targetNode = self._create_path(node, field.name)
-                self.logger.log('node returned to build ead: %s' % targetNode)
-              #  targetNode = node.xpath(field.name)[0]
-                targetNode.text = field.value
-                raise ValueError(etree.tostring(tree))
-                
-
-        
-
-    def _create_path(self, startNode, nodePath):  
-        global tree          
-        self.logger.log('the node path is %s' % nodePath)
-           
-        if (startNode.xpath(nodePath)):
-            self.logger.log('path matches')
-            self.logger.log('I return %s' % startNode.xpath(nodePath)[0])
-            return startNode.xpath(nodePath)[0]
-        else :
-            newNodePath = ''.join(nodePath[:nodePath.rfind('/')])
+                if field.name.find('controlaccess') == 0 :
+                    self._create_controlaccess(node, field.name, field.value) 
+                elif field.name.find('langusage') == 0 :
+                    self._create_langusage(node, field.value)
+                else :
+                    if (field.value != ''):
+                        target = self._create_path(node, field.name)
+                        self._add_text(target, field.value)
+        #raise ValueError(etree.tostring(tree))
+        return tree    
+    #- end build_ead
+    
+    
+    def _delete_currentControlaccess(self, startNode, list=['subject','persname', 'famname', 'title', 'corpname', 'geogname', 'title']):
+        if (startNode.xpath('controlaccess')):
+            parent = startNode.xpath('controlaccess')[0]        
+            for s in list :
+                if (parent.xpath('%s' % s)) :
+                    child = parent.xpath('%s' % s)
+                    for c in child :
+                        parent.remove(c)
+            if len(parent.getchildren()) == 0 :
+                startNode.remove(parent)
             
-            self.logger.log('new node path is %s' % newNodePath)
-            newNode = etree.Element(''.join(nodePath[nodePath.find('/')+1:]))
-            self.logger.log('new node is %s' % newNode)
-            return self._append_element(self._create_path(startNode, newNodePath), newNode)
+            
+    def _delete_currentLangusage(self, startNode):
+        if (startNode.xpath('langusage')):
+            parent = startNode.xpath('langusage')[0]
+            child = parent.xpath('language')
+            if len(child) > 0 :
+                for c in child :
+                    parent.remove(c)
+            startNode.remove(parent)
+    
+    
+    def _create_langusage(self, startNode, value):
+        if not (startNode.xpath('langusage')):
+            langusage = etree.Element('langusage')
+            startNode.append(langusage)
+            luNode = langusage
+        else:
+            luNode = startNode.xpath('langusage')[0]
+        fields = value.split(' ||| ')
+        language = etree.SubElement(luNode, 'language', langcode='%s' % fields[0].split(' | ')[1])     
+        text = fields[1].split(' | ')[1]
+        language.text = text        
+        
+       
+    def _create_controlaccess(self, startNode, name, value):
+        if not (startNode.xpath('controlaccess')):
+            controlaccess = etree.Element('controlaccess')
+            startNode.append(controlaccess)
+            caNode = controlaccess
+        else:
+            caNode = startNode.xpath('controlaccess')[0]   
+        type = etree.Element(name[name.find('/')+1:])
+        caNode.append(type)
+        fields = value.split(' ||| ')
+        for f in fields :
+            if not (f == ''):
+                field = f.split(' | ')
+                typelabel = field[0].split('_')[0]
+                fieldlabel = field[0].split('_')[1]
+                if (fieldlabel == 'source' or fieldlabel == 'rules'):
+                    type.set(fieldlabel, field[1])               
+                else :
+                    if (fieldlabel == typelabel):
+                        attributeValue = 'a'
+                    else:
+                        attributeValue = self.altrenderDict.get(fieldlabel, None)
+                        if attributeValue == None :
+                            attributeValue = fieldlabel
+                    emph = etree.Element('emph', altrender='%s' % attributeValue)
+                    emph.text = field[1]  
+                    type.append(emph)
+    
+    #- end _create_controlacess    
+    
+            
+    def _delete_path(self, startNode, nodePath):
+        if not (startNode.xpath(nodePath)) :
+            return 
+        elif (nodePath.find('/') == -1) :
+            child = startNode.xpath(nodePath)[0]
+            if len(child.getchildren()) == 0 :
+                return self._remove_element(startNode, child)   
+            else :
+                paraCount = 0
+                for c in child.getchildren():
+                    if c.tag == 'p':
+                        paraCount += 1
+                if paraCount == len(child.getchildren()):
+                     return self._remove_element(startNode, child) 
+                else :  
+                    return 
+        else :
+            child = startNode.xpath(nodePath)[0]
+            parent = startNode.xpath(''.join(nodePath[:nodePath.rfind('/')]))[0]
+            if len(child.getchildren()) == 0 :
+                self._remove_element(parent, child)
+                return self._delete_path(startNode, ''.join(nodePath[:nodePath.rfind('/')]))
+            else :
+                return 
+
+
+    def _create_path(self, startNode, nodePath):               
+        if (startNode.xpath(nodePath)):
+            return startNode.xpath(nodePath)[0]
+        elif (nodePath.find('/') == -1) :
+            newNode = etree.Element(nodePath)                        
+            return self._append_element(startNode, newNode)
+        else :
+            newNodePath = ''.join(nodePath[:nodePath.rfind('/')]) 
+            nodeString = ''.join(nodePath[nodePath.rfind('/')+1:])  
+            if (nodeString.find('@') != 0):      
+                newNode = etree.Element(nodeString)
+                return self._append_element(self._create_path(startNode, newNodePath), newNode)
+            else:
+                return self._add_attribute(self._create_path(startNode, newNodePath), nodeString[1:])
+    
+    
+    def _remove_element(self, parentNode, childNode):
+        parentNode.remove(childNode)
+        return parentNode        
             
             
     def _append_element(self, parentNode, childNode):    
         parentNode.append(childNode)
-        return parentNode
-        
-                
+        return childNode
+
     
-    def build_ead_old(self, req):
-        replHashWhitespace = {'\n' : '',
-                               '\t' : ''
-                            }
-        form = FieldStorage(req)
+    def _add_attribute(self, parentNode, attribute):
+        parentNode.attrib[attribute] = ""
+        return [parentNode, attribute]
+ 
         
-        replHashComp = {
-                    '%PLCHDR_REPOSITORY%' : form.get('/ead/archdesc/did/repository', ''),                 
-                    '%PLCHDR_UNITID%' : '%s %s %s' % (form.get('caa-cc', ''), form.get('caa-rc', ''), form.get('caa-id', '')),
-                    '%PLCHDR_UNITTITLE%' : form.get('did/unittitle', 'no title provided'),
-                    '%PLCHDR_UNITDATE%' : form.get('cac', ''),
-                    '%PLCHDR_NORMAL%' : form.get('can',''),
-                    '%PLCHDR_EXTENT%' : form.get('cae',''),
-                    '%PLCHDR_ORIGINATION%' : form.get('cba',''),
-                    '%PLCHDR_BIOGHIST%' : form.get('cbb', ''),
-                    '%PLCHDR_CUSTODHIST%' : form.get('cbc', ''),
-                    '%PLCHDR_ACQINFO%' : form.get('cbd', ''),
-                    '%PLCHDR_SCOPECONTENT%' : form.get('cca', ''),
-                    '\n' : '', 
-                    '\t' : ''        
-                    }      
-        
-        componentFile = read_file('componentlevel.xml')
-        componentXml = multiReplace(componentFile, replHashComp)
-
-        
-        
-        if (form.get('location', None) == 'collectionLevel'):
-            replHashColl = {'%PLCHDR_EADID%' : '%s %s %s' % (form.get('caa-cc', ''), form.get('caa-rc', ''), form.get('caa-id', '')),
-                            '%PLCHDR_TITLEPROPER%' : form.get('did/unittitle', 'no title provided'),
-                            '%PLCHDR_DATE%' : '%s' % datetime.date.today(),
-                            '%PLCHDR_COMPONENT%' : '%s' % componentXml,
-                            '\n' : '',
-                            '\t' : ''
-                            }
-              
-            baseFile = read_file('collectionlevel.xml')
-            xml = multiReplace(baseFile, replHashColl)
-            
-            replHashWrapper = {'<wrapper>' : '',
-                           '</wrapper>' : ''
-                           }
-        
-            xml1 = multiReplace(xml, replHashWrapper)
-            return xml1
+    def _add_text(self, parent, textValue):
+        if isinstance(parent, etree._Element):
+            if parent.tag in self.textareas :
+                for t in parent.getchildren():
+                    parent.remove(t)
+                paras = textValue.split('\n\n')
+                for p in paras :
+                    paragraph = etree.SubElement(parent, 'p')
+                    self._create_textNode(paragraph, p)
+            else :
+                self._create_textNode(parent, textValue)
         else :
-            replHashWrapper = {'<wrapper>' : '<%s xsl:id="%s">' % (form.get('ctype', 'c'), form.get('location', 0)),
-                           '</wrapper>' : '</%s>' % form.get('ctype', 'c')
-                           }
-            componentXml1 = multiReplace(componentXml, replHashWrapper)
+            parent[0].attrib[parent[1]] = textValue
 
-            return componentXml1
 
-        
+    def _create_textNode(self, parent, value):
+        #find all the tags create elements add their text and their tail add whole lot to parent 
+        if (value.find('<') != -1 and value.find('>') != -1):
+            open = value.find('<')
+            close = value.find('>')
+            if open != 0 :
+                parent.text = value[:close]
+            tagname = value[open+1:close]
+            content = value[close+1:value.find('<', close)]
+            newNode = etree.SubElement(parent, tagname)
+            newNode.text = content
+            if value[value.find('<', close)+1:value.find('<', close)+2] == '/' :
+                pass
+            else :
+                newValue = value[value.find('>', close+2)+1:]
+                self._create_textNode(newNode, newValue)
+            #need to change the find things to specify a place to start
+       
     def populate_form(self, recid, loc, new):  
         #if its collection level give the transformer the whole record
         if (new == 'collectionLevel'):  
@@ -195,54 +294,57 @@ class EadEditingHandler:
             retrievedXml = editStore.fetch_record(session, recid).get_xml()
             root = None
             tree = etree.XMLID(retrievedXml)
-            raise ValueError(tree) #currently dictionary does not seem to have anything in it
-            node = deepcopy(tree[0].xpath('//*[@id="%s"]' % new))
-            raise ValueError(node)
-            for e in node :
-                if root == None:
-                    root = e
-                else :
-                    root.append(e)
-            doc = StringDocument(etree.tostring(root))
-            rec = xmlp.process_document(session, doc)                 
+            node = tree[1].get(new)
+            for e in tree[0].getiterator() :
+                if e == node :
+                    root = deepcopy(e)
+            rec = LxmlRecord(root)                 
         return formTxr.process_record(session, rec).get_raw() 
-
 
     
     def save_form(self, req, loc, recid):
-        self.logger.log('saving form at recid = %s'% recid)
-        form = FieldStorage(req)
+        form = FieldStorage(req, True)
         if (loc == 'collectionLevel' and (recid == None or recid == 'None')):
             #save the form in any free slot
-            doc = StringDocument(self.build_ead(req))                
-            rec = xmlp.process_document(session, doc)       
+            rec = LxmlRecord(self.build_ead(req))
             id = str(editStore.create_record(session, rec))
             recid = id.split('/')[1]
             editStore.commit_storing(session)   
             return recid
-        elif (loc == 'collectionLevel'):            
+        elif (loc == 'collectionLevel'):          
+            list = form.list  
             #pull existing xml and make into a tree
             retrievedRec = editStore.fetch_record(session, recid)
             retrievedXml = retrievedRec.get_xml()
             tree = etree.fromstring(retrievedXml)
-
+            #first delete current accesspoints
+            node = tree.xpath('/ead/archdesc')[0]
+            self._delete_currentControlaccess(node)
+            self._delete_currentLangusage(node)
             #cycle through the form and replace any node that need it
-            list = form.list            
             for field in list :
-                if (tree.xpath(field.name)): #replace it
-                    targetNode = tree.xpath(field.name)[0]
-                    targetNode.text = field.value
-                else :  #create it                   
-                    pass
-            #resave the record
-            #doc = StringDocument(etree.tostring(tree))
-            #rec = xmlp.process_document(session, doc)
+                if field.name not in ['ctype','location','operation','newForm','nocache','recid']:    
+                    #TODO header stuff
+                              
+                    #do archdesc stuff
+                    node = tree.xpath('/ead/archdesc')[0]  
+                    if field.name.find('controlaccess') == 0 :                        
+                        self._create_controlaccess(node, field.name, field.value)      
+                    elif field.name.find('langusage') == 0 :
+                        self._create_langusage(node, field.value)
+                    else :
+                        if (field.value.strip() != ''):
+                            target = self._create_path(node, field.name)
+                            self._add_text(target, field.value)       
+                        else:
+                            self._delete_path(node, field.name)     
+
             rec = LxmlRecord(tree)
             rec.id = retrievedRec.id
             editStore.store_record(session, rec)
             editStore.commit_storing(session)
-            return recid
-       
+#            raise ValueError(etree.tostring(tree))
+            return recid       
         #check if C exists, if not add it, if so replace it
         else :
             #pull record from store
@@ -262,25 +364,38 @@ class EadEditingHandler:
         
             #if the component does not exist add it
             if not (tree.xpath(xpathString)):
-                #raise ValueError(xpathString)
                 dsc = tree.xpath('/ead/archdesc/dsc')[0]
-                #dsc.append(newTree)
-                doc1 = StringDocument(etree.tostring(tree))
-                rec = xmlp.process_document(session, doc1)
+                dsc.append(self.build_ead(req))
+                rec = LxmlRecord(tree)
                 rec.id = retrievedRec.id
-                self.logger.log('form was a new component and the xml saved was %s ' % rec.get_xml())
                 editStore.store_record(session, rec)
                 editStore.commit_storing(session) 
                 
             #if the component does exist change it
-            else :                
-                #find component in current record
-                currentComp = tree.xpath(xpathString)
-                #raise ValueError(currentComp)
-                
-                #replace the current component with the new component
-                
-                #re-store new record
+            else :   
+                list = form.list
+                #first delete current accesspoints
+                node = tree.xpath(xpathString)[0]
+                self._delete_currentControlaccess(node)
+                for field in list :
+                    if field.name not in ['ctype','location','operation','newForm','nocache','recid']:             
+                        node = tree.xpath(xpathString)[0]
+                        if field.name.find('controlaccess') == 0 :                        
+                            self._create_controlaccess(node, field.name, field.value)      
+                        elif field.name.find('langusage') == 0 :
+                            self._create_langusage(node, field.value)
+                        else :
+                            if (field.value.strip() != ''):
+                                target = self._create_path(node, field.name)
+                                self._add_text(target, field.value)       
+                            else:
+                                self._delete_path(node, field.name)   
+                            
+                rec = LxmlRecord(tree)
+                rec.id = retrievedRec.id
+                editStore.store_record(session, rec)
+                editStore.commit_storing(session)
+
             return recid    
             
         
@@ -299,10 +414,8 @@ class EadEditingHandler:
         form = FieldStorage(req)
         loc = form.get('location', None)        
         recid = form.getfirst('recid', None)
-        self.logger.log('navigate() says recid is %s' % recid)
         new = form.get('newForm', None)
-        self.save_form(req, loc, recid) 
-        self.logger.log('after saving navigate() thinks recid is %s' % recid)  
+        self.save_form(req, loc, recid)  
         page = self.populate_form(recid, loc, new)    
         return page 
    
@@ -324,6 +437,17 @@ class EadEditingHandler:
         #page = structure.replace('%FRM%', htmlform) 
         return page
     
+    def display(self, req):
+        form = FieldStorage(req)
+        recid=form.get('recid', None)
+        if recid != None and recid != 'null' :
+            retrievedRec = editStore.fetch_record(session, recid)
+            retrievedxml= retrievedRec.get_xml()
+            tree = etree.fromstring(retrievedxml)
+            return etree.tostring(tree)
+        else :
+            return '<p>Unable to display xml</p>'
+            
     
     def handle (self, req):
         form = FieldStorage(req)        
@@ -334,6 +458,9 @@ class EadEditingHandler:
         elif (operation == 'navigate'):
             page = self.navigate(req)
             self.send_html(page, req)
+        elif (operation == 'display'):
+            page = self.display(req)
+            self.send_xml(page, req)
         else :           
             page = self.generate_form(req)
             self.send_html(page, req)
