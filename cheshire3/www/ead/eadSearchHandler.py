@@ -129,7 +129,6 @@ class EadSearchHandler(EadHandler):
         titles.append((rec.id, t.strip()))
         titles.reverse()
         return titles
-    
         # end _backwalkTitles() ----------------------------------------------------
 
 
@@ -161,8 +160,8 @@ class EadSearchHandler(EadHandler):
                 parentTitle = '(unable to render parent title)'
 
         return parentTitle
-
         #- end _parentTitle() ---------------------------------------------------------
+
 
     def format_resultSet(self, rs, firstrec=1, numreq=20, highlight=1):
         global search_result_row, search_component_row, display_relevance, graphical_relevance
@@ -284,8 +283,6 @@ class EadSearchHandler(EadHandler):
             else:
                 relv = ''
             
-            
-            
             if (display_splash_screen_popup ):
                 splash = 'splashScreen();'
             else:
@@ -308,9 +305,7 @@ class EadSearchHandler(EadHandler):
         del rs
             
         rows.append('</table>')
-
         # some hit navigation
-            
         if (hits > numreq):
             if (firstrec > 1):
                 hitlinks = ['<div class="backlinks">'
@@ -353,7 +348,6 @@ class EadSearchHandler(EadHandler):
         #- end hit navigation
        
         return '\n'.join(rows)
-        
         #- end format_resultSet() ---------------------------------------------------------
         
 
@@ -438,12 +432,7 @@ class EadSearchHandler(EadHandler):
                 self.htmlTitle.append('No Matches')
                 return '<p>No records matched your search.</p>'
         
-        # FIXME: ??? disable highlighting if full-text search has been used - highlighting takes forever!
-#        if qString and (qString.find('cql.anywhere') > -1):
-#            highlight = 0
-            
         return self.format_resultSet(rs, firstrec, numreq, highlight)
-
         #- end search() ------------------------------------------------------------
     
     
@@ -454,7 +443,6 @@ class EadSearchHandler(EadHandler):
             if (x == 0 and not words[x][0].isdigit()) or (words[x][0].isalpha()) and (words[x] not in stopwords):
                 words[x] = words[x].title()
         return ' '.join(words)
-    
         #- end _cleverTitleCase() --------------------------------------------------
     
 
@@ -529,7 +517,6 @@ class EadSearchHandler(EadHandler):
             del scanData1
             
         totalTerms = len(scanData)
-
         if (totalTerms > 0):
             self.htmlTitle.append('Results')
             rows = ['<div id="wrapper"><div id="single"><br/>',
@@ -618,7 +605,6 @@ class EadSearchHandler(EadHandler):
         else:
             self.htmlTitle.append('Error')
             return '<p class="error">No terms retrieved from index. You may be browsing outside the range of terms within the index.</p>'
-
         #- end browse() ------------------------------------------------------------
 
 
@@ -639,8 +625,6 @@ class EadSearchHandler(EadHandler):
         rs = clusDb.search(session, query)
         if (rs):
             # FIXME: remove once Cheshire3 code is fixed
-#            rs.order(session, 'weight')
-#            rs.reverse(session)
             rs.scale_weights()
             # end remove
             self.htmlTitle.append('Results')        
@@ -709,11 +693,7 @@ class EadSearchHandler(EadHandler):
             
         session.database = 'db_ead'
         return content
-        
         #- end subject_resolve() ---------------------------------------------------
-
-    def _get(self):
-        pass
 
 
     def display_summary(self, rec, paramDict, proxInfo=None, highlight=1):
@@ -797,7 +777,8 @@ class EadSearchHandler(EadHandler):
         tmpl = read_file(self.templatePath)
         page = tmpl.replace('%CONTENT%', '<div id="leftcol">%s</div>%s' % (paramDict['LEFTSIDE'], summ))
         return multiReplace(page, paramDict)
-
+        #- end display_summary()
+        
     
     def display_toc(self, form):
         global toc_cache_path, printable_toc_scripts
@@ -1141,8 +1122,7 @@ In: %s
                 self.logger.log('Failed to send mail')
                 self.htmlTitle.append('Error')
                 return '<div id="padder"><div id="rightcol"><p class="error">The record with id %s could not be sent to %s. We apologise for the inconvenience and ask that you try again later.</p></div></div><div id="leftcol" class="results">%s</div>' % (recid, address, self.format_resultSet(rs, firstrec, numreq))
-                
-    #- end email_record() ------------------------------------------------------
+        #- end email_record() ------------------------------------------------------
     
     
     def similar_search(self, form):
@@ -1249,8 +1229,7 @@ In: %s
             self.htmlTitle.append('Error')
             self.logger.log('*** unable to locate similar records')
             return '<p>Unable to locate similar records.</p>'
-
-    #- end similar_search() ----------------------------------------------------
+        #- end similar_search() ----------------------------------------------------
         
         
     def handle(self, req):
@@ -1321,9 +1300,8 @@ In: %s
 
         page = multiReplace(page, self.globalReplacements)
         self.send_html(page, req)                                            # send the page
-
         #- end handle() ------------------------------------------------------------
-
+        
     #- end class EadSearchHandler --------------------------------------------------
 
 #- Some stuff to do on initialisation
