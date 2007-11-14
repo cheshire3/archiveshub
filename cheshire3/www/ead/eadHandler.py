@@ -196,7 +196,7 @@ class EadHandler:
                     pagenav.extend(['<form action="%s">Page: ' % (script)
                                    ,'<input type="hidden" name="operation" value="full" />'
                                    ,'<input type="hidden" name="recid" value="%s" />' % (recid)
-                                   ,'<input type="text" name="pagenum" size="2" maxlength="3" value="%d"/> of %d' % (x+1, len(pages))
+                                   ,'<input type="text" name="page" size="2" maxlength="3" value="%d"/> of %d' % (x+1, len(pages))
                                    ,'<input type="submit" value="Go!"/>'
                                    ,'</form>' 
                                    ])
