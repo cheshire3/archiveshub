@@ -15,7 +15,7 @@
   	<!-- import common HTML templates -->
 	<xsl:import href="html-common.xsl"/>
   
-	<xsl:output method="html"/>
+	<xsl:output method="xml" omit-xml-declaration="yes"/>
 	<xsl:preserve-space elements="*"/>
 	
 	<!-- Strip all subordinate levels of description -->
@@ -213,27 +213,26 @@
 	    	</xsl:if>
 	    </xsl:if>
 	</xsl:template>
-
-
-  <!--BUILDING REFS AND ANCS-->
+	
+	<!--BUILDING REFS AND ANCS-->
 	<!--  we can't assume that this will work in Summary view so overwrite it here -->
-  <xsl:template match="//ref[@target]">
-    <xsl:element name="a">
-      <xsl:attribute name="href">
-        <xsl:text>SCRIPT/?operation=full&amp;recid=RECID#</xsl:text>
-        <xsl:value-of select="./@target"/>
-      </xsl:attribute>
-      <xsl:attribute name="target">
-        <xsl:text>_top</xsl:text>
-      </xsl:attribute>
-      <xsl:attribute name="title">
-      	<xsl:text>Go to referenced section in the full-text version [some sections unavailable in 'Summary' view.]</xsl:text>
-      </xsl:attribute>
-      <xsl:attribute name="onclick">
-      	<xsl:text>SPLASH</xsl:text>
-      </xsl:attribute>
-      <xsl:apply-templates/>
-    </xsl:element>
-  </xsl:template>
+  	<xsl:template match="ref[@target]">
+	    <xsl:element name="a">
+			<xsl:attribute name="href">
+			  <xsl:text>SCRIPT/?operation=full&amp;recid=PARENTID#</xsl:text>
+			  <xsl:value-of select="./@target"/>
+			</xsl:attribute>
+			<xsl:attribute name="target">
+			  <xsl:text>_top</xsl:text>
+			</xsl:attribute>
+			<xsl:attribute name="title">
+				<xsl:text>Go to referenced section in the full-text version [some sections unavailable in 'Summary' view.]</xsl:text>
+			</xsl:attribute>
+			<xsl:attribute name="onclick">
+				<xsl:text>SPLASH</xsl:text>
+			</xsl:attribute>
+	      <xsl:apply-templates/>
+	    </xsl:element>
+	</xsl:template>
 
 </xsl:stylesheet>

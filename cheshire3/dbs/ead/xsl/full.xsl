@@ -18,7 +18,7 @@
 	<xsl:import href="html-common.xsl"/>
 	<xsl:import href="contents.xsl"/>
   
-	<xsl:output method="html"/>
+	<xsl:output method="xml" omit-xml-declaration="yes"/>
 	<xsl:preserve-space elements="*"/>
 
 	<xsl:template match="/">

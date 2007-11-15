@@ -18,7 +18,7 @@
 	<xsl:import href="html-common.xsl"/>
 	<xsl:import href="contents.xsl"/>
 	  
-	<xsl:output method="html"/>
+	<xsl:output method="xml" omit-xml-declaration="yes"/>
 	<xsl:preserve-space elements="*"/>
   
 	<!-- root template - varies for each type of transformer -->
@@ -49,7 +49,7 @@
 		<div class="archdesc">
 			<xsl:apply-templates select="./archdesc" />
 		</div>
-	    <p style="page-break-before: always"></p>
+	    <p style="page-break-before: always" />
 	    <!-- DSC -->
 		<div class="dsc">
 			<xsl:apply-templates select="./archdesc/dsc"/>

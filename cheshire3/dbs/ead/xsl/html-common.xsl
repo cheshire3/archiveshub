@@ -36,6 +36,7 @@
 	  				</xsl:otherwise>
 	  			</xsl:choose>
 	  		</xsl:attribute>
+	  		<xsl:text> </xsl:text>
 	  	</a>
 	
 	  	<h2 class="unittitle">
@@ -184,12 +185,10 @@
  
 	<xsl:template match="titlestmt">
 		<!-- ignore titleproper, usually the same as title of material (unittitle) -->
-		<!--
 		<xsl:if test="titleproper">
 			<strong>Title</strong><xsl:text>: </xsl:text>
 			<xsl:apply-templates select="titleproper"/><br/>
 		</xsl:if>
-		-->
 		<xsl:if test="subtitle">
 			<strong>Sub-title</strong><xsl:text>: </xsl:text>
 			<xsl:apply-templates select="subtitle"/><br/>
@@ -243,8 +242,8 @@
 		
 		<xsl:if test="./add">
 			<div class="add">
-		   <xsl:apply-templates select="./add" />
-		 </div>
+				<xsl:apply-templates select="./add" />
+		 	</div>
 		</xsl:if>
 		
 		<!-- ACCESS + USE RESTRICTIONS -->
@@ -676,9 +675,9 @@
 			</xsl:otherwise>
 		</xsl:choose>
 		
-		<table>
+	  <table>
 		
-		 <!-- Subjects -->
+		<!-- Subjects -->
 		<xsl:if test="subject">
 		  <tr><td colspan="2"><strong><xsl:text>Subjects</xsl:text></strong></td></tr>
 		  <xsl:for-each select="subject">
@@ -690,7 +689,9 @@
 				      </xsl:with-param>
 				    </xsl:call-template>
 				</td>
-				<td><!-- cross-search links --></td>
+				<td class="cross-search">
+					<!-- cross-search links -->
+				</td>
 			</tr>
 		  </xsl:for-each>
 		</xsl:if>
@@ -708,7 +709,7 @@
 				      </xsl:with-param>
 				    </xsl:call-template>
 			    </td>
-			    <td>
+			    <td class="cross-search">
 				    <xsl:if test="$link_to_wikipedia">
 						<xsl:call-template name="wikipedialink"/>		    	
 				    </xsl:if>
@@ -729,7 +730,7 @@
 				      </xsl:with-param>
 				    </xsl:call-template>
 				</td>
-				<td>
+				<td class="cross-search">
 					<xsl:if test="$link_to_wikipedia">
 						<xsl:call-template name="wikipedialink"/>		    	
 				    </xsl:if>
@@ -750,7 +751,7 @@
 				      </xsl:with-param>
 				    </xsl:call-template>
 				</td>
-				<td>
+				<td class="cross-search">
 					<xsl:if test="$link_to_wikipedia">
 						<xsl:call-template name="wikipedialink"/>		    	
 				    </xsl:if>
@@ -771,7 +772,7 @@
 				      </xsl:with-param>
 				    </xsl:call-template>
 				</td>
-				<td>
+				<td class="cross-search">
 					<!--  cross search links -->
 				    <xsl:if test="$link_to_googlemaps">
 						<xsl:call-template name="googlemapslink"/>
@@ -786,12 +787,13 @@
 		  <xsl:for-each select="title">
 		  	<tr>
 				<td><xsl:apply-templates/></td>
-				<td class="">
+				<!--  cross search links -->
+				<td class="cross-search">
 					<xsl:if test="$link_to_copac">
 						<xsl:call-template name="copaclink"/>								    	
 				    </xsl:if>
 				</td>
-				<td class="">
+				<td class="cross-search">
 					<xsl:if test="$link_to_amazon">
 						<xsl:call-template name="amazonlink"/>								    	
 				    </xsl:if>
@@ -805,31 +807,37 @@
 		  <xsl:for-each select="function">
 		  	<tr>
 			    <td><xsl:value-of select = "."/></td>
-			    <td><!-- cross search links --></td>
 			</tr>
 		  </xsl:for-each>
 		</xsl:if> 
 		
 		<xsl:if test="genreform">
-		  <strong><xsl:text>Genre/Form</xsl:text></strong><br/>
+		  <tr><td colspan="2"><strong><xsl:text>Genre/Form</xsl:text></strong></td></tr>
 		  <xsl:for-each select="genreform">
-				<xsl:call-template name="browselink">
-			    <xsl:with-param name="index">
-		  	    <xsl:text>bath.genreForm</xsl:text>
-		      </xsl:with-param>
-		    </xsl:call-template>
-			<br/>
+		  	<tr>
+		  		<td>
+					<xsl:call-template name="browselink">
+					    <xsl:with-param name="index">
+					  	    <xsl:text>bath.genreForm</xsl:text>
+						</xsl:with-param>
+		    		</xsl:call-template>
+		    	</td>
+			</tr>
 			</xsl:for-each>
 		</xsl:if>
 		
 		<xsl:if test="occupation">
-			<strong><xsl:text>Occupation</xsl:text></strong><br/>
+			<tr><td colspan="2"><strong><xsl:text>Occupation</xsl:text></strong></td></tr>
 			<xsl:for-each select="occupation">
-				<xsl:value-of select = "."/><br/>
+				<tr>
+					<td>
+						<xsl:value-of select = "."/>
+					</td>
+				</tr>
 			</xsl:for-each>
 		</xsl:if>
 		
-		</table>
+	  </table>
 
 	</xsl:template>
 	
@@ -852,7 +860,8 @@
 						<xsl:value-of select="generate-id(.)"/>
 					</xsl:otherwise>
 				</xsl:choose>
-		  		</xsl:attribute>
+	  		</xsl:attribute>
+	  		<xsl:text> </xsl:text>
 		</a>
 	
 		<xsl:if test="did/unitid">
@@ -1380,13 +1389,6 @@
     	<xsl:text> </xsl:text>
 	</xsl:template>
 	
-	<xsl:template match="span">
-		<xsl:copy>
-				<xsl:copy-of select="@*"/>
-				<xsl:apply-templates />
-		</xsl:copy>
-	</xsl:template>
-
 	
 	<!-- Template for making string cgi link friendly -->
 	<xsl:template name="cgiencode">
