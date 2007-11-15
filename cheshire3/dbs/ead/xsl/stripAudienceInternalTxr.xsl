@@ -16,7 +16,7 @@
   xsi:schemaLocation="http://www.loc.gov/ead/ead.xsd"
   version="1.0">
 
-	<xsl:output method="xml"/>
+	<xsl:output method="xml" omit-xml-declaration="yes"/>
 	
 	<xsl:template match="/">
 		<xsl:apply-templates />
