@@ -230,19 +230,13 @@
 			<paths>
 				<object type="indexStore" ref="indexStore" />
 			</paths>
-			<source mode="data">
+			<source mode="data|all|any|=">
 				<xpath>/*/*/did/unittitle</xpath>
 				<process>
 					<object type="workflow" ref="ProximityExtracterWorkflow"/>
 					<object type="workflow" ref="Diacritic-Case-Possessive-Stoplist-EnglishStem-NormaliserWorkflow"/>
 				</process>
 			</source>
-<!--			<source mode="all|any|=">-->
-<!--				<process>-->
-<!--					<object type="extracter" ref="PreserveMaskingProximityExtracter"/>-->
-<!--					<object type="workflow" ref="Diacritic-Case-Possessive-Stoplist-EnglishStem-NormaliserWorkflow"/>-->
-<!--				</process>-->
-<!--			</source>-->
 			<source mode="exact">
 				<process>
 					<object type="extracter" ref="SimpleExtracter"/>
@@ -352,19 +346,13 @@
 			<paths>
 				<object type="indexStore" ref="indexStore" />
 			</paths>
-			<source mode="data">
+			<source mode="data|all|any|=">
 				<xpath ref="descriptionXPath" />
 				<process>
 					<object type="workflow" ref="ProximityExtracterWorkflow"/>
 					<object type="workflow" ref="Diacritic-Case-Possessive-Stoplist-EnglishStem-NormaliserWorkflow"/>
 				</process>
 			</source>
-<!--			<source mode="all|any|=">-->
-<!--				<process>-->
-<!--					<object type="extracter" ref="PreserveMaskingProximityExtracter"/>-->
-<!--					<object type="workflow" ref="Diacritic-Case-Possessive-Stoplist-EnglishStem-NormaliserWorkflow"/>-->
-<!--				</process>-->
-<!--			</source>-->
 			<source mode="exact">
 				<process>
 					<object type="extracter" ref="SimpleExtracter"/>
@@ -383,19 +371,13 @@
 			<paths>
 				<object type="indexStore" ref="indexStore" />
 			</paths>
-			<source mode="data">
+			<source mode="data|all|any|=">
 				<xpath ref="anywhereXPath"/>
 				<process>
 					<object type="workflow" ref="ProximityExtracterWorkflow"/>
 					<object type="workflow" ref="Diacritic-Case-Possessive-Stoplist-EnglishStem-NormaliserWorkflow"/>
 				</process>
 			</source>
-<!--			<source mode="all|any|=">-->
-<!--				<process>-->
-<!--					<object type="extracter" ref="PreserveMaskingProximityExtracter"/>-->
-<!--					<object type="workflow" ref="Diacritic-Case-Possessive-Stoplist-EnglishStem-NormaliserWorkflow"/>-->
-<!--				</process>-->
-<!--			</source>-->
 			<source mode="exact">
 				<process>
 					<object type="extracter" ref="SimpleExtracter"/>
