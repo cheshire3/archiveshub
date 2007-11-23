@@ -4,21 +4,23 @@
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   version="1.0">
   
+  
   <xsl:output method="html" encoding="UTF-8"/>
  
   <xsl:variable name="eadidstring">
   	<xsl:value-of select="/ead/eadheader/eadid/text()"/>
   </xsl:variable>
   
+  
   <xsl:template match="/">
+  <div id="formDiv" name="form" class="formDiv" onscroll="hideAllMenus()">
     <form id="eadForm" name="eadForm" onreset="resetForm(this)" action="#" onsubmit="alert($(this).serialize()); return false">
-    <a id="addC" href="javascript: addComponent()">Add component/subcomponent to this record/component</a>
+    <a id="addC" href="javascript: addComponent()">Add component to this description</a>
     <!--<a id="keyboardToggle" href="javascript: toggleKeyboard()">Show Character Entity Keyboard</a>-->
       <div class="section">
     	<xsl:choose>
     		<xsl:when test="/ead/eadheader">
     			<h3>Collection Level Description</h3>
-
     			<xsl:apply-templates select="/c|/c01|/c02|/c03|/c04|/c05|/c06|/c07|/c08|/c09|/c10|/c11|/c12|/ead/archdesc"/>
     		</xsl:when>
     		<xsl:otherwise>
@@ -31,10 +33,11 @@
     	</xsl:choose>	
      </div> 	  
 	</form>
+  </div>
   </xsl:template>
   
   <xsl:template match="/c/recid">
-  	<input type="text" id="recid" name="recid">
+  	<input type="hidden" id="recid" name="recid">
   		<xsl:attribute name="value">
   			<xsl:value-of select="."/>
   		</xsl:attribute>
@@ -55,9 +58,9 @@
       			<xsl:apply-templates select="eadid"/>
       		</xsl:when>
       		<xsl:otherwise>
-      			<input type="text" name="caa-cc" id="caa-cc" maxlength="2" size="3" value="GB"></input>
-				<input type="text" onfocus="parent.setCurrent(this);" name="caa-rc" id="caa-rc" maxlength="4" size="5"></input>
-				<input type="text" onfocus="parent.setCurrent(this);" name="caa-id" id="caa-id" size="50"></input>	
+      			<input type="text" name="caa-cc" id="caa-cc" maxlength="2" size="3"></input>
+				<input type="text" onfocus="setCurrent(this);" name="caa-rc" id="caa-rc" maxlength="4" size="5"></input>
+				<input type="text" onfocus="setCurrent(this);" name="caa-id" id="caa-id" size="50"></input>	
       		</xsl:otherwise>
       	</xsl:choose>     	
       	</p>
@@ -71,8 +74,7 @@
   <xsl:template match="/c|/c01|/c02|/c03|/c04|/c05|/c06|/c07|/c08|/c09|/c10|/c11|/c12|/ead/archdesc">
   <xsl:if test="not(name() = 'archdesc')">
   	<p>
-    	<strong>Component Label</strong>
-    	<br />
+    	<strong>Component Label: </strong>
    		<input type="text" name="ctype" id="ctype" maxlength="3" size="4">
    			<xsl:attribute name="value">
    				<xsl:value-of select="name()"/>   					
@@ -82,7 +84,7 @@
   </xsl:if>
   	<div id="sec-3-1" class="section">
       <span class="isadg"><h3>3.1: Identity Statement Area</h3></span>
-      <p>
+      <p id="unitidparent">
 	  <strong><span class="isadg">3.1.1: </span><a href="arch/refcode.shtml" title="Reference Code help - opens in new window" target="_new">Reference Code</a></strong> 
 	  Comprising of <a href="http://www.iso.org/iso/en/prods-services/iso3166ma/02iso-3166-code-lists/list-en1.html" target="_new" title="Further information on ISO Country Codes">ISO Country Code</a>, 
 	  NCA Repository Code,
@@ -93,9 +95,9 @@
 	  	   <xsl:apply-templates select="did/unitid"/>
 	  	</xsl:when>
 	  	<xsl:otherwise>
-	  		<input type="text" name="did/unitid" id="caa-cc" maxlength="2" size="3" value="GB" disabled="true"></input>
-			<input type="text" onfocus="parent.setCurrent(this);" name="did/unitid" id="caa-rc" maxlength="4" size="5"></input>
-			<input type="text" onfocus="parent.setCurrent(this);" name="did/unitid" id="caa-id" size="50"></input>	
+	  		<input type="text" name="did/unitid/@countrycode" id="countrycode" maxlength="2" size="3" value="GB" readonly="true" onblur="checkId('recordStore')"></input>
+			<input type="text" onfocus="setCurrent(this);" name="did/unitid/@mainagencycode" id="mainagencycode" maxlength="4" size="5" onblur="checkId('recordStore')"></input>
+			<input type="text" onfocus="setCurrent(this);" name="did/unitid" id="unitid" size="50" onblur="checkId('recordStore')"></input>	
 	  	</xsl:otherwise>
 	  </xsl:choose>  		
   	</p>
@@ -106,7 +108,7 @@
 				<xsl:apply-templates select="did/unittitle"/>
 			</xsl:when>
 			<xsl:otherwise>
-				<input type="text" onfocus="parent.setCurrent(this);" name="did/unittitle/test/test" id="cab" size="80" onchange="updateTitle()"></input>
+				<input class="menuField" type="text" onfocus="setCurrent(this);" name="did/unittitle" id="cab" size="80" onchange="updateTitle(this)"></input>
 			</xsl:otherwise>
 		</xsl:choose>		
     </p>
@@ -117,7 +119,7 @@
 				<xsl:apply-templates select="did/unitdate"/>
 			</xsl:when>
 			<xsl:otherwise>
-				<input type="text" onfocus="parent.setCurrent(this);" name="did/unitdate" id="cac" size="39"></input>
+				<input class="menuField" type="text" onfocus="setCurrent(this);" onchange="validateField(this);" name="did/unitdate" id="cac" size="39"></input>
 			</xsl:otherwise>
 		</xsl:choose>      
 		</p>
@@ -130,7 +132,7 @@
 	    			<xsl:apply-templates select="did/unitdate/@normal"/>
 	    		</xsl:when>
 	    		<xsl:otherwise>
-	    			<input type="text" onfocus="parent.setCurrent(this);" name="did/unitdate/@normal" id="can" size="39" maxlength="10"></input>
+	    			<input type="text" onfocus="setCurrent(this);" name="did/unitdate/@normal" id="can" size="39" maxlength="10"></input>
 	    		</xsl:otherwise>
 	    	</xsl:choose>      	            
 		</p>
@@ -143,7 +145,7 @@
 				<xsl:apply-templates select="did/physdesc/extent"/>
 			</xsl:when>
 			<xsl:otherwise>
-				<input type="text" onfocus="parent.setCurrent(this);" name="did/physdesc/extent" id="cae" size="80"></input>
+				<input class="menuField" type="text" onfocus="setCurrent(this);" onchange="validateField(this);" name="did/physdesc/extent" id="cae" size="80"></input>
 			</xsl:otherwise>
 		</xsl:choose>		
     </p>
@@ -159,7 +161,7 @@
 				<xsl:apply-templates select="did/origination"/>
 			</xsl:when>
 			<xsl:otherwise>
-				<input type="text" onfocus="parent.setCurrent(this);" name="did/origination" id="cba" size="80"></input>
+				<input class="menuField" type="text" onfocus="setCurrent(this);" onchange="validateField(this);" name="did/origination" id="cba" size="80"></input>
 			</xsl:otherwise>
 		</xsl:choose>		
     	</p>
@@ -171,7 +173,7 @@
 				<xsl:apply-templates select="bioghist"/>
 			</xsl:when>
 			<xsl:otherwise>
-				<textarea name="bioghist" id="cbb" onfocus="parent.setCurrent(this);" rows="5" cols="80"></textarea>
+				<textarea class="menuField" name="bioghist" id="cbb" onfocus="setCurrent(this);" onchange="validateField(this);" rows="5" cols="80"></textarea>
 			</xsl:otherwise>			
 		</xsl:choose>
 	   </p>  
@@ -183,7 +185,7 @@
 			<xsl:otherwise>
 				<strong><span class="isadg">3.2.3: </span>Archival History </strong> <a class="smalllink" id="linkcbc" title="add archival history" onclick="addElement('cbc')">add</a> [optional]
 				<br/>
-				<textarea name="custodhist" id="cbc" onfocus="parent.setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
+				<textarea class="menuField" name="custodhist" id="cbc" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
 			</xsl:otherwise>
 		</xsl:choose>			
 	    </p>      
@@ -193,9 +195,9 @@
       			<xsl:apply-templates select="acqinfo"/>
       		</xsl:when>
       		<xsl:otherwise>
-      			<strong><span class="isadg">3.2.4: </span>Immediate Source of Acquisition </strong> <a class="smalllink" id="linkcbd" title="add archival history" onclick="addElement('cbd')">add</a> [optional]
+      			<strong><span class="isadg">3.2.4: </span>Immediate Source of Acquisition </strong> <a class="smalllink" id="linkcbd" title="add immediate source of acquisition" onclick="addElement('cbd')">add</a> [optional]
 				<br/>
-				<textarea name="acqinfo" id="cbd" onfocus="parent.setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
+				<textarea class="menuField" name="acqinfo" id="cbd" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
       		</xsl:otherwise>
       	</xsl:choose>		
       	</p>       
@@ -210,8 +212,8 @@
 	 	<xsl:when test="scopecontent">
 	 		<xsl:apply-templates select="scopecontent"/>
 	 	</xsl:when>
-	 	<xsl:otherwise>	 		
-			<textarea name="scopecontent" id="cca" onfocus="parent.setCurrent(this);" rows="5" cols="80"></textarea>
+	 	<xsl:otherwise>	 	
+			<textarea class="menuField" name="scopecontent" id="cca" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80"></textarea>
 	 	</xsl:otherwise>
 	 </xsl:choose>	
       </p>      
@@ -221,9 +223,9 @@
       			<xsl:apply-templates select="appraisal"/>
       		</xsl:when>
       		<xsl:otherwise>
-      			<strong><span class="isadg">3.3.2: </span>Appraisal </strong> <a class="smalllink" id="linkccb" title="add archival history" onclick="addElement('ccb')">add</a> [optional]
+      			<strong><span class="isadg">3.3.2: </span>Appraisal </strong> <a class="smalllink" id="linkccb" title="add appraisal" onclick="addElement('ccb')">add</a> [optional]
 				<br/>
-				<textarea name="appraisal" id="ccb" onfocus="parent.setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
+				<textarea class="menuField" name="appraisal" id="ccb" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
       		</xsl:otherwise>
       	</xsl:choose>		
       </p>
@@ -233,9 +235,9 @@
       			<xsl:apply-templates select="accruals"/>
       		</xsl:when>
       		<xsl:otherwise>
-				<strong><span class="isadg">3.3.3: </span>Accruals </strong> <a class="smalllink" id="linkccc" title="add archival history" onclick="addElement('ccc')">add</a> [optional]
+				<strong><span class="isadg">3.3.3: </span>Accruals </strong> <a class="smalllink" id="linkccc" title="add accruals" onclick="addElement('ccc')">add</a> [optional]
 				<br />
-				<textarea name="accruals" id="ccc" onfocus="parent.setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
+				<textarea class="menuField" name="accruals" id="ccc" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
       		</xsl:otherwise>
       	</xsl:choose>		
       </p>
@@ -245,9 +247,9 @@
       			<xsl:apply-templates select="arrangement"/>
       		</xsl:when>
       		<xsl:otherwise>
-				<strong><span class="isadg">3.3.4: </span>System of Arrangement </strong> <a class="smalllink" id="linkccd" title="add archival history" onclick="addElement('ccd')">add</a> [optional]
+				<strong><span class="isadg">3.3.4: </span>System of Arrangement </strong> <a class="smalllink" id="linkccd" title="add arrangement" onclick="addElement('ccd')">add</a> [optional]
 				<br />
-				<textarea name="arrangement" id="ccd" onfocus="parent.setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
+				<textarea class="menuField" name="arrangement" id="ccd" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
       		</xsl:otherwise>
       	</xsl:choose>		
       </p>
@@ -263,7 +265,7 @@
 				 		<xsl:apply-templates select="accessrestrict"/>
 				 	</xsl:when>
 				 	<xsl:otherwise>	 		
-						<textarea name="accessrestrict" id="cda" onfocus="parent.setCurrent(this);" rows="5" cols="80"></textarea>
+						<textarea class="menuField" name="accessrestrict" id="cda" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80"></textarea>
 				 	</xsl:otherwise>
 				 </xsl:choose>	
 			</p>      
@@ -273,9 +275,9 @@
 		      			<xsl:apply-templates select="userestrict"/>
 		      		</xsl:when>
 		      		<xsl:otherwise>
-						<strong><span class="isadg">3.4.2: </span>Conditions Governing Reproduction </strong> <a class="smalllink" id="linkcdb" title="add archival history" onclick="addElement('cdb')">add</a> [optional]
+						<strong><span class="isadg">3.4.2: </span>Conditions Governing Reproduction </strong> <a class="smalllink" id="linkcdb" title="add conditions governing reproduction" onclick="addElement('cdb')">add</a> [optional]
 						<br />
-						<textarea name="userestrict" id="cdb" onfocus="parent.setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
+						<textarea class="menuField" name="userestrict" id="cdb" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
 		      		</xsl:otherwise>
 		      </xsl:choose>		
 		     </p>
@@ -283,8 +285,8 @@
 		     	<strong><span class="isadg">3.4.3: </span><a href="/arch/lang.shtml" title="Language of Material help - opens in new window" target="_new">Language of Material</a></strong> [Must include <a href="http://www.loc.gov/standards/iso639-2/englangn.html" title="ISO 639-2 codes - opens new window" target="_new">ISO 639-2 3-letter code</a>]
 		     	<div id="language" class="apcontainer">
 		     	<xsl:choose>
-		     		<xsl:when test="langmaterial/language">
-		     			<xsl:apply-templates select="langmaterial"/>
+		     		<xsl:when test="langusage/language">
+		     			<xsl:apply-templates select="langusage"/>
 		     		</xsl:when>
 		     		<xsl:otherwise>		     			
 						<div id="addedlanguages" style="display:none" class="added"></div>		
@@ -292,8 +294,10 @@
 		     	</xsl:choose>
 		     		<div id="languagetable" class="tablecontainer">
 		  				<table>
-		      				<tr><td> 3-letter ISO code:</td><td> <input type="text" id="lang_code" maxlength="3" size="5"></input></td></tr>
-							<tr><td> Language:</td><td> <input type="text" id="lang_name" onfocus="parent.setCurrent(this);" size="30"></input></td></tr>
+		  					<tbody>
+		      					<tr><td> 3-letter ISO code:</td><td> <input type="text" id="lang_code" onfocus="setCurrent(this);" maxlength="3" size="5"></input></td></tr>
+								<tr><td> Language:</td><td> <input type="text" id="lang_name" onfocus="setCurrent(this);" size="30"></input></td></tr>
+		  					</tbody>
 		  				</table>
 					</div>
 		  			<div id="languagebuttons" class="buttoncontainer">
@@ -310,7 +314,7 @@
 		     		<xsl:otherwise>
 		     			<strong><span class="isadg">3.4.4: </span>Physical Characteristics </strong> <a class="smalllink" id="linkcdd" title="add physical characteristics" onclick="addElement('cdd')">add</a> [optional]
 						<br/>
-						<textarea name="phystech" id="cdd" onfocus="parent.setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
+						<textarea class="menuField" name="phystech" id="cdd" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
 		     		</xsl:otherwise>
 		     	</xsl:choose>			 	
       		</p>
@@ -322,7 +326,7 @@
 						<xsl:apply-templates select="otherfindaid"/> 
 					</xsl:when>
 					<xsl:otherwise>
-						<textarea name="cde" id="cde" onfocus="parent.setCurrent(this);" rows="5" cols="80"></textarea>
+						<textarea class="menuField" name="cde" id="cde" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80"></textarea>
 					</xsl:otherwise>
 				</xsl:choose>				
 	       </p>		     					
@@ -335,9 +339,9 @@
       				<xsl:apply-templates select="originalsloc"/>
       			</xsl:when>
       			<xsl:otherwise>
-      				<strong><span class="isadg">3.5.1: </span>Existence/Location of Originals </strong> <a class="smalllink" id="linkcea" title="add archival history" onclick="addElement('cea')">add</a> [optional]
+      				<strong><span class="isadg">3.5.1: </span>Existence/Location of Originals </strong> <a class="smalllink" id="linkcea" title="add existence/location of originals" onclick="addElement('cea')">add</a> [optional]
 					<br/>
-        			<textarea  name="originalsloc" id="cea" onfocus="parent.setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
+        			<textarea class="menuField" name="originalsloc" id="cea" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
       			</xsl:otherwise>
       		</xsl:choose>	
         </p> 
@@ -347,9 +351,9 @@
 					<xsl:apply-templates select="altformavail"/>
 				</xsl:when>
 				<xsl:otherwise>
-					<strong><span class="isadg">3.5.2: </span>Existence/Location of Copies </strong> <a class="smalllink" id="linkceb" title="add archival history" onclick="addElement('ceb')">add</a> [optional]
+					<strong><span class="isadg">3.5.2: </span>Existence/Location of Copies </strong> <a class="smalllink" id="linkceb" title="add existence/location of copies" onclick="addElement('ceb')">add</a> [optional]
 					<br/>
-					<textarea name="altformavail" id="ceb" onfocus="parent.setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
+					<textarea class="menuField" name="altformavail" id="ceb" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
 				</xsl:otherwise>
 			</xsl:choose>			
       	</p>
@@ -359,9 +363,9 @@
 					<xsl:apply-templates select="relatedmaterial"/>
 				</xsl:when>
 				<xsl:otherwise>
-					<strong><span class="isadg">3.5.3: </span>Related Units of Description </strong> <a class="smalllink" id="linkcec" title="add archival history" onclick="addElement('cec')">add</a> [optional]
+					<strong><span class="isadg">3.5.3: </span>Related Units of Description </strong> <a class="smalllink" id="linkcec" title="add related units of description" onclick="addElement('cec')">add</a> [optional]
 					<br/>
-					<textarea name="relatedmaterial" id="cec" onfocus="parent.setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
+					<textarea class="menuField" name="relatedmaterial" id="cec" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
 				</xsl:otherwise>
 			</xsl:choose>			
       	</p>
@@ -371,9 +375,9 @@
       	 			<xsl:apply-templates select="bibliography"/>
       	 		</xsl:when>
       	 		<xsl:otherwise>
-      	 			<strong><span class="isadg">3.5.4: </span>Publication Note</strong> [Works based on or about the collection] <a class="smalllink" id="linkced" title="add archival history" onclick="addElement('ced')">add</a> [optional]
+      	 			<strong><span class="isadg">3.5.4: </span>Publication Note</strong> [Works based on or about the collection] <a class="smalllink" id="linkced" title="add publication note" onclick="addElement('ced')">add</a> [optional]
 					<br/>
-					<textarea name="bibliography" id="ced" onfocus="parent.setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
+					<textarea class="menuField" name="bibliography" id="ced" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
       	 		</xsl:otherwise>
       	 	</xsl:choose>
       	</p>
@@ -386,9 +390,9 @@
 	  			<xsl:apply-templates select="note"/>
 	  		</xsl:when>
 	  		<xsl:otherwise>
-	  			<strong><span class="isadg">3.6.1: </span>Note </strong> <a class="smalllink" id="linkcfa" title="add archival history" onclick="addElement('cfa')">add</a> [optional]
+	  			<strong><span class="isadg">3.6.1: </span>Note </strong> <a class="smalllink" id="linkcfa" title="add note" onclick="addElement('cfa')" onmouseover="this.style.cursor='pointer'">add</a> [optional]
 				<br/>
-				<textarea name="note" id="cfa" onfocus="parent.setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
+				<textarea class="menuField" name="note" id="cfa" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
 	  		</xsl:otherwise>
 	  	</xsl:choose>		
 	  </p>
@@ -403,7 +407,7 @@
       			<xsl:apply-templates select="processinfo"/>
       		</xsl:when>
       		<xsl:otherwise>      			
-        		<textarea name="processinfo" id="cga" onfocus="parent.setCurrent(this);" rows="5" cols="80"></textarea>
+        		<textarea class="menuField" name="processinfo" id="cga" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80"></textarea>
       		</xsl:otherwise>
       	</xsl:choose>	
       </p>
@@ -426,21 +430,17 @@
 				</xsl:otherwise>
 			</xsl:choose>	
 			<div id="subjecttable" class="tablecontainer">
-				<table>
+				<table id="table_subject">
 				<tbody>
-			    	<tr><td class="label">Subject:</td><td><input type="text" onfocus="parent.setCurrent(this);" id="subject_subject" size="40"></input></td></tr>
-			    	<tr><td><select onfocus="parent.setCurrent(this);" id="subjectdropdown">
+			    	<tr NoDrop="true" NoDrag="true"><td class="label">Subject:</td><td><input type="text" onfocus="setCurrent(this);" id="subject_subject" size="40"></input></td></tr>
+			    	<tr NoDrop="true" NoDrag="true"><td class="label">Thesaurus:</td><td><input type="text" onfocus="setCurrent(this);" id="subject_source" size="40"></input></td></tr>
+			    	<tr NoDrop="true" NoDrag="true"><td><select onfocus="setCurrent(this);" id="subjectdropdown">
 			    		<option value="subject_dates">Dates</option>
 			    		<option value="subject_loc">Location</option>
 			    		<option value="subject_other">Other</option>
-			    		<option value="subject_source">Thesaurus</option>			    		
 			    	</select></td>
 			    	<td><input type="text" onfocus="addField('subject')" size="40" value="Click to Add Selected Field" style="background:#F2F2F2; color: grey;"></input></td></tr>
 			    </tbody>
-				<!--<tr><td>Dates:</td><td> <input type="text" onfocus="parent.setCurrent(this);" id="su_dates" size="40"></input></td></tr>
-					<tr><td>Location:</td><td> <input type="text" onfocus="parent.setCurrent(this);" id="su_loc" size="40"></input></td></tr>
-					<tr><td>Other:</td><td> <input type="text" onfocus="parent.setCurrent(this);" id="su_other" size="40"></input></td></tr>
-					<tr><td>Thesaurus:</td><td> <input type="text" onfocus="parent.setCurrent(this);" id="su_source" size="40"></input></td></tr> -->
 				</table>
 			</div>
 			<div id="subjectbuttons" class="buttoncontainer">
@@ -466,35 +466,30 @@
 				</xsl:otherwise>
 			</xsl:choose>	
 			<div id="persnametable" class="tablecontainer">					
-				<table>
-				  	<tr><td class="label"> Surname:</td><td> <input type="text" onfocus="parent.setCurrent(this);" id="persname_surname" size="40"></input></td></tr>
-				  	<tr><td><select onfocus="parent.setCurrent(this);" id="persnamedropdown">
+				<table id="table_persname"><tbody>					
+				  	<tr NoDrop="true" NoDrag="true"><td class="label"> Surname:</td><td> <input type="text" onfocus="setCurrent(this);" id="persname_surname" size="40"></input></td></tr>
+				  	<tr NoDrop="true" NoDrag="true"><td class="label"> Source:</td><td> <input type="text" onfocus="setCurrent(this);" id="persname_source" size="40"></input></td></tr>
+				  	<tr NoDrop="true" NoDrag="true"><td><select onfocus="setCurrent(this);" id="persnamedropdown">
 				  		<option value="persname_forename">Forename</option>
 			    		<option value="persname_dates">Dates</option>
 			    		<option value="persname_title">Title</option>
 			    		<option value="persname_epithet">Epithet</option>
-			    		<option value="persname_other">Other</option>
-			    		<option value="persname_source">Source</option>			    		
+			    		<option value="persname_other">Other</option>		    		
 			    	</select></td>
 			    	<td><input type="text" onfocus="addField('persname')" size="40" value="Click to Add Selected Field" style="background:#F2F2F2; color: grey;"></input></td></tr>
-			<!-- 	<tr><td> Forename:</td><td> <input type="text" onfocus="parent.setCurrent(this);" id="pn_forename" size="40"></input></td></tr>
-				    <tr><td> Dates:</td><td> <input type="text" onfocus="parent.setCurrent(this);" id="pn_dates" size="40"></input></td></tr>
-				    <tr><td> Title:</td><td> <input type="text" onfocus="parent.setCurrent(this);" id="pn_title" size="40"></input></td></tr>
-				    <tr><td> Epithet:</td><td> <input type="text" onfocus="parent.setCurrent(this);" id="pn_epithet" size="40"></input></td></tr>
-				    <tr><td> Other:</td><td> <input type="text" onfocus="parent.setCurrent(this);" id="pn_other" size="40"></input></td></tr>
-				    <tr><td> Source:</td><td> <input type="text" onfocus="parent.setCurrent(this);" id="pn_source" size="40"></input></td></tr>-->
-				</table>
+				</tbody></table>
 			</div>
 			<div id="persnamebuttons" class="buttoncontainer">
 				<p class="apbutton">Rules:
-					<select id="persname_rules">
+					<select id="persname_rules" onchange="checkRules('persname')">
+						<option value="none">None</option>
 						<option value="ncarules">NCA Rules</option>
 						<option value="aacr2">AACR2</option>
 					</select>
 				</p>
-			<!-- 	<input class="apbutton" type="button" onclick="window.open('http://www.hmc.gov.uk/nra/personal_simple.htm', 'new', 'width=800 height=600');" value="Search NRA" ></input><br/> -->
-				<input class="apbutton" type="button" onclick="addAccessPoint('persname');" value="Add Persname" ></input><br/>
-				<input class="apbutton" type="button" onclick="resetAccessPoint('persname');" value="Reset" ></input>
+			<!-- 	<input class="apbutton" type="button" onclick="window.open('http://www.hmc.gov.uk/nra/personal_simple.htm', 'new', 'width=800 height=600');" value="Search NRA" ></input><br/> -->			
+				<input class="apbutton" type="button" onclick="addAccessPoint('persname');" value="Add To Record" ></input><br />
+				<input class="apbutton" type="button" onclick="resetAccessPoint('persname');" value="Reset" ></input>				
 			</div>
 			<br/>
 		</div>
@@ -513,39 +508,35 @@
 				</xsl:otherwise>
 			</xsl:choose>
 			<div id="famnametable" class="tablecontainer">
-			      <table>
-					  <tr><td class="label">Surname:</td><td> <input type="text" onfocus="parent.setCurrent(this);" id="famname_surname" size="40"></input></td></tr>
-				  	  <tr><td><select onfocus="parent.setCurrent(this);" id="famnamedropdown">
+			      <table id="table_famname"><tbody>
+					  <tr NoDrop="true" NoDrag="true"><td class="label">Surname:</td><td> <input type="text" onfocus="setCurrent(this);" id="famname_surname" size="40"></input></td></tr>
+					  <tr NoDrop="true" NoDrag="true"><td class="label">Source:</td><td> <input type="text" onfocus="setCurrent(this);" id="famname_source" size="40"></input></td></tr>
+				  	  <tr NoDrop="true" NoDrag="true"><td><select onfocus="setCurrent(this);" id="famnamedropdown">
 				  	  	<option value="famname_other">Other</option>		  		
 			    		<option value="famname_dates">Dates</option>
 			    		<option value="famname_title">Title</option>
 			    		<option value="famname_epithet">Epithet</option>
-			    		<option value="famname_loc">Location</option>
-			    		<option value="famname_source">Source</option>			    		
+			    		<option value="famname_loc">Location</option>		    		
 			    	</select></td>
 			    	<td><input type="text" onfocus="addField('famname')" size="40" value="Click to Add Selected Field" style="background:#F2F2F2; color: grey;"></input></td></tr>
-				  <!--<tr><td>Other:</td><td> <input type="text" onfocus="parent.setCurrent(this);" id="fn_other" size="40" value="family"></input></td></tr>
-					  <tr><td>Dates:</td><td> <input type="text" onfocus="parent.setCurrent(this);" id="fn_dates" size="40"></input></td></tr>
-					  <tr><td>Title:</td><td> <input type="text" onfocus="parent.setCurrent(this);" id="fn_title" size="40"></input></td></tr>
-					  <tr><td>Epithet:</td><td> <input type="text" onfocus="parent.setCurrent(this);" id="fn_epithet" size="40"></input></td></tr>
-					  <tr><td>Location:</td><td><input type="text" onfocus="parent.setCurrent(this);" id="fn_loc" size="40"></input></td></tr>
-					  <tr><td>Source:</td><td> <input type="text" onfocus="parent.setCurrent(this);" id="fn_source" size="40"></input></td></tr>-->
-			      </table>
+			      </tbody></table>
 			</div>
 			<div id="famnamebuttons" class="buttoncontainer">
 				<p class="apbutton">Rules: 
-				<select id="famname_rules">
+				<select id="famname_rules" onchange="checkRules('famname')">
+					<option value="none">None</option>
 					<option value="ncarules">NCA Rules</option>
 					<option value="aacr2">AACR2</option>
 				</select>
 				</p>
 				<!--<input class="apbutton" type="button" onclick="window.open('http://www.hmc.gov.uk/nra/family_simple.htm', 'new', 'width=800 height=600');" value="Search NRA"></input><br/>  -->
-				<input class="apbutton" type="button" onclick="addAccessPoint('famname');" value="Add Famname"></input><br />
+				<input class="apbutton" type="button" onclick="addAccessPoint('famname');" value="Add To Record"></input><br />
 				<input class="apbutton" type="button" onclick="resetAccessPoint('famname');" value="Reset" ></input>
 			</div>
 			<br/>
 		</div>
 		<br/>		
+<!-- CORPNAME -->
 		<div id="corpname" class="apcontainer">
 			<p><strong>Corporate Name</strong><br /><a onclick="window.open('http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=O', 'new', 'width=800 height=600');">[Search NRA]</a></p>
 			<xsl:choose>
@@ -559,30 +550,27 @@
 				</xsl:otherwise>
 			</xsl:choose>	
 			<div id="corpnametable" class="tablecontainer">
-				<table>
-			    	<tr><td class="label">Organisation:</td><td><input type="text" onfocus="parent.setCurrent(this);" id="corpname_organisation" size="40"></input></td></tr>
-			    	<tr><td><select onfocus="parent.setCurrent(this);" id="corpnamedropdown">				  	  			  		
+				<table id="table_corpname"><tbody>
+			    	<tr NoDrop="true" NoDrag="true"><td class="label">Organisation:</td><td><input type="text" onfocus="setCurrent(this);" id="corpname_organisation" size="40"></input></td></tr>
+			    	<tr NoDrop="true" NoDrag="true"><td class="label">Source:</td><td><input type="text" onfocus="setCurrent(this);" id="corpname_source" size="40"></input></td></tr>
+			    	<tr NoDrop="true" NoDrag="true"><td><select onfocus="setCurrent(this);" id="corpnamedropdown">				  	  			  		
 			    		<option value="corpname_dates">Dates</option>
 			    		<option value="corpname_loc">Location</option>
-			    		<option value="corpname_other">Other</option>
-			    		<option value="corpname_source">Source</option>			    		
+			    		<option value="corpname_other">Other</option>		    		
 			    	</select></td>
 			    	<td><input type="text" onfocus="addField('corpname')" size="40" value="Click to Add Selected Field" style="background:#F2F2F2; color: grey;"></input></td></tr>
-				<!--<tr><td>Dates:</td><td> <input type="text" onfocus="parent.setCurrent(this);" id="cn_dates" size="40"></input></td></tr>
-					<tr><td>Location:</td><td> <input type="text" onfocus="parent.setCurrent(this);" id="cn_loc" size="40"></input></td></tr>
-					<tr><td>Other:</td><td> <input type="text" onfocus="parent.setCurrent(this);" id="cn_other" size="40"></input></td></tr>
-					<tr><td>Source:</td><td> <input type="text" onfocus="parent.setCurrent(this);" id="cn_source" size="40"></input></td></tr> -->
-				</table>
+				</tbody></table>
 			</div>
 			<div id="corpnamebuttons" class="buttoncontainer">
 				<p class="apbutton">Rules:
-				    <select id="corpname_rules">
+				    <select id="corpname_rules" onchange="checkRules('corpname')">
+				    	<option value="none">None</option>
 						<option value="ncarules">NCA Rules</option>
 						<option value="aacr2">AACR2</option>
 				    </select>
 				</p>
 				<!-- <input class="apbutton" type="button" onclick="window.open('http://www.hmc.gov.uk/nra/corporate_simple.htm', 'new', 'width=800 height=600');" value="Search NRA" ></input><br/> -->
-				<input class="apbutton" type="button" onclick="addAccessPoint('corpname');" value="Add Corpname"></input><br />
+				<input class="apbutton" type="button" onclick="addAccessPoint('corpname');" value="Add To Record"></input><br />
 				<input class="apbutton" type="button" onclick="resetAccessPoint('corpname');" value="Reset" ></input>
 			</div>
 			<br/>
@@ -602,24 +590,23 @@
 				</xsl:otherwise>
 			</xsl:choose>	
 				<div id="geognametable" class="tablecontainer">
-				    <table>
-						<tr><td class="label">Location:</td><td> <input type="text" onfocus="parent.setCurrent(this);" id="geogname_location" size="40"></input></td></tr>
-						<tr><td><select onfocus="parent.setCurrent(this);" id="geognamedropdown">				  	  			  		
-				    		<option value="geogname_dates">Dates</option>
-				    		<option value="geogname_source">Source</option>			    		
+				    <table id="table_geogname"><tbody>
+						<tr NoDrop="true" NoDrag="true"><td class="label">Location:</td><td> <input type="text" onfocus="setCurrent(this);" id="geogname_location" size="40"></input></td></tr>
+						<tr NoDrop="true" NoDrag="true"><td class="label">Source:</td><td> <input type="text" onfocus="setCurrent(this);" id="geogname_source" size="40"></input></td></tr>
+						<tr NoDrop="true" NoDrag="true"><td><select onfocus="setCurrent(this);" id="geognamedropdown">				  	  			  		
+				    		<option value="geogname_dates">Dates</option>		    		
 				    	</select></td>
 				    	<td><input type="text" onfocus="addField('geogname')" size="40" value="Click to Add Selected Field" style="background:#F2F2F2; color: grey;"></input></td></tr>
-				   <!-- <tr><td>Dates:</td><td> <input type="text" onfocus="parent.setCurrent(this);" id="gn_dates" size="40"></input></td></tr>
-						<tr><td>Source:</td><td> <input type="text" onfocus="parent.setCurrent(this);" id="gn_source" size="40"></input></td></tr> -->
-				    </table>
+				    </tbody></table>
 				</div>
 				<div id="geognamebuttons" class="buttoncontainer">
 					<p class="apbutton">Rules:
-			    			<select id="geogname_rules">
+			    			<select id="geogname_rules" onchange="checkRules('geogname')">
+			    				<option value="none">None</option>
 			      				<option value="ncarules">NCA Rules</option>
 			      				<option value="aacr2">AACR2</option>
 			    			</select></p>
-					<input class="apbutton" type="button" onclick="addAccessPoint('geogname');" value="Add Geogname"></input><br />
+					<input class="apbutton" type="button" onclick="addAccessPoint('geogname');" value="Add To Record"></input><br />
 					<input class="apbutton" type="button" onclick="resetAccessPoint('geogname');" value="Reset" ></input>
 				</div>
 				<br/>
@@ -639,25 +626,23 @@
 				</xsl:otherwise>
 			</xsl:choose>	
 				<div id="titletable" class="tablecontainer">
-					<table>
-						<tr><td class="label">Title:</td><td> <input type="text" onfocus="parent.setCurrent(this);" id="title_title" size="40"></input></td></tr>
-						<tr><td><select onfocus="parent.setCurrent(this);" id="titledropdown">				  	  			  		
-				    		<option value="title_dates">Dates</option>
-				    		<option value="title_source">Source</option>			    		
+					<table id="table_title"><tbody>
+						<tr NoDrop="true" NoDrag="true"><td class="label">Title:</td><td> <input type="text" onfocus="setCurrent(this);" id="title_title" size="40"></input></td></tr>
+						<tr NoDrop="true" NoDrag="true"><td class="label">Source:</td><td> <input type="text" onfocus="setCurrent(this);" id="title_source" size="40"></input></td></tr>
+						<tr NoDrop="true" NoDrag="true"><td><select onfocus="setCurrent(this);" id="titledropdown">				  	  			  		
+				    		<option value="title_dates">Dates</option>			    		
 				    	</select></td>
 				    	<td><input type="text" onfocus="addField('title')" size="40" value="Click to Add Selected Field" style="background:#F2F2F2; color: grey;"></input></td></tr>
-						
-					<!--<tr><td>Dates:</td><td> <input type="text" onfocus="parent.setCurrent(this);" id="bt_dates" size="40"></input></td></tr>
-						<tr><td>Source:</td><td> <input type="text" onfocus="parent.setCurrent(this);" id="bt_source" size="40"></input></td></tr>-->
-					</table>
+					</tbody></table>
 				</div>
 				<div id="titlebuttons" class="buttoncontainer">
 					<p class="apbutton">Rules:
-					    <select id="title_rules">
+					    <select id="title_rules" onchange="checkRules('title')">
+					      <option value="none">None</option>
 					      <option value="ncarules">NCA Rules</option>
 					      <option value="aacr2">AACR2</option>
 					    </select></p>
-						<input class="apbutton" type="button" onclick="addAccessPoint('title');" value="Add Title"></input><br />
+						<input class="apbutton" type="button" onclick="addAccessPoint('title');" value="Add To Record"></input><br />
 						<input class="apbutton" type="button" onclick="resetAccessPoint('title');" value="Reset" ></input>
 				</div>
 				<br/>
@@ -675,7 +660,7 @@
 		<xsl:for-each select="controlaccess/*[name() = $aptype]">
 		 	<input type="hidden">
 		 		<xsl:attribute name="name">
-		 			<xsl:value-of select="$aptype"/>
+		 			<xsl:text>controlaccess/</xsl:text><xsl:value-of select="$aptype"/>
 		 		</xsl:attribute>
 				<xsl:attribute name="id">
 					<xsl:value-of select="$aptype"/><xsl:text>_formgen</xsl:text><xsl:number level="single" count="controlaccess/*[name() = $aptype]" format="1"/><xsl:text>xml</xsl:text>
@@ -696,7 +681,7 @@
 				<div class="icons">
 					<a>
 						<xsl:attribute name="onclick">
-							<xsl:text>deleteaccesspoint('</xsl:text><xsl:value-of select="$aptype"/><xsl:text>_formgen</xsl:text><xsl:number level="single" count="controlaccess/*[name() = $aptype]" format="1"/><xsl:text>');</xsl:text>
+							<xsl:text>deleteAccessPoint('</xsl:text><xsl:value-of select="$aptype"/><xsl:text>_formgen</xsl:text><xsl:number level="single" count="controlaccess/*[name() = $aptype]" format="1"/><xsl:text>');</xsl:text>
 						</xsl:attribute>
 						<xsl:attribute name="title">
 							<xsl:text>delete entry</xsl:text>
@@ -706,18 +691,15 @@
 							<xsl:text>delete</xsl:text><xsl:number level="single" count="controlaccess/*[name() = $aptype]" format="1"/>
 						</xsl:attribute>
 						</img>
-					</a>	
-				<!--<a>
-						<xsl:attribute name="onclick">
-							<xsl:text>editaccesspoint('</xsl:text><xsl:value-of select="$aptype"/><xsl:text>_formgen', </xsl:text><xsl:number level="single" count="controlaccess/*[name() = $aptype]" format="1"/><xsl:text>);</xsl:text>
-						</xsl:attribute>
-						<xsl:text>edit</xsl:text>
-					</a>	 -->									
+					</a>										
 				</div>
 				<div class="accesspoint">	
-						<xsl:attribute name="onclick">
-							<xsl:text>editAccessPoint('</xsl:text><xsl:value-of select="$aptype"/><xsl:text>_formgen', </xsl:text><xsl:number level="single" count="controlaccess/*[name() = $aptype]" format="1"/><xsl:text>);</xsl:text>
-						</xsl:attribute>				 
+					<xsl:attribute name="onclick">
+						<xsl:text>editAccessPoint('</xsl:text><xsl:value-of select="$aptype"/><xsl:text>_formgen', </xsl:text><xsl:number level="single" count="controlaccess/*[name() = $aptype]" format="1"/><xsl:text>);</xsl:text>
+					</xsl:attribute>
+					<xsl:attribute name="title">
+						<xsl:text>Click to edit</xsl:text>
+					</xsl:attribute>		 
 					<xsl:call-template name="accesspointstring">					
 						<xsl:with-param name="aptype" select="$aptype"/>
 						<xsl:with-param name="separater" select="' '"/>
@@ -770,21 +752,21 @@
 
   
   <xsl:template match="did/unitid">
-	<input type="text" name="did/unitid" id="caa-cc" maxlength="2" size="3" disabled="true">		
+	<input type="text" name="did/unitid" id="countrycode" maxlength="2" size="3" disabled="true" onblur="checkId()">		
 		<xsl:if test="@countrycode">
 			<xsl:attribute name="value">
 				<xsl:value-of select="@countrycode"/>
 			</xsl:attribute>
 		</xsl:if>		
 	</input>
-	<input type="text" onfocus="parent.setCurrent(this);" name="did/unitid" id="caa-rc" maxlength="4" size="5">
+	<input type="text" onfocus="setCurrent(this);" name="did/unitid" id="mainagencycode" maxlength="4" size="5" onblur="checkId()">
 		<xsl:if test="@mainagencycode">
 			<xsl:attribute name="value">
 				<xsl:value-of select="@mainagencycode"/>
 			</xsl:attribute>
 		</xsl:if>
 	</input>
-	<input type="text" onfocus="parent.setCurrent(this);" name="did/unitid" id="caa-id" size="50">
+	<input type="text" onfocus="setCurrent(this);" name="did/unitid" id="unitid" size="50" onblur="checkId()">
 		<xsl:attribute name="value">
 			<xsl:value-of select="." />
 		</xsl:attribute>
@@ -792,23 +774,23 @@
   </xsl:template>
   
   <xsl:template match="did/unittitle">
-  	<input type="text" onfocus="parent.setCurrent(this);" name="did/unittitle" id="cab" size="80" onchange="updateTitle()">
+  	<input class="menuField" type="text" onfocus="setCurrent(this);" name="did/unittitle" id="cab" size="80" onchange="updateTitle()">
   		<xsl:attribute name="value">
-  			<xsl:value-of select="."/>
+  			<xsl:apply-templates/>
   		</xsl:attribute>
   	</input>
   </xsl:template>
     
   <xsl:template match="unitdate">
-  	<input type="text" onfocus="parent.setCurrent(this);" name="did/unitdate" id="cac" size="39">
+  	<input class="menuField" type="text" onchange="validateField(this);" onfocus="setCurrent(this);" name="did/unitdate" id="cac" size="39">
   		<xsl:attribute name="value">
-  		  <xsl:value-of select="."/>
+  		  <xsl:apply-templates/>
   		</xsl:attribute>	
   	</input>
   </xsl:template>
   
   <xsl:template match="unitdate/@normal">
-  	<input type="text" onfocus="parent.setCurrent(this);" name="did/unitdate" id="can" size="39" maxlength="10">
+  	<input type="text" onfocus="setCurrent(this);" name="did/unitdate" id="can" size="39" maxlength="10">
   		<xsl:attribute name="value">
   			<xsl:value-of select="."/>
   		</xsl:attribute>
@@ -816,97 +798,97 @@
   </xsl:template>
   
   <xsl:template match="did/physdesc/extent">
-  	<input type="text" onfocus="parent.setCurrent(this);" name="did/physdesc/extent" id="cae" size="80">
+  	<input class="menuField" type="text" onchange="validateField(this);" onfocus="setCurrent(this);" name="did/physdesc/extent" id="cae" size="80">
   		<xsl:attribute name="value">
-  			<xsl:value-of select="."/>
+  			<xsl:apply-templates/>
   		</xsl:attribute>
   	</input>
   </xsl:template>
 
   <xsl:template match="did/origination">
-  	<input type="text" onfocus="parent.setCurrent(this);" name="did/origination" id="cba" size="80">
+  	<input class="menuField" type="text" onchange="validateField(this);" onfocus="setCurrent(this);" name="did/origination" id="cba" size="80">
   		<xsl:attribute name="value">
-  			<xsl:value-of select="."/>
+  			<xsl:apply-templates/>
   		</xsl:attribute>
   	</input>
   </xsl:template>
 
  <xsl:template match="bioghist">
-  	<textarea name="bioghist" id="cbb" onfocus="parent.setCurrent(this);" rows="5" cols="80">  		
-		<xsl:value-of select="."/>  		  		
+  	<textarea class="menuField" name="bioghist" id="cbb" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80">  		
+		<!-- <xsl:value-of select="."/> -->
+		<xsl:apply-templates/>  		  		
   	</textarea>
   </xsl:template>
 
   <xsl:template match="custodhist">
   		<strong><span class="isadg">3.2.3: </span>Archival History </strong> <a class="smalllink" id="linkcbc" title="add archival history" onclick="addElement('cbc')">hide</a> [optional]
 		<br/>
-  	  	<textarea name="custodhist" id="cbc" onfocus="parent.setCurrent(this);" rows="5" cols="80" style="display:block">
-  		<xsl:value-of select="."/>
+  	  	<textarea class="menuField" name="custodhist" id="cbc" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80" style="display:block">
+  		<xsl:apply-templates/>
   	  </textarea>
   </xsl:template>
 
   <xsl:template match="acqinfo">
   		<strong><span class="isadg">3.2.4: </span>Immediate Source of Acquisition </strong> <a class="smalllink" id="linkcbd" title="add archival history" onclick="addElement('cbd')">hide</a> [optional]
 		<br/>
-  	  	<textarea name="acqinfo" id="cbd" onfocus="parent.setCurrent(this);" rows="5" cols="80" style="display:block">
-  		<xsl:value-of select="."/>
+  	  	<textarea class="menuField" name="acqinfo" id="cbd" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80" style="display:block">
+  		<xsl:apply-templates/>
   	  </textarea>
   </xsl:template>
 
     <xsl:template match="scopecontent">
-  	  <textarea name="scopecontent" id="cca" onfocus="parent.setCurrent(this);" rows="5" cols="80">
-  	  	<xsl:value-of select="."/>
+  	  <textarea class="menuField" name="scopecontent" id="cca" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80">
+  	  	<xsl:apply-templates/>
   	  </textarea>
    </xsl:template>
 
   <xsl:template match="appraisal">
   		<strong><span class="isadg">3.3.2: </span>Appraisal </strong> <a class="smalllink" id="linkccb" title="add archival history" onclick="addElement('ccb')">hide</a> [optional]
 		<br/>
-  	  	<textarea name="appraisal" id="ccb" onfocus="parent.setCurrent(this);" rows="5" cols="80" style="display:block">
-  		<xsl:value-of select="."/>
+  	  	<textarea class="menuField" name="appraisal" id="ccb" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80" style="display:block">
+  		<xsl:apply-templates/>
   	  </textarea>
   </xsl:template>
  
  <xsl:template match="accruals">
   		<strong><span class="isadg">3.3.3: </span>Accruals </strong> <a class="smalllink" id="linkccc" title="add archival history" onclick="addElement('ccc')">hide</a> [optional]
 		<br/>
-  	  	<textarea name="accruals" id="ccc" onfocus="parent.setCurrent(this);" rows="5" cols="80" style="display:block">
-  		<xsl:value-of select="."/>
+  	  	<textarea class="menuField" name="accruals" id="ccc" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80" style="display:block">
+  		<xsl:apply-templates/>
   	  </textarea>
   </xsl:template>
 
   <xsl:template match="arrangement">
   		<strong><span class="isadg">3.3.4: </span>System of Arrangement </strong> <a class="smalllink" id="linkccd" title="add archival history" onclick="addElement('ccd')">hide</a> [optional]
 		<br/>
-  	  	<textarea name="arrangement" id="ccd" onfocus="parent.setCurrent(this);" rows="5" cols="80" style="display:block">
-  		<xsl:value-of select="."/>
+  	  	<textarea class="menuField" name="arrangement" id="ccd" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80" style="display:block">
+  		<xsl:apply-templates/>
   	  </textarea>
   </xsl:template>
 
   <xsl:template match="accessrestrict">
-  	  <textarea name="accessrestrict" id="cca" onfocus="parent.setCurrent(this);" rows="5" cols="80">
-  	  	<xsl:value-of select="."/>
+  	  <textarea class="menuField" name="accessrestrict" id="cca" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80">
+  	  	<xsl:apply-templates/>
   	  </textarea>
    </xsl:template>
    
    <xsl:template match="userestrict">
   		<strong><span class="isadg">3.4.2: </span>Conditions Governing Reproduction </strong> <a class="smalllink" id="linkcdb" title="add archival history" onclick="addElement('cdb')">hide</a> [optional]
 		<br/>
-  	  	<textarea name="userestrict" id="cdb" onfocus="parent.setCurrent(this);" rows="5" cols="80" style="display:block">
-  		<xsl:value-of select="."/>
+  	  	<textarea class="menuField" name="userestrict" id="cdb" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80" style="display:block">
+  		<xsl:apply-templates/>
   	  </textarea>
   </xsl:template>
 
-  <xsl:template match="langmaterial">
+  <xsl:template match="langusage">
 	<div id="addedlanguages" style="display:block" class="added">
 		<xsl:for-each select="language">
-			<input type="hidden" name="language">
+			<input type="hidden" name="langusage/language">
 				<xsl:attribute name="id">
 					<xsl:text>language_formgen</xsl:text><xsl:number level="single" count="language" format="1"/><xsl:text>xml</xsl:text>
 				</xsl:attribute>
 				<xsl:attribute name="value">
-					<xsl:text>&lt;language langcode="</xsl:text><xsl:value-of select="@langcode"/><xsl:text>"&gt;</xsl:text>
-					<xsl:value-of select="."/><xsl:text>&lt;/language&gt;</xsl:text>
+					<xsl:text>lang_code | </xsl:text><xsl:value-of select="@langcode"/><xsl:text> ||| lang_name | </xsl:text><xsl:value-of select="."/><xsl:text> ||| </xsl:text>
 				</xsl:attribute>
 			</input>
 			<div>
@@ -916,7 +898,7 @@
 				<div class="icons">
 					<a>
 						<xsl:attribute name="onclick">
-							<xsl:text>deleteaccesspoint('language_formgen</xsl:text><xsl:number level="single" count="language" format="1"/><xsl:text>');</xsl:text>
+							<xsl:text>deleteAccessPoint('language_formgen</xsl:text><xsl:number level="single" count="language" format="1"/><xsl:text>');</xsl:text>
 						</xsl:attribute>
 						<xsl:attribute name="title">
 							<xsl:text>delete entry</xsl:text>
@@ -926,16 +908,17 @@
 							<xsl:text>delete</xsl:text><xsl:number level="single" count="language" format="1"/>
 						</xsl:attribute>
 						</img>
-					</a>	
-					<a>
-						<xsl:attribute name="onclick">
-							<xsl:text>editaccesspoint('language_formgen', </xsl:text><xsl:number level="single" count="language" format="1"/><xsl:text>);</xsl:text>
-						</xsl:attribute>
-						<xsl:text>edit</xsl:text>
-					</a>										
+					</a>									
 				</div>
 				<div class="accesspoint">
-					<xsl:value-of select="@langcode"/><xsl:text> | </xsl:text><xsl:value-of select="."/><xsl:text> |</xsl:text>
+				
+					<xsl:attribute name="onclick">
+						<xsl:text>editAccessPoint('language_formgen', </xsl:text><xsl:number level="single" count="language" format="1"/><xsl:text>);</xsl:text>
+					</xsl:attribute>
+					<xsl:attribute name="title">
+						<xsl:text>Click to edit</xsl:text>
+					</xsl:attribute>
+					<xsl:value-of select="@langcode"/><xsl:text> </xsl:text><xsl:value-of select="."/>
 				</div>
 			</div>
 			<br>
@@ -951,60 +934,60 @@
   <xsl:template match="phystech">
     <strong><span class="isadg">3.4.4: </span>Physical Characteristics </strong> <a class="smalllink" id="linkcdd" title="add physical characteristics" onclick="addElement('cdd')">hide</a> [optional]
 	<br/>
-	<textarea name="phystech" id="cdd" onfocus="parent.setCurrent(this);" rows="5" cols="80" style="display:block">
-			<xsl:value-of select="."/>
+	<textarea class="menuField" name="phystech" id="cdd" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80" style="display:block">
+			<xsl:apply-templates/>
 	</textarea>
   </xsl:template>
 
   <xsl:template match="otherfindaid">
-  	<textarea name="cde" id="cde" onfocus="parent.setCurrent(this);" rows="5" cols="80">
-  		<xsl:value-of select="."/>
+  	<textarea class="menuField" name="cde" id="cde" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80">
+  		<xsl:apply-templates/>
   	</textarea>
   </xsl:template>
   
   <xsl:template match="originalsloc">
   	<strong><span class="isadg">3.5.1: </span>Existence/Location of Originals </strong> <a class="smalllink" id="linkcea" title="add archival history" onclick="addElement('cea')">hide</a> [optional]
 	<br/>
-    <textarea  name="originalsloc" id="cea" onfocus="parent.setCurrent(this);" rows="5" cols="80" style="display:none">
-    	<xsl:value-of select="."/>
+    <textarea class="menuField" name="originalsloc" id="cea" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none">
+    	<xsl:apply-templates/>
     </textarea>
   </xsl:template>
   
   <xsl:template match="altformavail">
 	<strong><span class="isadg">3.5.2: </span>Existence/Location of Copies </strong> <a class="smalllink" id="linkceb" title="add archival history" onclick="addElement('ceb')">hide</a> [optional]
 	<br/>
-	<textarea name="altformavail" id="ceb" onfocus="parent.setCurrent(this);" rows="5" cols="80" style="display:none">
-		<xsl:value-of select="."/>
+	<textarea class="menuField" name="altformavail" id="ceb" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none">
+		<xsl:apply-templates/>
 	</textarea>  
   </xsl:template>
   
   <xsl:template match="relatedmaterial">
   	<strong><span class="isadg">3.5.3: </span>Related Units of Description </strong> <a class="smalllink" id="linkcec" title="add archival history" onclick="addElement('cec')">hide</a> [optional]
 	<br/>
-	<textarea name="relatedmaterial" id="cec" onfocus="parent.setCurrent(this);" rows="5" cols="80" style="display:none">
-		<xsl:value-of select="."/>
+	<textarea class="menuField" name="relatedmaterial" id="cec" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none">
+		<xsl:apply-templates/>
 	</textarea>
   </xsl:template>
   
   <xsl:template match="bibliography">
   	<strong><span class="isadg">3.5.4: </span>Publication Note</strong> [Works based on or about the collection] <a class="smalllink" id="linkced" title="add archival history" onclick="addElement('ced')">hide</a> [optional]
 	<br/>
-	<textarea name="bibliography" id="ced" onfocus="parent.setCurrent(this);" rows="5" cols="80" style="display:none">
-		<xsl:value-of select="."/>
+	<textarea class="menuField" name="bibliography" id="ced" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none">
+		<xsl:apply-templates/>
 	</textarea>
   </xsl:template>
   
   <xsl:template match="note">
   	<strong><span class="isadg">3.6.1: </span>Note </strong> <a class="smalllink" id="linkcfa" title="add archival history" onclick="addElement('cfa')">add</a> [optional]
 	<br/>
-	<textarea name="note" id="cfa" onfocus="parent.setCurrent(this);" rows="5" cols="80" style="display:none">
-		<xsl:value-of select="."/>
+	<textarea class="menuField" name="note" id="cfa" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none">
+		<xsl:apply-templates/>
 	</textarea>
   </xsl:template>
   
   <xsl:template match="processinfo">
-  	<textarea name="processinfo" id="cga" onfocus="parent.setCurrent(this);" rows="5" cols="80">
-  		<xsl:value-of select="."/>
+  	<textarea class="menuField" name="processinfo" id="cga" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80">
+  		<xsl:apply-templates/>
   	</textarea>
   </xsl:template>
   
@@ -1012,7 +995,7 @@
 
 
   <xsl:template match="eadid">
-	<input type="text" name="caa-cc" id="caa-cc" maxlength="2" size="3" disabled="true">
+	<input type="text" name="caa-cc" id="caa-cc" maxlength="2" size="3" readonly="true">
 		<xsl:attribute name="value">
 		    <xsl:choose>
 		    	<xsl:when test="@countrycode">
@@ -1024,7 +1007,7 @@
 		    </xsl:choose>					
 		</xsl:attribute>
 	</input>
-	<input type="text" onfocus="parent.setCurrent(this);" name="caa-rc" id="caa-rc" maxlength="4" size="5" disabled="true">
+	<input type="text" onfocus="setCurrent(this);" name="caa-rc" id="caa-rc" maxlength="4" size="5" readonly="true">
 		<xsl:attribute name="value">
 			<xsl:choose>
 				<xsl:when test="@mainagencycode">
@@ -1036,340 +1019,26 @@
 			</xsl:choose>			
 		</xsl:attribute>
 	</input>
-	<input type="text" onfocus="parent.setCurrent(this);" name="caa-id" id="caa-id" size="50" disabled="true">
+	<input type="text" onfocus="setCurrent(this);" name="caa-id" id="caa-id" size="50" readonly="true">
 		<xsl:attribute name="value">
 			<xsl:value-of select="$eadidstring"/>
 		</xsl:attribute>
 	</input> 
   </xsl:template>
+
+  
+  <xsl:template match="*">
+        <xsl:text>&lt;</xsl:text><xsl:value-of select="name()"/>
+        <xsl:for-each select="@*">
+  <xsl:text> </xsl:text>
+  <xsl:value-of select="name()"/>
+  <xsl:text>="</xsl:text><xsl:value-of select="."/><xsl:text>"</xsl:text>
+        </xsl:for-each>
+ <xsl:text>&gt;</xsl:text>
+        <xsl:apply-templates/>
+        <xsl:text>&lt;/</xsl:text><xsl:value-of select="name()"/><xsl:text>&gt;</xsl:text>
+  </xsl:template> 
+  
   
 </xsl:stylesheet>
 
-
-<!--   <xsl:template name="accesspointstring1">
-  
-  	 <xsl:param name="aptype"/>
-  	 <xsl:param name="separater"/>
-  	 <xsl:choose>
-  	  	<xsl:when test="$aptype = 'subject' or $aptype = 'corpname'">
-  	  		<xsl:choose>
-	  	  		<xsl:when test="emph[@altrender='a']|emph[@altrender='subject']|emph[@altrender='corpname']">
-	  	  			<xsl:apply-templates select="emph[@altrender='a']|emph[@altrender='subject']|emph[@altrender='corpname']"/>  	 
-	  	  			<xsl:value-of select="$separater"/> 				
-	  	  		</xsl:when>
-	  	  		<xsl:otherwise>
-	  	  			<xsl:value-of select="$separater"/> 
-	  	  		</xsl:otherwise>
-  	  		</xsl:choose>
-			<xsl:choose>
-	  	  		<xsl:when test="emph[@altrender='y']|emph[@altrender='dates']">
-	  	  			<xsl:apply-templates select="emph[@altrender='y']|emph[@altrender='dates']"/>  	 
-	  	  			<xsl:value-of select="$separater"/> 				
-	  	  		</xsl:when>
-	  	  		<xsl:otherwise>
-	  	  			<xsl:value-of select="$separater"/> 
-	  	  		</xsl:otherwise>
-  	  		</xsl:choose>
-  	  		<xsl:choose>
-	  	  		<xsl:when test="emph[@altrender='z']|emph[@altrender='loc']">
-	  	  			<xsl:apply-templates select="emph[@altrender='z']|emph[@altrender='loc']"/>  	 
-	  	  			<xsl:value-of select="$separater"/> 				
-	  	  		</xsl:when>
-	  	  		<xsl:otherwise>
-	  	  			<xsl:value-of select="$separater"/> 
-	  	  		</xsl:otherwise>
-  	  		</xsl:choose>
-  	  		<xsl:choose>
-	  	  		<xsl:when test="emph[@altrender='x']|emph[@altrender='other']">
-	  	  			<xsl:apply-templates select="emph[@altrender='x']|emph[@altrender='other']"/>  	 
-	  	  			<xsl:value-of select="$separater"/> 				
-	  	  		</xsl:when>
-	  	  		<xsl:otherwise>
-	  	  			<xsl:value-of select="$separater"/> 
-	  	  		</xsl:otherwise>
-  	  		</xsl:choose>
-  	  		<xsl:choose>
-	  	  		<xsl:when test="@source and $separater=' ||| '">
-	  	  			<xsl:apply-templates select="@source"/>  	 
-	  	  			<xsl:value-of select="$separater"/> 				
-	  	  		</xsl:when>
-	  	  		<xsl:otherwise>
-	  	  			<xsl:value-of select="$separater"/> 
-	  	  		</xsl:otherwise>
-  	  		</xsl:choose>
-  	  		<xsl:choose>
-	  	  		<xsl:when test="@rules and $separater=' ||| '">
-	  	  			<xsl:apply-templates select="@rules"/>  	 
-	  	  			<xsl:value-of select="$separater"/> 				
-	  	  		</xsl:when>
-	  	  		<xsl:otherwise>
-	  	  			<xsl:value-of select="$separater"/> 
-	  	  		</xsl:otherwise>
-  	  		</xsl:choose>
-  	  	</xsl:when>
-  	  	<xsl:when test="$aptype = 'persname'">
-  	  		<xsl:choose>
-	  	  		<xsl:when test="emph[@altrender='surname']">
-	  	  			<xsl:apply-templates select="emph[@altrender='surname']"/>  	 
-	  	  			<xsl:value-of select="$separater"/> 				
-	  	  		</xsl:when>
-	  	  		<xsl:otherwise>
-	  	  			<xsl:value-of select="$separater"/> 
-	  	  		</xsl:otherwise>
-  	  		</xsl:choose>
-  	  		<xsl:choose>
-	  	  		<xsl:when test="emph[@altrender='forename']">
-	  	  			<xsl:apply-templates select="emph[@altrender='forename']"/>  	 
-	  	  			<xsl:value-of select="$separater"/> 				
-	  	  		</xsl:when>
-	  	  		<xsl:otherwise>
-	  	  			<xsl:value-of select="$separater"/> 
-	  	  		</xsl:otherwise>
-  	  		</xsl:choose>
-  	  		<xsl:choose>
-	  	  		<xsl:when test="emph[@altrender='y']|emph[@altrender='dates']">
-	  	  			<xsl:apply-templates select="emph[@altrender='y']|emph[@altrender='dates']"/>  	 
-	  	  			<xsl:value-of select="$separater"/> 				
-	  	  		</xsl:when>
-	  	  		<xsl:otherwise>
-	  	  			<xsl:value-of select="$separater"/> 
-	  	  		</xsl:otherwise>
-  	  		</xsl:choose>
-  	  		<xsl:choose>
-	  	  		<xsl:when test="emph[@altrender='title']">
-	  	  			<xsl:apply-templates select="emph[@altrender='title']"/>  	 
-	  	  			<xsl:value-of select="$separater"/> 				
-	  	  		</xsl:when>
-	  	  		<xsl:otherwise>
-	  	  			<xsl:value-of select="$separater"/> 
-	  	  		</xsl:otherwise>
-  	  		</xsl:choose>
-  	  		<xsl:choose>
-	  	  		<xsl:when test="emph[@altrender='epithet']">
-	  	  			<xsl:apply-templates select="emph[@altrender='epithet']"/>  	 
-	  	  			<xsl:value-of select="$separater"/> 				
-	  	  		</xsl:when>
-	  	  		<xsl:otherwise>
-	  	  			<xsl:value-of select="$separater"/> 
-	  	  		</xsl:otherwise>
-  	  		</xsl:choose>
-  	  		<xsl:choose>
-	  	  		<xsl:when test="emph[@altrender='x']|emph[@altrender='other']">
-	  	  			<xsl:apply-templates select="emph[@altrender='x']|emph[@altrender='other']"/>  	 
-	  	  			<xsl:value-of select="$separater"/> 				
-	  	  		</xsl:when>
-	  	  		<xsl:otherwise>
-	  	  			<xsl:value-of select="$separater"/> 
-	  	  		</xsl:otherwise>
-  	  		</xsl:choose>
-  	  		<xsl:choose>
-	  	  		<xsl:when test="@source and $separater=' ||| '">
-	  	  			<xsl:apply-templates select="@source"/>  	 
-	  	  			<xsl:value-of select="$separater"/> 				
-	  	  		</xsl:when>
-	  	  		<xsl:otherwise>
-	  	  			<xsl:value-of select="$separater"/> 
-	  	  		</xsl:otherwise>
-  	  		</xsl:choose> 	  
-  	  		<xsl:choose>
-	  	  		<xsl:when test="@rules and $separater=' ||| '">
-	  	  			<xsl:apply-templates select="@rules"/>  	 
-	  	  			<xsl:value-of select="$separater"/> 				
-	  	  		</xsl:when>
-	  	  		<xsl:otherwise>
-	  	  			<xsl:value-of select="$separater"/> 
-	  	  		</xsl:otherwise>
-  	  		</xsl:choose>		
-  	  	</xsl:when>
-  	  	<xsl:when test="$aptype = 'famname'">
-  	  		<xsl:choose>
-	  	  		<xsl:when test="emph[@altrender='surname']">
-	  	  			<xsl:apply-templates select="emph[@altrender='surname']"/>  	 
-	  	  			<xsl:value-of select="$separater"/> 				
-	  	  		</xsl:when>
-	  	  		<xsl:otherwise>
-	  	  			<xsl:value-of select="$separater"/> 
-	  	  		</xsl:otherwise>
-  	  		</xsl:choose>
-  	  		<xsl:choose>
-	  	  		<xsl:when test="emph[@altrender='x']|emph[@altrender='other']">
-	  	  			<xsl:apply-templates select="emph[@altrender='x']|emph[@altrender='other']"/>  	 
-	  	  			<xsl:value-of select="$separater"/> 				
-	  	  		</xsl:when>
-	  	  		<xsl:otherwise>
-	  	  			<xsl:value-of select="$separater"/> 
-	  	  		</xsl:otherwise>
-  	  		</xsl:choose>
-  	  		<xsl:choose>
-	  	  		<xsl:when test="emph[@altrender='y']|emph[@altrender='dates']">
-	  	  			<xsl:apply-templates select="emph[@altrender='y']|emph[@altrender='dates']"/>  	 
-	  	  			<xsl:value-of select="$separater"/> 				
-	  	  		</xsl:when>
-	  	  		<xsl:otherwise>
-	  	  			<xsl:value-of select="$separater"/> 
-	  	  		</xsl:otherwise>
-  	  		</xsl:choose>
-  	  		<xsl:choose>
-	  	  		<xsl:when test="emph[@altrender='title']">
-	  	  			<xsl:apply-templates select="emph[@altrender='title']"/>  	 
-	  	  			<xsl:value-of select="$separater"/> 				
-	  	  		</xsl:when>
-	  	  		<xsl:otherwise>
-	  	  			<xsl:value-of select="$separater"/> 
-	  	  		</xsl:otherwise>
-  	  		</xsl:choose>
-  	  		<xsl:choose>
-	  	  		<xsl:when test="emph[@altrender='epithet']">
-	  	  			<xsl:apply-templates select="emph[@altrender='epithet']"/>  	 
-	  	  			<xsl:value-of select="$separater"/> 				
-	  	  		</xsl:when>
-	  	  		<xsl:otherwise>
-	  	  			<xsl:value-of select="$separater"/> 
-	  	  		</xsl:otherwise>
-  	  		</xsl:choose>
-  	  		<xsl:choose>
-	  	  		<xsl:when test="emph[@altrender='z']|emph[@altrender='loc']">
-	  	  			<xsl:apply-templates select="emph[@altrender='z']|emph[@altrender='loc']"/>  	 
-	  	  			<xsl:value-of select="$separater"/> 				
-	  	  		</xsl:when>
-	  	  		<xsl:otherwise>
-	  	  			<xsl:value-of select="$separater"/> 
-	  	  		</xsl:otherwise>
-  	  		</xsl:choose>
-  	  		<xsl:choose>
-	  	  		<xsl:when test="@source and $separater=' ||| '">
-	  	  			<xsl:apply-templates select="@source"/>  	 
-	  	  			<xsl:value-of select="$separater"/> 				
-	  	  		</xsl:when>
-	  	  		<xsl:otherwise>
-	  	  			<xsl:value-of select="$separater"/> 
-	  	  		</xsl:otherwise>
-  	  		</xsl:choose> 	  
-  	  		<xsl:choose>
-	  	  		<xsl:when test="@rules and $separater=' ||| '">
-	  	  			<xsl:apply-templates select="@rules"/>  	 
-	  	  			<xsl:value-of select="$separater"/> 				
-	  	  		</xsl:when>
-	  	  		<xsl:otherwise>
-	  	  			<xsl:value-of select="$separater"/> 
-	  	  		</xsl:otherwise>
-  	  		</xsl:choose>	
-  	  	</xsl:when>
-  	  	<xsl:when test="$aptype = 'geogname'">
-  	  		<xsl:choose>
-	  	  		<xsl:when test="emph[@altrender='z']|emph[@altrender='loc']">
-	  	  			<xsl:apply-templates select="emph[@altrender='z']|emph[@altrender='loc']"/>  	 
-	  	  			<xsl:value-of select="$separater"/> 				
-	  	  		</xsl:when>
-	  	  		<xsl:otherwise>
-	  	  			<xsl:value-of select="$separater"/> 
-	  	  		</xsl:otherwise>
-  	  		</xsl:choose>
-  	  		<xsl:choose>
-	  	  		<xsl:when test="emph[@altrender='y']|emph[@altrender='dates']">
-	  	  			<xsl:apply-templates select="emph[@altrender='y']|emph[@altrender='dates']"/>  	 
-	  	  			<xsl:value-of select="$separater"/> 				
-	  	  		</xsl:when>
-	  	  		<xsl:otherwise>
-	  	  			<xsl:value-of select="$separater"/> 
-	  	  		</xsl:otherwise>
-  	  		</xsl:choose>
-  	  		<xsl:choose>
-	  	  		<xsl:when test="@source and $separater=' ||| '">
-	  	  			<xsl:apply-templates select="@source"/>  	 
-	  	  			<xsl:value-of select="$separater"/> 				
-	  	  		</xsl:when>
-	  	  		<xsl:otherwise>
-	  	  			<xsl:value-of select="$separater"/> 
-	  	  		</xsl:otherwise>
-  	  		</xsl:choose> 
-  	  		<xsl:choose>
-	  	  		<xsl:when test="@rules and $separater=' ||| '">
-	  	  			<xsl:apply-templates select="@rules"/>  	 
-	  	  			<xsl:value-of select="$separater"/> 				
-	  	  		</xsl:when>
-	  	  		<xsl:otherwise>
-	  	  			<xsl:value-of select="$separater"/> 
-	  	  		</xsl:otherwise>
-  	  		</xsl:choose>	  
-  	  	</xsl:when>
-  	  	<xsl:when test="$aptype = 'title'">
-  	  		<xsl:choose>
-	  	  		<xsl:when test="emph[@altrender='a']|emph[@altrender='title']">
-	  	  			<xsl:apply-templates select="emph[@altrender='a']|emph[@altrender='title']"/>  	 
-	  	  			<xsl:value-of select="$separater"/> 				
-	  	  		</xsl:when>
-	  	  		<xsl:otherwise>
-	  	  			<xsl:value-of select="$separater"/> 
-	  	  		</xsl:otherwise>
-  	  		</xsl:choose>
-  	  		<xsl:choose>
-	  	  		<xsl:when test="emph[@altrender='y']|emph[@altrender='dates']">
-	  	  			<xsl:apply-templates select="emph[@altrender='y']|emph[@altrender='dates']"/>  	 
-	  	  			<xsl:value-of select="$separater"/> 				
-	  	  		</xsl:when>
-	  	  		<xsl:otherwise>
-	  	  			<xsl:value-of select="$separater"/> 
-	  	  		</xsl:otherwise>
-  	  		</xsl:choose>
-  	  		<xsl:choose>
-	  	  		<xsl:when test="@source and $separater=' ||| '">
-	  	  			<xsl:apply-templates select="@source"/>  	 
-	  	  			<xsl:value-of select="$separater"/> 				
-	  	  		</xsl:when>
-	  	  		<xsl:otherwise>
-	  	  			<xsl:value-of select="$separater"/> 
-	  	  		</xsl:otherwise>
-  	  		</xsl:choose> 
-  	  		<xsl:choose>
-	  	  		<xsl:when test="@rules and $separater=' ||| '">
-	  	  			<xsl:apply-templates select="@rules"/>  	 
-	  	  			<xsl:value-of select="$separater"/> 				
-	  	  		</xsl:when>
-	  	  		<xsl:otherwise>
-	  	  			<xsl:value-of select="$separater"/> 
-	  	  		</xsl:otherwise>
-  	  		</xsl:choose>	 
-  	  	</xsl:when>
-  	  </xsl:choose>
-  </xsl:template>
-  
-  <xsl:template match="emph[@altrender='a']|emph[@altrender='title']">
-  	<xsl:value-of select="."/>
-  </xsl:template>
-  
-  <xsl:template match="emph[@altrender='a']|emph[@altrender='subject']|emph[@altrender='corpname']">
-  	<xsl:value-of select="."/>
-  </xsl:template>
-  
-  <xsl:template match="emph[@altrender='y']|emph[@altrender='dates']">
-  	<xsl:value-of select="."/>
-  </xsl:template>
-  
-  <xsl:template match="emph[@altrender='z']|emph[@altrender='loc']">
-  	<xsl:value-of select="."/>
-  </xsl:template>
-  
-  <xsl:template match="@source">
-  	<xsl:value-of select="."/>
-  </xsl:template>
-  
-  <xsl:template match="emph[@altrender='x']|emph[@altrender='other']">
-  	<xsl:value-of select="."/>
-  </xsl:template>
-  
-  <xsl:template match="emph[@altrender='surname']">
-  	<xsl:value-of select="."/>
-  </xsl:template>
-  
-  <xsl:template match="emph[@altrender='title']">
-  	<xsl:value-of select="."/>
-  </xsl:template>
-  
-  <xsl:template match="emph[@altrender='forename']">
-  	<xsl:value-of select="."/>
-  </xsl:template>
-  
-  <xsl:template match="emph[@altrender='epithet']">
-  	<xsl:value-of select="."/>
-  </xsl:template>-->
