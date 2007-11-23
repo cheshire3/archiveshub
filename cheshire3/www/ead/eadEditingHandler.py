@@ -24,65 +24,36 @@
 
 
 
-# import mod_python stuff
-from mod_python import apache
-from mod_python.util import FieldStorage
-# import generally useful modules
-import sys, traceback, os, cgitb, urllib, time, smtplib, re, datetime
-from lxml import etree
+
+from eadHandler import *
 from copy import deepcopy
-# import customisable variables
-from localConfig import *
-# set sys paths 
-osp = sys.path
-sys.path = [os.path.join(cheshirePath, 'cheshire3', 'code')]
-sys.path.extend(osp)
-# import Cheshire3/PyZ3950 stuff
-from server import SimpleServer
-from PyZ3950 import CQLParser, SRWDiagnostics
-from baseObjects import Session
-from document import StringDocument
-from record import LxmlRecord
-import c3errors
-# C3 web search utils
-from www_utils import *
 
+# script specific globals
+#script = '/ead/edit/'
 
-class EadEditingHandler:
+class EadEditingHandler(EadHandler):
     global repository_name, repository_link, repository_logo, htmlPath
     templatePath = os.path.join(htmlPath, 'template.ssi')
 
     htmlTitle = None
     htmlNav = None
     logger = None
-    
+    errorFields = []
     
     altrenderDict = { 'surname' : 'a',
                       'dates' : 'y',
                       'other' : 'x',
                       'loc' : 'z'                    
                      }
-    
-    textareas = ['bioghist', 'custodhist', 'acqinfo', 'scopecontent', 'appraisal', 'accruals', 'arrangement']
 
     def __init__(self, lgr):
+        EadHandler.__init__(self, lgr)
         self.htmlTitle = ['Data Creation and Editing']
-        self.htmlNav = []
+        self.htmlNav = ['<a href="javascript: toggleKeyboard();">Show Character Keyboard</a>']
         self.logger = lgr
 
     #- end __init__
     
-    
-    def send_html(self, data, req, code=200):
-        req.content_type = 'text/html'
-        req.content_length = len(data)
-        req.send_http_header()
-        if (type(data) == unicode):
-            data = data.encode('utf-8')
-        req.write(data)
-        req.flush()
-        
-    #- end send_html()
     
     def send_xml(self, data, req, code=200):
         req.content_type = 'text/xml'
@@ -105,8 +76,20 @@ class EadEditingHandler:
         if (level == 'collectionLevel'):
             collection = True;
             tree = etree.fromstring('<ead><eadheader></eadheader><archdesc></archdesc></ead>')
+            
+            header = tree.xpath('/ead/eadheader')[0]
+            target = self._create_path(header, 'eadid')
+            self._add_text(target, '%s %s %s' % (form.get('did/unitid/@countrycode', ''), form.get('did/unitid/@mainagencycode', ''), form.get('did/unitid', '')))
+            target = self._create_path(header, 'eadid/@countrycode')
+            self._add_text(target, form.get('did/unitid/@countrycode', ''))
+            target = self._create_path(header, 'eadid/@mainagencycode')
+            self._add_text(target, form.get('did/unitid/@mainagencycode', ''))
+            target = self._create_path(header, 'titlestmt/titleproper')
+            self._add_text(target, form.get('did/unittitle', ''))
+            
         else :
             tree = etree.fromstring('<%s id="%s"></%s>' % (ctype, level, ctype))
+            
         list = form.list     
         for field in list :
             if field.name not in ['ctype','location','operation','newForm','nocache','recid']:              
@@ -123,11 +106,73 @@ class EadEditingHandler:
                     if (field.value != ''):
                         target = self._create_path(node, field.name)
                         self._add_text(target, field.value)
-        #raise ValueError(etree.tostring(tree))
+
         return tree    
-    #- end build_ead
+    #- end build_ead    
+            
+    def _delete_path(self, startNode, nodePath):
+        if not (startNode.xpath(nodePath)) :
+            return 
+        else :
+            child = startNode.xpath(nodePath)[0]
+            if nodePath.find('/') == -1 :
+                parent = startNode
+            else :
+                parent = parent = startNode.xpath(''.join(nodePath[:nodePath.rfind('/')]))[0]
+            parent.remove(child)
+            if len(parent.getchildren()) > 0 :
+                return
+            else :
+                return self._delete_path(startNode, nodePath[:nodePath.rfind('/')])
+            
+
+    def _create_path(self, startNode, nodePath):               
+        if (startNode.xpath(nodePath)):
+            return startNode.xpath(nodePath)[0]
+        elif (nodePath.find('/') == -1) :
+            newNode = etree.Element(nodePath)                        
+            return self._append_element(startNode, newNode)
+        else :
+            newNodePath = ''.join(nodePath[:nodePath.rfind('/')]) 
+            nodeString = ''.join(nodePath[nodePath.rfind('/')+1:])  
+            if (nodeString.find('@') != 0):      
+                newNode = etree.Element(nodeString)
+                return self._append_element(self._create_path(startNode, newNodePath), newNode)
+            else:
+                return self._add_attribute(self._create_path(startNode, newNodePath), nodeString[1:])  
+            
+                        
+    def _append_element(self, parentNode, childNode):    
+        parentNode.append(childNode)
+        return childNode
+
     
-    
+    def _add_attribute(self, parentNode, attribute):
+        parentNode.attrib[attribute] = ""
+        return [parentNode, attribute]
+ 
+        
+    def _add_text(self, parent, textValue):
+        self.logger.log(textValue)
+        if not (textValue.find('&') == -1):
+            textValue = textValue.replace('&', '&#38;')
+        if isinstance(parent, etree._Element):
+            for c in parent.getchildren() :
+                parent.remove(c)
+            value = '<foo>%s</foo>' % textValue      
+            try :
+                nodetree = etree.fromstring(value)               
+            except :
+                self.errorFields.append(parent.tag)
+                parent.text = textValue
+            else :
+                parent.text = nodetree.text
+                for n in nodetree :
+                    parent.append(n)
+        else :
+            parent[0].attrib[parent[1]] = textValue
+
+       
     def _delete_currentControlaccess(self, startNode, list=['subject','persname', 'famname', 'title', 'corpname', 'geogname', 'title']):
         if (startNode.xpath('controlaccess')):
             parent = startNode.xpath('controlaccess')[0]        
@@ -192,99 +237,9 @@ class EadEditingHandler:
                     type.append(emph)
     
     #- end _create_controlacess    
-    
-            
-    def _delete_path(self, startNode, nodePath):
-        if not (startNode.xpath(nodePath)) :
-            return 
-        elif (nodePath.find('/') == -1) :
-            child = startNode.xpath(nodePath)[0]
-            if len(child.getchildren()) == 0 :
-                return self._remove_element(startNode, child)   
-            else :
-                paraCount = 0
-                for c in child.getchildren():
-                    if c.tag == 'p':
-                        paraCount += 1
-                if paraCount == len(child.getchildren()):
-                     return self._remove_element(startNode, child) 
-                else :  
-                    return 
-        else :
-            child = startNode.xpath(nodePath)[0]
-            parent = startNode.xpath(''.join(nodePath[:nodePath.rfind('/')]))[0]
-            if len(child.getchildren()) == 0 :
-                self._remove_element(parent, child)
-                return self._delete_path(startNode, ''.join(nodePath[:nodePath.rfind('/')]))
-            else :
-                return 
-
-
-    def _create_path(self, startNode, nodePath):               
-        if (startNode.xpath(nodePath)):
-            return startNode.xpath(nodePath)[0]
-        elif (nodePath.find('/') == -1) :
-            newNode = etree.Element(nodePath)                        
-            return self._append_element(startNode, newNode)
-        else :
-            newNodePath = ''.join(nodePath[:nodePath.rfind('/')]) 
-            nodeString = ''.join(nodePath[nodePath.rfind('/')+1:])  
-            if (nodeString.find('@') != 0):      
-                newNode = etree.Element(nodeString)
-                return self._append_element(self._create_path(startNode, newNodePath), newNode)
-            else:
-                return self._add_attribute(self._create_path(startNode, newNodePath), nodeString[1:])
-    
-    
-    def _remove_element(self, parentNode, childNode):
-        parentNode.remove(childNode)
-        return parentNode        
-            
-            
-    def _append_element(self, parentNode, childNode):    
-        parentNode.append(childNode)
-        return childNode
-
-    
-    def _add_attribute(self, parentNode, attribute):
-        parentNode.attrib[attribute] = ""
-        return [parentNode, attribute]
- 
-        
-    def _add_text(self, parent, textValue):
-        if isinstance(parent, etree._Element):
-            if parent.tag in self.textareas :
-                for t in parent.getchildren():
-                    parent.remove(t)
-                paras = textValue.split('\n\n')
-                for p in paras :
-                    paragraph = etree.SubElement(parent, 'p')
-                    self._create_textNode(paragraph, p)
-            else :
-                self._create_textNode(parent, textValue)
-        else :
-            parent[0].attrib[parent[1]] = textValue
-
-
-    def _create_textNode(self, parent, value):
-        #find all the tags create elements add their text and their tail add whole lot to parent 
-        if (value.find('<') != -1 and value.find('>') != -1):
-            open = value.find('<')
-            close = value.find('>')
-            if open != 0 :
-                parent.text = value[:close]
-            tagname = value[open+1:close]
-            content = value[close+1:value.find('<', close)]
-            newNode = etree.SubElement(parent, tagname)
-            newNode.text = content
-            if value[value.find('<', close)+1:value.find('<', close)+2] == '/' :
-                pass
-            else :
-                newValue = value[value.find('>', close+2)+1:]
-                self._create_textNode(newNode, newValue)
-            #need to change the find things to specify a place to start
+   
        
-    def populate_form(self, recid, loc, new):  
+    def populate_form(self, recid, new):  
         #if its collection level give the transformer the whole record
         if (new == 'collectionLevel'):  
             retrievedDom = editStore.fetch_record(session, recid).get_dom()
@@ -307,10 +262,12 @@ class EadEditingHandler:
         if (loc == 'collectionLevel' and (recid == None or recid == 'None')):
             #save the form in any free slot
             rec = LxmlRecord(self.build_ead(req))
-            id = str(editStore.create_record(session, rec))
-            recid = id.split('/')[1]
-            editStore.commit_storing(session)   
+            rec = assignDataIdFlow.process(session, rec)
+            recid = rec.id
+            editStore.store_record(session, rec)
+            editStore.commit_storing(session) 
             return recid
+
         elif (loc == 'collectionLevel'):          
             list = form.list  
             #pull existing xml and make into a tree
@@ -321,11 +278,13 @@ class EadEditingHandler:
             node = tree.xpath('/ead/archdesc')[0]
             self._delete_currentControlaccess(node)
             self._delete_currentLangusage(node)
+            #change title in header
+            header = tree.xpath('/ead/eadheader')[0]
+            target = self._create_path(header, 'titlestmt/titleproper')
+            self._add_text(target, form.get('did/unittitle', ''))
             #cycle through the form and replace any node that need it
             for field in list :
-                if field.name not in ['ctype','location','operation','newForm','nocache','recid']:    
-                    #TODO header stuff
-                              
+                if field.name not in ['ctype','location','operation','newForm','nocache','recid']:                                
                     #do archdesc stuff
                     node = tree.xpath('/ead/archdesc')[0]  
                     if field.name.find('controlaccess') == 0 :                        
@@ -414,9 +373,10 @@ class EadEditingHandler:
         form = FieldStorage(req)
         loc = form.get('location', None)        
         recid = form.getfirst('recid', None)
+        self.logger.log(recid)
         new = form.get('newForm', None)
         self.save_form(req, loc, recid)  
-        page = self.populate_form(recid, loc, new)    
+        page = self.populate_form(recid, new)    
         return page 
    
        
@@ -425,16 +385,7 @@ class EadEditingHandler:
         doc = StringDocument('<ead><eadheader></eadheader><archdesc></archdesc></ead>')         
         rec = xmlp.process_document(session, doc)
         htmlform = formTxr.process_record(session, rec).get_raw()
-        paramDict = {
-            '%REP_NAME%': repository_name, 
-            '%REP_LINK%': repository_link,
-            '%REP_LOGO%': repository_logo, 
-            '%TITLE%': ' :: '.join(self.htmlTitle), 
-            '%NAVBAR%': ' | '.join(self.htmlNav),
-            '%FRM%' : htmlform,
-        }
-        page = multiReplace(structure, paramDict)
-        #page = structure.replace('%FRM%', htmlform) 
+        page = structure.replace('%FRM%', htmlform) 
         return page
     
     def display(self, req):
@@ -447,23 +398,75 @@ class EadEditingHandler:
             return etree.tostring(tree)
         else :
             return '<p>Unable to display xml</p>'
-            
     
+    
+    def checkId(self, req):
+        form = FieldStorage(req)
+        id = form.get('id', None)
+        if (id != None):
+            if (id in recordStore.fetch_idList(session)):
+                return '<value>true</value>'    
+            else :
+                return '<value>false</value>'
+            
+    def preview(self, req):
+        form = FieldStorage(req)
+        recid=form.get('recid', None)
+        if recid != None and recid != 'null' :
+            retrievedRec = editStore.fetch_record(session, recid)        
+        return self.display_full(retrievedRec, {})
+    
+    def validate(self, req):
+        form = FieldStorage(req)
+        text = form.get('text', None)
+        if not text.find('<') == -1:
+            try :
+                test = etree.fromstring('<foo>%s</foo>' % text)
+                return '<value>true</value>'
+            except :
+                return '<value>false</value>'
+        else :
+            return '<value>true</value>'
+        
+            
     def handle (self, req):
-        form = FieldStorage(req)        
+        form = FieldStorage(req)  
+        content = None      
         operation = form.get('operation', None)        
         if (operation == 'add'):  
-            page = self.add_form(req)
-            self.send_html(page, req)            
+            content = self.add_form(req)   
+            self.send_html(content, req)
+        elif (operation == 'save'):
+            content = self.save_form(req, form.get('location', None), form.get('recid', None))
+            self.send_xml('<recid>%s</recid>' % content, req)        
         elif (operation == 'navigate'):
-            page = self.navigate(req)
-            self.send_html(page, req)
+            content = self.navigate(req)
+            self.send_html(content, req)
         elif (operation == 'display'):
-            page = self.display(req)
-            self.send_xml(page, req)
+            content = self.display(req)
+            self.send_xml(content, req)
+        elif (operation == 'preview'):
+            content = self.preview(req)
+            self.send_html(content, req)
+        elif (operation == 'checkId'):
+            content = self.checkId(req)
+            self.send_xml(content, req)
+        elif (operation == 'validate'):
+            content = self.validate(req)
+            self.send_xml(content, req)
         else :           
-            page = self.generate_form(req)
-            self.send_html(page, req)
+            content = self.generate_form(req)
+           
+            tmpl = read_file(self.templatePath)                                        # read the template in
+            page = tmpl.replace("%CONTENT%", content)
+    
+            self.globalReplacements.update({
+                "%TITLE%": ' :: '.join(self.htmlTitle)
+               ,"%NAVBAR%": ' | '.join(self.htmlNav),
+               })
+    
+            page = multiReplace(page, self.globalReplacements)
+            self.send_html(page, req)          
     
         #- end handle() ---------------------------------------------------
         
@@ -476,12 +479,15 @@ serv = None
 session = None
 db = None
 editStore = None
+recordStore = None
+authStore = None
+assignDataIdFlow = None
 xmlp = None
 formTxr = None
 logfilepath = editinglogfilepath
 
 def build_architecture(data=None):
-    global session, serv, db, editStore, formTxr, xmlp
+    global session, serv, db, editStore, recordStore, authStore, formTxr, xmlp, assignDataIdFlow
     #Discover objects
     session = Session()
     session.database = 'db_ead'
@@ -490,6 +496,9 @@ def build_architecture(data=None):
     serv = SimpleServer(session, '/home/cheshire/cheshire3/cheshire3/configs/serverConfig.xml')
     db = serv.get_object(session, 'db_ead')
     editStore = db.get_object(session, 'editingStore')
+    recordStore = db.get_object(session, 'recordStore')
+    authStore = db.get_object(session, 'eadAuthStore')
+    assignDataIdFlow = db.get_object(session, 'assignDataIdentifierWorkflow')
     # transformers
     xmlp = db.get_object(session, 'LxmlParser')
     formTxr = db.get_object(session, 'formCreationTxr')
@@ -497,20 +506,20 @@ def build_architecture(data=None):
 
 
 
-
-
 def handler(req):
-    global rebuild, logfilepath, cheshirePath, db, editStore, xmlp, formTxr                # get the remote host's IP
+
+    global rebuild, logfilepath, cheshirePath, db, editStore, xmlp, formTxr, script                # get the remote host's IP
+    script = req.subprocess_env['SCRIPT_NAME']
     req.register_cleanup(build_architecture)
-    
+
     try :
-        try: 
-            fp = editStore.get_path(session, 'databasePath')
-            assert (rebuild)
-            assert (os.path.exists(fp) and time.time() - os.stat(fp).st_mtime > 60*60)
-        except :
-            build_architecture()
-      #  formTxr = db.get_object(session, 'formCreationTxr')    
+#        try: 
+#            fp = editStore.get_path(session, 'databasePath')
+#            assert (rebuild)
+#            assert (os.path.exists(fp) and time.time() - os.stat(fp).st_mtime > 60*60)
+#        except :
+#            build_architecture()
+#          #  formTxr = db.get_object(session, 'formCreationTxr')    
         remote_host = req.get_remote_host(apache.REMOTE_NOLOOKUP)
         os.chdir(os.path.join(cheshirePath, 'cheshire3', 'www', 'ead', 'html'))     # cd to where html fragments are
         lgr = FileLogger(logfilepath, remote_host)                                  # initialise logger object
@@ -523,11 +532,26 @@ def handler(req):
             except:
                 pass
             del lgr, eadEditingHandler  
-  #  except (etree                                        # handle request
+      #  except (etree                                        # handle request
     except:
         req.content_type = "text/html"
         cgitb.Hook(file = req).handle()                                         # give error info
     else :
         return apache.OK
+
+def authenhandler(req):
+    global session, authStore, rebuild
+    if (rebuild):
+        build_architecture()                                                    # build the architecture
+    pw = req.get_basic_auth_pw()
+    un = req.user
+    try: session.user = authStore.fetch_object(session, un)
+    except: return apache.HTTP_UNAUTHORIZED    
+    if (session.user and session.user.password == crypt(pw, pw[:2])):
+        return apache.OK
+    else:
+        return apache.HTTP_UNAUTHORIZED
+#- end authenhandler()
+
 
 #- end handler()
