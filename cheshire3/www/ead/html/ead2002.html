@@ -1,116 +1,292 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
-
-<head>
-	<title>Archives Hub EAD 2002 Online Template</title>
+<div id="maindiv">
 		
 		<!--This page contains a form which can be used to create an ead document.   -->
 		<!--The form uses JavaScript to compile lists and validate essential fields, -->
 		<!-- before converting the information into EAD 2002 in a new window. -->
 		
-	<meta http-equiv="Content-Script-Type" content="text/javascript"></meta>
-	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"></meta>
+	<!--<meta http-equiv="Content-Script-Type" content="text/javascript"></meta>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"></meta>-->
 	
-	<script src="/javascript/process2002.js" type="text/javascript"></script>
+	
 	<script src="/javascript/accesspoints2002.js" type="text/javascript"></script>
 	<script src="/javascript/form.js" type="text/javascript"></script>
 	<script src="/javascript/prototype.js" type="text/javascript"></script>
-	<script src="/javascript/keyboard.js" type="text/javascript"></script>
-	<script src="/javascript/collapsibleLists.js" type="text/javascript"></script>
+	<script src="/javascript/keyboard.js" type="text/javascript"></script>  
+    <script type="text/javascript" src="/javascript/contextmenu.js"></script>
+	<script type="text/javascript" src="/javascript/dragHandler.js"></script>  
+	<script type="text/javascript" src="/javascript/tablednd.js"></script>
 	<script type="text/javascript">
-    <!-- to prevent javascript errors - will be overridden when necessary
-    	function loadPage() {}
-    	function unloadPage() {}
-    -->
+    	function loadPage() {
+			SimpleContextMenu.setup({'preventDefault':true, 'preventForms':true});
+	        SimpleContextMenu.attach('menuField', 'tagmenu');
+	        SimpleContextMenu.attach('menuFieldError', 'tagmenu');
+	               
+			var dragable1 = DragHandler.attach(document.getElementById('keyboard'));
+
+		}	
+    	function unloadPage() {}    
     </script>
 
-	<!-- screen CSS -->		
-    <link rel="stylesheet" type="text/css" media="screen" href="/ead/css/struc-all.css"></link>
-      <!--[if lt IE 7]>
-		<link rel="stylesheet" type="text/css" href="/ead/css/struc-ie.css" media="screen">
-		<script type="text/javascript">
-			onload = function() { wrapper.focus() }
-		</script>
-	  <![endif]-->
-	  <link rel="stylesheet" type="text/css" href="/ead/css/style.css"></link>
-	<link rel="stylesheet" type="text/css" href="/ead/css/form.css" />
 
-	
+	<!-- screen CSS -->	
+    <link rel="stylesheet" type="text/css" media="screen" href="/ead/css/struc-all.css"></link>
+     <!--[if lt IE 7] 
+		<link rel="stylesheet" type="text/css" href="/ead/css/struc-ie.css" media="screen">
+		 <script type="text/javascript">
+			onload = function() { wrapper.focus() }
+		</script> 
+	[endif]-->
+
+ 	<link rel="stylesheet" type="text/css" href="/ead/css/style.css"></link>
+	<link rel="stylesheet" type="text/css" href="/ead/css/form.css" />
+	<link type="text/css" rel="stylesheet" href="/ead/css/contextmenu.css" />
+
 	<!--[if lt IE 7]
 		<link rel="stylesheet" type="text/css" href="/ead/css/form-ie.css" />
+			<script type="text/javascript">
+			onload = function() { wrapper.focus() }
+		</script>
 	[endif]-->
 	  	
-</head>
 
-<body onload="loadPage();" onunload="unloadPage();">
-<div id="banner">
-   		<div id="crest">
-   			<a href="%REP_LINK%" title="%REP_NAME%">
-			  <img src="%REP_LOGO%" alt="%REP_NAME%"/>
-			</a>
-   		</div>
-   		<!--
-   		<div id="c3logo">
-   			<a href="http://www.cheshire3.org" title="To www.cheshire3.org">
-			  <img src="/images/c3_black.gif" alt="cheshire | 3"/>
-			</a>
-   		</div>
-   		-->
-   		<div id="titles">
-   			<h1>%REP_NAME%</h1>
-			<h2 class="middleleft">%TITLE%</h2>
-   		</div>
-		<!-- site navigation links -->
-		<div id="navbar" class="navbar">
-		  <a href="/ead/index.html" title="Search for EAD Records" class="navlink"> Search </a> | 
-		  <a href="/ead/browse.html" title="Browse Indexes" class="navlink"> Browse Indexes </a> | 
-		  <a href="/ead/subject.html" title="Find Subjects" class="navlink"> Find Subjects </a> | 
-		  <a href="/ead/help.html" title="Search Help" class="navlink"> Help </a> | 
-		  <a href="/ead/about.html" title="About Cheshire for Archives" class="navlink"> About </a> | 
-		  %NAVBAR%
-		</div>
-	</div> <!-- end banner div -->
-<!--<a id="keyboardToggle" href="javascript: toggleKeyboard()">Show Character Entity Keyboard</a>-->
-<!-- -->
+
+	<ul id="tagmenu" class="SimpleContextMenu">
+		<li><a onMouseOver="javascript: hideSubMenus()" href="javascript: toggleKeyboard()">keyboard on/off</a></li>
+		<li><a onMouseOver="javascript: hideSubMenus()" href="javascript: addTag('head')">&lt;head&gt;</a></li>
+        <li><a onMouseOver="javascript: hideSubMenus()" href="javascript: addTag('date')">&lt;date&gt;</a></li>
+        <li><a onMouseOver="javascript: hideSubMenus()" href="javascript: addTag('title')">&lt;title&gt;</a></li>
+        <li><a onMouseOver="javascript: showSubMenu('name', 4)">name -&gt;</a></li>        
+    </ul>
+    
+    <ul id="namemenu" class="SimpleContextMenu">
+		<li><a  href="javascript: addTag('persname')">&lt;persname&gt;</a></li>
+		<li><a href="javascript: addTag('famname')">&lt;famname&gt;</a></li>
+		<li><a href="javascript: addTag('corpname')">&lt;corpname&gt;</a></li>        
+    </ul>
 
 <div class="toc" id="leftcol">
-<br/>
-<br/>
+<a id="display-link" onclick="javascript: viewXml();">View xml</a><br />
+<a id="preview-link" onclick="javascript: previewRec();">preview</a><br />
+<div id="treeDiv">
+
 <a id="link-collectionLevel" name="link" class="selected" onclick="javascript: displayForm(this.id)" style="display: inline">Collection Level</a>
-
+</div>
 
 </div>
-<div id="rightcol">
-<br/>
-<br/>
-	<div id="collectionLevel" name="form">%FRM%</div>
-</div>
-<div id="footer">
-		<div id="technologies">
-		   	<!-- W3C validated icon -->
-	  		<a href="http://validator.w3.org/check?uri=referer">
-	    		<img src="/images/valid-xhtml10" alt="Valid XHTML 1.0!" height="31" width="88"></img>
-	    	</a>
-				<a href="http://jigsaw.w3.org/css-validator/">
-					<img style="border:0;width:88px;height:31px"
-		      	src="/images/vcss" 
-						alt="Valid CSS!"/>
-		  	</a>
-		   	<!-- python powered -->
-		   	<!--
-		  	<a href="http://www.python.org" title="to www.python.org">
-	 	  	  <img src="/images/PythonPoweredSmall.gif" alt="Python Powered"/>
-  		  	</a>
-  		  	-->
-		</div>
-		<div id="version">
-		  	Cheshire for Archives v3.2.2 ::	Released: 18 July 2007
+<div id="padder">
 
-  		</div>
-	  	<div id="copyright">
-	    	Copyright &copy; the University of Liverpool 2005 - 2007
-  		</div>
-  	</div> <!-- end footer div -->
-</body>
-</html>
+<div id="rightcol" class="ead">
+
+	<div id="formDiv" name="form" class="formDiv">%FRM%</div>
+</div>
+</div>
+
+<div id="keyboard"  style="display:none">
+<div id="keyboardcontrolbar">
+	<div class="float" style="font-weight: normal; font-size: 11pt; padding-left: 2px; width: 63%; text-align: right;">Character Keyboard</div>
+	
+	<div style="float:right; padding-right: 2px;">
+		<a href="javascript: hideCharTable()" ><img src="/images/winmin.png" alt="?" onmouseover="this.src='/images/winmin-active.png';" onmouseout="this.src='/images/winmin.png';"/></a>
+		<a href="javascript: showCharTable()" ><img src="/images/winmax.png" alt="?" onmouseover="this.src='/images/winmax-active.png';" onmouseout="this.src='/images/winmax.png';"/></a>	
+		<a href="javascript: toggleKeyboard()" ><img src="/images/winclose.png" alt="?" onmouseover="this.src='/images/winclose-active.png';" onmouseout="this.src='/images/winclose.png';"/></a>
+	</div>
+	<br />
+</div>
+
+<div id="chartable">
+	<a id="keyboardlink" href="javascript:alert(theFieldName);">Which field?</a><br/>
+    
+    <table summary="Accented vowel character entity keyboard" class="keyboardSection">
+      <tr>
+	<!-- A -->
+	
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Á');" title="Upper-case A, acute accent"> &Aacute; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'À');" title="Upper-case A, grave accent"> &Agrave; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Â');" title="Upper-case A, circumflex accent"> &Acirc; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Ä');" title="Upper-case A, dieresis or umlaut mark"> &Auml; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Ã');" title="Upper-case A, tilde"> &Atilde; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Å');" title="Upper-case A, ring"> &Aring; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Ā');" title="Upper-case A, macron"> &#256; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Ă');" title="Upper-case A, breve"> &#258; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Ą');" title="Upper-case A, ogonek"> &#260; </button></td>
+		</tr>
+		<tr>
+		<!-- a -->
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'á');" title="Lower-case a, acute accent"> &aacute; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'à');" title="Lower-case a, grave accent"> &agrave; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'â');" title="Lower-case a, circumflex accent"> &acirc; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'ä');" title="Lower-case a, dieresis or umlaut"> &auml; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'ã');" title="Lower-case a, tilde"> &atilde; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'å');" title="Lower-case a, ring"> &aring; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'ā');" title="Lower-case a, macron"> &#257; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'ă');" title="Lower-case a, breve"> &#259; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'ą');" title="Lower-case a, ogonek"> &#261; </button></td>
+	</tr>
+	<tr>
+	<!-- C -->
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Ç');" title="Upper-case C, cedilla"> &Ccedil; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Ć');" title="Upper-case C, acute"> &#262; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Č');" title="Upper-case C, caron"> &#268; </button></td>
+	</tr>
+	<tr>
+	<!-- c -->
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'ç');" title="Lower-case c, cedilla"> &ccedil; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'ć');" title="Lower-case c, acute"> &#263; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'č');" title="Lower-case c, caron"> &#269; </button></td>
+	</tr>
+	<tr>
+	<!-- E -->
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'É');" title="Upper-case E, acute accent"> &Eacute; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'È');" title="Upper-case E, grave accent"> &Egrave; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Ê');" title="Upper-case E, circumflex accent"> &Ecirc; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Ë');" title="Upper-case E, dieresis or umlaut"> &Euml; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Ē');" title="Upper-case E, macron"> &#274;</button> </td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Ě');" title="Upper-case E, caron"> &#282; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Ę');" title="Upper-case E, ogonek"> &#280;</button> </td>
+	</tr>
+	<tr>	
+	<!-- e -->
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'é');" title="Lower-case e, acute accent"> &eacute; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'è');" title="Lower-case e, grave accent"> &egrave; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'ê');" title="Lower-case e circumflex accent"> &ecirc; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'ë');" title="Lower-case e, dieresis or umlaut"> &euml; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'ē');" title="Lower-case e, macron"> &#275; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'ě');" title="Lower-case e, caron"> &#283; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'ę');" title="Lower-case e, ogonek"> &#281; </button></td>
+	</tr>
+	<tr>
+	<!-- I -->
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Í');" title="Upper-case I, acute accent"> &Iacute; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Ì');" title="Upper-case I, grave accent"> &Igrave; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Î');" title="Upper-case I, circumflex accent"> &Icirc; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Ï');" title="Upper-case I, dieresis or umlaut"> &Iuml; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Ī');" title="Upper-case I, macron"> &#298; </button></td>
+	<!-- L -->
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Ł');" title="Upper-case L with stroke"> &#321; </button></td>
+	<!-- N -->
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Ñ');" title="Upper-case N, tilde"> &Ntilde; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Ń');" title="Upper-case N, acute"> &#323; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Ň');" title="Upper-case N, caron"> &#327; </button></td>	 
+    </tr>      
+    <tr>	
+	<!-- i -->
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'í');" title="Lower-case i, acute accent"> &iacute; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'ì');" title="Lower-case i, grave accent"> &igrave; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'î');" title="Lower-case i, circumflex accent"> &icirc; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'ï');" title="Lower-case i, dieresis or umlaut"> &iuml; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'ī');" title="Lower-case i, macron"> &#299; </button></td>
+	<!-- l -->
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'ł');" title="Lower-case l with stroke"> &#322; </button></td>
+	<!-- n -->
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'ñ');" title="Lower-case n, tilde"> &ntilde; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'ń');" title="Lower-case n, acute"> &#324; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'ň');" title="Lower-case n, caron"> &#328; </button></td>	
+    </tr>      
+    <tr>
+	<!-- O -->
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Ó');" title="Upper-case O, acute accent"> &Oacute; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Ò');" title="Upper-case O, grave accent"> &Ograve; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Ô');" title="Upper-case O, circumflex accent"> &Ocirc; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Ö');" title="Upper-case O, dieresis or umlaut"> &Ouml; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Õ');" title="Upper-case O, tilde"> &Otilde; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Ő');" title="Upper-case N, double acute"> &#336; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Ø');" title="Upper-case O, slashed"> &Oslash; </button></td>
+	</tr>
+	<tr>
+	<!-- o -->
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'ó');" title="Lower-case o, acute accent"> &oacute; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'ò');" title="Lower-case o, grave accent"> &ograve; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'ô');" title="Lower-case o, circumflex accent"> &ocirc; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'ö');" title="Lower-case o, dieresis or umlaut"> &ouml; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'õ');" title="lower-case O, tilde"> &otilde; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'ő');" title=""> &#337; </button></td>	
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'ø');" title="Lower-case o, slashed"> &oslash; </button></td>
+	<!-- <td width="35"><button onClick="cursorInsert(parent.currentEntryField, '&amp;eth;');"> &eth; </button></td>-->	
+	</tr>
+	<tr>
+	<!-- R -->
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Ř');" title="Upper-case R, caron"> &#344; </button></td>
+	<!-- S -->
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Ś');" title="Upper-case S, acute"> &#346; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Š');" title="Upper-case S, caron"> &Scaron; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Ş');" title="Upper-case S, cedilla"> &#350; </button></td>
+	<!-- T -->
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Ţ');" title="Upper-case T, cedilla"> &#354; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Ť');" title="Upper-case T, caron"> &#356; </button></td>	
+	</tr>
+	<tr>
+	<!-- r -->
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'ř');" title="Lower-case r, caron"> &#345; </button></td>
+	<!-- s -->
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'ś');" title="Lower-case s, acute"> &#347; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'š');" title="Lower-case s, caron"> &scaron; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'ş');" title="Lower-case s, cedilla"> &#351; </button></td>
+	<!-- t -->
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'ţ');" title="lower-case t, cedilla"> &#355; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'ť');" title="lower-case t, caron"> &#357; </button></td>	
+	</tr>
+	<tr>	
+	<!-- U -->
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Ú');" title="Upper-case U, acute accent"> &Uacute; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Ù');" title="Upper-case U, grave accent"> &Ugrave; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Û');" title="Upper-case U, circumflex accent"> &Ucirc; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Ü');" title="Upper-case U, dieresis or umlaut"> &Uuml; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Ū');" title="Upper-case U, macron"> &#362; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Ů');" title="Upper-case U, caron"> &#366; </button></td>
+	</tr>
+	<tr>
+	<!-- u -->
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'ú');" title="Lower-case u, acute accent"> &uacute; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'ù');" title="Lower-case u, grave accent"> &ugrave; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'û');" title="Lower-case u, circumflex accent"> &ucirc; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'ü');" title="Lower-case u, dieresis or umlaut"> &uuml; </button></td>	
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'ū');" title="Lower-case u, macron"> &#363; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'ů');" title="Lower-case u, ring above"> &#367; </button></td>	
+	</tr>
+	<tr>	
+	<!-- Y -->
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Ý');" title="Upper-case Y, acute"> &Yacute; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Ÿ');" title="Upper-case Y, dieresis or umlaut"> &Yuml; </button></td>
+	<!--Z-->
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Ź');" title="Upper-case Z, acute"> &#377; </button></td>	  
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Ż');" title="Upper-case Z, dot above"> &#379; </button></td>	  
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Ž');" title="Upper-case Z, caron"> &#381; </button></td>
+	
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Æ');" title="Upper-case AE dipthong (ligature)"> &AElig; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Œ');" title="Upper-case OE ligature"> &OElig; </button></td>
+	<td width="35"></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Þ');" title="Upper-case THORN, Icelandic"> &THORN; </button></td>	
+    </tr>
+    <tr>
+	<!-- y -->	  
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'ý');" title="Lower-case y, acute"> &yacute; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'ÿ');" title="Lower-case y, dieresis or umlaut"> &yuml; </button></td>
+	<!-- z -->
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'ź');" title="Lower-case z, acute"> &#378; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'ż');" title="Lower-case z, dot above"> &#380; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'ž');" title="Upper-case z, caron"> &#382; </button></td>
+	
+	<!-- other special / composite characters -->	  
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'æ');" title="Lower-case ae dipthong (ligature)"> &aelig; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'œ');" title="Lower-case oe ligature"> &oelig; </button></td>
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'ß');" title="Lower-case sharp s, German (sz ligature)"> &szlig; </button></td>
+	
+	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'þ');" title="Lower-case thorn, Icelandic"> &thorn; </button></td>		
+    </tr>
+    <tr>
+	<td width="35"><button onclick="cursorInsert(parent.currentEntryField, '&');" title="Ampersand"> &amp; </button></td>
+	<td width="35"><button onclick="cursorInsert(parent.currentEntryField, '£');" title="Pound sign"> &pound; </button></td>
+	<td width="35"><button onclick="cursorInsert(parent.currentEntryField, '%');" title="Percent"> &#37; </button></td>
+	<td width="35"><button onclick="cursorInsert(parent.currentEntryField, '°');" title="Degree"> &#176; </button></td>
+	<td width="35"><button onclick="cursorInsert(parent.currentEntryField, '©');" title="Copyright"> &#169; </button></td>
+	<td width="35"><button onclick="cursorInsert(parent.currentEntryField, 'quot');" title="Quotation mark"> &#34; </button></td>
+
+      </tr>
+
+    </table>
+    </div>
+  </div>
+ 
+ 
+</div>
