@@ -147,18 +147,21 @@ class EadHandler:
         else:
             # before we split need to find all internal anchors
             anchors = anchorRe.findall(doc)
-            pseudopages = doc.split('<p style="page-break-before: always"></p>')
+            pseudopages = doc.split('<p style="page-break-before: always"/>')
+            if len(pseudopages) == 1:
+                pseudopages = doc.split('<p style="page-break-before: always"></p>')
+                
             pages = []
             while pseudopages:
-                page = '<div id="padder"><div id="rightcol" class="ead">%PAGENAV%'
-                while (len(page) < max_page_size_bytes):
-                    page = page + pseudopages.pop(0)
+                pagebits = ['<div id="padder"><div id="rightcol" class="ead">%PAGENAV%']
+                while (sum(map(len, pagebits)) < max_page_size_bytes):
+                    pagebits.append(pseudopages.pop(0))
                     if not pseudopages:
                         break
                 
                 # append: pagenav, end rightcol div, padder div, left div (containing toc)
-                page = page + '%PAGENAV%<br/>\n<br/>\n</div>\n</div>\n<div id="leftcol" class="toc"><!--#include virtual="/ead/tocs/RECID.inc"--></div>'
-                pages.append(page)
+                pagebits.append('%PAGENAV%\n<br/>\n</div><!-- end rightcol -->\n</div><!-- end padder -->\n<div id="leftcol" class="toc"><!--#include virtual="/ead/tocs/RECID.inc"--></div>')
+                pages.append('\n'.join(pagebits))
 
             start = 0
             anchorPageHash = {}

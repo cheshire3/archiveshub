@@ -1,7 +1,7 @@
 #
 # Script:    eadSearchHandler.py
-# Version:   0.31
-# Date:      6 November 2007
+# Version:   0.32
+# Date:      15 November 2007
 # Copyright: &copy; University of Liverpool 2005-2007
 # Description:
 #            Web interface for searching a cheshire 3 database of EAD finding aids
@@ -92,7 +92,7 @@
 #                        - script name now taken form request object
 # 0.31 - 06/11/2007 - JH - Migrated to new architecture: extracter --> tokenizer -- tokenMerge
 #                        - Highlighting upgrade - now uses character offset info from proximity index
-#
+# 0.32 - 15/11/2007 - JH - Marginally improved display handling
 #
 #
 
@@ -116,7 +116,7 @@ class EadSearchHandler(EadHandler):
             except IndexError: i = None
             else:
                 i = flattenTexts(i)
-                i = rec.id + '-' + normIdFlow.process(session, i) 
+                i = rec.id + '-' + normIdFlow.process(session, i)
             titles.append((i, t.strip()))
             pathParts.pop(-1)
             
@@ -125,12 +125,22 @@ class EadSearchHandler(EadHandler):
         else:
             t = flattenTexts(t)
             t = nonAsciiRe.sub(asciiFriendly, t)
-
+    
         titles.append((rec.id, t.strip()))
         titles.reverse()
         return titles
         # end _backwalkTitles() ----------------------------------------------------
 
+
+    def _cleverTitleCase(self, txt):
+        global stopwords
+        words = txt.split()
+        for x in range(len(words)):
+            if (x == 0 and not words[x][0].isdigit()) or (words[x][0].isalpha()) and (words[x] not in stopwords):
+                words[x] = words[x].title()
+        return ' '.join(words)
+        #- end _cleverTitleCase() --------------------------------------------------
+        
 
     def _parentTitle(self, id):
         try:
@@ -161,7 +171,7 @@ class EadSearchHandler(EadHandler):
 
         return parentTitle
         #- end _parentTitle() ---------------------------------------------------------
-
+        
 
     def format_resultSet(self, rs, firstrec=1, numreq=20, highlight=1):
         global search_result_row, search_component_row, display_relevance, graphical_relevance
@@ -436,16 +446,6 @@ class EadSearchHandler(EadHandler):
         #- end search() ------------------------------------------------------------
     
     
-    def _cleverTitleCase(self, txt):
-        global stopwords
-        words = txt.split()
-        for x in range(len(words)):
-            if (x == 0 and not words[x][0].isdigit()) or (words[x][0].isalpha()) and (words[x] not in stopwords):
-                words[x] = words[x].title()
-        return ' '.join(words)
-        #- end _cleverTitleCase() --------------------------------------------------
-    
-
     def browse(self, form):
         idx = form.get('fieldidx1', None)
         rel = form.get('fieldrel1', 'exact')
@@ -519,7 +519,7 @@ class EadSearchHandler(EadHandler):
         totalTerms = len(scanData)
         if (totalTerms > 0):
             self.htmlTitle.append('Results')
-            rows = ['<div id="wrapper"><div id="single"><br/>',
+            rows = ['<div id="wrapper"><div id="single">',
                     '<table cellspacing="0" summary="list of terms in this index">',
                     '<tr class="headrow"><td>Term</td><td>Records</td></tr>']
 
@@ -860,27 +860,31 @@ class EadSearchHandler(EadHandler):
                     self.htmlTitle.append('Error')
                     return (False, '<div id="wrapper"><p class="error">The record you requested is not available.</p></div>')
 
-        elif rs:
+        else:
             try:
-                r = rs[hitposition]
-            except IndexError:
-                self.logger.log('Index %d not in range %d' % (hitposition, len(rs)))
-                self.htmlTitle.append('Error')
-                return (False, '<div id="wrapper"><p class="error">Could not retrieve requested record.</p></div>')
-            
-            try:
-                rec = r.fetch_record(session)
-            except (c3errors.FileDoesNotExistException, c3errors.ObjectDoesNotExistException):
-                self.logger.log('*** Unable to retrieve record: %s' % (r))
-                self.htmlTitle.append('Error')
-                return (False, '<div id="wrapper"><p class="error">Could not retrieve requested record.</p></div>')
+                try:
+                    r = rs[hitposition]
+                except IndexError:
+                    self.logger.log('Index %d not in range %d' % (hitposition, len(rs)))
+                    raise
 
-            recid = str(rec.id)
+                try:
+                    rec = r.fetch_record(session)
+                except (c3errors.FileDoesNotExistException, c3errors.ObjectDoesNotExistException):
+                    self.logger.log('*** Unable to retrieve record: %s' % (r))
+                    raise
+                
+                recid = str(rec.id)
+            
+            except:
+                self.htmlTitle.append('Error')
+                return (False, '<div id="wrapper"><p class="error">Could not retrieve requested record.</p></div>')
                 
         # Resolve link to parent if a component
         try:
             parentId = rec.process_xpath('/c3component/@parent')[0]
         except IndexError:
+            parentId = recid
             parentLink = ''
         else:
             # OK, must be a component record
@@ -920,6 +924,7 @@ class EadSearchHandler(EadHandler):
         
         paramDict = self.globalReplacements
         paramDict.update({'RECID': recid
+                         ,'PARENTID': parentId
                          ,'LINKTOPARENT': parentLink
                          #,'QSTRING': qString
                          ,'%TITLE%': ' :: '.join(self.htmlTitle)
