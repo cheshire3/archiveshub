@@ -364,6 +364,19 @@
 	    <supports type="relationModifier">relevant</supports>
 	    <supports type="relationModifier">stem</supports>
 	    <supports type="relationModifier">word</supports>
+	    
+	    <supports type="extension"
+                  c3:type="record"
+                  c3:function="docidRecordHandler"
+                  c3:sruName="info-2-docid"
+                  c3:sruFunction="simpleRequestXform">info:srw/extension/2/docid-v1.0 docid
+  		</supports>
+	    <supports type="extension"
+		  c3:type="record"
+		  c3:function="recordMetadataHandler"
+		  c3:sruName="info-2-rec"
+		  c3:sruFunction="simpleRequestXform">info:srw/extension/2/rec-1.1 rec
+	</supports>
 
 	</configInfo>
 
