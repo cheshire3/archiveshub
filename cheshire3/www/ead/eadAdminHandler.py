@@ -82,7 +82,9 @@ class AdminThread(Thread):
         except Exception, e: self.error = e
         except: self.error = 'Undeterminable Error'
 
-        
+
+
+
 class WorkflowThread(AdminThread):
     session = None
     wf = None
@@ -97,6 +99,8 @@ class WorkflowThread(AdminThread):
     def run2(self):
         self.wf.process(self.session, self.input)
 
+
+        
 
 class BuildHtmlThread(AdminThread):
     def run2(self):
@@ -735,6 +739,7 @@ class EadAdminHandler(EadHandler):
         paramDict.update({'%TITLE%': ' :: '.join(self.htmlTitle)
                          ,'%NAVBAR%': ' | '.join(self.htmlNav)
                          ,'LINKTOPARENT': ''
+                         ,'TOC_CACHE_URL' : toc_cache_url
                          , 'RECID': recid
                          })
         try:
