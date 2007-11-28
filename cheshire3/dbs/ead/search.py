@@ -19,11 +19,11 @@ def _backwalkTitles(rec, path):
     pathParts = path.split('/')
     while pathParts[-1] != 'dsc':
         try:
-            t = rec.process_xpath('/'.join(pathParts) + '/did/unittitle')[0]
+            t = rec.process_xpath(session, '/'.join(pathParts) + '/did/unittitle')[0]
             t = flattenTexts(t)
             titles.append(t.strip())
         except IndexError:
-            print etree.dump(rec.process_xpath('/'.join(pathParts) + '/did')[0])
+            print etree.dump(rec.process_xpath(session, '/'.join(pathParts) + '/did')[0])
             raise
             
         pathParts.pop(-1)
@@ -51,13 +51,13 @@ parents = {}
 for x in range(min(5, hits)):
     rec = rs[x].fetch_record(session)
     try:
-        parId = rec.process_xpath('/c3component/@parent')[0]
+        parId = rec.process_xpath(session, '/c3component/@parent')[0]
         parId = parId.split('/')[-1]
     except IndexError:
-        titles = [rec.process_xpath('/*/*/did/unittitle/text()')[0]]
+        titles = [rec.process_xpath(session, '/*/*/did/unittitle/text()')[0]]
     else:
         parRec = recordStore.fetch_record(session, parId)
-        xpath = rec.process_xpath('/c3component/@xpath')[0]
+        xpath = rec.process_xpath(session, '/c3component/@xpath')[0]
         titles = _backwalkTitles(parRec, xpath)
         
     for y, t in enumerate(titles):

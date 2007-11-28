@@ -17,7 +17,7 @@ if ('-h' in sys.argv) or ('--help' in sys.argv) or ('--options' in sys.argv):
     sys.exit()    
     
 osp = sys.path
-sys.path = ["../../code", "../../www/ead"]
+sys.path = ["/home/cheshire/cheshire3/cheshire3/code", "/home/cheshire/cheshire3/cheshire3/www/ead"]
 sys.path.extend(osp)
 
 from baseObjects import Session
@@ -32,7 +32,7 @@ from localConfig import *
 
 # Build environment...
 session = Session()
-serv = SimpleServer(session, "../../configs/serverConfig.xml")
+serv = SimpleServer(session, "/home/cheshire/cheshire3/cheshire3/configs/serverConfig.xml")
 session.database = 'db_ead'
 
 db = serv.get_object(session, 'db_ead')
@@ -67,7 +67,7 @@ if ('-adduser' in sys.argv):
             xml = xml.replace(k, '')
     doc = StringDocument(xml)
     rec = xmlp.process_document(session, doc)
-    id = rec.process_xpath('/config/@id')[0]
+    id = rec.process_xpath(session, '/config/@id')[0]
     rec.id = id
     authStore.store_record(session, rec)
     authStore.commit_storing(session)
@@ -107,7 +107,7 @@ if ('-index' in sys.argv):
         except UnicodeDecodeError:
             print '[Some indexes not built - non unicode characters!]'
         del rec
-            
+     
     db.commit_indexing(session)
     db.commit_metadata(session)
     (mins, secs) = divmod(time.time() - start, 60)
@@ -121,7 +121,7 @@ if ('-cluster' in sys.argv):
     session.database = 'db_ead_cluster'
     # build necessary objects
     clusFlow = clusDb.get_object(session, 'buildClusterWorkflow')
-    clusDocFac = db.get_object(session, 'clusterDocumentFactory')
+    clusDocFac = clusDb.get_object(session, 'clusterDocumentFactory')
     try:
         clusDocFac.load(session, clusDocFac.get_default(session, 'data'))
     except c3errors.FileDoesNotExistException:
@@ -134,11 +134,11 @@ if ('-cluster' in sys.argv):
         except:
             raise
     
-    # return session.database to the default (finding aid) DB
-    session.database = 'db_ead'
     (mins, secs) = divmod(time.time() - start, 60)
     (hours, mins) = divmod(mins, 60)
     print 'Cluster Indexing complete (%dh %dm %ds)' % (hours, mins, secs)
+    # return session.database to the default (finding aid) DB
+    session.database = 'db_ead'
 
 
 if ('-load_components' in sys.argv):
@@ -203,7 +203,7 @@ def cache_html():
         
         tmpl = read_file(templatePath)
         anchorPageHash = {}
-        if (len(rec.get_xml()) < maximum_page_size * 1024):
+        if (len(rec.get_xml(session)) < maximum_page_size * 1024):
             # Oh good. Nice and short record - do it the easy way
             doc = fullTxr.process_record(session, rec)
             # open, read, delete tocfile NOW to avoid overwriting screwups
@@ -214,7 +214,7 @@ def cache_html():
             except:
                 pass
                     
-            doc = doc.get_raw()
+            doc = doc.get_raw(session)
             try: doc = doc.encode('utf-8', 'latin-1')
             except: pass # hope for the best!
             page = tmpl.replace('%CONTENT%', doc)
@@ -234,7 +234,7 @@ def cache_html():
             except:
                 pass
                     
-            doc = doc.get_raw()
+            doc = doc.get_raw(session)
             try: doc = doc.encode('utf-8', 'latin-1')
             except: pass # hope for the best!
             # before we split need to find all internal anchors

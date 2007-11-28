@@ -7,22 +7,22 @@
 
 	<subConfigs>
 	
-		<subConfig type="xpathObject" id="identifierXPath">
-			<objectType>xpathObject.MetadataXPath</objectType>
+		<subConfig type="xpathProcessor" id="identifierXPath">
+			<objectType>xpathProcessor.MetadataXPath</objectType>
 			<source>
 				<xpath>id</xpath>
 			</source>
 		</subConfig>
 
-		<subConfig type="xpathObject" id="nowTimeXPath">
-			<objectType>xpathObject.MetadataXPath</objectType>
+		<subConfig type="xpathProcessor" id="nowTimeXPath">
+			<objectType>xpathProcessor.MetadataXPath</objectType>
 			<source>
 				<xpath>now</xpath>
 			</source>
 		</subConfig>
 		
-		<subConfig type="xpathObject" id="descriptionXPath">
-			<objectType>xpathObject.XPathObject</objectType>
+		<subConfig type="xpathProcessor" id="descriptionXPath">
+			<objectType>xpathProcessor.SimpleXPathProcessor</objectType>
 			<source>
 				<xpath>/ead//did/unittitle</xpath>
 				<xpath>/ead//did/origination</xpath>
@@ -35,8 +35,8 @@
 			</source>
 		</subConfig>
 		
-		<subConfig type="xpathObject" id="anywhereXPath">
-			<objectType>xpathObject.XPathObject</objectType>
+		<subConfig type="xpathProcessor" id="anywhereXPath">
+			<objectType>xpathProcessor.SimpleXPathProcessor</objectType>
 			<source>
 				<xpath>/ead/eadheader/*</xpath>
 				<xpath>/ead/archdesc/*</xpath>
@@ -44,8 +44,8 @@
 			</source>
 		</subConfig>
 		
-		<subConfig type="xpathObject" id="componentXPath">
-			<objectType>xpathObject.XPathObject</objectType>
+		<subConfig type="xpathProcessor" id="componentXPath">
+			<objectType>xpathProcessor.SimpleXPathProcessor</objectType>
 			<source>
 				<xpath>c</xpath>
 				<xpath>c01</xpath>

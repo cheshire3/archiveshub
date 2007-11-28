@@ -74,7 +74,7 @@
         </try>
         <except>
 			<log>"" + str(err)</log>
-			<log>"" + input.get_raw()</log>
+			<log>"" + input.get_raw(session)</log>
 			<log>"*** " + input.id + " DC record unparsable"</log>
         </except>
         <assign from="identifier" to="input.id"/>
@@ -140,7 +140,7 @@
     				<log>
     					"\n" + ''.join(traceback.format_exception(sys.exc_type,sys.exc_value,sys.exc_traceback))
     				</log>
-    				<log>"" + input.get_xml()</log>
+    				<log>"" + input.get_xml(session)</log>
     				<continue />
     			</except>
     			<object type="database" function="add_record" />
@@ -162,14 +162,14 @@
 			<!-- first put record aside so we can re-assign it later -->
 			<assign from="input" to="myRecord"/>
 			<try>
-				<assign from="input.process_xpath('/ead/eadheader/eadid[1]/text()')[0]" to="input"/>
+				<assign from="input.process_xpath(session, '/ead/eadheader/eadid[1]/text()')[0]" to="input"/>
 			</try>
 			<except>
 				<!-- component record -->
-				<assign from="input.process_xpath('/c3component/@parent')[0]" to="parentid"/>
+				<assign from="input.process_xpath(session, '/c3component/@parent')[0]" to="parentid"/>
 				<assign from="parentid.split('/', 1)[-1]" to="parentid"/>
-				<assign from="input.process_xpath('/*/*/did/unitid')[0]" to="input"/>
-				<object type="extracter" ref="SimpleExtracter" function="process_node"/>
+				<assign from="input.process_xpath(session, '/*/*/did/unitid')[0]" to="input"/>
+				<object type="extractor" ref="SimpleExtractor" function="process_node"/>
 				<assign from="input.keys()[0]" to="input"/>
 				<assign from="parentid + '-' + input" to="input"/>
 			</except>
@@ -183,9 +183,9 @@
 		<objectType>workflow.CachingWorkflow</objectType>
 		<workflow>
 			<!-- input type: String -->
-			<object type="normaliser" ref="DiacriticNormaliser" function="process_string"/>
-			<object type="normaliser" ref="CaseNormaliser" function="process_string"/>
-			<object type="normaliser" ref="SpaceNormaliser" function="process_string"/>
+			<object type="normalizer" ref="DiacriticNormalizer" function="process_string"/>
+			<object type="normalizer" ref="CaseNormalizer" function="process_string"/>
+			<object type="normalizer" ref="SpaceNormalizer" function="process_string"/>
 			<assign from="input.replace(' ', '').replace('/', '-')" to="input" />
 		</workflow>	
 	</subConfig>
@@ -203,6 +203,7 @@
 		  <log>"... " + input.id + " loaded, indexed"</log>	
 		</try>
 		<except>
+			<raise/>
 		  <log>"*** " + input.id + " Some indexes incomplete"</log>
 		</except>
 		<object type="workflow" ref="buildDcRecordWorkflow"/>
