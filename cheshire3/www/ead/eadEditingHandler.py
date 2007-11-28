@@ -242,11 +242,11 @@ class EadEditingHandler(EadHandler):
     def populate_form(self, recid, new):  
         #if its collection level give the transformer the whole record
         if (new == 'collectionLevel'):  
-            retrievedDom = editStore.fetch_record(session, recid).get_dom()
+            retrievedDom = editStore.fetch_record(session, recid).get_dom(session)
             rec = LxmlRecord(retrievedDom)
         #if its a component find the component by id and just give that component to the transformer          
         else :
-            retrievedXml = editStore.fetch_record(session, recid).get_xml()
+            retrievedXml = editStore.fetch_record(session, recid).get_xml(session)
             root = None
             tree = etree.XMLID(retrievedXml)
             node = tree[1].get(new)
@@ -254,7 +254,7 @@ class EadEditingHandler(EadHandler):
                 if e == node :
                     root = deepcopy(e)
             rec = LxmlRecord(root)                 
-        return formTxr.process_record(session, rec).get_raw() 
+        return formTxr.process_record(session, rec).get_raw(session) 
 
     
     def save_form(self, req, loc, recid):
@@ -272,7 +272,7 @@ class EadEditingHandler(EadHandler):
             list = form.list  
             #pull existing xml and make into a tree
             retrievedRec = editStore.fetch_record(session, recid)
-            retrievedXml = retrievedRec.get_xml()
+            retrievedXml = retrievedRec.get_xml(session)
             tree = etree.fromstring(retrievedXml)
             #first delete current accesspoints
             node = tree.xpath('/ead/archdesc')[0]
@@ -308,7 +308,7 @@ class EadEditingHandler(EadHandler):
         else :
             #pull record from store
             retrievedRec = editStore.fetch_record(session, recid)
-            retrievedxml= retrievedRec.get_xml()
+            retrievedxml= retrievedRec.get_xml(session)
             tree = etree.fromstring(retrievedxml)            
             #first check there is a dsc element and if not add one (needed for next set of xpath tests)
             if not (tree.xpath('/ead/archdesc/dsc')):
@@ -365,7 +365,7 @@ class EadEditingHandler(EadHandler):
         recid = self.save_form(req, loc, recid)
         doc = StringDocument('<c><recid>%s</recid></c>' % recid)
         rec = xmlp.process_document(session, doc)
-        htmlform = formTxr.process_record(session, rec).get_raw()
+        htmlform = formTxr.process_record(session, rec).get_raw(session)
         return htmlform
 
 
@@ -384,7 +384,7 @@ class EadEditingHandler(EadHandler):
         structure = read_file('ead2002.html')
         doc = StringDocument('<ead><eadheader></eadheader><archdesc></archdesc></ead>')         
         rec = xmlp.process_document(session, doc)
-        htmlform = formTxr.process_record(session, rec).get_raw()
+        htmlform = formTxr.process_record(session, rec).get_raw(session)
         page = structure.replace('%FRM%', htmlform) 
         return page
     
@@ -393,7 +393,7 @@ class EadEditingHandler(EadHandler):
         recid=form.get('recid', None)
         if recid != None and recid != 'null' :
             retrievedRec = editStore.fetch_record(session, recid)
-            retrievedxml= retrievedRec.get_xml()
+            retrievedxml= retrievedRec.get_xml(session)
             tree = etree.fromstring(retrievedxml)
             return etree.tostring(tree)
         else :

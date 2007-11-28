@@ -1,7 +1,7 @@
 #
 # Script:    eadSearchHandler.py
-# Version:   0.32
-# Date:      15 November 2007
+# Version:   0.33
+# Date:      26 November 2007
 # Copyright: &copy; University of Liverpool 2005-2007
 # Description:
 #            Web interface for searching a cheshire 3 database of EAD finding aids
@@ -90,9 +90,13 @@
 # 0.29 - 23/10/2007 - JH - Term highlighting for LxmlRecords implemented + optimised for summary display
 # 0.30 - 31/10/2007 - JH - Minor precautionary change as result of Leeds' multiple interfaces on same machine problems
 #                        - script name now taken form request object
-# 0.31 - 06/11/2007 - JH - Migrated to new architecture: extracter --> tokenizer -- tokenMerge
+# 0.31 - 06/11/2007 - JH - Migrated to new architecture: extractor --> tokenizer -- tokenMerge
 #                        - Highlighting upgrade - now uses character offset info from proximity index
 # 0.32 - 15/11/2007 - JH - Marginally improved display handling
+# 0.33 - 26/11/2007 - JH - More API changes: 
+#                        -    spelling corrections for extracter, normaliser etc.
+#                        -    session arg added to get_raw|xml|dom|sax functions
+#                        -    fetch_idList removed - all stores iterable
 #
 #
 
@@ -107,12 +111,12 @@ class EadSearchHandler(EadHandler):
         titles = []
         pathParts = path.split('/') 
         while pathParts[-1] != 'dsc':
-            try: t = rec.process_xpath('/'.join(pathParts) + '/did/unittitle')[0]
+            try: t = rec.process_xpath(session, '/'.join(pathParts) + '/did/unittitle')[0]
             except IndexError: t = '(untitled)'
             else:
                 t = flattenTexts(t)
                 t = nonAsciiRe.sub(asciiFriendly, t)
-            try: i = rec.process_xpath('/'.join(pathParts) + '/did/unitid')[0]
+            try: i = rec.process_xpath(session, '/'.join(pathParts) + '/did/unitid')[0]
             except IndexError: i = None
             else:
                 i = flattenTexts(i)
@@ -120,7 +124,7 @@ class EadSearchHandler(EadHandler):
             titles.append((i, t.strip()))
             pathParts.pop(-1)
             
-        try: t = rec.process_xpath('/*/*/did/unittitle')[0]
+        try: t = rec.process_xpath(session, '/*/*/did/unittitle')[0]
         except IndexError: t = '(untitled)'
         else:
             t = flattenTexts(t)
@@ -152,13 +156,13 @@ class EadSearchHandler(EadHandler):
                 return None
                 
         try:
-            parentTitle = rec.process_xpath('/srw_dc:dc/dc:title/text()', namespaceUriHash)[0]
+            parentTitle = rec.process_xpath(session, '/srw_dc:dc/dc:title/text()', namespaceUriHash)[0]
         except IndexError:
             try:
-                parentTitle = rec.process_xpath('/*/*/did/unittitle/text()')[0]
+                parentTitle = rec.process_xpath(session, '/*/*/did/unittitle/text()')[0]
             except IndexError:
                 try:
-                    parentTitle = rec.process_xpath('/ead/eadheader/filedesc/titlestmt/titleproper/text()')[0]
+                    parentTitle = rec.process_xpath(session, '/ead/eadheader/filedesc/titlestmt/titleproper/text()')[0]
                 except IndexError:
                     parentTitle = '(untitled)'
                 
@@ -214,14 +218,14 @@ class EadSearchHandler(EadHandler):
                     self.logger.log('Unable to retrieve record: %s' % (r.id))
                     continue
                 else:
-                    try: titleEl = rec.process_xpath('/*/*/did/unittitle')[0]
+                    try: titleEl = rec.process_xpath(session, '/*/*/did/unittitle')[0]
                     except IndexError:
-                        try: titleEl = rec.process_xpath('/ead/eadheader/filedesc/titlestmt/titleproper')[0]
+                        try: titleEl = rec.process_xpath(session, '/ead/eadheader/filedesc/titlestmt/titleproper')[0]
                         except IndexError: titleEl = '(untitled)'
                     
 
             else:
-                try: titleEl = rec.process_xpath('/srw_dc:dc/dc:title', namespaceUriHash)[0]
+                try: titleEl = rec.process_xpath(session, '/srw_dc:dc/dc:title', namespaceUriHash)[0]
                 except IndexError: titleEl = '(untitled)'
                 
             try: title = flattenTexts(titleEl)
@@ -229,7 +233,7 @@ class EadSearchHandler(EadHandler):
             del titleEl
                 
             try:
-                parentId = rec.process_xpath('/c3component/@parent')[0]
+                parentId = rec.process_xpath(session, '/c3component/@parent')[0]
             except IndexError:
                 # full record
                 row = search_result_row
@@ -244,7 +248,7 @@ class EadSearchHandler(EadHandler):
                     parentRec = recordStore.fetch_record(session, parentId)
                     parentRecs[parentId] = parentRec
                     
-                parentPath = rec.process_xpath('/c3component/@xpath')[0]
+                parentPath = rec.process_xpath(session, '/c3component/@xpath')[0]
                 titles = self._backwalkTitles(parentRec, parentPath)
                 t = titles.pop(0)
                 parentLink = html = '<a href="%s?operation=full&amp;rsid=%%RSID%%&amp;recid=%s" onclick="SPLASH">%s</a>' % (script, cgi_encode(t[0]) , t[1])
@@ -640,7 +644,7 @@ class EadSearchHandler(EadHandler):
                 else:
                     rowclass = 'even';
                     
-                subject = r.fetch_record(session).process_xpath('cluster/key/text()')[0]
+                subject = r.fetch_record(session).process_xpath(session, 'cluster/key/text()')[0]
                 self.logger.log('starting subject find hit estimate')
                 try:
                     sc = CQLParser.parse('dc.subject exact "%s"' % (subject))
@@ -703,9 +707,9 @@ class EadSearchHandler(EadHandler):
         # highlight search terms in rec.dom
         if (proxInfo) and highlight:
             # sort proxInfo so that nodeIdxs are sorted descending (so that offsets don't get upset :)
-            proxInfo2 = [(proxInfo[x], proxInfo[x+1], proxInfo[x+2]) for x in range(0, len(proxInfo), 3)]
-            proxInfo2.sort()
-            proxInfo2.reverse()
+            #proxInfo2 = [(proxInfo[x], proxInfo[x+1], proxInfo[x+2]) for x in range(0, len(proxInfo), 3)]
+            proxInfo2 = proxInfo
+            proxInfo2.sort(reverse=True)
             nodeIdxs = []
             wordIdxs = []
             wordOffsets = []
@@ -767,7 +771,7 @@ class EadSearchHandler(EadHandler):
         # send record to transformer
         doc = summaryTxr.process_record(session, rec)
         del rec
-        summ = unicode(doc.get_raw(), 'utf-8')
+        summ = unicode(doc.get_raw(session), 'utf-8')
         summ = nonAsciiRe.sub(asciiFriendly, summ)
         summ = overescapedAmpRe.sub(unescapeCharent, summ)
         self.logger.log('Record transformed to HTML')
@@ -882,14 +886,14 @@ class EadSearchHandler(EadHandler):
                 
         # Resolve link to parent if a component
         try:
-            parentId = rec.process_xpath('/c3component/@parent')[0]
+            parentId = rec.process_xpath(session, '/c3component/@parent')[0]
         except IndexError:
             parentId = recid
             parentLink = ''
         else:
             # OK, must be a component record
             parentId = parentId.split('/')[-1]
-            parentPath = rec.process_xpath('/c3component/@xpath')[0]
+            parentPath = rec.process_xpath(session, '/c3component/@xpath')[0]
             parentRec = recordStore.fetch_record(session, parentId)
             isComponent = True
             titles = self._backwalkTitles(parentRec, parentPath)
@@ -1050,7 +1054,7 @@ class EadSearchHandler(EadHandler):
             rec = r.fetch_record(session)
             recid = rec.id
             try:
-                parentId = rec.process_xpath('/c3component/@parent')[0]
+                parentId = rec.process_xpath(session, '/c3component/@parent')[0]
                 # only when integers are used
                 parentId = parentId.split('/')[-1]
                 # OK, must be a component record
@@ -1060,14 +1064,14 @@ class EadSearchHandler(EadHandler):
                 except:
                     parentRec = recordStore.fetch_record(session, parentId.split('/')[-1])                   
                     try:
-                        parentTitle = parentRec.process_xpath('/ead/archdesc/did/unittitle/text()')[0]
+                        parentTitle = parentRec.process_xpath(session, '/ead/archdesc/did/unittitle/text()')[0]
                     except IndexError:
                         try:
-                            parentTitle = parentRec.process_xpath('/ead/eadheader/filedesc/titlestmt/titleproper/text()')[0]
+                            parentTitle = parentRec.process_xpath(session, '/ead/eadheader/filedesc/titlestmt/titleproper/text()')[0]
                         except IndexError:
                             parentTitle = '(untitled)'
                 else:
-                    parentTitle = parentRec.process_xpath('dc:title/text()', namespaceUriHash)[0]
+                    parentTitle = parentRec.process_xpath(session, 'dc:title/text()', namespaceUriHash)[0]
 
                 parentTitle = nonAsciiRe.sub(asciiFriendly, parentTitle)
                 try:
@@ -1085,8 +1089,8 @@ class EadSearchHandler(EadHandler):
 #            try: textStore.store_document(session, doc)
 #            except: pass;         # cannot cache, oh well...
 
-            docString = unicode(doc.get_raw(), 'utf-8')
-            docString = diacriticNormaliser.process_string(session, docString)
+            docString = unicode(doc.get_raw(session), 'utf-8')
+            docString = diacriticNormalizer.process_string(session, docString)
             try: docString = docString.encode('utf-8', 'latin-1')
             except:
                 try: docString = docString.encode('utf-16')
@@ -1131,8 +1135,8 @@ In: %s
     
     
     def similar_search(self, form):
-        global extracter
-        if not (extracter): extracter = db.get_object(session, 'SimpleExtracter') #ensure it's available
+        global extractor
+        if not (extractor): extractor = db.get_object(session, 'SimpleExtractor') #ensure it's available
         rsid = form.getfirst('rsid', None)
         hitposition = int(form.getfirst('hitposition', 0))
         highlight = form.getfirst('highlight', 0)
@@ -1190,11 +1194,11 @@ In: %s
         rec = r.fetch_record(session)
         controlaccess = {}
         for cah in ['subject', 'persname', 'famname', 'geogname']:
-            controlaccess[cah] = rec.process_xpath('controlaccess[1]/%s' % (cah)) # we only want top level stuff to feed into similar search
+            controlaccess[cah] = rec.process_xpath(session, 'controlaccess[1]/%s' % (cah)) # we only want top level stuff to feed into similar search
         
         cqlClauses = []
         for cah, cal in controlaccess.iteritems():
-            aps = extracter.process_xpathResult(session, cal)
+            aps = extractor.process_xpathResult(session, cal)
             for key in aps.keys():
                 cqlClauses.append('c3.ead-idx-%s exact "%s"' % (cah, key))
 
@@ -1213,9 +1217,9 @@ In: %s
 
             for (idx, xp) in fields:
                 terms = []
-                data = rec.process_xpath(xp) # we only want top level stuff to feed into similar search
+                data = rec.process_xpath(session, xp) # we only want top level stuff to feed into similar search
                 for d in data:
-                    key = extracter.process_eventList(session, d).keys()[0]
+                    key = extractor.process_eventList(session, d).keys()[0]
                     if (type(key) == unicode):
                         key = key.encode('utf-8')
                     terms.append(key)
@@ -1343,8 +1347,8 @@ clusFlow = None
 compFlow = None
 compRecordFlow = None
 # other
-extracter = None
-diacriticNormaliser = None
+extractor = None
+diacriticNormalizer = None
 
 rebuild = True
 
@@ -1355,7 +1359,7 @@ def build_architecture(data=None):
     clusDb, clusStore, clusFlow, \
     summaryTxr, fullTxr, fullSplitTxr, textTxr, \
     ppFlow, buildFlow, buildSingleFlow, indexRecordFlow, assignDataIdFlow, normIdFlow, compFlow, compRecordFlow, \
-    extracter, diacriticNormaliser, \
+    extractor, diacriticNormalizer, \
     rebuild
     
     # globals line 1: re-establish session; maintain user if possible
@@ -1398,8 +1402,8 @@ def build_architecture(data=None):
     compFlow = db.get_object(session, 'buildAllComponentWorkflow'); compFlow.load_cache(session, db)
     compRecordFlow = db.get_object(session, 'buildComponentWorkflow'); compRecordFlow.load_cache(session, db)
     # globals line 6: other
-    extracter = db.get_object(session, 'SimpleExtracter')
-    diacriticNormaliser = db.get_object(session, 'DiacriticNormaliser')
+    extractor = db.get_object(session, 'SimpleExtractor')
+    diacriticNormalizer = db.get_object(session, 'DiacriticNormalizer')
     rebuild = False
 
 logfilepath = searchlogfilepath

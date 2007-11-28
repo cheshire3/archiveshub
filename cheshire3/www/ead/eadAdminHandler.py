@@ -1,7 +1,7 @@
 #
 # Script:    eadAdminHandler.py
-# Version:   0.26
-# Date:      6 November 2007
+# Version:   0.27
+# Date:      26 November 2007
 # Copyright: &copy; University of Liverpool 2005-2007
 # Description:
 #            Web interface for administering a cheshire 3 database of EAD finding aids
@@ -60,8 +60,11 @@
 # 0.24 - 08/10/2007 - CS - Stats page modified to allow all previous searchHandler logfiles to be viewed
 # 0.25 - 31/10/2007 - CS - Superuser status added with ability to create and delete users and superusers users only able to edit themselves
 #                        - Minor changes to navigation within Administration menu including addition of link to _error function
-# 0.26 - 06/11/2007 - JH - Migrated to new architecture: extracter --> tokenizer -- tokenMerge
-#
+# 0.26 - 06/11/2007 - JH - Migrated to new architecture: extractor -- tokenizer -- tokenMerge etc.
+# 0.27 - 26/11/2007 - JH - More API changes: 
+#                        -    spelling corrections for extracter, normaliser etc.
+#                        -    session arg added to get_raw|xml|dom|sax functions
+#                        -    fetch_idList removed - all stores iterable
 #
 #
 
@@ -107,12 +110,10 @@ class BuildHtmlThread(AdminThread):
         global overescapedAmpRe, toc_cache_url, repository_name, repository_link, repository_logo, script, toc_scripts
         fullTxr = db.get_object(session, 'htmlFullTxr')
         fullSplitTxr = db.get_object(session, 'htmlFullSplitTxr')
-        idList = recordStore.fetch_idList(session)
-        total = len(idList)
-        print "Caching HTML for %d records..." % (total)
+        print "Caching HTML for %d records..." % (recordStore.totalItems)
         for rec in recordStore:
             recid = rec.id
-            print rec.id.ljust(50),
+            print recid.ljust(50),
 #            # FIXME: rec.size is always 0
 #            # small record assumed to be < 100kb ...
 #            if (rec.size * 6 < (100 * 1024)):
@@ -133,7 +134,7 @@ class BuildHtmlThread(AdminThread):
             
             tmpl = read_file(templatePath)
             anchorPageHash = {}
-            if (len(rec.get_xml()) < maximum_page_size * 1024):
+            if (len(rec.get_xml(session)) < maximum_page_size * 1024):
                 # Nice and short record/component - do it the easy way
                 doc = fullTxr.process_record(session, rec)
                 # open, read, delete tocfile NOW to avoid overwriting screwups
@@ -153,7 +154,7 @@ class BuildHtmlThread(AdminThread):
                 except IOError: tocfile = None
                 except: tocfile = '<span class="error">There was a problem whilst generating the Table of Contents</span>'
                 
-                doc = doc.get_raw()
+                doc = doc.get_raw(session)
                 try: 
                     tocfile = tocfile.encode('utf-8', 'latin-1')
                 except:
@@ -190,7 +191,7 @@ class BuildHtmlThread(AdminThread):
                 except:
                     pass
                         
-                doc = doc.get_raw()
+                doc = doc.get_raw(session)
                 try: doc = doc.encode('utf-8', 'latin-1')
                 except: pass # hope for the best!
                 # before we split need to find all internal anchors
@@ -312,16 +313,14 @@ class EadAdminHandler(EadHandler):
         self.htmlTitle.append('User Management')
         lines = ['<table>',
                  '<tr class="headrow"><td>Username</td><td>Real Name</td><td>Email Address</td><td>Telephone</td><td>Operations</tr>']
-        #uList = authStore.fetch_idList(session)
+
         self.logger.log(session.user.address)
-        idList = authStore.fetch_idList(session)
-        for ctr in range(len(idList)):
-            uid = idList[ctr]
-            user = authStore.fetch_object(session, uid)
+        for ctr, user in enumerate(authStore):
+            uid = user.id
             if ((ctr+1) % 2): rowclass = 'odd'
             else:  rowclass = 'even'
             cells = '<td>%s</td><td>%s</td><td>%s</td><td>%s</td>' % (uid, user.realName, user.email, user.tel)
-            if (user.id == session.user.id):
+            if (uid == session.user.id):
                 cells = cells + '<td><a href="users.html?operation=edit&amp;userid=%s" class="fileop">EDIT</a></td>' % (uid)
             elif (session.user.has_flag(session, 'info:srw/operation/1/delete', 'eadAuthStore')):
                 cells = cells + '<td><a href="users.html?operation=delete&amp;userid=%s&confirm=true" class="fileop">DELETE</a></td>' % (uid)  
@@ -332,7 +331,6 @@ class EadAdminHandler(EadHandler):
         if (session.user.has_flag(session, 'info:srw/operation/1/create', 'eadAuthStore')):
             lines.extend(['<h3 class="bar">Add New User</h3>',
                       multiReplace(read_file('adduser.html'), values),])
-        
                                                                 
         return '\n'.join(lines)
     #- end list_users()
@@ -378,7 +376,7 @@ class EadAdminHandler(EadHandler):
     def _submit_userDom(self, id, userDom):
         rec = FtDomRecord(userDom)
         # nasty hacks to get DOM based record accepted
-        rec = docParser.process_document(session, StringDocument(rec.get_xml()))
+        rec = docParser.process_document(session, StringDocument(rec.get_xml(session)))
         rec.id = id
         authStore.store_record(session, rec)
         authStore.commit_storing(session)
@@ -433,7 +431,7 @@ class EadAdminHandler(EadHandler):
                     userRec = domParser.process_document(session, StringDocument(new_superuser_template.replace('%USERNAME%', userid)))
                 else :
                     userRec = domParser.process_document(session, StringDocument(new_user_template.replace('%USERNAME%', userid)))
-                userDom = userRec.get_dom()
+                userDom = userRec.get_dom(session)
                 passwd = form.get('passwd', None)
                 # check password
                 newHash = {}
@@ -488,7 +486,7 @@ class EadAdminHandler(EadHandler):
             self.htmlNav.append('<a href="users.html" title="User Management" class="navlink">Users</a>')
             if (form.get('submit', None)):
                 userRec = authStore.fetch_record(session, userid)
-                userDom = userRec.get_dom()
+                userDom = userRec.get_dom(session)
                 passwd = form.get('passwd', None)
                 # check password
                 if (passwd and crypt(passwd, passwd[:2]) == user.password):
@@ -651,7 +649,7 @@ class EadAdminHandler(EadHandler):
             rec = docParser.process_document(session, doc)
         except:
             newlineRe = re.compile('(\s\s+)')
-            doc.text = newlineRe.sub('\n\g<1>', doc.get_raw())
+            doc.text = newlineRe.sub('\n\g<1>', doc.get_raw(session))
             # repeat parse with correct line numbers
             try:
                 rec = docParser.process_document(session, doc)
@@ -660,7 +658,7 @@ class EadAdminHandler(EadHandler):
                 e = sys.exc_info()
                 self.logger.log('*** %s: %s' % (e[0], e[1]))
                 # try and highlight error in specified place
-                lines = doc.get_raw().split('\n')
+                lines = doc.get_raw(session).split('\n')
                 positionRe = re.compile(':(\d+):(\d+):')
                 mo = positionRe.search(str(e[1]))
                 line, posn = lines[int(mo.group(1))-1], int(mo.group(2))
@@ -685,7 +683,7 @@ class EadAdminHandler(EadHandler):
         # check record for presence of mandatory XPaths
         missing_xpaths = []
         for xp in required_xpaths:
-            try: rec.process_xpath(xp)[0];
+            try: rec.process_xpath(session, xp)[0];
             except IndexError:
                 missing_xpaths.append(xp)
         if len(missing_xpaths):
@@ -698,7 +696,7 @@ class EadAdminHandler(EadHandler):
     <pre>
 %s
     </pre>
-    ''' % ('<br/>'.join(missing_xpaths), newlineRe.sub('\n\g<1>', html_encode(rec.get_xml())))
+    ''' % ('<br/>'.join(missing_xpaths), newlineRe.sub('\n\g<1>', html_encode(rec.get_xml(session))))
         else:
             return None
 
@@ -805,7 +803,7 @@ class EadAdminHandler(EadHandler):
             else:
                 recordStore.commit_storing(session)
                 dcRecordStore.commit_storing(session)
-                if len(rec.process_xpath('dsc')):
+                if len(rec.process_xpath(session, 'dsc')):
                     req.write('Loading and Indexing components .')
                     compStore.begin_storing(session)
                     # extract and index components
@@ -899,7 +897,7 @@ class EadAdminHandler(EadHandler):
                         else: dcRecordStore.commit_storing(session)
                         req.write('<span class="ok">[OK]</span><br/>\n')
                         
-                    if len(rec.process_xpath('dsc')):
+                    if len(rec.process_xpath(session, 'dsc')):
                         # now the tricky bit - component records
                         compStore.begin_storing(session)
                         q = CQLParser.parse('ead.parentid exact "%s/%s"' % (rec.recordStore, rec.id))
@@ -1120,7 +1118,7 @@ class EadAdminHandler(EadHandler):
         req.content_type = 'text/html'
         req.send_http_header()
         head = self._get_genericHtml('header.html')
-        req.write(head + '<div id="wrapper">')
+        req.write(head + '<script type="text/javascript" src="/javascript/counter.js"></script>' + '<div id="wrapper">')
         req.write('Deleting existing data stores and indexes...')
         # delete main stores, metadata, and indexes
         self._clear_dir(os.path.join(dbPath, 'stores'))
@@ -1136,24 +1134,23 @@ class EadAdminHandler(EadHandler):
         db.begin_indexing(session)
         # for some reason this doesn't work well in threads...
         start = time.time()
-        dotcount = 0
         try:
             baseDocFac.load(session)
+            # TODO: figure out how many files we're loading
+            req.write('<span id="rec-progress">Processing File: <span id="rec-count" style="font-weight:bold;font-size:larger;">1</span> of UNKNOWN</span>')
             for doc in baseDocFac:
                 buildSingleFlow.process(session, doc)
-                req.write('.')
-                dotcount += 1
-                if (dotcount % 200 == 0):
-                    req.write('<br/>')
+                req.write('<script type="text/javascript">\nincr("rec-count");\n</script>')
                     
             mins, secs = divmod(time.time() - start, 60)
             hours, mins = divmod(mins, 60)
-            req.write('<span class="ok">[OK]</span> %dh %dm %ds<br/>' % (hours, mins, secs))
+            req.write('<style type="text/css">span#rec-progress {display:none;}</style><span class="ok">[OK]</span> %dh %dm %ds<br/>' % (hours, mins, secs))
             recordStore.commit_storing(session)
             dcRecordStore.commit_storing(session)
             db.commit_indexing(session)
             db.commit_metadata(session)
         except:
+            raise
             # failed to complete - nothing else will work!
             self.logger.log('Database rebuild attempt by %s failed to complete.' % (session.user.username))
             # FIXME: if above not done in thread, need better error message
@@ -1162,9 +1159,9 @@ class EadAdminHandler(EadHandler):
         else:
             # finish clusters
             req.write('Finishing subject clusters...')
-            clusDocFac = db.get_object(session, 'clusterDocumentFactory')
-            clusDocFac.load(session, os.path.join(dbPath,'tempCluster.data'))
             session.database = 'db_ead_cluster'
+            clusDocFac = clusDb.get_object(session, 'clusterDocumentFactory')
+            clusDocFac.load(session, os.path.join(dbPath, 'cluster', 'tempCluster.data'))
             hours, mins, secs = self._timeop(clusFlow.process, (session, clusDocFac))
             req.write('<span class="ok">[OK]</span> %dh %dm %ds<br/>' % (hours, mins, secs))
             session.database = 'db_ead'
@@ -1227,9 +1224,9 @@ class EadAdminHandler(EadHandler):
                       
         # finish clusters
         req.write('Finishing subject clusters...')
-        clusDocFac = db.get_object(session, 'clusterDocumentFactory')
-        clusDocFac.load(session, os.path.join(dbPath,'tempCluster.data'))
         session.database = 'db_ead_cluster'
+        clusDocFac = clusDb.get_object(session, 'clusterDocumentFactory')
+        clusDocFac.load(session, os.path.join(dbPath, 'cluster', 'tempCluster.data'))
         hours, mins, secs = self._timeop(clusFlow.process, (session, clusDocFac))
         req.write('<span class="ok">[OK]</span> %dh %dm %ds<br/>' % (hours, mins, secs))
         session.database = 'db_ead'
@@ -1624,8 +1621,8 @@ clusFlow = None
 compFlow = None
 compRecordFlow = None
 # other
-extracter = None
-diacriticNormaliser = None
+extractor = None
+diacriticNormalizer = None
 
 rebuild = True
 
@@ -1637,7 +1634,7 @@ def build_architecture(data=None):
     clusDb, clusStore, clusFlow, \
     summaryTxr, fullTxr, fullSplitTxr, textTxr, \
     ppFlow, buildFlow, buildSingleFlow, indexRecordFlow, assignDataIdFlow, normIdFlow, compFlow, compRecordFlow, \
-    extracter, diacriticNormaliser, \
+    extractor, diacriticNormalizer, \
     rebuild
     
     # globals line 1: re-establish session; maintain user if possible
@@ -1681,8 +1678,8 @@ def build_architecture(data=None):
     compFlow = db.get_object(session, 'buildAllComponentWorkflow'); compFlow.load_cache(session, db)
     compRecordFlow = db.get_object(session, 'buildComponentWorkflow'); compRecordFlow.load_cache(session, db)
     # globals line 6: other
-    extracter = db.get_object(session, 'SimpleExtracter')
-    diacriticNormaliser = db.get_object(session, 'DiacriticNormaliser')
+    extractor = db.get_object(session, 'SimpleExtractor')
+    diacriticNormalizer = db.get_object(session, 'DiacriticNormalizer')
     
     rebuild = False
 
