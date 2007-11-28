@@ -6,20 +6,20 @@
 	Copyright &copy; 2005, 2006, 2007 the University of Liverpool
 -->
 	
-  <objectType>database.SimpleDatabase</objectType>
+    <objectType>database.SimpleDatabase</objectType>
 
-  <options>
-    <setting type="srw">1</setting>
-    <setting type="z3950">1</setting>
-  </options>
+    <options>
+        <setting type="srw">1</setting>
+        <setting type="z3950">1</setting>
+    </options>
 
-  <paths>
-    <path type="defaultPath">dbs/ead/cluster</path>
-    <path type="metadataPath">stores/metadata.bdb</path>
-    <path type="indexStoreList">eadClusterIndexStore</path>
-    <object type="recordStore" ref="eadClusterStore"/>
-    <object type="protocolMap" ref="eadClusterCQLProtocolMap"/>
- </paths>
+    <paths>
+        <path type="defaultPath">dbs/ead/cluster</path>
+        <path type="metadataPath">stores/metadata.bdb</path>
+        <path type="indexStoreList">eadClusterIndexStore</path>
+        <object type="recordStore" ref="eadClusterStore"/>
+        <object type="protocolMap" ref="eadClusterCQLProtocolMap"/>
+    </paths>
 
   <subConfigs>
     
@@ -37,6 +37,16 @@
 <!--        <path type="zeerexPath">zeerex_z3950.xml</path>-->
 <!--      </paths>-->
 <!--    </subConfig>-->
+
+    <subConfig type="documentFactory" id="clusterDocumentFactory">
+        <objectType>documentFactory.SimpleDocumentFactory</objectType>
+        <options>
+            <default type="data">tempCluster.data</default>
+            <default type="cache">0</default>
+            <default type="format">cluster</default>
+            <default type="codec">utf-8</default>
+        </options>
+    </subConfig>
     
     <!-- recordStores -->
     <subConfig type="recordStore" id="eadClusterStore">
@@ -44,7 +54,7 @@
       <paths>
 		<path type="defaultPath">stores</path>
         <path type="databasePath">clusterStore.bdb</path>
-		<object type="idNormaliser" ref="StringIntNormaliser"/>
+		<object type="idNormalizer" ref="StringIntNormalizer"/>
       </paths>
       <options>
         <setting type="digest">sha</setting>

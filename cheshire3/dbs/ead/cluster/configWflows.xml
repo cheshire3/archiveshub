@@ -45,6 +45,7 @@
 			  <!--<log>"... loaded, indexed"</log>-->
 			</try>
 			<except>
+                            <raise/>
 			  <log>"*** error"</log>
 			</except>
 		</workflow>

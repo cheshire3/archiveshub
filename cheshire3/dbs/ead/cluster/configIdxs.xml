@@ -11,9 +11,9 @@
         <xpath>/cluster/title</xpath>
         <xpath>/cluster/desciption</xpath>
         <process>
-          <object type="workflow" ref="KeywordExtracterWorkflow"/>
-          <object type="normaliser" ref="CaseNormaliser"/>
-          <object type="normaliser" ref="EnglishStemNormaliser"/>
+          <object type="workflow" ref="KeywordExtractorWorkflow"/>
+          <object type="normalizer" ref="CaseNormalizer"/>
+          <object type="normalizer" ref="EnglishStemNormalizer"/>
         </process>
       </source>
     </subConfig>
@@ -26,9 +26,9 @@
       <source>
         <xpath>/cluster/key</xpath>
         <process>
-          <object type="workflow" ref="KeywordExtracterWorkflow"/>
-          <object type="normaliser" ref="CaseNormaliser"/>
-          <object type="normaliser" ref="EnglishStemNormaliser"/>
+          <object type="workflow" ref="KeywordExtractorWorkflow"/>
+          <object type="normalizer" ref="CaseNormalizer"/>
+          <object type="normalizer" ref="EnglishStemNormalizer"/>
         </process>
       </source>
     </subConfig>
@@ -41,9 +41,9 @@
       <source>
         <xpath>/cluster/title</xpath>
         <process>
-          <object type="workflow" ref="KeywordExtracterWorkflow"/>
-          <object type="normaliser" ref="CaseNormaliser"/>
-          <object type="normaliser" ref="EnglishStemNormaliser"/>
+          <object type="workflow" ref="KeywordExtractorWorkflow"/>
+          <object type="normalizer" ref="CaseNormalizer"/>
+          <object type="normalizer" ref="EnglishStemNormalizer"/>
         </process>
       </source>
     </subConfig>
@@ -56,9 +56,9 @@
       <source>
         <xpath>/cluster/description</xpath>
         <process>
-          <object type="workflow" ref="KeywordExtracterWorkflow"/>
-          <object type="normaliser" ref="CaseNormaliser"/>
-          <object type="normaliser" ref="EnglishStemNormaliser"/>
+          <object type="workflow" ref="KeywordExtractorWorkflow"/>
+          <object type="normalizer" ref="CaseNormalizer"/>
+          <object type="normalizer" ref="EnglishStemNormalizer"/>
         </process>
       </source>
     </subConfig>
