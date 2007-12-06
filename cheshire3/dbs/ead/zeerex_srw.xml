@@ -327,58 +327,56 @@
 	</indexInfo>
 
 	<schemaInfo>
-		<schema identifier="http://www.loc.gov/ead/"
-		  location="http://www.loc.gov/ead/ead.xsd"
-		  sort="true" retrieve="true" name="ead"
-		  c3:transformer="stripAudienceInternalTxr">
-			<title>Encoded Archival Description (EAD)</title>
+		<schema identifier="info:srw/schema/1/ead-2002"
+                        sort="true" retrieve="true" name="ead"
+                        c3:transformer="stripAudienceInternalTxr">
+                    <title>Encoded Archival Description (EAD) DTD Version 2002</title>
 		</schema>
 		<schema identifier="info:srw/schema/1/dc-v1.1"
-		  location="http://www.loc.gov/zing/srw/dc.xsd"
-		  sort="false" retrieve="true" name="dc"
-		  c3:transformer="eadDublinCoreTxr">
-			<title>Dublin Core</title>
+                        location="http://www.loc.gov/zing/srw/dc.xsd"
+                        sort="false" retrieve="true" name="dc"
+                        c3:transformer="eadDublinCoreTxr">
+                    <title>Dublin Core</title>
 		</schema>
 		<schema identifier="http://www.openarchives.org/OAI/2.0/oai_dc/"
-		  location="http://www.openarchives.org/OAI/2.0/oai_dc.xsd"
-		  sort="false" retrieve="true" name="oai_dc"
-		  c3:transformer="OAIDublinCoreTransformer">
-			<title>OAI Unqualified Dublin Core</title>
+                        location="http://www.openarchives.org/OAI/2.0/oai_dc.xsd"
+                        sort="false" retrieve="true" name="oai_dc"
+                        c3:transformer="OAIDublinCoreTransformer">
+	           <title>OAI Unqualified Dublin Core</title>
 		</schema>
 	</schemaInfo>
 
-	<configInfo>
-	    <default type="numberOfRecords">1</default>
-	    <default type="contextSet">dc</default>
-	    <default type="index">dc.title</default>
-	    <default type="relation">all</default>
-	    <default type="sortSchema">ead</default>
-	    <default type="retrieveSchema">ead</default>
-	    <default type="sortCaseSensitive">false</default>
-	    <default type="sortAscending">true</default>
-	    <default type="sortMissingValue">HighValue</default>
-	    <setting type="maximumRecords">50</setting>
-	    <supports type="proximity"/>
-	    <supports type="resultSets"/>
-	    <supports type="sort"/>
-	    <supports type="relationModifier">relevant</supports>
-	    <supports type="relationModifier">stem</supports>
-	    <supports type="relationModifier">word</supports>
+    <configInfo>
+        <default type="numberOfRecords">1</default>
+        <default type="contextSet">dc</default>
+        <default type="index">dc.title</default>
+        <default type="relation">all</default>
+        <default type="sortSchema">ead</default>
+        <default type="retrieveSchema">ead</default>
+        <default type="sortCaseSensitive">false</default>
+        <default type="sortAscending">true</default>
+        <default type="sortMissingValue">HighValue</default>
+        <setting type="maximumRecords">50</setting>
+        <supports type="proximity"/>
+        <supports type="resultSets"/>
+        <supports type="sort"/>
+        <supports type="relationModifier">relevant</supports>
+        <supports type="relationModifier">stem</supports>
+        <supports type="relationModifier">word</supports>
 	    
-	    <supports type="extension"
-                  c3:type="record"
-                  c3:function="docidRecordHandler"
-                  c3:sruName="info-2-docid"
-                  c3:sruFunction="simpleRequestXform">info:srw/extension/2/docid-v1.0 docid
-  		</supports>
-	    <supports type="extension"
-		  c3:type="record"
-		  c3:function="recordMetadataHandler"
-		  c3:sruName="info-2-rec"
-		  c3:sruFunction="simpleRequestXform">info:srw/extension/2/rec-1.1 rec
-	</supports>
+        <supports type="extension"
+            c3:type="record"
+            c3:function="recordMetadataHandler"
+            c3:sruName="archiveshub-2-record">http://www.archiveshub.ac.uk/srw/extension/2/record-1.1 rec
+        </supports>
+        
+        <supports type="extension"
+            c3:type="search"
+            c3:function="resultSetSummaryHandler"
+            c3:sruName="archiveshub-2-resultSet">http://www.archiveshub.ac.uk/srw/extension/2/resultSet-1.1 rs
+        </supports>
 
-	</configInfo>
+    </configInfo>
 
 </explain>
 
