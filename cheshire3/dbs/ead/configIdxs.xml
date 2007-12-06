@@ -340,34 +340,34 @@
 			</options>
 		</subConfig>
 
-		<!-- description/topic/quick search index -->
-		<subConfig type="index" id="ead-idx-description">
-			<objectType>index.ProximityIndex</objectType>
-			<paths>
-				<object type="indexStore" ref="indexStore" />
-			</paths>
-			<source mode="data|all|any|=">
-				<xpath ref="descriptionXPath" />
-				<process>
-                                        <object type="extractor" ref="ProxExtractor"/>
-                                        <object type="normalizer" ref="CaseNormalizer"/>
-                                        <object type="tokenizer" ref="RegexpFindOffsetTokenizer"/>
-                                        <object type="normalizer" ref="StoplistNormalizer"/>
-                                        <object type="tokenMerger" ref="OffsetProxTokenMerger" />
-					<object type="workflow" ref="Diacritic-Case-Possessive-Stoplist-EnglishStem-NormalizerWorkflow"/>
-				</process>
-			</source>
-			<source mode="exact">
-				<process>
-					<object type="extractor" ref="SimpleExtractor"/>
-					<object type="workflow" ref="Space-Diacritic-Case-NormalizerWorkflow"/>
-				</process>
-			</source>
-			<options>
-				<setting type="recordStoreSizes">1</setting>
-				<setting type="nProxInts">3</setting>
-			</options>
-		</subConfig>
+	<!-- description/topic/quick search index -->
+	<subConfig type="index" id="ead-idx-description">
+		<objectType>index.ProximityIndex</objectType>
+		<paths>
+			<object type="indexStore" ref="indexStore" />
+		</paths>
+		<source mode="data|all|any|=">
+			<xpath ref="descriptionXPath" />
+			<process>
+                                    <object type="extractor" ref="ProxExtractor"/>
+                                    <object type="normalizer" ref="CaseNormalizer"/>
+                                    <object type="tokenizer" ref="RegexpFindOffsetTokenizer"/>
+                                    <object type="normalizer" ref="StoplistNormalizer"/>
+                                    <object type="tokenMerger" ref="OffsetProxTokenMerger" />
+				<object type="workflow" ref="Diacritic-Case-Possessive-Stoplist-EnglishStem-NormalizerWorkflow"/>
+			</process>
+		</source>
+		<source mode="exact">
+			<process>
+				<object type="extractor" ref="SimpleExtractor"/>
+				<object type="workflow" ref="Space-Diacritic-Case-NormalizerWorkflow"/>
+			</process>
+		</source>
+		<options>
+			<setting type="recordStoreSizes">1</setting>
+			<setting type="nProxInts">3</setting>
+		</options>
+	</subConfig>
 
 		<!-- full text index -->
 		<subConfig type="index" id="ead-idx-all">
