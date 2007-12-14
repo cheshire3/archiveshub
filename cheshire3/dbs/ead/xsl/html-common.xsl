@@ -270,7 +270,7 @@
 		
 		<!-- CONTROLACCESS -->
 		<xsl:apply-templates select="./controlaccess"/>
-		 
+		<xsl:text> </xsl:text> 
 	</xsl:template>
 
 
