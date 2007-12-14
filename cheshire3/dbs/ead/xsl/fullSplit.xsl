@@ -38,36 +38,31 @@
 
 
 	<xsl:template match="/ead">
-  		<div id="record-head">
-			<!-- Core information about described material from <did> -->
-			<xsl:apply-templates select="./archdesc/did"/>
-			<!-- finding aid metadata from <eadheader> - creator, revisions etc -->
-			<xsl:if test="$finding_aid_metadata">
-			  <xsl:apply-templates select="./eadheader"/>
-			</xsl:if>
-		</div>
-		<div class="archdesc">
-			<xsl:apply-templates select="./archdesc" />
-		</div>
+            <div id="record-head">
+            	<!-- Core information about described material from <did> -->
+                <xsl:apply-templates select="./archdesc/did"/>
+                <!-- finding aid metadata from <eadheader> - creator, revisions etc -->
+            	<xsl:if test="$finding_aid_metadata">
+            	   <xsl:apply-templates select="./eadheader"/>
+            	</xsl:if>
+            </div>
+            <div class="archdesc">
+            	<xsl:apply-templates select="./archdesc" />
+            </div>
 	    <p style="page-break-before: always" />
 	    <!-- DSC -->
-		<div class="dsc">
-			<xsl:apply-templates select="./archdesc/dsc"/>
-		</div>
+            <xsl:apply-templates select="./archdesc/dsc"/>
 	</xsl:template>
 	
- 
 	<!--DSC SECTION-->
 	<xsl:template name="all-component" match="c|c01|c02|c03|c04|c05|c06|c07|c08|c09|c10|c11|c12">
-		<xsl:if test="not(@audience and @audience = 'internal')">
-			<xsl:if test="$horizontal_rule_between_units">
-				<hr/>    
-			</xsl:if>
-			<p style="page-break-before: always"/>
-			<xsl:call-template name="single-component" />
-		</xsl:if>
+            <xsl:if test="not(@audience and @audience = 'internal')">
+            	<xsl:if test="$horizontal_rule_between_units">
+                    <hr/>    
+            	</xsl:if>
+            	<p style="page-break-before: always"/>
+            	<xsl:call-template name="single-component" />
+            </xsl:if>
 	</xsl:template>
 
 </xsl:stylesheet>
-
-

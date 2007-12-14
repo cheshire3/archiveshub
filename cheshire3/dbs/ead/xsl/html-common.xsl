@@ -22,25 +22,25 @@
 
   	<!-- DID -->
 	<xsl:template match="did">
-	  	<a>
-	  		<xsl:attribute name="name">
-	  			<xsl:choose>
-	  				<xsl:when test="@id">
-	  					<xsl:value-of select="@id" />
-	  				</xsl:when>
-	  				<xsl:when test="unitid/@id">
-	  					<xsl:value-of select="unitid/@id" />
-	  				</xsl:when>
-	  				<xsl:otherwise>
-	  					<xsl:value-of select="generate-id(.)" />
-	  				</xsl:otherwise>
-	  			</xsl:choose>
-	  		</xsl:attribute>
-	  		<xsl:text> </xsl:text>
-	  	</a>
+            <a>
+            	<xsl:attribute name="name">
+                    <xsl:choose>
+                    	<xsl:when test="@id">
+                            <xsl:value-of select="@id" />
+                    	</xsl:when>
+                    	<xsl:when test="unitid/@id">
+                            <xsl:value-of select="unitid/@id" />
+                    	</xsl:when>
+                    	<xsl:otherwise>
+                            <xsl:value-of select="generate-id(.)" />
+                    	</xsl:otherwise>
+                    </xsl:choose>
+            	</xsl:attribute>
+            	<xsl:text> </xsl:text>
+            </a>
 	
-	  	<h2 class="unittitle">
-	      <xsl:choose>
+            <h2 class="unittitle">
+	       <xsl:choose>
 	        <xsl:when test="unittitle">
 	          <xsl:apply-templates select="unittitle[1]"/>
 	        </xsl:when>
@@ -53,8 +53,8 @@
 	        <xsl:otherwise>
 	          <xsl:text>(untitled)</xsl:text>
 	        </xsl:otherwise>
-	      </xsl:choose>
-		</h2>
+	       </xsl:choose>
+            </h2>
 		
 		<xsl:if test="./dao|../dao|../odd/dao|./daogrp|../daogrp|../odd/daogrp">
 			<div class="daos">

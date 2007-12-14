@@ -111,7 +111,7 @@
 		<xsl:param name="text">
 			<xsl:value-of select="."/>
 		</xsl:param>
-		<xsl:value-of select="translate(translate(translate($text, ' ', ''), '\n', ''), $uc, $lc)"/>
+		<xsl:value-of select="translate(translate($text, ' ', ''), $uc, $lc)"/>
 	</xsl:template>
  
 	<xsl:template match="*">
