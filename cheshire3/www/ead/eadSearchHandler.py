@@ -403,7 +403,7 @@ class EadSearchHandler(EadHandler):
                     return '<p class="error">Invalid query submitted.</p>'
                 
             if (withinCollection and withinCollection != 'allcollections'):
-                qString = '(c3.ead-idx-docid exact "%s" or ead.parentid exact "%s/%s") and/relevant %s' % (withinCollection, recordStore.id, withinCollection, qString)
+                qString = '(c3.ead-idx-docid exact "%s" or ead.parentid exact "%s/%s") and/relevant (%s)' % (withinCollection, recordStore.id, withinCollection, qString)
             elif (form.has_key('noComponents')):
                 qString = 'ead.istoplevel=1 and/relevant ' + qString
             

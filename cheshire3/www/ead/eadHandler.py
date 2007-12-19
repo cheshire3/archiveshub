@@ -18,6 +18,9 @@
 #                        -    spelling corrections for extracter, normaliser etc.
 #                        -    session arg added to get_raw|xml|dom|sax functions
 #                        -    fetch_idList removed - all stores iterable
+# 0.04 - 14/12/2007 - JH - Non-ascii character handling fixes
+#
+#
 
 # import mod_python stuffs
 from mod_python import apache, Cookie
@@ -116,6 +119,11 @@ class EadHandler:
         
         #- end send_html() ---------------------------------------------------------
     
+    def _stripOffendingChar(self, exception):
+        text = exception.object
+        return text[:exception.start] + '<span class="error" title="This character could not be encoded for display">*</span>' + text[exception.end:]
+    
+    
     def display_full(self, rec, paramDict, isComponent=False):
         recid = rec.id
         if (len(rec.get_xml(session)) < max_page_size_bytes) or isComponent:
@@ -136,7 +144,7 @@ class EadHandler:
             os.remove(os.path.join(toc_cache_path, 'foo.bar'))
             tocfile = nonAsciiRe.sub(asciiFriendly, tocfile)
             tocfile = tocfile.replace('RECID', recid)
-            tocfile = overescapedAmpRe.sub(unescapeCharent, tocfile)
+            #tocfile = overescapedAmpRe.sub(unescapeCharent, tocfile)
         
         doc = unicode(doc.get_raw(session), 'utf-8')
         doc = nonAsciiRe.sub(asciiFriendly, doc)
@@ -160,14 +168,14 @@ class EadHandler:
                 
             pages = []
             while pseudopages:
-                pagebits = ['<div id="padder"><div id="rightcol" class="ead">%PAGENAV%']
+                pagebits = ['<div id="padder"><div id="rightcol" class="ead">', '%PAGENAV%']
                 while (sum(map(len, pagebits)) < max_page_size_bytes):
                     pagebits.append(pseudopages.pop(0))
                     if not pseudopages:
                         break
                 
                 # append: pagenav, end rightcol div, padder div, left div (containing toc)
-                pagebits.append('%PAGENAV%\n<br/>\n</div><!-- end rightcol -->\n</div><!-- end padder -->\n<div id="leftcol" class="toc"><!--#include virtual="/ead/tocs/RECID.inc"--></div>')
+                pagebits.extend(['%PAGENAV%','<br/>','</div><!-- end rightcol -->','</div><!-- end padder -->','<div id="leftcol" class="toc"><!--#include virtual="/ead/tocs/RECID.inc"--></div>'])
                 pages.append('\n'.join(pagebits))
 
             start = 0
@@ -227,6 +235,7 @@ class EadHandler:
                 pagex = pagex.replace('PAGE#', '%s/RECID-p1.shtml#' % (cache_url))
                 pagex = multiReplace(pagex, paramDict)
                 pages[x] = pagex
+                pagex = pagex.encode('utf-8')
                 write_file(os.path.join(cache_path, recid + '-p%d.shtml' % (x+1)), pagex)
 
             self.logger.log('Multi-page navigation generated')
@@ -241,6 +250,7 @@ class EadHandler:
             
             # any remaining links were not anchored - encoders fault :( - hope they're on page 1
             tocfile = multiReplace(tocfile, {'SCRIPT': script, 'PAGE#': '%s/%s-p1.shtml#' % (cache_url, recid)})
+            tocfile = tocfile.encode('utf-8')
             write_file(os.path.join(toc_cache_path, recid +'.inc'), tocfile)
             os.chmod(os.path.join(toc_cache_path, recid + '.inc'), 0755)
  
