@@ -191,7 +191,7 @@ class EadSearchHandler(EadHandler):
             useScaledWeights = False
             topWeight = rs[0].weight # get relevance of best record
         
-        if (firstrec-1 >= len(rs)):
+        if (firstrec-1 >= hits):
             return '<div class="hitreport">Your search resulted in <strong>%d</strong> hits, however you requested to begin displaying at result <strong>%d</strong>.</div>' % (hits, firstrec)
         
         rows = ['''<script type="text/javascript"> <!-- 
