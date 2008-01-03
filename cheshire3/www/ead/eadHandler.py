@@ -1,13 +1,14 @@
 #
 # Script:    eadHandler.py
-# Version:   0.03
-# Date:      26 November 2007
-# Copyright: &copy; University of Liverpool 2005-2007
+# Version:   0.05
+# Date:      03 January 2008
+# Copyright: &copy; University of Liverpool 2005-2008
 # Description:
 #            Globals and parent class web interfaces to a Cheshire3 database of EAD finding aids.
 #            - part of Cheshire for Archives v3
 #
 # Author(s): JH - John Harrison <john.harrison@liv.ac.uk>
+#            CS - Catherine Smith <catherine.smith@liv.ac.uk>
 #
 # Language:  Python
 #
@@ -19,7 +20,7 @@
 #                        -    session arg added to get_raw|xml|dom|sax functions
 #                        -    fetch_idList removed - all stores iterable
 # 0.04 - 14/12/2007 - JH - Non-ascii character handling fixes
-#
+# 0.05 - 03/01/2008 - CS - _parse_upload function moved here from adminHandler as also used in editing handler
 #
 
 # import mod_python stuffs
@@ -123,6 +124,48 @@ class EadHandler:
         text = exception.object
         return text[:exception.start] + '<span class="error" title="This character could not be encoded for display">*</span>' + text[exception.end:]
     
+    
+    def _parse_upload(self, data):
+        if (type(data) == unicode):
+            try: data = data.encode('utf-8')
+            except:
+                try: data = data.encode('utf-16')
+                except: pass # hope for the best!
+        doc = StringDocument(data)
+        doc = ppFlow.process(session, doc)
+        try:
+            rec = docParser.process_document(session, doc)
+        except:
+            newlineRe = re.compile('(\s\s+)')
+            doc.text = newlineRe.sub('\n\g<1>', doc.get_raw(session))
+            # repeat parse with correct line numbers
+            try:
+                rec = docParser.process_document(session, doc)
+            except:
+                self.htmlTitle.append('Error')
+                e = sys.exc_info()
+                self.logger.log('*** %s: %s' % (e[0], e[1]))
+                # try and highlight error in specified place
+                lines = doc.get_raw(session).split('\n')
+                positionRe = re.compile(':(\d+):(\d+):')
+                mo = positionRe.search(str(e[1]))
+                line, posn = lines[int(mo.group(1))-1], int(mo.group(2))
+                startspace = newlineRe.match(line).group(0)
+                return '''\
+        <div id="wrapper"><p class="error">An error occured while parsing your file. 
+        Please check the file at the suggested location and try again.</p>
+        <code>%s: %s</code>
+        <pre>
+        %s
+        <span class="error">%s</span>
+        </pre>
+        <p><a href="files.html">Back to file page</a></p></div>
+                ''' % (e[0], e[1], html_encode(line[:posn+20]) + '...',  startspace + str('-'*(posn-len(startspace))) +'^')
+        
+        del data, doc
+        return rec
+    # end _parse_upload()
+
     
     def display_full(self, rec, paramDict, isComponent=False):
         recid = rec.id
