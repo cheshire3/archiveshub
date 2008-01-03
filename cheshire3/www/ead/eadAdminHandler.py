@@ -1,8 +1,8 @@
 #
 # Script:    eadAdminHandler.py
-# Version:   0.27
-# Date:      26 November 2007
-# Copyright: &copy; University of Liverpool 2005-2007
+# Version:   0.28
+# Date:      03 January 2008
+# Copyright: &copy; University of Liverpool 2005-2008
 # Description:
 #            Web interface for administering a cheshire 3 database of EAD finding aids
 #            - part of Cheshire for Archives v3
@@ -65,7 +65,8 @@
 #                        -    spelling corrections for extracter, normaliser etc.
 #                        -    session arg added to get_raw|xml|dom|sax functions
 #                        -    fetch_idList removed - all stores iterable
-#
+# 0.28 - 03/01/2008 - CS - Added menu for editing to main menu page
+#                        - _parse_upload function moved to eadHandler because also used by eadEditingHandler
 #
 
 from eadHandler import *
