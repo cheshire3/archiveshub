@@ -549,7 +549,7 @@ class EadAdminHandler(EadHandler):
                #return '<span class="error">Unable to delete user %s - incorrect password.</span>' % (userid) + self.list_users()
     #- end delete_user()
 
-    def _walk_directory(self, d):
+    def _walk_directory(self, d, type='checkbox'):
         global script
         # we want to keep all dirs at the top, followed by all files
         outD = []
@@ -566,7 +566,7 @@ class EadAdminHandler(EadHandler):
             else:
                 fp = os.path.join(d,f)
                 outF.extend(['<li>'
-                            ,'<span class="fileops"><input type="checkbox" name="filepath" value="%s"/></span>' % (fp)
+                            ,'<span class="fileops"><input type="%s" name="filepath" value="%s"/></span>' % (type, fp)
                             ,'<span class="filename"><a href="files.html?operation=view&amp;filepath=%s" title="View file contents">%s</a></span>' % (cgi_encode(fp), f)
                             ,'</li>'
                             ])
@@ -613,6 +613,16 @@ class EadAdminHandler(EadHandler):
         return '\n'.join(out)
     #- end review_records()
     
+    
+    def show_editMenu(self):
+        global sourceDir
+        self.htmlTitle.append('Edit/Create')
+        page = read_file('editmenu.html')
+        files = self._walk_directory(sourceDir, 'radio')
+        output = page.replace('%%FILES%%', ''.join(files))
+        return output
+        
+    
     def _run_thread(self, t, req):
         start = time.time()
         dotcount = 0
@@ -636,47 +646,47 @@ class EadAdminHandler(EadHandler):
     # end _run_thread()
     
         
-    def _parse_upload(self, data):
-        if (type(data) == unicode):
-            try: data = data.encode('utf-8')
-            except:
-                try: data = data.encode('utf-16')
-                except: pass # hope for the best!
-        
-        doc = StringDocument(data)
-        doc = ppFlow.process(session, doc)
-        try:
-            rec = docParser.process_document(session, doc)
-        except:
-            newlineRe = re.compile('(\s\s+)')
-            doc.text = newlineRe.sub('\n\g<1>', doc.get_raw(session))
-            # repeat parse with correct line numbers
-            try:
-                rec = docParser.process_document(session, doc)
-            except:
-                self.htmlTitle.append('Error')
-                e = sys.exc_info()
-                self.logger.log('*** %s: %s' % (e[0], e[1]))
-                # try and highlight error in specified place
-                lines = doc.get_raw(session).split('\n')
-                positionRe = re.compile(':(\d+):(\d+):')
-                mo = positionRe.search(str(e[1]))
-                line, posn = lines[int(mo.group(1))-1], int(mo.group(2))
-                startspace = newlineRe.match(line).group(0)
-                return '''\
-        <div id="wrapper"><p class="error">An error occured while parsing your file. 
-        Please check the file at the suggested location and try again.</p>
-        <code>%s: %s</code>
-        <pre>
-        %s
-        <span class="error">%s</span>
-        </pre>
-        <p><a href="files.html">Back to file page</a></p></div>
-                ''' % (e[0], e[1], html_encode(line[:posn+20]) + '...',  startspace + str('-'*(posn-len(startspace))) +'^')
-        
-        del data, doc
-        return rec
-    # end _parse_upload()
+#    def _parse_upload(self, data):
+#        if (type(data) == unicode):
+#            try: data = data.encode('utf-8')
+#            except:
+#                try: data = data.encode('utf-16')
+#                except: pass # hope for the best!
+#        
+#        doc = StringDocument(data)
+#        doc = ppFlow.process(session, doc)
+#        try:
+#            rec = docParser.process_document(session, doc)
+#        except:
+#            newlineRe = re.compile('(\s\s+)')
+#            doc.text = newlineRe.sub('\n\g<1>', doc.get_raw(session))
+#            # repeat parse with correct line numbers
+#            try:
+#                rec = docParser.process_document(session, doc)
+#            except:
+#                self.htmlTitle.append('Error')
+#                e = sys.exc_info()
+#                self.logger.log('*** %s: %s' % (e[0], e[1]))
+#                # try and highlight error in specified place
+#                lines = doc.get_raw(session).split('\n')
+#                positionRe = re.compile(':(\d+):(\d+):')
+#                mo = positionRe.search(str(e[1]))
+#                line, posn = lines[int(mo.group(1))-1], int(mo.group(2))
+#                startspace = newlineRe.match(line).group(0)
+#                return '''\
+#        <div id="wrapper"><p class="error">An error occured while parsing your file. 
+#        Please check the file at the suggested location and try again.</p>
+#        <code>%s: %s</code>
+#        <pre>
+#        %s
+#        <span class="error">%s</span>
+#        </pre>
+#        <p><a href="files.html">Back to file page</a></p></div>
+#                ''' % (e[0], e[1], html_encode(line[:posn+20]) + '...',  startspace + str('-'*(posn-len(startspace))) +'^')
+#        
+#        del data, doc
+#        return rec
+#    # end _parse_upload()
         
     def _validate_isadg(self, rec):
         global required_xpaths
@@ -708,6 +718,7 @@ class EadAdminHandler(EadHandler):
         self.htmlNav.append('<a href="/ead/admin/files.html" title="Preview File" class="navlink">Files</a>')
         f = form.get('eadfile', None)
         pagenum = int(form.getfirst('pagenum', 1))
+
         if not f or not len(f.value):
             head = self._get_genericHtml('header.html')
             output = head
@@ -756,6 +767,8 @@ class EadAdminHandler(EadHandler):
  
         return page
     #- end preview_file()
+
+
 
     def upload_file(self, req, form):
         self.htmlTitle.append('File Management')
@@ -1539,7 +1552,13 @@ class EadAdminHandler(EadHandler):
                         self.htmlTitle.append('Error')
                         content = 'An invalid operation was attempted. Valid operations are:<br/>reset'
                 else:    
-                    content = self.view_statistics(form.get('fileName', 'searchHandler.log'))                
+                    
+                    
+                    content = self.view_statistics(form.get('fileName', 'searchHandler.log'))     
+                    
+            elif (path == 'edit.html') :                
+                content = self.show_editMenu()
+                
             elif (len(path)):
                 # 404
                 self.htmlTitle.append('Page Not Found')
