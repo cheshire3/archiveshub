@@ -463,13 +463,13 @@
 		</recordSyntax>
 		<!-- XML -->
 		<recordSyntax identifier="1.2.840.10003.5.109.9">
-			<elementSet name="F" c3:transformer="stripAudienceInternalTxr"/>
-			<elementSet name="ead" c3:transformer="stripAudienceInternalTxr"/>
+			<elementSet name="F" c3:transformer="sruOutgoingTxr"/>
+			<elementSet name="ead" c3:transformer="sruOutgoingTxr"/>
 			<elementSet name="DC" c3:transformer="eadDublinCoreTxr" />
 		</recordSyntax>
 		<recordSyntax identifier="1.2.840.10003.5.109.10">
-			<elementSet name="F" c3:transformer="stripAudienceInternalTxr"/>
-			<elementSet name="ead" c3:transformer="stripAudienceInternalTxr"/>
+			<elementSet name="F" c3:transformer="sruOutgoingTxr"/>
+			<elementSet name="ead" c3:transformer="sruOutgoingTxr"/>
 			<elementSet name="DC" c3:transformer="eadDublinCoreTxr" />
 		</recordSyntax>
 	</recordInfo>

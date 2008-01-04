@@ -39,7 +39,7 @@
 	  	<schema identifier="http://www.loc.gov/ead/"
 		  location="http://www.loc.gov/ead/ead.xsd"
 		  sort="true" retrieve="true" name="ead"
-		  c3:transformer="stripAudienceInternalTxr">
+		  c3:transformer="sruOutgoingTxr">
 			<title>Encoded Archival Description (EAD)</title>
 		</schema>
 	  

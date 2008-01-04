@@ -20,7 +20,7 @@
 	<xsl:output method="xml" omit-xml-declaration="yes"/>
 	
 	<xsl:template match="/">
-		<xsl:apply-templates />
+	   <xsl:apply-templates />
 	</xsl:template>
 	
 	<!-- Strip all audience=internal -->
