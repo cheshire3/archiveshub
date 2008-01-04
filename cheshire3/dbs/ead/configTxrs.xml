@@ -7,10 +7,10 @@
 
 	<subConfigs>
 	
-		<subConfig type="transformer" id="stripAudienceInternalTxr">
+		<subConfig type="transformer" id="sruOutgoingTxr">
 	      <objectType>transformer.LxmlXsltTransformer</objectType>
 	      <paths>
-	         <path type="xsltPath">xsl/stripAudienceInternalTxr.xsl</path>
+	         <path type="xsltPath">xsl/sruOut.xsl</path>
 	      </paths>
 	    </subConfig>
 	    
