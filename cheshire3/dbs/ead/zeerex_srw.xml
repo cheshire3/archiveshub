@@ -39,7 +39,8 @@
 	      <name set="ead">istoplevel</name>
 	    </map>
 	    <configInfo>
-	      <supports type="relation" c3:index="ead-idx-istoplevel">=</supports>
+              <supports type="relation">exact</supports>
+	      <supports type="relation">=</supports>
 	    </configInfo>
 	  </index>
 	  
@@ -49,8 +50,8 @@
 	      <name set="ead">parentid</name>
 	    </map>
 	    <configInfo>
-	      <supports type="relation" c3:index="ead-idx-parentid">exact</supports>
-	      <supports type="relation" c3:index="ead-idx-parentid">=</supports>
+	      <supports type="relation">exact</supports>
+	      <supports type="relation">=</supports>
 	    </configInfo>
 	  </index>
 	
@@ -60,12 +61,12 @@
 	      <name set="dc">identifier</name>
 	    </map>
 	    <configInfo>
-	      <supports type="relation" c3:index="ead-idx-unitid">exact</supports>
-	      <supports type="relation" c3:index="ead-idx-unitid">=</supports>
-	      <supports type="relation" c3:index="ead-idx-unitid">within</supports>
+	      <supports type="relation">exact</supports>
+	      <supports type="relation">=</supports>
+	      <supports type="relation">within</supports>
 	      <supports type="relation" c3:index="ead-idx-unitidword">all</supports>
 	      <supports type="relation" c3:index="ead-idx-unitidword">any</supports>
-	      <supports type="relationModifier" c3:index="ead-idx-unitid">string</supports>
+	      <supports type="relationModifier">string</supports>
 	      <supports type="relationModifier" c3:index="ead-idx-unitidword">word</supports>
 	      <supports type="relationModifier" c3:index="ead-idx-unitidword">stem</supports>
 	    </configInfo>
@@ -77,12 +78,12 @@
 	      <name set="dc">title</name>
 	    </map>
 	    <configInfo>
-	      <supports type="relation" c3:index="ead-idx-title">exact</supports>
-	      <supports type="relation" c3:index="ead-idx-title">within</supports>
+	      <supports type="relation">exact</supports>
+	      <supports type="relation">within</supports>
 	      <supports type="relation" c3:index="ead-idx-titleword">all</supports>
 	      <supports type="relation" c3:index="ead-idx-titleword">any</supports>
 	      <supports type="relation" c3:index="ead-idx-titleword">=</supports>
-	      <supports type="relationModifier" c3:index="ead-idx-title">string</supports>
+	      <supports type="relationModifier">string</supports>
 	      <supports type="relationModifier" c3:index="ead-idx-titleword">word</supports>
 	      <supports type="relationModifier" c3:index="ead-idx-titleword">stem</supports>
 	    </configInfo>
@@ -94,12 +95,12 @@
 	      <name set="dc">creator</name>
 	    </map>
 	    <configInfo>
-	      <supports type="relation" c3:index="ead-idx-creator">=</supports>
-	      <supports type="relation" c3:index="ead-idx-creator">exact</supports>
-	      <supports type="relation" c3:index="ead-idx-creator">within</supports>
+	      <supports type="relation">=</supports>
+	      <supports type="relation">exact</supports>
+	      <supports type="relation">within</supports>
 	      <supports type="relation" c3:index="ead-idx-creatorword">all</supports>
 	      <supports type="relation" c3:index="ead-idx-creatorword">any</supports>
-	      <supports type="relationModifier" c3:index="ead-idx-creator">string</supports>
+	      <supports type="relationModifier">string</supports>
 	    </configInfo>
 	  </index>
 	
@@ -109,11 +110,11 @@
 	      <name set="dc">description</name>
 	    </map>
 	    <configInfo>
-	      <supports type="relation" c3:index="ead-idx-description">any</supports>
-	      <supports type="relation" c3:index="ead-idx-description">all</supports>
-	      <supports type="relation" c3:index="ead-idx-description">=</supports>
-	      <supports type="relationModifier" c3:index="ead-idx-description">word</supports>
-	      <supports type="relationModifier" c3:index="ead-idx-description">stem</supports>
+	      <supports type="relation">any</supports>
+	      <supports type="relation">all</supports>
+	      <supports type="relation">=</supports>
+	      <supports type="relationModifier">word</supports>
+	      <supports type="relationModifier">stem</supports>
 	    </configInfo>
 	  </index>
 	
@@ -123,11 +124,11 @@
 	      <name set="cql">anywhere</name>
 	    </map>
 	    <configInfo>
-	      <supports type="relation" c3:index="ead-idx-all">any</supports>
-	      <supports type="relation" c3:index="ead-idx-all">all</supports>
-	      <supports type="relation" c3:index="ead-idx-all">=</supports>
-	      <supports type="relationModifier" c3:index="ead-idx-all">word</supports>
-	      <supports type="relationModifier" c3:index="ead-idx-all">stem</supports>
+	      <supports type="relation">any</supports>
+	      <supports type="relation">all</supports>
+	      <supports type="relation">=</supports>
+	      <supports type="relationModifier">word</supports>
+	      <supports type="relationModifier">stem</supports>
 	    </configInfo>
 	  </index>
 	
@@ -137,12 +138,12 @@
 	      <name set="dc">subject</name>
 	    </map>
 	    <configInfo>
-	      <supports type="relation" c3:index="ead-idx-subject">exact</supports>
-	      <supports type="relation" c3:index="ead-idx-subject">=</supports>
-	      <supports type="relation" c3:index="ead-idx-subject">within</supports>
+	      <supports type="relation">exact</supports>
+	      <supports type="relation">=</supports>
+	      <supports type="relation">within</supports>
 	      <supports type="relation" c3:index="ead-idx-subjectword">all</supports>
 	      <supports type="relation" c3:index="ead-idx-subjectword">any</supports>
-	      <supports type="relationModifier" c3:index="ead-idx-subject">string</supports>
+	      <supports type="relationModifier">string</supports>
 	      <supports type="relationModifier" c3:index="ead-idx-subjectword">word</supports>
 	      <supports type="relationModifier" c3:index="ead-idx-subjectword">stem</supports>
 	    </configInfo>
@@ -154,12 +155,12 @@
 	      <name set="bath">name</name>
 	    </map>
 	    <configInfo>
-	      <supports type="relation" c3:index="ead-idx-name">exact</supports>
-	      <supports type="relation" c3:index="ead-idx-name">=</supports>
-	      <supports type="relation" c3:index="ead-idx-name">within</supports>
+	      <supports type="relation">exact</supports>
+	      <supports type="relation">=</supports>
+	      <supports type="relation">within</supports>
 	      <supports type="relation" c3:index="ead-idx-nameword">all</supports>
 	      <supports type="relation" c3:index="ead-idx-nameword">any</supports>
-	      <supports type="relationModifier" c3:index="ead-idx-name">string</supports>
+	      <supports type="relationModifier">string</supports>
 	      <supports type="relationModifier" c3:index="ead-idx-nameword">word</supports>
 	    </configInfo>
 	  </index>
@@ -170,12 +171,12 @@
 	      <name set="bath">personalName</name>
 	    </map>
 	    <configInfo>
-	      <supports type="relation" c3:index="ead-idx-persname">exact</supports>
-	      <supports type="relation" c3:index="ead-idx-persname">=</supports>
-	      <supports type="relation" c3:index="ead-idx-persname">within</supports>
+	      <supports type="relation">exact</supports>
+	      <supports type="relation">=</supports>
+	      <supports type="relation">within</supports>
 	      <supports type="relation" c3:index="ead-idx-persnameword">all</supports>
 	      <supports type="relation" c3:index="ead-idx-persnameword">any</supports>
-	      <supports type="relationModifier" c3:index="ead-idx-persname">string</supports>
+	      <supports type="relationModifier">string</supports>
 	      <supports type="relationModifier" c3:index="ead-idx-persnameword">word</supports>
 	      <!--<supports type="relationModifier" c3:index="ead-idx-persnameword">=</supports>
 	    --></configInfo>
@@ -329,7 +330,7 @@
 	<schemaInfo>
 		<schema identifier="info:srw/schema/1/ead-2002"
                         sort="true" retrieve="true" name="ead"
-                        c3:transformer="stripAudienceInternalTxr">
+                        c3:transformer="sruOutgoingTxr">
                     <title>Encoded Archival Description (EAD) DTD Version 2002</title>
 		</schema>
 		<schema identifier="info:srw/schema/1/dc-v1.1"
