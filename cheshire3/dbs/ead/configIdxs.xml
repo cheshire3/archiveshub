@@ -349,12 +349,12 @@
 		<source mode="data|all|any|=">
 			<xpath ref="descriptionXPath" />
 			<process>
-                                    <object type="extractor" ref="ProxExtractor"/>
-                                    <object type="normalizer" ref="CaseNormalizer"/>
-                                    <object type="tokenizer" ref="RegexpFindOffsetTokenizer"/>
-                                    <object type="normalizer" ref="StoplistNormalizer"/>
-                                    <object type="tokenMerger" ref="OffsetProxTokenMerger" />
-				<object type="workflow" ref="Diacritic-Case-Possessive-Stoplist-EnglishStem-NormalizerWorkflow"/>
+                            <object type="extractor" ref="ProxExtractor"/>
+                            <object type="normalizer" ref="CaseNormalizer"/>
+                            <object type="tokenizer" ref="RegexpFindOffsetTokenizer"/>
+                            <object type="normalizer" ref="StoplistNormalizer"/> <!-- this is here so as not to screw up proximity info -->
+                            <object type="tokenMerger" ref="OffsetProxTokenMerger" />
+                            <object type="workflow" ref="Diacritic-Case-Possessive-EnglishStem-NormalizerWorkflow"/>
 			</process>
 		</source>
 		<source mode="exact">
@@ -426,13 +426,13 @@
 					<object type="workflow" ref="Diacritic-Case-Possessive-EnglishStem-NormalizerWorkflow"/>
 				</process>
 			</source>
-			<source mode="all|any|=">
+			<source mode="all|any">
 				<process>
 					<object type="workflow" ref="PreserveMaskingKeywordExtractorWorkflow" />
 					<object type="workflow" ref="Diacritic-Case-Possessive-EnglishStem-NormalizerWorkflow"/>
 				</process>
 			</source>
-			<source mode="exact">
+			<source mode="=|exact">
 				<process>
 					<object type="extractor" ref="SimpleExtractor"/>
 					<object type="workflow" ref="Space-Diacritic-Case-NormalizerWorkflow"/>
