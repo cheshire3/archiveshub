@@ -48,6 +48,13 @@
 	         <path type="xsltPath">xsl/form.xsl</path>
 	      </paths>
 	    </subConfig>
+	    
+	    <subConfig type="transformer" id="editingTocTxr">
+	    	<objectType>transformer.LxmlXsltTransformer</objectType>
+	      <paths>
+	         <path type="xsltPath">xsl/contents-editing.xsl</path>
+	      </paths>
+	    </subConfig>
 	
 	    <subConfig type="transformer" id="eadDublinCoreTxr">
 	      <objectType>transformer.LxmlXsltTransformer</objectType>
