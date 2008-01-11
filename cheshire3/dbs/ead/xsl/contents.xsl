@@ -105,13 +105,6 @@
 	      </xsl:otherwise>
       </xsl:choose>
     </a>
-    <!-- 
-    <xsl:if test="$node/did/physdesc/extent">
-    	<xsl:text>{</xsl:text>
-    		<xsl:value-of select="$node/did/physdesc/extent"/>
-    	<xsl:text>}</xsl:text>
-    </xsl:if>
-     -->
   </xsl:template>
 
 </xsl:stylesheet>
