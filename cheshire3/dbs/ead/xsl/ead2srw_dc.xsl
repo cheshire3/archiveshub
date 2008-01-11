@@ -11,6 +11,7 @@
 	
 <xsl:stylesheet
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+  xmlns:rec="http://www.archiveshub.ac.uk/srw/extension/2/record-1.1"
   xmlns:srw_dc="info:srw/schema/1/dc-v1.1"
   xmlns:dc="http://purl.org/dc/elements/1.0"
   version="1.0">
@@ -41,38 +42,45 @@
 	</xsl:template>
 
 	<xsl:template match="/c3component">
-		<srw_dc:dc>
-			<!-- always insert identifier -->
-			<xsl:attribute name="id">
-				<xsl:choose>
-					<xsl:when test="./*/@id">
-						<xsl:value-of select="./*/@id"/>
-					</xsl:when>
-					<xsl:when test="./*/did/@id">
-						<xsl:value-of select="./*/did/@id"/>
-					</xsl:when>
-					<xsl:otherwise>
-						<xsl:call-template name="strip_space_and_lowercase">
-							<xsl:with-param name="text">
-								<xsl:value-of select="./*/did/unitid"/>
-							</xsl:with-param>
-						</xsl:call-template>
-					</xsl:otherwise>
-				</xsl:choose>
-			</xsl:attribute>
-		    <dc:identifier>
-				<xsl:call-template name="strip_space_and_lowercase">
-					<xsl:with-param name="text">
-						<xsl:value-of select="./*/did/unitid"/>
-					</xsl:with-param>
-				</xsl:call-template>
-			</dc:identifier>
-			<xsl:apply-templates select="./*/did"/>
-		    <xsl:apply-templates select="./*/controlaccess/subject"/>
-			<xsl:apply-templates select="./*/scopecontent"/>
-			<xsl:apply-templates select="./*/langmaterial"/>
-		</srw_dc:dc>
-	</xsl:template>
+            <srw_dc:dc>
+		<!-- always insert identifier -->
+		<xsl:attribute name="id">
+			<xsl:choose>
+				<xsl:when test="./*/@id">
+					<xsl:value-of select="./*/@id"/>
+				</xsl:when>
+				<xsl:when test="./*/did/@id">
+					<xsl:value-of select="./*/did/@id"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:call-template name="strip_space_and_lowercase">
+						<xsl:with-param name="text">
+							<xsl:value-of select="./*/did/unitid"/>
+						</xsl:with-param>
+					</xsl:call-template>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:attribute>
+                <rec:collectionIdentifier>
+                    <xsl:call-template name="parent_collection_identifier">
+                        <xsl:with-param name="parent">
+                            <xsl:value-of select="/c3component/@parent" />
+                        </xsl:with-param>
+                    </xsl:call-template>
+                </rec:collectionIdentifier>
+		<dc:identifier>
+                    <xsl:call-template name="strip_space_and_lowercase">
+                    	<xsl:with-param name="text">
+                            <xsl:value-of select="./*/did/unitid"/>
+                    	</xsl:with-param>
+                    </xsl:call-template>
+		</dc:identifier>
+                <xsl:apply-templates select="./*/did"/>
+                <xsl:apply-templates select="./*/controlaccess/subject"/>
+                <xsl:apply-templates select="./*/scopecontent"/>
+                <xsl:apply-templates select="./*/langmaterial"/>
+            </srw_dc:dc>
+        </xsl:template>
 
 	<xsl:template match="did">
 		<dc:title>
@@ -119,6 +127,13 @@
 		</xsl:param>
 		<xsl:value-of select="translate(translate($text, ' ', ''), $uc, $lc)"/>
 	</xsl:template>
+    
+        <xsl:template name="parent_collection_identifier">
+            <xsl:param name="parent">
+                <xsl:value-of select="." />
+            </xsl:param>
+            <xsl:value-of select="substring-after($parent, '/')" />
+        </xsl:template>
 
 	<xsl:template match="*">
 		<xsl:text> </xsl:text>
