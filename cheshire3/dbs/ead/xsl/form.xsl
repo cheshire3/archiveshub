@@ -2,10 +2,15 @@
 
 <xsl:stylesheet
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:exsl="http://exslt.org/common"
+  extension-element-prefixes="exsl"
   version="1.0">
-  
+  <xsl:import href="contents-editing.xsl"/>
   
   <xsl:output method="html" encoding="UTF-8"/>
+ <xsl:strip-space elements="*"/>
+ 
+ 
  
   <xsl:variable name="eadidstring">
   	<xsl:value-of select="/ead/eadheader/eadid/text()"/>
@@ -14,20 +19,27 @@
   
   <xsl:template match="/">
   <div id="formDiv" name="form" class="formDiv" onscroll="hideAllMenus()">
-    <form id="eadForm" name="eadForm" onreset="resetForm(this)" action="#" onsubmit="alert($(this).serialize()); return false">
-    <a id="addC" href="javascript: addComponent()">Add component to this description</a>
-    <!--<a id="keyboardToggle" href="javascript: toggleKeyboard()">Show Character Entity Keyboard</a>-->
+    <form id="eadForm" name="eadForm"  action="#" >
+    <div class="button"><a id="addC" class="buttonlink" href="javascript: addComponent()">Add component</a></div>
+    <div class="button"><a id="reset" class="buttonlink" href="javascript: resetForm()">Reset</a></div> <br />
       <div class="section">
     	<xsl:choose>
     		<xsl:when test="/ead/eadheader">
     			<h3>Collection Level Description</h3>
+    			<!--<input type="hidden" id="recid" name="recid">
+			  		<xsl:attribute name="value">
+			  			<xsl:text>%RECID%</xsl:text>
+			  		</xsl:attribute>
+			  	</input> 
+    			-->
+    			%RECID%
     			<xsl:apply-templates select="/c|/c01|/c02|/c03|/c04|/c05|/c06|/c07|/c08|/c09|/c10|/c11|/c12|/ead/archdesc"/>
     		</xsl:when>
     		<xsl:otherwise>
     			<h3>Component Level Description</h3>
-    			<xsl:if test="/c/recid">
+    		<!--	<xsl:if test="/c/recid">
    					<xsl:apply-templates select="/c/recid"/> 					
-    			</xsl:if>
+    			</xsl:if>-->
     			<xsl:apply-templates select="/c|/c01|/c02|/c03|/c04|/c05|/c06|/c07|/c08|/c09|/c10|/c11|/c12|/ead/archdesc"/>
     		</xsl:otherwise>
     	</xsl:choose>	
@@ -774,7 +786,7 @@
   </xsl:template>
   
   <xsl:template match="did/unittitle">
-  	<input class="menuField" type="text" onfocus="setCurrent(this);" name="did/unittitle" id="cab" size="80" onchange="updateTitle()">
+  	<input class="menuField" type="text" onfocus="setCurrent(this);" name="did/unittitle" id="cab" size="80" onchange="updateTitle(this)">
   		<xsl:attribute name="value">
   			<xsl:apply-templates/>
   		</xsl:attribute>
