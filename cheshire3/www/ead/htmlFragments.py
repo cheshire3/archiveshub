@@ -1,8 +1,8 @@
 #
 # Script:      htmlFragments.py
-# Version:     0.03
-# Date:        26 September 2007
-# Copyright:   &copy; University of Liverpool 2005-2007
+# Version:     0.05
+# Date:        11 January 2008
+# Copyright:   &copy; University of Liverpool 2005-2008
 # Description:
 #            HTML fragments used by Cheshire for Archives
 #
@@ -15,6 +15,7 @@
 # 0.03 - 26/09/2007 - JH - Mods to component search display to accomodate hierarchy of titles
 #                        - Folder tags added
 # 0.04 - 30/10/2007 - CS - Config code for superuser and user added/modified
+# 0.05 - 11/01/2008 - CS - javascript call to collapseLists function changed to createTreeFromList()
 #
 # NB:
 # - If you are not experieced in editing HTML you are advised not to edit any of the HTML fragments
@@ -117,7 +118,7 @@ toc_scripts = '''
   <!--
   function loadPage() {
     closeSplash();
-    collapseList('someId', getCookie('RECID-tocstate'), true);
+    createTreeFromList('someId', getCookie('RECID-tocstate'), true, false);
   }
   function unloadPage() {
     setCookie('RECID-tocstate', stateToString('someId'));
