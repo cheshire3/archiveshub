@@ -16,16 +16,22 @@
     <script type="text/javascript" src="/javascript/contextmenu.js"></script>
 	<script type="text/javascript" src="/javascript/dragHandler.js"></script>  
 	<script type="text/javascript" src="/javascript/tablednd.js"></script>
+	<script type="text/javascript" src="/javascript/collapsibleLists.js"></script>
+	<script type="text/javascript" src="/javascript/cookies.js"></script>
 	<script type="text/javascript">
     	function loadPage() {
 			SimpleContextMenu.setup({'preventDefault':true, 'preventForms':true});
 	        SimpleContextMenu.attach('menuField', 'tagmenu');
 	        SimpleContextMenu.attach('menuFieldError', 'tagmenu');
+	        closeSplash();
+	    	createTreeFromList('someId', getCookie('preview/catherine-tocstate'), false, false);
 	               
 			var dragable1 = DragHandler.attach(document.getElementById('keyboard'));
 
 		}	
-    	function unloadPage() {}    
+    	function unloadPage() {
+    		setCookie('preview/catherine-tocstate', stateToString('someId'));
+    	}    
     </script>
 
 
@@ -71,8 +77,8 @@
 <a id="preview-link" onclick="javascript: submit();">submit</a><br />
 <div id="treeDiv">
 
-<a id="link-collectionLevel" name="link" class="selected" onclick="javascript: displayForm(this.id)" style="display: inline">Collection Level</a>
-%TOC%
+<!--  <a id="collectionLevel" name="link" class="selected" onclick="javascript: displayForm(this.id)" style="display: inline">Collection Level</a>
+-->%TOC%
 </div>
 
 </div>
@@ -112,9 +118,9 @@
 	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Ā');" title="Upper-case A, macron"> &#256; </button></td>
 	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Ă');" title="Upper-case A, breve"> &#258; </button></td>
 	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'Ą');" title="Upper-case A, ogonek"> &#260; </button></td>
-		</tr>
-		<tr>
-		<!-- a -->
+	</tr>
+	<tr>
+	<!-- a -->
 	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'á');" title="Lower-case a, acute accent"> &aacute; </button></td>
 	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'à');" title="Lower-case a, grave accent"> &agrave; </button></td>
 	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, 'â');" title="Lower-case a, circumflex accent"> &acirc; </button></td>
@@ -284,7 +290,7 @@
 	<td width="35"><button onclick="cursorInsert(parent.currentEntryField, '©');" title="Copyright"> &#169; </button></td>
 	<td width="35"><button onclick="cursorInsert(parent.currentEntryField, 'quot');" title="Quotation mark"> &#34; </button></td>
 
-      </tr>
+    </tr>
 
     </table>
     </div>
