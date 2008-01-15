@@ -13,5 +13,3 @@ rm -f cluster/stores/*.bdb
 rm -rf cluster/indexes/*
 rm -f tempCluster.*
 cd $current
-
-
