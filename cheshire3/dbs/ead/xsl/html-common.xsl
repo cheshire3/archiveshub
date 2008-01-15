@@ -56,12 +56,12 @@
 	       </xsl:choose>
             </h2>
 		
-		<xsl:if test="./dao|../dao|../odd/dao|./daogrp|../daogrp|../odd/daogrp">
-			<div class="daos">
-				<div class="daohead">Digital Objects</div>
-				<xsl:apply-templates select="./dao|../dao|../odd/dao|./daogrp|../daogrp|../odd/daogrp"/>
-			</div>
-		</xsl:if>
+            <xsl:if test="./dao|../dao|../odd/dao|../scopecontent/dao|./daogrp|../daogrp|../odd/daogrp|../scopecontent/daogrp">
+                <div class="daos">
+                    <div class="daohead">Digital Objects</div>
+                    <xsl:apply-templates select="./dao|../dao|../odd/dao|../scopecontent/dao|./daogrp|../daogrp|../odd/daogrp|../scopecontent/daogrp"/>
+                </div>
+            </xsl:if>
 
 	    <div class="did">
 			<strong>Reference Number</strong><xsl:text>: </xsl:text>

@@ -6,38 +6,36 @@
     
 <!-- 
 	This file was produced, and released as part of Cheshire for Archives v3.x.
-	Copyright &copy; 2005-2007 the University of Liverpool
+	Copyright &copy; 2005-2008 the University of Liverpool
 -->
 
 <xsl:stylesheet 
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   version="1.0">
 
-	<xsl:output method="xml" omit-xml-declaration="yes"/>
-	<xsl:preserve-space elements="*"/>
+    <xsl:output method="xml" omit-xml-declaration="yes"/>
+    <xsl:preserve-space elements="*"/>
 
-  <!-- templates for Table of Contents (toc) -->
-  <xsl:template name="toc">
+    <!-- templates for Table of Contents (toc) -->
+    <xsl:template name="toc">
   	<script type="text/javascript" src="/javascript/collapsibleLists.js"></script>
   	<script type="text/javascript" src="/javascript/cookies.js"></script>
-  	
-    <h2>Contents 
-    	<span class="printlink">
-    		<a href="SCRIPT?operation=toc&amp;recid=RECID">[ printable ]</a>
-    	</span>
-    </h2>
-    <b>
+        <h2>
+            <xsl:text>Contents</xsl:text> 
+            <span class="printlink">
+                <a href="SCRIPT?operation=toc&amp;recid=RECID"><xsl:text>[ printable ]</xsl:text></a>
+            </span>
+        </h2>
+        <b>
 	    <xsl:call-template name="toc-link">
 	      <xsl:with-param name="node" select="/ead/archdesc"/>
 	    </xsl:call-template>
 	</b>
-    <ul id="someId" class="hierarchy">    
-		<xsl:apply-templates select="/ead/archdesc/dsc" mode="toc"/>
-    </ul>
-    <br/>
-    <br/>
-  </xsl:template>
-
+        <ul id="someId" class="hierarchy">    
+            <xsl:apply-templates select="/ead/archdesc/dsc" mode="toc"/>
+        </ul>
+        <br/>
+    </xsl:template>
 
 	<xsl:template match="dsc" mode="toc">
 		<xsl:for-each select="c|c01">
