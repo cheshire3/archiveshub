@@ -705,10 +705,11 @@ class EadSearchHandler(EadHandler):
         self.logger.log('Summary requested for record: %s' % (recid))
         # highlight search terms in rec.dom
         if (proxInfo) and highlight:
-            # sort proxInfo so that nodeIdxs are sorted descending (so that offsets don't get upset :)
             #proxInfo2 = [(proxInfo[x], proxInfo[x+1], proxInfo[x+2]) for x in range(0, len(proxInfo), 3)]
-            proxInfo2 = proxInfo
-            proxInfo2.sort(reverse=True)
+            #proxInfo2 = proxInfo
+            proxInfo2 = reduce(lambda x,y: x+y, proxInfo)        # flatten groups from phrases / multiple word terms into list of [nodeIdx, wordIdx, charOffset] triples
+            proxInfo2 = map(eval, set(map(repr, proxInfo2)))     # filter out duplicates
+            proxInfo2.sort(reverse=True)                         # sort proxInfo so that nodeIdxs are sorted descending (so that offsets don't get upset when modifying text :)
             nodeIdxs = []
             wordIdxs = []
             wordOffsets = []
