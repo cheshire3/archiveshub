@@ -259,7 +259,6 @@ class EadSearchHandler(EadHandler):
                             html = '<a href="%s?operation=full&amp;rsid=%%RSID%%&amp;recid=%s" onclick="SPLASH">%s</a>' % (script, cgi_encode(t[0]) , t[1])
                         else:
                             html = '<a href="%s?operation=full&amp;recid=%s" onclick="SPLASH">%s</a>' % (script, cgi_encode(t[0]) , t[1])
-                        
                     else:
                         html = t[1]
                         
@@ -1289,7 +1288,7 @@ In: %s
             The message returned was as follows:</p>
             <code>%s: %s</code>
             <p><strong>Please try again, or contact the system administrator if this problem persists.</strong></p>
-            <p>Debugging Traceback: <a class="jscall" onclick="toggleShow(this, 'traceback');">[ show ]</a></p>
+            <p>Debugging Traceback: <a class="jscall" href="javascript:;" onclick="toggleShow(this, 'traceback');">[ show ]</a></p>
             <div id="traceback">%s</div>
             </div>
             ''' % (excName, excArgs, '<br/>\n'.join(excTb))
