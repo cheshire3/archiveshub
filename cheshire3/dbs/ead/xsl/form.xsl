@@ -16,7 +16,7 @@
   	<xsl:value-of select="/ead/eadheader/eadid/text()"/>
   </xsl:variable>
   
-  
+    
   <xsl:template match="/">
   <div id="formDiv" name="form" class="formDiv" onscroll="hideAllMenus()">
     <form id="eadForm" name="eadForm"  action="#" >
@@ -25,21 +25,14 @@
       <div class="section">
     	<xsl:choose>
     		<xsl:when test="/ead/eadheader">
+    			<strong><xsl:text>Persistent Unique Identifier: </xsl:text></strong>				
+    			%PUI%
     			<h3>Collection Level Description</h3>
-    			<!--<input type="hidden" id="recid" name="recid">
-			  		<xsl:attribute name="value">
-			  			<xsl:text>%RECID%</xsl:text>
-			  		</xsl:attribute>
-			  	</input> 
-    			-->
-    			%RECID%
+    			%RECID%   			
     			<xsl:apply-templates select="/c|/c01|/c02|/c03|/c04|/c05|/c06|/c07|/c08|/c09|/c10|/c11|/c12|/ead/archdesc"/>
     		</xsl:when>
     		<xsl:otherwise>
     			<h3>Component Level Description</h3>
-    		<!--	<xsl:if test="/c/recid">
-   					<xsl:apply-templates select="/c/recid"/> 					
-    			</xsl:if>-->
     			<xsl:apply-templates select="/c|/c01|/c02|/c03|/c04|/c05|/c06|/c07|/c08|/c09|/c10|/c11|/c12|/ead/archdesc"/>
     		</xsl:otherwise>
     	</xsl:choose>	
@@ -47,41 +40,7 @@
 	</form>
   </div>
   </xsl:template>
-  
-  <xsl:template match="/c/recid">
-  	<input type="hidden" id="recid" name="recid">
-  		<xsl:attribute name="value">
-  			<xsl:value-of select="."/>
-  		</xsl:attribute>
-  	</input>
-  </xsl:template>
-  
-  <xsl:template match="/ead/eadheader">
-  	<div id="sec-3-1" class="section">
-      <span class="isadg"><h3>3.1: Identity Statement Area</h3></span>
-      <p>
-	  <strong><span class="isadg">3.1.1: </span><a href="arch/refcode.shtml" title="Reference Code help - opens in new window" target="_new">Reference Code</a></strong> 
-	  Comprising of <a href="http://www.iso.org/iso/en/prods-services/iso3166ma/02iso-3166-code-lists/list-en1.html" target="_new" title="Further information on ISO Country Codes">ISO Country Code</a>, 
-	  NCA Repository Code,
-	  and a unique identifier for this record or component.
-	  [<strong>all fields required</strong>]<br/>
-      	<xsl:choose>
-      		<xsl:when test="eadid">
-      			<xsl:apply-templates select="eadid"/>
-      		</xsl:when>
-      		<xsl:otherwise>
-      			<input type="text" name="caa-cc" id="caa-cc" maxlength="2" size="3"></input>
-				<input type="text" onfocus="setCurrent(this);" name="caa-rc" id="caa-rc" maxlength="4" size="5"></input>
-				<input type="text" onfocus="setCurrent(this);" name="caa-id" id="caa-id" size="50"></input>	
-      		</xsl:otherwise>
-      	</xsl:choose>     	
-      	</p>
-      </div>
-  </xsl:template>
-  
-<!--  <xsl:template match="/ead/archdesc">
-  	
-  </xsl:template> --> 
+    
   
   <xsl:template match="/c|/c01|/c02|/c03|/c04|/c05|/c06|/c07|/c08|/c09|/c10|/c11|/c12|/ead/archdesc">
   <xsl:if test="not(name() = 'archdesc')">
@@ -107,8 +66,8 @@
 	  	   <xsl:apply-templates select="did/unitid"/>
 	  	</xsl:when>
 	  	<xsl:otherwise>
-	  		<input type="text" name="did/unitid/@countrycode" id="countrycode" maxlength="2" size="3" value="GB" readonly="true" onblur="checkId('recordStore')"></input>
-			<input type="text" onfocus="setCurrent(this);" name="did/unitid/@mainagencycode" id="mainagencycode" maxlength="4" size="5" onblur="checkId('recordStore')"></input>
+	  		<input type="text" name="did/unitid/@countrycode" id="countrycode" maxlength="2" size="3" value="GB" onblur="checkId('recordStore')"></input>
+			<input type="text" onfocus="setCurrent(this);" name="did/unitid/@repositorycode" id="repositorycode" maxlength="4" size="5" onblur="checkId('recordStore')"></input>
 			<input type="text" onfocus="setCurrent(this);" name="did/unitid" id="unitid" size="50" onblur="checkId('recordStore')"></input>	
 	  	</xsl:otherwise>
 	  </xsl:choose>  		
@@ -161,7 +120,7 @@
 			</xsl:otherwise>
 		</xsl:choose>		
     </p>
-    <p><strong>Note: <span class="isadg">3.1.4: </span>Level of Description</strong> will be generated automatically for this record, with "fonds" as the default.</p>
+    <!-- <p><strong>Note: <span class="isadg">3.1.4: </span>Level of Description</strong> will be generated automatically for this record, with "fonds" as the default.</p> -->
    </div>
 <!-- CONTEXT -->   
    <div class="section">
@@ -297,8 +256,8 @@
 		     	<strong><span class="isadg">3.4.3: </span><a href="/arch/lang.shtml" title="Language of Material help - opens in new window" target="_new">Language of Material</a></strong> [Must include <a href="http://www.loc.gov/standards/iso639-2/englangn.html" title="ISO 639-2 codes - opens new window" target="_new">ISO 639-2 3-letter code</a>]
 		     	<div id="language" class="apcontainer">
 		     	<xsl:choose>
-		     		<xsl:when test="langusage/language">
-		     			<xsl:apply-templates select="langusage"/>
+		     		<xsl:when test="did/langmaterial/language">
+		     			<xsl:apply-templates select="did/langmaterial"/>
 		     		</xsl:when>
 		     		<xsl:otherwise>		     			
 						<div id="addedlanguages" style="display:none" class="added"></div>		
@@ -313,7 +272,8 @@
 		  				</table>
 					</div>
 		  			<div id="languagebuttons" class="buttoncontainer">
-		      			<input class="apbutton" type="button" onclick="addLanguage();" value="Add Language" ></input>
+		      			<input class="apbutton" type="button" onclick="addLanguage();" value="Add to Record" ></input><br/>
+		  				<input class="apbutton" type="button" onclick="resetAccessPoint('language');" value="Reset" ></input>
 		  			</div>
       			</div>
       			<br/>		     	
@@ -764,17 +724,17 @@
 
   
   <xsl:template match="did/unitid">
-	<input type="text" name="did/unitid" id="countrycode" maxlength="2" size="3" disabled="true" onblur="checkId()">		
+	<input type="text" name="did/unitid" id="countrycode" maxlength="2" size="3" onblur="checkId()">		
 		<xsl:if test="@countrycode">
 			<xsl:attribute name="value">
 				<xsl:value-of select="@countrycode"/>
 			</xsl:attribute>
 		</xsl:if>		
 	</input>
-	<input type="text" onfocus="setCurrent(this);" name="did/unitid" id="mainagencycode" maxlength="4" size="5" onblur="checkId()">
-		<xsl:if test="@mainagencycode">
+	<input type="text" onfocus="setCurrent(this);" name="did/unitid" id="repositorycode"  maxlength="4" size="5" onblur="checkId()">
+		<xsl:if test="@repositorycode">
 			<xsl:attribute name="value">
-				<xsl:value-of select="@mainagencycode"/>
+				<xsl:value-of select="@repositorycode"/>
 			</xsl:attribute>
 		</xsl:if>
 	</input>
@@ -892,10 +852,10 @@
   	  </textarea>
   </xsl:template>
 
-  <xsl:template match="langusage">
+  <xsl:template match="did/langmaterial">
 	<div id="addedlanguages" style="display:block" class="added">
 		<xsl:for-each select="language">
-			<input type="hidden" name="langusage/language">
+			<input type="hidden" name="did/langmaterial/language">
 				<xsl:attribute name="id">
 					<xsl:text>language_formgen</xsl:text><xsl:number level="single" count="language" format="1"/><xsl:text>xml</xsl:text>
 				</xsl:attribute>
@@ -1003,41 +963,6 @@
   	</textarea>
   </xsl:template>
   
-  
-
-
-  <xsl:template match="eadid">
-	<input type="text" name="caa-cc" id="caa-cc" maxlength="2" size="3" readonly="true">
-		<xsl:attribute name="value">
-		    <xsl:choose>
-		    	<xsl:when test="@countrycode">
-		    	   <xsl:value-of select="@countrycode"/>
-		    	</xsl:when>
-		    	<xsl:otherwise>
-		    	   <xsl:value-of select="substring($eadidstring, 1, 3)" />
-		    	</xsl:otherwise>
-		    </xsl:choose>					
-		</xsl:attribute>
-	</input>
-	<input type="text" onfocus="setCurrent(this);" name="caa-rc" id="caa-rc" maxlength="4" size="5" readonly="true">
-		<xsl:attribute name="value">
-			<xsl:choose>
-				<xsl:when test="@mainagencycode">
-					<xsl:value-of select="@mainagencycode" />
-				</xsl:when>
-				<xsl:otherwise>
-					<xsl:value-of select="substring($eadidstring, 4, 5)" />
-				</xsl:otherwise>
-			</xsl:choose>			
-		</xsl:attribute>
-	</input>
-	<input type="text" onfocus="setCurrent(this);" name="caa-id" id="caa-id" size="50" readonly="true">
-		<xsl:attribute name="value">
-			<xsl:value-of select="$eadidstring"/>
-		</xsl:attribute>
-	</input> 
-  </xsl:template>
-
   
   <xsl:template match="*">
         <xsl:text>&lt;</xsl:text><xsl:value-of select="name()"/>
