@@ -204,11 +204,11 @@
 	</xsl:template>
  
 	<xsl:template match="profiledesc">
-		<xsl:if test="creation/text()">
+		<xsl:if test="creation">
 			<strong>Creation</strong><xsl:text>: </xsl:text>
 			<xsl:apply-templates select="./creation"/><br/>
 		</xsl:if>
-		<xsl:if test="descrules/text()">
+		<xsl:if test="descrules">
 			<strong>Descriptive Rules</strong><xsl:text>: </xsl:text>
 			<xsl:apply-templates select="./descrules"/><br/>
 		</xsl:if>
