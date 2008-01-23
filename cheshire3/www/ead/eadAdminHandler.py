@@ -335,6 +335,7 @@ class EadAdminHandler(EadHandler):
                                                                 
         return '\n'.join(lines)
     #- end list_users()
+ 
            
     def _error(self, msg, page=""):
         if (page == 'users.html'):
@@ -351,6 +352,7 @@ class EadAdminHandler(EadHandler):
             link = '<a href="database.html">Return to \'Database Management\' page</a>'
         self.htmlTitle.append('Error')
         return '<span class="error">%s</span><br/>\n<br/>%s' % (msg, link)
+  
     
     def _modify_userDom(self, userDom, updateHash):
         global authStore
