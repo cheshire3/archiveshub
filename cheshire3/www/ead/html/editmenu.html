@@ -1,8 +1,10 @@
 <div id="single">
     <h3 class="bar"><a href="../edit/">Create New EAD Description</a></h3>
     <p>Create a new EAD description</p>
-    
     <h3 class="bar"><a title="File Management Menu">Edit Existing EAD Description</a></h3>
+     <div style="float: left">
+     <h4>A new file from the main database</h4>
+    
     <form action="../edit/" method="post" enctype="multipart/form-data">
     <input type="hidden" name="operation" id="operation" value="edit"/>
     <input type="submit" value=" Edit File "/>
@@ -11,4 +13,18 @@
     </ul>
     <input type="submit" value=" Edit File "/>
     </form>
-</div>
+    </div>
+    <div style="float: left">
+    <h4>A file already in the process of being edited or created</h4>
+    <form action="../edit/" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="operation" id="operation" value="load"/>
+    <input type="submit" value=" Load File "/>
+    <ul>
+    %%RECORDS%%
+    </ul>
+    <input type="submit" value=" Load File "/>
+    </form>
+    </div>
+    
+    
+    </div>
