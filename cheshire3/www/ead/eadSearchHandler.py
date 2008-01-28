@@ -705,18 +705,16 @@ class EadSearchHandler(EadHandler):
         self.logger.log('Summary requested for record: %s' % (recid))
         # highlight search terms in rec.dom
         if (proxInfo) and highlight:
-            #proxInfo2 = [(proxInfo[x], proxInfo[x+1], proxInfo[x+2]) for x in range(0, len(proxInfo), 3)]
-            #proxInfo2 = proxInfo
             proxInfo2 = reduce(lambda x,y: x+y, proxInfo)        # flatten groups from phrases / multiple word terms into list of [nodeIdx, wordIdx, charOffset] triples
+            proxInfo2 = [[x[0], x[2]] for x in proxInfo2]        # strip out wordIdx, this can vary due to stoplisting - nodeIdx, offsets are reliable
             proxInfo2 = map(eval, set(map(repr, proxInfo2)))     # filter out duplicates
             proxInfo2.sort(reverse=True)                         # sort proxInfo so that nodeIdxs are sorted descending (so that offsets don't get upset when modifying text :)
             nodeIdxs = []
-            wordIdxs = []
+            #wordIdxs = []
             wordOffsets = []
             for x in proxInfo2:
                 nodeIdxs.append(x[0])
-                wordIdxs.append(x[1])
-                wordOffsets.append(x[2])
+                wordOffsets.append(x[1])
             
             xps = {}
             tree = rec.dom.getroottree()
@@ -728,7 +726,6 @@ class EadSearchHandler(EadHandler):
                     xps[x] = tree.getpath(n)
                     
             for x, ni in enumerate(nodeIdxs):
-                wi = wordIdxs[x]
                 offset = wordOffsets[x] 
                 wordCount = 0
                 try:
