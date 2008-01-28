@@ -27,6 +27,7 @@
 
 from eadHandler import *
 from copy import deepcopy
+import datetime
 
 # script specific globals
 #script = '/ead/edit/'
@@ -41,6 +42,7 @@ class EadEditingHandler(EadHandler):
     errorFields = []
     
     altrenderDict = { 'surname' : 'a',
+                      'organisation' : 'a',
                       'dates' : 'y',
                       'other' : 'x',
                       'loc' : 'z'                    
@@ -49,7 +51,7 @@ class EadEditingHandler(EadHandler):
     def __init__(self, lgr):
         EadHandler.__init__(self, lgr)
         self.htmlTitle = ['Data Creation and Editing']
-        self.htmlNav = ['<a href="javascript: toggleKeyboard();">Show Character Keyboard</a>']
+        self.htmlNav = ['<a href="javascript: toggleKeyboard();">Character Keyboard</a>']
         self.logger = lgr
 
     #- end __init__
@@ -71,7 +73,7 @@ class EadEditingHandler(EadHandler):
     %s
     </p>
     <pre>
-%s
+    %s
     </pre>
     ''' % ('<br/>'.join(missing_xpaths), newlineRe.sub('\n\g<1>', html_encode(rec.get_xml(session))))
         else:
@@ -150,18 +152,25 @@ class EadEditingHandler(EadHandler):
             tree = etree.fromstring('<ead><eadheader></eadheader><archdesc></archdesc></ead>')           
             header = tree.xpath('/ead/eadheader')[0]
             target = self._create_path(header, 'eadid')
-            self._add_text(target, '%s %s %s' % (form.get('did/unitid/@countrycode', ''), form.get('did/unitid/@mainagencycode', ''), form.get('did/unitid', '')))
-            target = self._create_path(header, 'eadid/@countrycode')
-            self._add_text(target, form.get('did/unitid/@countrycode', ''))
-            target = self._create_path(header, 'eadid/@mainagencycode')
-            self._add_text(target, form.get('did/unitid/@mainagencycode', ''))
-            target = self._create_path(header, 'titlestmt/titleproper')
+            if form.get('eadid', '') != '':
+                self._add_text(target, form.get('eadid', ''))
+            else :
+                self._add_text(target, form.get('pui', ''))
+            target = self._create_path(header, 'filedesc/titlestmt/titleproper')
             self._add_text(target, form.get('did/unittitle', ''))            
+            target = self._create_path(header, 'profiledesc/creation')
+            if session.user.realName != '' :
+                userName = session.user.realName
+            else :
+                userName = session.user.username
+            self._add_text(target, 'Created by %s using the cheshire for archives ead creation tool ' % userName)
+            target = self._create_path(header, 'profiledesc/creation/date')
+            self._add_text(target, '%s' % datetime.date.today())
         else :
             tree = etree.fromstring('<%s id="%s"></%s>' % (ctype, level, ctype))           
         list = form.list     
         for field in list :
-            if field.name not in ['ctype','location','operation','newForm','nocache','recid', 'parent']:              
+            if field.name not in ['ctype','location','operation','newForm','nocache','recid', 'parent', 'pui', 'eadid']:              
                 #do did level stuff
                 if (collection):
                     node = tree.xpath('/ead/archdesc')[0]
@@ -169,8 +178,9 @@ class EadEditingHandler(EadHandler):
                     node = tree.xpath('/*[not(name() = "ead")]')[0]
                 if field.name.find('controlaccess') == 0 :
                     self._create_controlaccess(node, field.name, field.value) 
-                elif field.name.find('langusage') == 0 :
-                    self._create_langusage(node, field.value)
+                elif field.name.find('did/langmaterial') == 0 :
+                    did = self._create_path(node, 'did')
+                    self._create_langmaterial(did, field.value)
                 else :
                     if (field.value != ''):
                         target = self._create_path(node, field.name)
@@ -253,25 +263,27 @@ class EadEditingHandler(EadHandler):
                 startNode.remove(parent)
             
             
-    def _delete_currentLangusage(self, startNode):
-        if (startNode.xpath('langusage')):
-            parent = startNode.xpath('langusage')[0]
+    def _delete_currentLangmaterial(self, startNode):
+        did = startNode.xpath('did')[0]
+        self.logger.log(did)
+        if (did.xpath('langmaterial')):
+            parent = did.xpath('langmaterial')[0]
             child = parent.xpath('language')
             if len(child) > 0 :
                 for c in child :
                     parent.remove(c)
-            startNode.remove(parent)
+            did.remove(parent)
     
     
-    def _create_langusage(self, startNode, value):
-        if not (startNode.xpath('langusage')):
-            langusage = etree.Element('langusage')
-            startNode.append(langusage)
-            luNode = langusage
+    def _create_langmaterial(self, startNode, value):
+        if not (startNode.xpath('langmaterial')):
+            langmaterial = etree.Element('langmaterial')
+            startNode.append(langmaterial)
+            lmNode = langmaterial
         else:
-            luNode = startNode.xpath('langusage')[0]
+            lmNode = startNode.xpath('langmaterial')[0]
         fields = value.split(' ||| ')
-        language = etree.SubElement(luNode, 'language', langcode='%s' % fields[0].split(' | ')[1])     
+        language = etree.SubElement(lmNode, 'language', langcode='%s' % fields[0].split(' | ')[1])     
         text = fields[1].split(' | ')[1]
         language.text = text        
         
@@ -279,6 +291,7 @@ class EadEditingHandler(EadHandler):
     def _create_controlaccess(self, startNode, name, value):
         if not (startNode.xpath('controlaccess')):
             controlaccess = etree.Element('controlaccess')
+            #need to insert before dsc?
             startNode.append(controlaccess)
             caNode = controlaccess
         else:
@@ -317,22 +330,19 @@ class EadEditingHandler(EadHandler):
             retrievedXml = editStore.fetch_record(session, recid).get_xml(session)
             root = None
             tree = etree.XMLID(retrievedXml)
-            self.logger.log(tree[0])
-            self.logger.log(tree[1])
             node = tree[1].get(new)
             for e in tree[0].getiterator() :
                 if e == node :
                     root = deepcopy(e)
             rec = LxmlRecord(root)          
         page = formTxr.process_record(session, rec).get_raw(session)
+        page = page.replace('%PUI%', '<input type="text" onfocus="setCurrent(this);" name="pui" id="pui" size="30" disabled="true" value="%s"/>' % recid)
         return page.replace('%RECID%', '')
 
     
     def save_form(self, form):
         loc = form.get('location', None)
-        self.logger.log('location = %s' % loc)
         recid = form.get('recid', None)
-        self.logger.log('recid = %s' % recid)
         parent = form.get('parent', None)
         if (loc == 'collectionLevel' and (recid == None or recid == 'None')):
             self.logger.log('new collection level')
@@ -349,17 +359,19 @@ class EadEditingHandler(EadHandler):
             retrievedRec = editStore.fetch_record(session, recid)
             retrievedXml = retrievedRec.get_xml(session)
             tree = etree.fromstring(retrievedXml)
+            
             node = tree.xpath('/ead/archdesc')[0]         
             #first delete current accesspoints
             self._delete_currentControlaccess(node)
-            self._delete_currentLangusage(node)
-            #change title in header
-            header = tree.xpath('/ead/eadheader')[0]
-            target = self._create_path(header, 'titlestmt/titleproper')
-            self._add_text(target, form.get('did/unittitle', ''))
+            self._delete_currentLangmaterial(node)
+            #change title in header 
+#CHECK THAT THIS IS SOMETHING WE WANT IF SO COMMENT IN AND TEST
+            #header = tree.xpath('/ead/eadheader')[0]
+            #target = self._create_path(header, 'titlestmt/titleproper')
+            #self._add_text(target, form.get('did/unittitle', ''))
             #cycle through the form and replace any node that need it
             for field in list :                
-                if field.name not in ['ctype','location','operation','newForm','nocache','recid', 'parent']:                   
+                if field.name not in ['ctype','location','operation','newForm','nocache','recid', 'parent', 'pui']:                   
                     #do archdesc stuff
                     if field.name.find('controlaccess') == 0 :                        
                         self._create_controlaccess(node, field.name, field.value)      
@@ -412,11 +424,7 @@ class EadEditingHandler(EadHandler):
             else :   
                 self.logger.log('existing component')
                 list = form.list
-                self.logger.log('=====================================================')
-                self.logger.log(list)
-                self.logger.log('=====================================================')
                 node = tree[1].get(loc) 
-                self.logger.log(node)
                 #first delete current accesspoints
                 self._delete_currentControlaccess(node)
                 for field in list :
@@ -440,7 +448,7 @@ class EadEditingHandler(EadHandler):
     
     def _add_componentIds (self, rec):
         tree = etree.fromstring(rec.get_xml(session))
-        compre = re.compile('c[0-9]*$')
+        compre = re.compile('^c[0-9]*$')
         for element in tree.getiterator():
             try :
                 if compre.match(element.tag):
@@ -459,7 +467,7 @@ class EadEditingHandler(EadHandler):
                                 if parentId[-1] == '-':
                                     parentId = parentId[:-1]                                
                                 break
-                        idString = 'C%d-%d-%s' % (self._get_depth(element), posCount, parentId)
+                        idString = '%d-%s' % (posCount, parentId)
                         if idString[-1] == '-':
                             idString = idString[:-1]
                         element.set('id', idString)                               
@@ -469,7 +477,7 @@ class EadEditingHandler(EadHandler):
                     
                 
     def _get_depth (self, node):
-        compre = re.compile('c[0-9]*$')
+        compre = re.compile('^c[0-9]*$')
         depth = 0;
         for element in node.iterancestors():
             if compre.match(element.tag) or element.tag == 'archdesc':
@@ -477,6 +485,93 @@ class EadEditingHandler(EadHandler):
         return depth                
     
     
+    def add_form(self, form):
+        recid = form.get('recid', None)
+        level = int(form.get('clevel', None))
+        stringLevel = '%02d' % (level)
+        self.logger.log(stringLevel)
+        doc = StringDocument('<c%s><recid>%s</recid></c%s>' % (stringLevel, recid, stringLevel))
+        rec = xmlp.process_document(session, doc)
+        htmlform = formTxr.process_record(session, rec).get_raw(session)
+        htmlform = htmlform.replace('%PUI%', '<input type="text" onfocus="setCurrent(this);" name="pui" id="pui" size="30" disabled="true" value="%s"/>' % recid)
+        return htmlform
+
+
+    def delete_record(self, form):
+        recid = form.get('recid', None)
+        if not recid == None :
+            editStore.delete_record(session, recid)
+        return 'done'
+
+
+    def navigate(self, form):    
+        recid = form.get('recid', None)
+        new = form.get('newForm', None)
+        page = self.populate_form(recid, new)  
+        return page 
+         
+         
+    def generate_file(self, req):
+        structure = read_file('ead2002.html')
+        doc = StringDocument('<ead><eadheader></eadheader><archdesc></archdesc></ead>')         
+        rec = xmlp.process_document(session, doc)
+        htmlform = formTxr.process_record(session, rec).get_raw(session)
+        page = structure.replace('%FRM%', htmlform) 
+        page = page.replace('%RECID%', '')
+        page = page.replace('%PUI%', '<input type="text" onfocus="setCurrent(this);" name="pui" id="pui" size="30" readonly="true" class="readonly"/>')
+        page = page.replace('%TOC%', '<b><a id="collectionLevel" name="link" class="selected" onclick="javascript: displayForm(this.id)" href="#" style="display: inline">Collection Level</a></b>')  
+        return page
+
+    
+    def _add_revisionDesc(self, rec):
+        tree = rec.get_dom(session)
+        if session.user.realName != '' :
+            userName = session.user.realName
+        else :
+            userName = session.user.username
+        if tree.xpath('/ead/eadheader/revisiondesc'):
+           
+            if tree.xpath('/ead/eadheader/revisiondesc/change'):
+                parent = tree.xpath('/ead/eadheader/revisiondesc')[0]
+                new = etree.Element('change')
+                date = etree.Element('date')
+                date.text = '%s' % datetime.date.today()
+                new.append(date)
+                item = etree.Element('item')
+                item.text = 'Edited by %s using the cheshire for archives ead creation tool' % userName
+                new.append(item)
+                parent.append(new)
+            elif tree.xpath('/ead/eadheader/revisiondesc/list'):
+                parent = tree.xpath('/ead/eadheader/revisiondesc/list')[0]
+                item = etree.Element('item')
+                item.text = 'Edited by %s using the cheshire for archives ead creation tool on %s'  % (userName, datetime.date.today())
+                parent.append(item)
+        else :
+            target = self._create_path(header, '/ead/eadheader/revisiondesc/change/date')
+            self._add_text(target, '%s' % datetime.date.today())
+            target = self._create_path(header, '/ead/eadheader/revisiondesc/change/item')
+            self._add_text(target, 'Edited by %s using the cheshire for archives ead creation tool' % userName)   
+        return LxmlRecord(tree)
+
+
+    def load_file(self, form):
+        recid = form.get('recid', None)
+        if not recid == None:
+            try :
+                rec = editStore.fetch_record(session, recid)
+            except:
+                #to do - fix this
+                pass
+            else :
+                structure = read_file('ead2002.html') 
+                htmlform = formTxr.process_record(session, rec).get_raw(session)
+                page = structure.replace('%FRM%', htmlform) 
+                page = page.replace('%RECID%', '<input type="hidden" id="recid" value="%s"/>' % recid)
+                page = page.replace('%PUI%', '<input type="text" onfocus="setCurrent(this);" name="pui" id="pui" size="30" disabled="true" value="%s"/>' % recid)
+                page = page.replace('%TOC%', tocTxr.process_record(session, rec).get_raw(session))
+                return page
+        
+
     def edit_file(self, form):
         f = form.get('filepath', None)
         if not f or not len(f.value):
@@ -485,8 +580,7 @@ class EadEditingHandler(EadHandler):
         ws = re.compile('[\s]+')
         xml = ws.sub(' ', read_file(f))
         rec = self._add_componentIds(self._parse_upload(xml))
-        
-        
+                
         # TODO: handle file not successfully parsed
         if not isinstance(rec, LxmlRecord):
             return rec
@@ -495,43 +589,19 @@ class EadEditingHandler(EadHandler):
         if (val): return val
         del val      
         
-        rec = assignDataIdFlow.process(session, rec)
-        recid = rec.id
-
-        editStore.store_record(session, rec)
+        rec1 = self._add_revisionDesc(rec)
+        rec2 = assignDataIdFlow.process(session, rec1)
+        recid = rec2.id
+        
+        editStore.store_record(session, rec2)
         editStore.commit_storing(session) 
         structure = read_file('ead2002.html') 
-        htmlform = formTxr.process_record(session, rec).get_raw(session)
+        htmlform = formTxr.process_record(session, rec2).get_raw(session)
         page = structure.replace('%FRM%', htmlform) 
         page = page.replace('%RECID%', '<input type="hidden" id="recid" value="%s"/>' % recid)
-        page = page.replace('%TOC%', tocTxr.process_record(session, rec).get_raw(session))
-        return page
-           
-
-    def add_form(self, form):
-        recid = form.get('recid', None)
-        doc = StringDocument('<c><recid>%s</recid></c>' % recid)
-        rec = xmlp.process_document(session, doc)
-        htmlform = formTxr.process_record(session, rec).get_raw(session)
-        return htmlform
-
-
-    def navigate(self, form):    
-        recid = form.get('recid', None)
-        new = form.get('newForm', None)
-        page = self.populate_form(recid, new)    
-        return page 
-         
-         
-    def generate_form(self, req):
-        structure = read_file('ead2002.html')
-        #doc = StringDocument(editStore.fetch_record(session, 'david').get_xml(session))
-        doc = StringDocument('<ead><eadheader></eadheader><archdesc></archdesc></ead>')         
-        rec = xmlp.process_document(session, doc)
-        htmlform = formTxr.process_record(session, rec).get_raw(session)
-        page = structure.replace('%FRM%', htmlform) 
-        page = page.replace('%RECID%', '')
-        return page
+        page = page.replace('%PUI%', '<input type="text" onfocus="setCurrent(this);" name="pui" id="pui" size="30" disabled="true" value="%s"/><input type="hidden" id="filename" value="%s"/>' % (recid, f))
+        page = page.replace('%TOC%', tocTxr.process_record(session, rec2).get_raw(session))
+        return page    
     
     
     def display(self, req):
@@ -546,57 +616,117 @@ class EadEditingHandler(EadHandler):
             return '<p>Unable to display xml</p>'
     
        
-    def checkId(self, req):
-        form = FieldStorage(req)
+    def checkId(self, form):
         id = form.get('id', None)
+        store = form.get('store', None)
+        if store == 'recordStore' :
+            rs = recordStore
+        elif store == 'editStore' :
+            rs = editStore
         if (id != None):
-            if (id in recordStore.fetch_idList(session)):
-                return '<value>true</value>'    
-            else :
-                return '<value>false</value>'
+            exists = 'false'
+            for r in rs:
+                if r.id == id :
+                    exists = 'true'
+                    break;
+            return '<value>%s</value>' % exists
     
     
     def _get_timeStamp(self):
         return time.strftime('%Y-%m-%dT%H%M%S')
     
     
+    def validate_record(self, xml):
+        try :
+            etree.fromstring(xml)
+            return True
+        except :
+            return False
+    
+    
     def submit(self, form):
-        global sourceDir
-        recid = self.save_form(form)
+        global sourceDir, ppFlow, xmlp
+        recid = form.get('recid', None)
+        fileName = form.get('filename', None)
+        self.logger.log(fileName)
         rec = editStore.fetch_record(session, recid)
-        xml = rec.get_xml(session)        
-        newname = '%s-%s-%s.xml' % (recid, session.user.username, self._get_timeStamp())
-        write_file(os.path.join(sourceDir, newname), xml)
-        req.write('File uploaded and stored on server as <code>%s</code><br/>\n' % (newname))
-        # 'open' all dbs and recordStores
-        db.begin_indexing(session)
-        recordStore.begin_storing(session)
-        dcRecordStore.begin_storing(session)
-        req.write('Loading and Indexing record .')
-        indexRecordFlow.process(session, rec)
-        recordStore.commit_storing(session)
-        dcRecordStore.commit_storing(session)
-        if len(rec.process_xpath('dsc')):
-            req.write('Loading and Indexing components .')
-            compStore.begin_storing(session)
-            # extract and index components
-            compRecordFlow.process(session, rec)
-            compStore.commit_storing(session)
+        xml = rec.get_xml(session)    
+        valid = self.validate_record(xml)    
+        exists = True 
+        if valid :
+            #delete and unindex the old version from the record store
+            try :
+                oldRec = recordStore.fetch_record(session, recid)
+            except :
+                #this is a new record so we don't need to delete anything
+                exists = False
+            else :
+                db.unindex_record(session, oldRec)
+                db.remove_record(session, oldRec)
+                
+                recordStore.begin_storing(session)
+                recordStore.delete_record(session, oldRec.id)
+                recordStore.commit_storing(session)
+                
+                dcRecordStore.begin_storing(session)
+                try: dcRecordStore.delete_record(session, rec.id)
+                except: pass
+                else: dcRecordStore.commit_storing(session)
+                
+                if len(rec.process_xpath(session, 'dsc')) and exists :
+                    # now the tricky bit - component records
+                    compStore.begin_storing(session)
+                    q = CQLParser.parse('ead.parentid exact "%s/%s"' % (rec.recordStore, rec.id))
+                    rs = db.search(session, q)
+                    for r in rs:
+                        try:
+                            compRec = r.fetch_record(session)
+                        except (c3errors.FileDoesNotExistException, c3errors.ObjectDoesNotExistException):
+                            pass
+                        else:
+                            db.unindex_record(session, compRec)
+                            db.remove_record(session, compRec)
+                            compStore.delete_record(session, compRec.id)
+         
+                    compStore.commit_storing(session)
+                
+            #add and index new record
+            doc = ppFlow.process(session, StringDocument(xml))
+            rec = xmlp.process_document(session, doc)
             
-        req.write('Merging indexes ...')
-        try:
-            db.commit_indexing(session)
-            db.commit_metadata(session)
-        except:
-            req.write('<span class="error">[ERROR]</span> - Could not finish merging indexes. Your record may not be available to search.<br/>\n')
-        else:
-            req.write('<span class="ok">[OK]</span><br/>\nUPLOAD + INDEXING COMPLETE')
-        
+            db.begin_indexing(session)
+            recordStore.begin_storing(session)
+            dcRecordStore.begin_storing(session)
+            
+            indexRecordFlow.process(session, rec)
+            
+            recordStore.commit_storing(session)
+            dcRecordStore.commit_storing(session)
+            
+            
+            if len(rec.process_xpath(session, 'dsc')):
+                compStore.begin_storing(session)
+                # extract and index components
+                compRecordFlow.process(session, rec)
+                compStore.commit_storing(session)
+                db.commit_indexing(session)
+                db.commit_metadata(session)
+                   
+            # write to file
+            if os.path.exists(fileName):
+                os.remove(fileName)
+            try :
+                file = open(filename, 'w')
+            except :
+                file = open(os.path.join(sourceDir,recid), 'w')
+            file.write(etree.tostring(rec.get_dom(session), pretty_print=True))
+            file.close     
+            editStore.remove_record(session, rec.id)
+            editStore.commit_storing(session)
         return '<p>Process Complete</p>' 
     
     
-    def validate(self, req):
-        form = FieldStorage(req)
+    def validateField(self, form):
         text = form.get('text', None)
         if not text.find('<') == -1:
             try :
@@ -621,6 +751,9 @@ class EadEditingHandler(EadHandler):
             elif (operation == 'save'):
                 content = self.save_form(form)
                 self.send_xml('<recid>%s</recid>' % content, req)
+            elif (operation == 'delete'):
+                content = self.delete_record(form)
+                self.send_xml('<recid>%s</recid>' % content, req)
             elif (operation == 'navigate'):
                 content = self.navigate(form)
                 self.send_html(content, req)
@@ -631,11 +764,11 @@ class EadEditingHandler(EadHandler):
                 content = self.preview_file(req)
                 self.send_html(content, req)     
             elif (operation == 'checkId'):
-                content = self.checkId(req)
+                content = self.checkId(form)
                 self.send_xml(content, req)
             elif (operation == 'validate'):
-                content = self.validate(req)
-                self.send_xml(content, req)               
+                content = self.validateField(form)
+                self.send_xml(content, req)              
             elif (operation == 'submit'):
                 content = self.submit(form)
                 tmpl = read_file(self.templatePath)                                        # read the template in
@@ -661,11 +794,22 @@ class EadEditingHandler(EadHandler):
         
                 page = multiReplace(page, self.globalReplacements)
                 self.send_html(page, req) 
-  
+            elif (operation == 'load'):
+                content = self.load_file(form)
+                tmpl = read_file(self.templatePath)                                        # read the template in
+                page = tmpl.replace("%CONTENT%", content)
+        
+                self.globalReplacements.update({
+                    "%TITLE%": ' :: '.join(self.htmlTitle)
+                   ,"%NAVBAR%": ' | '.join(self.htmlNav),
+                   })
+        
+                page = multiReplace(page, self.globalReplacements)
+                self.send_html(page, req)  
             
         else :    
                    
-            content = self.generate_form(req)
+            content = self.generate_file(req)
            
             tmpl = read_file(self.templatePath)                                        # read the template in
             page = tmpl.replace("%CONTENT%", content)
@@ -698,13 +842,14 @@ authStore = None
 assignDataIdFlow = None
 compRecordFlow = None
 indexRecordFlow = None
+preParserWorkflow = None
 xmlp = None
 formTxr = None
 tocTxr = None
 logfilepath = editinglogfilepath
 
 def build_architecture(data=None):
-    global session, serv, db, editStore, recordStore, dcRecordStore, compStore, authStore, formTxr, tocTxr, xmlp, assignDataIdFlow, indexRecordFlow, compRecordFlow, sourceDir, baseDocFac
+    global session, serv, db, editStore, recordStore, dcRecordStore, compStore, authStore, formTxr, tocTxr, xmlp, assignDataIdFlow, indexRecordFlow, compRecordFlow, ppFlow, sourceDir, baseDocFac
     #Discover objects
     session = Session()
     session.database = 'db_ead'
@@ -720,8 +865,9 @@ def build_architecture(data=None):
     compStore = db.get_object(session, 'componentStore')
     authStore = db.get_object(session, 'eadAuthStore')
     assignDataIdFlow = db.get_object(session, 'assignDataIdentifierWorkflow')
-    indexRecordFlow = db.get_object(session, 'indexRecordWorkflow')
     compRecordFlow = db.get_object(session, 'buildComponentWorkflow')
+    indexRecordFlow = db.get_object(session, 'indexRecordWorkflow')
+    ppFlow = db.get_object(session, 'preParserWorkflow')
     # transformers
     xmlp = db.get_object(session, 'LxmlParser')
     formTxr = db.get_object(session, 'formCreationTxr')
