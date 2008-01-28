@@ -710,7 +710,6 @@ class EadSearchHandler(EadHandler):
             proxInfo2 = map(eval, set(map(repr, proxInfo2)))     # filter out duplicates
             proxInfo2.sort(reverse=True)                         # sort proxInfo so that nodeIdxs are sorted descending (so that offsets don't get upset when modifying text :)
             nodeIdxs = []
-            #wordIdxs = []
             wordOffsets = []
             for x in proxInfo2:
                 nodeIdxs.append(x[0])
@@ -744,7 +743,8 @@ class EadSearchHandler(EadHandler):
                             if end == -1:
                                 end = len(text)
                             located = 'text'
-                            c.text = text[:start] + 'HGHLGHT' + text[start:end] + 'THGLHGH' + text[end:]
+                            if text[:start].find('HGHLGHT') < 0:
+                                c.text = text[:start] + 'HGHLGHT' + text[start:end] + 'THGLHGH' + text[end:]
                             break
                         else:
                             offset -= len(text)
@@ -757,7 +757,8 @@ class EadSearchHandler(EadHandler):
                             if end == -1:
                                 end = len(text)
                             located = 'tail'
-                            c.tail = text[:start] + 'HGHLGHT' + text[start:end] + 'THGLHGH' + text[end:]
+                            if text[:start].find('HGHLGHT') < 0:
+                                c.tail = text[:start] + 'HGHLGHT' + text[start:end] + 'THGLHGH' + text[end:]
                             break
                         else:
                             offset -= len(text)
