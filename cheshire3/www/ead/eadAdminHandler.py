@@ -552,6 +552,18 @@ class EadAdminHandler(EadHandler):
                #return '<span class="error">Unable to delete user %s - incorrect password.</span>' % (userid) + self.list_users()
     #- end delete_user()
 
+    def _walk_store(self, storeName, type='checkbox'):
+        store = db.get_object(session, storeName)
+        out = []
+        for s in store :
+            out.extend(['<li>'
+                            ,'<span class="fileops"><input type="%s" name="recid" value="%s"/></span>' % (type, s.id)
+                            ,'<span class="filename">%s</span>' % s.id
+                            ,'</li>'
+                            ])
+        return out
+
+
     def _walk_directory(self, d, type='checkbox'):
         global script
         # we want to keep all dirs at the top, followed by all files
@@ -623,6 +635,8 @@ class EadAdminHandler(EadHandler):
         page = read_file('editmenu.html')
         files = self._walk_directory(sourceDir, 'radio')
         output = page.replace('%%FILES%%', ''.join(files))
+        recids = self._walk_store('editingStore', 'radio')
+        output = output.replace('%%RECORDS%%', ''.join(recids))
         return output
         
     
