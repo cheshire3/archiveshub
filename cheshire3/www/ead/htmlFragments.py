@@ -127,6 +127,8 @@ toc_scripts = '''
 </script>
 '''
 
+full_record_link = ''
+
 printable_toc_scripts = toc_scripts
 
 user_form = '''

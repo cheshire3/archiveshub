@@ -892,6 +892,7 @@ class EadSearchHandler(EadHandler):
             parentLink = ''
         else:
             # OK, must be a component record
+            isComponent = True
             parentId = parentId.split('/')[-1]
             parentPath = rec.process_xpath(session, '/c3component/@xpath')[0]
             parentRec = recordStore.fetch_record(session, parentId)
@@ -967,7 +968,7 @@ class EadSearchHandler(EadHandler):
                     return (False, '<div id="wrapper"><p class="error">Specified page %d does not exist. This record has only %d pages.</p></div>' % (pagenum, len(pages)))
                 else:
                     del pages
-                
+            
             if (isComponent) or not (os.path.exists('%s/%s.inc' % (toc_cache_path, recid))):
                 page = page.replace('<!--#include virtual="%s/%s.inc"-->' % (toc_cache_url, recid), searchResults)
             else:
