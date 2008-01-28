@@ -30,7 +30,7 @@
 	      <xsl:with-param name="level" select="'collectionLevel'"/>
 	    </xsl:call-template>
 	</b>
-    <ul id="someId" class="hierarchy">    
+    <ul id="someId" class="hierarchy" name="1">    
 		<xsl:apply-templates select="/ead/archdesc/dsc" mode="toc"/>		
     </ul>
     <br/>
@@ -53,6 +53,9 @@
 		</xsl:call-template>
 	    <xsl:if test="c|c01|c02|c03|c04|c05|c06|c07|c08|c09|c10|c11|c12"> 
 	      <ul class="hierarchy">
+	      <xsl:attribute name="name">
+	      	 <xsl:value-of select="count(ancestor::*)-1"/>
+	      </xsl:attribute>
 	        <xsl:for-each select="c|c01|c02|c03|c04|c05|c06|c07|c08|c09|c10|c11|c12">
 	        	<xsl:if test="not(./@audience and ./@audience = 'internal')">
 		          <li>
@@ -64,34 +67,6 @@
 		</xsl:if>
 	</xsl:template>
 	
-	<xsl:template name="toc-c1" match="c|c01|c02|c03|c04|c05|c06|c07|c08|c09|c10|c11|c12">
-		<xsl:param name="parent"/>
-		<xsl:call-template name="toc-link">
-			  <xsl:with-param name="node" select="."/>
-			  <xsl:with-param name="level" select="count(./ancestor::*[starts-with(name(), 'c')]) + 1"/>
-			  <xsl:with-param name="pos" select="count(./preceding-sibling::*[starts-with(name(), 'c')]) + 1"/>
-			  <xsl:with-param name="parent" select="$parent"/>
-		</xsl:call-template>
-	    <xsl:if test="c|c01|c02|c03|c04|c05|c06|c07|c08|c09|c10|c11|c12"> 
-	      <xsl:variable name="parent_pos">
-	      	<xsl:number value="count(./preceding-sibling::*[starts-with(name(), 'c')]) + 1"/>
-	      	<xsl:text>-</xsl:text>
-	      	<xsl:value-of select="$parent"/>
-	      </xsl:variable>
-	      <ul class="hierarchy">
-	        <xsl:for-each select="c|c01|c02|c03|c04|c05|c06|c07|c08|c09|c10|c11|c12">
-	        	<xsl:if test="not(./@audience and ./@audience = 'internal')">
-		          <li>
-		            <xsl:call-template name="toc-c">
-		            	<xsl:with-param name="parent" select="$parent_pos"/>
-		            </xsl:call-template>
-		          </li>
-	            </xsl:if>
-	        </xsl:for-each>
-	      </ul>
-		</xsl:if>
-	</xsl:template>
-
 
   <xsl:template name="toc-link">
     <xsl:param name="node"/>
@@ -144,52 +119,5 @@
     </a>    
   </xsl:template>
 
-
-  <xsl:template name="toc-link1">
-    <xsl:param name="node"/>
-    <xsl:param name="level"/>
-    <xsl:param name="pos"/>
-    <xsl:param name="parent"/>
-    <a>
-      <xsl:attribute name="id">
-        <xsl:text>link-C</xsl:text>
-        <xsl:value-of select="$level"/>
-        <xsl:text>-</xsl:text>
-        <xsl:value-of select="$pos"/>
-        <xsl:if test="$parent">
-        	<xsl:text>-</xsl:text>
-        	<xsl:value-of select="substring($parent, 0, string-length($parent))"/>
-        </xsl:if>        
-      </xsl:attribute>
-      <xsl:attribute name="href">
-        <xsl:text>javascript: displayForm('link-C</xsl:text>
-        <xsl:value-of select="$level"/>
-        <xsl:text>-</xsl:text>
-        <xsl:value-of select="$pos"/>
-        <xsl:if test="$parent">
-        	<xsl:text>-</xsl:text>
-        	<xsl:value-of select="substring($parent, 0, string-length($parent))"/>
-        </xsl:if>        
-        <xsl:text>')</xsl:text>
-	  </xsl:attribute>
-	  
-	  <xsl:if test="$node/did/unitid">
-	      <xsl:value-of select="$node/did/unitid"/>
-	      <xsl:text> - </xsl:text>
-      </xsl:if>
-      <xsl:choose>
-      	<xsl:when test="$node/did/unittitle">
-		      <xsl:value-of select="$node/did/unittitle"/>
-	      </xsl:when>
-	      <xsl:when test="$node/../eadheader/filedesc/titlestmt/titleproper">
-	      	<xsl:value-of select="$node/../eadheader/filedesc/titlestmt/titleproper"/>
-	      </xsl:when>
- 	      <xsl:otherwise>
- 	      	<xsl:text>(untitled)</xsl:text>
-	      </xsl:otherwise>
-      </xsl:choose>
-    </a>
-    
-  </xsl:template>
 
 </xsl:stylesheet>

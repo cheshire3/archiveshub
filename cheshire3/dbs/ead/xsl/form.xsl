@@ -20,13 +20,18 @@
   <xsl:template match="/">
   <div id="formDiv" name="form" class="formDiv" onscroll="hideAllMenus()">
     <form id="eadForm" name="eadForm"  action="#" >
-    <div class="button"><a id="addC" class="buttonlink" href="javascript: addComponent()">Add component</a></div>
-    <div class="button"><a id="reset" class="buttonlink" href="javascript: resetForm()">Reset</a></div> <br />
+    <div class="float"> <input type="button" class="menubutton" id="addC" onclick="javascript: addComponent()" value="Add Component"></input></div>
+    <div class="float"> <input type="button" class="menubutton" id="reset" onclick="javascript: resetForm()" value="Reset"></input> </div>
+    
+    	<div class="pui">
+    		<strong><xsl:text>Persistent Unique Identifier: </xsl:text></strong>				
+    		%PUI%
+    	</div>
+    
+    <br/>
       <div class="section">
     	<xsl:choose>
-    		<xsl:when test="/ead/eadheader">
-    			<strong><xsl:text>Persistent Unique Identifier: </xsl:text></strong>				
-    			%PUI%
+    		<xsl:when test="/ead/eadheader">	
     			<h3>Collection Level Description</h3>
     			%RECID%   			
     			<xsl:apply-templates select="/c|/c01|/c02|/c03|/c04|/c05|/c06|/c07|/c08|/c09|/c10|/c11|/c12|/ead/archdesc"/>
@@ -45,8 +50,8 @@
   <xsl:template match="/c|/c01|/c02|/c03|/c04|/c05|/c06|/c07|/c08|/c09|/c10|/c11|/c12|/ead/archdesc">
   <xsl:if test="not(name() = 'archdesc')">
   	<p>
-    	<strong>Component Label: </strong>
-   		<input type="text" name="ctype" id="ctype" maxlength="3" size="4">
+    	<!--<strong>Component Label: </strong>-->
+   		<input type="hidden" name="ctype" id="ctype" maxlength="3" size="4">
    			<xsl:attribute name="value">
    				<xsl:value-of select="name()"/>   					
  			</xsl:attribute>
@@ -90,7 +95,7 @@
 				<xsl:apply-templates select="did/unitdate"/>
 			</xsl:when>
 			<xsl:otherwise>
-				<input class="menuField" type="text" onfocus="setCurrent(this);" onchange="validateField(this);" name="did/unitdate" id="cac" size="39"></input>
+				<input class="menuField" type="text" onfocus="setCurrent(this);" onchange="validateField(this, 'true');" name="did/unitdate" id="cac" size="39"></input>
 			</xsl:otherwise>
 		</xsl:choose>      
 		</p>
@@ -109,6 +114,17 @@
 		</p>
 	</div>
   	<br/>
+  	<p>
+  		<strong><span class="isadg"></span>Repository</strong><br/>
+  		<xsl:choose>
+			<xsl:when test="did/repository">
+				<xsl:apply-templates select="did/repository"/>
+			</xsl:when>
+			<xsl:otherwise>
+				<input class="menuField" type="text" onfocus="setCurrent(this);" onchange="validateField(this, 'true');" name="did/repository" id="rep" size="80"></input>
+			</xsl:otherwise>
+		</xsl:choose>
+  	</p>
  	<p>
 		<strong><span class="isadg">3.1.5: </span><a href="arch/extent.shtml" title="Extent help - opens in new window" target="_new">Extent of Unit of Description</a></strong><br/>
 		<xsl:choose>
@@ -116,7 +132,7 @@
 				<xsl:apply-templates select="did/physdesc/extent"/>
 			</xsl:when>
 			<xsl:otherwise>
-				<input class="menuField" type="text" onfocus="setCurrent(this);" onchange="validateField(this);" name="did/physdesc/extent" id="cae" size="80"></input>
+				<input class="menuField" type="text" onfocus="setCurrent(this);" onchange="validateField(this, 'true');" name="did/physdesc/extent" id="cae" size="80"></input>
 			</xsl:otherwise>
 		</xsl:choose>		
     </p>
@@ -132,7 +148,7 @@
 				<xsl:apply-templates select="did/origination"/>
 			</xsl:when>
 			<xsl:otherwise>
-				<input class="menuField" type="text" onfocus="setCurrent(this);" onchange="validateField(this);" name="did/origination" id="cba" size="80"></input>
+				<input class="menuField" type="text" onfocus="setCurrent(this);" onchange="validateField(this, 'true');" name="did/origination" id="cba" size="80"></input>
 			</xsl:otherwise>
 		</xsl:choose>		
     	</p>
@@ -144,7 +160,7 @@
 				<xsl:apply-templates select="bioghist"/>
 			</xsl:when>
 			<xsl:otherwise>
-				<textarea class="menuField" name="bioghist" id="cbb" onfocus="setCurrent(this);" onchange="validateField(this);" rows="5" cols="80"></textarea>
+				<textarea class="menuField" name="bioghist" id="cbb" onfocus="setCurrent(this);" onchange="validateField(this, 'true');" rows="5" cols="80"></textarea>
 			</xsl:otherwise>			
 		</xsl:choose>
 	   </p>  
@@ -156,7 +172,7 @@
 			<xsl:otherwise>
 				<strong><span class="isadg">3.2.3: </span>Archival History </strong> <a class="smalllink" id="linkcbc" title="add archival history" onclick="addElement('cbc')">add</a> [optional]
 				<br/>
-				<textarea class="menuField" name="custodhist" id="cbc" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
+				<textarea class="menuField" name="custodhist" id="cbc" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
 			</xsl:otherwise>
 		</xsl:choose>			
 	    </p>      
@@ -168,7 +184,7 @@
       		<xsl:otherwise>
       			<strong><span class="isadg">3.2.4: </span>Immediate Source of Acquisition </strong> <a class="smalllink" id="linkcbd" title="add immediate source of acquisition" onclick="addElement('cbd')">add</a> [optional]
 				<br/>
-				<textarea class="menuField" name="acqinfo" id="cbd" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
+				<textarea class="menuField" name="acqinfo" id="cbd" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
       		</xsl:otherwise>
       	</xsl:choose>		
       	</p>       
@@ -184,7 +200,7 @@
 	 		<xsl:apply-templates select="scopecontent"/>
 	 	</xsl:when>
 	 	<xsl:otherwise>	 	
-			<textarea class="menuField" name="scopecontent" id="cca" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80"></textarea>
+			<textarea class="menuField" name="scopecontent" id="cca" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80"></textarea>
 	 	</xsl:otherwise>
 	 </xsl:choose>	
       </p>      
@@ -196,7 +212,7 @@
       		<xsl:otherwise>
       			<strong><span class="isadg">3.3.2: </span>Appraisal </strong> <a class="smalllink" id="linkccb" title="add appraisal" onclick="addElement('ccb')">add</a> [optional]
 				<br/>
-				<textarea class="menuField" name="appraisal" id="ccb" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
+				<textarea class="menuField" name="appraisal" id="ccb" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
       		</xsl:otherwise>
       	</xsl:choose>		
       </p>
@@ -208,7 +224,7 @@
       		<xsl:otherwise>
 				<strong><span class="isadg">3.3.3: </span>Accruals </strong> <a class="smalllink" id="linkccc" title="add accruals" onclick="addElement('ccc')">add</a> [optional]
 				<br />
-				<textarea class="menuField" name="accruals" id="ccc" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
+				<textarea class="menuField" name="accruals" id="ccc" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
       		</xsl:otherwise>
       	</xsl:choose>		
       </p>
@@ -220,7 +236,7 @@
       		<xsl:otherwise>
 				<strong><span class="isadg">3.3.4: </span>System of Arrangement </strong> <a class="smalllink" id="linkccd" title="add arrangement" onclick="addElement('ccd')">add</a> [optional]
 				<br />
-				<textarea class="menuField" name="arrangement" id="ccd" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
+				<textarea class="menuField" name="arrangement" id="ccd" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
       		</xsl:otherwise>
       	</xsl:choose>		
       </p>
@@ -236,7 +252,7 @@
 				 		<xsl:apply-templates select="accessrestrict"/>
 				 	</xsl:when>
 				 	<xsl:otherwise>	 		
-						<textarea class="menuField" name="accessrestrict" id="cda" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80"></textarea>
+						<textarea class="menuField" name="accessrestrict" id="cda" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80"></textarea>
 				 	</xsl:otherwise>
 				 </xsl:choose>	
 			</p>      
@@ -248,13 +264,13 @@
 		      		<xsl:otherwise>
 						<strong><span class="isadg">3.4.2: </span>Conditions Governing Reproduction </strong> <a class="smalllink" id="linkcdb" title="add conditions governing reproduction" onclick="addElement('cdb')">add</a> [optional]
 						<br />
-						<textarea class="menuField" name="userestrict" id="cdb" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
+						<textarea class="menuField" name="userestrict" id="cdb" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
 		      		</xsl:otherwise>
 		      </xsl:choose>		
 		     </p>
 		     <p>
 		     	<strong><span class="isadg">3.4.3: </span><a href="/arch/lang.shtml" title="Language of Material help - opens in new window" target="_new">Language of Material</a></strong> [Must include <a href="http://www.loc.gov/standards/iso639-2/englangn.html" title="ISO 639-2 codes - opens new window" target="_new">ISO 639-2 3-letter code</a>]
-		     	<div id="language" class="apcontainer">
+		     	<div id="language" class="langcontainer">
 		     	<xsl:choose>
 		     		<xsl:when test="did/langmaterial/language">
 		     			<xsl:apply-templates select="did/langmaterial"/>
@@ -286,7 +302,7 @@
 		     		<xsl:otherwise>
 		     			<strong><span class="isadg">3.4.4: </span>Physical Characteristics </strong> <a class="smalllink" id="linkcdd" title="add physical characteristics" onclick="addElement('cdd')">add</a> [optional]
 						<br/>
-						<textarea class="menuField" name="phystech" id="cdd" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
+						<textarea class="menuField" name="phystech" id="cdd" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
 		     		</xsl:otherwise>
 		     	</xsl:choose>			 	
       		</p>
@@ -298,7 +314,7 @@
 						<xsl:apply-templates select="otherfindaid"/> 
 					</xsl:when>
 					<xsl:otherwise>
-						<textarea class="menuField" name="cde" id="cde" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80"></textarea>
+						<textarea class="menuField" name="cde" id="cde" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80"></textarea>
 					</xsl:otherwise>
 				</xsl:choose>				
 	       </p>		     					
@@ -313,7 +329,7 @@
       			<xsl:otherwise>
       				<strong><span class="isadg">3.5.1: </span>Existence/Location of Originals </strong> <a class="smalllink" id="linkcea" title="add existence/location of originals" onclick="addElement('cea')">add</a> [optional]
 					<br/>
-        			<textarea class="menuField" name="originalsloc" id="cea" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
+        			<textarea class="menuField" name="originalsloc" id="cea" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
       			</xsl:otherwise>
       		</xsl:choose>	
         </p> 
@@ -325,7 +341,7 @@
 				<xsl:otherwise>
 					<strong><span class="isadg">3.5.2: </span>Existence/Location of Copies </strong> <a class="smalllink" id="linkceb" title="add existence/location of copies" onclick="addElement('ceb')">add</a> [optional]
 					<br/>
-					<textarea class="menuField" name="altformavail" id="ceb" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
+					<textarea class="menuField" name="altformavail" id="ceb" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
 				</xsl:otherwise>
 			</xsl:choose>			
       	</p>
@@ -337,7 +353,7 @@
 				<xsl:otherwise>
 					<strong><span class="isadg">3.5.3: </span>Related Units of Description </strong> <a class="smalllink" id="linkcec" title="add related units of description" onclick="addElement('cec')">add</a> [optional]
 					<br/>
-					<textarea class="menuField" name="relatedmaterial" id="cec" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
+					<textarea class="menuField" name="relatedmaterial" id="cec" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
 				</xsl:otherwise>
 			</xsl:choose>			
       	</p>
@@ -349,7 +365,7 @@
       	 		<xsl:otherwise>
       	 			<strong><span class="isadg">3.5.4: </span>Publication Note</strong> [Works based on or about the collection] <a class="smalllink" id="linkced" title="add publication note" onclick="addElement('ced')">add</a> [optional]
 					<br/>
-					<textarea class="menuField" name="bibliography" id="ced" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
+					<textarea class="menuField" name="bibliography" id="ced" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
       	 		</xsl:otherwise>
       	 	</xsl:choose>
       	</p>
@@ -364,7 +380,7 @@
 	  		<xsl:otherwise>
 	  			<strong><span class="isadg">3.6.1: </span>Note </strong> <a class="smalllink" id="linkcfa" title="add note" onclick="addElement('cfa')" onmouseover="this.style.cursor='pointer'">add</a> [optional]
 				<br/>
-				<textarea class="menuField" name="note" id="cfa" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
+				<textarea class="menuField" name="note" id="cfa" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
 	  		</xsl:otherwise>
 	  	</xsl:choose>		
 	  </p>
@@ -379,7 +395,7 @@
       			<xsl:apply-templates select="processinfo"/>
       		</xsl:when>
       		<xsl:otherwise>      			
-        		<textarea class="menuField" name="processinfo" id="cga" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80"></textarea>
+        		<textarea class="menuField" name="processinfo" id="cga" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80"></textarea>
       		</xsl:otherwise>
       	</xsl:choose>	
       </p>
@@ -724,14 +740,14 @@
 
   
   <xsl:template match="did/unitid">
-	<input type="text" name="did/unitid" id="countrycode" maxlength="2" size="3" onblur="checkId()">		
+	<input type="text" name="did/unitid/@countrycode" id="countrycode" maxlength="2" size="3" onblur="checkId()">		
 		<xsl:if test="@countrycode">
 			<xsl:attribute name="value">
 				<xsl:value-of select="@countrycode"/>
 			</xsl:attribute>
 		</xsl:if>		
 	</input>
-	<input type="text" onfocus="setCurrent(this);" name="did/unitid" id="repositorycode"  maxlength="4" size="5" onblur="checkId()">
+	<input type="text" onfocus="setCurrent(this);" name="did/unitid/@repositorycode" id="repositorycode"  maxlength="4" size="5" onblur="checkId()">
 		<xsl:if test="@repositorycode">
 			<xsl:attribute name="value">
 				<xsl:value-of select="@repositorycode"/>
@@ -754,7 +770,7 @@
   </xsl:template>
     
   <xsl:template match="unitdate">
-  	<input class="menuField" type="text" onchange="validateField(this);" onfocus="setCurrent(this);" name="did/unitdate" id="cac" size="39">
+  	<input class="menuField" type="text" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" name="did/unitdate" id="cac" size="39">
   		<xsl:attribute name="value">
   		  <xsl:apply-templates/>
   		</xsl:attribute>	
@@ -769,8 +785,17 @@
   	</input>
   </xsl:template>
   
+  <xsl:template match="did/repository">
+  	<input class="menuField" type="text" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" name="did/repository" id="rep" size="80">
+  		<xsl:attribute name="value">
+  			<xsl:apply-templates/>
+  		</xsl:attribute>
+  	</input>
+  </xsl:template>
+  
+  
   <xsl:template match="did/physdesc/extent">
-  	<input class="menuField" type="text" onchange="validateField(this);" onfocus="setCurrent(this);" name="did/physdesc/extent" id="cae" size="80">
+  	<input class="menuField" type="text" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" name="did/physdesc/extent" id="cae" size="80">
   		<xsl:attribute name="value">
   			<xsl:apply-templates/>
   		</xsl:attribute>
@@ -778,7 +803,7 @@
   </xsl:template>
 
   <xsl:template match="did/origination">
-  	<input class="menuField" type="text" onchange="validateField(this);" onfocus="setCurrent(this);" name="did/origination" id="cba" size="80">
+  	<input class="menuField" type="text" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" name="did/origination" id="cba" size="80">
   		<xsl:attribute name="value">
   			<xsl:apply-templates/>
   		</xsl:attribute>
@@ -786,7 +811,7 @@
   </xsl:template>
 
  <xsl:template match="bioghist">
-  	<textarea class="menuField" name="bioghist" id="cbb" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80">  		
+  	<textarea class="menuField" name="bioghist" id="cbb" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80">  		
 		<!-- <xsl:value-of select="."/> -->
 		<xsl:apply-templates/>  		  		
   	</textarea>
@@ -795,7 +820,7 @@
   <xsl:template match="custodhist">
   		<strong><span class="isadg">3.2.3: </span>Archival History </strong> <a class="smalllink" id="linkcbc" title="add archival history" onclick="addElement('cbc')">hide</a> [optional]
 		<br/>
-  	  	<textarea class="menuField" name="custodhist" id="cbc" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80" style="display:block">
+  	  	<textarea class="menuField" name="custodhist" id="cbc" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80" style="display:block">
   		<xsl:apply-templates/>
   	  </textarea>
   </xsl:template>
@@ -803,13 +828,13 @@
   <xsl:template match="acqinfo">
   		<strong><span class="isadg">3.2.4: </span>Immediate Source of Acquisition </strong> <a class="smalllink" id="linkcbd" title="add archival history" onclick="addElement('cbd')">hide</a> [optional]
 		<br/>
-  	  	<textarea class="menuField" name="acqinfo" id="cbd" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80" style="display:block">
+  	  	<textarea class="menuField" name="acqinfo" id="cbd" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80" style="display:block">
   		<xsl:apply-templates/>
   	  </textarea>
   </xsl:template>
 
     <xsl:template match="scopecontent">
-  	  <textarea class="menuField" name="scopecontent" id="cca" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80">
+  	  <textarea class="menuField" name="scopecontent" id="cca" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80">
   	  	<xsl:apply-templates/>
   	  </textarea>
    </xsl:template>
@@ -817,7 +842,7 @@
   <xsl:template match="appraisal">
   		<strong><span class="isadg">3.3.2: </span>Appraisal </strong> <a class="smalllink" id="linkccb" title="add archival history" onclick="addElement('ccb')">hide</a> [optional]
 		<br/>
-  	  	<textarea class="menuField" name="appraisal" id="ccb" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80" style="display:block">
+  	  	<textarea class="menuField" name="appraisal" id="ccb" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80" style="display:block">
   		<xsl:apply-templates/>
   	  </textarea>
   </xsl:template>
@@ -825,7 +850,7 @@
  <xsl:template match="accruals">
   		<strong><span class="isadg">3.3.3: </span>Accruals </strong> <a class="smalllink" id="linkccc" title="add archival history" onclick="addElement('ccc')">hide</a> [optional]
 		<br/>
-  	  	<textarea class="menuField" name="accruals" id="ccc" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80" style="display:block">
+  	  	<textarea class="menuField" name="accruals" id="ccc" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80" style="display:block">
   		<xsl:apply-templates/>
   	  </textarea>
   </xsl:template>
@@ -833,13 +858,13 @@
   <xsl:template match="arrangement">
   		<strong><span class="isadg">3.3.4: </span>System of Arrangement </strong> <a class="smalllink" id="linkccd" title="add archival history" onclick="addElement('ccd')">hide</a> [optional]
 		<br/>
-  	  	<textarea class="menuField" name="arrangement" id="ccd" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80" style="display:block">
+  	  	<textarea class="menuField" name="arrangement" id="ccd" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80" style="display:block">
   		<xsl:apply-templates/>
   	  </textarea>
   </xsl:template>
 
   <xsl:template match="accessrestrict">
-  	  <textarea class="menuField" name="accessrestrict" id="cca" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80">
+  	  <textarea class="menuField" name="accessrestrict" id="cca" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80">
   	  	<xsl:apply-templates/>
   	  </textarea>
    </xsl:template>
@@ -847,7 +872,7 @@
    <xsl:template match="userestrict">
   		<strong><span class="isadg">3.4.2: </span>Conditions Governing Reproduction </strong> <a class="smalllink" id="linkcdb" title="add archival history" onclick="addElement('cdb')">hide</a> [optional]
 		<br/>
-  	  	<textarea class="menuField" name="userestrict" id="cdb" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80" style="display:block">
+  	  	<textarea class="menuField" name="userestrict" id="cdb" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80" style="display:block">
   		<xsl:apply-templates/>
   	  </textarea>
   </xsl:template>
@@ -906,13 +931,13 @@
   <xsl:template match="phystech">
     <strong><span class="isadg">3.4.4: </span>Physical Characteristics </strong> <a class="smalllink" id="linkcdd" title="add physical characteristics" onclick="addElement('cdd')">hide</a> [optional]
 	<br/>
-	<textarea class="menuField" name="phystech" id="cdd" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80" style="display:block">
+	<textarea class="menuField" name="phystech" id="cdd" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80" style="display:block">
 			<xsl:apply-templates/>
 	</textarea>
   </xsl:template>
 
   <xsl:template match="otherfindaid">
-  	<textarea class="menuField" name="cde" id="cde" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80">
+  	<textarea class="menuField" name="cde" id="cde" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80">
   		<xsl:apply-templates/>
   	</textarea>
   </xsl:template>
@@ -920,7 +945,7 @@
   <xsl:template match="originalsloc">
   	<strong><span class="isadg">3.5.1: </span>Existence/Location of Originals </strong> <a class="smalllink" id="linkcea" title="add archival history" onclick="addElement('cea')">hide</a> [optional]
 	<br/>
-    <textarea class="menuField" name="originalsloc" id="cea" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none">
+    <textarea class="menuField" name="originalsloc" id="cea" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none">
     	<xsl:apply-templates/>
     </textarea>
   </xsl:template>
@@ -928,7 +953,7 @@
   <xsl:template match="altformavail">
 	<strong><span class="isadg">3.5.2: </span>Existence/Location of Copies </strong> <a class="smalllink" id="linkceb" title="add archival history" onclick="addElement('ceb')">hide</a> [optional]
 	<br/>
-	<textarea class="menuField" name="altformavail" id="ceb" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none">
+	<textarea class="menuField" name="altformavail" id="ceb" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none">
 		<xsl:apply-templates/>
 	</textarea>  
   </xsl:template>
@@ -936,7 +961,7 @@
   <xsl:template match="relatedmaterial">
   	<strong><span class="isadg">3.5.3: </span>Related Units of Description </strong> <a class="smalllink" id="linkcec" title="add archival history" onclick="addElement('cec')">hide</a> [optional]
 	<br/>
-	<textarea class="menuField" name="relatedmaterial" id="cec" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none">
+	<textarea class="menuField" name="relatedmaterial" id="cec" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none">
 		<xsl:apply-templates/>
 	</textarea>
   </xsl:template>
@@ -944,7 +969,7 @@
   <xsl:template match="bibliography">
   	<strong><span class="isadg">3.5.4: </span>Publication Note</strong> [Works based on or about the collection] <a class="smalllink" id="linkced" title="add archival history" onclick="addElement('ced')">hide</a> [optional]
 	<br/>
-	<textarea class="menuField" name="bibliography" id="ced" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none">
+	<textarea class="menuField" name="bibliography" id="ced" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none">
 		<xsl:apply-templates/>
 	</textarea>
   </xsl:template>
@@ -952,13 +977,13 @@
   <xsl:template match="note">
   	<strong><span class="isadg">3.6.1: </span>Note </strong> <a class="smalllink" id="linkcfa" title="add archival history" onclick="addElement('cfa')">add</a> [optional]
 	<br/>
-	<textarea class="menuField" name="note" id="cfa" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none">
+	<textarea class="menuField" name="note" id="cfa" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none">
 		<xsl:apply-templates/>
 	</textarea>
   </xsl:template>
   
   <xsl:template match="processinfo">
-  	<textarea class="menuField" name="processinfo" id="cga" onchange="validateField(this);" onfocus="setCurrent(this);" rows="5" cols="80">
+  	<textarea class="menuField" name="processinfo" id="cga" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80">
   		<xsl:apply-templates/>
   	</textarea>
   </xsl:template>
