@@ -170,7 +170,7 @@ class EadEditingHandler(EadHandler):
             tree = etree.fromstring('<%s id="%s"></%s>' % (ctype, level, ctype))           
         list = form.list     
         for field in list :
-            if field.name not in ['ctype','location','operation','newForm','nocache','recid', 'parent', 'pui', 'eadid']:              
+            if field.name not in ['ctype','location','operation','newForm','nocache','recid', 'parent', 'pui', 'eadid']:        
                 #do did level stuff
                 if (collection):
                     node = tree.xpath('/ead/archdesc')[0]
@@ -276,6 +276,7 @@ class EadEditingHandler(EadHandler):
     
     
     def _create_langmaterial(self, startNode, value):
+        self.logger.log('creating lang material')
         if not (startNode.xpath('langmaterial')):
             langmaterial = etree.Element('langmaterial')
             startNode.append(langmaterial)
@@ -285,7 +286,8 @@ class EadEditingHandler(EadHandler):
         fields = value.split(' ||| ')
         language = etree.SubElement(lmNode, 'language', langcode='%s' % fields[0].split(' | ')[1])     
         text = fields[1].split(' | ')[1]
-        language.text = text        
+        language.text = text     
+        self.logger.log(text)   
         
        
     def _create_controlaccess(self, startNode, name, value):
@@ -375,8 +377,9 @@ class EadEditingHandler(EadHandler):
                     #do archdesc stuff
                     if field.name.find('controlaccess') == 0 :                        
                         self._create_controlaccess(node, field.name, field.value)      
-                    elif field.name.find('langusage') == 0 :
-                        self._create_langusage(node, field.value)
+                    elif field.name.find('did/langmaterial') == 0 :
+                        did = self._create_path(node, 'did')
+                        self._create_langmaterial(did, field.value)
                     else :
                         if (field.value.strip() != ''):
                             target = self._create_path(node, field.name)
@@ -427,12 +430,14 @@ class EadEditingHandler(EadHandler):
                 node = tree[1].get(loc) 
                 #first delete current accesspoints
                 self._delete_currentControlaccess(node)
+                self._delete_currentLangmaterial(node)
                 for field in list :
                     if field.name not in ['ctype','location','operation','newForm','nocache','recid', 'parent']:            
                         if field.name.find('controlaccess') == 0 :                        
                             self._create_controlaccess(node, field.name, field.value)      
-                        elif field.name.find('langusage') == 0 :
-                            self._create_langusage(node, field.value)
+                        elif field.name.find('did/langmaterial') == 0 :
+                            did = self._create_path(node, 'did')
+                            self._create_langmaterial(did, field.value)
                         else :
                             if (field.value.strip() != ''):
                                 target = self._create_path(node, field.name)
