@@ -5,31 +5,31 @@
 	Copyright &copy; 2005-2007 the University of Liverpool
  -->
 
-  <objectType>database.SimpleDatabase</objectType>
+    <objectType>database.SimpleDatabase</objectType>
+    
+    <options>
+        <setting type="srw">1</setting>
+        <setting type="z3950">1</setting>
+        <setting type="oai-pmh">1</setting>
+    </options>
 
-  <options>
-    <setting type="srw">1</setting>
-    <setting type="z3950">1</setting>
-    <setting type="oai-pmh">1</setting>
-  </options>
+    <paths>
+        <path type="defaultPath">dbs/ead</path>
+        <path type="metadataPath">stores/metadata.bdb</path>
+        <path type="indexStoreList">indexStore</path>
+        <object type="recordStore" ref="recordStore"/>
+        <object type="protocolMap" ref="eadCqlProtocolMap"/>
+    </paths>
 
-  <paths>
-    <path type="defaultPath">dbs/ead</path>
-    <path type="metadataPath">stores/metadata.bdb</path>
-    <path type="indexStoreList">indexStore</path>
-    <object type="recordStore" ref="recordStore"/>
-    <object type="protocolMap" ref="eadCqlProtocolMap"/>
-  </paths>
+    <subConfigs>
 
-  <subConfigs>
-
-		<!-- protocol map -->
-	    <subConfig type="protocolMap" id="eadCqlProtocolMap">
-	      <objectType>protocolMap.CQLProtocolMap</objectType>
-	      <paths>
-	        <path type="zeerexPath">zeerex_srw.xml</path>
-	      </paths>
-	    </subConfig>
+	<!-- protocol map -->
+        <subConfig type="protocolMap" id="eadCqlProtocolMap">
+          <objectType>protocolMap.CQLProtocolMap</objectType>
+          <paths>
+            <path type="zeerexPath">zeerex_srw.xml</path>
+          </paths>
+        </subConfig>
 	    
 	    <subConfig type="protocolMap" id="eadZProtocolMap">
 	      <objectType>protocolMap.Z3950ProtocolMap</objectType>

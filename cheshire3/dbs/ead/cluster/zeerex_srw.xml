@@ -74,15 +74,9 @@
   </indexInfo>
 
   <schemaInfo>
-    <schema identifier="http://libserv12.princeton.edu/ead/dtd/2002/"
-	    location="http://libserv12.princeton.edu/ead/dtd/2002/ead.xsd"
-	    sort="true" retrieve="true" name="ead">
-      <title>EAD Schema</title>
-    </schema>
-    <schema identifier="http://srw.o-r-g.org/schemas/ccg/1.0/" 
-	    location="http://srw.o-r-g.org/schemas/ccg/1.0/ccg.xsd" 
-	    sort="false" retrieve="true" name="ccg">
-      <title>Card Schema</title>
+    <schema identifier="http://www.cheshire3.org/schemas/cluster"
+	    sort="true" retrieve="true" name="cluster">
+      <title>Cheshire3 Cluster Schema</title>
     </schema>
   </schemaInfo>
 
@@ -91,8 +85,8 @@
     <default type="contextSet">dc</default>
     <default type="index">dc.title</default>
     <default type="relation">all</default>
-    <default type="sortSchema">ead</default>
-    <default type="retrieveSchema">ead</default>
+    <default type="sortSchema">cluster</default>
+    <default type="retrieveSchema">cluster</default>
     <default type="sortCaseSensitive">false</default>
     <default type="sortAscending">true</default>
     <default type="sortMissingValue">HighValue</default>
