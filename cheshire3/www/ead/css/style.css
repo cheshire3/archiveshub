@@ -1,6 +1,6 @@
 /*
   This file was produced, and released as part of Cheshire for Archives v3.0.x
-  Copyright &copy; 2005-2007 the University of Liverpool
+  Copyright &copy; 2005-2008 the University of Liverpool
 */
 
 body { 
@@ -29,11 +29,23 @@ div#banner {
 }
 */
 
+div.daos {
+	border-left: 1px solid blue;
+}
+
+div.daohead {
+	font-size: 10pt;
+	font-weight: bold;	
+}
+
+div.dao {
+}
+
 /* TABLES */
 
 table.results {
 	border-collapse: collapse;
-	font-size: 12pt;
+	font-size: 11pt;
 }
 
 table.adminmenu { 
@@ -89,13 +101,13 @@ table.nassischneiderman td {
 h1 { font-size: 16pt; margin-top: 0.5em; margin-bottom: 0.5em;}
 h2 { font-size: 16pt; margin-top: 0.25em; margin-bottom: 0.25em;}
 h2.unittitle { text-align: center; margin-bottom: 1em;}
-h3 { color: #000000; font-size: 14pt; margin-top: 0.1em; margin-bottom: 0.1em;}
+h3 { color: #000000; font-size: 14pt; margin-top: 0.1em; margin-bottom: 0.5em;}
 h3.bar, h3.ead, h3.redheading, h3.greenheading{ background-color: #c4d6f8; padding: 2px; border: solid black 1px; margin: 1em 0 0.5em 0;}
 h3.redheading { background-color: #ffaaaa; }
 h3.greenheading { background-color: #aaffaa; }
 h4 {font-size: 14pt; margin-top: 0.1em; margin-bottom: 0.1em;}
 h5 {font-size: 12pt; margin-top: 0.1em; margin-bottom: 0.1em;}
-
+h6 {font-size: 11pt; margin-top: 0.1em; margin-bottom: 0.1em;}
 
 /* LISTS */
 

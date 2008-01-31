@@ -1,6 +1,6 @@
 /*
 	This file was produced, and released as part of Cheshire for Archives v3.x
-	Copyright &copy; 2005-2007 the University of Liverpool
+	Copyright &copy; 2005-2008 the University of Liverpool
 */
 
 body {
@@ -112,6 +112,8 @@ div#copyright
   font-size: smaller;
 }
 
+h4.ead {clear:both;}
+
 #hitreport { 
   margin-top: 1em;
   margin-bottom: 1em;
@@ -175,9 +177,10 @@ div#traceback {
 	display: none;
 }
 
-hr { 
-  margin-bottom: 0;
-  padding-bottom: 0;
+hr {
+	clear: both;
+	margin-bottom: 0;
+	padding-bottom: 0;
 }
 div#full-link {
 	float:right;
