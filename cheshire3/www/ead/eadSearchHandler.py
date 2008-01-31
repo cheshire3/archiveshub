@@ -316,8 +316,7 @@ class EadSearchHandler(EadHandler):
 
         #- end for each hit
         del rs
-            
-        rows.append('</table>')
+        
         # some hit navigation
         if (hits > numreq):
             if (firstrec > 1):
@@ -336,37 +335,44 @@ class EadSearchHandler(EadHandler):
 
             numlinks = ['<div class="numnav">']
             # new hub style
-#                       ,'<form action="%s">' % (script)
-#                       ,'<input type="hidden" name="operation" value="search"/>'
-#                       ,'<input type="hidden" name="rsid" value="%s"/>' % (rsid)
-#                       ,'Page: <input type="text" name="page" size="3" value="%d"/> of %d' % ((firstrec / numreq)+1, (hits/numreq)+1)
-#                       ,'<input type="submit" value="Go!"/>'
-#                       ,'</form>'
-#                       ]
-            for x in range(1, hits+1, numreq):
-                if (x == firstrec):
-                    numlinks.append('<strong>%d-%d</strong>' % (x, min(x+numreq-1, hits)))
-                elif (x == hits):
-                    numlinks.append('<a href="%s?operation=search%s&amp;firstrec=%d&amp;numreq=%d&amp;highlight=%d">%d</a>'
-                                    % (script, rsidCgiString, x, numreq, highlight, x))
-                else:
-                    numlinks.append('<a href="%s?operation=search%s&amp;firstrec=%d&amp;numreq=%d&amp;highlight=%d">%d-%d</a>'
-                                    % (script, rsidCgiString, x, numreq, highlight, x, min(x+numreq-1, hits)))
+            numlinks.extend(['<form action="%s">' % (script)
+                       ,'<input type="hidden" name="operation" value="search"/>'
+                       ,'<input type="hidden" name="rsid" value="%s"/>' % (rsid)
+                       ,'Page: <input type="text" name="page" size="3" value="%d"/> of %d' % ((firstrec / numreq)+1, (hits/numreq)+1)
+                       ,'<input type="submit" value="Go!"/>'
+                       ,'</form>'
+                       ])
+#            for x in range(1, hits+1, numreq):
+#                if (x == firstrec):
+#                    numlinks.append('<strong>%d-%d</strong>' % (x, min(x+numreq-1, hits)))
+#                elif (x == hits):
+#                    numlinks.append('<a href="%s?operation=search%s&amp;firstrec=%d&amp;numreq=%d&amp;highlight=%d">%d</a>'
+#                                    % (script, rsidCgiString, x, numreq, highlight, x))
+#                else:
+#                    numlinks.append('<a href="%s?operation=search%s&amp;firstrec=%d&amp;numreq=%d&amp;highlight=%d">%d-%d</a>'
+#                                    % (script, rsidCgiString, x, numreq, highlight, x, min(x+numreq-1, hits)))
 
             numlinks.append('</div>')
-            hitlinks.append(' | '.join(numlinks))
+            hitlinks.append('\n'.join(numlinks))
             
-            rows.append('<div class="hitnav">%s</div>' % (' '.join(hitlinks)))
+            rows.append('<tr class="hitnav"><td>%s</td></tr>' % (' '.join(hitlinks)))
             del numlinks, hitlinks
         #- end hit navigation
+            
+        rows.append('</table>')
+        
        
         return '\n'.join(rows)
         #- end format_resultSet() ---------------------------------------------------------
         
 
     def search(self, form, maxResultSetSize=None):
-        firstrec = int(form.get('firstrec', 1))
         numreq = int(form.get('numreq', 20))
+        firstrec = int(form.get('firstrec', 0))
+        if not firstrec:
+            page = int(form.get('page', 1))
+            firstrec = 1+(numreq*page)-numreq
+        
         highlight = int(form.get('highlight', 1))
         rsid = form.get('rsid', None)
         qString = form.get('query', form.get('cqlquery', None))
