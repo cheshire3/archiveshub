@@ -1,0 +1,316 @@
+A:link {
+  color: #501060; 
+  background: transparent ; 
+  text-decoration:underline
+}
+A:visited {
+  color: black; 
+  background: transparent 
+}
+
+A:hover {
+  background: #ddddff}
+
+/*DIV:hover { background: #ddddff }*/
+
+.heading {
+  color: #501060 ; 
+  font-weight: bold ; 
+  font-family:sans-serif, avantgarde, lucida 
+}
+
+.menuheading {
+  color: #501060 ; 
+  font-weight: bold ; 
+  font-family:sans-serif, avantgarde, lucida 
+}
+
+.menusubheading {
+  color: #501060; 
+  font-weight: bold; 
+  font-family:sans-serif, avantgarde, lucida 
+}
+
+.mainheading {
+  color: #501060 ; 
+  font-weight: bold ; 
+  font-family :lucida, sans-serif
+}
+
+.purple {
+  background-color: #bbbbff
+}
+
+.boxed {
+  border-color: #bbbbff; 
+  border-style: groove
+}
+
+hr {   
+  color: #501060;
+  background-color: #501060; 
+  height: 1px; 
+  border: 1px  }
+
+
+/*overall page background colour and font*/
+body {
+  background-color: #fffffa;
+/*  background-color: #ffffff; */
+  font-family: Arial, Helvetica, sans-serif;
+  color: #000000;
+}
+
+/*background colour and font of title and navigation bars */
+.hey { 
+  font-family: Arial, Helvetica, sans-serif; 
+  background-color: #cccc99;
+  vertical-align: top;
+  color: #000000;
+}
+
+
+/*style of page sub-heading*/
+.heading {
+  font-weight: bold ;
+  font-family:sans-serif, avantgarde, lucida
+}
+
+
+/*font type and size for text in <p> tags*/
+p, blockquote { 
+  font-family: arial, lucida sans, sans serif;  
+  color: black; 
+}
+
+.content{ 
+  margin-left: 5%;
+  margin-right: 5%;
+ }
+
+li { 
+  font-family: arial, lucida sans, sans serif;  
+  color: black; 
+} 
+
+.smaller
+{ 
+  font-family: arial, lucida sans, sans-serif;  
+  color: black; 
+  font-size: smaller; 
+} 
+
+a:hover{ 
+  color: #006699;
+  background: transparent;
+ }
+
+th
+{ 
+  font-family: arial, lucida sans, sans-serif;  
+  color: black; 
+  font-size:smaller; 
+}
+
+h1 { 
+  font-family:arial, lucida sans, sans-serif;
+  color: #501060;
+  font-weight: bold ;
+  font-size: larger;
+}
+ 
+h2 
+{ 
+  font-family: arial, lucida sans, sans-serif;  
+  color: black; 
+} 
+ 
+h3 { 
+  font-family: arial, lucida sans,sans-serif;  
+  color: black; 
+}  
+ 
+h4 {  
+  font-family: arial, lucida sans,sans-serif;   
+  color: black;  
+}  
+
+h5 {  
+  font-family: arial, lucida sans,sans-serif;   
+}  
+
+/* font-size:smaller; */
+.quicksearch 
+{ 
+  font-size:smaller; 
+  font-family:arial, lucida sans, sans-serif; 
+  font-weight:bold; 
+} 
+
+span.quicksearch { 
+  font-family:arial, lucida sans, sans-serif; 
+  font-weight:bold; 
+} 
+
+#revolution { 
+  font-size:smaller; 
+  font-family:arial, lucida sans, sans-serif; 
+  font-weight:bold; 
+} 
+ 
+
+#archiveshub2 { 
+  font-size:x-large; 
+  font-family:arial, lucida sans, sans-serif; 
+  font-weight:bold; 
+} 
+ 
+p.lightblue {
+  background: #f5f8ff;
+}
+
+.lightyel {
+  background: #FBDE8F;
+}
+
+p.center {
+  text-align: center;
+}
+
+h4.sci   
+{  
+font-family: arial, lucida sans,sans-serif;   
+color: #666666;  
+}  
+
+.sciyear
+{ 
+font-family: arial, lucida sans, sans-serif;  
+color: #666666; 
+font-size:smaller; 
+} 
+
+.keyboard { 
+
+  color: black;
+  text-align: center;
+  border-style: groove;
+  border-color: #000000;
+}
+
+table.keyboardSection { 
+  text-align: center;
+}
+
+
+td.blu
+{
+background: #c4d6f8;
+}
+
+.invisible
+{
+visibility: hidden;
+}
+
+.invisible2
+{
+display: none;
+}
+
+
+em
+{
+font-style: italic;
+}
+
+strong
+{
+font-weight: bold;
+}
+
+.navbarlayout
+{
+width: 15%;
+vertical-align: top;
+text-align: center;
+}
+
+.contentlayout
+{
+width: 85%;
+vertical-align: top;
+}
+
+
+/* ends */
+
+.center2
+{
+text-align: center;
+}
+
+.topleft {
+  text-align: left;
+  vertical-align: top;
+  padding-top: 0px;
+  padding-right: 0px; 
+  padding-bottom: 0px; 
+  padding-left: 0px;
+}
+
+.top
+{
+  vertical-align: top;
+  text-align: center;
+}
+
+.topright {
+  text-align: right;
+  vertical-align: top;
+  padding-top: 0px;
+  padding-right: 0px; 
+  padding-bottom: 0px; 
+  padding-left: 0px;
+}
+
+
+.middleleft { 
+  vertical-align: middle;  
+  text-align: left;
+}
+
+.middle
+{
+  vertical-align: middle;
+  text-align: center;
+}
+
+.middleright { 
+  vertical-align: middle;  
+  text-align: right;
+}
+
+
+/*input
+{
+font-family: Arial, Helvetica, sans-serif;
+vertical-align: middle
+}
+*/
+
+textarea
+{ 
+background-color: white;
+font-family: Arial, Helvetica, sans-serif;
+font-size: 1em;
+vertical-align: top;
+}
+
+button {
+  background-color: #ffffff;
+  font-size: 12pt;
+  text-align: center;
+  width: 100%;
+}
+
