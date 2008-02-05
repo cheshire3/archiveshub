@@ -1,7 +1,7 @@
 #
 # Script:    eadAdminHandler.py
-# Version:   0.29
-# Date:      11 January 2008
+# Version:   0.30
+# Date:      5 February 2008
 # Copyright: &copy; University of Liverpool 2005-2008
 # Description:
 #            Web interface for administering a cheshire 3 database of EAD finding aids
@@ -68,6 +68,10 @@
 # 0.28 - 03/01/2008 - CS - Added menu for editing to main menu page
 #                        - _parse_upload function moved to eadHandler because also used by eadEditingHandler
 # 0.29 - 11/01/2008 - CS - javascript call to collapseLists function changed to createTreeFromList()
+# 0.30 - xx/02/2008 - JH - Some new display stuff while rebuilding / reindexing
+#
+#
+
 
 from eadHandler import *
 
@@ -1142,13 +1146,14 @@ class EadAdminHandler(EadHandler):
         global dbPath, db, sourceDir, baseDocFac, recordStore, dcRecordStore, buildFlow, buildSingleFlow
         global clusDb, clusStore, clusFlow
         global compStore, compFlow, compRecordFlow, rebuild
+        global admin_reload_display_type
         # setup http headers etc
         self.htmlTitle.append('Rebuild Database')
         self.htmlNav.append('<a href="database.html" title="Database Management" class="navlink">Database</a>')    
         req.content_type = 'text/html'
         req.send_http_header()
         head = self._get_genericHtml('header.html')
-        req.write(head + '<script type="text/javascript" src="/javascript/counter.js"></script>' + '<div id="wrapper">')
+        req.write(head + '<div id="wrapper">')
         req.write('Deleting existing data stores and indexes...')
         # delete main stores, metadata, and indexes
         self._clear_dir(os.path.join(dbPath, 'stores'))
@@ -1164,28 +1169,62 @@ class EadAdminHandler(EadHandler):
         db.begin_indexing(session)
         # for some reason this doesn't work well in threads...
         start = time.time()
+        style = admin_reload_display_type
+        problems = []
         try:
             baseDocFac.load(session)
             # TODO: figure out how many files we're loading
-            req.write('<span id="rec-progress">Processing File: <span id="rec-count" style="font-weight:bold;font-size:larger;">1</span> of UNKNOWN</span>')
-            for doc in baseDocFac:
-                buildSingleFlow.process(session, doc)
-                req.write('<script type="text/javascript">\nincr("rec-count");\n</script>')
-                    
-            mins, secs = divmod(time.time() - start, 60)
-            hours, mins = divmod(mins, 60)
-            req.write('<style type="text/css">span#rec-progress {display:none;}</style><span class="ok">[OK]</span> %dh %dm %ds<br/>' % (hours, mins, secs))
+            if style == 1:
+                req.write('<span id="rec-progress">Processing File: <span id="rec-count" style="font-weight:bold;font-size:larger;">0</span></span> ')
+            elif style == 2:
+                req.write('<table class="rebuildtable"><tr class="headrow"><td>File</td><td>Identifier</td><td>Indexed</td><td>Message</td></tr>')
+                
+            for x, doc in enumerate(baseDocFac):
+                if style == 1:
+                    req.write('<script type="text/javascript">e = document.getElementById("rec-count");e.innerHTML = "%d"\n</script><noscript>.</noscript>' % (x+1))
+                elif style == 2:
+                    req.write('<tr><td><code>%s</code></td>' % (doc.filename))
+                retval = buildSingleFlow.process(session, doc)
+                if not isinstance(retval, Record):
+                    if style < 2:
+                        problems.append((doc.filename, (retval)))
+                    else:
+                        req.write('<td/><td class="error" style="text-align: center;">ERROR</td><td>%s</td></tr>' % (retval))
+                else:
+                    if style == 0:
+                        req.write('.')
+                        if ((x+1) % 200 == 0): req.write('<br/>')
+                    elif style == 2:
+                        req.write('<td>%s</td><td class="ok" style="text-align: center;">OK</td><td/></tr>' % (retval.id))
+    
+            if style == 2:
+                req.write('</table>Indexing Complete ')
+            else:    
+                req.write('[<span class="ok"> OK </span>] ')
+            
             recordStore.commit_storing(session)
             dcRecordStore.commit_storing(session)
             db.commit_indexing(session)
             db.commit_metadata(session)
+            
+            mins, secs = divmod(time.time() - start, 60)
+            hours, mins = divmod(mins, 60)
+            req.write('%dh %dm %ds<br/>' % (hours, mins, secs))
+            
+            if len(problems):
+                req.write('<span class="error">The following file(s) were omitted due to errors that occured while loading: </span><br/>\n')
+                req.write('<br/>\n'.join(['%s - %s' % (p[0], p[1]) for p in problems]))
+                req.write('<br/>\n')
+                
         except:
-            raise
             # failed to complete - nothing else will work!
             self.logger.log('Database rebuild attempt by %s failed to complete.' % (session.user.username))
-            # FIXME: if above not done in thread, need better error message
-            #req.write('<span class="error">Indexing exited abnormally with message:<br/>\n%s</span>' % t.error)
-            req.write('<span class="error">Indexing exited abnormally</span>')
+            cla, exc, trbk = sys.exc_info()
+            excName = cla.__name__
+            try: excArgs = exc.__dict__["args"]
+            except KeyError: excArgs = str(exc)
+            #req.write('<span class="error">Indexing exited abnormally with message:<br/>\n%s</span>' % t.error) # thread version
+            req.write('<span class="error">Indexing exited abnormally:<br/>\n %s:%s</span>' % (excName, excArgs))
         else:
             # finish clusters
             req.write('Finishing subject clusters...')
@@ -1227,28 +1266,59 @@ class EadAdminHandler(EadHandler):
         self._clear_dir(os.path.join(dbPath, 'cluster', 'indexes'))
         # now we've blitzed everything, we'll have to rediscover/build the objects
         build_architecture()
-        req.write('<span class="ok">[OK]</span><br/>Indexing records.')
+        req.write('[<span class="ok"> OK </span>]<br/>')
         db.begin_indexing(session)
         # reindex records
         start = time.time()
-        reccount = 0
+        style = admin_reload_display_type
+        style = 2 # may be 0: dots, 1: incrementing counter, 2: table
         problems = []
-        for rec in recordStore:
+        if style == 0:
+            # Basic dot version
+            req.write('Indexing records.')
+        elif style == 1:
+            # Incrementing counter version
+            req.write('<span id="rec-progress">Indexing Record: <span id="rec-count" style="font-weight:bold;font-size:larger;">0</span> of %d</span>' % recordStore.totalItems)
+        else:
+            # Table version
+            req.write('<table class="rebuildtable"><tr class="headrow"><td><i>n</i> of %d</td><td>Identifier</td><td>Indexed</td><td>Message</td></tr>' % (recordStore.totalItems))
+        
+        for reccount, rec in enumerate(recordStore):
+            if style == 1:
+                req.write('<script type="text/javascript">e = document.getElementById("rec-count");e.innerHTML = "%d" \n</script><noscript>.</noscript>' % (reccount+1))
+            elif style == 2:
+                req.write('<tr><td>%d</td><td>%s</td>' % (reccount+1,rec.id))
             try: 
                 db.index_record(session, rec)
-            except Exception, e:
-                problems.append((rec.id, e))
-                continue
+            except Exception:
+                cla, exc, trbk = sys.exc_info()
+                excName = cla.__name__
+                try:
+                    excArgs = exc.__dict__["args"]
+                except KeyError:
+                    excArgs = str(exc)
+                if style < 2:
+                    problems.append((rec.id, (excName, excArgs)))
+                else:
+                    req.write('<td class="error" style="text-align: center;">ERROR</td><td>%s:%s</td></tr>' % (excName, excArgs))
             else:
-                req.write('.')
-                reccount += 1
-                if (reccount % 200 == 0): req.write('<br/>')
+                if style == 0:
+                    req.write('.')
+                    if ((reccount+1) % 200 == 0): req.write('<br/>')
+                elif style == 2:
+                    req.write('<td class="ok" style="text-align: center;">OK</td><td/></tr>')
         
+        if style == 2:
+            req.write('</table>Indexing Complete ')
+        else:    
+            req.write('[<span class="ok"> OK </span>]')
+            
         mins, secs = divmod(time.time() - start, 60)
         hours, mins = divmod(mins, 60)
-        req.write('<span class="ok">[OK]</span> %dh %dm %ds<br/>' % (hours, mins, secs))
+        req.write('%dh %dm %ds<br/>' % (hours, mins, secs))
+         
         if len(problems):
-            req.write('<span class="error">The following record(s) were omitted due to errors that occured while indexing: <br/>\n')
+            req.write('<span class="error">The following record(s) were omitted due to errors that occured while indexing: </span><br/>\n')
             req.write('<br/>\n'.join(['%s - %r:%r' % (p[0], p[1][0], p[1][1]) for p in problems]))
             req.write('<br/>\n')
                       
@@ -1258,33 +1328,32 @@ class EadAdminHandler(EadHandler):
         clusDocFac = clusDb.get_object(session, 'clusterDocumentFactory')
         clusDocFac.load(session, os.path.join(dbPath, 'cluster', 'tempCluster.data'))
         hours, mins, secs = self._timeop(clusFlow.process, (session, clusDocFac))
-        req.write('<span class="ok">[OK]</span> %dh %dm %ds<br/>' % (hours, mins, secs))
+        req.write('[<span class="ok"> OK </span>] %dh %dm %ds<br/>' % (hours, mins, secs))
         session.database = 'db_ead'
         # reindex components
-        req.write('Indexing components.')
         start = time.time()
-        dotcount = 0
         # refresh compStore - seems to be busted :?
         compStore = db.get_object(session, 'componentStore')
-        for rec in compStore:
+        req.write('<span id="comp-progress">Indexing Component: <span id="comp-count" style="font-weight:bold;font-size:larger;">0</span> of %d</span>' % compStore.totalItems)
+        for x, rec in enumerate(compStore):
+            req.write('<script type="text/javascript">e = document.getElementById("comp-count");e.innerHTML = "%d"</script>\n' % (x+1))
             try:
                 db.index_record(session, rec)
             except:
                 continue
             else:
-                dotcount += 1
-                if (dotcount % 10 == 0): req.write('.')
-                if (dotcount % (200 * 10) == 0): req.write('<br/>')
+                if ((x+1) % 10 == 0): req.write('<noscript>.</noscript>')
+                if ((x+1) % (200 * 10) == 0): req.write('<noscript><br/></noscript>')
         
         mins, secs = divmod(time.time() - start, 60)
         hours, mins = divmod(mins, 60)
-        req.write('<span class="ok">[OK]</span> %dh %dm %ds<br/>' % (hours, mins, secs))    
+        req.write('[<span class="ok"> OK </span>] %dh %dm %ds<br/>' % (hours, mins, secs))    
         req.write('Merging indexes...')
         start = time.time()
         hours, mins, secs = self._timeop(db.commit_indexing, [session])
         hours2, mins2, secs2 = self._timeop(db.commit_metadata, [session])
         hours+=hours2; mins+=mins2; secs+=secs2
-        req.write('<span class="ok">[OK]</span> %dh %dm %ds<br/>\nDATABASE REINDEX COMPLETE' % (hours, mins, secs))
+        req.write('[<span class="ok"> OK </span>] %dh %dm %ds<br/>\nDATABASE REINDEX COMPLETE' % (hours, mins, secs))
         req.write('<br/>\n<a href="database.html" title="Database Management" class="navlink">Back to \'Database Management\' Page</a>')
         # finish HTML, log
         foot = self._get_genericHtml('footer.html')          

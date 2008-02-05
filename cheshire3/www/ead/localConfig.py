@@ -92,6 +92,10 @@ namespaceUriHash = {
     ,'srw_dc': 'info:srw/schema/1/dc-v1.1'
     }
 
+# Type of display to use when reloading / reindexing database within the admin interface. Options are:
+# 0: dots, 1: counter, 2: table
+admin_reload_display_type = 2
+
 # List of words which should not be used when conducting similar searches
 # Also used for clever titlecase i.e. don't titlecase these
 # New words should be added inside the inverted commas, and separated by whitespace
