@@ -51,7 +51,18 @@ table.results {
 table.adminmenu { 
 }
 
+table.rebuildtable {
+	font-size: 10pt;
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+table.rebuildtable tr,
+table.rebuildtable td {
+	border: 1px solid black;	
+}
+
 tr.headrow {
+	font-size: larger;
 	font-weight: bolder;
 /* like navbar */
 /*  color: #ffffff;*/
@@ -185,9 +196,6 @@ a.buttonlink:visited:hover {
   text-decoration: none;
 }
 
-
-
-
 /* text and spans */
 
 p {
@@ -261,5 +269,3 @@ div.explanation {
 table {
 	padding-top: 0;
 }
-
-

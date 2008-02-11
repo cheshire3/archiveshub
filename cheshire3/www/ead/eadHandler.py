@@ -50,13 +50,8 @@ import c3errors
 from www_utils import *
 
 # regexs
-#punctuationRe = re.compile('([@+=;!?:*"{}()\[\]\~/\\|\#\&\^]|[-.,\'][^\w]|[^\w][-.,\'])')
-# modified slightly from re used to extract keywords
-# spaces need to be maintained (not consumed) to maintain accuracy of offsets
-#punctuationRe = re.compile('([~`@+=;!?:*"{}()\[\]\~/\\|\#\&\^]|[-.,]([^\w]|$)|[^\w][-.\',])')
-#punctuationRe = re.compile('([@+=;!?:*"{}()\[\]\~/\\|\#\&\^]|[-.,\'](?=\s)|(?<=\s)[-.,\'])')
-#punctuationRe = re.compile('([@+=;!?:*"{}()\[\]\~/\\|\#\&\^](?!\.)|[-.,\'](?=\s)|(?<=\s)[-.,\'])')
-punctuationRe = re.compile('([@+=;!?:*"{}()\[\]\~/\\|\#\&\^]|[-.,\'](?=\s+)|(?<=\s)[-.,\'])')   # this busts when there are accented chars(?)
+# Deprecated in favour of ProximityIndex offsets
+#punctuationRe = re.compile('([@+=;!?:*"{}()\[\]\~/\\|\#\&\^]|[-.,\'](?=\s+)|(?<=\s)[-.,\'])')   # this busts when there are accented chars(?)
 wordRe = re.compile('\s*\S+')
 emailRe = re.compile('^[a-zA-Z][^@ .]*(\.[^@ .]+)*@[^@ .]+\.[^@ .]+(\.[^@ .]+)*$')    # e.g. foo@bar.com
 anchorRe = re.compile('<a .*?name="(.*?)".*?>')
@@ -78,8 +73,6 @@ recid_re = {}
 recid_re['full'] = re.compile(': Full-text requested.+: (.+)$', re.MULTILINE)
 recid_re['summary'] = re.compile(': Summary requested.+: (.+)$', re.MULTILINE)
 recid_re['email'] = re.compile(': Record (.+?) emailed to (.+)$', re.MULTILINE)
-
-
 
 
 
