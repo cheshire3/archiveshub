@@ -557,10 +557,10 @@ class EadAdminHandler(EadHandler):
         out = []
         for s in store :
             out.extend(['<li>'
-                            ,'<span class="fileops"><input type="%s" name="recid" value="%s"/></span>' % (type, s.id)
-                            ,'<span class="filename">%s</span>' % s.id
-                            ,'</li>'
-                            ])
+                       ,'<span class="fileops"><input type="%s" name="recid" value="%s"/></span>' % (type, s.id)
+                       ,'<span class="filename">%s</span>' % s.id
+                       ,'</li>'
+                       ])
         return out
 
 
@@ -575,7 +575,7 @@ class EadAdminHandler(EadHandler):
             if (os.path.isdir(os.path.join(d,f))):
                 outD.extend(['<li title="%s">%s' % (os.path.join(d,f),f),
                             '<ul class="hierarchy">',
-                            '\n'.join(self._walk_directory(os.path.join(d, f))),
+                            '\n'.join(self._walk_directory(os.path.join(d, f), type)),
                             '</ul></li>'
                             ])
             else:
@@ -588,6 +588,7 @@ class EadAdminHandler(EadHandler):
 
         return outD + outF
     #- end walk_directory()
+
 
     def review_records(self, version='full'):
         global sourceDir
@@ -632,12 +633,11 @@ class EadAdminHandler(EadHandler):
     def show_editMenu(self):
         global sourceDir
         self.htmlTitle.append('Edit/Create')
+        self.logger.log('Create/Edit Options')
         page = read_file('editmenu.html')
         files = self._walk_directory(sourceDir, 'radio')
-        output = page.replace('%%FILES%%', ''.join(files))
         recids = self._walk_store('editingStore', 'radio')
-        output = output.replace('%%RECORDS%%', ''.join(recids))
-        return output
+        return multiReplace(page, {'%%%SOURCEDIR%%%': sourceDir, '%%%FILES%%%': ''.join(files), '%%%RECORDS%%%': ''.join(recids)})
         
     
     def _run_thread(self, t, req):

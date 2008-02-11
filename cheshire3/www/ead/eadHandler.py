@@ -391,3 +391,4 @@ def build_architecture(data=None):
     diacriticNormalizer = db.get_object(session, 'DiacriticNormalizer')
     
     rebuild = False
+    

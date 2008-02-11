@@ -1,15 +1,30 @@
 <div id="single">
+	<script type="text/javascript" src="/javascript/cookies.js"></script>
+	<script type="text/javascript" src="/javascript/collapsibleLists.js"></script>
+        <script type="text/javascript">
+               <!--
+               function loadPage() {
+                   createTreeFromList('sourceDirTree', getCookie('sourceDirTree'), true, false);
+               }
+               function unloadPage() {
+                   setCookie('sourceDirTree', stateToString('sourceDirTree'))
+               }
+               -->
+	</script>
     <h3 class="bar"><a href="../edit/">Create New EAD Description</a></h3>
     <p>Create a new EAD description</p>
     <h3 class="bar"><a title="File Management Menu">Edit Existing EAD Description</a></h3>
-     <div style="float: left">
-     <h4>A new file from the main database</h4>
-    
-    <form action="../edit/" method="post" enctype="multipart/form-data">
+    <div style="float: left; padding-right:50px;">
+    <h4>A new file from the main database</h4>
+    <form action="/ead/edit/" method="post" enctype="multipart/form-data">
     <input type="hidden" name="operation" id="operation" value="edit"/>
     <input type="submit" value=" Edit File "/>
-    <ul>
-    %%FILES%%
+    <ul class="unmarked">
+    	<li><img src="/images/folderOpen.jpg" alt=""/><code>%%%SOURCEDIR%%%</code>
+	    <ul id="sourceDirTree" class="unmarked">
+	    %%%FILES%%%
+	    </ul>
+    	</li>
     </ul>
     <input type="submit" value=" Edit File "/>
     </form>
@@ -19,8 +34,8 @@
     <form action="../edit/" method="post" enctype="multipart/form-data">
     <input type="hidden" name="operation" id="operation" value="load"/>
     <input type="submit" value=" Load File "/>
-    <ul>
-    %%RECORDS%%
+    <ul class="unmarked">
+    %%%RECORDS%%%
     </ul>
     <input type="submit" value=" Load File "/>
     </form>
