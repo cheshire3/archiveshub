@@ -91,8 +91,6 @@ class AdminThread(Thread):
         except: self.error = 'Undeterminable Error'
 
 
-
-
 class WorkflowThread(AdminThread):
     session = None
     wf = None
@@ -107,8 +105,6 @@ class WorkflowThread(AdminThread):
     def run2(self):
         self.wf.process(self.session, self.input)
 
-
-        
 
 class BuildHtmlThread(AdminThread):
     def run2(self):
@@ -828,7 +824,8 @@ class EadAdminHandler(EadHandler):
             
             # index record in thread to allow feedback
             req.write('Loading and Indexing record .')
-            t = WorkflowThread(session, indexRecordFlow, rec)
+            rec = assignDataIdFlow.process(session, rec)
+            t = WorkflowThread(session, indexNewRecordFlow, rec)
             self._run_thread(t, req)
             if t.error:
                 # thread failed to complete - nothing else will work!
@@ -890,7 +887,7 @@ class EadAdminHandler(EadHandler):
                 self.htmlTitle.append('Error')
                 return 'Could not locate specified file path'     
             # first we have to find the recid by parsing the record
-            req.write('Reading original file (<code>%s</code>) ...' % filepath)
+            req.write('Reading original file <code>%s</code> ...' % filepath)
             try:
                 doc = StringDocument(read_file(filepath))
             except IOError:
@@ -936,7 +933,8 @@ class EadAdminHandler(EadHandler):
                         compStore.begin_storing(session)
                         q = CQLParser.parse('ead.parentid exact "%s/%s"' % (rec.recordStore, rec.id))
                         rs = db.search(session, q)
-                        req.write('Unindexing %d component records .' % (len(rs)))
+                        req.write('<script type="text/javascript" src="/javascript/counter.js"></script>')
+                        req.write('Unindexing component <b><span id="comp-count">0</span></b> of %d.' % (len(rs)))
                         dotcount = 0
                         for r in rs:
                             try:
@@ -948,13 +946,13 @@ class EadAdminHandler(EadHandler):
                                 db.remove_record(session, compRec)
                                 compStore.delete_record(session, compRec.id)
                             
-                            req.write('.')
+                            req.write('<script type="text/javascript">incr("comp-count");</script><noscript>.</noscript>\n')
                             dotcount +=1
                             if (dotcount % 200 == 0):
-                                req.write('<br/>')
+                                req.write('<noscript><br/></noscript>')
                     
                         compStore.commit_storing(session)
-                        req.write('<span class="ok">[OK]</span><br/>\n')
+                        req.write(' [<span class="ok"> OK </span>]<br/>\n')
                     
                     req.write('Merging modified indexes...')
                     try:
@@ -968,8 +966,8 @@ class EadAdminHandler(EadHandler):
                         unindexTotal +=1
                         errorTotal += 1
                     else:
-                        req.write('<span class="ok">[OK]</span><br/>\n')
                         db.commit_metadata(session)
+                        req.write('<span class="ok">[OK]</span><br/>\n')
                         unindexedTotal += 1
                     self.logger.log('File Delete: %s removed from database' % (rec.id))
                     rebuild = True
@@ -1122,13 +1120,15 @@ class EadAdminHandler(EadHandler):
 
     def _clear_dir(self, dir):
         # function to recursively clear an entire directory - dangerous if used incorrectly!!!
-        # imitates "rm -rf dir" in shell
+        # imitates "rm -rf dir/*" in shell
         for f in os.listdir(dir):
             fp = os.path.join(dir, f)
             if os.path.isdir(fp):
-                self._clear_dir(fp)
-                if fp[-7:] != 'preview':
-                    os.rmdir(fp)
+                if f <> 'preview':
+                    os.shutil.rmtree(fp, ignore_errors=True)
+                else:
+                    self._clear_dir(fp)
+
             else:
                 os.remove(fp)
                 
@@ -1157,9 +1157,9 @@ class EadAdminHandler(EadHandler):
         req.write('Deleting existing data stores and indexes...')
         # delete main stores, metadata, and indexes
         self._clear_dir(os.path.join(dbPath, 'stores'))
-        self._clear_dir(os.path.join(dbPath, 'indexes'))
+        db.clear_indexes(session)
         self._clear_dir(os.path.join(dbPath, 'cluster', 'stores'))
-        self._clear_dir(os.path.join(dbPath, 'cluster', 'indexes'))
+        clusDb.clear_indexes(session)
         # now we've blitzed everything, we'll have to rediscover/build the objects
         build_architecture()
         # rebuild and reindex
@@ -1260,10 +1260,15 @@ class EadAdminHandler(EadHandler):
         req.write(head + '<div id="wrapper">')
         req.write('Deleting existing indexes...')
         # delete existing indexes
-        self._clear_dir(os.path.join(dbPath, 'indexes'))
+        if not db.indexes:
+            db._cacheIndexes(session)
+        for idx in db.indexes.itervalues():
+            if not idx.get_setting(session, 'noUnindexDefault', 0):
+                idx.clear(session)
+            
         # delete cluster stores, metadata, and indexes
         self._clear_dir(os.path.join(dbPath, 'cluster', 'stores'))
-        self._clear_dir(os.path.join(dbPath, 'cluster', 'indexes'))
+        clusDb.clear_indexes(session)
         # now we've blitzed everything, we'll have to rediscover/build the objects
         build_architecture()
         req.write('[<span class="ok"> OK </span>]<br/>')
@@ -1719,7 +1724,7 @@ textTxr = None
 ppFlow = None
 buildFlow = None
 buildSingleFlow = None
-indexRecordFlow = None
+indexNewRecordFlow = None
 assignDataIdFlow = None
 normIdFlow = None
 clusFlow = None
@@ -1738,7 +1743,7 @@ def build_architecture(data=None):
     authStore, recordStore, dcRecordStore, compStore, resultSetStore, \
     clusDb, clusStore, clusFlow, \
     summaryTxr, fullTxr, fullSplitTxr, textTxr, \
-    ppFlow, buildFlow, buildSingleFlow, indexRecordFlow, assignDataIdFlow, normIdFlow, compFlow, compRecordFlow, \
+    ppFlow, buildFlow, buildSingleFlow, indexNewRecordFlow, assignDataIdFlow, normIdFlow, compFlow, compRecordFlow, \
     extractor, diacriticNormalizer, \
     rebuild
     
@@ -1777,7 +1782,7 @@ def build_architecture(data=None):
     ppFlow = db.get_object(session, 'preParserWorkflow'); ppFlow.load_cache(session, db)
     buildFlow = db.get_object(session, 'buildIndexWorkflow'); buildFlow.load_cache(session, db)
     buildSingleFlow = db.get_object(session, 'buildIndexSingleWorkflow'); buildSingleFlow.load_cache(session, db)
-    indexRecordFlow = db.get_object(session, 'indexRecordWorkflow'); indexRecordFlow.load_cache(session, db)
+    indexNewRecordFlow = db.get_object(session, 'indexNewRecordWorkflow'); indexNewRecordFlow.load_cache(session, db)
     assignDataIdFlow = db.get_object(session, 'assignDataIdentifierWorkflow'); assignDataIdFlow.load_cache(session, db)
     normIdFlow = db.get_object(session, 'normalizeDataIdentifierWorkflow'); normIdFlow.load_cache(session, db)
     compFlow = db.get_object(session, 'buildAllComponentWorkflow'); compFlow.load_cache(session, db)
