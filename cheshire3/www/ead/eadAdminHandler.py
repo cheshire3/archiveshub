@@ -1,7 +1,7 @@
 #
 # Script:    eadAdminHandler.py
-# Version:   0.30
-# Date:      5 February 2008
+# Version:   0.31
+# Date:      12 February 2008
 # Copyright: &copy; University of Liverpool 2005-2008
 # Description:
 #            Web interface for administering a cheshire 3 database of EAD finding aids
@@ -69,7 +69,9 @@
 #                        - _parse_upload function moved to eadHandler because also used by eadEditingHandler
 # 0.29 - 11/01/2008 - CS - javascript call to collapseLists function changed to createTreeFromList()
 # 0.30 - xx/02/2008 - JH - Some new display stuff while rebuilding / reindexing
-#
+# 0.31 - 12/02/2008 - CS - show_editMenu function to display edit menu moved to editing handler for easier release without editing interface
+#                        - _walk_directory moved to eadHandler 
+#                        - _walk_store moved to editingHandler
 #
 
 
@@ -552,42 +554,6 @@ class EadAdminHandler(EadHandler):
                #return '<span class="error">Unable to delete user %s - incorrect password.</span>' % (userid) + self.list_users()
     #- end delete_user()
 
-    def _walk_store(self, storeName, type='checkbox'):
-        store = db.get_object(session, storeName)
-        out = []
-        for s in store :
-            out.extend(['<li>'
-                       ,'<span class="fileops"><input type="%s" name="recid" value="%s"/></span>' % (type, s.id)
-                       ,'<span class="filename">%s</span>' % s.id
-                       ,'</li>'
-                       ])
-        return out
-
-
-    def _walk_directory(self, d, type='checkbox'):
-        global script
-        # we want to keep all dirs at the top, followed by all files
-        outD = []
-        outF = []
-        filelist = os.listdir(d)
-        filelist.sort()
-        for f in filelist:
-            if (os.path.isdir(os.path.join(d,f))):
-                outD.extend(['<li title="%s">%s' % (os.path.join(d,f),f),
-                            '<ul class="hierarchy">',
-                            '\n'.join(self._walk_directory(os.path.join(d, f), type)),
-                            '</ul></li>'
-                            ])
-            else:
-                fp = os.path.join(d,f)
-                outF.extend(['<li>'
-                            ,'<span class="fileops"><input type="%s" name="filepath" value="%s"/></span>' % (type, fp)
-                            ,'<span class="filename"><a href="files.html?operation=view&amp;filepath=%s" title="View file contents">%s</a></span>' % (cgi_encode(fp), f)
-                            ,'</li>'
-                            ])
-
-        return outD + outF
-    #- end walk_directory()
 
 
     def review_records(self, version='full'):
@@ -630,14 +596,7 @@ class EadAdminHandler(EadHandler):
     #- end review_records()
     
     
-    def show_editMenu(self):
-        global sourceDir
-        self.htmlTitle.append('Edit/Create')
-        self.logger.log('Create/Edit Options')
-        page = read_file('editmenu.html')
-        files = self._walk_directory(sourceDir, 'radio')
-        recids = self._walk_store('editingStore', 'radio')
-        return multiReplace(page, {'%%%SOURCEDIR%%%': sourceDir, '%%%FILES%%%': ''.join(files), '%%%RECORDS%%%': ''.join(recids)})
+
         
     
     def _run_thread(self, t, req):
