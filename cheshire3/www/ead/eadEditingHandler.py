@@ -157,7 +157,9 @@ class EadEditingHandler(EadHandler):
             else :
                 self._add_text(target, form.get('pui', ''))
             target = self._create_path(header, 'filedesc/titlestmt/titleproper')
-            self._add_text(target, form.get('did/unittitle', ''))            
+            self._add_text(target, form.get('did/unittitle', ''))      
+            target = self._create_path(header, 'filedesc/titlestmt/sponsor')   
+            self._add_text(target, form.get('filedesc/titlestmt/sponsor', '')) 
             target = self._create_path(header, 'profiledesc/creation')
             if session.user.realName != '' :
                 userName = session.user.realName
@@ -170,7 +172,7 @@ class EadEditingHandler(EadHandler):
             tree = etree.fromstring('<%s id="%s"></%s>' % (ctype, level, ctype))           
         list = form.list     
         for field in list :
-            if field.name not in ['ctype','location','operation','newForm','nocache','recid', 'parent', 'pui', 'eadid']:        
+            if field.name not in ['ctype','location','operation','newForm','nocache','recid', 'parent', 'pui', 'eadid', 'filedesc/titlestmt/sponsor']:        
                 #do did level stuff
                 if (collection):
                     node = tree.xpath('/ead/archdesc')[0]
@@ -185,6 +187,7 @@ class EadEditingHandler(EadHandler):
                     if (field.value != ''):
                         target = self._create_path(node, field.name)
                         self._add_text(target, field.value)
+        self.logger.log('build complete')
         return tree    
     #- end build_ead    
         
@@ -205,9 +208,20 @@ class EadEditingHandler(EadHandler):
                 return self._delete_path(startNode, nodePath[:nodePath.rfind('/')])
             
 
-    def _create_path(self, startNode, nodePath):               
+    def _create_path(self, startNode, nodePath):           
+        self.logger.log('creating path %s ' % nodePath)    
         if (startNode.xpath(nodePath)):
-            return startNode.xpath(nodePath)[0]
+            if (nodePath.find('@') == -1):
+                return startNode.xpath(nodePath)[0]
+            else :  
+                if len(startNode.xpath(nodePath[:nodePath.rfind('/')])) > 0:
+                    parent = startNode.xpath(nodePath[:nodePath.rfind('/')])[0]
+                else :
+                    parent = startNode
+                attribute = nodePath[nodePath.rfind('@')+1:]
+                return [parent, attribute]
+        elif (nodePath.find('@') == 0):
+            return self._add_attribute(startNode, nodePath[1:])
         elif (nodePath.find('/') == -1) :
             newNode = etree.Element(nodePath)                        
             return self._append_element(startNode, newNode)
@@ -227,14 +241,19 @@ class EadEditingHandler(EadHandler):
 
     
     def _add_attribute(self, parentNode, attribute):
+        self.logger.log('adding attribute')
+        self.logger.log(parentNode)
+        self.logger.log(attribute)
         parentNode.attrib[attribute] = ""
         return [parentNode, attribute]
  
         
     def _add_text(self, parent, textValue):
+        self.logger.log('adding text with values: parent = %s textValue = %s' % (parent, textValue))
         if not (textValue.find('&') == -1):
             textValue = textValue.replace('&', '&#38;')
         if isinstance(parent, etree._Element):
+            self.logger.log('element')
             for c in parent.getchildren() :
                 parent.remove(c)
             value = '<foo>%s</foo>' % textValue      
@@ -248,10 +267,12 @@ class EadEditingHandler(EadHandler):
                 for n in nodetree :
                     parent.append(n)
         else :
+            self.logger.log('attribute')
             parent[0].attrib[parent[1]] = textValue
 
+
        
-    def _delete_currentControlaccess(self, startNode, list=['subject','persname', 'famname', 'corpname', 'geogname', 'title']):
+    def _delete_currentControlaccess(self, startNode, list=['subject','persname', 'famname', 'corpname', 'geogname', 'title', 'genreform']):
         if (startNode.xpath('controlaccess')):
             parent = startNode.xpath('controlaccess')[0]        
             for s in list :
@@ -366,6 +387,7 @@ class EadEditingHandler(EadHandler):
             #first delete current accesspoints
             self._delete_currentControlaccess(node)
             self._delete_currentLangmaterial(node)
+            self.logger.log('deleted stuff')
             #change title in header 
 #CHECK THAT THIS IS SOMETHING WE WANT IF SO COMMENT IN AND TEST
             #header = tree.xpath('/ead/eadheader')[0]
@@ -373,7 +395,8 @@ class EadEditingHandler(EadHandler):
             #self._add_text(target, form.get('did/unittitle', ''))
             #cycle through the form and replace any node that need it
             for field in list :                
-                if field.name not in ['ctype','location','operation','newForm','nocache','recid', 'parent', 'pui']:                   
+                if field.name not in ['ctype','location','operation','newForm','nocache','recid', 'parent', 'pui']:        
+                    self.logger.log('adding %s' % field.name)                
                     #do archdesc stuff
                     if field.name.find('controlaccess') == 0 :                        
                         self._create_controlaccess(node, field.name, field.value)      
@@ -431,8 +454,10 @@ class EadEditingHandler(EadHandler):
                 #first delete current accesspoints
                 self._delete_currentControlaccess(node)
                 self._delete_currentLangmaterial(node)
+                self.logger.log('deleted stuff')
                 for field in list :
-                    if field.name not in ['ctype','location','operation','newForm','nocache','recid', 'parent']:            
+                    if field.name not in ['ctype','location','operation','newForm','nocache','recid', 'parent']:       
+                        self.logger.log('adding %s' % field.name)     
                         if field.name.find('controlaccess') == 0 :                        
                             self._create_controlaccess(node, field.name, field.value)      
                         elif field.name.find('did/langmaterial') == 0 :
@@ -726,7 +751,7 @@ class EadEditingHandler(EadHandler):
                 file = open(os.path.join(sourceDir,recid), 'w')
             file.write(etree.tostring(rec.get_dom(session), pretty_print=True))
             file.close     
-            editStore.remove_record(session, rec.id)
+            editStore.delete_record(session, rec.id)
             editStore.commit_storing(session)
         return '<p>Process Complete</p>' 
     
