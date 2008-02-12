@@ -1,11 +1,9 @@
-<!DOCTYPE xsl:stylesheet [ 
-    <!ENTITY nbsp "&#160;">   <!-- white space in XSL -->
-    <!ENTITY copy "&#169;">   <!-- copyright symbol in XSL -->
-    ]>
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE xsl:stylesheet []>
     
 <!-- 
 	This file was produced, and released as part of Cheshire for Archives v3.x.
-	Copyright &copy; 2005-2007 the University of Liverpool
+	Copyright &#169; 2005-2008 the University of Liverpool
 -->
 
 <xsl:stylesheet
@@ -29,6 +27,9 @@
 	    </div>
 	  </div>
 	  <div id="leftcol" class="toc">
+            <xsl:comment>
+                <xsl:text>#config errmsg="[ Table of Contents unavailable ]"</xsl:text>
+            </xsl:comment>
 	    <xsl:comment>
 	      <xsl:text>#include virtual="</xsl:text>
 	      <xsl:value-of select="$toc_cache_url"/>
@@ -70,7 +71,7 @@
 	</xsl:template>
 
 
-  <!-- for component records -->
+        <!-- for component records -->
 	<xsl:template match="/c3component">
 		<!-- link to collection level -->
 		<xsl:text>LINKTOPARENT</xsl:text>

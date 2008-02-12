@@ -1,4 +1,17 @@
-#!/home/cheshire/cheshire3/install/bin/python
+#!/home/cheshire/cheshire3/install/bin/python -i
+#
+# Script:    run.py
+# Date:      11 February 2008
+# Copyright: &copy; University of Liverpool 2005-2008
+# Description:
+#            script for maintaining a Cheshire3 database of EAD finding aid documents.
+#            - includes building, indexing and user creation/editing
+#            - part of Cheshire for Archives v3
+#
+# Author(s): JH - John Harrison <john.harrison@liv.ac.uk>
+#
+# Language:  Python
+#
 
 import sys, os, re, getpass, time, traceback
 from crypt import crypt
@@ -23,7 +36,6 @@ sys.path.extend(osp)
 from baseObjects import Session
 from server import SimpleServer
 from document import StringDocument
-#from PyZ3950 import CQLParser
 import c3errors
 
 from www_utils import *
@@ -82,6 +94,7 @@ if ('-adduser' in sys.argv):
 
 
 if ('-load' in sys.argv):
+    db.clear_indexes(session)
     start = time.time()
     # build necessary objects
     flow = db.get_object(session, 'buildIndexWorkflow')
@@ -92,11 +105,16 @@ if ('-load' in sys.argv):
     flow.process(session, baseDocFac)
     (mins, secs) = divmod(time.time() - start, 60)
     (hours, mins) = divmod(mins, 60)
-    print 'Indexing complete (%dh %dm %ds)' % (hours, mins, secs)
+    print 'Loading, Indexing complete (%dh %dm %ds)' % (hours, mins, secs)
     
 
 if ('-index' in sys.argv):
     start = time.time()
+    if not db.indexes:
+        db._cacheIndexes(session)
+    for idx in db.indexes.itervalues():
+        if not idx.get_setting(session, 'noUnindexDefault', 0):
+            idx.clear(session)
     db.begin_indexing(session)
     print "Indexing records..."
     for rec in recordStore:
@@ -118,28 +136,26 @@ if ('-index' in sys.argv):
 if ('-cluster' in sys.argv):
     start = time.time()
     # set session.database to the cluster DB
-    session.database = 'db_ead_cluster'
+    session.database = clusDb.id
     # build necessary objects
+    clusDb.clear_indexes(session)
     clusFlow = clusDb.get_object(session, 'buildClusterWorkflow')
     clusDocFac = clusDb.get_object(session, 'clusterDocumentFactory')
     try:
-        clusDocFac.load(session, clusDocFac.get_default(session, 'data'))
+        clusDocFac.load(session)
     except c3errors.FileDoesNotExistException:
         # return session.database to the default (finding aid) DB
         print '*** No cluster data present.'
     else:
         print 'Clustering subjects...'
-        try:
-            clusFlow.process(session, clusDocFac)
-        except:
-            raise
+        clusFlow.process(session, clusDocFac)
     
     (mins, secs) = divmod(time.time() - start, 60)
     (hours, mins) = divmod(mins, 60)
     print 'Cluster Indexing complete (%dh %dm %ds)' % (hours, mins, secs)
     # return session.database to the default (finding aid) DB
-    session.database = 'db_ead'
-
+    session.database = db.id
+    
 
 if ('-load_components' in sys.argv):
     start = time.time()

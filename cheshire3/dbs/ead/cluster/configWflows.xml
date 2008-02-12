@@ -2,55 +2,54 @@
 
 <!-- 
 	This file was produced, and released as part of Cheshire for Archives v3.x.
-	Copyright &copy; 2005-2007 the University of Liverpool
+	Copyright &copy; 2005-2008 the University of Liverpool
 -->
 
-  <subConfigs>
+    <subConfigs>
 	
-    <subConfig type="workflow" id="buildClusterWorkflow">
-      <objectType>workflow.CachingWorkflow</objectType>
-      <workflow>
-        <!-- input type:  documentFactory -->
-        <object type="recordStore" function="begin_storing"/>
-        <object type="database" function="begin_indexing"/>
-        <for-each>
-			<object type="workflow" ref="buildClusterSingleWorkflow"/>
-        </for-each>
-        <object type="recordStore" function="commit_storing"/>
-        <object type="database" function="commit_metadata"/>
-        <object type="database" function="commit_indexing"/>
-      </workflow>
-    </subConfig>
+        <subConfig type="workflow" id="buildClusterWorkflow">
+            <objectType>workflow.CachingWorkflow</objectType>
+            <workflow>
+                <!-- input type:  documentFactory -->
+                <object type="recordStore" function="begin_storing"/>
+                <object type="database" function="begin_indexing"/>
+                <for-each>
+                    <object type="workflow" ref="buildClusterSingleWorkflow"/>
+                </for-each>
+                <object type="recordStore" function="commit_storing"/>
+                <object type="database" function="commit_metadata"/>
+                <object type="database" function="commit_indexing"/>
+            </workflow>
+        </subConfig>
 
 
 	<subConfig type="workflow" id="buildClusterSingleWorkflow">
-		<objectType>workflow.CachingWorkflow</objectType>
-		<workflow>
-			<!-- input type: document -->
-			<object type="preParser" ref="PrintableOnlyPreParser"/>
-			<object type="preParser" ref="CharacterEntityPreParser"/>
-			<object type="preParser" ref="AmpPreParser"/>
-			<try>
-			  <object type="parser" ref="SaxParser"/>
-			</try>
-			<except>
-			  <log>"*** unparsable"</log>
-			  <return/>
-			</except>
-			<!-- type: record -->
-			<try>
-			  <object type="recordStore" ref="eadClusterStore" function="create_record"/>
-			  <object type="database" function="add_record"/>    
-			  <object type="database" function="index_record"/> 	
-			  <!--<log>"... loaded, indexed"</log>-->
-			</try>
-			<except>
-                            <raise/>
-			  <log>"*** error"</log>
-			</except>
-		</workflow>
+            <objectType>workflow.CachingWorkflow</objectType>
+            <workflow>
+		<!-- input type: document -->
+		<object type="preParser" ref="PrintableOnlyPreParser"/>
+		<object type="preParser" ref="CharacterEntityPreParser"/>
+		<object type="preParser" ref="AmpPreParser"/>
+		<try>
+                    <object type="parser" ref="LxmlParser"/>
+		</try>
+		<except>
+                    <log>"*** unparsable"</log>
+                    <return/>
+		</except>
+		<!-- type: record -->
+		<try>
+                    <object type="recordStore" ref="eadClusterStore" function="create_record"/>
+                    <object type="database" function="add_record"/>
+                    <object type="database" function="index_record"/>
+		</try>
+		<except>
+                    <log>"*** error"</log>
+                    <raise/>
+		</except>
+            </workflow>
 	</subConfig>
 	
-  </subConfigs>
+    </subConfigs>
 
 </config>

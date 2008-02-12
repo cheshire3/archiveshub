@@ -1,4 +1,16 @@
 #!/home/cheshire/cheshire3/install/bin/python -i
+#
+# Script:    search.py
+# Date:      11 February 2008
+# Copyright: &copy; University of Liverpool 2005-2008
+# Description:
+#            Quick search testing script
+#            - part of Cheshire for Archives v3
+#
+# Author(s): JH - John Harrison <john.harrison@liv.ac.uk>
+#
+# Language:  Python
+#
 
 import sys, os
 from lxml import etree
@@ -10,7 +22,7 @@ sys.path.extend(osp)
 from baseObjects import Session
 from server import SimpleServer
 from document import StringDocument
-from PyZ3950 import CQLParser
+from PyZ3950.CQLParser import parse as CQLparse
 from utils import flattenTexts
 import c3errors
 
@@ -43,7 +55,7 @@ if len(sys.argv[1:]):
 else:
     qString = 'dc.description all/relevant/proxinfo "money"'
 
-q = CQLParser.parse(qString)
+q = CQLparse(qString)
 rs = db.search(session, q)
 hits = len(rs)
 print hits, 'hits'

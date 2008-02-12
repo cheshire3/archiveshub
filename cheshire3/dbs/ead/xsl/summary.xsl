@@ -1,11 +1,9 @@
-<!DOCTYPE xsl:stylesheet [ 
-    <!ENTITY nbsp "&#160;">   <!-- white space in XSL -->
-    <!ENTITY copy "&#169;">   <!-- copyright symbol in XSL -->
-    ]>
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE xsl:stylesheet []>
 
 <!-- 
 	This file was produced, and released as part of Cheshire for Archives v3.x.
-	Copyright &copy; 2005-2007 the University of Liverpool
+	Copyright &#169; 2005-2008 the University of Liverpool
 -->
 
 <xsl:stylesheet

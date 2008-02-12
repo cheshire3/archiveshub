@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE xsl:stylesheet [ 
-    <!ENTITY nbsp "&#160;">   <!-- white space in XSL -->
-    <!ENTITY copy "&#169;">   <!-- copyright symbol in XSL -->
-    ]>
+<!DOCTYPE xsl:stylesheet []>
     
 <!-- 
 	This file was produced, and released as part of Cheshire for Archives v3.x.
-	Copyright &copy; 2005-2008 the University of Liverpool
+	Copyright &#169; 2005-2008 the University of Liverpool
 -->
 
 <xsl:stylesheet 
@@ -21,7 +18,7 @@
   	<script type="text/javascript" src="/javascript/collapsibleLists.js"></script>
   	<script type="text/javascript" src="/javascript/cookies.js"></script>
         <h2>
-            <xsl:text>Contents</xsl:text> 
+            <xsl:text>Contents&#160;</xsl:text>
             <span class="printlink">
                 <a href="SCRIPT?operation=toc&amp;recid=RECID"><xsl:text>[ printable ]</xsl:text></a>
             </span>

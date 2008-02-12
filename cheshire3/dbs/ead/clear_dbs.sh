@@ -5,11 +5,11 @@ find /home/cheshire/cheshire3/install/htdocs/ead/html/ -name '*.shtml' -print0 |
 find /home/cheshire/cheshire3/install/htdocs/ead/tocs/ -name '*.inc' -print0 | xargs --null rm -f
 
 current=`pwd`
+
 cd /home/cheshire/cheshire3/cheshire3/dbs/ead
 rm -f stores/*.bdb
-rm -rf indexes/*
-rm -f cluster/*.bdb
-rm -f cluster/stores/*.bdb
-rm -rf cluster/indexes/*
-rm -f tempCluster.*
+# rm -rf indexes/* # this is now handled within Cheshire3
+
+./cluster/clear_dbs.sh
+
 cd $current

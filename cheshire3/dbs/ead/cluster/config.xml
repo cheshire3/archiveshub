@@ -50,15 +50,17 @@
     
     <!-- recordStores -->
     <subConfig type="recordStore" id="eadClusterStore">
-      <objectType>recordStore.BdbRecordStore</objectType>
-      <paths>
-		<path type="defaultPath">stores</path>
-        <path type="databasePath">clusterStore.bdb</path>
-		<object type="idNormalizer" ref="StringIntNormalizer"/>
-      </paths>
-      <options>
-        <setting type="digest">sha</setting>
-      </options>
+        <objectType>recordStore.BdbRecordStore</objectType>
+        <paths>
+            <path type="defaultPath">stores</path>
+            <path type="databasePath">clusterStore.bdb</path>
+            <object type="idNormalizer" ref="StringIntNormalizer"/>
+            <object type="inTransformer" ref="XmlTransformer" />
+            <object type="outParser" ref="LxmlParser" />
+        </paths>
+        <options>
+            <setting type="digest">sha</setting>
+        </options>
     </subConfig>
 
     <!-- indexes -->

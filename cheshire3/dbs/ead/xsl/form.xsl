@@ -1,17 +1,18 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="utf-8"?>
 
 <xsl:stylesheet
-  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:exsl="http://exslt.org/common"
-  extension-element-prefixes="exsl"
-  version="1.0">
-  <xsl:import href="contents-editing.xsl"/>
+    extension-element-prefixes="exsl"
+    version="1.0">
   
-  <xsl:output method="html" encoding="UTF-8"/>
- <xsl:strip-space elements="*"/>
- 
- 
- 
+    <xsl:import href="contents-editing.xsl"/>
+  
+    <xsl:output method="html" encoding="UTF-8"/>
+    <xsl:strip-space elements="*"/>     
+<!--  <xsl:output method="xml" omit-xml-declaration="yes"/>-->
+<!--  <xsl:preserve-space elements="*"/>-->
+
   <xsl:variable name="eadidstring">
   	<xsl:value-of select="/ead/eadheader/eadid/text()"/>
   </xsl:variable>
@@ -172,7 +173,7 @@
 			<xsl:otherwise>
 				<strong><span class="isadg">3.2.3: </span>Archival History </strong> <a class="smalllink" id="linkcbc" title="add archival history" onclick="addElement('cbc')">add</a> [optional]
 				<br/>
-				<textarea class="menuField" name="custodhist" id="cbc" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
+				<textarea class="menuField" name="custodhist" id="cbc" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none"/>
 			</xsl:otherwise>
 		</xsl:choose>			
 	    </p>      
