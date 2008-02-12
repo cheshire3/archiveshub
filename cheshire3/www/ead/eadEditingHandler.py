@@ -577,6 +577,7 @@ class EadEditingHandler(EadHandler):
                 item.text = 'Edited by %s using the cheshire for archives ead creation tool on %s'  % (userName, datetime.date.today())
                 parent.append(item)
         else :
+            header = tree.xpath('/ead/eadheader')[0]
             target = self._create_path(header, '/ead/eadheader/revisiondesc/change/date')
             self._add_text(target, '%s' % datetime.date.today())
             target = self._create_path(header, '/ead/eadheader/revisiondesc/change/item')
