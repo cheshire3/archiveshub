@@ -17,6 +17,27 @@
   	<xsl:value-of select="/ead/eadheader/eadid/text()"/>
   </xsl:variable>
   
+  <xsl:variable name="leveltype">
+  	<xsl:choose>
+  		<xsl:when test="/ead/eadheader">
+  			<xsl:text>collection</xsl:text>
+  		</xsl:when>
+  		<xsl:otherwise>
+  			<xsl:text>component</xsl:text>
+  		</xsl:otherwise>
+  	</xsl:choose>
+  </xsl:variable>
+  
+  <xsl:variable name="level">
+  	<xsl:choose>
+  		<xsl:when test="/*/@level">
+  			<xsl:value-of select="/*/@level"/>
+  		</xsl:when>
+  		<xsl:otherwise>
+  			<xsl:text></xsl:text>
+  		</xsl:otherwise>
+  	</xsl:choose>
+  </xsl:variable>
     
   <xsl:template match="/">
   <div id="formDiv" name="form" class="formDiv" onscroll="hideAllMenus()">
@@ -116,15 +137,56 @@
 	</div>
   	<br/>
   	<p>
-  		<strong><span class="isadg"></span>Repository</strong><br/>
-  		<xsl:choose>
-			<xsl:when test="did/repository">
-				<xsl:apply-templates select="did/repository"/>
-			</xsl:when>
-			<xsl:otherwise>
-				<input class="menuField" type="text" onfocus="setCurrent(this);" onchange="validateField(this, 'true');" name="did/repository" id="rep" size="80"></input>
-			</xsl:otherwise>
-		</xsl:choose>
+  		<xsl:if test="$leveltype = 'component'">
+  			<strong><span class="isadg">3.1.4: </span>Level of Description</strong><br/>
+  			<select name="@level">
+	  			<xsl:call-template name="option">
+	  				<xsl:with-param name="value" select="''"/>
+	  				<xsl:with-param name="label" select="'none'"/>
+	  				<xsl:with-param name="select" select="$level"/>
+	  			</xsl:call-template>
+	  			<xsl:call-template name="option">
+	  				<xsl:with-param name="value" select="'fonds'"/>
+	  				<xsl:with-param name="label" select="'fonds'"/>
+	  				<xsl:with-param name="select" select="$level"/>
+	  			</xsl:call-template>
+	  			<xsl:call-template name="option">
+	  				<xsl:with-param name="value" select="'class'"/>
+	  				<xsl:with-param name="label" select="'class'"/>
+	  				<xsl:with-param name="select" select="$level"/>
+	  			</xsl:call-template>
+	  			<xsl:call-template name="option">
+	  				<xsl:with-param name="value" select="'series'"/>
+	  				<xsl:with-param name="label" select="'series'"/>
+	  				<xsl:with-param name="select" select="$level"/>
+	  			</xsl:call-template>
+	  			<xsl:call-template name="option">
+	  				<xsl:with-param name="value" select="'subfonds'"/>
+	  				<xsl:with-param name="label" select="'subfonds'"/>
+	  				<xsl:with-param name="select" select="$level"/>
+	  			</xsl:call-template>
+	  			<xsl:call-template name="option">
+	  				<xsl:with-param name="value" select="'subseries'"/>
+	  				<xsl:with-param name="label" select="'subseries'"/>
+	  				<xsl:with-param name="select" select="$level"/>
+	  			</xsl:call-template>
+	  			<xsl:call-template name="option">
+	  				<xsl:with-param name="value" select="'file'"/>
+	  				<xsl:with-param name="label" select="'file'"/>
+	  				<xsl:with-param name="select" select="$level"/>
+	  			</xsl:call-template>
+	  			<xsl:call-template name="option">
+	  				<xsl:with-param name="value" select="'item'"/>
+	  				<xsl:with-param name="label" select="'item'"/>
+	  				<xsl:with-param name="select" select="$level"/>
+	  			</xsl:call-template>
+	  			<xsl:call-template name="option">
+	  				<xsl:with-param name="value" select="'otherlevel'"/>
+	  				<xsl:with-param name="label" select="'otherlevel'"/>
+	  				<xsl:with-param name="select" select="$level"/>
+	  			</xsl:call-template>
+  			</select>
+		</xsl:if>
   	</p>
  	<p>
 		<strong><span class="isadg">3.1.5: </span><a href="arch/extent.shtml" title="Extent help - opens in new window" target="_new">Extent of Unit of Description</a></strong><br/>
@@ -137,7 +199,30 @@
 			</xsl:otherwise>
 		</xsl:choose>		
     </p>
-    <!-- <p><strong>Note: <span class="isadg">3.1.4: </span>Level of Description</strong> will be generated automatically for this record, with "fonds" as the default.</p> -->
+    <xsl:if test="$leveltype = 'collection'">
+	    <p>
+	  		<strong><span class="isadg"></span>Repository</strong><br/>
+	  		<xsl:choose>
+				<xsl:when test="did/repository">
+					<xsl:apply-templates select="did/repository"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<input class="menuField" type="text" onfocus="setCurrent(this);" onchange="validateField(this, 'true');" name="did/repository" id="rep" size="80"></input>
+				</xsl:otherwise>
+			</xsl:choose>
+	  	</p>
+	  	<p>  		
+	  		<xsl:choose>
+				<xsl:when test="filedesc/titestmt/sponsor">				
+					<xsl:apply-templates select="filedesc/titestmt/sponsor"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<strong><span class="isadg"></span>Sponsor </strong> <a class="smalllink" id="linkspo" title="add sponsor" onclick="addElement('spo')">add</a> [optional]<br/>
+					<input class="menuField" type="text" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" name="filedesc/titlestmt/sponsor" id="spo" size="80" style="display:none"></input>
+				</xsl:otherwise>
+			</xsl:choose>
+	  	</p>
+  	</xsl:if>
    </div>
 <!-- CONTEXT -->   
    <div class="section">
@@ -307,18 +392,20 @@
 		     		</xsl:otherwise>
 		     	</xsl:choose>			 	
       		</p>
-      		<p>
-				<strong><span class="isadg">3.4.5: </span><a href="arch/other.shtml" title="Finding Aids help - opens in new window" target="_new">Finding Aids</a></strong>
-				<br/>
-				<xsl:choose>
-					<xsl:when test="otherfindaid">
-						<xsl:apply-templates select="otherfindaid"/> 
-					</xsl:when>
-					<xsl:otherwise>
-						<textarea class="menuField" name="cde" id="cde" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80"></textarea>
-					</xsl:otherwise>
-				</xsl:choose>				
-	       </p>		     					
+      		<xsl:if test="$leveltype = 'collection'">
+	      		<p>
+					<strong><span class="isadg">3.4.5: </span><a href="arch/other.shtml" title="Finding Aids help - opens in new window" target="_new">Finding Aids</a></strong>
+					<br/>
+					<xsl:choose>
+						<xsl:when test="otherfindaid">
+							<xsl:apply-templates select="otherfindaid"/> 
+						</xsl:when>
+						<xsl:otherwise>
+							<textarea class="menuField" name="cde" id="cde" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80"></textarea>
+						</xsl:otherwise>
+					</xsl:choose>				
+		       </p>	
+	       </xsl:if>	     					
 	</div>
 	<div class="section">
       <span class="isadg"><h3>3.5: Allied Materials Area</h3></span>
@@ -386,23 +473,25 @@
 	  	</xsl:choose>		
 	  </p>
 	</div>
-	<div class="section">
-      <span class="isadg"><h3>3.7: Description Area</h3></span> 
-      <p>
-      	<strong><a href="arch/archnote.shtml" title="Archivist's Note help - opens in new window" target="_new"><span class="isadg">3.7.1: </span>Archivist's Note</a></strong>
-		<br/>
-      	<xsl:choose>
-      		<xsl:when test="processinfo">
-      			<xsl:apply-templates select="processinfo"/>
-      		</xsl:when>
-      		<xsl:otherwise>      			
-        		<textarea class="menuField" name="processinfo" id="cga" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80"></textarea>
-      		</xsl:otherwise>
-      	</xsl:choose>	
-      </p>
-	  <strong>Note: <!-- 3.7.2 Rules and Conventions</strong> and --><span class="isadg">3.7.3 </span>Dates of Description</strong> will be generated automatically for this record.
-      <input type="hidden" name="revisions" id="revisions" value=""></input>
-	</div>
+	<xsl:if test="$leveltype = 'collection'">
+		<div class="section">
+	      <span class="isadg"><h3>3.7: Description Area</h3></span> 
+	      <p>
+	      	<strong><a href="arch/archnote.shtml" title="Archivist's Note help - opens in new window" target="_new"><span class="isadg">3.7.1: </span>Archivist's Note</a></strong>
+			<br/>
+	      	<xsl:choose>
+	      		<xsl:when test="processinfo">
+	      			<xsl:apply-templates select="processinfo"/>
+	      		</xsl:when>
+	      		<xsl:otherwise>      			
+	        		<textarea class="menuField" name="processinfo" id="cga" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80"></textarea>
+	      		</xsl:otherwise>
+	      	</xsl:choose>	
+	      </p><!--
+		  <strong>Note:  3.7.2 Rules and Conventions</strong> and <span class="isadg">3.7.3 </span>Dates of Description</strong> will be generated automatically for this record.
+	      <input type="hidden" name="revisions" id="revisions" value=""></input>
+		--></div>
+	</xsl:if>
 	<div id="accesspointssection" class="section">
 		<h3><a id="accesspoints" name="accesspoints">Access Points</a></h3>
 <!-- SUBJECT -->
@@ -601,6 +690,39 @@
 				<br/>
 		</div>
 		<br/>
+<!-- GENRE FORM -->
+		<div id="genreform" class="apcontainer">
+			<p><strong>Genre Form</strong></p>
+			<xsl:choose>
+				<xsl:when test="controlaccess/genreform">
+					<xsl:call-template name="accesspoint">
+						<xsl:with-param name="aptype" select="'genreform'"/>
+					</xsl:call-template>	
+				</xsl:when>
+				<xsl:otherwise>
+					<div id="addedgenreforms" style="display:none" class="added"></div>
+				</xsl:otherwise>
+			</xsl:choose>	
+				<div id="genreformtable" class="tablecontainer">
+					<table id="table_genreform"><tbody>
+						<tr NoDrop="true" NoDrag="true"><td class="label">Genre:</td><td> <input type="text" onfocus="setCurrent(this);" id="genreform_genre" size="40"></input></td></tr>
+						<tr NoDrop="true" NoDrag="true"><td class="label">Source:</td><td> <input type="text" onfocus="setCurrent(this);" id="genreform_source" size="40"></input></td></tr>
+					</tbody></table>
+				</div>
+				<div id="genreformbuttons" class="buttoncontainer">
+					<p class="apbutton">Rules:
+					    <select id="genreform_rules" onchange="checkRules('genreform')">
+					      <option value="none">None</option>
+					      <option value="ncarules">NCA Rules</option>
+					      <option value="aacr2">AACR2</option>
+					    </select></p>
+						<input class="apbutton" type="button" onclick="addAccessPoint('genreform');" value="Add To Record"></input><br />
+						<input class="apbutton" type="button" onclick="resetAccessPoint('genreform');" value="Reset" ></input>
+				</div>
+				<br/>
+			</div>
+			<br/>						
+
 <!--TITLE -->
 		<div id="title" class="apcontainer">
 			<p><strong>Book Title</strong></p>
@@ -788,6 +910,15 @@
   
   <xsl:template match="did/repository">
   	<input class="menuField" type="text" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" name="did/repository" id="rep" size="80">
+  		<xsl:attribute name="value">
+  			<xsl:apply-templates/>
+  		</xsl:attribute>
+  	</input>
+  </xsl:template>
+  
+  <xsl:template match="filedesc/titlestmt/sponsor">
+  	<strong><span class="isadg"></span>Sponsor </strong> <a class="smalllink" id="linkspo" title="add sponsor" onclick="addElement('spo')">hide</a> [optional]<br/>
+  	<input class="menuField" type="text" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" name="filedesc/titlestmt/sponsor" id="spo" size="80">
   		<xsl:attribute name="value">
   			<xsl:apply-templates/>
   		</xsl:attribute>
@@ -988,6 +1119,23 @@
   		<xsl:apply-templates/>
   	</textarea>
   </xsl:template>
+  
+  
+  <xsl:template name="option">
+	<!-- Generates an option to go in the drop-down list -->
+
+	<xsl:param name="value" />
+	<xsl:param name="label" />
+	<xsl:param name="select" />
+
+	<xsl:element name="option">
+	  <xsl:attribute name="value"><xsl:value-of select="$value" /></xsl:attribute>
+	  <xsl:if test="$value = $select"><xsl:attribute name="selected">selected</xsl:attribute></xsl:if>
+	  <xsl:value-of select="$label" />
+	</xsl:element>
+  </xsl:template>
+  
+  
   
   
   <xsl:template match="*">
