@@ -22,6 +22,11 @@ div#banner {
   color: #000000;
   background-color: #c4d6f8;
 }
+
+div#leftcol.toc {
+	font-size: 11pt;	
+}
+
 /*
 .titlebar { 
   color: #000000;

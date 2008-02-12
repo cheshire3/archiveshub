@@ -1058,36 +1058,23 @@ class EadSearchHandler(EadHandler):
             
             rec = r.fetch_record(session)
             recid = rec.id
+            # Resolve link to parent if a component
             try:
                 parentId = rec.process_xpath(session, '/c3component/@parent')[0]
-                # only when integers are used
-                parentId = parentId.split('/')[-1]
-                # OK, must be a component record
-                isComponent = True
-                try:
-                    parentRec = dcRecordStore.fetch_record(session, parentId.split('/')[-1])
-                except:
-                    parentRec = recordStore.fetch_record(session, parentId.split('/')[-1])                   
-                    try:
-                        parentTitle = parentRec.process_xpath(session, '/ead/archdesc/did/unittitle/text()')[0]
-                    except IndexError:
-                        try:
-                            parentTitle = parentRec.process_xpath(session, '/ead/eadheader/filedesc/titlestmt/titleproper/text()')[0]
-                        except IndexError:
-                            parentTitle = '(untitled)'
-                else:
-                    parentTitle = parentRec.process_xpath(session, 'dc:title/text()', namespaceUriHash)[0]
-
-                parentTitle = nonAsciiRe.sub(asciiFriendly, parentTitle)
-                try:
-                    parentTitle = parentTitle.encode('utf-8');
-                except:
-                    parentTitle = '[Could not encode parent title into Unicode]';
-                
-            except:
+            except IndexError:
                 parentTitle = '';
                 isComponent = False
-            
+            else:
+                # OK, must be a component record
+                isComponent = True
+                parentId = parentId.split('/')[-1]
+                parentPath = rec.process_xpath(session, '/c3component/@xpath')[0]
+                parentRec = recordStore.fetch_record(session, parentId)
+                isComponent = True
+                titles = self._backwalkTitles(parentRec, parentPath)
+                hierarchy = [(' ' * 4 * x) + t[1] for x,t in enumerate(titles[:-1])]
+                parentTitle = '\n'.join(hierarchy)
+                
             doc = textTxr.process_record(session, rec)
             # cache copy
 #            doc.id = recid
