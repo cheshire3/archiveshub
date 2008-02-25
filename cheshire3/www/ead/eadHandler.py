@@ -1,7 +1,7 @@
 #
 # Script:    eadHandler.py
-# Version:   0.06
-# Date:      12 January 2008
+# Version:   0.05
+# Date:      03 January 2008
 # Copyright: &copy; University of Liverpool 2005-2008
 # Description:
 #            Globals and parent class web interfaces to a Cheshire3 database of EAD finding aids.
@@ -21,8 +21,7 @@
 #                        -    fetch_idList removed - all stores iterable
 # 0.04 - 14/12/2007 - JH - Non-ascii character handling fixes
 # 0.05 - 03/01/2008 - CS - _parse_upload function moved here from adminHandler as also used in editing handler
-# 0.06 - 12/02/2008 - CS - _walk_directory function moved here from adminHandler as also used in editing handler
-# 
+#
 
 # import mod_python stuffs
 from mod_python import apache, Cookie
@@ -94,13 +93,13 @@ class EadHandler:
         self.htmlTitle = []
         self.htmlNav = []
         self.templatePath = os.path.join(htmlPath, 'template.ssi')
-        self.globalReplacements = {'%REP_NAME%': repository_name,
-                              '%REP_LINK%': repository_link,
-                              '%REP_LOGO%': repository_logo,
-                              'SCRIPT': script,
-                              '%SCRIPT%': script
-                              }
-
+        self.globalReplacements = {'%REP_NAME%': repository_name
+                                  ,'%REP_LINK%': repository_link
+                                  ,'%REP_LOGO%': repository_logo
+                                  ,'%SCRIPT%': script
+                                  ,'SCRIPT': script
+                                  }
+        
         #- end __init__() ----------------------------------------------------------
         
     def send_html(self, data, req, code=200):
@@ -159,34 +158,6 @@ class EadHandler:
         del data, doc
         return rec
     # end _parse_upload()
-
-
-    def _walk_directory(self, d, type='checkbox'):
-        global script
-        # we want to keep all dirs at the top, followed by all files
-        outD = []
-        outF = []
-        filelist = os.listdir(d)
-        filelist.sort()
-        for f in filelist:
-            if (os.path.isdir(os.path.join(d,f))):
-                outD.extend(['<li title="%s">%s' % (os.path.join(d,f),f),
-                            '<ul class="hierarchy">',
-                            '\n'.join(self._walk_directory(os.path.join(d, f), type)),
-                            '</ul></li>'
-                            ])
-            else:
-                fp = os.path.join(d,f)
-                outF.extend(['<li>'
-                            ,'<span class="fileops"><input type="%s" name="filepath" value="%s"/></span>' % (type, fp)
-                            ,'<span class="filename"><a href="files.html?operation=view&amp;filepath=%s" title="View file contents">%s</a></span>' % (cgi_encode(fp), f)
-                            ,'</li>'
-                            ])
-
-        return outD + outF
-        
-        #- end walk_directory()
-    
 
     
     def display_full(self, rec, paramDict):

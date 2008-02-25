@@ -1,7 +1,7 @@
 #
 # Script:    eadAdminHandler.py
-# Version:   0.31
-# Date:      12 February 2008
+# Version:   0.30
+# Date:      5 February 2008
 # Copyright: &copy; University of Liverpool 2005-2008
 # Description:
 #            Web interface for administering a cheshire 3 database of EAD finding aids
@@ -69,9 +69,7 @@
 #                        - _parse_upload function moved to eadHandler because also used by eadEditingHandler
 # 0.29 - 11/01/2008 - CS - javascript call to collapseLists function changed to createTreeFromList()
 # 0.30 - xx/02/2008 - JH - Some new display stuff while rebuilding / reindexing
-# 0.31 - 12/02/2008 - CS - show_editMenu function to display edit menu moved to editing handler for easier release without editing interface
-#                        - _walk_directory moved to eadHandler 
-#                        - _walk_store moved to editingHandler
+#
 #
 
 
@@ -114,167 +112,146 @@ class BuildHtmlThread(AdminThread):
         fullTxr = db.get_object(session, 'htmlFullTxr')
         fullSplitTxr = db.get_object(session, 'htmlFullSplitTxr')
         print "Caching HTML for %d records..." % (recordStore.totalItems)
+        paramDict = {'%REP_NAME%': repository_name
+                    ,'%REP_LINK%': repository_link
+                    ,'%REP_LOGO%': repository_logo
+                    ,'SCRIPT': script
+                    ,'%SCRIPT%': script
+                    ,'%TITLE%': 'Display in Full'
+                    ,'%NAVBAR%': ''
+                    }
+
+        # TODO ensure ToC being created properly
         for rec in recordStore:
             recid = rec.id
-            print recid.ljust(50),
-#            # FIXME: rec.size is always 0
-#            # small record assumed to be < 100kb ...
-#            if (rec.size * 6 < (100 * 1024)):
-#                print '[Build at access time - record is really small (approx %d kb)]' % (rec.size*6)
-#                continue
-            paramDict = {
-                    'RECID': recid,
-                    'TOC_CACHE_URL': toc_cache_url,
-                    '%REP_NAME%':repository_name, 
-                    '%REP_LINK%':repository_link,
-                    '%REP_LOGO%':repository_logo, 
-                    '%TITLE%': 'Display in Full',
-                    '%NAVBAR%': '',
-            }
-        
-            path = '%s/%s-1.shtml' % (cache_path, recid)
-            rec = recordStore.fetch_record(session, recid)
-            
-            tmpl = read_file(templatePath)
-            anchorPageHash = {}
-            if (len(rec.get_xml(session)) < maximum_page_size * 1024):
+            paramDict['RECID'] = recid
+            try: l = rec.byteCount
+            except: l = len(rec.get_xml(session))
+            if (l < max_page_size_bytes):
                 # Nice and short record/component - do it the easy way
                 doc = fullTxr.process_record(session, rec)
-                # open, read, delete tocfile NOW to avoid overwriting screwups
-                try:
-                    tocfile = read_file(os.path.join(toc_cache_path, 'foo.bar'))
-                    os.remove(os.path.join(toc_cache_path, 'foo.bar'))
-                    tocfile = nonAsciiRe.sub(asciiFriendly, tocfile)
-                    try: 
-                        tocfile = tocfile.encode('utf-8', 'latin-1')
-                    except:
-                        try:
-                            tocfile = tocfile.encode('utf-16')
-                        except:
-                            pass # hope for the best
-                    tocfile = tocfile.replace('RECID', recid)
-                    tocfile = overescapedAmpRe.sub('&\g<1>;', tocfile)
-                except IOError: tocfile = None
-                except: tocfile = '<span class="error">There was a problem whilst generating the Table of Contents</span>'
-                
-                doc = doc.get_raw(session)
-                try: 
-                    tocfile = tocfile.encode('utf-8', 'latin-1')
-                except:
-                    try:
-                        tocfile = tocfile.encode('utf-16')
-                    except:
-                        pass # hope for the best
-                    
-                doc = overescapedAmpRe.sub('&\g<1>;', doc)
-                doc = doc.replace('PAGE#', '%s/RECID-1.shtml#' % cache_url)
-                doc = nonAsciiRe.sub(_asciiFriendly, doc)
-                page = tmpl.replace('%CONTENT%', toc_scripts + doc)
-                for k, v in paramDict.iteritems():
-                    page = page.replace(k, v)
-    
-                write_file(path, page)
-                print '\t[OK]'
             else:
-                # Long record - have to do splitting, link resolving etc.
                 doc = fullSplitTxr.process_record(session, rec)
-                # open, read, and delete tocfile NOW to avoid overwriting screwups
-                try:
-                    tocfile = read_file(os.path.join(toc_cache_path, 'foo.bar'))
-                    os.remove(os.path.join(toc_cache_path, 'foo.bar'))
-                    tocfile = nonAsciiRe.sub(_asciiFriendly, tocfile)
-                    try: 
-                        tocfile = tocfile.encode('utf-8', 'latin-1')
-                    except:
-                        try:
-                            tocfile = tocfile.encode('utf-16')
-                        except:
-                            pass # hope for the best
-                    tocfile = tocfile.replace('RECID', recid)
-                except:
-                    pass
-                        
-                doc = doc.get_raw(session)
-                try: doc = doc.encode('utf-8', 'latin-1')
-                except: pass # hope for the best!
+                # Long record - have to do splitting, link resolving etc.
+            
+            # open, read, and delete tocfile NOW to avoid overwriting screwups
+            try:
+                tocfile = unicode(read_file(os.path.join(toc_cache_path, 'foo.bar')), 'utf-8')
+            except IOError:
+                tocfile = None
+            else:
+                os.remove(os.path.join(toc_cache_path, 'foo.bar'))
+                tocfile = nonAsciiRe.sub(asciiFriendly, tocfile)
+                tocfile = tocfile.replace('RECID', recid)
+                #tocfile = overescapedAmpRe.sub(unescapeCharent, tocfile)
+            
+            doc = unicode(doc.get_raw(session), 'utf-8')
+            doc = nonAsciiRe.sub(asciiFriendly, doc)
+            #doc = overescapedAmpRe.sub(unescapeCharent, doc)
+            tmpl = read_file(templatePath)
+            
+            if (l < max_page_size_bytes):
+                # resolve anchors to only page
+                #doc = nonAsciiRe.sub(asciiFriendly, doc)
+                doc = doc.replace('PAGE#', '%s/RECID-p1.shtml#' % cache_url)
+                # never cache component HTML
+                #doc = doc.replace('LINKTOPARENT', paramDict['LINKTOPARENT'])
+                page = tmpl.replace('%CONTENT%', toc_scripts + doc)
+                pages = [multiReplace(page, paramDict)]
+                write_file(os.path.join(cache_path, recid + '-p1.shtml'), pages[0])
+            else:
                 # before we split need to find all internal anchors
-                anchor_re = re.compile('<a .*?name="(.*?)".*?>')
-                anchors = anchor_re.findall(doc)
+                anchors = anchorRe.findall(doc)
                 pseudopages = doc.split('<p style="page-break-before: always"/>')
+                if len(pseudopages) == 1:
+                    pseudopages = doc.split('<p style="page-break-before: always"></p>')
+                    
                 pages = []
                 while pseudopages:
-                    page = '<div id="padder"><div id="rightcol" class="ead"><div class="pagenav">%PAGENAV%</div>'
-                    while (len(page) < maximum_page_size * 1024):
-                        page = page + pseudopages.pop(0)
+                    pagebits = ['<div id="padder"><div id="rightcol" class="ead">', '%PAGENAV%']
+                    while (sum(map(len, pagebits)) < max_page_size_bytes):
+                        pagebits.append(pseudopages.pop(0))
                         if not pseudopages:
                             break
-                            
-                    # append: pagenav, end rightcol div, end padder div, left div (containing toc)
-                    page = page + '<div class="pagenav">%PAGENAV%</div>\n</div>\n</div>\n<div id="leftcol" class="toc"><!--#include virtual="/ead/tocs/RECID.inc"--></div>'
-                    pages.append(page)
                     
+                    # append: pagenav, end rightcol div, padder div, left div (containing toc)
+                    pagebits.extend(['%PAGENAV%','</div><!-- end rightcol -->','</div><!-- end padder -->','<div id="leftcol" class="toc"><!--#config errmsg="[ Table of Contents unavailable ]" --><!--#include virtual="/ead/tocs/RECID.inc"--></div>'])
+                    pages.append('\n'.join(pagebits))
+    
                 start = 0
+                anchorPageHash = {}
                 for a in anchors:
-                    for x in range(start, len(pages)):
-                        if (pages[x].find('name="%s"' % a) > -1):
-                            anchorPageHash[a] = x + 1
-                            start = x                                       # next anchor must be on this page or later
-                            
+                    if len(a.strip()) > 0:
+                        for x in range(start, len(pages), 1):
+                            if (pages[x].find('name="%s"' % a) > -1):
+                                anchorPageHash[a] = x + 1
+                                start = x                                  # next anchor must be on this page or later
+    
                 for x in range(len(pages)):
                     doc = pages[x]
                     # now we know how many real pages there are, generate some page navigation links
-                    pagenav = ['<div class="backlinks">']
-                    if (x > 0):
-                        pagenav.extend(['<a href="%s/%s-1.shtml" title="First page" onclick="setCookie(\'%s-tocstate\', stateToString(\'someId\'))"><img src="/images/fback.gif" alt="First"/></a>' % (cache_url, recid, recid),
-                                        '<a href="%s/%s-%d.shtml" title="Previous page" onclick="setCookie(\'%s-tocstate\', stateToString(\'someId\'))"><img src="/images/back.gif" alt="Previous"/></a>' % (cache_url, recid, x, recid)
-                                      ])
-                    pagenav.extend(['</div>', '<div class="forwardlinks">'])
-                    if (x < len(pages)-1):
-                        pagenav.extend(['<a href="%s/%s-%d.shtml" title="Next page" onclick="setCookie(\'%s-tocstate\', stateToString(\'someId\'))"><img src="/images/forward.gif" alt="Next"/></a>' % (cache_url, recid, x+2, recid),
-                                        '<a href="%s/%s-%d.shtml" title="Final page" onclick="setCookie(\'%s-tocstate\', stateToString(\'someId\'))"><img src="/images/fforward.gif" alt="Final"/></a>' % (cache_url, recid, len(pages), recid)
-                                      ])
-                    pagenav.extend(['</div>', '<div class="numnav">'])
-                    for y in range(len(pages)):
-                        if (y == x):
-                            pagenav.append('<strong>%d</strong>' % (y+1))
-                        else:
-                            pagenav.append('<a href="%s/%s-%d.shtml" title="Page %d" onclick="setCookie(\'%s-tocstate\', stateToString(\'someId\'))">%d</a>' % (cache_url, recid, y+1, y+1, recid, y+1))
-                    pagenav.append('</div>')
-    
-                    # now stick the page together and send it back
-                    doc = nonAsciiRe.sub(_asciiFriendly, doc)
+                    if len(pages) > 1:
+                        pagenav = ['<div class="pagenav">', '<div class="backlinks">']
+                        if (x > 0):
+                            pagenav.extend(['<a href="%s/%s-p1.shtml" title="First page" onclick="setCookie(\'%s-tocstate\', stateToString(\'someId\'))"><img src="/images/fback.gif" alt="First"/></a>' % (cache_url, recid, recid), 
+                                            '<a href="%s/%s-p%d.shtml" title="Previous page" onclick="setCookie(\'%s-tocstate\', stateToString(\'someId\'))"><img src="/images/back.gif" alt="Previous"/></a>' % (cache_url, recid, x, recid)
+                                          ])
+                        pagenav.extend(['</div>', '<div class="forwardlinks">'])
+                        if (x < len(pages)-1):
+                            pagenav.extend(['<a href="%s/%s-p%d.shtml" title="Next page" onclick="setCookie(\'%s-tocstate\', stateToString(\'someId\'))"><img src="/images/forward.gif" alt="Next"/></a>' % (cache_url, recid, x+2, recid),
+                                            '<a href="%s/%s-p%d.shtml" title="Final page" onclick="setCookie(\'%s-tocstate\', stateToString(\'someId\'))"><img src="/images/fforward.gif" alt="Final"/></a>' % (cache_url, recid, len(pages), recid)
+                                          ])
+                        pagenav.extend(['</div>', '<div class="numnav">'])
+                        # individual number links
+#                        for y in range(len(pages)):
+#                            if (y == x):
+#                                pagenav.append('<strong>%d</strong>' % (y+1))
+#                            else:
+#                                pagenav.append('<a href="%s/%s-p%d.shtml" title="Page %d" onclick="setCookie(\'%s-tocstate\', stateToString(\'someId\'))">%d</a>' % (cache_url, recid, y+1, y+1, recid, y+1))
+                        # form style - Page: x of X
+                        pagenav.extend(['<form action="%s">Page: ' % (script)
+                                       ,'<input type="hidden" name="operation" value="full" />'
+                                       ,'<input type="hidden" name="recid" value="%s" />' % (recid)
+                                       ,'<input type="text" name="page" size="2" maxlength="3" value="%d"/> of %d' % (x+1, len(pages))
+                                       ,'<input type="submit" value="Go!"/>'
+                                       ,'</form>' 
+                                       ])
+                        # end case
+                        pagenav.extend(['</div> <!--end numnav div -->', '</div> <!-- end pagenav div -->'])
+                    else:
+                        pagenav = []
+                    
+                    #doc = nonAsciiRe.sub(asciiFriendly, doc)
                     pagex = tmpl.replace('%CONTENT%', toc_scripts + doc)
                     pagex = pagex.replace('%PAGENAV%', '\n'.join(pagenav))
     
                     #resolve internal ref links
                     for k, v in anchorPageHash.iteritems():
-                        pagex = pagex.replace('PAGE#%s"' % k, '%s/RECID-%d.shtml#%s"' % (cache_url, v, k))
+                        pagex = pagex.replace('PAGE#%s"' % k, '%s/RECID-p%d.shtml#%s"' % (cache_url, v, k))
     
                     # any remaining links were not anchored - encoders fault :( - hope they're on page 1
-                    pagex = pagex.replace('PAGE#', '%s/RECID-1.shtml#' % cache_url)
-                            
-                    for k, v in paramDict.iteritems():
-                        pagex = pagex.replace(k, v)
-                                
-                    write_file('%s/%s-%d.shtml' % (cache_path, recid, x+1), pagex)
-                print '\t[OK - %d pages]' % len(pages)
-                
-            try:
-                if anchorPageHash:
+                    pagex = pagex.replace('PAGE#', '%s/RECID-p1.shtml#' % (cache_url))
+                    pagex = multiReplace(pagex, paramDict)
+                    pages[x] = pagex
+                    pagex = pagex.encode('utf-8', 'xmlcharrefreplace')
+                    write_file(os.path.join(cache_path, recid + '-p%d.shtml' % (x+1)), pagex)
+    
+            if tocfile:
+                try:
                     for k, v in anchorPageHash.iteritems():
-                        tocfile = tocfile.replace('PAGE#%s"' % k, '%s/%s-%d.shtml#%s"' % (cache_url, recid, v, k))
-    
-                    # any remaining links were not anchored - encoders fault :( - hope they're on page 1
-                    tocfile = tocfile.replace('PAGE#', '%s/%s-1.shtml#' % (cache_url, recid))
-                else:
-                    # must all be on 1 page
-                    tocfile = tocfile.replace('PAGE#', '%s/%s-1.shtml#' % (cache_url, recid))
-    
+                        tocfile = tocfile.replace('PAGE#%s"' % k, '%s/%s-p%d.shtml#%s"' % (cache_url, recid, v, k))
+                except UnboundLocalError:
+                    pass
+                
+                # any remaining links were not anchored - encoders fault :( - hope they're on page 1
+                tocfile = multiReplace(tocfile, {'SCRIPT': script
+                                                ,'PAGE#': '%s/%s-p1.shtml#' % (cache_url, recid)
+                                                })
+                tocfile = tocfile.encode('utf-8', 'xmlcharrefreplace')
                 write_file(os.path.join(toc_cache_path, recid +'.inc'), tocfile)
-                os.chmod(os.path.join(toc_cach_path, recid + '.inc'), 0755)
-                        
-            except:
-                pass
+                os.chmod(os.path.join(toc_cache_path, recid + '.inc'), 0755)
+            
+#- end BuildHtmlThread --------------------------------------------------------
     
 
 class EadAdminHandler(EadHandler):
@@ -554,6 +531,42 @@ class EadAdminHandler(EadHandler):
                #return '<span class="error">Unable to delete user %s - incorrect password.</span>' % (userid) + self.list_users()
     #- end delete_user()
 
+    def _walk_store(self, storeName, type='checkbox'):
+        store = db.get_object(session, storeName)
+        out = []
+        for s in store :
+            out.extend(['<li>'
+                       ,'<span class="fileops"><input type="%s" name="recid" value="%s"/></span>' % (type, s.id)
+                       ,'<span class="filename">%s</span>' % s.id
+                       ,'</li>'
+                       ])
+        return out
+
+
+    def _walk_directory(self, d, type='checkbox'):
+        global script
+        # we want to keep all dirs at the top, followed by all files
+        outD = []
+        outF = []
+        filelist = os.listdir(d)
+        filelist.sort()
+        for f in filelist:
+            if (os.path.isdir(os.path.join(d,f))):
+                outD.extend(['<li title="%s">%s' % (os.path.join(d,f),f),
+                            '<ul class="hierarchy">',
+                            '\n'.join(self._walk_directory(os.path.join(d, f), type)),
+                            '</ul></li>'
+                            ])
+            else:
+                fp = os.path.join(d,f)
+                outF.extend(['<li>'
+                            ,'<span class="fileops"><input type="%s" name="filepath" value="%s"/></span>' % (type, fp)
+                            ,'<span class="filename"><a href="files.html?operation=view&amp;filepath=%s" title="View file contents">%s</a></span>' % (cgi_encode(fp), f)
+                            ,'</li>'
+                            ])
+
+        return outD + outF
+    #- end walk_directory()
 
 
     def review_records(self, version='full'):
@@ -596,7 +609,14 @@ class EadAdminHandler(EadHandler):
     #- end review_records()
     
     
-
+    def show_editMenu(self):
+        global sourceDir
+        self.htmlTitle.append('Edit/Create')
+        self.logger.log('Create/Edit Options')
+        page = read_file('editmenu.html')
+        files = self._walk_directory(sourceDir, 'radio')
+        recids = self._walk_store('editingStore', 'radio')
+        return multiReplace(page, {'%%%SOURCEDIR%%%': sourceDir, '%%%FILES%%%': ''.join(files), '%%%RECORDS%%%': ''.join(recids)})
         
     
     def _run_thread(self, t, req):
@@ -837,7 +857,7 @@ class EadAdminHandler(EadHandler):
         head = self._get_genericHtml('header.html')
         req.write(head + '<div id="wrapper">')     
         if (len(filepaths) == 0):
-            return '%s<br />\n<br /><a href="files.html" title="File Management" class="navlink">Back to \'File Management\' Page</a>' % self.review_records(operation)     
+            return '%s<br />\n<br/><a href="files.html" title="File Management" class="navlink">Back to \'File Management\' Page</a>' % self.review_records(operation)     
         deletedTotal = 0
         unindexedTotal = 0
         errorTotal = 0

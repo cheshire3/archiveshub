@@ -541,7 +541,7 @@ class EadEditingHandler(EadHandler):
         return page 
          
          
-    def generate_file(self, form):
+    def generate_file(self, req):
         structure = read_file('ead2002.html')
         doc = StringDocument('<ead><eadheader></eadheader><archdesc></archdesc></ead>')         
         rec = xmlp.process_document(session, doc)
@@ -577,7 +577,6 @@ class EadEditingHandler(EadHandler):
                 item.text = 'Edited by %s using the cheshire for archives ead creation tool on %s'  % (userName, datetime.date.today())
                 parent.append(item)
         else :
-            header = tree.xpath('/ead/eadheader')[0]
             target = self._create_path(header, '/ead/eadheader/revisiondesc/change/date')
             self._add_text(target, '%s' % datetime.date.today())
             target = self._create_path(header, '/ead/eadheader/revisiondesc/change/item')
@@ -767,31 +766,7 @@ class EadEditingHandler(EadHandler):
                 return '<value>false</value>'
         else :
             return '<value>true</value>'
-    
-    
-    def show_editMenu(self):
-        global sourceDir
-        self.htmlTitle.append('Edit/Create')
-        self.logger.log('Create/Edit Options')
-        page = read_file('editmenu.html')
-        files = self._walk_directory(sourceDir, 'radio')
-        recids = self._walk_store('editingStore', 'radio')
-        return multiReplace(page, {'%%%SOURCEDIR%%%': sourceDir, '%%%FILES%%%': ''.join(files), '%%%RECORDS%%%': ''.join(recids)})
-       
-       
-       
-    def _walk_store(self, storeName, type='checkbox'):
-        store = db.get_object(session, storeName)
-        out = []
-        for s in store :
-            out.extend(['<li>'
-                       ,'<span class="fileops"><input type="%s" name="recid" value="%s"/></span>' % (type, s.id)
-                       ,'<span class="filename">%s</span>' % s.id
-                       ,'</li>'
-                       ])
-        return out
-           
-           
+                
                 
     def handle (self, req):
         global script
@@ -861,34 +836,22 @@ class EadEditingHandler(EadHandler):
         
                 page = multiReplace(page, self.globalReplacements)
                 self.send_html(page, req)  
-                
-            elif (operation == 'create'):
-
-                content = self.generate_file(form)
+            
+        else :    
+                   
+            content = self.generate_file(req)
            
-                tmpl = read_file(self.templatePath)                                        # read the template in
-                page = tmpl.replace("%CONTENT%", content)
+            tmpl = read_file(self.templatePath)                                        # read the template in
+            page = tmpl.replace("%CONTENT%", content)
     
-                self.globalReplacements.update({
-                    "%TITLE%": ' :: '.join(self.htmlTitle)
-                    ,"%NAVBAR%": ' | '.join(self.htmlNav),
-                   })
+            self.globalReplacements.update({
+                "%TITLE%": ' :: '.join(self.htmlTitle)
+               ,"%NAVBAR%": ' | '.join(self.htmlNav),
+               })
     
-                page = multiReplace(page, self.globalReplacements)
-                self.send_html(page, req) 
-        else :              
-            content = self.show_editMenu()
-            content = '<div id="wrapper">%s</div>' % (content)
-            page = multiReplace(tmpl, {'%REP_NAME%': repository_name,
-                     '%REP_LINK%': repository_link,
-                     '%REP_LOGO%': repository_logo,
-                     '%TITLE%': ' :: '.join(self.htmlTitle),
-                     '%NAVBAR%': ' | '.join(self.htmlNav),
-                     '%CONTENT%': content
-                     })
-
-            # send the display
-            self.send_html(page, req)
+            page = multiReplace(page, self.globalReplacements)
+            self.send_html(page, req) 
+        
                      
     
         #- end handle() ---------------------------------------------------

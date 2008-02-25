@@ -124,10 +124,11 @@ class EadSearchHandler(EadHandler):
             titles.append((i, t.strip()))
             pathParts.pop(-1)
             
-        try: t = rec.process_xpath(session, '/*/*/did/unittitle')[0]
-        except IndexError: t = '(untitled)'
+            
+        t = rec.process_xpath(session, 'string(/*/*/did/unittitle[1])')
+        if not t:
+            t = '(untitled)'
         else:
-            t = flattenTexts(t)
             t = nonAsciiRe.sub(asciiFriendly, t)
     
         titles.append((rec.id, t.strip()))
@@ -154,16 +155,13 @@ class EadSearchHandler(EadHandler):
                 rec = recordStore.fetch_record(session, id)
             except:
                 return None
-                
-        try:
-            parentTitle = rec.process_xpath(session, '/srw_dc:dc/dc:title/text()', namespaceUriHash)[0]
-        except IndexError:
-            try:
-                parentTitle = rec.process_xpath(session, '/*/*/did/unittitle/text()')[0]
-            except IndexError:
-                try:
-                    parentTitle = rec.process_xpath(session, '/ead/eadheader/filedesc/titlestmt/titleproper/text()')[0]
-                except IndexError:
+            
+        parentTitle = rec.process_xpath(session, 'string(/srw_dc:dc/dc:title[1])', namespaceUriHash)
+        if not parentTitle:
+            parentTitle = rec.process_xpath(session, 'string(/*/*/did/unittitle[1])')
+            if not parentTitle:
+                parentTitle = rec.process_xpath(session, 'string(/ead/eadheader/filedesc/titlestmt/titleproper[1])')
+                if not parentTitle:
                     parentTitle = '(untitled)'
                 
         parentTitle = nonAsciiRe.sub(asciiFriendly, parentTitle)
@@ -1415,8 +1413,9 @@ def handler(req):
                 # architecture not built
                 build_architecture()
 
-        remote_host = req.get_remote_host(apache.REMOTE_NOLOOKUP)                   # get the remote host's IP for logging
+        
         os.chdir(os.path.join(cheshirePath, 'cheshire3','www','ead','html'))        # cd to where html fragments are
+        remote_host = req.get_remote_host(apache.REMOTE_NOLOOKUP)                   # get the remote host's IP for logging
         lgr = FileLogger(logfilepath, remote_host)                                  # initialise logger object
         eadSearchHandler = EadSearchHandler(lgr)                                    # initialise handler - with logger for this request
         try:
