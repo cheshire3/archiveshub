@@ -1,8 +1,8 @@
 #
 # Script:    eadSearchHandler.py
-# Version:   0.33
-# Date:      26 November 2007
-# Copyright: &copy; University of Liverpool 2005-2007
+# Version:   0.34
+# Date:      26 February 2008
+# Copyright: &copy; University of Liverpool 2005-2008
 # Description:
 #            Web interface for searching a cheshire 3 database of EAD finding aids
 #            - part of Cheshire for Archives v3
@@ -90,13 +90,14 @@
 # 0.29 - 23/10/2007 - JH - Term highlighting for LxmlRecords implemented + optimised for summary display
 # 0.30 - 31/10/2007 - JH - Minor precautionary change as result of Leeds' multiple interfaces on same machine problems
 #                        - script name now taken form request object
-# 0.31 - 06/11/2007 - JH - Migrated to new architecture: extractor --> tokenizer -- tokenMerge
+# 0.31 - 06/11/2007 - JH - Migrated to new architecture: extracter --> tokenizer -- tokenMerge
 #                        - Highlighting upgrade - now uses character offset info from proximity index
 # 0.32 - 15/11/2007 - JH - Marginally improved display handling
 # 0.33 - 26/11/2007 - JH - More API changes: 
 #                        -    spelling corrections for extracter, normaliser etc.
 #                        -    session arg added to get_raw|xml|dom|sax functions
 #                        -    fetch_idList removed - all stores iterable
+# 0.34 - 26/02/2008 - JH - Minor improvements to highlighting (end point location)
 #
 #
 
@@ -727,7 +728,8 @@ class EadSearchHandler(EadHandler):
                     break # no point highlighting any further down - takes forever
                 if x in nodeIdxs:
                     xps[x] = tree.getpath(n)
-                    
+            
+            endPointRe = regexpFindOffsetTokenizer.regexp
             for x, ni in enumerate(nodeIdxs):
                 offset = wordOffsets[x] 
                 wordCount = 0
@@ -743,7 +745,7 @@ class EadSearchHandler(EadHandler):
                         text = c.text
                         if len(c.text) > offset:
                             start = offset
-                            end = text.find(' ', start)
+                            end = endPointRe.search(text, start).end()
                             if end == -1:
                                 end = len(text)
                             located = 'text'
@@ -757,7 +759,7 @@ class EadSearchHandler(EadHandler):
                         text = c.tail
                         if len(c.tail) > offset:
                             start = offset
-                            end = text.find(' ', start)
+                            end = endPointRe.search(text, start).end()
                             if end == -1:
                                 end = len(text)
                             located = 'tail'
@@ -1349,7 +1351,7 @@ def build_architecture(data=None):
     clusDb, clusStore, clusFlow, \
     summaryTxr, fullTxr, fullSplitTxr, textTxr, \
     ppFlow, buildFlow, buildSingleFlow, indexRecordFlow, assignDataIdFlow, normIdFlow, compFlow, compRecordFlow, \
-    extractor, diacriticNormalizer, \
+    extractor, diacriticNormalizer, regexpFindOffsetTokenizer, \
     rebuild
     
     # globals line 1: re-establish session; maintain user if possible
@@ -1394,6 +1396,7 @@ def build_architecture(data=None):
     # globals line 6: other
     extractor = db.get_object(session, 'SimpleExtractor')
     diacriticNormalizer = db.get_object(session, 'DiacriticNormalizer')
+    regexpFindOffsetTokenizer = db.get_object(session, 'RegexpFindOffsetTokenizer')
     rebuild = False
 
 logfilepath = searchlogfilepath
