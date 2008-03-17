@@ -31,48 +31,39 @@
           </paths>
         </subConfig>
 	    
-	    <subConfig type="protocolMap" id="eadZProtocolMap">
-	      <objectType>protocolMap.Z3950ProtocolMap</objectType>
-	      <paths>
-	        <path type="zeerexPath">zeerex_z3950.xml</path>
-	      </paths>
-	    </subConfig>
-	    
-	    <subConfig type="protocolMap" id="eadOAIProtocolMap">
-	      <objectType>protocolMap.OAIPMHProtocolMap</objectType>
-	      <paths>
-	        <path type="zeerexPath">zeerex_oai.xml</path>
-	      </paths>
-	    </subConfig>
+        <subConfig type="protocolMap" id="eadZProtocolMap">
+            <objectType>protocolMap.Z3950ProtocolMap</objectType>
+            <paths>
+                <path type="zeerexPath">zeerex_z3950.xml</path>
+            </paths>
+        </subConfig>
+        
+        <subConfig type="protocolMap" id="eadOAIProtocolMap">
+            <objectType>protocolMap.OAIPMHProtocolMap</objectType>
+            <paths>
+                <path type="zeerexPath">zeerex_oai.xml</path>
+            </paths>
+        </subConfig>
+        
+        <subConfigs>
+            <path type="includeConfigs">configs.d</path>
+        </subConfigs>
 
-		<!-- documentFactories - this is where we get the data from -->
-		<path type="includeConfigs">configIngest.xml</path>
-	    <!-- recordStores -->
-		<path type="includeConfigs">configStores.xml</path>
-		<!-- XPaths -->
-		<path type="includeConfigs">configXPaths.xml</path>
-		<!-- indexes -->
-		<path type="includeConfigs">configIdxs.xml</path>
-		<!-- workflows - override default workflows -->
-		<path type="includeConfigs">configWflows.xml</path>
-		<!-- transformers -->
-		<path type="includeConfigs">configTxrs.xml</path>
+        <!-- postgreSQL  -->
+        <subConfig type="resultSetStore" id="eadResultSetStore">
+             <objectType>postgres.PostgresResultSetStore</objectType>
+             <paths>
+               <path type="databaseName">db_ead</path>
+               <path type="tableName">eadResultSetStore</path>
+               <path type="recordStoreHash">recordStore componentStore</path>
+               <object type="idNormalizer" ref="StringIntNormalizer"/>
+             </paths>
+             <options>
+               <default type="expires">3600</default>
+             </options>
+        </subConfig>
 		
-		<!-- postgreSQL  -->
-		<subConfig type="resultSetStore" id="eadResultSetStore">
-		     <objectType>postgres.PostgresResultSetStore</objectType>
-		     <paths>
-		       <path type="databaseName">db_ead</path>
-		       <path type="tableName">eadResultSetStore</path>
-		       <path type="recordStoreHash">recordStore componentStore</path>
-		       <object type="idNormalizer" ref="StringIntNormalizer"/>
-		     </paths>
-		     <options>
-		       <default type="expires">3600</default>
-		     </options>
-		</subConfig>
-		
-	</subConfigs>
+    </subConfigs>
 
 </config>
 
