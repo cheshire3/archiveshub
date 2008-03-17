@@ -2,8 +2,8 @@
 <!DOCTYPE xsl:stylesheet []>
     
 <!-- 
-	This file was produced, and released as part of Cheshire for Archives v3.x.
-	Copyright &#169; 2005-2007 the University of Liverpool.
+    This file was produced, and released as part of Cheshire for Archives v3.x.
+    Copyright &#169; 2005-2008 the University of Liverpool.
 -->
 
 <xsl:stylesheet
