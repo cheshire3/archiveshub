@@ -13,8 +13,9 @@
     <!-- import common HTML templates -->
     <xsl:import href="html-common.xsl"/>
     
-    <xsl:output method="xml" omit-xml-declaration="yes"/>
-    <xsl:preserve-space elements="*"/>
+<!--	<xsl:output method="xml" omit-xml-declaration="yes"/>-->
+<!--	<xsl:preserve-space elements="*"/>-->
+        <xsl:output method="html"/>
     
     <!-- Strip all subordinate levels of description -->
     <xsl:template match="dsc|c|c01|c02|c03|c04|c05|c06|c07|c08|c09|c10|c11|c12" priority="99"/>

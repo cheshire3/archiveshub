@@ -16,14 +16,14 @@
 	<xsl:import href="html-common.xsl"/>
 	<xsl:import href="contents.xsl"/>
   
-	<xsl:output method="xml" omit-xml-declaration="yes"/>
-	<xsl:preserve-space elements="*"/>
+	<!--	<xsl:output method="xml" omit-xml-declaration="yes"/>-->
+<!--	<xsl:preserve-space elements="*"/>-->
+        <xsl:output method="html"/>
 
 	<xsl:template match="/">
 	  <div id="padder">
 	    <div id="rightcol" class="ead">
 	      <xsl:apply-templates/>
-	      <br/>
 	    </div>
 	  </div>
 	  <div id="leftcol" class="toc">
@@ -37,7 +37,7 @@
 	      <xsl:value-of select="$recid"/>
 	      <xsl:text>.inc"</xsl:text>
 	    </xsl:comment>
-	    <br/><br/>
+	    <br/>
 	  </div>
 	  <xsl:if test="/ead/archdesc/dsc">
 	    <exsl:document
@@ -53,21 +53,21 @@
 
 
 	<xsl:template match="/ead">
-		<div id="record-head">
-			<!-- Core information about described material from <did> -->
-			<xsl:apply-templates select="./archdesc/did"/>
-			<!-- finding aid metadata from <eadheader> - creator, revisions etc -->
-			<xsl:if test="$finding_aid_metadata">
-			  <xsl:apply-templates select="./eadheader"/>
-			</xsl:if>
-		</div>
-		<div class="archdesc">
-			<xsl:apply-templates select="./archdesc" />
-		</div>
-		<!-- DSC -->
-		<div class="dsc">
-			<xsl:apply-templates select="./archdesc/dsc"/>
-		</div>
+            <div id="record-head">
+            	<!-- Core information about described material from <did> -->
+            	<xsl:apply-templates select="./archdesc/did"/>
+            	<!-- finding aid metadata from <eadheader> - creator, revisions etc -->
+            	<xsl:if test="$finding_aid_metadata">
+            	  <xsl:apply-templates select="./eadheader"/>
+            	</xsl:if>
+            </div>
+            <div class="archdesc">
+            	<xsl:apply-templates select="./archdesc" />
+            </div>
+            <!-- DSC -->
+            <div class="dsc">
+            	<xsl:apply-templates select="./archdesc/dsc"/>
+            </div>
 	</xsl:template>
 
 

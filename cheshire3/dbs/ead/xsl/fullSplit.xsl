@@ -19,22 +19,23 @@
 	<xsl:import href="html-common.xsl"/>
 	<xsl:import href="contents.xsl"/>
 	  
-	<xsl:output method="xml" omit-xml-declaration="yes"/>
-	<xsl:preserve-space elements="*"/>
+<!--	<xsl:output method="xml" omit-xml-declaration="yes"/>-->
+<!--	<xsl:preserve-space elements="*"/>-->
+        <xsl:output method="html"/>
   
 	<!-- root template - varies for each type of transformer -->
 	<xsl:template match="/">
-		<xsl:apply-templates/>
-		<xsl:if test="/ead/archdesc/dsc"> 
-			<exsl:document
-			  href="file:///home/cheshire/cheshire3/install/htdocs/ead/tocs/foo.bar"
-			  method="xml"
-			  omit-xml-declaration="yes"
-			  indent="yes">
-			    <!-- content for this document should go here -->
-				<xsl:call-template name="toc"/>
-			</exsl:document>
-		</xsl:if>
+            <xsl:apply-templates/>
+            <xsl:if test="/ead/archdesc/dsc"> 
+            	<exsl:document
+            	  href="file:///home/cheshire/cheshire3/install/htdocs/ead/tocs/foo.bar"
+            	  method="xml"
+            	  omit-xml-declaration="yes"
+            	  indent="yes">
+            	    <!-- content for this document should go here -->
+                    <xsl:call-template name="toc"/>
+            	</exsl:document>
+            </xsl:if>
 	</xsl:template>
 
 
