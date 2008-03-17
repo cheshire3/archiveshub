@@ -1,8 +1,10 @@
 <config>
 
 <!-- 
-	This file was produced, and released as part of Cheshire for Archives v3.x.
-	Copyright &copy; 2005-2008 the University of Liverpool
+    Configuration for Workflows.
+    
+    This file was produced, and released as part of Cheshire for Archives v3.x.
+    Copyright &#169; 2005-2008 the University of Liverpool
  -->
  
     <subConfigs>
