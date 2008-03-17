@@ -1,0 +1,133 @@
+<config>
+
+<!-- 
+	This file was produced, and released as part of Cheshire for Archives v3.x.
+	Copyright &copy; 2005-2007 the University of Liverpool
+ -->
+
+	<subConfigs>
+	
+		<subConfig type="transformer" id="sruOutgoingTxr">
+	      <objectType>transformer.LxmlXsltTransformer</objectType>
+	      <paths>
+	         <path type="xsltPath">xsl/sruOut.xsl</path>
+	      </paths>
+	    </subConfig>
+	    
+	    <subConfig type="transformer" id="htmlFullTxr">
+	      <objectType>transformer.LxmlXsltTransformer</objectType>
+	      <paths>
+	         <path type="xsltPath">xsl/full.xsl</path>
+	      </paths>
+	    </subConfig>
+	
+	    <subConfig type="transformer" id="htmlFullSplitTxr">
+	      <objectType>transformer.LxmlXsltTransformer</objectType>
+	      <paths>
+	         <path type="xsltPath">xsl/fullSplit.xsl</path>
+	      </paths>
+	    </subConfig>
+	
+	    <subConfig type="transformer" id="htmlSummaryTxr">
+	      <objectType>transformer.LxmlXsltTransformer</objectType>
+	      <paths>
+	         <path type="xsltPath">xsl/summary.xsl</path>
+	      </paths>
+	    </subConfig>
+	
+	    <subConfig type="transformer" id="textTxr">
+	      <objectType>transformer.LxmlXsltTransformer</objectType>
+	      <paths>
+	         <path type="xsltPath">xsl/text.xsl</path>
+	      </paths>
+	    </subConfig>
+	    
+	    <subConfig type="transformer" id="formCreationTxr">
+	      <objectType>transformer.LxmlXsltTransformer</objectType>
+	      <paths>
+	         <path type="xsltPath">xsl/form.xsl</path>
+	      </paths>
+	    </subConfig>
+	    
+	    <subConfig type="transformer" id="editingTocTxr">
+	    	<objectType>transformer.LxmlXsltTransformer</objectType>
+	      <paths>
+	         <path type="xsltPath">xsl/contents-editing.xsl</path>
+	      </paths>
+	    </subConfig>
+	
+	    <subConfig type="transformer" id="eadDublinCoreTxr">
+	      <objectType>transformer.LxmlXsltTransformer</objectType>
+	      <paths>
+	         <path type="xsltPath">xsl/ead2srw_dc.xsl</path>
+	      </paths>
+	    </subConfig>
+	    
+	    <subConfig type="transformer" id="OAIDublinCoreTransformer">
+	      <objectType>transformer.LxmlXsltTransformer</objectType>
+	      <paths>
+	         <path type="xsltPath">xsl/ead2oai_dc.xsl</path>
+	      </paths>
+	    </subConfig>
+    
+		<subConfig type="transformer" id="tpgrsTxr">
+			<objectType>transformer.GrsMapTransformer</objectType>
+			<transform>
+				<map>
+					<xpath>#RAWRELEVANCE#</xpath>
+					<xpath>10</xpath>
+				</map>
+				<map>
+					<xpath>#DOCID#</xpath>
+					<xpath>5</xpath>
+				</map>
+				<map>
+					<xpath>/ead/archdesc/did/unittitle/text()</xpath>
+					<xpath>1</xpath>
+				</map>
+				<map>
+					<xpath>archdesc/did/unitid/text()</xpath>
+					<xpath>28</xpath>
+				</map>
+				<map>
+					<xpath>count(/ead/archdesc/dsc)</xpath>
+					<xpath>17</xpath>
+				</map>					
+			</transform>
+		</subConfig>
+		
+		<subConfig type="transformer" id="cTpgrsTxr">
+			<objectType>transformer.GrsMapTransformer</objectType>
+			<transform>
+				<map>
+					<xpath>#RAWRELEVANCE#</xpath>
+					<xpath>10</xpath>
+				</map>
+				<map>
+					<xpath>#DOCID#</xpath>
+					<xpath>5</xpath>
+				</map>
+				<map>
+					<xpath>did[1]/unittitle/text()</xpath>
+					<xpath>1</xpath>
+				</map>
+				<map>
+					<xpath>did[1]/unitid/text()</xpath>
+					<xpath>28</xpath>
+				</map>
+				<map>
+					<!-- id of parent document -->
+					<xpath>#PARENT#/#DOCID#</xpath>
+					<xpath>5</xpath>
+				</map>
+				<map>
+					<!-- this needs to be the title of the parent document -->
+					<xpath>#PARENT#/unittitle[1]/text()</xpath>
+					<xpath>1</xpath>
+				</map>		
+			</transform>
+		</subConfig>
+	
+	</subConfigs>
+	
+</config>
