@@ -1006,7 +1006,7 @@
             <!-- inner HTML -->
             <xsl:choose>
                 <xsl:when test="./text()">
-                    <xsl:value-of select="string(./*)" />
+                    <xsl:value-of select="string(.)" />
                 </xsl:when>
                 <xsl:when test="./@title">
                     <xsl:value-of select="./@title"/>
@@ -1059,27 +1059,27 @@
 		</a>
 	</xsl:template>
 
-	<!--EXREFS-->
-  	<xsl:template match="extref">
-	    <xsl:call-template name="simplelink" />
-	</xsl:template>
+    <!--EXREFS-->
+    <xsl:template match="extref">
+        <xsl:call-template name="simplelink" />
+    </xsl:template>
 	
-	<!-- extptr -->
-	<xsl:template match="extptr">
-  		<xsl:choose>
-  			<xsl:when test="./@audience = 'internal'" />
-  			<xsl:when test="./@href">
-  				<xsl:choose>
-  					<xsl:when test="@show='embed'">
-						<xsl:call-template name="image" />
-					</xsl:when>
-					<xsl:otherwise>
-						<xsl:call-template name="simplelink" />
-					</xsl:otherwise>
-  				</xsl:choose>
-		    </xsl:when>
-    	</xsl:choose>
- 	</xsl:template>
+    <!-- extptr -->
+    <xsl:template match="extptr">
+        <xsl:choose>
+            <xsl:when test="./@audience = 'internal'" />
+            <xsl:when test="./@href">
+                <xsl:choose>
+                    <xsl:when test="@show='embed'">
+                        <xsl:call-template name="image" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:call-template name="simplelink" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:when>
+        </xsl:choose>
+    </xsl:template>
  	
     <!--DAO - Digital Archival Objects-->  
     <xsl:template match="dao">
