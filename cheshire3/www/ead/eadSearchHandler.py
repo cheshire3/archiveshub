@@ -1,7 +1,7 @@
 #
 # Script:    eadSearchHandler.py
-# Version:   0.34
-# Date:      26 February 2008
+# Version:   0.35
+# Date:      18 March 2008
 # Copyright: &copy; University of Liverpool 2005-2008
 # Description:
 #            Web interface for searching a cheshire 3 database of EAD finding aids
@@ -98,6 +98,7 @@
 #                        -    session arg added to get_raw|xml|dom|sax functions
 #                        -    fetch_idList removed - all stores iterable
 # 0.34 - 26/02/2008 - JH - Minor improvements to highlighting (end point location)
+# 0.35 - 18/03/2008 - JH - More debugging of component hierarchy
 #
 #
 
@@ -203,7 +204,7 @@ class EadSearchHandler(EadHandler):
 
         parentTitles = {}
         parentRecs = {}
-        rsidCgiString = '&amp;rsid=%s' % cgi_encode(rsid)
+        rsidCgiString = 'rsid=%s' % cgi_encode(rsid)
 
         for x in range(firstrec-1, min(len(rs), firstrec -1 + numreq)):
             r = rs[x]
@@ -250,14 +251,11 @@ class EadSearchHandler(EadHandler):
                 parentPath = rec.process_xpath(session, '/c3component/@xpath')[0]
                 titles = self._backwalkTitles(parentRec, parentPath)
                 t = titles.pop(0)
-                parentLink = html = '<a href="%s?operation=full&amp;rsid=%%RSID%%&amp;recid=%s" onclick="SPLASH">%s</a>' % (script, cgi_encode(t[0]) , t[1])
+                parentLink = html = '<a href="%s?operation=full&amp;%%RSID%%&amp;recid=%s" onclick="SPLASH">%s</a>' % (script, cgi_encode(t[0]) , t[1])
                 hierarchy = []
                 for level,t in enumerate(titles[:-1]):
                     if t[0]:
-                        if rsid:
-                            html = '<a href="%s?operation=full&amp;rsid=%%RSID%%&amp;recid=%s" onclick="SPLASH">%s</a>' % (script, cgi_encode(t[0]) , t[1])
-                        else:
-                            html = '<a href="%s?operation=full&amp;recid=%s" onclick="SPLASH">%s</a>' % (script, cgi_encode(t[0]) , t[1])
+                        html = '<a href="%s?operation=full&amp;%%RSID%%&amp;recid=%s" onclick="SPLASH">%s</a>' % (script, cgi_encode(t[0]) , t[1])
                     else:
                         html = t[1]
                         
@@ -320,16 +318,16 @@ class EadSearchHandler(EadHandler):
         if (hits > numreq):
             if (firstrec > 1):
                 hitlinks = ['<div class="backlinks">'
-                           ,'<a href="%s?operation=search%s&amp;page=1&amp;numreq=%d&amp;highlight=%d">First</a>' % (script, rsidCgiString, numreq, highlight) 
-                           ,'<a href="%s?operation=search%s&amp;firstrec=%d&amp;numreq=%d&amp;highlight=%d">Previous</a>' % (script, rsidCgiString, max(firstrec-numreq, 1), numreq, highlight)
+                           ,'<a href="%s?operation=search&amp;%s&amp;page=1&amp;numreq=%d&amp;highlight=%d">First</a>' % (script, rsidCgiString, numreq, highlight) 
+                           ,'<a href="%s?operation=search&amp;%s&amp;firstrec=%d&amp;numreq=%d&amp;highlight=%d">Previous</a>' % (script, rsidCgiString, max(firstrec-numreq, 1), numreq, highlight)
                            ,'</div>']
             else:
                 hitlinks = []
 
             if (hits > firstrec+numreq-1):
                 hitlinks.extend(['<div class="forwardlinks">'
-                                ,'<a href="%s?operation=search%s&amp;firstrec=%d&amp;numreq=%d&amp;highlight=%d">Next</a>' % (script, rsidCgiString, firstrec+numreq, numreq, highlight)
-                                ,'<a href="%s?operation=search%s&amp;page=%d&amp;numreq=%d&amp;highlight=%d">Last</a>' % (script, rsidCgiString, (hits/numreq)+1, numreq, highlight)
+                                ,'<a href="%s?operation=search&amp;%s&amp;firstrec=%d&amp;numreq=%d&amp;highlight=%d">Next</a>' % (script, rsidCgiString, firstrec+numreq, numreq, highlight)
+                                ,'<a href="%s?operation=search&amp;%s&amp;page=%d&amp;numreq=%d&amp;highlight=%d">Last</a>' % (script, rsidCgiString, (hits/numreq)+1, numreq, highlight)
                                 ,'</div>'])
 
             numlinks = ['<div class="numnav">']
@@ -887,7 +885,10 @@ class EadSearchHandler(EadHandler):
             except:
                 self.htmlTitle.append('Error')
                 return (False, '<div id="wrapper"><p class="error">Could not retrieve requested record.</p></div>')
-                
+           
+        if (rsid): rsidCgiString = 'rsid=%s&amp;firstrec=%d&amp;numreq=%d&amp;hitposition=%s&amp;highlight=%d' % (cgi_encode(rsid), firstrec, numreq, hitposition, highlight)
+        else: rsidCgiString = 'recid=%s' % (recid)
+             
         # Resolve link to parent if a component
         try:
             parentId = rec.process_xpath(session, '/c3component/@parent')[0]
@@ -905,8 +906,8 @@ class EadSearchHandler(EadHandler):
             hierarchy = []
             for x,t in enumerate(titles[:-1]):
                 if t[0]:
-                    if rsid:
-                        html = '<a href="%s?operation=full&amp;RSID&amp;recid=%s" onclick="SPLASH">%s</a>' % (script, cgi_encode(t[0]) , t[1])
+                    if rsid and operation == 'summary':
+                        html = '<a href="%s?operation=full&amp;%s&amp;recid=%s" onclick="SPLASH">%s</a>' % (script, rsidCgiString, cgi_encode(t[0]) , t[1])
                     else:
                         html = '<a href="%s?operation=full&amp;recid=%s" onclick="SPLASH">%s</a>' % (script, cgi_encode(t[0]) , t[1])
                     
@@ -940,8 +941,8 @@ class EadSearchHandler(EadHandler):
                          ,'%NAVBAR%':' | '.join(self.htmlNav)
                          })
         
-        if (rsid): paramDict['RSID'] = 'rsid=%s&amp;firstrec=%d&amp;numreq=%d&amp;hitposition=%s&amp;highlight=%d' % (cgi_encode(rsid), firstrec, numreq, hitposition, highlight)
-        else: paramDict['RSID'] = 'recid=%s' % (recid)
+        parentLink = parentLink.replace('RSID', rsidCgiString)
+        paramDict['RSID'] = rsidCgiString 
         
         if (operation == 'summary'):
             paramDict['HGHLGHT'] = '<span class="highlight">'
@@ -950,7 +951,6 @@ class EadSearchHandler(EadHandler):
             try:
                 page = self.display_summary(rec, paramDict, r.proxInfo, highlight)
             except AttributeError:
-                raise
                 page = self.display_summary(rec, paramDict)
         else:
             # full record

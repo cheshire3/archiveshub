@@ -61,18 +61,18 @@ search_result_row = '''
         <table width="100%">
           <tr>
             <td colspan="4">
-              <a href="SCRIPT?operation=summary%RSID%&amp;hitposition=%HITPOSITION%" title="Display record summary" %SPLASH%><strong>%TITLE%</strong></a>
+              <a href="SCRIPT?operation=summary&amp;%RSID%&amp;hitposition=%HITPOSITION%" title="Display record summary" %SPLASH%><strong>%TITLE%</strong></a>
             </td>
           </tr>
           <tr>
             <td width="100">
-              <a href="SCRIPT?operation=full%RSID%&amp;hitposition=%HITPOSITION%" title="Display Full-text" %SPLASH%>%FULL%</a>
+              <a href="SCRIPT?operation=full&amp;%RSID%&amp;hitposition=%HITPOSITION%" title="Display Full-text" %SPLASH%>%FULL%</a>
             </td>
             <td width="100">
-              <a href="SCRIPT?operation=email%RSID%&amp;hitposition=%HITPOSITION%" title="Send record by e-mail">%EMAIL%</a>
+              <a href="SCRIPT?operation=email&amp;%RSID%&amp;hitposition=%HITPOSITION%" title="Send record by e-mail">%EMAIL%</a>
             </td>
             <td width="100">
-              <a href="SCRIPT?operation=similar%RSID%&amp;hitposition=%HITPOSITION%" title="Find similar records" %SPLASH%">%SIMILAR%</a>
+              <a href="SCRIPT?operation=similar&amp;%RSID%&amp;hitposition=%HITPOSITION%" title="Find similar records" %SPLASH%">%SIMILAR%</a>
             </td>
             <td class="relv">%RELV%</td>
           </tr>
@@ -91,18 +91,18 @@ search_component_row = '''
         <table width="100%">
           <tr>
             <td colspan="4">
-              <a href="SCRIPT?operation=summary%RSID%&amp;hitposition=%HITPOSITION%" title="Display record summary" %SPLASH%><strong>%TITLE%</strong></a>
+              <a href="SCRIPT?operation=summary&amp;%RSID%&amp;hitposition=%HITPOSITION%" title="Display record summary" %SPLASH%><strong>%TITLE%</strong></a>
             </td>
           </tr>
           <tr>
             <td width="100">
-            <a href="SCRIPT?operation=full%RSID%&amp;hitposition=%HITPOSITION%" title="Display Full-text" %SPLASH%>%FULL%</a>
+            <a href="SCRIPT?operation=full&amp;%RSID%&amp;hitposition=%HITPOSITION%" title="Display Full-text" %SPLASH%>%FULL%</a>
             </td>
             <td width="100">
-            <a href="SCRIPT?operation=email%RSID%&amp;hitposition=%HITPOSITION%" title="Send record by e-mail">%EMAIL%</a>
+            <a href="SCRIPT?operation=email&amp;%RSID%&amp;hitposition=%HITPOSITION%" title="Send record by e-mail">%EMAIL%</a>
             </td>
             <td width="100">
-            <a href="SCRIPT?operation=similar%RSID%&amp;hitposition=%HITPOSITION%" title="Find similar records" %SPLASH%>%SIMILAR%</a>
+            <a href="SCRIPT?operation=similar&amp;%RSID%&amp;hitposition=%HITPOSITION%" title="Find similar records" %SPLASH%>%SIMILAR%</a>
             </td>
             <td class="relv">%RELV%</td>
           </tr>
