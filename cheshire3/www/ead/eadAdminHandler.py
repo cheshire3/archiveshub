@@ -1545,10 +1545,11 @@ class EadAdminHandler(EadHandler):
         content = None
         operation = form.get('operation', None)
         self.htmlNav.append('<a href="/ead/admin/index.html" title="Administration Interface Main Menu">Administration</a>')
-        directFiles = {'index.html': 'adminmenu.html',
-                       'menu.html': 'adminmenu.html',
-                       'help.html': 'adminhelp.html'
-                       }
+        directFiles = {'admin': 'adminmenu.html'
+                      ,'index.html': 'adminmenu.html'
+                      ,'menu.html': 'adminmenu.html'
+                      ,'help.html': 'adminhelp.html'
+                      }
                 
         try:
             if (directFiles.has_key(path)):
