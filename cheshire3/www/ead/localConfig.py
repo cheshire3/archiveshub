@@ -1,15 +1,15 @@
 #
 # Script:   localConfig.py
-# Version:   0.13
+# Version:   0.14
 # Description:
 #            Customisable elements for Cheshire for Archives v3.x
 #
 # Language:  Python
 # Author:    John Harrison <john.harrison@liv.ac.uk>
 # Author:    Catherine Smith <catherine.smith@liv.ac.uk>
-# Date:      18 June 2007
+# Date:      26 March 2008
 #
-# Copyright: &copy; University of Liverpool 2005-2007
+# Copyright: &copy; University of Liverpool 2005-2008
 #
 # Version History:
 # 0.01 - 13/04/2005 - JH - Basic configurable elements coded by John
@@ -30,6 +30,7 @@
 # 0.11 - 16/05/2007 - JH - Change to default settings for switches
 # 0.12 - 18/06/2007 - JH - sourceDir setting removed - now derived from documentFactory setting
 # 0.13 - 04/10/2007 - CS - editinglogfilepath added 
+# 0.14 - 26/03/2008 - JH - More configurable header + navbar display - new tags added title_separator and navbar_separator
 #
 #
 # Changes to original:
@@ -52,6 +53,9 @@ cheshirePath = "/home/cheshire/cheshire3"
 repository_name = "Cheshire for Archives 3.3 Development"
 repository_link = "http://www.archiveshub.ac.uk"                        # must begin http://
 repository_logo = "http://www.archiveshub.ac.uk/loopsmall2.gif"             # should begin http:// unless on this server
+
+title_separator = ' :: '
+navbar_separator = ' | '
 
 # URL of relevance graphic
 relevance_graphic = '/images/star.gif'

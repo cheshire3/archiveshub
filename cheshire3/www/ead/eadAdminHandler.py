@@ -271,8 +271,8 @@ class EadAdminHandler(EadHandler):
         global repository_name, repository_link, repository_logo
         html = read_file(fn)
         paramDict = self.globalReplacements
-        paramDict.update({'%TITLE%': ' :: '.join(self.htmlTitle)
-                         ,'%NAVBAR%': ' | '.join(self.htmlNav)
+        paramDict.update({'%TITLE%': title_separator.join(self.htmlTitle)
+                         ,'%NAVBAR%': navbar_separator.join(self.htmlNav)
                          })
         return multiReplace(html, paramDict)
         
@@ -741,8 +741,8 @@ class EadAdminHandler(EadHandler):
 
         recid = rec.id = 'preview/%s' % (session.user.username)    # assign rec.id so that html is stored in a restricted access directory
         paramDict = self.globalReplacements
-        paramDict.update({'%TITLE%': ' :: '.join(self.htmlTitle)
-                         ,'%NAVBAR%': ' | '.join(self.htmlNav)
+        paramDict.update({'%TITLE%': title_separator.join(self.htmlTitle)
+                         ,'%NAVBAR%': navbar_separator.join(self.htmlNav)
                          ,'LINKTOPARENT': ''
                          ,'TOC_CACHE_URL' : toc_cache_url
                          , 'RECID': recid
@@ -1665,8 +1665,8 @@ class EadAdminHandler(EadHandler):
         page = multiReplace(tmpl, {'%REP_NAME%': repository_name,
                      '%REP_LINK%': repository_link,
                      '%REP_LOGO%': repository_logo,
-                     '%TITLE%': ' :: '.join(self.htmlTitle),
-                     '%NAVBAR%': ' | '.join(self.htmlNav),
+                     '%TITLE%': title_separator.join(self.htmlTitle),
+                     '%NAVBAR%': navbar_separator.join(self.htmlNav),
                      '%CONTENT%': content
                      })
 

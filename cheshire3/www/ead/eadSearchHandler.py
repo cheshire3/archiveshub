@@ -937,8 +937,8 @@ class EadSearchHandler(EadHandler):
                          ,'PARENTID': parentId
                          ,'LINKTOPARENT': parentLink
                          #,'QSTRING': qString
-                         ,'%TITLE%': ' :: '.join(self.htmlTitle)
-                         ,'%NAVBAR%':' | '.join(self.htmlNav)
+                         ,'%TITLE%': title_separator.join(self.htmlTitle)
+                         ,'%NAVBAR%': navbar_separator.join(self.htmlNav)
                          })
         
         parentLink = parentLink.replace('RSID', rsidCgiString)
