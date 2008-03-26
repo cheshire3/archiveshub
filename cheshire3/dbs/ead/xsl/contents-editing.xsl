@@ -6,7 +6,7 @@
     
 <!-- 
 	This file was produced, and released as part of Cheshire for Archives v3.x.
-	Copyright &copy; 2005-2007 the University of Liverpool
+	Copyright &copy; 2005-2008 the University of Liverpool
 -->
 
 <xsl:stylesheet 
