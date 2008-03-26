@@ -49,6 +49,13 @@
 	      </paths>
 	    </subConfig>
 	    
+	    <subConfig type="transformer" id="orderingTxr">
+	    	<objectType>transformer.LxmlXsltTransformer</objectType>
+	      <paths>
+	         <path type="xsltPath">xsl/ead_order.xsl</path>
+	      </paths>
+	    </subConfig>
+	    
 	    <subConfig type="transformer" id="editingTocTxr">
 	    	<objectType>transformer.LxmlXsltTransformer</objectType>
 	      <paths>
