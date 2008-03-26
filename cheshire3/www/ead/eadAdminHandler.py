@@ -848,6 +848,7 @@ class EadAdminHandler(EadHandler):
         self.htmlTitle.append('File Management')
         self.htmlNav.append('<a href="files.html" title="File Management" class="navlink">Files</a>')
         operation = form.get('operation', 'unindex') 
+        self.logger.log(operation)
         if (operation == 'unindex + delete'):
             operation = 'unindex'      
         filepaths = form.getlist('filepath')
@@ -887,6 +888,7 @@ class EadAdminHandler(EadHandler):
                     req.write('<br/>\nUnindexing record: %s ...' % recid)
                     try:
                         rec = recordStore.fetch_record(session, recid)
+                        raise ValueError(rec.id)
                     except (c3errors.FileDoesNotExistException, c3errors.ObjectDoesNotExistException):
                         # hmm record doesn't exists, simply remove file from disk (already done!)
                         req.write('<span class="error">[ERROR]</span> - Record not present in recordStore<br/>\n')
@@ -1077,25 +1079,25 @@ class EadAdminHandler(EadHandler):
             
 
     
-    def view_file(self, form):
-
-        global script
-        self.htmlTitle.append('File Management')
-
-        self.htmlNav.append('<a href="files.html" title="File Management" class="navlink">Files</a>')
-        filepath = form.get('filepath', None)
-        if not filepath:
-            self.htmlTitle.append('Error')
-            return 'Could not locate specified file path'
-
-        self.htmlTitle.append('View File')
-
-        out = ['<div class="heading">%s</div>' % (filepath),'<pre>']
-        out.append(html_encode(read_file(filepath)))
-        out.append('</pre>')
-
-        return '\n'.join(out)
-    #- end view_file()
+#    def view_file(self, form):
+#
+#        global script
+#        self.htmlTitle.append('File Management')
+#
+#        self.htmlNav.append('<a href="files.html" title="File Management" class="navlink">Files</a>')
+#        filepath = form.get('filepath', None)
+#        if not filepath:
+#            self.htmlTitle.append('Error')
+#            return 'Could not locate specified file path'
+#
+#        self.htmlTitle.append('View File')
+#
+#        out = ['<div class="heading">%s</div>' % (filepath),'<pre>']
+#        out.append(html_encode(read_file(filepath)))
+#        out.append('</pre>')
+#
+#        return '\n'.join(out)
+#    #- end view_file()
 
     def _clear_dir(self, dir):
         # function to recursively clear an entire directory - dangerous if used incorrectly!!!
