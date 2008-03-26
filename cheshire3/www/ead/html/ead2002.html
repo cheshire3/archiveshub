@@ -26,9 +26,9 @@
 	        SimpleContextMenu.attach('menuFieldError', 'tagmenu');
 	        closeSplash();
 	    	createTreeFromList('someId', getCookie('preview/catherine-tocstate'), false, false);
-	               
-			var dragable1 = DragHandler.attach(document.getElementById('keyboard'));
-
+	        alert(document.getElementById('keyboard'));
+			var dragable1 = DragHandler.attach(document.getElementById('keyboard')); 
+			setRecid();
 		}	
     	function unloadPage() {
     		setCookie('preview/catherine-tocstate', stateToString('someId'));
