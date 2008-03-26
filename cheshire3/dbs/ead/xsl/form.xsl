@@ -8,10 +8,10 @@
   
     <xsl:import href="contents-editing.xsl"/>
   
-    <xsl:output method="html" encoding="UTF-8"/>
-    <xsl:strip-space elements="*"/>     
-<!--  <xsl:output method="xml" omit-xml-declaration="yes"/>-->
-<!--  <xsl:preserve-space elements="*"/>-->
+ <!--   <xsl:output method="html" encoding="UTF-8"/>
+    <xsl:strip-space elements="*"/>     -->
+  <xsl:output method="xml" omit-xml-declaration="yes"/>
+	 <xsl:preserve-space elements="*"/>
 
   <xsl:variable name="eadidstring">
   	<xsl:value-of select="/ead/eadheader/eadid/text()"/>
@@ -213,8 +213,8 @@
 	  	</p>
 	  	<p>  		
 	  		<xsl:choose>
-				<xsl:when test="filedesc/titestmt/sponsor">				
-					<xsl:apply-templates select="filedesc/titestmt/sponsor"/>
+				<xsl:when test="filedesc/titlestmt/sponsor">				
+					<xsl:apply-templates select="filedesc/titlestmt/sponsor"/>
 				</xsl:when>
 				<xsl:otherwise>
 					<strong><span class="isadg"></span>Sponsor </strong> <a class="smalllink" id="linkspo" title="add sponsor" onclick="addElement('spo')">add</a> [optional]<br/>
@@ -224,7 +224,9 @@
 	  	</p>
   	</xsl:if>
    </div>
-<!-- CONTEXT -->   
+<!--  -->
+<!-- CONTEXT -->  
+<!--  --> 
    <div class="section">
 		<span class="isadg"><h3>3.2: Context Area</h3></span> 
 		<p>
@@ -238,263 +240,475 @@
 			</xsl:otherwise>
 		</xsl:choose>		
     	</p>
-   		<p>
-		<strong><span class="isadg">3.2.2: </span><a href="arch/bioghist.shtml" title="Administrative/Biographical History help - opens in new window" target="_new">Administrative/Biographical History</a></strong>
-		<br/>
+<!-- bioghist -->
+    	<p>
+    	<xsl:variable name="content">
 		<xsl:choose>
 			<xsl:when test="bioghist">
-				<xsl:apply-templates select="bioghist"/>
+				<xsl:text>true</xsl:text>			
 			</xsl:when>
 			<xsl:otherwise>
-				<textarea class="menuField" name="bioghist" id="cbb" onfocus="setCurrent(this);" onchange="validateField(this, 'true');" rows="5" cols="80"></textarea>
+				<xsl:text>false</xsl:text>
 			</xsl:otherwise>			
-		</xsl:choose>
-	   </p>  
-	   <p>		
-		<xsl:choose>
-			<xsl:when test="custodhist">
-				<xsl:apply-templates select="custodhist"/>
-			</xsl:when>
-			<xsl:otherwise>
-				<strong><span class="isadg">3.2.3: </span>Archival History </strong> <a class="smalllink" id="linkcbc" title="add archival history" onclick="addElement('cbc')">add</a> [optional]
-				<br/>
-				<textarea class="menuField" name="custodhist" id="cbc" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none"/>
-			</xsl:otherwise>
-		</xsl:choose>			
-	    </p>      
-	    <p>
-      	<xsl:choose>
-      		<xsl:when test="acqinfo">
-      			<xsl:apply-templates select="acqinfo"/>
-      		</xsl:when>
-      		<xsl:otherwise>
-      			<strong><span class="isadg">3.2.4: </span>Immediate Source of Acquisition </strong> <a class="smalllink" id="linkcbd" title="add immediate source of acquisition" onclick="addElement('cbd')">add</a> [optional]
-				<br/>
-				<textarea class="menuField" name="acqinfo" id="cbd" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
-      		</xsl:otherwise>
-      	</xsl:choose>		
+		</xsl:choose>  
+		</xsl:variable>
+		<xsl:call-template name="textarea">
+			<xsl:with-param name="name" select="'bioghist'"/>
+			<xsl:with-param name="id" select="'cbb'"/>
+			<xsl:with-param name="class" select="'menuField'"/>
+			<xsl:with-param name="optional" select="'false'"/>
+			<xsl:with-param name="content" select="$content"/>
+			<xsl:with-param name="node" select="bioghist"/>
+			<xsl:with-param name="isadg" select="'3.2.2: '"/>
+			<xsl:with-param name="title" select="'Administrative/Biographical History'"/>
+			<xsl:with-param name="help" select="www.archiveshub.ac.uk/arch/bioghist.shtml"/>
+		</xsl:call-template>
+	   </p>
+<!-- custodhist -->
+	   <p>
+	   <xsl:variable name="content">
+			<xsl:choose>
+				<xsl:when test="custodhist">
+					<xsl:text>true</xsl:text>				
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:text>false</xsl:text>
+				</xsl:otherwise>			
+			</xsl:choose>
+		</xsl:variable>  
+		<xsl:call-template name="textarea">
+			<xsl:with-param name="name" select="'custodhist'"/>
+			<xsl:with-param name="id" select="'cbc'"/>
+			<xsl:with-param name="class" select="'menuField'"/>
+			<xsl:with-param name="optional" select="'true'"/>
+			<xsl:with-param name="content" select="$content"/>
+			<xsl:with-param name="node" select="custodhist"/>
+			<xsl:with-param name="isadg" select="'3.2.3: '"/>
+			<xsl:with-param name="title" select="'Archival History'"/>
+			<xsl:with-param name="help" select="''"/>
+		</xsl:call-template>
+	   </p>
+<!-- acqinfo -->
+	   <p>
+	   <xsl:variable name="content">
+			<xsl:choose>
+				<xsl:when test="acqinfo">
+					<xsl:text>true</xsl:text>				
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:text>false</xsl:text>
+				</xsl:otherwise>			
+			</xsl:choose>
+		</xsl:variable>  
+      	<xsl:call-template name="textarea">
+			<xsl:with-param name="name" select="'acqinfo'"/>
+			<xsl:with-param name="id" select="'cbd'"/>
+			<xsl:with-param name="class" select="'menuField'"/>
+			<xsl:with-param name="optional" select="'true'"/>
+			<xsl:with-param name="content" select="$content"/>
+			<xsl:with-param name="node" select="acqinfo"/>
+			<xsl:with-param name="isadg" select="'3.2.4: '"/>
+			<xsl:with-param name="title" select="'Immediate Source of Acquisition'"/>
+			<xsl:with-param name="help" select="''"/>
+		</xsl:call-template>		
       	</p>       
-    </div>	
+    </div>	    
+ <!--  -->   
  <!-- CONTENT AND STRUCTURE -->   
+ <!--  -->
     <div class="section">
 	<span class="isadg"><h3>3.3: Content and Structure Area</h3></span> 
+<!-- scopecontent -->
 	 <p>
-	 <strong><span class="isadg">3.3.1: </span><a href="arch/scope.shtml" title="Scope and Content help - opens in new window" target="_new">Scope and Content</a></strong>
-			<br/>
-	 <xsl:choose>
-	 	<xsl:when test="scopecontent">
-	 		<xsl:apply-templates select="scopecontent"/>
-	 	</xsl:when>
-	 	<xsl:otherwise>	 	
-			<textarea class="menuField" name="scopecontent" id="cca" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80"></textarea>
-	 	</xsl:otherwise>
-	 </xsl:choose>	
-      </p>      
+	 <xsl:variable name="content">
+			<xsl:choose>
+				<xsl:when test="scopecontent">
+					<xsl:text>true</xsl:text>				
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:text>false</xsl:text>
+				</xsl:otherwise>			
+			</xsl:choose>
+		</xsl:variable>  
+      	<xsl:call-template name="textarea">
+			<xsl:with-param name="name" select="'scopecontent'"/>
+			<xsl:with-param name="id" select="'cca'"/>
+			<xsl:with-param name="class" select="'menuField'"/>
+			<xsl:with-param name="optional" select="'false'"/>
+			<xsl:with-param name="content" select="$content"/>
+			<xsl:with-param name="node" select="scopecontent"/>
+			<xsl:with-param name="isadg" select="'3.3.1: '"/>
+			<xsl:with-param name="title" select="'Scope and Content'"/>
+			<xsl:with-param name="help" select="'www.archiveshub.ac.uk/arch/scope.shtml'"/>
+		</xsl:call-template>
+      </p> 
+<!-- appraisal -->     
       <p>
-      <xsl:choose>
-      		<xsl:when test="appraisal">
-      			<xsl:apply-templates select="appraisal"/>
-      		</xsl:when>
-      		<xsl:otherwise>
-      			<strong><span class="isadg">3.3.2: </span>Appraisal </strong> <a class="smalllink" id="linkccb" title="add appraisal" onclick="addElement('ccb')">add</a> [optional]
-				<br/>
-				<textarea class="menuField" name="appraisal" id="ccb" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
-      		</xsl:otherwise>
-      	</xsl:choose>		
+      <xsl:variable name="content">
+			<xsl:choose>
+				<xsl:when test="appraisal">
+					<xsl:text>true</xsl:text>				
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:text>false</xsl:text>
+				</xsl:otherwise>			
+			</xsl:choose>
+		</xsl:variable>  
+      	<xsl:call-template name="textarea">
+			<xsl:with-param name="name" select="'appraisal'"/>
+			<xsl:with-param name="id" select="'ccb'"/>
+			<xsl:with-param name="class" select="'menuField'"/>
+			<xsl:with-param name="optional" select="'true'"/>
+			<xsl:with-param name="content" select="$content"/>
+			<xsl:with-param name="node" select="appraisal"/>
+			<xsl:with-param name="isadg" select="'3.3.2: '"/>
+			<xsl:with-param name="title" select="'Appraisal'"/>
+			<xsl:with-param name="help" select="''"/>
+		</xsl:call-template>	
       </p>
+<!-- accruals -->
       <p>
-      <xsl:choose>
-      		<xsl:when test="accruals">
-      			<xsl:apply-templates select="accruals"/>
-      		</xsl:when>
-      		<xsl:otherwise>
-				<strong><span class="isadg">3.3.3: </span>Accruals </strong> <a class="smalllink" id="linkccc" title="add accruals" onclick="addElement('ccc')">add</a> [optional]
-				<br />
-				<textarea class="menuField" name="accruals" id="ccc" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
-      		</xsl:otherwise>
-      	</xsl:choose>		
+      <xsl:variable name="content">
+			<xsl:choose>
+				<xsl:when test="accruals">
+					<xsl:text>true</xsl:text>				
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:text>false</xsl:text>
+				</xsl:otherwise>			
+			</xsl:choose>
+		</xsl:variable>  
+      	<xsl:call-template name="textarea">
+			<xsl:with-param name="name" select="'accruals'"/>
+			<xsl:with-param name="id" select="'ccc'"/>
+			<xsl:with-param name="class" select="'menuField'"/>
+			<xsl:with-param name="optional" select="'true'"/>
+			<xsl:with-param name="content" select="$content"/>
+			<xsl:with-param name="node" select="accruals"/>
+			<xsl:with-param name="isadg" select="'3.3.3: '"/>
+			<xsl:with-param name="title" select="'Accruals'"/>
+			<xsl:with-param name="help" select="''"/>
+		</xsl:call-template>	
       </p>
+<!-- arrangement -->
       <p>
-      <xsl:choose>
-      		<xsl:when test="arrangement">
-      			<xsl:apply-templates select="arrangement"/>
-      		</xsl:when>
-      		<xsl:otherwise>
-				<strong><span class="isadg">3.3.4: </span>System of Arrangement </strong> <a class="smalllink" id="linkccd" title="add arrangement" onclick="addElement('ccd')">add</a> [optional]
-				<br />
-				<textarea class="menuField" name="arrangement" id="ccd" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
-      		</xsl:otherwise>
-      	</xsl:choose>		
+      <xsl:variable name="content">
+			<xsl:choose>
+				<xsl:when test="arrangement">
+					<xsl:text>true</xsl:text>				
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:text>false</xsl:text>
+				</xsl:otherwise>			
+			</xsl:choose>
+		</xsl:variable>  
+      	<xsl:call-template name="textarea">
+			<xsl:with-param name="name" select="'arrangement'"/>
+			<xsl:with-param name="id" select="'ccd'"/>
+			<xsl:with-param name="class" select="'menuField'"/>
+			<xsl:with-param name="optional" select="'true'"/>
+			<xsl:with-param name="content" select="$content"/>
+			<xsl:with-param name="node" select="arrangement"/>
+			<xsl:with-param name="isadg" select="'3.3.4: '"/>
+			<xsl:with-param name="title" select="'System of Arrangement'"/>
+			<xsl:with-param name="help" select="''"/>
+		</xsl:call-template>	
       </p>
     </div>
+<!--  -->
 <!-- ACCESS -->
+<!--  -->
     <div class="section">
-		<span class="isadg"><h3>3.4: Conditions of Access and Use Area</h3></span>
-			<p>
-				 <strong><span class="isadg">3.4.1: </span><a href="arch/restrict.shtml" title="Conditions Governing Access help - opens in new window" target="_new">Conditions Governing Access</a></strong>
-						<br/>
-				 <xsl:choose>
-				 	<xsl:when test="accessrestrict">
-				 		<xsl:apply-templates select="accessrestrict"/>
-				 	</xsl:when>
-				 	<xsl:otherwise>	 		
-						<textarea class="menuField" name="accessrestrict" id="cda" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80"></textarea>
-				 	</xsl:otherwise>
-				 </xsl:choose>	
-			</p>      
-			<p>
-		      <xsl:choose>
-		      		<xsl:when test="userestrict">
-		      			<xsl:apply-templates select="userestrict"/>
-		      		</xsl:when>
-		      		<xsl:otherwise>
-						<strong><span class="isadg">3.4.2: </span>Conditions Governing Reproduction </strong> <a class="smalllink" id="linkcdb" title="add conditions governing reproduction" onclick="addElement('cdb')">add</a> [optional]
-						<br />
-						<textarea class="menuField" name="userestrict" id="cdb" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
-		      		</xsl:otherwise>
-		      </xsl:choose>		
-		     </p>
-		     <p>
-		     	<strong><span class="isadg">3.4.3: </span><a href="/arch/lang.shtml" title="Language of Material help - opens in new window" target="_new">Language of Material</a></strong> [Must include <a href="http://www.loc.gov/standards/iso639-2/englangn.html" title="ISO 639-2 codes - opens new window" target="_new">ISO 639-2 3-letter code</a>]
-		     	<div id="language" class="langcontainer">
-		     	<xsl:choose>
-		     		<xsl:when test="did/langmaterial/language">
-		     			<xsl:apply-templates select="did/langmaterial"/>
-		     		</xsl:when>
-		     		<xsl:otherwise>		     			
-						<div id="addedlanguages" style="display:none" class="added"></div>		
-		     		</xsl:otherwise>
-		     	</xsl:choose>
-		     		<div id="languagetable" class="tablecontainer">
-		  				<table>
-		  					<tbody>
-		      					<tr><td> 3-letter ISO code:</td><td> <input type="text" id="lang_code" onfocus="setCurrent(this);" maxlength="3" size="5"></input></td></tr>
-								<tr><td> Language:</td><td> <input type="text" id="lang_name" onfocus="setCurrent(this);" size="30"></input></td></tr>
-		  					</tbody>
-		  				</table>
-					</div>
-		  			<div id="languagebuttons" class="buttoncontainer">
-		      			<input class="apbutton" type="button" onclick="addLanguage();" value="Add to Record" ></input><br/>
-		  				<input class="apbutton" type="button" onclick="resetAccessPoint('language');" value="Reset" ></input>
-		  			</div>
-      			</div>
-      			<br/>		     	
-		     </p>
-		     <p>
-		     	<xsl:choose>
-		     		<xsl:when test="phystech">
-		     			<xsl:apply-templates select="phystech"/>
-		     		</xsl:when>
-		     		<xsl:otherwise>
-		     			<strong><span class="isadg">3.4.4: </span>Physical Characteristics </strong> <a class="smalllink" id="linkcdd" title="add physical characteristics" onclick="addElement('cdd')">add</a> [optional]
-						<br/>
-						<textarea class="menuField" name="phystech" id="cdd" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
-		     		</xsl:otherwise>
-		     	</xsl:choose>			 	
-      		</p>
-      		<xsl:if test="$leveltype = 'collection'">
-	      		<p>
-					<strong><span class="isadg">3.4.5: </span><a href="arch/other.shtml" title="Finding Aids help - opens in new window" target="_new">Finding Aids</a></strong>
-					<br/>
-					<xsl:choose>
-						<xsl:when test="otherfindaid">
-							<xsl:apply-templates select="otherfindaid"/> 
-						</xsl:when>
-						<xsl:otherwise>
-							<textarea class="menuField" name="cde" id="cde" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80"></textarea>
-						</xsl:otherwise>
-					</xsl:choose>				
-		       </p>	
-	       </xsl:if>	     					
+	<span class="isadg"><h3>3.4: Conditions of Access and Use Area</h3></span>
+<!-- accessrestrict -->  
+	<p>
+	<xsl:variable name="content">
+		<xsl:choose>
+			<xsl:when test="accessrestrict">
+				<xsl:text>true</xsl:text>				
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:text>false</xsl:text>
+			</xsl:otherwise>			
+		</xsl:choose>
+	</xsl:variable>  
+     	<xsl:call-template name="textarea">
+		<xsl:with-param name="name" select="'accessrestrict'"/>
+		<xsl:with-param name="id" select="'cda'"/>
+		<xsl:with-param name="class" select="'menuField'"/>
+		<xsl:with-param name="optional" select="'false'"/>
+		<xsl:with-param name="content" select="$content"/>
+		<xsl:with-param name="node" select="accessrestrict"/>
+		<xsl:with-param name="isadg" select="'3.4.1: '"/>
+		<xsl:with-param name="title" select="'Conditions Governing Access'"/>
+		<xsl:with-param name="help" select="'www.archiveshub.ac.uk/arch/restrict.shtml'"/>
+	</xsl:call-template>
+	</p>  
+<!-- userestrict --> 
+ 	<p>
+	<xsl:variable name="content">
+		<xsl:choose>
+			<xsl:when test="userestrict">
+				<xsl:text>true</xsl:text>				
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:text>false</xsl:text>
+			</xsl:otherwise>			
+		</xsl:choose>
+	</xsl:variable>  
+     	<xsl:call-template name="textarea">
+		<xsl:with-param name="name" select="'userestrict'"/>
+		<xsl:with-param name="id" select="'cdb'"/>
+		<xsl:with-param name="class" select="'menuField'"/>
+		<xsl:with-param name="optional" select="'true'"/>
+		<xsl:with-param name="content" select="$content"/>
+		<xsl:with-param name="node" select="userestrict"/>
+		<xsl:with-param name="isadg" select="'3.4.2: '"/>
+		<xsl:with-param name="title" select="'Conditions Governing Reproduction'"/>
+	</xsl:call-template>
+	</p> 
+<!-- langmaterial -->
+     <p>
+     	<strong><span class="isadg">3.4.3: </span><a href="/arch/lang.shtml" title="Language of Material help - opens in new window" target="_new">Language of Material</a></strong> [Must include <a href="http://www.loc.gov/standards/iso639-2/englangn.html" title="ISO 639-2 codes - opens new window" target="_new">ISO 639-2 3-letter code</a>]
+     	<div id="language" class="langcontainer">
+     	<xsl:choose>
+     		<xsl:when test="did/langmaterial/language">
+     			<xsl:apply-templates select="did/langmaterial"/>
+     		</xsl:when>
+     		<xsl:otherwise>		     			
+				<div id="addedlanguages" style="display:none" class="added"><xsl:text> </xsl:text></div>		
+     		</xsl:otherwise>
+     	</xsl:choose>
+     		<div id="languagetable" class="tablecontainer">
+  				<table>
+  					<tbody>
+      					<tr><td> 3-letter ISO code:</td><td> <input type="text" id="lang_code" onfocus="setCurrent(this);" maxlength="3" size="5"></input></td></tr>
+						<tr><td> Language:</td><td> <input type="text" id="lang_name" onfocus="setCurrent(this);" size="30"></input></td></tr>
+  					</tbody>
+  				</table>
+			</div>
+  			<div id="languagebuttons" class="buttoncontainer">
+      			<input class="apbutton" type="button" onclick="addLanguage();" value="Add to Record" ></input><br/>
+  				<input class="apbutton" type="button" onclick="resetAccessPoint('language');" value="Reset" ></input>
+  			</div>
+    			</div>
+    			<br/>		     	
+     </p>
+<!-- phystech -->
+	<p>
+	<xsl:variable name="content">
+		<xsl:choose>
+			<xsl:when test="phystech">
+				<xsl:text>true</xsl:text>				
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:text>false</xsl:text>
+			</xsl:otherwise>			
+		</xsl:choose>
+	</xsl:variable>  
+     	<xsl:call-template name="textarea">
+		<xsl:with-param name="name" select="'phystech'"/>
+		<xsl:with-param name="id" select="'cdd'"/>
+		<xsl:with-param name="class" select="'menuField'"/>
+		<xsl:with-param name="optional" select="'true'"/>
+		<xsl:with-param name="content" select="$content"/>
+		<xsl:with-param name="node" select="phystech"/>
+		<xsl:with-param name="isadg" select="'3.4.4: '"/>
+		<xsl:with-param name="title" select="'Physical Characteristics'"/>
+	</xsl:call-template>
+	</p>
+<!-- otherfindaid -->	
+	<xsl:if test="$leveltype = 'collection'">
+	<p>
+	<xsl:variable name="content">
+		<xsl:choose>
+			<xsl:when test="otherfindaid">
+				<xsl:text>true</xsl:text>				
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:text>false</xsl:text>
+			</xsl:otherwise>			
+		</xsl:choose>
+	</xsl:variable>  
+     	<xsl:call-template name="textarea">
+		<xsl:with-param name="name" select="'otherfindaid'"/>
+		<xsl:with-param name="id" select="'cde'"/>
+		<xsl:with-param name="class" select="'menuField'"/>
+		<xsl:with-param name="optional" select="'false'"/>
+		<xsl:with-param name="content" select="$content"/>
+		<xsl:with-param name="node" select="otherfindaid"/>
+		<xsl:with-param name="isadg" select="'3.4.5: '"/>
+		<xsl:with-param name="title" select="'Finding Aids'"/>
+	</xsl:call-template>			
+	</p>	
+	</xsl:if>	     					
 	</div>
+<!--  -->
+<!-- ALLIED MATERIALS -->
+<!--  -->
 	<div class="section">
-      <span class="isadg"><h3>3.5: Allied Materials Area</h3></span>
-      	<p>
-      		<xsl:choose>
-      			<xsl:when test="originalsloc">
-      				<xsl:apply-templates select="originalsloc"/>
-      			</xsl:when>
-      			<xsl:otherwise>
-      				<strong><span class="isadg">3.5.1: </span>Existence/Location of Originals </strong> <a class="smalllink" id="linkcea" title="add existence/location of originals" onclick="addElement('cea')">add</a> [optional]
-					<br/>
-        			<textarea class="menuField" name="originalsloc" id="cea" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
-      			</xsl:otherwise>
-      		</xsl:choose>	
-        </p> 
-		<p>
-			<xsl:choose>
-				<xsl:when test="altformavail">
-					<xsl:apply-templates select="altformavail"/>
-				</xsl:when>
-				<xsl:otherwise>
-					<strong><span class="isadg">3.5.2: </span>Existence/Location of Copies </strong> <a class="smalllink" id="linkceb" title="add existence/location of copies" onclick="addElement('ceb')">add</a> [optional]
-					<br/>
-					<textarea class="menuField" name="altformavail" id="ceb" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
-				</xsl:otherwise>
-			</xsl:choose>			
-      	</p>
-		<p>
-			<xsl:choose>
-				<xsl:when test="relatedmaterial">
-					<xsl:apply-templates select="relatedmaterial"/>
-				</xsl:when>
-				<xsl:otherwise>
-					<strong><span class="isadg">3.5.3: </span>Related Units of Description </strong> <a class="smalllink" id="linkcec" title="add related units of description" onclick="addElement('cec')">add</a> [optional]
-					<br/>
-					<textarea class="menuField" name="relatedmaterial" id="cec" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
-				</xsl:otherwise>
-			</xsl:choose>			
-      	</p>
-      	 <p>
-      	 	<xsl:choose>
-      	 		<xsl:when test="bibliography">
-      	 			<xsl:apply-templates select="bibliography"/>
-      	 		</xsl:when>
-      	 		<xsl:otherwise>
-      	 			<strong><span class="isadg">3.5.4: </span>Publication Note</strong> [Works based on or about the collection] <a class="smalllink" id="linkced" title="add publication note" onclick="addElement('ced')">add</a> [optional]
-					<br/>
-					<textarea class="menuField" name="bibliography" id="ced" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
-      	 		</xsl:otherwise>
-      	 	</xsl:choose>
-      	</p>
+    <span class="isadg"><h3>3.5: Allied Materials Area</h3></span>
+<!-- originalsloc -->  
+    <p>
+    <xsl:variable name="content">
+		<xsl:choose>
+			<xsl:when test="originalsloc">
+				<xsl:text>true</xsl:text>				
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:text>false</xsl:text>
+			</xsl:otherwise>			
+		</xsl:choose>
+	</xsl:variable>  
+     	<xsl:call-template name="textarea">
+		<xsl:with-param name="name" select="'originalsloc'"/>
+		<xsl:with-param name="id" select="'cea'"/>
+		<xsl:with-param name="class" select="'menuField'"/>
+		<xsl:with-param name="optional" select="'true'"/>
+		<xsl:with-param name="content" select="$content"/>
+		<xsl:with-param name="node" select="originalsloc"/>
+		<xsl:with-param name="isadg" select="'3.5.1: '"/>
+		<xsl:with-param name="title" select="'Existence/Location of Originals'"/>
+	</xsl:call-template>
+    </p> 
+<!-- altformavail -->
+	<p>
+	 <xsl:variable name="content">
+		<xsl:choose>
+			<xsl:when test="altformavail">
+				<xsl:text>true</xsl:text>				
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:text>false</xsl:text>
+			</xsl:otherwise>			
+		</xsl:choose>
+	</xsl:variable>  
+     	<xsl:call-template name="textarea">
+		<xsl:with-param name="name" select="'altformavail'"/>
+		<xsl:with-param name="id" select="'ceb'"/>
+		<xsl:with-param name="class" select="'menuField'"/>
+		<xsl:with-param name="optional" select="'true'"/>
+		<xsl:with-param name="content" select="$content"/>
+		<xsl:with-param name="node" select="altformavail"/>
+		<xsl:with-param name="isadg" select="'3.5.2: '"/>
+		<xsl:with-param name="title" select="'Existence/Location of Copies'"/>
+	</xsl:call-template>
+	</p>
+<!-- relatedmaterial -->
+	<p>
+	<xsl:variable name="content">
+		<xsl:choose>
+			<xsl:when test="relatedmaterial">
+				<xsl:text>true</xsl:text>				
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:text>false</xsl:text>
+			</xsl:otherwise>			
+		</xsl:choose>
+	</xsl:variable>  
+     	<xsl:call-template name="textarea">
+		<xsl:with-param name="name" select="'relatedmaterial'"/>
+		<xsl:with-param name="id" select="'cec'"/>
+		<xsl:with-param name="class" select="'menuField'"/>
+		<xsl:with-param name="optional" select="'true'"/>
+		<xsl:with-param name="content" select="$content"/>
+		<xsl:with-param name="node" select="relatedmaterial"/>
+		<xsl:with-param name="isadg" select="'3.5.3: '"/>
+		<xsl:with-param name="title" select="'Related Units of Description'"/>
+	</xsl:call-template>		
+    </p>
+<!-- bibliography -->
+	<p>
+	<xsl:variable name="content">
+		<xsl:choose>
+			<xsl:when test="bibliography">
+				<xsl:text>true</xsl:text>				
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:text>false</xsl:text>
+			</xsl:otherwise>			
+		</xsl:choose>
+	</xsl:variable>  
+     	<xsl:call-template name="textarea">
+		<xsl:with-param name="name" select="'bibliography'"/>
+		<xsl:with-param name="id" select="'ced'"/>
+		<xsl:with-param name="class" select="'menuField'"/>
+		<xsl:with-param name="optional" select="'true'"/>
+		<xsl:with-param name="content" select="$content"/>
+		<xsl:with-param name="node" select="bibliography"/>
+		<xsl:with-param name="isadg" select="'3.5.4: '"/>
+		<xsl:with-param name="title" select="'Publication Note'"/>
+		<xsl:with-param name="additional" select="'[Works based on or about the collection]'"/>
+	</xsl:call-template>
+	</p>
 	</div>
+<!--  -->
+<!-- NOTE AREA -->	
+<!--  -->
 	<div class="section">
 	<span class="isadg"><h3>3.6: Note Area</h3></span> 
-	  <p>
-	  	<xsl:choose>
-	  		<xsl:when test="note">
-	  			<xsl:apply-templates select="note"/>
-	  		</xsl:when>
-	  		<xsl:otherwise>
-	  			<strong><span class="isadg">3.6.1: </span>Note </strong> <a class="smalllink" id="linkcfa" title="add note" onclick="addElement('cfa')" onmouseover="this.style.cursor='pointer'">add</a> [optional]
-				<br/>
-				<textarea class="menuField" name="note" id="cfa" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none"></textarea>
-	  		</xsl:otherwise>
-	  	</xsl:choose>		
-	  </p>
+<!-- note -->
+	<p>
+	<xsl:variable name="content">
+		<xsl:choose>
+			<xsl:when test="note">
+				<xsl:text>true</xsl:text>				
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:text>false</xsl:text>
+			</xsl:otherwise>			
+		</xsl:choose>
+	</xsl:variable>  
+     	<xsl:call-template name="textarea">
+		<xsl:with-param name="name" select="'note'"/>
+		<xsl:with-param name="id" select="'cfa'"/>
+		<xsl:with-param name="class" select="'menuField'"/>
+		<xsl:with-param name="optional" select="'true'"/>
+		<xsl:with-param name="content" select="$content"/>
+		<xsl:with-param name="node" select="note"/>
+		<xsl:with-param name="isadg" select="'3.6.1: '"/>
+		<xsl:with-param name="title" select="'Note'"/>
+	</xsl:call-template>
+	</p>
 	</div>
+<!--  -->
+<!-- DESCRIPTION AREA -->
+<!--  -->
 	<xsl:if test="$leveltype = 'collection'">
-		<div class="section">
-	      <span class="isadg"><h3>3.7: Description Area</h3></span> 
-	      <p>
-	      	<strong><a href="arch/archnote.shtml" title="Archivist's Note help - opens in new window" target="_new"><span class="isadg">3.7.1: </span>Archivist's Note</a></strong>
-			<br/>
-	      	<xsl:choose>
-	      		<xsl:when test="processinfo">
-	      			<xsl:apply-templates select="processinfo"/>
-	      		</xsl:when>
-	      		<xsl:otherwise>      			
-	        		<textarea class="menuField" name="processinfo" id="cga" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80"></textarea>
-	      		</xsl:otherwise>
-	      	</xsl:choose>	
-	      </p><!--
-		  <strong>Note:  3.7.2 Rules and Conventions</strong> and <span class="isadg">3.7.3 </span>Dates of Description</strong> will be generated automatically for this record.
-	      <input type="hidden" name="revisions" id="revisions" value=""></input>
-		--></div>
+	<div class="section">
+	<span class="isadg"><h3>3.7: Description Area</h3></span> 
+<!-- processinfo -->
+	<p>
+	<xsl:variable name="content">
+		<xsl:choose>
+			<xsl:when test="processinfo">
+				<xsl:text>true</xsl:text>				
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:text>false</xsl:text>
+			</xsl:otherwise>			
+		</xsl:choose>
+	</xsl:variable>  
+     	<xsl:call-template name="textarea">
+		<xsl:with-param name="name" select="'processinfo'"/>
+		<xsl:with-param name="id" select="'cga'"/>
+		<xsl:with-param name="class" select="'menuField'"/>
+		<xsl:with-param name="optional" select="'true'"/>
+		<xsl:with-param name="content" select="$content"/>
+		<xsl:with-param name="node" select="processinfo"/>
+		<xsl:with-param name="isadg" select="'3.7.1: '"/>
+		<xsl:with-param name="title" select='"Archivist&apos;s Note"'/>
+		<xsl:with-param name="help" select="'www.archiveshub.ac.uk/arch/archnote.shtml'"/>
+	</xsl:call-template>
+	</p>
+	</div>
 	</xsl:if>
+<!--  -->
+<!-- ACCESSPOINTS -->
+<!--  -->
 	<div id="accesspointssection" class="section">
 		<h3><a id="accesspoints" name="accesspoints">Access Points</a></h3>
-<!-- SUBJECT -->
+<!-- subject -->
 		<div id="subject" class="apcontainer">
 			<p><strong>Subject</strong><br /><a onclick="window.open('http://www.archiveshub.ac.uk/unesco/', 'new', 'width=800 height=600');">[Search UNESCO] </a> <a onclick="window.open('http://www.archiveshub.ac.uk/lcsh/', 'new', 'width=800 height=600');"> [Search LCSH]</a></p>
 			<xsl:choose>
@@ -504,7 +718,7 @@
 					</xsl:call-template>	
 				</xsl:when>
 				<xsl:otherwise>
-					<div id="addedsubjects" style="display:none" class="added"></div>
+					<div id="addedsubjects" style="display:none" class="added"><xsl:text> </xsl:text></div>
 				</xsl:otherwise>
 			</xsl:choose>	
 			<div id="subjecttable" class="tablecontainer">
@@ -521,16 +735,14 @@
 			    </tbody>
 				</table>
 			</div>
-			<div id="subjectbuttons" class="buttoncontainer">
-			<!--    <input class="apbutton" type="button" onclick="opensearch(0);" value="Search UNESCO" ></input><br/>-->
-		  	<!--    <input class="apbutton" type="button" onclick="window.open('http://fantasia.cse.msstate.edu/lcshdb/index.cgi');" value="Search LCSH" ></input><br/>	-->			     
+			<div id="subjectbuttons" class="buttoncontainer">			     
 		  	    <input class="apbutton" type="button" onclick="addAccessPoint('subject');" value="Add to Record" ></input><br/>
 		  	    <input class="apbutton" type="button" onclick="resetAccessPoint('subject');" value="Reset" ></input>
 			</div>
 			<br/>
 		</div>
 		<br/>	
-<!--PERSNAME -->
+<!--persname -->
         <div id="persname" class="apcontainer">				
 			<p><strong>Personal Name</strong><br /><a onclick="window.open('http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=P', 'new', 'width=800 height=600');">[Search NRA]</a></p>
 			<xsl:choose>
@@ -540,7 +752,7 @@
 					</xsl:call-template>	
 				</xsl:when>
 				<xsl:otherwise>
-					<div id="addedpersnames" style="display:none" class="added"></div>
+					<div id="addedpersnames" style="display:none" class="added"><xsl:text> </xsl:text></div>
 				</xsl:otherwise>
 			</xsl:choose>	
 			<div id="persnametable" class="tablecontainer">					
@@ -565,14 +777,13 @@
 						<option value="aacr2">AACR2</option>
 					</select>
 				</p>
-			<!-- 	<input class="apbutton" type="button" onclick="window.open('http://www.hmc.gov.uk/nra/personal_simple.htm', 'new', 'width=800 height=600');" value="Search NRA" ></input><br/> -->			
 				<input class="apbutton" type="button" onclick="addAccessPoint('persname');" value="Add To Record" ></input><br />
 				<input class="apbutton" type="button" onclick="resetAccessPoint('persname');" value="Reset" ></input>				
 			</div>
 			<br/>
 		</div>
 		<br/>
-<!--FAMNAME -->
+<!--famname -->
 		<div id="famname" class="apcontainer">
 			<p><strong>Family Name</strong><br /><a onclick="window.open('http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=F', 'new', 'width=800 height=600');">[Search NRA]</a></p>
 			<xsl:choose>
@@ -582,7 +793,7 @@
 					</xsl:call-template>	
 				</xsl:when>
 				<xsl:otherwise>
-					<div id="addedfamnames" style="display:none" class="added"></div>
+					<div id="addedfamnames" style="display:none" class="added"><xsl:text> </xsl:text></div>
 				</xsl:otherwise>
 			</xsl:choose>
 			<div id="famnametable" class="tablecontainer">
@@ -607,14 +818,13 @@
 					<option value="aacr2">AACR2</option>
 				</select>
 				</p>
-				<!--<input class="apbutton" type="button" onclick="window.open('http://www.hmc.gov.uk/nra/family_simple.htm', 'new', 'width=800 height=600');" value="Search NRA"></input><br/>  -->
 				<input class="apbutton" type="button" onclick="addAccessPoint('famname');" value="Add To Record"></input><br />
 				<input class="apbutton" type="button" onclick="resetAccessPoint('famname');" value="Reset" ></input>
 			</div>
 			<br/>
 		</div>
 		<br/>		
-<!-- CORPNAME -->
+<!-- corpname -->
 		<div id="corpname" class="apcontainer">
 			<p><strong>Corporate Name</strong><br /><a onclick="window.open('http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=O', 'new', 'width=800 height=600');">[Search NRA]</a></p>
 			<xsl:choose>
@@ -624,7 +834,7 @@
 					</xsl:call-template>	
 				</xsl:when>
 				<xsl:otherwise>
-					<div id="addedcorpnames" style="display:none" class="added"></div>
+					<div id="addedcorpnames" style="display:none" class="added"><xsl:text> </xsl:text></div>
 				</xsl:otherwise>
 			</xsl:choose>	
 			<div id="corpnametable" class="tablecontainer">
@@ -647,14 +857,13 @@
 						<option value="aacr2">AACR2</option>
 				    </select>
 				</p>
-				<!-- <input class="apbutton" type="button" onclick="window.open('http://www.hmc.gov.uk/nra/corporate_simple.htm', 'new', 'width=800 height=600');" value="Search NRA" ></input><br/> -->
 				<input class="apbutton" type="button" onclick="addAccessPoint('corpname');" value="Add To Record"></input><br />
 				<input class="apbutton" type="button" onclick="resetAccessPoint('corpname');" value="Reset" ></input>
 			</div>
 			<br/>
 		</div>
 		<br/>	
-<!--PLACENAME-->
+<!-- placename -->
 		<div id="geogname" class="apcontainer">
 			<p><strong>Place Name</strong><br /><a onclick="window.open('http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=PL', 'new', 'width=800 height=600');">[Search NRA]</a></p>
 			<xsl:choose>
@@ -664,7 +873,7 @@
 					</xsl:call-template>	
 				</xsl:when>
 				<xsl:otherwise>
-					<div id="addedgeognames" style="display:none" class="added"></div>
+					<div id="addedgeognames" style="display:none" class="added"><xsl:text> </xsl:text></div>
 				</xsl:otherwise>
 			</xsl:choose>	
 				<div id="geognametable" class="tablecontainer">
@@ -690,7 +899,7 @@
 				<br/>
 		</div>
 		<br/>
-<!-- GENRE FORM -->
+<!-- genreform -->
 		<div id="genreform" class="apcontainer">
 			<p><strong>Genre Form</strong></p>
 			<xsl:choose>
@@ -700,7 +909,7 @@
 					</xsl:call-template>	
 				</xsl:when>
 				<xsl:otherwise>
-					<div id="addedgenreforms" style="display:none" class="added"></div>
+					<div id="addedgenreforms" style="display:none" class="added"><xsl:text> </xsl:text></div>
 				</xsl:otherwise>
 			</xsl:choose>	
 				<div id="genreformtable" class="tablecontainer">
@@ -723,7 +932,7 @@
 			</div>
 			<br/>						
 
-<!--TITLE -->
+<!--title -->
 		<div id="title" class="apcontainer">
 			<p><strong>Book Title</strong></p>
 			<xsl:choose>
@@ -733,7 +942,7 @@
 					</xsl:call-template>	
 				</xsl:when>
 				<xsl:otherwise>
-					<div id="addedtitles" style="display:none" class="added"></div>
+					<div id="addedtitles" style="display:none" class="added"><xsl:text> </xsl:text></div>
 				</xsl:otherwise>
 			</xsl:choose>	
 				<div id="titletable" class="tablecontainer">
@@ -761,7 +970,9 @@
 			<br/>						
 		</div>	
   </xsl:template>
-
+  
+  
+  
   <xsl:template name="accesspoint">
   	<xsl:param name="aptype"/>
   	<div style="display:block" class="added"> 
@@ -826,6 +1037,9 @@
 	</div>	  	
   </xsl:template>
   
+  
+  
+  
   <xsl:template name="accesspointstring">
   	 <xsl:param name="aptype"/>
   	 <xsl:param name="separater"/>
@@ -861,6 +1075,7 @@
   	 </xsl:choose>
   </xsl:template>
 
+  
   
   <xsl:template match="did/unitid">
 	<input type="text" name="did/unitid/@countrycode" id="countrycode" maxlength="2" size="3" onblur="checkId()">		
@@ -942,72 +1157,6 @@
   	</input>
   </xsl:template>
 
- <xsl:template match="bioghist">
-  	<textarea class="menuField" name="bioghist" id="cbb" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80">  		
-		<!-- <xsl:value-of select="."/> -->
-		<xsl:apply-templates/>  		  		
-  	</textarea>
-  </xsl:template>
-
-  <xsl:template match="custodhist">
-  		<strong><span class="isadg">3.2.3: </span>Archival History </strong> <a class="smalllink" id="linkcbc" title="add archival history" onclick="addElement('cbc')">hide</a> [optional]
-		<br/>
-  	  	<textarea class="menuField" name="custodhist" id="cbc" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80" style="display:block">
-  		<xsl:apply-templates/>
-  	  </textarea>
-  </xsl:template>
-
-  <xsl:template match="acqinfo">
-  		<strong><span class="isadg">3.2.4: </span>Immediate Source of Acquisition </strong> <a class="smalllink" id="linkcbd" title="add archival history" onclick="addElement('cbd')">hide</a> [optional]
-		<br/>
-  	  	<textarea class="menuField" name="acqinfo" id="cbd" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80" style="display:block">
-  		<xsl:apply-templates/>
-  	  </textarea>
-  </xsl:template>
-
-    <xsl:template match="scopecontent">
-  	  <textarea class="menuField" name="scopecontent" id="cca" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80">
-  	  	<xsl:apply-templates/>
-  	  </textarea>
-   </xsl:template>
-
-  <xsl:template match="appraisal">
-  		<strong><span class="isadg">3.3.2: </span>Appraisal </strong> <a class="smalllink" id="linkccb" title="add archival history" onclick="addElement('ccb')">hide</a> [optional]
-		<br/>
-  	  	<textarea class="menuField" name="appraisal" id="ccb" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80" style="display:block">
-  		<xsl:apply-templates/>
-  	  </textarea>
-  </xsl:template>
- 
- <xsl:template match="accruals">
-  		<strong><span class="isadg">3.3.3: </span>Accruals </strong> <a class="smalllink" id="linkccc" title="add archival history" onclick="addElement('ccc')">hide</a> [optional]
-		<br/>
-  	  	<textarea class="menuField" name="accruals" id="ccc" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80" style="display:block">
-  		<xsl:apply-templates/>
-  	  </textarea>
-  </xsl:template>
-
-  <xsl:template match="arrangement">
-  		<strong><span class="isadg">3.3.4: </span>System of Arrangement </strong> <a class="smalllink" id="linkccd" title="add archival history" onclick="addElement('ccd')">hide</a> [optional]
-		<br/>
-  	  	<textarea class="menuField" name="arrangement" id="ccd" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80" style="display:block">
-  		<xsl:apply-templates/>
-  	  </textarea>
-  </xsl:template>
-
-  <xsl:template match="accessrestrict">
-  	  <textarea class="menuField" name="accessrestrict" id="cca" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80">
-  	  	<xsl:apply-templates/>
-  	  </textarea>
-   </xsl:template>
-   
-   <xsl:template match="userestrict">
-  		<strong><span class="isadg">3.4.2: </span>Conditions Governing Reproduction </strong> <a class="smalllink" id="linkcdb" title="add archival history" onclick="addElement('cdb')">hide</a> [optional]
-		<br/>
-  	  	<textarea class="menuField" name="userestrict" id="cdb" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80" style="display:block">
-  		<xsl:apply-templates/>
-  	  </textarea>
-  </xsl:template>
 
   <xsl:template match="did/langmaterial">
 	<div id="addedlanguages" style="display:block" class="added">
@@ -1060,70 +1209,10 @@
 	</div>	
   </xsl:template>
 
-  <xsl:template match="phystech">
-    <strong><span class="isadg">3.4.4: </span>Physical Characteristics </strong> <a class="smalllink" id="linkcdd" title="add physical characteristics" onclick="addElement('cdd')">hide</a> [optional]
-	<br/>
-	<textarea class="menuField" name="phystech" id="cdd" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80" style="display:block">
-			<xsl:apply-templates/>
-	</textarea>
-  </xsl:template>
-
-  <xsl:template match="otherfindaid">
-  	<textarea class="menuField" name="cde" id="cde" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80">
-  		<xsl:apply-templates/>
-  	</textarea>
-  </xsl:template>
-  
-  <xsl:template match="originalsloc">
-  	<strong><span class="isadg">3.5.1: </span>Existence/Location of Originals </strong> <a class="smalllink" id="linkcea" title="add archival history" onclick="addElement('cea')">hide</a> [optional]
-	<br/>
-    <textarea class="menuField" name="originalsloc" id="cea" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none">
-    	<xsl:apply-templates/>
-    </textarea>
-  </xsl:template>
-  
-  <xsl:template match="altformavail">
-	<strong><span class="isadg">3.5.2: </span>Existence/Location of Copies </strong> <a class="smalllink" id="linkceb" title="add archival history" onclick="addElement('ceb')">hide</a> [optional]
-	<br/>
-	<textarea class="menuField" name="altformavail" id="ceb" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none">
-		<xsl:apply-templates/>
-	</textarea>  
-  </xsl:template>
-  
-  <xsl:template match="relatedmaterial">
-  	<strong><span class="isadg">3.5.3: </span>Related Units of Description </strong> <a class="smalllink" id="linkcec" title="add archival history" onclick="addElement('cec')">hide</a> [optional]
-	<br/>
-	<textarea class="menuField" name="relatedmaterial" id="cec" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none">
-		<xsl:apply-templates/>
-	</textarea>
-  </xsl:template>
-  
-  <xsl:template match="bibliography">
-  	<strong><span class="isadg">3.5.4: </span>Publication Note</strong> [Works based on or about the collection] <a class="smalllink" id="linkced" title="add archival history" onclick="addElement('ced')">hide</a> [optional]
-	<br/>
-	<textarea class="menuField" name="bibliography" id="ced" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none">
-		<xsl:apply-templates/>
-	</textarea>
-  </xsl:template>
-  
-  <xsl:template match="note">
-  	<strong><span class="isadg">3.6.1: </span>Note </strong> <a class="smalllink" id="linkcfa" title="add archival history" onclick="addElement('cfa')">add</a> [optional]
-	<br/>
-	<textarea class="menuField" name="note" id="cfa" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80" style="display:none">
-		<xsl:apply-templates/>
-	</textarea>
-  </xsl:template>
-  
-  <xsl:template match="processinfo">
-  	<textarea class="menuField" name="processinfo" id="cga" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80">
-  		<xsl:apply-templates/>
-  	</textarea>
-  </xsl:template>
   
   
   <xsl:template name="option">
 	<!-- Generates an option to go in the drop-down list -->
-
 	<xsl:param name="value" />
 	<xsl:param name="label" />
 	<xsl:param name="select" />
@@ -1137,6 +1226,105 @@
   
   
   
+  <xsl:template name="textarea">
+  	<xsl:param name="name" />
+  	<xsl:param name="id" />
+  	<xsl:param name="class" />
+  	<xsl:param name="optional" />
+  	<xsl:param name="content" />  
+  	<xsl:param name="node" />
+  	<xsl:param name="isadg" />
+  	<xsl:param name="title" />
+  	<xsl:param name="help" />
+  	<xsl:param name="additional" />
+  	<xsl:call-template name="label">
+  		<xsl:with-param name="id" select="$id"/>
+  		<xsl:with-param name="optional" select="$optional"/>
+  		<xsl:with-param name="content" select="$content"/> 
+  		<xsl:with-param name="isadg" select="$isadg"/>
+  		<xsl:with-param name="title" select="$title"/>
+  		<xsl:with-param name="help" select="$help"/>  	
+  		<xsl:with-param name="additional" select="$additional"/>  		
+  	</xsl:call-template>
+  	<textarea onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80">
+  		<xsl:attribute name="name"><xsl:value-of select="$name"/></xsl:attribute>
+  		<xsl:attribute name="id"><xsl:value-of select="$id"/></xsl:attribute>
+  		<xsl:attribute name="class"><xsl:value-of select="$class"/></xsl:attribute>
+  		<xsl:if test="$optional = 'true' and $content = 'false'">
+  			<xsl:attribute name="style">display:none</xsl:attribute>	
+  		</xsl:if>
+  		<xsl:choose>
+  			<xsl:when test="$content = 'false'">
+  				<xsl:text> </xsl:text>
+  			</xsl:when>
+  			<xsl:otherwise>
+  				<xsl:apply-templates select="$node/node()"/>	
+  			</xsl:otherwise>
+  		</xsl:choose>
+  	</textarea> 	
+  </xsl:template>
+   
+   
+  <xsl:template name="label">
+  	<xsl:param name="id" />
+  	<xsl:param name="optional" />
+  	<xsl:param name="content" />
+  	<xsl:param name="isadg" />
+  	<xsl:param name="title" />
+  	<xsl:param name="help" />
+  	<xsl:param name="additional" />
+  	<strong><span class="isadg"><xsl:value-of select="$isadg"/></span> 	
+  	<xsl:choose>
+		<xsl:when test="not($help='')">
+			<a>
+			<xsl:attribute name="href">
+				<xsl:value-of select="$help"/>
+			</xsl:attribute>
+			<xsl:attribute name="title">
+				<xsl:value-of select="$title"/><xsl:text> help - opens in new window</xsl:text>
+			</xsl:attribute>
+			<xsl:attribute name="target">
+				<xsl:text>_new</xsl:text>
+			</xsl:attribute>
+			<xsl:value-of select="$title"/>
+			</a>
+		</xsl:when>
+		<xsl:otherwise>
+			<xsl:value-of select="$title"/>
+		</xsl:otherwise>
+  	</xsl:choose>  	
+  	</strong>
+  	<xsl:if test="not($additional = '')">
+  		<xsl:text> </xsl:text>
+  		<xsl:value-of select="$additional"/>
+  	</xsl:if>
+  	<xsl:if test="$optional = 'true'">
+  		<xsl:text> </xsl:text>
+  		<a class="smalllink">
+  			<xsl:attribute name="title">
+  				<xsl:text>add </xsl:text>
+  				<xsl:value-of select="$title"/>
+  			</xsl:attribute>
+  			<xsl:attribute name="id">
+  				<xsl:text>link</xsl:text>
+  				<xsl:value-of select="$id"/>
+  			</xsl:attribute>
+  			<xsl:attribute name="onclick">
+  				<xsl:text>addElement('</xsl:text><xsl:value-of select="$id"/><xsl:text>')</xsl:text>
+  			</xsl:attribute>
+  		    <xsl:choose>
+  				<xsl:when test="$content = 'true'">
+  					<xsl:text>hide</xsl:text>
+  				</xsl:when>
+  				<xsl:otherwise>
+  					<xsl:text>add</xsl:text>
+  				</xsl:otherwise>
+  			</xsl:choose>
+  		</a>
+  		<xsl:text> [optional]</xsl:text>
+  	</xsl:if>
+	<br/>  	
+  </xsl:template>
   
   <xsl:template match="*">
         <xsl:text>&lt;</xsl:text><xsl:value-of select="name()"/>
