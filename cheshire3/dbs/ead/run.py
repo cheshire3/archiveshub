@@ -30,7 +30,8 @@ if ('-h' in sys.argv) or ('--help' in sys.argv) or ('--options' in sys.argv):
     sys.exit()    
     
 osp = sys.path
-sys.path = ["/home/cheshire/cheshire3/cheshire3/code", "/home/cheshire/cheshire3/cheshire3/www/ead"]
+sys.path = ["/home/cheshire/cheshire3/cheshire3/code"]
+sys.path.append("/home/cheshire/cheshire3/cheshire3/www/ead")
 sys.path.extend(osp)
 
 from baseObjects import Session

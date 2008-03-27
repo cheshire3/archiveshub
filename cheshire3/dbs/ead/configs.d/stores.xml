@@ -58,6 +58,7 @@
 	      </options>
 	    </subConfig>
 
+            <!-- Only needed for Editing interface - currently a work in progress 
 	    <subConfig type="recordStore" id="editingStore">
 	      <objectType>recordStore.BdbRecordStore</objectType>
 	      <paths>
@@ -70,6 +71,7 @@
 	      <options>
 	      </options>
 	    </subConfig>
+            -->
 
 	</subConfigs>
 </config>

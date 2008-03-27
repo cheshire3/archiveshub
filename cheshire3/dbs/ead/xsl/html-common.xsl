@@ -1235,7 +1235,7 @@
 	<!--LINE BREAKS-->
 	<xsl:template match="lb">
 	  <br/>
-	  <!-- XXX: not sure apply-templates needs to be here... first thing to check if problem in the future -->
+	  <!-- XXX: not sure apply-templates needs to be here as tag should be empty... first thing to check if problem in the future -->
 	  <xsl:apply-templates/>
 	</xsl:template>
 
