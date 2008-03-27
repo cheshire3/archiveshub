@@ -99,6 +99,8 @@
 #                        -    fetch_idList removed - all stores iterable
 # 0.34 - 26/02/2008 - JH - Minor improvements to highlighting (end point location)
 # 0.35 - 18/03/2008 - JH - More debugging of component hierarchy
+# 0.36 - 27/03/2008 - JH - Debugging of similar search
+#
 #
 #
 
@@ -1127,8 +1129,6 @@ In: %s
     
     
     def similar_search(self, form):
-        global extractor
-        if not (extractor): extractor = db.get_object(session, 'SimpleExtractor') #ensure it's available
         rsid = form.getfirst('rsid', None)
         hitposition = int(form.getfirst('hitposition', 0))
         highlight = form.getfirst('highlight', 0)
@@ -1186,17 +1186,17 @@ In: %s
         rec = r.fetch_record(session)
         controlaccess = {}
         for cah in ['subject', 'persname', 'famname', 'geogname']:
-            controlaccess[cah] = rec.process_xpath(session, 'controlaccess[1]/%s' % (cah)) # we only want top level stuff to feed into similar search
+            controlaccess[cah] = rec.process_xpath(session, '//controlaccess[1]/%s' % (cah)) # we only want top level stuff to feed into similar search
         
         cqlClauses = []
         for cah, cal in controlaccess.iteritems():
-            aps = extractor.process_xpathResult(session, cal)
-            for key in aps.keys():
+            aps = [flattenTexts(cNode) for cNode in cal]
+            for key in aps:
                 cqlClauses.append('c3.ead-idx-%s exact "%s"' % (cah, key))
 
         if len(cqlClauses):
-            if highlight: cql = ' or/proxinfo '.join(cqlClauses)
-            else: cql = ' or '.join(cqlClauses)
+            if highlight: cqlBool = ' or/proxinfo '
+            else: cqlBool = ' or '
         else:
             # hrm there's no control access - try something a bit more vague...
             # take words from important fields and feed back into quick search
@@ -1207,21 +1207,28 @@ In: %s
                       #('dc.description', 'scopecontent[1]'),
                       ('dc.creator', 'did[1]/origination')]
 
+            if highlight: cqlMods = 'relevant/proxinfo'
+            else: cqlMods = 'relevant'
             for (idx, xp) in fields:
                 terms = []
                 data = rec.process_xpath(session, xp) # we only want top level stuff to feed into similar search
-                for d in data:
-                    key = extractor.process_eventList(session, d).keys()[0]
-                    if (type(key) == unicode):
-                        key = key.encode('utf-8')
-                    terms.append(key)
+                wf = db.get_object(session, 'KeywordExtractorWorkflow')
+                terms = wf.process(session, data).keys()
+#                for d in data:
+#                    key = flattenTexts(d)
+#                    if (type(key) == unicode):
+#                        key = key.encode('utf-8')
+#                    terms.append(key)
                 
                 if len(terms):
-                    cqlClauses.append('%s any/relevant/proxinfo "%s"' % (idx, ' '.join(terms)))
+                    cqlClauses.append('%s any/%s "%s"' % (idx, cqlMods, ' '.join(terms)))
             
-            if highlight: cql = ' or/relevant/proxinfo '.join(cqlClauses)
-            else: cql = ' or/relevant '.join(cqlClauses)
+            cqlBool = ' or/%s ' % (cqlMods)
+
+        if not cqlClauses:
+            return '<p>Unable to locate similar records.</p>'
         
+        cql = cqlBool.join(cqlClauses)
         form = {'query': cql, 'firstrec': 1, 'numreq': 20, 'highlight': highlight}
         try:
             #return self.search(form, 100)            # limit similar search results to 100 - noone will look through more than that anyway!
@@ -1339,7 +1346,6 @@ clusFlow = None
 compFlow = None
 compRecordFlow = None
 # other
-extractor = None
 diacriticNormalizer = None
 
 rebuild = True
@@ -1351,7 +1357,7 @@ def build_architecture(data=None):
     clusDb, clusStore, clusFlow, \
     summaryTxr, fullTxr, fullSplitTxr, textTxr, \
     ppFlow, buildFlow, buildSingleFlow, indexRecordFlow, assignDataIdFlow, normIdFlow, compFlow, compRecordFlow, \
-    extractor, diacriticNormalizer, regexpFindOffsetTokenizer, \
+    diacriticNormalizer, regexpFindOffsetTokenizer, \
     rebuild
     
     # globals line 1: re-establish session; maintain user if possible
@@ -1394,7 +1400,6 @@ def build_architecture(data=None):
     compFlow = db.get_object(session, 'buildAllComponentWorkflow'); compFlow.load_cache(session, db)
     compRecordFlow = db.get_object(session, 'buildComponentWorkflow'); compRecordFlow.load_cache(session, db)
     # globals line 6: other
-    extractor = db.get_object(session, 'SimpleExtractor')
     diacriticNormalizer = db.get_object(session, 'DiacriticNormalizer')
     regexpFindOffsetTokenizer = db.get_object(session, 'RegexpFindOffsetTokenizer')
     rebuild = False
