@@ -19,15 +19,17 @@
 	<script type="text/javascript" src="/javascript/tablednd.js"></script>
 	<script type="text/javascript" src="/javascript/collapsibleLists.js"></script>
 	<script type="text/javascript" src="/javascript/cookies.js"></script>
+	<script type="text/javascript" src="/javascript/collapsibleLists.js"></script>
+  	<script type="text/javascript" src="/javascript/cookies.js"></script> 
 	<script type="text/javascript">
     	function loadPage() {
+    	    setTimeout(this, 1000)
 			SimpleContextMenu.setup({'preventDefault':true, 'preventForms':true});
 	        SimpleContextMenu.attach('menuField', 'tagmenu');
 	        SimpleContextMenu.attach('menuFieldError', 'tagmenu');
 	        closeSplash();
 	    	createTreeFromList('someId', getCookie('preview/catherine-tocstate'), false, false);
-	        alert(document.getElementById('keyboard'));
-			var dragable1 = DragHandler.attach(document.getElementById('keyboard')); 
+	        var dragable1 = DragHandler.attach(document.getElementById('keyboard')); 	 
 			setRecid();
 		}	
     	function unloadPage() {
@@ -82,8 +84,7 @@
 
 <div id="treeDiv">
 
-<!--  <a id="collectionLevel" name="link" class="selected" onclick="javascript: displayForm(this.id)" style="display: inline">Collection Level</a>
--->%TOC%
+%TOC%
 </div>
 
 </div>
