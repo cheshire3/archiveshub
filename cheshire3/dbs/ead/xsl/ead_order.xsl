@@ -17,45 +17,22 @@
 	 </ead>
 	 </xsl:template>
 	 
-	 <xsl:template match="/ead/archdesc|dsc|c|c01|c02|c03|c04"> 
-	 	<xsl:element name="{name()}">	
+	 <xsl:template match="/ead/archdesc|dsc|c|c01|c02|c03|c04|c05|c06|c07|c08|c09|c10|c11|c12"> 
+	 	<xsl:element name="{name()}">
+	    <xsl:copy-of select="@*"/> 
 	 	   <xsl:for-each select="node()">
 	 		<xsl:choose>
-	 		<xsl:when test="controlaccess|dsc|c|c01|c02|c03|c04">
-	 		   <!-- pass --> 
+	 		<xsl:when test="not(name() = 'dsc') and not(name() = 'controlaccess') and not(name() = 'c') and not(starts-with(name(), 'c0')) and not(starts-with(name(), 'c1'))">
+				<xsl:copy-of select="."/>	
 	 		</xsl:when>
-	 		<xsl:otherwise>
-	 			 <xsl:copy-of select="."/>
-	 		</xsl:otherwise>
 	 		</xsl:choose>
-	 		</xsl:for-each>
+	 		</xsl:for-each>	
 	 		<xsl:copy-of select="controlaccess"/>
-	 		<xsl:if test="dsc|c|c01|c02|c03|c04">
-	 			<xsl:apply-templates select="dsc|c|c01|c02|c03|c04"/>	
+	 		<xsl:if test="dsc|c|c01|c02|c03|c04|c05|c06|c07|c08|c09|c10|c11|c12">
+	 			<xsl:apply-templates select="dsc|c|c01|c02|c03|c04|c05|c06|c07|c08|c09|c10|c11|c12"/>	
 	 		</xsl:if> 	
 	 	</xsl:element>
 	 </xsl:template>
-	 	
-<!-- <xsl:template match="dsc|c|c01|c02|c03">
-	   <xsl:element name="{name()}">
-	   
-	 	<xsl:for-each select="node()">
-	 		<xsl:choose>
-	 		<xsl:when test="not(name() = 'dsc') and not(name() = 'controlaccess') and not(name() = 'c') and not(name() = 'c01') and not(name() = 'c02') and not(name() = 'c03')">
-	 		    <xsl:copy-of select="."/>
-	 		</xsl:when>
-	 		</xsl:choose>
-	 		</xsl:for-each>
-	 		<xsl:copy-of select="controlaccess"/>
-	 		<xsl:if test="dsc|c|c01|c02|c03">
-	 		  <xsl:apply-templates select="dsc|c|c01|c02|c03"/>
-	 		</xsl:if> 	
-	 	</xsl:element>
-	 </xsl:template>  -->	
 	 
-	 
-	 <xsl:template match="*">      
-        <xsl:apply-templates/>       
-  	 </xsl:template> 
 	 
 </xsl:stylesheet>
