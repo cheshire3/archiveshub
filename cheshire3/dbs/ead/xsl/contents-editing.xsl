@@ -22,8 +22,7 @@
 
   <!-- templates for Table of Contents (toc) -->
   <xsl:template name="toc">
-  	<script type="text/javascript" src="/javascript/collapsibleLists.js"></script>
-  	<script type="text/javascript" src="/javascript/cookies.js"></script> 	
+  		
     <b>
 	    <xsl:call-template name="toc-link">
 	      <xsl:with-param name="node" select="/ead/archdesc"/>
