@@ -284,6 +284,7 @@ class EadEditingHandler(EadHandler):
         self.logger.log('adding text with values: parent = %s textValue = %s' % (parent, textValue))
         if not (textValue.find('&') == -1):
             textValue = textValue.replace('&', '&#38;')
+        textValue = textValue.lstrip()
         if isinstance(parent, etree._Element):
             self.logger.log('element')
             for c in parent.getchildren() :
