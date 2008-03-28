@@ -241,7 +241,7 @@
 		</xsl:choose>		
     	</p>
 <!-- bioghist -->
-    	<p>
+    <p>	  	
     	<xsl:variable name="content">
 		<xsl:choose>
 			<xsl:when test="bioghist">
@@ -252,18 +252,21 @@
 			</xsl:otherwise>			
 		</xsl:choose>  
 		</xsl:variable>
-		<xsl:call-template name="textarea">
-			<xsl:with-param name="name" select="'bioghist'"/>
-			<xsl:with-param name="id" select="'cbb'"/>
-			<xsl:with-param name="class" select="'menuField'"/>
-			<xsl:with-param name="optional" select="'false'"/>
-			<xsl:with-param name="content" select="$content"/>
-			<xsl:with-param name="node" select="bioghist"/>
-			<xsl:with-param name="isadg" select="'3.2.2: '"/>
-			<xsl:with-param name="title" select="'Administrative/Biographical History'"/>
-			<xsl:with-param name="help" select="www.archiveshub.ac.uk/arch/bioghist.shtml"/>
-		</xsl:call-template>
+	
+		<xsl:for-each select="bioghist">
+			<xsl:call-template name="textarea">
+				<xsl:with-param name="name" select="concat('bioghist[', position(), ']')"/>
+				<xsl:with-param name="id" select="concat('cbb', position())"/>
+				<xsl:with-param name="class" select="'menuField'"/>
+				<xsl:with-param name="optional" select="'false'"/>
+				<xsl:with-param name="content" select="$content"/>
+				<xsl:with-param name="isadg" select="'3.2.2: '"/>
+				<xsl:with-param name="title" select="'Administrative/Biographical History'"/>
+				<xsl:with-param name="help" select="www.archiveshub.ac.uk/arch/bioghist.shtml"/>
+			</xsl:call-template>
+	   </xsl:for-each>
 	   </p>
+	   
 <!-- custodhist -->
 	   <p>
 	   <xsl:variable name="content">
@@ -276,17 +279,19 @@
 				</xsl:otherwise>			
 			</xsl:choose>
 		</xsl:variable>  
-		<xsl:call-template name="textarea">
-			<xsl:with-param name="name" select="'custodhist'"/>
-			<xsl:with-param name="id" select="'cbc'"/>
-			<xsl:with-param name="class" select="'menuField'"/>
-			<xsl:with-param name="optional" select="'true'"/>
-			<xsl:with-param name="content" select="$content"/>
-			<xsl:with-param name="node" select="custodhist"/>
-			<xsl:with-param name="isadg" select="'3.2.3: '"/>
-			<xsl:with-param name="title" select="'Archival History'"/>
-			<xsl:with-param name="help" select="''"/>
-		</xsl:call-template>
+		
+		<xsl:for-each select="custodhist">
+			<xsl:call-template name="textarea">
+				<xsl:with-param name="name" select="concat('custodhist[', position(), ']')"/>
+				<xsl:with-param name="id" select="concat('cbc', position())"/>
+				<xsl:with-param name="class" select="'menuField'"/>
+				<xsl:with-param name="optional" select="'true'"/>
+				<xsl:with-param name="content" select="$content"/>
+				<xsl:with-param name="isadg" select="'3.2.3: '"/>
+				<xsl:with-param name="title" select="'Archival History'"/>
+				<xsl:with-param name="help" select="''"/>
+			</xsl:call-template>
+		</xsl:for-each>
 	   </p>
 <!-- acqinfo -->
 	   <p>
@@ -300,17 +305,19 @@
 				</xsl:otherwise>			
 			</xsl:choose>
 		</xsl:variable>  
-      	<xsl:call-template name="textarea">
-			<xsl:with-param name="name" select="'acqinfo'"/>
-			<xsl:with-param name="id" select="'cbd'"/>
-			<xsl:with-param name="class" select="'menuField'"/>
-			<xsl:with-param name="optional" select="'true'"/>
-			<xsl:with-param name="content" select="$content"/>
-			<xsl:with-param name="node" select="acqinfo"/>
-			<xsl:with-param name="isadg" select="'3.2.4: '"/>
-			<xsl:with-param name="title" select="'Immediate Source of Acquisition'"/>
-			<xsl:with-param name="help" select="''"/>
-		</xsl:call-template>		
+		
+		<xsl:for-each select="acqinfo">
+	      	<xsl:call-template name="textarea">
+				<xsl:with-param name="name" select="concat('acqinfo[', position(), ']')"/>
+				<xsl:with-param name="id" select="concat('cbd', position())"/>
+				<xsl:with-param name="class" select="'menuField'"/>
+				<xsl:with-param name="optional" select="'true'"/>
+				<xsl:with-param name="content" select="$content"/>
+				<xsl:with-param name="isadg" select="'3.2.4: '"/>
+				<xsl:with-param name="title" select="'Immediate Source of Acquisition'"/>
+				<xsl:with-param name="help" select="''"/>
+			</xsl:call-template>	
+		</xsl:for-each>	
       	</p>       
     </div>	    
  <!--  -->   
@@ -330,17 +337,19 @@
 				</xsl:otherwise>			
 			</xsl:choose>
 		</xsl:variable>  
-      	<xsl:call-template name="textarea">
-			<xsl:with-param name="name" select="'scopecontent'"/>
-			<xsl:with-param name="id" select="'cca'"/>
-			<xsl:with-param name="class" select="'menuField'"/>
-			<xsl:with-param name="optional" select="'false'"/>
-			<xsl:with-param name="content" select="$content"/>
-			<xsl:with-param name="node" select="scopecontent"/>
-			<xsl:with-param name="isadg" select="'3.3.1: '"/>
-			<xsl:with-param name="title" select="'Scope and Content'"/>
-			<xsl:with-param name="help" select="'www.archiveshub.ac.uk/arch/scope.shtml'"/>
-		</xsl:call-template>
+		
+		<xsl:for-each select="scopecontent">
+	      	<xsl:call-template name="textarea">
+				<xsl:with-param name="name" select="concat('scopecontent[', position(), ']')"/>
+				<xsl:with-param name="id" select="concat('cca', position())"/>
+				<xsl:with-param name="class" select="'menuField'"/>
+				<xsl:with-param name="optional" select="'false'"/>
+				<xsl:with-param name="content" select="$content"/>
+				<xsl:with-param name="isadg" select="'3.3.1: '"/>
+				<xsl:with-param name="title" select="'Scope and Content'"/>
+				<xsl:with-param name="help" select="'www.archiveshub.ac.uk/arch/scope.shtml'"/>
+			</xsl:call-template>
+		</xsl:for-each>
       </p> 
 <!-- appraisal -->     
       <p>
@@ -354,17 +363,19 @@
 				</xsl:otherwise>			
 			</xsl:choose>
 		</xsl:variable>  
-      	<xsl:call-template name="textarea">
-			<xsl:with-param name="name" select="'appraisal'"/>
-			<xsl:with-param name="id" select="'ccb'"/>
-			<xsl:with-param name="class" select="'menuField'"/>
-			<xsl:with-param name="optional" select="'true'"/>
-			<xsl:with-param name="content" select="$content"/>
-			<xsl:with-param name="node" select="appraisal"/>
-			<xsl:with-param name="isadg" select="'3.3.2: '"/>
-			<xsl:with-param name="title" select="'Appraisal'"/>
-			<xsl:with-param name="help" select="''"/>
-		</xsl:call-template>	
+		
+		<xsl:for-each select="appraisal">
+	      	<xsl:call-template name="textarea">
+				<xsl:with-param name="name" select="concat('appraisal[', position(), ']')"/>
+				<xsl:with-param name="id" select="concat('ccb', position())"/>
+				<xsl:with-param name="class" select="'menuField'"/>
+				<xsl:with-param name="optional" select="'true'"/>
+				<xsl:with-param name="content" select="$content"/>
+				<xsl:with-param name="isadg" select="'3.3.2: '"/>
+				<xsl:with-param name="title" select="'Appraisal'"/>
+				<xsl:with-param name="help" select="''"/>
+			</xsl:call-template>	
+		</xsl:for-each>
       </p>
 <!-- accruals -->
       <p>
@@ -378,17 +389,19 @@
 				</xsl:otherwise>			
 			</xsl:choose>
 		</xsl:variable>  
-      	<xsl:call-template name="textarea">
-			<xsl:with-param name="name" select="'accruals'"/>
-			<xsl:with-param name="id" select="'ccc'"/>
-			<xsl:with-param name="class" select="'menuField'"/>
-			<xsl:with-param name="optional" select="'true'"/>
-			<xsl:with-param name="content" select="$content"/>
-			<xsl:with-param name="node" select="accruals"/>
-			<xsl:with-param name="isadg" select="'3.3.3: '"/>
-			<xsl:with-param name="title" select="'Accruals'"/>
-			<xsl:with-param name="help" select="''"/>
-		</xsl:call-template>	
+		
+		<xsl:for-each select="accruals">
+	      	<xsl:call-template name="textarea">
+				<xsl:with-param name="name" select="concat('accruals[', position(), ']')"/>
+				<xsl:with-param name="id" select="concat('ccc', position())"/>
+				<xsl:with-param name="class" select="'menuField'"/>
+				<xsl:with-param name="optional" select="'true'"/>
+				<xsl:with-param name="content" select="$content"/>
+				<xsl:with-param name="isadg" select="'3.3.3: '"/>
+				<xsl:with-param name="title" select="'Accruals'"/>
+				<xsl:with-param name="help" select="''"/>
+			</xsl:call-template>
+		</xsl:for-each>	
       </p>
 <!-- arrangement -->
       <p>
@@ -402,17 +415,19 @@
 				</xsl:otherwise>			
 			</xsl:choose>
 		</xsl:variable>  
-      	<xsl:call-template name="textarea">
-			<xsl:with-param name="name" select="'arrangement'"/>
-			<xsl:with-param name="id" select="'ccd'"/>
-			<xsl:with-param name="class" select="'menuField'"/>
-			<xsl:with-param name="optional" select="'true'"/>
-			<xsl:with-param name="content" select="$content"/>
-			<xsl:with-param name="node" select="arrangement"/>
-			<xsl:with-param name="isadg" select="'3.3.4: '"/>
-			<xsl:with-param name="title" select="'System of Arrangement'"/>
-			<xsl:with-param name="help" select="''"/>
-		</xsl:call-template>	
+		
+		<xsl:for-each select="arrangement">
+	      	<xsl:call-template name="textarea">
+				<xsl:with-param name="name" select="concat('arrangement[', position(), ']')"/>
+				<xsl:with-param name="id" select="concat('ccd', position())"/>
+				<xsl:with-param name="class" select="'menuField'"/>
+				<xsl:with-param name="optional" select="'true'"/>
+				<xsl:with-param name="content" select="$content"/>
+				<xsl:with-param name="isadg" select="'3.3.4: '"/>
+				<xsl:with-param name="title" select="'System of Arrangement'"/>
+				<xsl:with-param name="help" select="''"/>
+			</xsl:call-template>	
+		</xsl:for-each>
       </p>
     </div>
 <!--  -->
@@ -432,17 +447,19 @@
 			</xsl:otherwise>			
 		</xsl:choose>
 	</xsl:variable>  
-     	<xsl:call-template name="textarea">
-		<xsl:with-param name="name" select="'accessrestrict'"/>
-		<xsl:with-param name="id" select="'cda'"/>
-		<xsl:with-param name="class" select="'menuField'"/>
-		<xsl:with-param name="optional" select="'false'"/>
-		<xsl:with-param name="content" select="$content"/>
-		<xsl:with-param name="node" select="accessrestrict"/>
-		<xsl:with-param name="isadg" select="'3.4.1: '"/>
-		<xsl:with-param name="title" select="'Conditions Governing Access'"/>
-		<xsl:with-param name="help" select="'www.archiveshub.ac.uk/arch/restrict.shtml'"/>
-	</xsl:call-template>
+	
+	<xsl:for-each select="accessrestrict">
+	    <xsl:call-template name="textarea">
+			<xsl:with-param name="name" select="concat('accessrestrict[', position(), ']')"/>
+			<xsl:with-param name="id" select="concat('cda', position())"/>
+			<xsl:with-param name="class" select="'menuField'"/>
+			<xsl:with-param name="optional" select="'false'"/>
+			<xsl:with-param name="content" select="$content"/>
+			<xsl:with-param name="isadg" select="'3.4.1: '"/>
+			<xsl:with-param name="title" select="'Conditions Governing Access'"/>
+			<xsl:with-param name="help" select="'www.archiveshub.ac.uk/arch/restrict.shtml'"/>
+		</xsl:call-template>
+	</xsl:for-each>
 	</p>  
 <!-- userestrict --> 
  	<p>
@@ -456,16 +473,18 @@
 			</xsl:otherwise>			
 		</xsl:choose>
 	</xsl:variable>  
-     	<xsl:call-template name="textarea">
-		<xsl:with-param name="name" select="'userestrict'"/>
-		<xsl:with-param name="id" select="'cdb'"/>
-		<xsl:with-param name="class" select="'menuField'"/>
-		<xsl:with-param name="optional" select="'true'"/>
-		<xsl:with-param name="content" select="$content"/>
-		<xsl:with-param name="node" select="userestrict"/>
-		<xsl:with-param name="isadg" select="'3.4.2: '"/>
-		<xsl:with-param name="title" select="'Conditions Governing Reproduction'"/>
-	</xsl:call-template>
+	
+	<xsl:for-each select="userestrict">
+	    <xsl:call-template name="textarea">
+			<xsl:with-param name="name" select="concat('userestrict[', position(), ']')"/>
+			<xsl:with-param name="id" select="concat('cdb', position())"/>
+			<xsl:with-param name="class" select="'menuField'"/>
+			<xsl:with-param name="optional" select="'true'"/>
+			<xsl:with-param name="content" select="$content"/>
+			<xsl:with-param name="isadg" select="'3.4.2: '"/>
+			<xsl:with-param name="title" select="'Conditions Governing Reproduction'"/>
+		</xsl:call-template>
+	</xsl:for-each>
 	</p> 
 <!-- langmaterial -->
      <p>
@@ -506,16 +525,18 @@
 			</xsl:otherwise>			
 		</xsl:choose>
 	</xsl:variable>  
-     	<xsl:call-template name="textarea">
-		<xsl:with-param name="name" select="'phystech'"/>
-		<xsl:with-param name="id" select="'cdd'"/>
-		<xsl:with-param name="class" select="'menuField'"/>
-		<xsl:with-param name="optional" select="'true'"/>
-		<xsl:with-param name="content" select="$content"/>
-		<xsl:with-param name="node" select="phystech"/>
-		<xsl:with-param name="isadg" select="'3.4.4: '"/>
-		<xsl:with-param name="title" select="'Physical Characteristics'"/>
-	</xsl:call-template>
+	
+	<xsl:for-each select="phystech">
+	    <xsl:call-template name="textarea">
+			<xsl:with-param name="name" select="concat('phystech[', position(), ']')"/>
+			<xsl:with-param name="id" select="concat('cdd', position())"/>
+			<xsl:with-param name="class" select="'menuField'"/>
+			<xsl:with-param name="optional" select="'true'"/>
+			<xsl:with-param name="content" select="$content"/>
+			<xsl:with-param name="isadg" select="'3.4.4: '"/>
+			<xsl:with-param name="title" select="'Physical Characteristics'"/>
+		</xsl:call-template>
+	</xsl:for-each>
 	</p>
 <!-- otherfindaid -->	
 	<xsl:if test="$leveltype = 'collection'">
@@ -530,16 +551,18 @@
 			</xsl:otherwise>			
 		</xsl:choose>
 	</xsl:variable>  
-     	<xsl:call-template name="textarea">
-		<xsl:with-param name="name" select="'otherfindaid'"/>
-		<xsl:with-param name="id" select="'cde'"/>
-		<xsl:with-param name="class" select="'menuField'"/>
-		<xsl:with-param name="optional" select="'false'"/>
-		<xsl:with-param name="content" select="$content"/>
-		<xsl:with-param name="node" select="otherfindaid"/>
-		<xsl:with-param name="isadg" select="'3.4.5: '"/>
-		<xsl:with-param name="title" select="'Finding Aids'"/>
-	</xsl:call-template>			
+	
+	<xsl:for-each select="otherfindaid">
+	    <xsl:call-template name="textarea">
+			<xsl:with-param name="name" select="concat('otherfindaid[', position(), ']')"/>
+			<xsl:with-param name="id" select="concat('cde', position())"/>
+			<xsl:with-param name="class" select="'menuField'"/>
+			<xsl:with-param name="optional" select="'false'"/>
+			<xsl:with-param name="content" select="$content"/>
+			<xsl:with-param name="isadg" select="'3.4.5: '"/>
+			<xsl:with-param name="title" select="'Finding Aids'"/>
+		</xsl:call-template>	
+	</xsl:for-each>		
 	</p>	
 	</xsl:if>	     					
 	</div>
@@ -560,16 +583,18 @@
 			</xsl:otherwise>			
 		</xsl:choose>
 	</xsl:variable>  
+	
+	<xsl:for-each select="originalsloc">
      	<xsl:call-template name="textarea">
-		<xsl:with-param name="name" select="'originalsloc'"/>
-		<xsl:with-param name="id" select="'cea'"/>
-		<xsl:with-param name="class" select="'menuField'"/>
-		<xsl:with-param name="optional" select="'true'"/>
-		<xsl:with-param name="content" select="$content"/>
-		<xsl:with-param name="node" select="originalsloc"/>
-		<xsl:with-param name="isadg" select="'3.5.1: '"/>
-		<xsl:with-param name="title" select="'Existence/Location of Originals'"/>
-	</xsl:call-template>
+			<xsl:with-param name="name" select="concat('originalsloc[', position(), ']')"/>
+			<xsl:with-param name="id" select="concat('cea', position())"/>
+			<xsl:with-param name="class" select="'menuField'"/>
+			<xsl:with-param name="optional" select="'true'"/>
+			<xsl:with-param name="content" select="$content"/>
+			<xsl:with-param name="isadg" select="'3.5.1: '"/>
+			<xsl:with-param name="title" select="'Existence/Location of Originals'"/>
+		</xsl:call-template>
+	</xsl:for-each>
     </p> 
 <!-- altformavail -->
 	<p>
@@ -583,16 +608,18 @@
 			</xsl:otherwise>			
 		</xsl:choose>
 	</xsl:variable>  
-     	<xsl:call-template name="textarea">
-		<xsl:with-param name="name" select="'altformavail'"/>
-		<xsl:with-param name="id" select="'ceb'"/>
-		<xsl:with-param name="class" select="'menuField'"/>
-		<xsl:with-param name="optional" select="'true'"/>
-		<xsl:with-param name="content" select="$content"/>
-		<xsl:with-param name="node" select="altformavail"/>
-		<xsl:with-param name="isadg" select="'3.5.2: '"/>
-		<xsl:with-param name="title" select="'Existence/Location of Copies'"/>
-	</xsl:call-template>
+	
+	<xsl:for-each select="altformavail">
+	    <xsl:call-template name="textarea">
+			<xsl:with-param name="name" select="concat('altformavail[', position(), ']')"/>
+			<xsl:with-param name="id" select="concat('ceb', position())"/>
+			<xsl:with-param name="class" select="'menuField'"/>
+			<xsl:with-param name="optional" select="'true'"/>
+			<xsl:with-param name="content" select="$content"/>
+			<xsl:with-param name="isadg" select="'3.5.2: '"/>
+			<xsl:with-param name="title" select="'Existence/Location of Copies'"/>
+		</xsl:call-template>
+	</xsl:for-each>
 	</p>
 <!-- relatedmaterial -->
 	<p>
@@ -606,16 +633,18 @@
 			</xsl:otherwise>			
 		</xsl:choose>
 	</xsl:variable>  
+	
+	<xsl:for-each select="relatedmaterial">
      	<xsl:call-template name="textarea">
-		<xsl:with-param name="name" select="'relatedmaterial'"/>
-		<xsl:with-param name="id" select="'cec'"/>
-		<xsl:with-param name="class" select="'menuField'"/>
-		<xsl:with-param name="optional" select="'true'"/>
-		<xsl:with-param name="content" select="$content"/>
-		<xsl:with-param name="node" select="relatedmaterial"/>
-		<xsl:with-param name="isadg" select="'3.5.3: '"/>
-		<xsl:with-param name="title" select="'Related Units of Description'"/>
-	</xsl:call-template>		
+			<xsl:with-param name="name" select="concat('relatedmaterial[', position(), ']')"/>
+			<xsl:with-param name="id" select="concat('cec', position())"/>
+			<xsl:with-param name="class" select="'menuField'"/>
+			<xsl:with-param name="optional" select="'true'"/>
+			<xsl:with-param name="content" select="$content"/>
+			<xsl:with-param name="isadg" select="'3.5.3: '"/>
+			<xsl:with-param name="title" select="'Related Units of Description'"/>
+		</xsl:call-template>
+	</xsl:for-each>		
     </p>
 <!-- bibliography -->
 	<p>
@@ -629,17 +658,19 @@
 			</xsl:otherwise>			
 		</xsl:choose>
 	</xsl:variable>  
+	
+	<xsl:for-each select="bibliography">
      	<xsl:call-template name="textarea">
-		<xsl:with-param name="name" select="'bibliography'"/>
-		<xsl:with-param name="id" select="'ced'"/>
-		<xsl:with-param name="class" select="'menuField'"/>
-		<xsl:with-param name="optional" select="'true'"/>
-		<xsl:with-param name="content" select="$content"/>
-		<xsl:with-param name="node" select="bibliography"/>
-		<xsl:with-param name="isadg" select="'3.5.4: '"/>
-		<xsl:with-param name="title" select="'Publication Note'"/>
-		<xsl:with-param name="additional" select="'[Works based on or about the collection]'"/>
-	</xsl:call-template>
+			<xsl:with-param name="name" select="concat('bibliography[', position(), ']')"/>
+			<xsl:with-param name="id" select="concat('ced', position())"/>
+			<xsl:with-param name="class" select="'menuField'"/>
+			<xsl:with-param name="optional" select="'true'"/>
+			<xsl:with-param name="content" select="$content"/>
+			<xsl:with-param name="isadg" select="'3.5.4: '"/>
+			<xsl:with-param name="title" select="'Publication Note'"/>
+			<xsl:with-param name="additional" select="'[Works based on or about the collection]'"/>
+		</xsl:call-template>
+	</xsl:for-each>
 	</p>
 	</div>
 <!--  -->
@@ -659,16 +690,18 @@
 			</xsl:otherwise>			
 		</xsl:choose>
 	</xsl:variable>  
+	
+	<xsl:for-each select="note">
      	<xsl:call-template name="textarea">
-		<xsl:with-param name="name" select="'note'"/>
-		<xsl:with-param name="id" select="'cfa'"/>
-		<xsl:with-param name="class" select="'menuField'"/>
-		<xsl:with-param name="optional" select="'true'"/>
-		<xsl:with-param name="content" select="$content"/>
-		<xsl:with-param name="node" select="note"/>
-		<xsl:with-param name="isadg" select="'3.6.1: '"/>
-		<xsl:with-param name="title" select="'Note'"/>
-	</xsl:call-template>
+			<xsl:with-param name="name" select="concat('note[', position(), ']')"/>
+			<xsl:with-param name="id" select="concat('cfa', position())"/>
+			<xsl:with-param name="class" select="'menuField'"/>
+			<xsl:with-param name="optional" select="'true'"/>
+			<xsl:with-param name="content" select="$content"/>
+			<xsl:with-param name="isadg" select="'3.6.1: '"/>
+			<xsl:with-param name="title" select="'Note'"/>
+		</xsl:call-template>
+	</xsl:for-each>
 	</p>
 	</div>
 <!--  -->
@@ -688,18 +721,20 @@
 				<xsl:text>false</xsl:text>
 			</xsl:otherwise>			
 		</xsl:choose>
-	</xsl:variable>  
+	</xsl:variable> 
+	
+	<xsl:for-each select="processinfo"> 
      	<xsl:call-template name="textarea">
-		<xsl:with-param name="name" select="'processinfo'"/>
-		<xsl:with-param name="id" select="'cga'"/>
-		<xsl:with-param name="class" select="'menuField'"/>
-		<xsl:with-param name="optional" select="'true'"/>
-		<xsl:with-param name="content" select="$content"/>
-		<xsl:with-param name="node" select="processinfo"/>
-		<xsl:with-param name="isadg" select="'3.7.1: '"/>
-		<xsl:with-param name="title" select='"Archivist&apos;s Note"'/>
-		<xsl:with-param name="help" select="'www.archiveshub.ac.uk/arch/archnote.shtml'"/>
-	</xsl:call-template>
+			<xsl:with-param name="name" select="concat('processinfo[', position(), ']')"/>
+			<xsl:with-param name="id" select="concat('cga', position())"/>
+			<xsl:with-param name="class" select="'menuField'"/>
+			<xsl:with-param name="optional" select="'true'"/>
+			<xsl:with-param name="content" select="$content"/>
+			<xsl:with-param name="isadg" select="'3.7.1: '"/>
+			<xsl:with-param name="title" select='"Archivist&apos;s Note"'/>
+			<xsl:with-param name="help" select="'www.archiveshub.ac.uk/arch/archnote.shtml'"/>
+		</xsl:call-template>
+	</xsl:for-each>
 	</p>
 	</div>
 	</xsl:if>
@@ -1232,7 +1267,6 @@
   	<xsl:param name="class" />
   	<xsl:param name="optional" />
   	<xsl:param name="content" />  
-  	<xsl:param name="node" />
   	<xsl:param name="isadg" />
   	<xsl:param name="title" />
   	<xsl:param name="help" />
@@ -1258,10 +1292,12 @@
   				<xsl:text> </xsl:text>
   			</xsl:when>
   			<xsl:otherwise>
-  				<xsl:apply-templates select="$node/node()"/>	
+  				<xsl:text> </xsl:text>
+  				<xsl:apply-templates select="./node()"/>	
   			</xsl:otherwise>
   		</xsl:choose>
-  	</textarea> 	
+  	</textarea> 
+  	
   </xsl:template>
    
    
@@ -1273,6 +1309,7 @@
   	<xsl:param name="title" />
   	<xsl:param name="help" />
   	<xsl:param name="additional" />
+  	<br/>
   	<strong><span class="isadg"><xsl:value-of select="$isadg"/></span> 	
   	<xsl:choose>
 		<xsl:when test="not($help='')">
