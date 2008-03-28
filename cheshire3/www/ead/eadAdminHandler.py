@@ -1547,8 +1547,7 @@ class EadAdminHandler(EadHandler):
         content = None
         operation = form.get('operation', None)
         self.htmlNav.append('<a href="/ead/admin/index.html" title="Administration Interface Main Menu">Administration</a>')
-        directFiles = {'admin': 'adminmenu.html'
-                      ,'index.html': 'adminmenu.html'
+        directFiles = {'index.html': 'adminmenu.html'
                       ,'menu.html': 'adminmenu.html'
                       ,'help.html': 'adminhelp.html'
                       }
@@ -1556,6 +1555,8 @@ class EadAdminHandler(EadHandler):
         try:
             if (directFiles.has_key(path)):
                 content = read_file(directFiles[path])
+            elif (path == 'admin'):
+                redirect(req, path + '/', permanent=1)
             elif (path == 'users.html'):
                 if (operation):
                     if (operation == 'add'):

@@ -26,7 +26,7 @@
 
 # import mod_python stuffs
 from mod_python import apache, Cookie
-from mod_python.util import FieldStorage
+from mod_python.util import FieldStorage, redirect
 # import generally useful modules
 import sys, traceback, os, cgitb, urllib, time, smtplib, re
 from crypt import crypt
