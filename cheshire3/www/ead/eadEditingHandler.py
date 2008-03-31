@@ -28,6 +28,7 @@
 from eadHandler import *
 from copy import deepcopy
 import datetime, glob
+import traceback
 
 # script specific globals
 #script = '/ead/edit/'
@@ -206,6 +207,7 @@ class EadEditingHandler(EadHandler):
         for field in list :
             if field.name not in ['ctype','location','operation','newForm','nocache','recid', 'parent', 'pui', 'eadid', 'filedesc/titlestmt/sponsor']:        
                 #do did level stuff
+                self.logger.log(field.name)
                 if (collection):
                     node = tree.xpath('/ead/archdesc')[0]
                 else :
@@ -240,8 +242,7 @@ class EadEditingHandler(EadHandler):
                 return self._delete_path(startNode, nodePath[:nodePath.rfind('/')])
             
 
-    def _create_path(self, startNode, nodePath):           
-        self.logger.log('creating path %s ' % nodePath)    
+    def _create_path(self, startNode, nodePath):              
         if (startNode.xpath(nodePath)):
             if (nodePath.find('@') == -1):
                 return startNode.xpath(nodePath)[0]
@@ -273,20 +274,55 @@ class EadEditingHandler(EadHandler):
 
     
     def _add_attribute(self, parentNode, attribute):
-        self.logger.log('adding attribute')
-        self.logger.log(parentNode)
-        self.logger.log(attribute)
         parentNode.attrib[attribute] = ""
         return [parentNode, attribute]
- 
-        
+
+       
+    def _delete_currentControlaccess(self, startNode, list=['subject','persname', 'famname', 'corpname', 'geogname', 'title', 'genreform']):
+        if (startNode.xpath('controlaccess')):
+            self.logger.log('deleting control access')
+            parent = startNode.xpath('controlaccess')[0]        
+            for s in list :
+                if (parent.xpath('%s' % s)) :
+                    child = parent.xpath('%s' % s)
+                    for c in child :
+                        parent.remove(c)
+            if len(parent.getchildren()) == 0 :
+                startNode.remove(parent)
+            
+            
+            
+    def _delete_currentLangmaterial(self, startNode):
+        did = startNode.xpath('did')[0]
+        if (did.xpath('langmaterial')):
+            parent = did.xpath('langmaterial')[0]
+            child = parent.xpath('language')
+            if len(child) > 0 :
+                for c in child :
+                    parent.remove(c)
+            did.remove(parent)
+    
+    
+    
+    def _create_langmaterial(self, startNode, value):
+        if not (startNode.xpath('langmaterial')):
+            langmaterial = etree.Element('langmaterial')
+            startNode.append(langmaterial)
+            lmNode = langmaterial
+        else:
+            lmNode = startNode.xpath('langmaterial')[0]
+        fields = value.split(' ||| ')
+        language = etree.SubElement(lmNode, 'language', langcode='%s' % fields[0].split(' | ')[1])     
+        text = fields[1].split(' | ')[1]
+        language.text = text     
+
+
+
     def _add_text(self, parent, textValue):
-        self.logger.log('adding text with values: parent = %s textValue = %s' % (parent, textValue))
         if not (textValue.find('&') == -1):
             textValue = textValue.replace('&', '&#38;')
-        textValue = textValue.lstrip()
+        textValue = textValue.lstrip()      
         if isinstance(parent, etree._Element):
-            self.logger.log('element')
             for c in parent.getchildren() :
                 parent.remove(c)
             value = '<foo>%s</foo>' % textValue      
@@ -300,48 +336,8 @@ class EadEditingHandler(EadHandler):
                 for n in nodetree :
                     parent.append(n)
         else :
-            self.logger.log('attribute')
             parent[0].attrib[parent[1]] = textValue
 
-
-       
-    def _delete_currentControlaccess(self, startNode, list=['subject','persname', 'famname', 'corpname', 'geogname', 'title', 'genreform']):
-        if (startNode.xpath('controlaccess')):
-            parent = startNode.xpath('controlaccess')[0]        
-            for s in list :
-                if (parent.xpath('%s' % s)) :
-                    child = parent.xpath('%s' % s)
-                    for c in child :
-                        parent.remove(c)
-            if len(parent.getchildren()) == 0 :
-                startNode.remove(parent)
-            
-            
-    def _delete_currentLangmaterial(self, startNode):
-        did = startNode.xpath('did')[0]
-        self.logger.log(did)
-        if (did.xpath('langmaterial')):
-            parent = did.xpath('langmaterial')[0]
-            child = parent.xpath('language')
-            if len(child) > 0 :
-                for c in child :
-                    parent.remove(c)
-            did.remove(parent)
-    
-    
-    def _create_langmaterial(self, startNode, value):
-        self.logger.log('creating lang material')
-        if not (startNode.xpath('langmaterial')):
-            langmaterial = etree.Element('langmaterial')
-            startNode.append(langmaterial)
-            lmNode = langmaterial
-        else:
-            lmNode = startNode.xpath('langmaterial')[0]
-        fields = value.split(' ||| ')
-        language = etree.SubElement(lmNode, 'language', langcode='%s' % fields[0].split(' | ')[1])     
-        text = fields[1].split(' | ')[1]
-        language.text = text     
-        self.logger.log(text)   
         
        
     def _create_controlaccess(self, startNode, name, value):
@@ -360,9 +356,9 @@ class EadEditingHandler(EadHandler):
                 field = f.split(' | ')
                 typelabel = field[0].split('_')[0]
                 fieldlabel = field[0].split('_')[1]
-                if (fieldlabel == 'source' or fieldlabel == 'rules'):
+                if (fieldlabel == 'source' or fieldlabel == 'rules' or typelabel == 'att'):
                     if (field[1] != 'none') :
-                        type.set(fieldlabel, field[1])               
+                        type.set(fieldlabel, field[1])                         
                 else :
                     if (fieldlabel == typelabel):
                         attributeValue = 'a'
@@ -371,7 +367,7 @@ class EadEditingHandler(EadHandler):
                         if attributeValue == None :
                             attributeValue = fieldlabel
                     emph = etree.Element('emph', altrender='%s' % attributeValue)
-                    emph.text = field[1]  
+                    self._add_text(emph, field[1])
                     type.append(emph)    
     #- end _create_controlacess    
    
@@ -446,7 +442,7 @@ class EadEditingHandler(EadHandler):
             #cycle through the form and replace any node that need it
             for field in list :                
                 if field.name not in ['ctype','location','operation','newForm','nocache','recid', 'parent', 'pui', 'filedesc/titlestmt/sponsor']:        
-                    #self.logger.log('adding %s' % field.name)                
+                    self.logger.log(field.name)                
                     #do archdesc stuff
                     if field.name.find('controlaccess') == 0 :                        
                         self._create_controlaccess(node, field.name, field.value)      
@@ -458,8 +454,7 @@ class EadEditingHandler(EadHandler):
                             target = self._create_path(node, field.name)
                             self._add_text(target, field.value)       
                         else:
-                            self._delete_path(node, field.name)     
-                            
+                            self._delete_path(node, field.name)              
             rec = LxmlRecord(tree)
             rec.id = retrievedRec.id
             editStore.store_record(session, rec)
@@ -506,8 +501,7 @@ class EadEditingHandler(EadHandler):
                 self._delete_currentLangmaterial(node)
                 self.logger.log('deleted stuff')
                 for field in list :
-                    if field.name not in ['ctype','location','operation','newForm','nocache','recid', 'parent']:       
-                        self.logger.log('adding %s' % field.name)     
+                    if field.name not in ['ctype','location','operation','newForm','nocache','recid', 'parent']:           
                         if field.name.find('controlaccess') == 0 :                        
                             self._create_controlaccess(node, field.name, field.value)      
                         elif field.name.find('did/langmaterial') == 0 :
@@ -566,7 +560,6 @@ class EadEditingHandler(EadHandler):
         recid = form.get('recid', None)
         level = int(form.get('clevel', None))
         stringLevel = '%02d' % (level)
-        self.logger.log(stringLevel)
         doc = StringDocument('<c%s><recid>%s</recid></c%s>' % (stringLevel, recid, stringLevel))
         rec = xmlp.process_document(session, doc)
         htmlform = formTxr.process_record(session, rec).get_raw(session)
@@ -688,7 +681,6 @@ class EadEditingHandler(EadHandler):
         page = page.replace('%RECID%', '<input type="hidden" id="recid" value="%s"/>' % recid)
         page = page.replace('%PUI%', '<input type="text" onfocus="setCurrent(this);" name="pui" id="pui" size="30" disabled="true" value="%s"/><input type="hidden" id="filename" value="%s"/>' % (recid, f))
         page = page.replace('%TOC%', tocTxr.process_record(session, rec2).get_raw(session))
-        self.logger.log(tocTxr.process_record(session, rec2).get_raw(session))
         return page    
     
     
@@ -878,7 +870,8 @@ class EadEditingHandler(EadHandler):
                        ,'</li>'
                        ])
         return out
-                      
+    
+                          
                 
     def handle (self, req):
         global script
