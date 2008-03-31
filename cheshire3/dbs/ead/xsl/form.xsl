@@ -10,7 +10,7 @@
   
  <!--   <xsl:output method="html" encoding="UTF-8"/>
     <xsl:strip-space elements="*"/>     -->
-  <xsl:output method="xml" omit-xml-declaration="yes"/>
+  <xsl:output method="xml" omit-xml-declaration="yes" encoding="UTF-8"/>
 	 <xsl:preserve-space elements="*"/>
 
   <xsl:variable name="eadidstring">
@@ -489,6 +489,16 @@
 <!-- langmaterial -->
      <p>
      	<strong><span class="isadg">3.4.3: </span><a href="/arch/lang.shtml" title="Language of Material help - opens in new window" target="_new">Language of Material</a></strong> [Must include <a href="http://www.loc.gov/standards/iso639-2/englangn.html" title="ISO 639-2 codes - opens new window" target="_new">ISO 639-2 3-letter code</a>]
+     	<xsl:for-each select="did/langmaterial/@*">
+     		<input type="text">
+     			<xsl:attribute name="name">
+     				<xsl:text>did/langmaterial/@</xsl:text><xsl:value-of select="name()"/>
+     			</xsl:attribute>
+     			<xsl:attribute name="value">
+     				<xsl:value-of select="."/>
+     			</xsl:attribute>
+     		</input>
+		</xsl:for-each>    	
      	<div id="language" class="langcontainer">
      	<xsl:choose>
      		<xsl:when test="did/langmaterial/language">
@@ -510,8 +520,8 @@
       			<input class="apbutton" type="button" onclick="addLanguage();" value="Add to Record" ></input><br/>
   				<input class="apbutton" type="button" onclick="resetAccessPoint('language');" value="Reset" ></input>
   			</div>
-    			</div>
-    			<br/>		     	
+    	</div>
+    	<br/>		     	
      </p>
 <!-- phystech -->
 	<p>
@@ -738,6 +748,10 @@
 	</p>
 	</div>
 	</xsl:if>
+<!--  -->
+<!--  -->
+<!--  -->
+<!--  -->
 <!--  -->
 <!-- ACCESSPOINTS -->
 <!--  -->
@@ -1015,7 +1029,7 @@
   		<xsl:text>added</xsl:text><xsl:value-of select="$aptype"/><xsl:text>s</xsl:text>
   	</xsl:attribute>
 		<xsl:for-each select="controlaccess/*[name() = $aptype]">
-		 	<input type="hidden">
+		 	<input type="text">
 		 		<xsl:attribute name="name">
 		 			<xsl:text>controlaccess/</xsl:text><xsl:value-of select="$aptype"/>
 		 		</xsl:attribute>
@@ -1079,35 +1093,83 @@
   	 <xsl:param name="aptype"/>
   	 <xsl:param name="separater"/>
   	 <xsl:choose>
-  	 	<xsl:when test="$separater = ' '">
-  	 		<xsl:for-each select="emph">
-  	 			<xsl:value-of select="."/>
-  	 			<xsl:value-of select="$separater"/>
-  	 		</xsl:for-each>
-  	 	</xsl:when>
-  	 	<xsl:when test="$separater = ' ||| '">
-  	 		<xsl:for-each select="emph">
-  	 			<xsl:value-of select="$aptype"/>
-  	 			<xsl:text>_</xsl:text>
-  	 			<xsl:value-of select="@altrender"/>
-  	 			<xsl:text> | </xsl:text>
-  	 			<xsl:value-of select="."/>
-  	 			<xsl:value-of select="$separater"/>
-  	 		</xsl:for-each>
-	  	  	<xsl:if test="@source">
-	  	  		<xsl:value-of select="$aptype"/>
-  	 			<xsl:text>_source | </xsl:text>
-	  	  		<xsl:apply-templates select="@source"/>  	 
-	  	  		<xsl:value-of select="$separater"/> 				
-	  	  	</xsl:if>
-			<xsl:if test="@rules">
-				<xsl:value-of select="$aptype"/>
-  	 			<xsl:text>_rules | </xsl:text>
-	  	  		<xsl:apply-templates select="@rules"/>  	 
-	  	  		<xsl:value-of select="$separater"/> 				
-	  	  	</xsl:if>	 
-  	 	</xsl:when>
-  	 </xsl:choose>
+  	 	<xsl:when test="emph">
+		  	 <xsl:choose>
+		  	 	<xsl:when test="$separater = ' '">
+		  	 		<xsl:for-each select="emph">
+		  	 			<xsl:value-of select="."/>
+		  	 			<xsl:value-of select="$separater"/>
+		  	 		</xsl:for-each>
+		  	 	</xsl:when>
+		  	 	<xsl:when test="$separater = ' ||| '">
+		  	 		<xsl:for-each select="emph">
+		  	 			<xsl:value-of select="$aptype"/>
+		  	 			<xsl:text>_</xsl:text>
+		  	 			<xsl:value-of select="@altrender"/>
+		  	 			<xsl:text> | </xsl:text>
+		  	 			<xsl:value-of select="."/>
+		  	 			<xsl:value-of select="$separater"/>
+		  	 		</xsl:for-each>
+		  	 		<xsl:if test="@source">
+			  	  		<xsl:value-of select="$aptype"/>
+		  	 			<xsl:text>_source | </xsl:text>
+			  	  		<xsl:apply-templates select="@source"/>  	 
+			  	  		<xsl:value-of select="$separater"/> 				
+			  	  	</xsl:if>
+					<xsl:if test="@rules">
+						<xsl:value-of select="$aptype"/>
+		  	 			<xsl:text>_rules | </xsl:text>
+			  	  		<xsl:apply-templates select="@rules"/>  	 
+			  	  		<xsl:value-of select="$separater"/> 				
+			  	  	</xsl:if>
+		  	 		<xsl:for-each select="@*">
+		  	 			<xsl:if test="not(name() = 'rules') and not(name() = 'source')">
+		  	 				<xsl:text>att_</xsl:text>
+		  	 				<xsl:value-of select="name()"/>
+		  	 				<xsl:text> | </xsl:text>
+		  	 				<xsl:value-of select="."/>
+		  	 				<xsl:value-of select="$separater"/>
+		  	 			</xsl:if>
+		  	 		</xsl:for-each>	 
+		  	 	</xsl:when>
+		  	 </xsl:choose>
+	  	 </xsl:when>
+	  	 <xsl:otherwise>
+	  	 	<xsl:choose>
+	  	 		<xsl:when test="$separater = ' '">
+	  	 			<xsl:value-of select="./text()"/>
+	  	 			<xsl:value-of select="$separater"/>
+	  	 		</xsl:when>
+	  	 		<xsl:when test="$separater = ' ||| '">
+	  	 			<xsl:value-of select="$aptype"/>
+		  	 		<xsl:text>_a | </xsl:text>
+		  	 		<xsl:value-of select="."/>
+		  	 		<xsl:value-of select="$separater"/>
+		  	 		<xsl:if test="@source">
+			  	  		<xsl:value-of select="$aptype"/>
+		  	 			<xsl:text>_source | </xsl:text>
+			  	  		<xsl:apply-templates select="@source"/>  	 
+			  	  		<xsl:value-of select="$separater"/> 				
+			  	  	</xsl:if>
+					<xsl:if test="@rules">
+						<xsl:value-of select="$aptype"/>
+		  	 			<xsl:text>_rules | </xsl:text>
+			  	  		<xsl:apply-templates select="@rules"/>  	 
+			  	  		<xsl:value-of select="$separater"/> 				
+			  	  	</xsl:if>
+		  	 		<xsl:for-each select="@*">
+		  	 			<xsl:if test="not(name() = 'rules') and not(name() = 'source')">
+		  	 				<xsl:text>att_</xsl:text>
+		  	 				<xsl:value-of select="name()"/>
+		  	 				<xsl:text> | </xsl:text>
+		  	 				<xsl:value-of select="."/>
+		  	 				<xsl:value-of select="$separater"/>
+		  	 			</xsl:if>
+		  	 		</xsl:for-each>
+	  	 		</xsl:when>
+	  	 	</xsl:choose>
+	  	 </xsl:otherwise>
+	  </xsl:choose>
   </xsl:template>
 
   
@@ -1196,12 +1258,21 @@
   <xsl:template match="did/langmaterial">
 	<div id="addedlanguages" style="display:block" class="added">
 		<xsl:for-each select="language">
-			<input type="hidden" name="did/langmaterial/language">
+			<input type="text" name="did/langmaterial/language">
 				<xsl:attribute name="id">
 					<xsl:text>language_formgen</xsl:text><xsl:number level="single" count="language" format="1"/><xsl:text>xml</xsl:text>
 				</xsl:attribute>
 				<xsl:attribute name="value">
 					<xsl:text>lang_code | </xsl:text><xsl:value-of select="@langcode"/><xsl:text> ||| lang_name | </xsl:text><xsl:value-of select="."/><xsl:text> ||| </xsl:text>
+					<xsl:for-each select="@*">
+		  	 			<xsl:if test="not(name() = 'langcode')">
+		  	 				<xsl:text>att_</xsl:text>
+		  	 				<xsl:value-of select="name()"/>
+		  	 				<xsl:text> | </xsl:text>
+		  	 				<xsl:value-of select="."/>
+		  	 				<xsl:text> ||| </xsl:text>
+		  	 			</xsl:if>
+		  	 		</xsl:for-each>	
 				</xsl:attribute>
 			</input>
 			<div>
@@ -1366,9 +1437,9 @@
   <xsl:template match="*">
         <xsl:text>&lt;</xsl:text><xsl:value-of select="name()"/>
         <xsl:for-each select="@*">
-  <xsl:text> </xsl:text>
-  <xsl:value-of select="name()"/>
-  <xsl:text>="</xsl:text><xsl:value-of select="."/><xsl:text>"</xsl:text>
+			  <xsl:text> </xsl:text>
+			  <xsl:value-of select="name()"/>
+			  <xsl:text>="</xsl:text><xsl:value-of select="."/><xsl:text>"</xsl:text>
         </xsl:for-each>
  <xsl:text>&gt;</xsl:text>
         <xsl:apply-templates/>
