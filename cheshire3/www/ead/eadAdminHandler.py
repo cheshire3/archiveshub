@@ -1,7 +1,7 @@
 #
 # Script:    eadAdminHandler.py
-# Version:   0.30
-# Date:      5 February 2008
+# Version:   0.31
+# Date:      8 April 2008
 # Copyright: &copy; University of Liverpool 2005-2008
 # Description:
 #            Web interface for administering a cheshire 3 database of EAD finding aids
@@ -69,6 +69,7 @@
 #                        - _parse_upload function moved to eadHandler because also used by eadEditingHandler
 # 0.29 - 11/01/2008 - CS - javascript call to collapseLists function changed to createTreeFromList()
 # 0.30 - xx/02/2008 - JH - Some new display stuff while rebuilding / reindexing
+# 0.31 - 08/04/2008 - JH - Contraints placed on usernames (alphanumeric only)
 #
 #
 
@@ -395,9 +396,13 @@ class EadAdminHandler(EadHandler):
             userid = form.get('userid', None)
             usertype = form.get('usertype', 'user')
             
-            if not userid:
-                output = [self._error('Unable to add user - you MUST supply a username', 'users.html')]
-                
+            if not (userid and userid.isalnum()):
+                if not userid:
+                    output = [self._error('Unable to add user - you MUST supply a username.', 'users.html')]
+                else:
+                    output = [self._error('Unable to add user - username may only comprise alphanumeric characters.', 'users.html')]
+                    values['%USERNAME%'] = ''
+                    
                 adduser = multiReplace(read_file('adduser.html'), values)
                 if (usertype == 'user'):
                     adduser = multiReplace(adduser, {'%USER%' : 'checked="true"', '%SUPERUSER%' : ''})
@@ -405,6 +410,7 @@ class EadAdminHandler(EadHandler):
                     adduser = multiReplace(adduser, {'%USER%' : '', '%SUPERUSER%' : 'checked="true"'})
                 output.append(adduser)
                 return ''.join(output)
+            
             try:
                 user = authStore.fetch_object(session, userid)
             except:
@@ -888,7 +894,6 @@ class EadAdminHandler(EadHandler):
                     req.write('<br/>\nUnindexing record: %s ...' % recid)
                     try:
                         rec = recordStore.fetch_record(session, recid)
-                        raise ValueError(rec.id)
                     except (c3errors.FileDoesNotExistException, c3errors.ObjectDoesNotExistException):
                         # hmm record doesn't exists, simply remove file from disk (already done!)
                         req.write('<span class="error">[ERROR]</span> - Record not present in recordStore<br/>\n')
@@ -1164,7 +1169,7 @@ class EadAdminHandler(EadHandler):
                 if style == 1:
                     req.write('<script type="text/javascript">e = document.getElementById("rec-count");e.innerHTML = "%d"\n</script><noscript>.</noscript>' % (x+1))
                 elif style == 2:
-                    req.write('<tr><td><code>%s</code></td>' % (doc.filename))
+                    req.write('<tr><td><code>%s</code></td>' % (doc.filename.replace(sourceDir, '')[1:]))
                 retval = buildSingleFlow.process(session, doc)
                 if not isinstance(retval, Record):
                     if style < 2:
@@ -1198,6 +1203,7 @@ class EadAdminHandler(EadHandler):
                 req.write('<br/>\n')
                 
         except:
+            raise
             # failed to complete - nothing else will work!
             self.logger.log('Database rebuild attempt by %s failed to complete.' % (session.user.username))
             cla, exc, trbk = sys.exc_info()

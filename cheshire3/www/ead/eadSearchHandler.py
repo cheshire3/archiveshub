@@ -100,7 +100,7 @@
 # 0.34 - 26/02/2008 - JH - Minor improvements to highlighting (end point location)
 # 0.35 - 18/03/2008 - JH - More debugging of component hierarchy
 # 0.36 - 27/03/2008 - JH - Debugging of similar search
-#
+# 0.37 - 14/04/2008 - JH - Debugging cluster search
 #
 #
 
@@ -647,8 +647,8 @@ class EadSearchHandler(EadHandler):
                     rowclass = 'odd';
                 else:
                     rowclass = 'even';
-                    
-                subject = r.fetch_record(session).process_xpath(session, 'cluster/key/text()')[0]
+                
+                subject = r.fetch_record(session).process_xpath(session, 'string(/cluster/key)')
                 self.logger.log('starting subject find hit estimate')
                 try:
                     sc = CQLParser.parse('dc.subject exact "%s"' % (subject))
