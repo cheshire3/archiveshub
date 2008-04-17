@@ -37,23 +37,49 @@
                 <object type="tokenMerger" ref="SimpleTokenMerger"/>
             </workflow>
         </subConfig>
-		
-	<subConfig type="workflow" id="ProximityExtractorWorkflow">
+        
+        <subConfig type="workflow" id="ProximityExtractorWorkflow">
             <objectType>workflow.CachingWorkflow</objectType>
             <workflow>
                 <object type="extractor" ref="ProxExtractor" />
                 <object type="tokenizer" ref="RegexpFindOffsetTokenizer"/>
                 <object type="tokenMerger" ref="OffsetProxTokenMerger"/>
             </workflow>
-	</subConfig>
-	
-	<subConfig type="workflow" id="Diacritic-Case-NormalizerWorkflow">
+        </subConfig>
+        
+        <subConfig type="workflow" id="ProxDataWorkflow">
+            <objectType>workflow.CachingWorkflow</objectType>
+            <workflow>
+                <object type="extractor" ref="ProxExtractor" />
+                <object type="normalizer" ref="CaseNormalizer" />
+                <object type="tokenizer" ref="RegexpFindOffsetTokenizer"/>
+                <object type="normalizer" ref="StoplistNormalizer" />
+                <!-- this is here so as not to screw up proximity info -->
+                <object type="tokenMerger" ref="OffsetProxTokenMerger" />
+                <object type="workflow" ref="Diacritic-Case-Possessive-EnglishStem-NormalizerWorkflow"/>
+            </workflow>
+        </subConfig>
+        
+        <subConfig type="workflow" id="ProxSearchWorkflow">
+            <objectType>workflow.CachingWorkflow</objectType>
+            <workflow>
+                <object type="extractor" ref="ProxExtractor" />
+                <object type="normalizer" ref="CaseNormalizer" />
+                <object type="tokenizer" ref="PreserveMaskingTokenizer"/>
+                <object type="normalizer" ref="StoplistNormalizer" />
+                <!-- this is here so as not to screw up proximity info -->
+                <object type="tokenMerger" ref="ProxTokenMerger" />
+                <object type="workflow" ref="Diacritic-Case-Possessive-EnglishStem-NormalizerWorkflow"/>
+            </workflow>
+        </subConfig>
+        
+    	<subConfig type="workflow" id="Diacritic-Case-NormalizerWorkflow">
             <objectType>workflow.CachingWorkflow</objectType>
             <workflow>
                 <object type="normalizer" ref="DiacriticNormalizer" />
                 <object type="normalizer" ref="CaseNormalizer" />
             </workflow>
-	</subConfig>
+        </subConfig>
 	
 	<subConfig type="workflow" id="Space-Diacritic-Case-NormalizerWorkflow">
             <objectType>workflow.CachingWorkflow</objectType>
@@ -228,28 +254,32 @@
 	</subConfig>
 
 	<subConfig type="index" id="ead-idx-titleword">
-            <objectType>index.ProximityIndex</objectType>
-            <paths>
-            	<object type="indexStore" ref="indexStore" />
-            </paths>
-            <source mode="data|all|any|=">
-            	<xpath>/*/*/did/unittitle</xpath>
-            	<process>
-                    <object type="workflow" ref="ProximityExtractorWorkflow"/>
-                    <object type="workflow" ref="Diacritic-Case-Possessive-Stoplist-EnglishStem-NormalizerWorkflow"/>
-            	</process>
-            </source>
-            <source mode="exact">
-            	<process>
-                    <object type="extractor" ref="SimpleExtractor"/>
-                    <object type="workflow" ref="Space-Diacritic-Case-NormalizerWorkflow"/>
-            	</process>
-            </source>
-            <options>
-            	<setting type="recordStoreSizes">1</setting>
-            	<setting type="nProxInts">3</setting>
-                <setting type="termIds">1</setting>
-            </options>
+        <objectType>index.ProximityIndex</objectType>
+        <paths>
+        	<object type="indexStore" ref="indexStore" />
+        </paths>
+        <source mode="data">
+        	<xpath>/*/*/did/unittitle</xpath>
+            <process>
+                <object type="workflow" ref="ProxDataWorkflow"/>
+            </process>
+        </source>
+        <source mode="all|any|=">
+            <process>
+                <object type="workflow" ref="ProxSearchWorkflow" />
+            </process>
+        </source>
+        <source mode="exact">
+        	<process>
+                <object type="extractor" ref="SimpleExtractor"/>
+                <object type="workflow" ref="Space-Diacritic-Case-NormalizerWorkflow"/>
+        	</process>
+        </source>
+        <options>
+        	<setting type="recordStoreSizes">1</setting>
+        	<setting type="nProxInts">3</setting>
+            <setting type="termIds">1</setting>
+        </options>
 	</subConfig>
 
 	<!-- creators -->
@@ -349,18 +379,17 @@
 	    <paths>
 	        <object type="indexStore" ref="indexStore" />
 	    </paths>
-	    <source mode="data|all|any|=">
+	    <source mode="data">
 	        <xpath ref="descriptionXPath" />
-	        <process>
-	            <object type="extractor" ref="ProxExtractor" />
-	            <object type="normalizer" ref="CaseNormalizer" />
-	            <object type="tokenizer" ref="RegexpFindOffsetTokenizer"/>
-	            <object type="normalizer" ref="StoplistNormalizer" />
-	            <!-- this is here so as not to screw up proximity info -->
-	            <object type="tokenMerger" ref="OffsetProxTokenMerger" />
-	            <object type="workflow" ref="Diacritic-Case-Possessive-EnglishStem-NormalizerWorkflow"/>
-	        </process>
+            <process>
+                <object type="workflow" ref="ProxDataWorkflow"/>
+            </process>
 	    </source>
+        <source mode="all|any|=">
+            <process>
+                <object type="workflow" ref="ProxSearchWorkflow"/>
+            </process>
+        </source>
 	    <source mode="exact">
 	        <process>
 	            <object type="extractor" ref="SimpleExtractor" />
@@ -380,13 +409,17 @@
 		<paths>
 			<object type="indexStore" ref="indexStore" />
 		</paths>
-		<source mode="data|all|any|=">
+		<source mode="data">
 			<xpath ref="anywhereXPath"/>
 			<process>
-				<object type="workflow" ref="ProximityExtractorWorkflow"/>
-				<object type="workflow" ref="Diacritic-Case-Possessive-Stoplist-EnglishStem-NormalizerWorkflow"/>
-			</process>
+	            <object type="workflow" ref="ProxDataWorkflow"/>
+	        </process>
 		</source>
+        <source mode="all|any|=">
+            <process>
+                <object type="workflow" ref="ProxSearchWorkflow"/>
+            </process>
+        </source>
 		<source mode="exact">
 			<process>
 				<object type="extractor" ref="SimpleExtractor"/>
