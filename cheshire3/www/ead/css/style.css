@@ -3,6 +3,10 @@
   Copyright &copy; 2005-2008 the University of Liverpool
 */
 
+div#footer {
+	background-color: #fdd;	
+}
+
 body { 
   color: black;
   background-color: white;
