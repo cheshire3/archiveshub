@@ -19,7 +19,7 @@
   <xsl:variable name="count_subordinates_in_summary" select="true()"/>
   <xsl:variable name="horizontal_rule_between_units" select="true()"/>
   <!-- external resource link switches -->
-  <xsl:variable name="link_to_amazon" select="true()" />
+  <xsl:variable name="link_to_amazon" select="false()" />
   <xsl:variable name="link_to_copac" select="true()"/>
   <xsl:variable name="link_to_googlemaps" select="true()"/>
   <xsl:variable name="link_to_wikipedia" select="false()"/>
