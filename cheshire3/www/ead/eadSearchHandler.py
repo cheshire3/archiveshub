@@ -101,6 +101,7 @@
 # 0.35 - 18/03/2008 - JH - More debugging of component hierarchy
 # 0.36 - 27/03/2008 - JH - Debugging of similar search
 # 0.37 - 14/04/2008 - JH - Debugging cluster search
+# 0.38 - 25/04/2008 - JH - Debugging browse and _cleverTitleCase
 #
 #
 
@@ -144,9 +145,14 @@ class EadSearchHandler(EadHandler):
     def _cleverTitleCase(self, txt):
         global stopwords
         words = txt.split()
-        for x in range(len(words)):
-            if (x == 0 and not words[x][0].isdigit()) or (words[x][0].isalpha()) and (words[x] not in stopwords):
-                words[x] = words[x].title()
+        for x,w in enumerate(words):
+            if w[0].isdigit():
+                continue
+            elif (w[-2:] == "'s"):
+                words[x] = w[:-2].title() + "'s"
+            elif (x == 0) or (w not in stopwords):
+                words[x] = w.title()
+            
         return ' '.join(words)
         #- end _cleverTitleCase() --------------------------------------------------
         
@@ -497,26 +503,32 @@ class EadSearchHandler(EadHandler):
             scanData.reverse()
             if (len(scanData) < numreq): hitstart = True
         else:
-            # Need to go down...
+            # we ask for 1 extra term and trim it off later to check if there are more terms (for navigation purposes)
+            # Need to go up...
             try:
-                scanData = db.scan(session, scanClause, rp, direction="<=")
+                scanData = db.scan(session, scanClause, rp+1, direction="<=")
             except:
                 scanData = []
-            # ... then up
+            # ... then down
             try:
-                scanData1 = db.scan(session, scanClause, numreq-rp+1, direction=">=")
+                
+                scanData1 = db.scan(session, scanClause, (numreq-rp+1)+1, direction=">=")
             except:
                 scanData1 = []
             
             
-            if (len(scanData1) < numreq-rp+1):
+            if (len(scanData1) < (numreq-rp+1)+1):
                 hitend = True
-            if (len(scanData) < rp):
+            else:
+                scanData1.pop(-1)
+            if (len(scanData) < rp+1):
                 hitstart = True
+            else:
+                scanData.pop(-1)
             # try to stick them together
             try:
                 if scanData1[0][0] == scanData[0][0]:
-                    scanData = scanData[1:]
+                    scanData.pop(0)
             except:
                 pass
 
