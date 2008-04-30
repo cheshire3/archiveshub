@@ -1,4 +1,4 @@
-#!/home/cheshire/cheshire3/install/bin/python -i
+#!/home/cheshire/cheshire3/install/bin/python
 #
 # Script:    run.py
 # Date:      11 February 2008
@@ -19,13 +19,13 @@ from crypt import crypt
 # quick check if they asked for options
 if ('-h' in sys.argv) or ('--help' in sys.argv) or ('--options' in sys.argv):
     print '\n'.join([
-        '-adduser'.ljust(20) + 'add a new administrative user',
-        '-load'.ljust(20) + 'load and index full records',
-        '-index'.ljust(20) + 'index all records already loaded',
-        '-load_components'.ljust(20) + 'extract components, load and index them',
-        '-index_components'.ljust(20) + 'index all components already loaded',
-        '-cluster'.ljust(20) + 'complete cluster indexing (used by subject finder)',
-        '-cache'.ljust(20) + 'build HTML copies of larger records'
+        '-adduser'.ljust(30) + 'add a new administrative user',
+        '-load'.ljust(30) + 'load and index full records',
+        '-index'.ljust(30) + 'index all records already loaded',
+        '-load_cs, -load_components'.ljust(30) + 'extract components, load and index them',
+        '-index_cs, -index_components'.ljust(30) + 'index all components already loaded',
+        '-cluster'.ljust(30) + 'complete cluster indexing (used by subject finder)',
+        '-cache'.ljust(30) + 'build HTML copies of larger records'
         ])
     sys.exit()    
     
@@ -55,7 +55,7 @@ compStore = db.get_object(session, 'componentStore')
 clusRecordStore = clusDb.get_object(session, 'eadClusterStore')
 authStore = db.get_object(session, 'eadAuthStore')
 
-xmlp = db.get_object(session, 'SaxParser')
+xmlp = db.get_object(session, 'LxmlParser')
 
 
 def inputError(msg):
@@ -158,7 +158,7 @@ if ('-cluster' in sys.argv):
     session.database = db.id
     
 
-if ('-load_components' in sys.argv):
+if ('-load_components' in sys.argv) or ('-load_cs' in sys.argv):
     start = time.time()
     compFlow = db.get_object(session, 'buildAllComponentWorkflow')
     compFlow.load_cache(session, db)
@@ -168,7 +168,7 @@ if ('-load_components' in sys.argv):
     print 'Component Indexing complete (%dh %dm %ds)' % (hours, mins, secs)
     
     
-if ('-index_components' in sys.argv):
+if ('-index_components' in sys.argv) or ('-index_cs' in sys.argv):
     start = time.time()
     db.begin_indexing(session)
     print "Indexing components..."
