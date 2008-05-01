@@ -1,9 +1,9 @@
-<explain id="138.253.81.174/OAI/2.0/ead" authoritative="true"
+<explain id="172.20.252.2/OAI/2.0/ead" authoritative="true"
   xmlns="http://explain.z3950.org/dtd/2.0/"
   xmlns:c3="http://www.cheshire3.org/schemas/explain/">
 
 	<serverInfo protocol="oai-pmh" version="2.0" transport="http">
-	  <host>138.253.81.174</host>
+	  <host>172.20.252.2</host>
 	  <port>80</port>
 	  <database>OAI/2.0/ead</database>
 	</serverInfo>

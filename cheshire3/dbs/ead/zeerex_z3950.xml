@@ -8,7 +8,7 @@
  --> 
  
 	<serverInfo protocol="z3950" version="3">
-		<host>localhost</host>
+		<host>172.20.252.2</host>
 		<port>2100</port>
 		<database>ead</database>
 	</serverInfo>
