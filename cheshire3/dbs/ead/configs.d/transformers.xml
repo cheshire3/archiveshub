@@ -89,11 +89,11 @@
 					<xpath>5</xpath>
 				</map>
 				<map>
-					<xpath>/ead/archdesc/did/unittitle/text()</xpath>
+					<xpath>/ead/archdesc/did/unittitle//text()</xpath>
 					<xpath>1</xpath>
 				</map>
 				<map>
-					<xpath>archdesc/did/unitid/text()</xpath>
+					<xpath>archdesc/did/unitid//text()</xpath>
 					<xpath>28</xpath>
 				</map>
 				<map>
@@ -115,11 +115,11 @@
 					<xpath>5</xpath>
 				</map>
 				<map>
-					<xpath>did[1]/unittitle/text()</xpath>
+					<xpath>did[1]/unittitle//text()</xpath>
 					<xpath>1</xpath>
 				</map>
 				<map>
-					<xpath>did[1]/unitid/text()</xpath>
+					<xpath>did[1]/unitid//text()</xpath>
 					<xpath>28</xpath>
 				</map>
 				<map>
@@ -129,7 +129,7 @@
 				</map>
 				<map>
 					<!-- this needs to be the title of the parent document -->
-					<xpath>#PARENT#/unittitle[1]/text()</xpath>
+					<xpath>#PARENT#/unittitle[1]//text()</xpath>
 					<xpath>1</xpath>
 				</map>		
 			</transform>
