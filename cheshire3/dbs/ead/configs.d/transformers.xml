@@ -13,6 +13,13 @@
 	         <path type="xsltPath">xsl/sruOut.xsl</path>
 	      </paths>
 	    </subConfig>
+        
+        <subConfig type="transformer" id="oaiOutgoingTxr">
+          <objectType>transformer.LxmlXsltTransformer</objectType>
+          <paths>
+             <path type="xsltPath">xsl/oaiOut.xsl</path>
+          </paths>
+        </subConfig>
 	    
 	    <subConfig type="transformer" id="htmlFullTxr">
 	      <objectType>transformer.LxmlXsltTransformer</objectType>

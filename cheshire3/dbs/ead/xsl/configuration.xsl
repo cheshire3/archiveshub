@@ -8,6 +8,9 @@
 
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 
+    <!--  Host machine address -->
+    <xsl:variable name="host" select="'172.20.252.2'"/>
+
   <!-- Administrator configurable 'switches'
        for each option, you may set the 'select' attribute to:
        "true()"
@@ -85,9 +88,4 @@
   	<xsl:text>/favicon.ico</xsl:text>
   </xsl:param>
   
-  <!-- the following parameters should NOT be reconfigured by users-->
-  <xsl:param name="script" select="'SCRIPT'"/>
-  <xsl:param name="recid" select="'RECID'"/>
-  <xsl:param name="toc_cache_url" select="'TOC_CACHE_URL'"/>
-
 </xsl:stylesheet>

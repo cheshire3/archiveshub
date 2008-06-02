@@ -14,7 +14,11 @@
 
 	<!-- include configurations from external file - over-rideable locally  (i.e. in this file) -->
 	<xsl:include href="./configuration.xsl"/>
-	
+    
+    <xsl:variable name="script" select="'SCRIPT'"/>
+    <xsl:variable name="recid" select="'RECID'"/>
+    <xsl:variable name="toc_cache_url" select="'TOC_CACHE_URL'"/>
+
 	<!-- Strip all audience="internal" -->
 	<xsl:template match="*[@audience='internal']" priority="100" />
 
@@ -896,48 +900,46 @@
             </xsl:for-each>
         </xsl:if>
 	
-<!--        <xsl:apply-templates select="./dao|./did/dao|./odd/dao|./daogrp|./did/daogrp|./odd/daogrp"/>-->
-	    
-	<xsl:if test = "did/physloc">
-	  <xsl:value-of select="did/physloc"/>
-	</xsl:if>
-			
-	<xsl:apply-templates select="did/physdesc" mode="component"/>
-		
-	<xsl:apply-templates select="did/note"/>
-	<xsl:apply-templates select="scopecontent"/>
-	<xsl:apply-templates select="bioghist"/>
-	<xsl:apply-templates select="arrangement"/>
- 
-	<xsl:if test="admininfo">
-		<xsl:apply-templates select="admininfo" />
-	</xsl:if>
-       
-	<!-- ACCESS + USE RESTRICTIONS -->
-	<xsl:apply-templates select="accessrestrict"/>
-	<xsl:apply-templates select="userestrict"/>
-	<!-- ADMINISTRATIVE INFORMATION / ARCHIVAL HISTORY-->
-	<xsl:apply-templates select="appraisal"/>
-	<xsl:apply-templates select="acqinfo"/>
-	<xsl:apply-templates select="custodhist"/>
-	<xsl:apply-templates select="accruals"/>
-	<xsl:apply-templates select="processinfo"/>
-	<!-- USER INFO -->
-	<xsl:apply-templates select="otherfindaid"/>
-	<xsl:apply-templates select="originalsloc"/>
-	<xsl:apply-templates select="altformavail"/>
-	<xsl:apply-templates select="relatedmaterial"/>
-	<xsl:apply-templates select="separatedmaterial"/>
-	<!-- BIBLIOGRAPHY / CITATIONS -->
-	<xsl:apply-templates select="bibliography"/>
-	<xsl:apply-templates select="prefercite"/>
-	<!-- MISCELLANEOUS -->
-	<xsl:apply-templates select="odd"/>
-	
-	<!-- CONTROLACCESS -->
-	<xsl:apply-templates select="controlaccess"/>
-			
-	<xsl:apply-templates select="c|c01|c02|c03|c04|c05|c06|c07|c08|c09|c10|c11|c12"/>
+    	<xsl:if test = "did/physloc">
+    	  <xsl:value-of select="did/physloc"/>
+    	</xsl:if>
+    			
+    	<xsl:apply-templates select="did/physdesc" mode="component"/>
+    		
+    	<xsl:apply-templates select="did/note"/>
+    	<xsl:apply-templates select="scopecontent"/>
+    	<xsl:apply-templates select="bioghist"/>
+    	<xsl:apply-templates select="arrangement"/>
+     
+    	<xsl:if test="admininfo">
+    		<xsl:apply-templates select="admininfo" />
+    	</xsl:if>
+           
+    	<!-- ACCESS + USE RESTRICTIONS -->
+    	<xsl:apply-templates select="accessrestrict"/>
+    	<xsl:apply-templates select="userestrict"/>
+    	<!-- ADMINISTRATIVE INFORMATION / ARCHIVAL HISTORY-->
+    	<xsl:apply-templates select="appraisal"/>
+    	<xsl:apply-templates select="acqinfo"/>
+    	<xsl:apply-templates select="custodhist"/>
+    	<xsl:apply-templates select="accruals"/>
+    	<xsl:apply-templates select="processinfo"/>
+    	<!-- USER INFO -->
+    	<xsl:apply-templates select="otherfindaid"/>
+    	<xsl:apply-templates select="originalsloc"/>
+    	<xsl:apply-templates select="altformavail"/>
+    	<xsl:apply-templates select="relatedmaterial"/>
+    	<xsl:apply-templates select="separatedmaterial"/>
+    	<!-- BIBLIOGRAPHY / CITATIONS -->
+    	<xsl:apply-templates select="bibliography"/>
+    	<xsl:apply-templates select="prefercite"/>
+    	<!-- MISCELLANEOUS -->
+    	<xsl:apply-templates select="odd"/>
+    	
+    	<!-- CONTROLACCESS -->
+    	<xsl:apply-templates select="controlaccess"/>
+    			
+    	<xsl:apply-templates select="c|c01|c02|c03|c04|c05|c06|c07|c08|c09|c10|c11|c12"/>
     </xsl:template>
 
 
@@ -992,10 +994,10 @@
             </xsl:if>
             <xsl:attribute name="target">
                 <xsl:choose>
-                    <xsl:when test="./@show='new'">
+                    <xsl:when test="./@show = 'new'">
                         <xsl:text>_new</xsl:text>
                     </xsl:when>
-                    <xsl:when test="./@show='replace'">
+                    <xsl:when test="./@show = 'replace'">
                         <xsl:text>_parent</xsl:text>
                     </xsl:when>
                     <xsl:otherwise>
@@ -1005,7 +1007,7 @@
             </xsl:attribute>
             <!-- inner HTML -->
             <xsl:choose>
-                <xsl:when test="./text()">
+                <xsl:when test="string(.)">
                     <xsl:value-of select="string(.)" />
                 </xsl:when>
                 <xsl:when test="./@title">
@@ -1058,8 +1060,53 @@
 			<xsl:apply-templates />
 		</a>
 	</xsl:template>
-
-    <!--EXREFS-->
+    
+    <!-- ARCHREF  -->
+    <xsl:template match="archref">
+        <xsl:element name="a">
+            <xsl:if test="./@title">
+                <xsl:attribute name="title">
+                  <xsl:value-of select="./@title"/>
+                </xsl:attribute>
+            </xsl:if>
+            <xsl:attribute name="target">
+                <xsl:choose>
+                    <xsl:when test="./@show = 'new'">
+                        <xsl:text>_new</xsl:text>
+                    </xsl:when>
+                    <xsl:when test="./@show = 'replace'">
+                        <xsl:text>_parent</xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:text>_blank</xsl:text>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:attribute>
+            <xsl:attribute name="href">
+                <xsl:choose>
+                    <xsl:when test="@role = 'http://www.archiveshub.ac.uk/apps/linkroles/related' or
+                                    @role = 'http://www.archiveshub.ac.uk/apps/linkroles/extended' or
+                                    @role = 'http://www.archiveshub.ac.uk/apps/linkroles/child' or
+                                    @role = 'http://www.archiveshub.ac.uk/apps/linkroles/parent' or
+                                    @role = 'http://www.archiveshub.ac.uk/apps/linkroles/descendant' or
+                                    @role = 'http://www.archiveshub.ac.uk/apps/linkroles/ancestor'">
+                        <xsl:value-of select="$script"/>
+                        <xsl:text>?</xsl:text>
+                        <xsl:text>operation=full</xsl:text>
+                        <xsl:text>&amp;recid=</xsl:text>
+                        <xsl:value-of select="@href"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="@href"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:attribute>
+            <!-- inner HTML -->
+            <xsl:value-of select="string(.)"/>
+        </xsl:element>
+    </xsl:template>
+    
+    <!--EXTREFS-->
     <xsl:template match="extref">
         <xsl:call-template name="simplelink" />
     </xsl:template>
@@ -1226,17 +1273,15 @@
                                 </xsl:element>
                             </xsl:otherwise>
                         </xsl:choose>
-		    </xsl:when>
-	    	</xsl:choose>
-	    </div>
-	</xsl:for-each>
+                    </xsl:when>
+                </xsl:choose>
+            </div>
+        </xsl:for-each>
     </xsl:template>
 		
 	<!--LINE BREAKS-->
 	<xsl:template match="lb">
 	  <br/>
-	  <!-- XXX: not sure apply-templates needs to be here as tag should be empty... first thing to check if problem in the future -->
-	  <xsl:apply-templates/>
 	</xsl:template>
 
 	<!-- CHANGES e.g. in revisiondesc -->

@@ -14,23 +14,25 @@
   xsi:schemaLocation="http://www.loc.gov/ead/ead.xsd"
   version="1.0">
 
-	<xsl:output method="xml" omit-xml-declaration="yes"/>
-	
-	<xsl:template match="/">
-	   <xsl:apply-templates />
-	</xsl:template>
+    <xsl:output method="xml" omit-xml-declaration="yes"/>
     
-    <xsl:param name="script" select="'/services/ead'"/>
-	
-	<!-- Strip all audience=internal -->
-	
-	<!-- this isn't reliable - it returns flat text
-	<xsl:template match='*[@audience="internal"]' priority="100" />
-	-->
-	
-	<xsl:template match="*">
+    <!-- include configurations from external file - over-rideable locally  (i.e. in this file) -->
+    <xsl:include href="./configuration.xsl"/>
+    
+    <xsl:variable name="script" select="'/OAI/2.0/ead'"/>
+    
+    <xsl:template match="/">
+       <xsl:apply-templates />
+    </xsl:template>
+    
+    <!-- Strip all audience=internal -->
+    <!-- this isn't reliable - it returns flat text
+    <xsl:template match='*[@audience="internal"]' priority="100" />
+    -->
+    
+    <xsl:template match="*">
             <xsl:choose>
-		<xsl:when test="./@audience='internal'"/>
+        <xsl:when test="./@audience='internal'"/>
                 <!-- namespacify cheshire3 component wrapper -->
                 <xsl:when test="name(.)='c3:component' or local-name(.)='c3component'">
                     <c3:component>
@@ -52,14 +54,14 @@
                         <xsl:apply-templates />
                     </c3:component>
                 </xsl:when>
-		<xsl:otherwise>
+        <xsl:otherwise>
                     <xsl:copy>
                         <xsl:copy-of select="@*"/>
                         <xsl:apply-templates />
                     </xsl:copy>
-		</xsl:otherwise>
+        </xsl:otherwise>
             </xsl:choose>
-	</xsl:template>
+    </xsl:template>
     
     <!-- ARCHREF  -->
     <xsl:template match="archref">
@@ -74,13 +76,13 @@
                                     @role = 'http://www.archiveshub.ac.uk/apps/linkroles/parent' or
                                     @role = 'http://www.archiveshub.ac.uk/apps/linkroles/descendant' or
                                     @role = 'http://www.archiveshub.ac.uk/apps/linkroles/ancestor'">
+                        <xsl:text>http://</xsl:text>
+                        <xsl:value-of select="$host"/>
                         <xsl:value-of select="$script"/>
                         <xsl:text>?</xsl:text>
-                        <xsl:text>operation=searchRetrieve</xsl:text>
-                        <xsl:text>&amp;version=1.1</xsl:text>
-                        <xsl:text>&amp;maximumRecords=1</xsl:text>
-                        <xsl:text>&amp;recordSchema=ead</xsl:text>
-                        <xsl:text>&amp;query=rec.identifier+exact+</xsl:text>
+                        <xsl:text>verb=GetRecord</xsl:text>
+                        <xsl:text>&amp;metadataPrefix=ead</xsl:text>
+                        <xsl:text>&amp;identifier=</xsl:text>
                         <xsl:value-of select="@href"/>
                     </xsl:when>
                     <xsl:otherwise>
