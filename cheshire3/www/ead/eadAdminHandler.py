@@ -1163,7 +1163,7 @@ class EadAdminHandler(EadHandler):
             if style == 1:
                 req.write('<span id="rec-progress">Processing File: <span id="rec-count" style="font-weight:bold;font-size:larger;">0</span></span> ')
             elif style == 2:
-                req.write('<table class="rebuildtable"><tr class="headrow"><td>File</td><td>Identifier</td><td>Indexed</td><td>Message</td></tr>')
+                req.write('<table class="rebuildtable"><tr class="headrow"><td>File</td><td>Outcome</td><td>Message</td></tr>')
                 
             for x, doc in enumerate(baseDocFac):
                 if style == 1:
@@ -1175,13 +1175,13 @@ class EadAdminHandler(EadHandler):
                     if style < 2:
                         problems.append((doc.filename, (retval)))
                     else:
-                        req.write('<td/><td class="error" style="text-align: center;">ERROR</td><td>%s</td></tr>' % (retval))
+                        req.write('<td class="error" style="text-align: center;">ERROR</td><td>%s</td></tr>' % (retval))
                 else:
                     if style == 0:
                         req.write('.')
                         if ((x+1) % 200 == 0): req.write('<br/>')
                     elif style == 2:
-                        req.write('<td>%s</td><td class="ok" style="text-align: center;">OK</td><td/></tr>' % (retval.id))
+                        req.write('<td class="ok" style="text-align: center;">OK</td><td>Record Identifier: %s</td></tr>' % (retval.id))
     
             if style == 2:
                 req.write('</table>Indexing Complete ')
@@ -1219,11 +1219,30 @@ class EadAdminHandler(EadHandler):
             clusDocFac = clusDb.get_object(session, 'clusterDocumentFactory')
             clusDocFac.load(session, os.path.join(dbPath, 'cluster', 'tempCluster.data'))
             hours, mins, secs = self._timeop(clusFlow.process, (session, clusDocFac))
-            req.write('<span class="ok">[OK]</span> %dh %dm %ds<br/>' % (hours, mins, secs))
+            req.write('<span class="ok">[OK]</span> %dh %dm %ds<br/>\n' % (hours, mins, secs))
             session.database = 'db_ead'
             # rebuild and reindex components
-            req.write('Loading and indexing components.')
-            hours, mins, secs = self._timeop(compFlow.process, (session, recordStore))
+            # have to do this manually otherwise times out :(
+            req.write('Loading and indexing components.<br/>\n')
+            start = time.time()
+            db.begin_indexing(session)
+            compStore.begin_storing(session)
+            dotcount = 0
+            for rec in recordStore:
+                try: compRecordFlow.process(session, rec)
+                except:
+                     req.write('<span class="error">.</span>')
+                else:
+                    req.write('.')
+                if ((dotcount+1) % 200 == 0): req.write('<br/>\n')
+                dotcount += 1
+                
+            compStore.commit_storing(session)
+            db.commit_indexing(session)
+            db.commit_metadata(session)
+#            hours, mins, secs = self._timeop(compFlow.process, (session, recordStore))
+            mins, secs = divmod(time.time() - start, 60)
+            hours, mins = divmod(mins, 60)
             req.write('<span class="ok">[OK]</span> %dh %dm %ds<br/>\nDATABASE REBUILD COMPLETE' % (hours, mins, secs))
             req.write('<br/>\n<a href="database.html" title="Database Management" class="navlink">Back to \'Database Management\' Page</a>')
             self.logger.log('Database rebuilt by: %s' % (session.user.username))
@@ -1273,13 +1292,13 @@ class EadAdminHandler(EadHandler):
             req.write('<span id="rec-progress">Indexing Record: <span id="rec-count" style="font-weight:bold;font-size:larger;">0</span> of %d</span>' % recordStore.totalItems)
         else:
             # Table version
-            req.write('<table class="rebuildtable"><tr class="headrow"><td><i>n</i> of %d</td><td>Identifier</td><td>Indexed</td><td>Message</td></tr>' % (recordStore.totalItems))
+            req.write('<table class="rebuildtable"><tr class="headrow"><td><i>n</i> of %d</td><td>Outcome</td><td>Message</td></tr>' % (recordStore.totalItems))
         
         for reccount, rec in enumerate(recordStore):
             if style == 1:
                 req.write('<script type="text/javascript">e = document.getElementById("rec-count");e.innerHTML = "%d" \n</script><noscript>.</noscript>' % (reccount+1))
             elif style == 2:
-                req.write('<tr><td>%d</td><td>%s</td>' % (reccount+1,rec.id))
+                req.write('<tr><td>%d</td>' % (reccount+1))
             try: 
                 db.index_record(session, rec)
             except Exception:
@@ -1292,13 +1311,13 @@ class EadAdminHandler(EadHandler):
                 if style < 2:
                     problems.append((rec.id, (excName, excArgs)))
                 else:
-                    req.write('<td class="error" style="text-align: center;">ERROR</td><td>%s:%s</td></tr>' % (excName, excArgs))
+                    req.write('<td class="error" style="text-align: center;">ERROR</td><td>Record Identifier: %s<br/>%s:%s</td></tr>' % (rec.id, excName, excArgs))
             else:
                 if style == 0:
                     req.write('.')
                     if ((reccount+1) % 200 == 0): req.write('<br/>')
                 elif style == 2:
-                    req.write('<td class="ok" style="text-align: center;">OK</td><td/></tr>')
+                    req.write('<td class="ok" style="text-align: center;">OK</td><td>Record Identifier: %s</td></tr>' % (rec.id))
         
         if style == 2:
             req.write('</table>Indexing Complete ')
@@ -1328,7 +1347,8 @@ class EadAdminHandler(EadHandler):
         compStore = db.get_object(session, 'componentStore')
         req.write('<span id="comp-progress">Indexing Component: <span id="comp-count" style="font-weight:bold;font-size:larger;">0</span> of %d</span>' % compStore.totalItems)
         for x, rec in enumerate(compStore):
-            req.write('<script type="text/javascript">e = document.getElementById("comp-count");e.innerHTML = "%d"</script>\n' % (x+1))
+            if ((x+1) % 5) == 0:
+                req.write('<script type="text/javascript">e = document.getElementById("comp-count");e.innerHTML = "%d"</script>\n' % (x+1))
             try:
                 db.index_record(session, rec)
             except:
@@ -1336,6 +1356,9 @@ class EadAdminHandler(EadHandler):
             else:
                 if ((x+1) % 10 == 0): req.write('<noscript>.</noscript>')
                 if ((x+1) % (200 * 10) == 0): req.write('<noscript><br/></noscript>')
+        
+        # make sure final report represents totalItems
+        req.write('<script type="text/javascript">e = document.getElementById("comp-count");e.innerHTML = "%d"</script>\n' % (compStore.totalItems))
         
         mins, secs = divmod(time.time() - start, 60)
         hours, mins = divmod(mins, 60)

@@ -1,13 +1,13 @@
 #
 # Script:   localConfig.py
-# Version:   0.14
+# Version:   0.16
 # Description:
 #            Customisable elements for Cheshire for Archives v3.x
 #
 # Language:  Python
 # Author:    John Harrison <john.harrison@liv.ac.uk>
 # Author:    Catherine Smith <catherine.smith@liv.ac.uk>
-# Date:      26 March 2008
+# Date:      3 June 2008
 #
 # Copyright: &copy; University of Liverpool 2005-2008
 #
@@ -31,7 +31,8 @@
 # 0.12 - 18/06/2007 - JH - sourceDir setting removed - now derived from documentFactory setting
 # 0.13 - 04/10/2007 - CS - editinglogfilepath added 
 # 0.14 - 26/03/2008 - JH - More configurable header + navbar display - new tags added title_separator and navbar_separator
-#
+# 0.15 - 24/04/2008 - JH - Improvements to stopwords
+# 0.16 - 03/06/2008 - JH - Configurable highlight delimiters 
 #
 # Changes to original:
 # You should make a note of any changes that you make to the originally distributed file here.
@@ -100,10 +101,26 @@ namespaceUriHash = {
 # 0: dots, 1: counter, 2: table
 admin_reload_display_type = 2
 
-# List of words which should not be used when conducting similar searches
-# Also used for clever titlecase i.e. don't titlecase these
-# New words should be added inside the inverted commas, and separated by whitespace
-stopwords = 'a and by for in is of on s th the to'
+# Stopwords - New words should be added inside the triple inverted commas, each on a new line
+# for clever titlecase i.e. don't titlecase these
+stopwords = '''
+a
+and
+by
+for
+in
+is
+of
+on
+s
+th
+the
+to
+'''
+
+# List of words in addition to above which should not be used when conducting similar searches
+similar_search_stopwords = '''
+'''
 
 # List of xpaths that are mandatory for Archives Hub Records
 required_xpaths = [
@@ -123,7 +140,7 @@ required_xpaths = [
 # HTML Fragments
 from htmlFragments import *
 
-# reflect switch preferences in HTML fragments
+# reflect switch preferences in HTML fragments - DO NOT EDIT THESE
 if ( result_graphics ):
     search_result_row = search_result_row.replace( '%FULL%', full_tag ).replace( '%EMAIL%', email_tag ).replace( '%SIMILAR%', similar_tag )
     search_component_row = search_component_row.replace( '%FULL%', full_tag ).replace( '%EMAIL%', email_tag ).replace( '%SIMILAR%', similar_tag )
@@ -141,12 +158,14 @@ else:
 
 # Some bits to ensure that objects are of the correct python object type - DO NOT EDIT THESE
 # split similar search stoplist at whitespace
-try:
-    similar_search_stoplist = similar_search_stopwords.split()
-except:
-    similar_search_stoplist = []
+stopwords = stopwords.split()
+similar_search_stoplist = stopwords[:]
+similar_search_stoplist.extend(similar_search_stopwords.split())
 
 # calculation for approx max page size in bytes - DO NOT edit
 # maximum size in kb * bytes in a kb - size of template in bytes
 max_page_size_bytes = (maximum_page_size * 1024) - 4943
 
+# Strings to use to delimit highlighted terms
+highlightStartTag = 'HGHLGHT'
+highlightEndTag = highlightStartTag[::-1]

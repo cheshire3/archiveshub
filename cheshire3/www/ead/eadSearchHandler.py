@@ -1,7 +1,7 @@
 #
 # Script:    eadSearchHandler.py
-# Version:   0.35
-# Date:      18 March 2008
+# Version:   0.39
+# Date:      3 June 2008
 # Copyright: &copy; University of Liverpool 2005-2008
 # Description:
 #            Web interface for searching a cheshire 3 database of EAD finding aids
@@ -102,6 +102,7 @@
 # 0.36 - 27/03/2008 - JH - Debugging of similar search
 # 0.37 - 14/04/2008 - JH - Debugging cluster search
 # 0.38 - 25/04/2008 - JH - Debugging browse and _cleverTitleCase
+# 0.39 - 03/06/2008 - JH - Highlight debugging
 #
 #
 
@@ -717,7 +718,9 @@ class EadSearchHandler(EadHandler):
 
 
     def display_summary(self, rec, paramDict, proxInfo=None, highlight=1):
-        global nonAsciiRe, asciiFriendly, overescapedAmpRe, unescapeCharent
+        global nonAsciiRe, asciiFriendly, overescapedAmpRe, unescapeCharent, highlightStartTag, highlightEndTag
+        sTag = highlightStartTag
+        eTag = highlightEndTag
         recid = rec.id
         self.logger.log('Summary requested for record: %s' % (recid))
         # highlight search terms in rec.dom
@@ -761,11 +764,12 @@ class EadSearchHandler(EadHandler):
                             if end == -1:
                                 end = len(text)
                             located = 'text'
-                            if text[:start].find('HGHLGHT') < 0:
-                                c.text = text[:start] + 'HGHLGHT' + text[start:end] + 'THGLHGH' + text[end:]
+                            if text[:start+len(sTag)].find(sTag) < 0:
+                                c.text = text[:start] + sTag + text[start:end] + eTag + text[end:]
                             break
                         else:
-                            offset -= len(text)
+                            # check for highlight start / end strings adjust offset accordingly
+                            offset -= len(text.replace(sTag, '').replace(eTag, ''))
                         
                     if c.tail:
                         text = c.tail
@@ -775,11 +779,12 @@ class EadSearchHandler(EadHandler):
                             if end == -1:
                                 end = len(text)
                             located = 'tail'
-                            if text[:start].find('HGHLGHT') < 0:
-                                c.tail = text[:start] + 'HGHLGHT' + text[start:end] + 'THGLHGH' + text[end:]
+                            if text[:start+len(sTag)].find(sTag) < 0:
+                                c.tail = text[:start] + sTag + text[start:end] + eTag + text[end:]
                             break
                         else:
-                            offset -= len(text)
+                            # check for highlight start / end strings adjust offset accordingly
+                            offset -= len(text.replace(sTag, '').replace(eTag, ''))
                         
             self.logger.log('Search terms highlighted')
         
@@ -826,7 +831,7 @@ class EadSearchHandler(EadHandler):
 
 
     def display_record(self, form):
-        global max_page_size_bytes, cache_path, cache_url, toc_cache_path, toc_cache_url, repository_name, repository_link, repository_logo, display_splash_screen_popup, punctuationRe, wordRe, anchorRe, highlightInLinkRe, overescapedAmpRe
+        global max_page_size_bytes, cache_path, cache_url, toc_cache_path, toc_cache_url, repository_name, repository_link, repository_logo, display_splash_screen_popup, punctuationRe, wordRe, anchorRe, highlightInLinkRe, overescapedAmpRe, highlightStartTag, highlightEndTag
         isComponent = None
         operation = form.get('operation', 'full')
         recid = form.getfirst('recid', None)
@@ -959,8 +964,8 @@ class EadSearchHandler(EadHandler):
         paramDict['RSID'] = rsidCgiString 
         
         if (operation == 'summary'):
-            paramDict['HGHLGHT'] = '<span class="highlight">'
-            paramDict['THGLHGH'] = '</span>'
+            paramDict[highlightStartTag] = '<span class="highlight">'
+            paramDict[highlightEndTag] = '</span>'
             paramDict['LEFTSIDE'] = searchResults
             try:
                 page = self.display_summary(rec, paramDict, r.proxInfo, highlight)
