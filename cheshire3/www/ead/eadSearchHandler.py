@@ -135,6 +135,8 @@ class EadSearchHandler(EadHandler):
         if not t:
             t = '(untitled)'
         else:
+            if isinstance(t, list):
+                t = t[0]
             t = nonAsciiRe.sub(asciiFriendly, t)
     
         titles.append((rec.id, t.strip()))
@@ -175,6 +177,8 @@ class EadSearchHandler(EadHandler):
                 if not parentTitle:
                     parentTitle = '(untitled)'
                 
+        if isinstance(parentTitle, list):
+            parentTitle = parentTitle[0]
         parentTitle = nonAsciiRe.sub(asciiFriendly, parentTitle)
         if (type(parentTitle) == unicode):
             try:
@@ -664,6 +668,8 @@ class EadSearchHandler(EadHandler):
                 subject = r.fetch_record(session).process_xpath(session, 'string(/cluster/key)')
                 self.logger.log('starting subject find hit estimate')
                 try:
+                    if isinstance(subject, list):
+                        subject = subject[0]
                     sc = CQLParser.parse('dc.subject exact "%s"' % (subject))
                     session.database = 'db_ead'
                     scanData = db.scan(session, sc, 1, direction=">=")
