@@ -62,7 +62,7 @@ navbar_separator = ' | '
 relevance_graphic = '/images/star.gif'
 
 # server and email settings - you should check these with your computing services people.
-localhost = '138.253.81.174'
+localhost = '172.20.252.2'
 outgoing_email_username = 'cheshire'
 outgoing_email_host = "mail1.liv.ac.uk"
 outgoing_email_port = 25                           # 25 is the default for most mail servers
