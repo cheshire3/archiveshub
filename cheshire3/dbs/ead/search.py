@@ -53,7 +53,7 @@ recordStore = db.get_object(session, 'recordStore')
 if len(sys.argv[1:]):
     qString = ' '.join(sys.argv[1:])
 else:
-    qString = 'dc.description all/relevant/proxinfo "money"'
+    qString = 'cql.anywhere all/relevant/proxinfo "money"'
 
 q = CQLparse(qString)
 rs = db.search(session, q)
@@ -71,7 +71,9 @@ for x in range(min(5, hits)):
         parRec = recordStore.fetch_record(session, parId)
         xpath = rec.process_xpath(session, '/c3component/@xpath')[0]
         titles = _backwalkTitles(parRec, xpath)
-        
+    
+    print x+1,
     for y, t in enumerate(titles):
-        print (' ' * (y*2)) + t
+        if y: print ' ',
+        print (' ' * (y*2) ),t
     
