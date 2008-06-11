@@ -9,117 +9,117 @@
 
     <subConfigs>
         
-        <!-- indexStore -->
-        <subConfig type="indexStore" id="indexStore">
-          <objectType>indexStore.BdbIndexStore</objectType>
-          <paths>
+    <!-- indexStore -->
+    <subConfig type="indexStore" id="indexStore">
+        <objectType>indexStore.BdbIndexStore</objectType>
+        <paths>
             <path type="defaultPath">indexes</path>
             <path type="tempPath">temp</path>
             <path type="recordStoreHash">recordStore componentStore</path>  
-          </paths> 
-        </subConfig>
+        </paths> 
+    </subConfig>
 	
 	<!-- Custom normalizers -->
 		
-        <subConfig type="normalizer" id="StoplistNormalizer">
-            <objectType>normalizer.StoplistNormalizer</objectType>
-            <paths>
-                <path type="stoplist">stopwords.txt</path>
-            </paths>
-        </subConfig>
+    <subConfig type="normalizer" id="StoplistNormalizer">
+        <objectType>normalizer.StoplistNormalizer</objectType>
+        <paths>
+            <path type="stoplist">stopwords.txt</path>
+        </paths>
+    </subConfig>
 		
-        <!-- mini-workflows for processing chains -->
-        <subConfig type="workflow" id="PreserveMaskingKeywordExtractorWorkflow">
-            <objectType>workflow.CachingWorkflow</objectType>
-            <workflow>
-                <object type="extractor" ref="SimpleExtractor" />
-                <object type="tokenizer" ref="PreserveMaskingTokenizer" />
-                <object type="tokenMerger" ref="SimpleTokenMerger"/>
-            </workflow>
-        </subConfig>
-        
-        <subConfig type="workflow" id="ProximityExtractorWorkflow">
-            <objectType>workflow.CachingWorkflow</objectType>
-            <workflow>
-                <object type="extractor" ref="ProxExtractor" />
-                <object type="tokenizer" ref="RegexpFindOffsetTokenizer"/>
-                <object type="tokenMerger" ref="OffsetProxTokenMerger"/>
-            </workflow>
-        </subConfig>
-        
-        <subConfig type="workflow" id="ProxDataWorkflow">
-            <objectType>workflow.CachingWorkflow</objectType>
-            <workflow>
-                <object type="extractor" ref="ProxExtractor" />
-                <object type="normalizer" ref="CaseNormalizer" />
-                <object type="tokenizer" ref="RegexpFindOffsetTokenizer"/>
-                <object type="normalizer" ref="StoplistNormalizer" />
-                <!-- this is here so as not to screw up proximity info -->
-                <object type="tokenMerger" ref="OffsetProxTokenMerger" />
-                <object type="workflow" ref="Diacritic-Case-Possessive-EnglishStem-NormalizerWorkflow"/>
-            </workflow>
-        </subConfig>
-        
-        <subConfig type="workflow" id="ProxSearchWorkflow">
-            <objectType>workflow.CachingWorkflow</objectType>
-            <workflow>
-                <object type="extractor" ref="ProxExtractor" />
-                <object type="normalizer" ref="CaseNormalizer" />
-                <object type="tokenizer" ref="PreserveMaskingTokenizer"/>
-                <object type="normalizer" ref="StoplistNormalizer" />
-                <!-- this is here so as not to screw up proximity info -->
-                <object type="tokenMerger" ref="ProxTokenMerger" />
-                <object type="workflow" ref="Diacritic-Case-Possessive-EnglishStem-NormalizerWorkflow"/>
-            </workflow>
-        </subConfig>
-        
-    	<subConfig type="workflow" id="Diacritic-Case-NormalizerWorkflow">
-            <objectType>workflow.CachingWorkflow</objectType>
-            <workflow>
-                <object type="normalizer" ref="DiacriticNormalizer" />
-                <object type="normalizer" ref="CaseNormalizer" />
-            </workflow>
-        </subConfig>
+    <!-- mini-workflows for processing chains -->
+    <subConfig type="workflow" id="PreserveMaskingKeywordExtractorWorkflow">
+        <objectType>workflow.CachingWorkflow</objectType>
+        <workflow>
+            <object type="extractor" ref="SimpleExtractor" />
+            <object type="tokenizer" ref="PreserveMaskingTokenizer" />
+            <object type="tokenMerger" ref="SimpleTokenMerger"/>
+        </workflow>
+    </subConfig>
+    
+    <subConfig type="workflow" id="ProximityExtractorWorkflow">
+        <objectType>workflow.CachingWorkflow</objectType>
+        <workflow>
+            <object type="extractor" ref="ProxExtractor" />
+            <object type="tokenizer" ref="RegexpFindOffsetTokenizer"/>
+            <object type="tokenMerger" ref="OffsetProxTokenMerger"/>
+        </workflow>
+    </subConfig>
+    
+    <subConfig type="workflow" id="ProxDataWorkflow">
+        <objectType>workflow.CachingWorkflow</objectType>
+        <workflow>
+            <object type="extractor" ref="ProxExtractor" />
+            <object type="normalizer" ref="CaseNormalizer" />
+            <object type="tokenizer" ref="RegexpFindOffsetTokenizer"/>
+            <object type="normalizer" ref="StoplistNormalizer" />
+            <!-- this is here so as not to screw up proximity info -->
+            <object type="tokenMerger" ref="OffsetProxTokenMerger" />
+            <object type="workflow" ref="Diacritic-Case-Possessive-EnglishStem-NormalizerWorkflow"/>
+        </workflow>
+    </subConfig>
+    
+    <subConfig type="workflow" id="ProxSearchWorkflow">
+        <objectType>workflow.CachingWorkflow</objectType>
+        <workflow>
+            <object type="extractor" ref="ProxExtractor" />
+            <object type="normalizer" ref="CaseNormalizer" />
+            <object type="tokenizer" ref="PreserveMaskingTokenizer"/>
+            <object type="normalizer" ref="StoplistNormalizer" />
+            <!-- this is here so as not to screw up proximity info -->
+            <object type="tokenMerger" ref="ProxTokenMerger" />
+            <object type="workflow" ref="Diacritic-Case-Possessive-EnglishStem-NormalizerWorkflow"/>
+        </workflow>
+    </subConfig>
+    
+	<subConfig type="workflow" id="Diacritic-Case-NormalizerWorkflow">
+        <objectType>workflow.CachingWorkflow</objectType>
+        <workflow>
+            <object type="normalizer" ref="DiacriticNormalizer" />
+            <object type="normalizer" ref="CaseNormalizer" />
+        </workflow>
+    </subConfig>
 	
 	<subConfig type="workflow" id="Space-Diacritic-Case-NormalizerWorkflow">
-            <objectType>workflow.CachingWorkflow</objectType>
-            <workflow>
-                <object type="normalizer" ref="SpaceNormalizer" />
-                <object type="workflow" ref="Diacritic-Case-NormalizerWorkflow"/>
-            </workflow>
+        <objectType>workflow.CachingWorkflow</objectType>
+        <workflow>
+            <object type="normalizer" ref="SpaceNormalizer" />
+            <object type="workflow" ref="Diacritic-Case-NormalizerWorkflow"/>
+        </workflow>
 	</subConfig>
 	
 	<subConfig type="workflow" id="Diacritic-Case-Possessive-NormalizerWorkflow">
-            <objectType>workflow.CachingWorkflow</objectType>
-            <workflow>
-                <object type="workflow" ref="Diacritic-Case-NormalizerWorkflow"/>
-                <object type="normalizer" ref="PossessiveNormalizer" />
-            </workflow>
+        <objectType>workflow.CachingWorkflow</objectType>
+        <workflow>
+            <object type="workflow" ref="Diacritic-Case-NormalizerWorkflow"/>
+            <object type="normalizer" ref="PossessiveNormalizer" />
+        </workflow>
 	</subConfig>
 	
 	<subConfig type="workflow" id="Space-Diacritic-Case-Possessive-NormalizerWorkflow">
-            <objectType>workflow.CachingWorkflow</objectType>
-            <workflow>
-                        <object type="normalizer" ref="SpaceNormalizer" />
-                        <object type="workflow" ref="Diacritic-Case-Possessive-NormalizerWorkflow"/>
-            </workflow>
+        <objectType>workflow.CachingWorkflow</objectType>
+        <workflow>
+            <object type="normalizer" ref="SpaceNormalizer" />
+            <object type="workflow" ref="Diacritic-Case-Possessive-NormalizerWorkflow"/>
+        </workflow>
 	</subConfig>
 	
 	<subConfig type="workflow" id="Diacritic-Case-Possessive-EnglishStem-NormalizerWorkflow">
-            <objectType>workflow.CachingWorkflow</objectType>
-            <workflow>
-            	<object type="workflow" ref="Diacritic-Case-Possessive-NormalizerWorkflow"/>
-            	<object type="normalizer" ref="EnglishStemNormalizer" />
-            </workflow>
+        <objectType>workflow.CachingWorkflow</objectType>
+        <workflow>
+        	<object type="workflow" ref="Diacritic-Case-Possessive-NormalizerWorkflow"/>
+        	<object type="normalizer" ref="EnglishStemNormalizer" />
+        </workflow>
 	</subConfig>
 	
 	<subConfig type="workflow" id="Diacritic-Case-Possessive-Stoplist-EnglishStem-NormalizerWorkflow">
-            <objectType>workflow.CachingWorkflow</objectType>
-            <workflow>
-            	<object type="workflow" ref="Diacritic-Case-Possessive-NormalizerWorkflow"/>
-            	<object type="normalizer" ref="StoplistNormalizer" />
-            	<object type="normalizer" ref="EnglishStemNormalizer" />
-            </workflow>
+        <objectType>workflow.CachingWorkflow</objectType>
+        <workflow>
+        	<object type="workflow" ref="Diacritic-Case-Possessive-NormalizerWorkflow"/>
+        	<object type="normalizer" ref="StoplistNormalizer" />
+        	<object type="normalizer" ref="EnglishStemNormalizer" />
+        </workflow>
 	</subConfig>
 	
 	
@@ -250,6 +250,7 @@
             <options>
             	<setting type="sortStore">1</setting>
             	<setting type="recordStoreSizes">1</setting>
+                <setting type="vectors">1</setting>
             </options>
 	</subConfig>
 
@@ -449,67 +450,68 @@
 		</source>
 		<options>
 			<setting type="recordStoreSizes">1</setting>
+            <setting type="vectors">1</setting>
 		</options>
 	</subConfig>
 
-	<subConfig type="index" id="ead-idx-subjectword">
-		<objectType>index.SimpleIndex</objectType>
-		<paths>
-			<object type="indexStore" ref="indexStore" />
-		</paths>
-		<source mode="data">
-			<xpath>subject</xpath>
-			<process>
-				<object type="workflow" ref="KeywordExtractorWorkflow" />
-				<object type="workflow" ref="Diacritic-Case-Possessive-EnglishStem-NormalizerWorkflow"/>
-			</process>
-		</source>
-		<source mode="all|any">
-			<process>
-				<object type="workflow" ref="PreserveMaskingKeywordExtractorWorkflow" />
-				<object type="workflow" ref="Diacritic-Case-Possessive-EnglishStem-NormalizerWorkflow"/>
-			</process>
-		</source>
-		<source mode="=|exact">
-			<process>
-				<object type="extractor" ref="SimpleExtractor"/>
-				<object type="workflow" ref="Space-Diacritic-Case-NormalizerWorkflow"/>
-			</process>
-		</source>
-		<options>
-			<setting type="recordStoreSizes">1</setting>
-		</options>
-	</subConfig>
+    	<subConfig type="index" id="ead-idx-subjectword">
+    		<objectType>index.SimpleIndex</objectType>
+    		<paths>
+    			<object type="indexStore" ref="indexStore" />
+    		</paths>
+    		<source mode="data">
+    			<xpath>subject</xpath>
+    			<process>
+    				<object type="workflow" ref="KeywordExtractorWorkflow" />
+    				<object type="workflow" ref="Diacritic-Case-Possessive-EnglishStem-NormalizerWorkflow"/>
+    			</process>
+    		</source>
+    		<source mode="all|any">
+    			<process>
+    				<object type="workflow" ref="PreserveMaskingKeywordExtractorWorkflow" />
+    				<object type="workflow" ref="Diacritic-Case-Possessive-EnglishStem-NormalizerWorkflow"/>
+    			</process>
+    		</source>
+    		<source mode="=|exact">
+    			<process>
+    				<object type="extractor" ref="SimpleExtractor"/>
+    				<object type="workflow" ref="Space-Diacritic-Case-NormalizerWorkflow"/>
+    			</process>
+    		</source>
+    		<options>
+    			<setting type="recordStoreSizes">1</setting>
+    		</options>
+    	</subConfig>
 
-	<subConfig type="index" id="ead-idx-name">
+        <subConfig type="index" id="ead-idx-name">
             <objectType>index.SimpleIndex</objectType>
             <paths>
             	<object type="indexStore" ref="indexStore" />
             </paths>
             <source>
-		<!-- all ...name in controlaccess, or with 'normal' attributes -->
-		<!--
-		<xpath>controlaccess/*[regexp(name(), '.*name$')]</xpath>
-		<xpath>*[regexp(name(), '.*name$')]/@normal</xpath>
-		-->
-		<xpath>controlaccess/name</xpath>
-		<xpath>controlaccess/persname</xpath>
-		<xpath>controlaccess/famname</xpath>
-		<xpath>controlaccess/corpname</xpath>
-		<xpath>controlaccess/geogname</xpath>				
-		<xpath>name/@normal</xpath>
-		<xpath>persname/@normal</xpath>
-		<xpath>famname/@normal</xpath>
-		<xpath>corpname/@normal</xpath>
-		<xpath>geogname/@normal</xpath>
-		
-		<process>
+        		<!-- all ...name in controlaccess, or with 'normal' attributes -->
+        		<!--
+        		<xpath>controlaccess/*[regexp(name(), '.*name$')]</xpath>
+        		<xpath>*[regexp(name(), '.*name$')]/@normal</xpath>
+        		-->
+        		<xpath>controlaccess/name</xpath>
+        		<xpath>controlaccess/persname</xpath>
+        		<xpath>controlaccess/famname</xpath>
+        		<xpath>controlaccess/corpname</xpath>
+        		<xpath>controlaccess/geogname</xpath>				
+        		<xpath>name/@normal</xpath>
+        		<xpath>persname/@normal</xpath>
+        		<xpath>famname/@normal</xpath>
+        		<xpath>corpname/@normal</xpath>
+        		<xpath>geogname/@normal</xpath>
+				<process>
                     <object type="extractor" ref="SimpleExtractor" />
                     <object type="workflow" ref="Space-Diacritic-Case-Possessive-NormalizerWorkflow"/>
-		</process>
+				</process>
             </source>
             <options>
                 <setting type="recordStoreSizes">1</setting>
+                <setting type="vectors">1</setting>
             </options>
         </subConfig>
 
@@ -562,6 +564,7 @@
 		</source>
 		<options>
 			<setting type="recordStoreSizes">1</setting>
+            <setting type="vectors">1</setting>
 		</options>
 	</subConfig>
 
@@ -738,159 +741,159 @@
 	</subConfig>
 
 	<subConfig type="index" id="ead-idx-geognameword">
-            <objectType>index.SimpleIndex</objectType>
-            <paths>
-                <object type="indexStore" ref="indexStore" />
-            </paths>
-            <source mode="data">
-                <xpath>geogname</xpath>
-                <xpath>controlaccess/*/emph[@altrender='z']</xpath>
-                <process>
-                    <object type="workflow" ref="KeywordExtractorWorkflow" />
-                    <object type="workflow" ref="Diacritic-Case-NormalizerWorkflow"/>
-                </process>
-            </source>
-            <source mode="all|any|=">
-                <process>
-                    <object type="workflow" ref="PreserveMaskingKeywordExtractorWorkflow" />
-                    <object type="workflow" ref="Diacritic-Case-NormalizerWorkflow"/>
-                </process>
-            </source>
-            <source mode="exact">
-                <process>
-                    <object type="extractor" ref="SimpleExtractor"/>
-                    <object type="workflow" ref="Space-Diacritic-Case-NormalizerWorkflow"/>
-                </process>
-            </source>
-            <options>
-            	<setting type="recordStoreSizes">1</setting>
-            </options>
+        <objectType>index.SimpleIndex</objectType>
+        <paths>
+            <object type="indexStore" ref="indexStore" />
+        </paths>
+        <source mode="data">
+            <xpath>geogname</xpath>
+            <xpath>controlaccess/*/emph[@altrender='z']</xpath>
+            <process>
+                <object type="workflow" ref="KeywordExtractorWorkflow" />
+                <object type="workflow" ref="Diacritic-Case-NormalizerWorkflow"/>
+            </process>
+        </source>
+        <source mode="all|any|=">
+            <process>
+                <object type="workflow" ref="PreserveMaskingKeywordExtractorWorkflow" />
+                <object type="workflow" ref="Diacritic-Case-NormalizerWorkflow"/>
+            </process>
+        </source>
+        <source mode="exact">
+            <process>
+                <object type="extractor" ref="SimpleExtractor"/>
+                <object type="workflow" ref="Space-Diacritic-Case-NormalizerWorkflow"/>
+            </process>
+        </source>
+        <options>
+        	<setting type="recordStoreSizes">1</setting>
+        </options>
 	</subConfig>
 	
 	<!-- genreform -->
 	<subConfig type="index" id="ead-idx-genreform">
-            <objectType>index.SimpleIndex</objectType>
-            <paths>
-            	<object type="indexStore" ref="indexStore" />
-            </paths>
-            <source>
-            	<xpath>genreform</xpath>
-            	<process>
-                    <object type="extractor" ref="SimpleExtractor" />
-                    <object type="workflow" ref="Space-Diacritic-Case-NormalizerWorkflow"/>
-            	</process>
-            </source>
-            <options>
-            	<setting type="recordStoreSizes">1</setting>
-            </options>
+        <objectType>index.SimpleIndex</objectType>
+        <paths>
+        	<object type="indexStore" ref="indexStore" />
+        </paths>
+        <source>
+        	<xpath>genreform</xpath>
+        	<process>
+                <object type="extractor" ref="SimpleExtractor" />
+                <object type="workflow" ref="Space-Diacritic-Case-NormalizerWorkflow"/>
+        	</process>
+        </source>
+        <options>
+        	<setting type="recordStoreSizes">1</setting>
+        </options>
 	</subConfig>
 
 	<!-- genreform -->
 	<subConfig type="index" id="ead-idx-genreformword">
-            <objectType>index.SimpleIndex</objectType>
-            <paths>
-            	<object type="indexStore" ref="indexStore" />
-            </paths>
-            <source mode="data">
-            	<xpath>genreform</xpath>
-            	<process>
-                    <object type="workflow" ref="KeywordExtractorWorkflow" />
-                    <object type="workflow" ref="Diacritic-Case-NormalizerWorkflow"/>
-            	</process>
-            </source>
-            <source mode="all|any|=">
-            	<process>
-                    <object type="workflow" ref="PreserveMaskingKeywordExtractorWorkflow" />
-                    <object type="workflow" ref="Diacritic-Case-NormalizerWorkflow"/>
-            	</process>
-            </source>
-            <source mode="exact">
-            	<process>
-                    <object type="extractor" ref="SimpleExtractor"/>
-                    <object type="workflow" ref="Space-Diacritic-Case-NormalizerWorkflow"/>
-            	</process>
-            </source>
-            <options>
-                <setting type="recordStoreSizes">1</setting>
-            </options>
+        <objectType>index.SimpleIndex</objectType>
+        <paths>
+        	<object type="indexStore" ref="indexStore" />
+        </paths>
+        <source mode="data">
+        	<xpath>genreform</xpath>
+        	<process>
+                <object type="workflow" ref="KeywordExtractorWorkflow" />
+                <object type="workflow" ref="Diacritic-Case-NormalizerWorkflow"/>
+        	</process>
+        </source>
+        <source mode="all|any|=">
+        	<process>
+                <object type="workflow" ref="PreserveMaskingKeywordExtractorWorkflow" />
+                <object type="workflow" ref="Diacritic-Case-NormalizerWorkflow"/>
+        	</process>
+        </source>
+        <source mode="exact">
+        	<process>
+                <object type="extractor" ref="SimpleExtractor"/>
+                <object type="workflow" ref="Space-Diacritic-Case-NormalizerWorkflow"/>
+        	</process>
+        </source>
+        <options>
+            <setting type="recordStoreSizes">1</setting>
+        </options>
 	</subConfig>
 		
-        <!-- metadata indexes for OAI -->
-        <subConfig type="index" id="ead-idx-creationDate">
-            <objectType>index.SimpleIndex</objectType>
-            <paths>
-                <object type="indexStore" ref="indexStore" />
-            </paths>
-            <source>
-                <xpath ref="nowTimeXPath"/>
-                <process>
-                    <object type="extractor" ref="SimpleExtractor"/>
-                    <object type="tokenizer" ref="DateTokenizer" />
-                    <object type="tokenMerger" ref="SimpleTokenMerger"/>
-                </process>
-            </source>
-            <options>
-                <!-- don't index or unindex in db.[un]index_record() -->	
-                <setting type="noIndexDefault">1</setting>
-                <setting type="noUnindexDefault">1</setting>
-                <!-- We need vectors to unindex these, current value cannot be recreated in the future -->
-                <setting type="vectors">1</setting>
-            </options>
-        </subConfig>
+    <!-- metadata indexes for OAI -->
+    <subConfig type="index" id="ead-idx-creationDate">
+        <objectType>index.SimpleIndex</objectType>
+        <paths>
+            <object type="indexStore" ref="indexStore" />
+        </paths>
+        <source>
+            <xpath ref="nowTimeXPath"/>
+            <process>
+                <object type="extractor" ref="SimpleExtractor"/>
+                <object type="tokenizer" ref="DateTokenizer" />
+                <object type="tokenMerger" ref="SimpleTokenMerger"/>
+            </process>
+        </source>
+        <options>
+            <!-- don't index or unindex in db.[un]index_record() -->	
+            <setting type="noIndexDefault">1</setting>
+            <setting type="noUnindexDefault">1</setting>
+            <!-- We need vectors to unindex these, current value cannot be recreated in the future -->
+            <setting type="vectors">1</setting>
+        </options>
+    </subConfig>
 
-        <subConfig type="index" id="ead-idx-modificationDate">
-            <objectType>index.SimpleIndex</objectType>
-            <paths>
-                <object type="indexStore" ref="indexStore" />
-            </paths>
-            <source>
-                <xpath ref="nowTimeXPath"/>
-                <process>
-                    <object type="extractor" ref="SimpleExtractor"/>
-                    <object type="tokenizer" ref="DateTokenizer" />
-                    <object type="tokenMerger" ref="SimpleTokenMerger"/>
-                </process>
-            </source>
-            <options>
-                <!-- We need vectors to unindex these, current value cannot be recreated in the future -->
-                <setting type="vectors">1</setting>
-            </options>
-        </subConfig>
+    <subConfig type="index" id="ead-idx-modificationDate">
+        <objectType>index.SimpleIndex</objectType>
+        <paths>
+            <object type="indexStore" ref="indexStore" />
+        </paths>
+        <source>
+            <xpath ref="nowTimeXPath"/>
+            <process>
+                <object type="extractor" ref="SimpleExtractor"/>
+                <object type="tokenizer" ref="DateTokenizer" />
+                <object type="tokenMerger" ref="SimpleTokenMerger"/>
+            </process>
+        </source>
+        <options>
+            <!-- We need vectors to unindex these, current value cannot be recreated in the future -->
+            <setting type="vectors">1</setting>
+        </options>
+    </subConfig>
       
-      <!-- subject cluster extraction -->
-        <subConfig type="index" id="clusterExtractionIndex">
-	   <objectType>index.ClusterExtractionIndex</objectType>
-	      <paths>
-                <path type="tempPath">cluster/tempCluster.data</path>
-                <object type="indexStore" ref="indexStore"/>
-	      </paths>
-	      <cluster>
+    <!-- subject cluster extraction -->
+    <subConfig type="index" id="clusterExtractionIndex">
+        <objectType>index.ClusterExtractionIndex</objectType>
+        <paths>
+            <path type="tempPath">cluster/tempCluster.data</path>
+            <object type="indexStore" ref="indexStore"/>
+        </paths>
+        <cluster>
 	        <map type="key">
-	          <xpath>controlaccess/subject</xpath>
-	          <xpath>key</xpath>
-	          <process>
-	            <object type="extractor" ref="SimpleExtractor"/>
-	            <object type="normalizer" ref="CaseNormalizer"/>
-	          </process>
+                <xpath>controlaccess/subject</xpath>
+                <xpath>key</xpath>
+                <process>
+                <object type="extractor" ref="SimpleExtractor"/>
+                <object type="normalizer" ref="CaseNormalizer"/>
+                </process>
 	        </map>
 	        <map>
-	          <xpath>did/unittitle</xpath>
-	          <xpath>title</xpath>
-	          <process>
-	            <object type="extractor" ref="SimpleExtractor"/>
-	            <object type="normalizer" ref="CaseNormalizer"/>
-	          </process>
+                <xpath>did/unittitle</xpath>
+                <xpath>title</xpath>
+                <process>
+    	            <object type="extractor" ref="SimpleExtractor"/>
+    	            <object type="normalizer" ref="CaseNormalizer"/>
+                </process>
 	        </map>
 	        <map>
-	          <xpath>subject</xpath>
-	          <xpath>description</xpath>
-	          <process>
-	            <object type="extractor" ref="SimpleExtractor"/>
-	            <object type="normalizer" ref="CaseNormalizer"/>
-	          </process>
+                <xpath>subject</xpath>
+                <xpath>description</xpath>
+                <process>
+    	            <object type="extractor" ref="SimpleExtractor"/>
+    	            <object type="normalizer" ref="CaseNormalizer"/>
+                </process>
 	        </map>
-	      </cluster>
-	    </subConfig>
+        </cluster>
+    </subConfig>
 
 	</subConfigs>
 
