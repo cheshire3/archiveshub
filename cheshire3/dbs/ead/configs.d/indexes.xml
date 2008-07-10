@@ -299,6 +299,7 @@
             <options>
             	<setting type="sortStore">1</setting>
             	<setting type="recordStoreSizes">1</setting>
+                <setting type="vectors">1</setting>
             </options>
 	</subConfig>
 
@@ -354,6 +355,27 @@
 	        <setting type="recordStoreSizes">1</setting>
 	    </options>
 	</subConfig>
+    
+    <subConfig type="index" id="ead-idx-dateYear">
+        <objectType>index.SimpleIndex</objectType>
+        <paths>
+            <object type="indexStore" ref="indexStore" />
+        </paths>
+        <source mode="data">
+            <xpath>/*/*/did/unitdate</xpath>
+            <xpath>/*/*/did/unitdate/@normal</xpath>
+            <process>
+                <object type="extractor" ref="SimpleExtractor" />
+                <object type="tokenizer" ref="DateTokenizer" />
+                <object type="normalizer" ref="DateYearNormalizer"/>
+                <object type="tokenMerger" ref="SimpleTokenMerger" />
+            </process>
+        </source>
+        <options>
+            <setting type="recordStoreSizes">1</setting>
+            <setting type="vectors">1</setting>
+        </options>
+    </subConfig>
 
 	<subConfig type="index" id="ead-idx-dateRange">
 	    <objectType>index.RangeIndex</objectType>
@@ -785,6 +807,7 @@
         </source>
         <options>
         	<setting type="recordStoreSizes">1</setting>
+            <setting type="vectors">1</setting>
         </options>
 	</subConfig>
 
