@@ -4,8 +4,8 @@
 	xmlns:exsl="http://exslt.org/common" extension-element-prefixes="exsl"
 	version="1.0">
 
-	<xsl:output method="xml" omit-xml-declaration="yes" />
-	<xsl:preserve-space elements="*" />
+	<xsl:output method="xml" omit-xml-declaration="yes" indent="yes"/>
+	
 
 	<xsl:template match="/">
 		<ead>
