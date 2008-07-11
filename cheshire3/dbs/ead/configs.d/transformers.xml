@@ -63,6 +63,13 @@
 	      </paths>
 	    </subConfig>
 	    
+	    <subConfig type="transformer" id="indentingTxr">
+	    	<objectType>transformer.LxmlXsltTransformer</objectType>
+	      <paths>
+	         <path type="xsltPath">xsl/reindent.xsl</path>
+	      </paths>
+	    </subConfig>
+	    
 	    <subConfig type="transformer" id="editingTocTxr">
 	    	<objectType>transformer.LxmlXsltTransformer</objectType>
 	      <paths>
