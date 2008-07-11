@@ -1,14 +1,20 @@
 <div id="single">
+
+    <script type="text/javascript" src="/javascript/prototype.js"></script>
 	<script type="text/javascript" src="/javascript/cookies.js"></script>
 	<script type="text/javascript" src="/javascript/collapsibleLists.js"></script>
+	<script type="text/javascript" src="/javascript/form.js"></script>
         <script type="text/javascript">
                <!--
                function loadPage() {
                    createTreeFromList('sourceDirTree', getCookie('sourceDirTree'), true, false);
+                   createTreeFromList('storeDirTree', getCookie('storeDirTree'), false, false);
                }
                function unloadPage() {
                    setCookie('sourceDirTree', stateToString('sourceDirTree'))
+                   setCookie('storeDirTree', stateToString('storeDirTree'))
                }
+           
                -->
 	</script>
     <h3 class="bar"><a href="javascript:document.createform.submit();">Create New EAD Description</a></h3>
@@ -19,10 +25,10 @@
     
     <h3 class="bar">Edit Existing EAD Description</h3>
     <div style="float: left; padding-right:50px;">
-    <h4>A new file from the main database</h4>
-    <form action="/ead/edit/" method="post" enctype="multipart/form-data">
+    <h4>A file from the main database</h4>
+    <form id="sourceDirForm" name="sourceDirForm" action="/ead/edit/" method="post" enctype="multipart/form-data">
     <input type="hidden" name="operation" id="operation" value="edit"/>
-    <input type="submit" value=" Edit File "/>
+    <input type="button" onclick="checkConflicts();" value=" Edit File "/>
     <ul class="unmarked">
     	<li><img src="/images/folderOpen.jpg" alt=""/><code>%%%SOURCEDIR%%%</code>
 	    <ul id="sourceDirTree" class="unmarked">
@@ -35,13 +41,21 @@
     </div>
     <div style="float: left">
     <h4>A file already in the process of being edited or created</h4>
-    <form action="/ead/edit/" method="post" enctype="multipart/form-data">
+    <form name="storeDirForm" id="storeDirForm" action="/ead/edit/" method="post" enctype="multipart/form-data">
     <input type="hidden" name="operation" id="operation" value="load"/>
-    <input type="submit" value=" Load File "/>
+   <input type="submit" value=" Load File "/>
+   <input type="button" onclick="deleteFromStore()" value=" Delete "/>
+   
+   	%%%USROPTNS%%%
     <ul class="unmarked">
-    %%%RECORDS%%%
+    	<li><img src="/images/folderOpen.jpg" alt=""/><span>User Files</span>
+    	<ul id="storeDirTree" class="unmarked">
+    	%%%RECORDS%%%
+    	</ul>
+    	</li>
     </ul>
     <input type="submit" value=" Load File "/>
+    <input type="button" onclick="deleteFromStore()" value=" Delete "/>
     </form>
 
     </div>

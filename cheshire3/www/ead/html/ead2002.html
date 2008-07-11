@@ -63,24 +63,36 @@
 	<ul id="tagmenu" class="SimpleContextMenu">
 		<li><a onMouseOver="javascript: hideSubMenus()" href="javascript: toggleKeyboard()">keyboard on/off</a></li>
 		<li><a onMouseOver="javascript: hideSubMenus()" href="javascript: addTag('p')">&lt;p&gt;</a></li>
-		<li><a onMouseOver="javascript: hideSubMenus()" href="javascript: addTag('head')">&lt;head&gt;</a></li>
-        <li><a onMouseOver="javascript: hideSubMenus()" href="javascript: addTag('date')">&lt;date&gt;</a></li>
-        <li><a onMouseOver="javascript: hideSubMenus()" href="javascript: addTag('title')">&lt;title&gt;</a></li>
-        <li><a onMouseOver="javascript: showSubMenu('name', 5)">name -&gt;</a></li>        
+		<li><a onMouseOver="javascript: showSubMenu('title', 2)">title -&gt;</a></li>
+		<li><a onMouseOver="javascript: showSubMenu('emph', 3)">emph -&gt;</a></li>
+		<li><a onMouseOver="javascript: hideSubMenus()" href="javascript: addTag('list')">&lt;list&gt;</a></li>
+        <li><a onMouseOver="javascript: hideSubMenus()" href="javascript: addTag('item')">&lt;item&gt;</a></li>
+        <li><a onMouseOver="javascript: showSubMenu('extref', 6)">extref -&gt;</a></li>
+		<li><a onMouseOver="javascript: hideSubMenus()" href="javascript: addTag('comment')">&lt;!-- --&gt;</a></li>
     </ul>
     
-    <ul id="namemenu" class="SimpleContextMenu">
-		<li><a  href="javascript: addTag('persname')">&lt;persname&gt;</a></li>
-		<li><a href="javascript: addTag('famname')">&lt;famname&gt;</a></li>
-		<li><a href="javascript: addTag('corpname')">&lt;corpname&gt;</a></li>        
+    <ul id="titlemenu" class="SimpleContextMenu">
+		<li><a  href="javascript: addTag('title')">&lt;title&gt; (italic)</a></li>
+		<li><a href="javascript: addTag('title render=\'doublequote\'')">&lt;title&gt; (quotes)</a></li>   
+    </ul>
+    
+     <ul id="emphmenu" class="SimpleContextMenu">
+		<li><a  href="javascript: addTag('title render=\'italic\'')">&lt;emph&gt; (italic)</a></li>
+		<li><a href="javascript: addTag('title render=\'bold\'')">&lt;emph&gt; (bold)</a></li>   
+    </ul>
+    
+    <ul id="extrefmenu" class="SimpleContextMenu">
+		<li><a  href="javascript: addTag('extref href=\' \'')">&lt;extref&gt; (website)</a></li>
+		<li><a href="javascript: addTag('extref href=\'mailto: \'')">&lt;extref&gt; (email)</a></li>   
     </ul>
 
 <div class="toc" id="leftcol">
+<div class="float"><input type="button" class="menubutton" id="save-button" onclick="javascript: saveForm(false); alert('This form is now saved and can be reloaded from the admin menu for further editing at a later date.')" value="Save"></input></div>
+<div class="float"><input type="button" class="menubutton" id="delete-button" onclick="javascript: var cont = confirmOp('This operation will delete the current record from the editing store and any changes made since it was last submitted to the database will be lost. If the record is also in the database that record will remain unchanged and will not be deleted.\n\nAre you sure you want to delete this record?'); if (cont) {deleteRec($('pui').value);}" value="Discard"></input></div>
+<div class="float"><input type="button" class="menubutton" id="submit-button" onclick="javascript: submit();" value="Submit"></input></div><br />
 <div class="float"><input type="button" class="menubutton" id="display-button" onclick="javascript: viewXml();" value="View xml"></input></div>
 <div class="float"><input type="button" class="menubutton" id="preview-button" onclick="javascript: previewRec();" value="Preview"></input></div>
-<div class="float"><input type="button" class="menubutton" id="delete-button" onclick="javascript: var cont = confirmOp('This operation will delete the current record from the editing store and any changes made since it was last submitted to the database will be lost. If the record is also in the database that record will remain unchanged and will not be deleted.\n\nAre you sure you want to delete this record?'); if (cont) {deleteRec($('pui').value);}" value="Discard all changes"></input></div>
-<div class="float"><input type="button" class="menubutton" id="save-button" onclick="javascript: saveForm(false); alert('This form is now saved and can be reloaded from the admin menu for further editing at a later date.')" value="Save"></input></div>
-<div class="float"><input type="button" class="menubutton" id="submit-button" onclick="javascript: submit();" value="Submit"></input></div><br /><br />
+<br /><br />
 
 <div id="treeDiv">
 
