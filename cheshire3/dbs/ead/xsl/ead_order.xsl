@@ -1,17 +1,22 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0"?>
 
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:exsl="http://exslt.org/common" extension-element-prefixes="exsl"
 	version="1.0">
 
-	<xsl:output method="xml" omit-xml-declaration="yes" indent="yes"/>
+	<xsl:output method="xml" omit-xml-declaration="yes" indent="yes" encoding="iso-8859-1"/>
 	
 
 	<xsl:template match="/">
-		<ead>
+		<xsl:apply-templates/>
+	</xsl:template>
+	
+	<xsl:template match="ead">
+		<xsl:element name="ead">
+			<xsl:copy-of select="@*" />		
 			<xsl:copy-of select="/ead/eadheader" />
 			<xsl:apply-templates select="/ead/archdesc" />
-		</ead>
+		</xsl:element>
 	</xsl:template>
 
 	<xsl:template match="/ead/archdesc|dsc|c|c01|c02|c03|c04|c05|c06|c07|c08|c09|c10|c11|c12">

@@ -15,8 +15,8 @@
 
     <!-- templates for Table of Contents (toc) -->
     <xsl:template name="toc">
-  	<script type="text/javascript" src="/javascript/collapsibleLists.js"></script>
-  	<script type="text/javascript" src="/javascript/cookies.js"></script>
+  	<script type="text/javascript" src="/ead/js/collapsibleLists.js"></script>
+  	<script type="text/javascript" src="/ead/js/cookies.js"></script>
         <h2>
             <xsl:text>Contents&#160;</xsl:text>
             <span class="printlink">

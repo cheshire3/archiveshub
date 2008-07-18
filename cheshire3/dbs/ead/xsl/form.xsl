@@ -88,7 +88,10 @@
 	  Comprising of <a href="http://www.iso.org/iso/en/prods-services/iso3166ma/02iso-3166-code-lists/list-en1.html" target="_new" title="Further information on ISO Country Codes">ISO Country Code</a>, 
 	  NCA Repository Code,
 	  and a unique identifier for this record or component.
-	  [<strong>all fields required</strong>]<br/>
+	  <xsl:if test="$leveltype = 'collection'">
+	  [<strong>all fields required</strong>]
+	  </xsl:if>
+	  <br/>
 	  <xsl:choose>
 	  	<xsl:when test="did/unitid">
 	  	   <xsl:apply-templates select="did/unitid"/>
@@ -1718,6 +1721,10 @@
   		<xsl:text> [optional]</xsl:text>
   	</xsl:if>
 	<br/>  	
+  </xsl:template>
+  
+  <xsl:template match="comment()">
+  	<xsl:comment><xsl:value-of select="."/></xsl:comment>
   </xsl:template>
   
   <xsl:template match="*">
