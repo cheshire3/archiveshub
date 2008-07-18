@@ -46,18 +46,32 @@ function setRecid(){
 }
 
 
+/* basic user operations: submit, delete etc. */
+
 function deleteFromStore(){
+
 	var recid = null;
-	for (var i=0; i < document.getElementById('storeDirForm').recid.length; i++) {
-		if (document.getElementById('storeDirForm').recid[i].checked) {
-	      	recid = document.getElementById('storeDirForm').recid[i].value;
-	    }
+	if (!document.getElementById('storeDirForm').recid){
+		return;
 	}
+	if (document.getElementById('storeDirForm').recid.length){
+		for (var i=0; i < document.getElementById('storeDirForm').recid.length; i++) {
+			if (document.getElementById('storeDirForm').recid[i].checked) {
+		      	recid = document.getElementById('storeDirForm').recid[i].value;
+		    }
+		}
+	}
+	else {
+		if (document.getElementById('storeDirForm').recid.checked) {
+			recid = document.getElementById('storeDirForm').recid.value;
+		}
+	}
+	
 	if (recid == null) {
 		return;
 	}
 	else {
-		var ok = confirmOp('You are about to delete ' + recid + ' from the editing store. All changes made since it was last submitted to the database will be lost.\nAre you sure you want to continue?')
+		var ok = confirmOp('You are about to delete ' + recid.split('-')[0] + ' from the editing store. All changes made since it was last submitted to the database will be lost.\nAre you sure you want to continue?')
 		if (ok){
 			deleteRec(recid);
 		}
@@ -66,32 +80,6 @@ function deleteFromStore(){
 		}
 	}
 }
-
-
-function reassignToUser(){
-	var recid = null;
-	var ok = false;
-	var user = document.getElementById('storeDirForm').user.value;
-	for (var i=0; i < document.getElementById('storeDirForm').recid.length; i++) {
-		if (document.getElementById('storeDirForm').recid[i].checked) {
-	      	recid = document.getElementById('storeDirForm').recid[i].value;
-	    }
-	}
-	if (user != 'null' && recid != null){
-		var conflict = conflicts(recid.substring(0, recid.lastIndexOf('-')+1)+user);
-		if (conflict){
-			ok = confirmOp(user + ' already has this file in the editing process. Continuing with this operation will result in ' + user + '\'s current version being lost.\n Are you sure you want to continue to assign this file to ' + user + '?')
-		}
-		if (ok || !conflict){
-			var url = '/ead/edit/';
-			var data = 'operation=reassign&recid=' + recid + '&user=' + user;
-			var ajax = new Ajax.Request(url, {method:'post', asynchronous:false, postBody:data, evalScripts:true, onSuccess: function(transport) {  	
-				location.href="";		    
-			}});
-		}	
-	}
-}
-
 
 function deleteRec(id){
 	var url = '/ead/edit/';
@@ -102,7 +90,7 @@ function deleteRec(id){
 }
 
 
-function submit(){
+function submit(index){
 	if (!checkRequiredData()){
 		alert ('the following fields must be entered before proceeding:\n  - Reference Code \n  - Title')
 		return;
@@ -127,24 +115,11 @@ function submit(){
 	if (fileName != null){
 		url += '&filename=' + fileName;
 	}
+	if (index == false || index == 'false'){
+		url += '&index=false';
+	}
     location.href= url;
 }
-
-
-
-function addElement(s){
-	$(s).toggle();
-  	if ($(s).visible($(s))){
-  		$(('link' + s)).update('hide');		
-  	}
- 	else if ($(s).getValue($(s)) == '' || $(s).getValue($(s)) == ' '){
-		$(('link' + s)).update('add');	
-  	} 
-  	else { 
-		$(('link' + s)).update('show');
-  	}
-}
-
 
 
 function resetForm(){
@@ -224,9 +199,6 @@ function saveForm(asynch){
 	    var rid = response.substring(7,response.indexOf('</recid>'));		    	
 	}});	
 }
-
-
-
 
 
 function displayForm(id, level){
@@ -438,6 +410,60 @@ function previewRec(){
 	}
 	window.open(url, 'new');
 }
+
+
+/* */
+
+
+function reassignToUser(){
+	var recid = null;
+	var ok = false;
+	if (!document.getElementById('storeDirForm').recid){
+		return;
+	}
+	var user = document.getElementById('storeDirForm').user.value;
+	if (document.getElementById('storeDirForm').recid.length){
+		for (var i=0; i < document.getElementById('storeDirForm').recid.length; i++) {
+			if (document.getElementById('storeDirForm').recid[i].checked) {
+		      	recid = document.getElementById('storeDirForm').recid[i].value;
+		    }
+		}
+	}
+	else {
+		if (document.getElementById('storeDirForm').recid.checked) {
+			recid = document.getElementById('storeDirForm').recid.value;
+		}
+	}
+	if (user != 'null' && recid != null){
+		var conflict = conflicts(recid.substring(0, recid.lastIndexOf('-')+1)+user);
+		if (conflict){
+			ok = confirmOp(user + ' already has this file in the editing process. Continuing with this operation will result in ' + user + '\'s current version being lost.\n Are you sure you want to continue to assign this file to ' + user + '?')
+		}
+		if (ok || !conflict){
+			var url = '/ead/edit/';
+			var data = 'operation=reassign&recid=' + recid + '&user=' + user;
+			var ajax = new Ajax.Request(url, {method:'post', asynchronous:false, postBody:data, evalScripts:true, onSuccess: function(transport) {  	
+				location.href="";		    
+			}});
+		}	
+	}
+}
+
+
+
+function addElement(s){
+	$(s).toggle();
+  	if ($(s).visible($(s))){
+  		$(('link' + s)).update('hide');		
+  	}
+ 	else if ($(s).getValue($(s)) == '' || $(s).getValue($(s)) == ' '){
+		$(('link' + s)).update('add');	
+  	} 
+  	else { 
+		$(('link' + s)).update('show');
+  	}
+}
+
 
 
 //================================================================================================

@@ -20,7 +20,7 @@
 	<!-- favourite icon -->
 	<link rel="favourite icon" href="/images/c3.ico"></link>
 	
-	<script type="text/javascript" src="/javascript/ead.js"></script>
+	<script type="text/javascript" src="/ead/js/ead.js"></script>
 	
 	<script type="text/javascript">
 	<!-- to prevent javascript errors - will be overridden when necessary

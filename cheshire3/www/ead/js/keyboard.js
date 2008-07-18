@@ -69,25 +69,36 @@ function cursorInsert(field, insert) {
 		}
 		var selected = field.value.substring(startPos, endPos);
 		field.value = field.value.substring(0, startPos) + insert + field.value.substring(endPos, field.value.length);
+		//for FF at least we can get the curser to stay after the entered letter instead of at end of field
+		field.focus(); 
+		field.selectionEnd = endPos + 1;
+		field.selectionStart = endPos + 1;
 	}
-	else if (document.selection) {
-		//Windows IE 5+ - tested
-		field.focus();
-		selection = document.selection.createRange();
-		selection.text = insert;
+	else {
+		 if (document.selection) {
+			//Windows IE 5+ - tested
+			field.focus();
+			selection = document.selection.createRange();
+			selection.text = insert;
+		}
+		else if (window.getSelection) {
+			// Mozilla 1.7, Safari 1.3 - untested
+			selection = window.getSelection();
+			selection.text = insert;
+		}
+		else if (document.getSelection) {
+			// Mac IE 5.2, Opera 8, Netscape 4, iCab 2.9.8 - untested
+			selection = document.getSelection();
+			selection.text = insert;
+		} 
+		else {
+			field.value += insert;
+		}
+		field.focus(); //this puts cursor at end
 	}
-	else if (window.getSelection) {
-		// Mozilla 1.7, Safari 1.3 - untested
-		selection = window.getSelection();
-		selection.text = insert;
-	}
-	else if (document.getSelection) {
-		// Mac IE 5.2, Opera 8, Netscape 4, iCab 2.9.8 - untested
-		selection = document.getSelection();
-		selection.text = insert;
-	} 
-	else field.value += insert;
-	field.focus();
+	
+
+	
 
 }
 		

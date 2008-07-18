@@ -276,8 +276,11 @@ class EadEditingHandler(EadHandler):
 
 
     def _add_text(self, parent, textValue):
-        if not (textValue.find('&') == -1):
-            textValue = textValue.replace('&', '&#38;')
+        if not (textValue.find('&amp;') == -1):
+            textValue = textValue.replace('&amp;', '&#38;')
+        else : 
+            if not (textValue.find('&') == -1):
+                textValue = textValue.replace('&', '&#38;')
         textValue = textValue.lstrip()      
         if isinstance(parent, etree._Element):
             for c in parent.getchildren() :
@@ -336,18 +339,18 @@ class EadEditingHandler(EadHandler):
         recid = form.get('recid', None)
         owner = form.get('owner', session.user.username)
         new = form.get('newForm', None)
-        page = self.populate_form('%s-%s'% (recid, owner), new, form)  
+        page = self.populate_form(recid, owner, new, form)  
         return page    
     
-    def populate_form(self, recid, new, form):  
+    def populate_form(self, recid, owner, new, form):  
         #if its collection level give the transformer the whole record
         if (new == 'collectionLevel'):  
-            retrievedDom = editStore.fetch_record(session, recid).get_dom(session)
+            retrievedDom = editStore.fetch_record(session, '%s-%s' % (recid, owner)).get_dom(session)
             rec = LxmlRecord(retrievedDom)
            
         #if its a component find the component by id and just give that component to the transformer          
         else :
-            retrievedXml = editStore.fetch_record(session, recid).get_xml(session)
+            retrievedXml = editStore.fetch_record(session, '%s-%s' % (recid, owner)).get_xml(session)
             root = None
             tree = etree.XMLID(retrievedXml)
             node = tree[1].get(new)                
@@ -363,36 +366,41 @@ class EadEditingHandler(EadHandler):
                 rec = LxmlRecord(root) 
         
         page = formTxr.process_record(session, rec).get_raw(session)
-        page = page.replace('%PUI%', '<input type="text" onfocus="setCurrent(this);" name="pui" id="pui" size="30" disabled="true" value="%s"/>' % recid[:recid.rfind('-')])
+        page = page.replace('%PUI%', '<input type="text" onfocus="setCurrent(this);" name="pui" id="pui" size="30" disabled="true" value="%s"/>' % recid)
         return page.replace('%RECID%', '')
 
 
-# loading in related functions   
+# loading in related functions =============================================================================
     
     def _add_componentIds (self, rec):
         tree = etree.fromstring(rec.get_xml(session))
         compre = re.compile('^c[0-9]*$')
-        for element in tree.getiterator():
-            try :
-                if compre.match(element.tag):
+        for element in tree.iter(tag=etree.Element):
+            if compre.match(element.tag): 
+                try :                 
                     if not element.get('id'):
                         #add the appropriate id!
                         posCount = 1
                         parentId = ''
-                        for el in element.itersiblings(preceding=True):
+                        for el in element.itersiblings(tag=etree.Element, preceding=True):
                             if compre.match(el.tag):
                                 posCount += 1
                         #get the parent component id and use it 
                         for el in element.iterancestors():
+                            self.logger.log('element is: %s' % el.tag)
                             if compre.match(el.tag):
-                                parentId = el.get('id')                                
+                                self.logger.log('attributes are: %s' % ' '.join(el.attrib))
+                                parentId = el.get('id')    
+                                self.logger.log('parent id: %s' % parentId)                            
                                 break
                         idString = '%d-%s' % (posCount, parentId)
                         if idString[-1] == '-':
                             idString = idString[:-1]
-                        element.set('id', idString)                               
-            except :
-                continue
+                        element.set('id', idString)   
+                        self.logger.log('final id String: %s ' % idString)   
+                        self.logger.log('attribute value : %s ' % element.get('id'))                      
+                except :
+                    raise
         return LxmlRecord(tree)
                     
                      
@@ -402,7 +410,7 @@ class EadEditingHandler(EadHandler):
         rec = xmlp.process_document(session, doc)
         htmlform = formTxr.process_record(session, rec).get_raw(session)
         page = structure.replace('%FRM%', htmlform) 
-        page = page.replace('%RECID%', '<input type="text" id="recid" value="notSet"/>')
+        page = page.replace('%RECID%', '<input type="hidden" id="recid" value="notSet"/>')
         page = page.replace('%PUI%', '<input type="text" onfocus="setCurrent(this);" name="pui" id="pui" size="30" readonly="true" class="readonly"/>')
         page = page.replace('%TOC%', '<b><a id="collectionLevel" name="link" class="selected" onclick="javascript: displayForm(this.id)" href="#" style="display: inline">Collection Level</a></b>')  
         return page
@@ -425,72 +433,58 @@ class EadEditingHandler(EadHandler):
                 new.append(date)
                 item = etree.Element('item')
                 item.text = 'Loaded from %s and edited by %s using the cheshire for archives ead creation tool' % (filename, userName)
+                new.set('audience', 'internal')
                 new.append(item)
                 parent.append(new)
             elif tree.xpath('/ead/eadheader/revisiondesc/list'):
                 parent = tree.xpath('/ead/eadheader/revisiondesc/list')[0]
                 item = etree.Element('item')
+                item.set('audience', 'internal')
                 item.text = 'Loaded from %s and edited by %s using the cheshire for archives ead creation tool on %s'  % (filename, userName, datetime.date.today())
                 parent.append(item)
         else :
             header = tree.xpath('/ead/eadheader')[0]
+            target = self._create_path(header, '/ead/eadheader/revisiondesc/change')
+            target.set('audience', 'internal')
             target = self._create_path(header, '/ead/eadheader/revisiondesc/change/date')
             self._add_text(target, '%s' % datetime.date.today())
-            target = self._create_path(header, '/ead/eadheader/revisiondesc/change/item')
+            target = self._create_path(header, '/ead/eadheader/revisiondesc/change/item')          
             self._add_text(target, 'Loaded from %s and edited by %s using the cheshire for archives ead creation tool' % (filename, userName))   
         return LxmlRecord(tree)
 
 
-    def _get_filename(self, rec):
-        tree = rec.get_dom(session)
-        if tree.xpath('/ead/eadheader/revisiondesc'):
-           
-            if tree.xpath('/ead/eadheader/revisiondesc/change'):
-                children = tree.xpath('/ead/eadheader/revisiondesc/change/item')
-            elif tree.xpath('/ead/eadheader/revisiondesc/list'):
-                children = tree.xpath('/ead/eadheader/revisiondesc/list/item')
-            fnre = re.compile('Loaded from ([\S]+) and edited')
-            m = re.match(fnre, children[-1].text)
-            filename = m.group(1)
-            return filename
-        else :
-            return None
             
     #loads from editStore
     def load_file(self, form):
         recid = form.get('recid', None)
-        if recid == 'null' :
-            return read_file('upload.html')
-        else :    
-            try :
-                rec = editStore.fetch_record(session, recid)
-            except:
-                #to do - fix this
-                pass
+        if not recid :
+            return self.show_editMenu();
+        try :
+            rec = editStore.fetch_record(session, recid)
+        except:
+            #to do - fix this
+            pass
+        else :
+            structure = read_file('ead2002.html') 
+            htmlform = formTxr.process_record(session, rec).get_raw(session)
+            page = structure.replace('%FRM%', htmlform) 
+            splitId = recid.split('-')
+            page = page.replace('%RECID%', '<input type="hidden" id="recid" value="%s"/>' % splitId[0])
+            if splitId[1] == session.user.username:
+                page = page.replace('%PUI%', '<input type="text" onfocus="setCurrent(this);" name="pui" id="pui" size="30" disabled="true" value="%s"/>' % splitId[0])
             else :
-                #recid = recid[:recid.rfind('-')]
-                structure = read_file('ead2002.html') 
-                htmlform = formTxr.process_record(session, rec).get_raw(session)
-                page = structure.replace('%FRM%', htmlform) 
-                splitId = recid.split('-')
-                page = page.replace('%RECID%', '<input type="text" id="recid" value="%s"/>' % splitId[0])
-                if splitId[1] == session.user.username:
-                    page = page.replace('%PUI%', '<input type="text" onfocus="setCurrent(this);" name="pui" id="pui" size="30" disabled="true" value="%s"/>' % splitId[0])
-                else :
-                    page = page.replace('%PUI%', '<input type="text" onfocus="setCurrent(this);" name="pui" id="pui" size="30" disabled="true" value="%s"/><input type="hidden" id="owner" value="%s"/>' % (splitId[0], splitId[1]))
-                page = page.replace('%TOC%', tocTxr.process_record(session, rec).get_raw(session))
-                return page
+                page = page.replace('%PUI%', '<input type="text" onfocus="setCurrent(this);" name="pui" id="pui" size="30" disabled="true" value="%s"/><input type="hidden" id="owner" value="%s"/>' % (splitId[0], splitId[1]))
+            page = page.replace('%TOC%', tocTxr.process_record(session, rec).get_raw(session))
+            return page
         
     #loads from recordStore
     def edit_file(self, form):
         f = form.get('filepath', None)
         if not f or not len(f.value):
-            #TODO: create appropriate html file - this is for admin
-            return read_file('upload.html')
+            return self.show_editMenu();
         ws = re.compile('[\s]+')
         xml = ws.sub(' ', read_file(f))
-        rec = self._add_componentIds(self._parse_upload(xml))
-                
+        rec = self._add_componentIds(self._parse_upload(xml))       
         # TODO: handle file not successfully parsed
         if not isinstance(rec, LxmlRecord):
             return rec
@@ -507,11 +501,10 @@ class EadEditingHandler(EadHandler):
         editStore.store_record(session, rec2)
         editStore.commit_storing(session) 
         
-        
         structure = read_file('ead2002.html')
         htmlform = formTxr.process_record(session, rec2).get_raw(session)
         page = structure.replace('%FRM%', htmlform)
-        page = page.replace('%RECID%', '<input type="text" id="recid" value="%s"/>' % (recid.encode('ascii')))
+        page = page.replace('%RECID%', '<input type="hidden" id="recid" value="%s"/>' % (recid.encode('ascii')))
         page = page.replace('%PUI%', '<input type="text" onfocus="setCurrent(this);" name="pui" id="pui" size="30" disabled="true" value="%s"/><input type="hidden" id="filename" value="%s"/>' % (recid.encode('ascii'), f))
         page = page.replace('%TOC%', tocTxr.process_record(session, rec2).get_raw(session))
         return page    
@@ -634,6 +627,7 @@ class EadEditingHandler(EadHandler):
             #pull existing xml and make into a tree
             retrievedRec = editStore.fetch_record(session, '%s-%s' % (recid, fileOwner))
             retrievedXml = retrievedRec.get_xml(session)
+            self.logger.log('existing collection level - retrieved =  %s' % retrievedXml)
             tree = etree.fromstring(retrievedXml)
             
             node = tree.xpath('/ead/archdesc')[0]         
@@ -827,7 +821,11 @@ class EadEditingHandler(EadHandler):
         req.send_http_header()
         head = self._get_genericHtml('header.html')
         req.write(head + '<div id="wrapper">')
-        
+        i = form.get('index', 'true')
+        if i == 'false' :
+            index = False
+        else :
+            index = True
         recid = form.get('recid', None)
         fileOwner = form.get('owner', session.user.username)
         editRecid = '%s-%s' % (recid.value, fileOwner)
@@ -835,10 +833,13 @@ class EadEditingHandler(EadHandler):
         rec = editStore.fetch_record(session, editRecid)
         
         filename = form.get('filename', self._get_filename(rec))
+        if filename == None:
+            filename = '%s.xml' % recid
+        
         xml = rec.get_xml(session)    
         valid = self.validate_record(xml)     
         exists = True 
-        if valid :
+        if valid and index:
             #delete and unindex the old version from the record store
             try : 
                 oldRec = recordStore.fetch_record(session, recid)
@@ -910,6 +911,7 @@ class EadEditingHandler(EadHandler):
                 db.commit_metadata(session)   
                 req.write('[OK]')
             # write to file
+        if valid:
             req.write('writing to file system... ')
             filepath = os.path.join(sourceDir, filename)
             if os.path.exists(filepath):
@@ -929,6 +931,21 @@ class EadEditingHandler(EadHandler):
             foot = self._get_genericHtml('footer.html')          
             req.write('</div>' + foot)
         return None 
+      
+      
+    def _get_filename(self, rec):
+        tree = rec.get_dom(session)
+        if tree.xpath('/ead/eadheader/revisiondesc'):          
+            if tree.xpath('/ead/eadheader/revisiondesc/change'):
+                children = tree.xpath('/ead/eadheader/revisiondesc/change/item')
+            elif tree.xpath('/ead/eadheader/revisiondesc/list'):
+                children = tree.xpath('/ead/eadheader/revisiondesc/list/item')
+            fnre = re.compile('Loaded from ([\S]+) and edited')
+            m = re.match(fnre, children[-1].text)
+            filename = m.group(1)
+            return filename
+        else :
+            return None
       
     
     def add_form(self, form):
@@ -1012,9 +1029,13 @@ class EadEditingHandler(EadHandler):
                 userFiles = ['<li title=%s><span>%s</span>' % (name, name), '<ul class="hierarchy">'] 
                 for s in store:
                     if s.id[s.id.rfind('-')+1:] == name:
+                        try :
+                            displayId = s.id[:s.id.rindex('-')]
+                        except:
+                            displayId = s.id
                         userFiles.extend(['<li>'
                                            ,'<span class="fileops"><input type="%s" name="recid" value="%s" %s/></span>' % (type, s.id, disabled)
-                                           ,'<span class="filename">%s</span>' % s.id
+                                           ,'<span class="filename">%s</span>' % displayId
                                            ,'</li>'
                                            ])
                         total += 1;
@@ -1027,9 +1048,13 @@ class EadEditingHandler(EadHandler):
                     disabled = 'disabled="disabled"'
                 for s in store:
                     if s.id[s.id.rfind('-')+1:] not in names:
+                        try :
+                            displayId = s.id[:s.id.rindex('-')]
+                        except:
+                            displayId = s.id
                         out.extend(['<li title=deletedUsers><span>Deleted Users</span>', '<ul class="hierarchy">', '<li>'
                                                    ,'<span class="fileops"><input type="%s" name="recid" value="%s" %s/></span>' % (type, s.id, disabled)
-                                                   ,'<span class="filename">%s</span>' % s.id
+                                                   ,'<span class="filename">%s</span>' % displayId
                                                    ,'</li>'])
             return out
                 
