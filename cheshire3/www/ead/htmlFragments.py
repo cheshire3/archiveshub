@@ -16,6 +16,7 @@
 #                        - Folder tags added
 # 0.04 - 30/10/2007 - CS - Config code for superuser and user added/modified
 # 0.05 - 11/01/2008 - CS - javascript call to collapseLists function changed to createTreeFromList()
+# 0.06 - 23/07/2008 - JH - Javascript show / hide made to degrade more gracefully when JS absent
 #
 # NB:
 # - If you are not experieced in editing HTML you are advised not to edit any of the HTML fragments
@@ -40,8 +41,8 @@ folder_open_tag = '<img src="/images/folderOpen.jpg" alt="[-]"/>'
 # Result rows
 browse_result_row = '''
     <tr class="%ROWCLASS%">
-      <td>
-        <a href="SCRIPT?operation=search&amp;fieldidx1=%IDX%&amp;fieldrel1=%REL%&amp;fieldcont1=%CGITERM%" title="Find matching records">%TERM%</a>
+      <td class="term">
+        <a href="SCRIPT?operation=search&amp;fieldidx1=%IDX%&amp;fieldrel1=%REL%&amp;fieldcont1=%CGITERM%#leftcol" title="Find matching records">%TERM%</a>
       </td>
       <td class="hitcount">%COUNT%</td>
     </tr>'''
@@ -49,7 +50,7 @@ browse_result_row = '''
 subject_resolve_row = '''
     <tr class="%ROWCLASS%">
       <td>
-        <a href="SCRIPT?operation=search&amp;fieldidx1=dc.subject&amp;fieldrel1=exact&amp;fieldcont1=%CGISUBJ%" title="Find records with matching subjects">%TITLE%</a>
+        <a href="SCRIPT?operation=search&amp;fieldidx1=dc.subject&amp;fieldrel1=exact&amp;fieldcont1=%CGISUBJ%#leftcol" title="Find records with matching subjects">%TITLE%</a>
       </td>
       <td class="relv">%RELV%</td>
       <td class="hitcount">%COUNT%</td>
@@ -61,18 +62,18 @@ search_result_row = '''
         <table width="100%">
           <tr>
             <td colspan="4">
-              <a href="SCRIPT?operation=summary&amp;%RSID%&amp;hitposition=%HITPOSITION%" title="Display record summary" %SPLASH%><strong>%TITLE%</strong></a>
+              <a href="SCRIPT?operation=summary&amp;%RSID%&amp;hitposition=%HITPOSITION%#rightcol" title="Display record summary" %SPLASH%><strong>%TITLE%</strong></a>
             </td>
           </tr>
           <tr>
             <td width="100">
-              <a href="SCRIPT?operation=full&amp;%RSID%&amp;hitposition=%HITPOSITION%" title="Display Full-text" %SPLASH%>%FULL%</a>
+              <a href="SCRIPT?operation=full&amp;%RSID%&amp;hitposition=%HITPOSITION%#rightcol" title="Display Full-text" %SPLASH%>%FULL%</a>
             </td>
             <td width="100">
-              <a href="SCRIPT?operation=email&amp;%RSID%&amp;hitposition=%HITPOSITION%" title="Send record by e-mail">%EMAIL%</a>
+              <a href="SCRIPT?operation=email&amp;%RSID%&amp;hitposition=%HITPOSITION%#rightcol" title="Send record by e-mail">%EMAIL%</a>
             </td>
             <td width="100">
-              <a href="SCRIPT?operation=similar&amp;%RSID%&amp;hitposition=%HITPOSITION%" title="Find similar records" %SPLASH%">%SIMILAR%</a>
+              <a href="SCRIPT?operation=similar&amp;%RSID%&amp;hitposition=%HITPOSITION%#leftcol" title="Find similar records" %SPLASH%>%SIMILAR%</a>
             </td>
             <td class="relv">%RELV%</td>
           </tr>
@@ -84,25 +85,25 @@ search_result_row = '''
 search_component_row = '''
     <tr>
       <td class="comphit">
-        <a href="javascript:;" onclick="toggleShow(this, \'comphier%HITPOSITION%\', \'folders');">''' + folder_closed_tag + '''</a><em>%PARENT%</em>
-        <div class="comphier" id="comphier%HITPOSITION%">
+        <a href="#comphier%HITPOSITION%" class="jstoggle-folders">''' + folder_open_tag + '''</a><em>%PARENT%</em>
+        <div class="jshide" id="comphier%HITPOSITION%">
           %HIERARCHY%
         </div>
         <table width="100%">
           <tr>
             <td colspan="4">
-              <a href="SCRIPT?operation=summary&amp;%RSID%&amp;hitposition=%HITPOSITION%" title="Display record summary" %SPLASH%><strong>%TITLE%</strong></a>
+              <a href="SCRIPT?operation=summary&amp;%RSID%&amp;hitposition=%HITPOSITION%#rightcol" title="Display record summary" %SPLASH%><strong>%TITLE%</strong></a>
             </td>
           </tr>
           <tr>
             <td width="100">
-            <a href="SCRIPT?operation=full&amp;%RSID%&amp;hitposition=%HITPOSITION%" title="Display Full-text" %SPLASH%>%FULL%</a>
+            <a href="SCRIPT?operation=full&amp;%RSID%&amp;hitposition=%HITPOSITION%#rightcol" title="Display Full-text" %SPLASH%>%FULL%</a>
             </td>
             <td width="100">
-            <a href="SCRIPT?operation=email&amp;%RSID%&amp;hitposition=%HITPOSITION%" title="Send record by e-mail">%EMAIL%</a>
+            <a href="SCRIPT?operation=email&amp;%RSID%&amp;hitposition=%HITPOSITION%#rightcol" title="Send record by e-mail">%EMAIL%</a>
             </td>
             <td width="100">
-            <a href="SCRIPT?operation=similar&amp;%RSID%&amp;hitposition=%HITPOSITION%" title="Find similar records" %SPLASH%>%SIMILAR%</a>
+            <a href="SCRIPT?operation=similar&amp;%RSID%&amp;hitposition=%HITPOSITION%#leftcol" title="Find similar records" %SPLASH%>%SIMILAR%</a>
             </td>
             <td class="relv">%RELV%</td>
           </tr>
@@ -110,18 +111,22 @@ search_component_row = '''
       </td>
     </tr>'''
     
-
 toc_scripts = '''
 <script type="text/javascript" src="/javascript/collapsibleLists.js"></script>
 <script type="text/javascript" src="/javascript/cookies.js"></script>
 <script type="text/javascript">
   <!--
-  function loadPage() {
-    closeSplash();
-    createTreeFromList('someId', getCookie('RECID-tocstate'), true, false);
+  var olf = function() { createTreeFromList('someId', getCookie('RECID-tocstate'), true, false);} ; 
+  if (addLoadEvent) {
+      addLoadEvent(olf);
+  } else {
+      window.onload = olf; 
   }
-  function unloadPage() {
-    setCookie('RECID-tocstate', stateToString('someId'));
+  var ulf = function() { setCookie('RECID-tocstate', stateToString('someId')); } ;
+  if (addUnloadEvent) {
+      addUnloadEvent(ulf);
+  } else {
+      window.onunload = ulf;
   }
   -->
 </script>

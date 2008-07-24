@@ -40,7 +40,7 @@ osp = sys.path
 sys.path = [os.path.join(cheshirePath, 'cheshire3', 'code')]
 sys.path.extend(osp)
 # import Cheshire3/PyZ3950 stuff
-from baseObjects import Session, Record
+from baseObjects import Session, Record, ResultSet
 from server import SimpleServer
 from PyZ3950 import CQLParser, SRWDiagnostics
 from document import StringDocument
@@ -83,6 +83,8 @@ class EadHandler:
     htmlTitle = []
     htmlNav = []
     templatePath = None
+    req = None
+    cookies = None
     globalReplacements = {}
     txrHash = {}
     
@@ -90,6 +92,7 @@ class EadHandler:
         global rebuild
         if (rebuild):
             build_architecture()
+            
         self.logger = lgr
         self.htmlTitle = []
         self.htmlNav = []
@@ -111,9 +114,17 @@ class EadHandler:
           data = data.encode('utf-8')
         req.write(data)
         req.flush()
-        
         #- end send_html() ---------------------------------------------------------
     
+    def send_xml(self, data, req, code=200):
+        req.content_type = 'text/xml'
+        req.content_length = len(data)
+        req.send_http_header()
+        if (type(data) == unicode):
+            data = data.encode('utf-8')
+        req.write(data)
+        req.flush()
+        #- end send_xml() ---------------------------------------------------------
     
     
     def _stripOffendingChar(self, exception):
@@ -258,14 +269,19 @@ class EadHandler:
                 
             pages = []
             while pseudopages:
-                pagebits = ['<div id="padder"><div id="rightcol" class="ead">', '%PAGENAV%']
+                pagebits = ['<div id="leftcol" class="toc"><!--#config errmsg="[ Table of Contents unavailable ]" --><!--#include virtual="/ead/tocs/RECID.inc"--></div>'
+                           ,'<div id="padder"><div id="rightcol" class="ead">'
+                           , '%PAGENAV%']
                 while (sum(map(len, pagebits)) < max_page_size_bytes):
                     pagebits.append(pseudopages.pop(0))
                     if not pseudopages:
                         break
                 
                 # append: pagenav, end rightcol div, padder div, left div (containing toc)
-                pagebits.extend(['%PAGENAV%','<br/>','</div><!-- end rightcol -->','</div><!-- end padder -->','<div id="leftcol" class="toc"><!--#config errmsg="[ Table of Contents unavailable ]" --><!--#include virtual="/ead/tocs/RECID.inc"--></div>'])
+                pagebits.extend(['%PAGENAV%','<br/>'
+                                ,'</div><!-- end rightcol -->'
+                                ,'</div><!-- end padder -->'
+                                ])
                 pages.append('\n'.join(pagebits))
 
             start = 0
