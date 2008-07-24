@@ -27,3 +27,21 @@ function checkEmailAddy(){
 		return false;
 	}
 }
+
+function addFormValidation(){
+	if( !document.getElementsByTagName) {
+  		return;
+  	}	
+  	var forms = document.getElementsByTagName("form");
+  	for (var i = 0; i < forms.length; i++) {
+		if (forms[i].className.match('email')){
+			forms[i].onsubmit = function() { return checkEmailAddy(); }
+		}
+	}
+}
+
+if (addLoadEvent) {
+	addLoadEvent(addFormValidation);
+} else {
+	window.onload = addFormValidation;
+}

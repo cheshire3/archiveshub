@@ -7,6 +7,7 @@ body {
   color: black;
   background-color: white;
   font-family: Helvetica, Arial, sans-serif;
+  font-size: 10.5pt;
 }
 
 img { 
@@ -39,7 +40,7 @@ div.daos {
 }
 
 div.daohead {
-	font-size: 10pt;
+	font-size: 11pt;
 	font-weight: bold;	
 }
 
@@ -67,7 +68,7 @@ table.rebuildtable td {
 }
 
 tr.headrow {
-	font-size: larger;
+	font-size: 11pt;
 	font-weight: bolder;
 /* like navbar */
 /*  color: #ffffff;*/
@@ -91,13 +92,24 @@ tr.even {
 
 td.hit,
 td.comphit {
-	border: 1px solid black;
+	border-width: 1px 0 1px 0;
+	border-style: dotted;
+	border-color: black;
 }
 
 td.relv,
 td.hitcount {
 	padding-left: 10px;
 	text-align: right;
+}
+
+table.facets tr.headrow{
+}
+table.facets tr.subheadrow {
+	font-weight: bolder;
+}
+table.facets tr.even {
+	background-color: white;
 }
 
 table.nassischneiderman {
@@ -114,8 +126,8 @@ table.nassischneiderman td {
 
 /* HEADINGS */
 
-h1 { font-size: 16pt; margin-top: 0.5em; margin-bottom: 0.5em;}
-h2 { font-size: 16pt; margin-top: 0.25em; margin-bottom: 0.25em;}
+h1 { font-size: 14pt; margin-top: 2px; margin-bottom: 2px;}
+h2 { font-size: 14pt; margin-top: 2px; margin-bottom: 2px;}
 h2.unittitle { text-align: center; margin-bottom: 1em;}
 h3 { color: #000000; font-size: 14pt; margin-top: 0.1em; margin-bottom: 0.5em;}
 h3.bar, h3.ead, h3.redheading, h3.greenheading{ background-color: #c4d6f8; padding: 2px; border: solid black 1px; margin: 1em 0 0.5em 0;}
@@ -133,6 +145,21 @@ ul.unmarked {
 
 ul.hierarchy { 
   border-left: 1px dotted #aaaaaa;
+}
+
+
+/* Facets */
+div.facet {
+	font-size: 10pt;
+}
+span.facethead {
+	font-weight: bold;	
+}
+span.facet-hitcount {
+	color: #666;	
+}
+ul.facetlist {
+	list-style: square inside;
 }
 
 
@@ -162,6 +189,7 @@ a.jscall {
   color: white;
   background-color: #0b2277; /*dark blue*/
   font-size: 11pt;
+  /*font-variant: small-caps;*/
 }
 .navbar a:link,
 .navbar a:visited

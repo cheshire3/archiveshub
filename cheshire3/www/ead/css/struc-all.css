@@ -5,62 +5,69 @@
 
 body {
   margin: 0;
-  padding: 8em 1em 6em 0;
+  padding: 75px 10px 60px 0;
   /* Prevent body becoming narrower than wrapper - keeps the content from disappearing off the left edge with Gecko browsers */ 
   min-width: 770px;
   height: 100%;
 }
-
 div#banner,
 div#leftcol,
 div#rightcol,
-div#single,
-div#footer
+div#wrapper
 {
+	padding: 0px;
 	position: absolute;
 	text-align: left;
 	left: 0;
 	overflow: auto;
 }
 
-div#banner {
+div#banner,
+div#navbar {
 	position: fixed;
 	overflow: visible;
-	top: 0;
-	z-index: 2;
 	width: 100%;
-	background: none;
-	/*height: 7.5em;
-	min-height: 120px;*/
+}
+
+div#banner {
+	top: 0;
+	height: 75px;
+	z-index: 2;
+	overflow: auto;
+}
+div#navbar {
+	top: 75px;
+	height: 25px;
+	padding: 0px 15px 0px 15px;
+	z-index: 3;
+	overflow: display;
+	clear: both;
+	vertical-align: middle;
 }
 
 div#banner div { padding: 5px 15px 5px 15px; }
 div#crest{ float: left; }
+img.rep-logo { max-height: 65px; }
 div#c3logo{ float: right; }
-div#banner div#navbar {
-	padding-top: 0;
-	padding-bottom:0;
-	clear: both;
-}
 
 div#wrapper {
-	text-align: left;
-	top: 8em;
-	padding: 0 5px 0 5px;
+	top: 100px;
+	bottom: 50px;	
 }
 
-div#single,
 div#leftcol,
-div#rightcol
-{
-	top: 8em;
-	bottom: 50px;
-	padding: 5px 5px 5px 5px;
-	min-height: 1em;
+div#rightcol {
+	top: 0;
+	bottom: 0px;
+	padding: 5px;
+	min-height: 10px;
+	overflow-y: scroll !important;
 }
-div#single {
+
+
+div#wrapper {
 	width: 99%;
-	padding: 15px 0 0 15px;
+	padding: 5px 0 0 15px;
 }
 div#leftcol {
 	width: 39%;
@@ -115,13 +122,13 @@ div#copyright
 h4.ead {clear:both;}
 
 #hitreport { 
-  margin-top: 1em;
-  margin-bottom: 1em;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .hitnav {
-  margin-top: 1em;
-  margin-bottom: 1em;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .pagenav {
@@ -147,7 +154,7 @@ h4.ead {clear:both;}
 ul { 
   margin: 0 0 0 0;
   padding-top: 0;
-  padding-bottom: 0.5em;
+  padding-bottom: 2px;
 }
 
 ul.hierarchy,
@@ -167,16 +174,24 @@ ul.hierarchy li {
 	white-space: nowrap;
 }
 
-div.did,
-div.eadheader {
-	margin-bottom: 0.5em;
+ul.facetlist {
+	padding-left: 0px;;	
 }
 
+div.facet {
+	padding-bottom: 10px;
+}
+
+div.did,
+div.eadheader {
+	margin-bottom: 2px;
+}
+/*
 div#eadheader,
 div#traceback {
 	display: none;
 }
-
+*/
 hr {
 	clear: both;
 	margin-bottom: 0;
@@ -187,7 +202,7 @@ div#full-link {
 }
 
 div.archdesc {
-	padding-top: 0.2em;
+	padding-top: 10px;
 	clear:both;
 }
 
@@ -205,6 +220,17 @@ div.embed-img {
 	
 }
 
+/*
 div.comphier {
 	display:none;
+}
+*/
+
+table.results {
+	width:96%;
+	max-width: 600px;
+}
+
+td.term {
+	min-width: 150px;
 }
