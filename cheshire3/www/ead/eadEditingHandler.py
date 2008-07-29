@@ -161,7 +161,6 @@ class EadEditingHandler(EadHandler):
         for field in list :
             if field.name not in ['ctype','location','operation','newForm','nocache','recid', 'parent', 'pui', 'eadid', 'filedesc/titlestmt/sponsor']:        
                 #do did level stuff
-                self.logger.log(field.name)
                 if (collection):
                     node = tree.xpath('/ead/archdesc')[0]
                 else :
@@ -387,18 +386,13 @@ class EadEditingHandler(EadHandler):
                                 posCount += 1
                         #get the parent component id and use it 
                         for el in element.iterancestors():
-                            self.logger.log('element is: %s' % el.tag)
                             if compre.match(el.tag):
-                                self.logger.log('attributes are: %s' % ' '.join(el.attrib))
-                                parentId = el.get('id')    
-                                self.logger.log('parent id: %s' % parentId)                            
+                                parentId = el.get('id')                             
                                 break
                         idString = '%d-%s' % (posCount, parentId)
                         if idString[-1] == '-':
                             idString = idString[:-1]
-                        element.set('id', idString)   
-                        self.logger.log('final id String: %s ' % idString)   
-                        self.logger.log('attribute value : %s ' % element.get('id'))                      
+                        element.set('id', idString)                       
                 except :
                     raise
         return LxmlRecord(tree)
@@ -568,7 +562,6 @@ class EadEditingHandler(EadHandler):
                 if r.id == id :
                     exists = 'true'
                     break;
-            self.logger.log(exists)
             return '<value>%s</value>' % exists
     
     
@@ -581,6 +574,7 @@ class EadEditingHandler(EadHandler):
         
         
     def validateField(self, form):
+        self.logger.log('validating field via AJAX')
         text = form.get('text', None)
         if not text.find('<') == -1:
             try :
@@ -627,7 +621,7 @@ class EadEditingHandler(EadHandler):
             #pull existing xml and make into a tree
             retrievedRec = editStore.fetch_record(session, '%s-%s' % (recid, fileOwner))
             retrievedXml = retrievedRec.get_xml(session)
-            self.logger.log('existing collection level - retrieved =  %s' % retrievedXml)
+            self.logger.log('existing collection level')
             tree = etree.fromstring(retrievedXml)
             
             node = tree.xpath('/ead/archdesc')[0]         
@@ -650,8 +644,7 @@ class EadEditingHandler(EadHandler):
             
             #cycle through the form and replace any node that need it
             for field in list :                
-                if field.name not in ['ctype','location','operation','newForm','nocache','recid', 'parent', 'pui', 'filedesc/titlestmt/sponsor']:        
-                    self.logger.log(field.name)                
+                if field.name not in ['ctype','location','operation','newForm','nocache','recid', 'parent', 'pui', 'filedesc/titlestmt/sponsor']:               
                     #do archdesc stuff
                     if field.name.find('controlaccess') == 0 :                        
                         self._create_controlaccess(node, field.name, field.value)      
@@ -676,7 +669,6 @@ class EadEditingHandler(EadHandler):
         #check if C exists, if not add it, if so replace it
         else :
             self.logger.log('component')
-            self.logger.log('loc is %s' % loc)
             #pull record from store            
             retrievedRec = editStore.fetch_record(session, '%s-%s' % (recid, fileOwner))
             retrievedxml= retrievedRec.get_xml(session)
