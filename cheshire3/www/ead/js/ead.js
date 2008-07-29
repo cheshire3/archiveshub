@@ -134,7 +134,7 @@ function hideStuff(){
 			el.innerHTML = linkHash[toggleStyle][0]
 			el.onclick = function() {
 				var hrefParts = this.getAttribute("href").split("#")
-				var div = hrefParts[1]
+				var div = hrefParts.pop()
 				var classBits = this.className.split('-')
 				var style = classBits[classBits.length-1]
 				toggleShow(this, div, style);

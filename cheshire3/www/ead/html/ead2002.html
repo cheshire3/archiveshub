@@ -20,7 +20,7 @@
 	<script type="text/javascript" src="/ead/js/collapsibleLists.js"></script>
 	<script type="text/javascript" src="/ead/js/cookies.js"></script>
 	<script type="text/javascript">
-    	function loadPage() {
+        addLoadEvent( function loadPage() {
     		setTimeout(this, 1000);
 			SimpleContextMenu.setup({'preventDefault':true, 'preventForms':true});
 	        SimpleContextMenu.attach('menuField', 'tagmenu');
@@ -29,12 +29,11 @@
 	    	createTreeFromList('someId', getCookie('preview/catherine-tocstate'), false, false);
 	        var dragable1 = DragHandler.attach(document.getElementById('keyboard')); 	 
 			setRecid();
-		}	
-    	function unloadPage() {
+		} );
+        addUnloadEvent( function unloadPage() {
     		setCookie('preview/catherine-tocstate', stateToString('someId'));
-    	}    
+    	} );
     </script>
-
 
 	<!-- screen CSS -->	
     <link rel="stylesheet" type="text/css" media="screen" href="/ead/css/struc-all.css"></link>
@@ -104,8 +103,9 @@
 	Your form is being validated please wait
 </div>
 <div id="rightcol" class="ead">
-
-	<div id="formDiv" name="form" class="formDiv">%FRM%</div>
+	<div id="formDiv" name="form" class="formDiv">
+    %FRM%
+    </div>
 </div>
 </div>
 
