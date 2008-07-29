@@ -812,7 +812,7 @@ class EadEditingHandler(EadHandler):
         req.content_type = 'text/html'
         req.send_http_header()
         head = self._get_genericHtml('header.html')
-        req.write(head + '<div id="wrapper">')
+        req.write(head)
         i = form.get('index', 'true')
         if i == 'false' :
             index = False
@@ -1109,7 +1109,6 @@ class EadEditingHandler(EadHandler):
                 self.send_fullHtml(content, req) 
         else :              
             content = self.show_editMenu()
-            content = '<div id="wrapper">%s</div>' % (content)
             page = multiReplace(tmpl, {'%REP_NAME%': repository_name,
                      '%REP_LINK%': repository_link,
                      '%REP_LOGO%': repository_logo,
