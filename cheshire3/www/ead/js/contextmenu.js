@@ -171,7 +171,7 @@ var SimpleContextMenu = {
         e = e ? e : window.event;
         var position = {
             'x' : e.clientX,
-            'y' : e.clientY
+            'y' : e.clientY - 100
         }
 
         return position;

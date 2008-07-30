@@ -111,13 +111,11 @@ buttoncontainer p {
 }
 
 .formDiv {
-    position: relative;
-	height: 100%;
-    overflow-x: hidden;
-	overflow-y: auto;
 	font-size: small;
 /* should use scroll for windows */
 }
+
+
 
 
 #keyboard {
