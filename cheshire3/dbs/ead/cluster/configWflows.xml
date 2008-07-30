@@ -17,8 +17,8 @@
                     <object type="workflow" ref="buildClusterSingleWorkflow"/>
                 </for-each>
                 <object type="recordStore" function="commit_storing"/>
-                <object type="database" function="commit_metadata"/>
                 <object type="database" function="commit_indexing"/>
+                <object type="database" function="commit_metadata"/>
             </workflow>
         </subConfig>
 

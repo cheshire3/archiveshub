@@ -27,6 +27,24 @@
 		<set name="BIB2" identifier="1.2.840.10003.3.18"/>
 		<set name="ZRX1" identifier="1.2.840.10003.3.19"/>
      
+    <index c3:index="ead-cluster-idx-id">
+        <title>Cluster ID Index</title>
+        <map><attr type="1">docid</attr></map>
+        <map><attr type="1">1032</attr></map>
+        <map><attr type="1">1007</attr></map>
+        <configInfo>
+            <default>
+                <map>
+                    <attr type="2">3</attr>
+                    <attr type="3">1</attr>
+                    <attr type="4">3</attr>
+                    <attr type="5">100</attr>
+                    <attr type="6">3</attr>
+                </map>
+            </default>
+        </configInfo>
+    </index>
+     
 		<index c3:index="ead-cluster-idx-all">
       <title>Full-text Proximity Keywords</title>
       <map><name>any</name></map>

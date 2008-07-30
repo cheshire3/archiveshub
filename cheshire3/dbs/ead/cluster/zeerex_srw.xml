@@ -22,6 +22,25 @@
   <indexInfo>
     <set identifier="info:srw/cql-context-set/1/dc-v1.1" name="dc"/>
     <set identifier="info:srw/cql-context-set/1/cql-v1.1" name="cql"/>
+    <set identifier="info:srw/cql-context-set/2/rec-1.1" name="rec"/>
+
+    <index c3:index="ead-cluster-idx-id">
+        <title>Cluster ID Index</title>
+        <map>
+			<name set="rec">identifier</name>
+		</map>
+		<configInfo>
+			<supports type="relation">=</supports>
+			<supports type="relation">&lt;</supports>
+			<supports type="relation">&lt;=</supports>
+			<supports type="relation">&gt;</supports>
+			<supports type="relation">&gt;=</supports>
+			<supports type="relation">any</supports>
+			<supports type="relation">all</supports>
+			<supports type="relation">exact</supports>
+			<supports type="relation">within</supports>
+		</configInfo>
+    </index>
 
     <index c3:index="ead-cluster-idx-all">
       <title>Full-text Proximity Keywords</title>

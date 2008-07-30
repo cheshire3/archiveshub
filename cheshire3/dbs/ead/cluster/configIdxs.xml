@@ -1,5 +1,12 @@
 <config>
   <subConfigs>
+  
+    <subConfig type="index" id="ead-cluster-idx-id">
+        <objectType>index.RecordIdentifierIndex</objectType>
+        <paths>
+            <object type="recordStore" ref="eadClusterStore" />
+        </paths>
+    </subConfig>
 
     <subConfig type="index" id="ead-cluster-idx-all">
       <objectType>index.SimpleIndex</objectType>
