@@ -41,7 +41,7 @@
   </xsl:variable>
     
   <xsl:template match="/">
-  <div id="formDiv" name="form" class="formDiv" onscroll="hideAllMenus()">
+  <div id="formDiv" name="form" class="formDiv">
     <form id="eadForm" name="eadForm"  action="#" >
     <div class="float"> <input type="button" class="formbutton" id="addC" onclick="javascript: addComponent()" value="Add Component"></input></div>
     <div class="float"> <input type="button" class="formbutton" id="reset" onclick="javascript: resetForm()" value="Reset"></input> </div>
