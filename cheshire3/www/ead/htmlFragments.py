@@ -112,11 +112,11 @@ search_component_row = '''
     </tr>'''
     
 toc_scripts = '''
-<script type="text/javascript" src="/javascript/collapsibleLists.js"></script>
-<script type="text/javascript" src="/javascript/cookies.js"></script>
+<script type="text/javascript" src="/ead/js/collapsibleLists.js"></script>
+<script type="text/javascript" src="/ead/js/cookies.js"></script>
 <script type="text/javascript">
   <!--
-  var olf = function() { createTreeFromList('someId', getCookie('RECID-tocstate'), true, false);} ; 
+  var olf = function() { createTreeFromList('someId', getCookie('RECID-tocstate'), true, true);} ; 
   if (addLoadEvent) {
       addLoadEvent(olf);
   } else {

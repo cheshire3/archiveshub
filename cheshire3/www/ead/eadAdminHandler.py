@@ -676,14 +676,14 @@ class EadAdminHandler(EadHandler):
 #                line, posn = lines[int(mo.group(1))-1], int(mo.group(2))
 #                startspace = newlineRe.match(line).group(0)
 #                return '''\
-#        <div id="wrapper"><p class="error">An error occured while parsing your file. 
+#        <p class="error">An error occured while parsing your file. 
 #        Please check the file at the suggested location and try again.</p>
 #        <code>%s: %s</code>
 #        <pre>
 #        %s
 #        <span class="error">%s</span>
 #        </pre>
-#        <p><a href="files.html">Back to file page</a></p></div>
+#        <p><a href="files.html">Back to file page</a></p>
 #                ''' % (e[0], e[1], html_encode(line[:posn+20]) + '...',  startspace + str('-'*(posn-len(startspace))) +'^')
 #        
 #        del data, doc
@@ -795,7 +795,7 @@ class EadAdminHandler(EadHandler):
         req.content_type = 'text/html'
         req.send_http_header()
         head = self._get_genericHtml('header.html')
-        req.write(head + '<div id="wrapper">')
+        req.write(head)
         fn = f.filename.split('\\')[-1]
         fnparts = fn.split('.')
         newname = '%s-%s-%s.%s' % ('.'.join(fnparts[:-1]), session.user.username, self._get_timeStamp(), fnparts[-1])
@@ -843,7 +843,7 @@ class EadAdminHandler(EadHandler):
         # finish HTML
         req.write('\n<p><a href="/ead/admin/files.html">Back to \'File Management\' page.</a></p>')
         foot = self._get_genericHtml('footer.html')          
-        req.write('</div>' + foot)        
+        req.write(foot)        
         rebuild = True                    # flag for rebuild architecture
         return None 
     #- end upload_file()
@@ -862,7 +862,7 @@ class EadAdminHandler(EadHandler):
         req.content_type = 'text/html'
         req.send_http_header()
         head = self._get_genericHtml('header.html')
-        req.write(head + '<div id="wrapper">')     
+        req.write(head)     
         if (len(filepaths) == 0):
             return '%s<br />\n<br/><a href="files.html" title="File Management" class="navlink">Back to \'File Management\' Page</a>' % self.review_records(operation)     
         deletedTotal = 0
@@ -967,7 +967,7 @@ class EadAdminHandler(EadHandler):
         req.write('\n<p><a href="/ead/admin/files.html">Back to \'File Management\' page.</a></p>')
                 
         foot = self._get_genericHtml('footer.html')          
-        req.write('</div>' + foot)
+        req.write(foot)
         return None
     #- end delete_file()
             
@@ -1139,7 +1139,7 @@ class EadAdminHandler(EadHandler):
         req.content_type = 'text/html'
         req.send_http_header()
         head = self._get_genericHtml('header.html')
-        req.write(head + '<div id="wrapper">')
+        req.write(head)
         req.write('Deleting existing data stores and indexes...')
         # delete main stores, metadata, and indexes
         self._clear_dir(os.path.join(dbPath, 'stores'))
@@ -1249,7 +1249,7 @@ class EadAdminHandler(EadHandler):
 
         # finish HTML, log
         foot = self._get_genericHtml('footer.html')          
-        req.write('</div>' + foot)
+        req.write(foot)
         rebuild = True
         
         #- end rebuild_database() --------------------------------------------------
@@ -1263,7 +1263,7 @@ class EadAdminHandler(EadHandler):
         req.content_type = 'text/html'
         req.send_http_header()
         head = self._get_genericHtml('header.html')
-        req.write(head + '<div id="wrapper">')
+        req.write(head)
         req.write('Deleting existing indexes...')
         # delete existing indexes
         if not db.indexes:
@@ -1372,7 +1372,7 @@ class EadAdminHandler(EadHandler):
         req.write('<br/>\n<a href="database.html" title="Database Management" class="navlink">Back to \'Database Management\' Page</a>')
         # finish HTML, log
         foot = self._get_genericHtml('footer.html')          
-        req.write('</div>' + foot)
+        req.write(foot)
         self.logger.log('Database reindexed by: %s' % (session.user.username))
         rebuild = True
         
@@ -1404,7 +1404,7 @@ class EadAdminHandler(EadHandler):
         req.content_type = 'text/html'
         req.send_http_header()
         head = self._get_genericHtml('header.html')
-        req.write(head + '<div id="wrapper"><div id="single">')
+        req.write(head + '<div id="single">')
         req.write('Deleting existing HTML...')
         # delete exisiting HTML
         self._clear_dir(cache_path)
@@ -1420,7 +1420,7 @@ class EadAdminHandler(EadHandler):
             req.write('<span class="error">An error occured. HTML may not have been built.<br/>%s</span>' % (t.error))
         req.write('<br /><a href="database.html" title="Database Management" class="navlink">Back to \'Database Management\' Page</a>')
         foot = self._get_genericHtml('footer.html')          
-        req.write('</div><!--end single--></div><!--end wrapper-->' + foot)
+        req.write('</div><!--end single-->' + foot)
     
         #- end rebuild_html()
         
@@ -1679,13 +1679,12 @@ class EadAdminHandler(EadHandler):
             self.logger.log('*** %s: %s' % (excName, excArgs))
             excTb = traceback.format_tb(trbk, 100)
             content = '''\
-            <div id="wrapper"><p class="error">An error occured while processing your request.<br/>
+            <p class="error">An error occured while processing your request.<br/>
             The message returned was as follows:</p>
             <code>%s: %s</code>
             <p><strong>Please try again, or contact the system administrator if this problem persists.</strong></p>
             <p>Debugging Traceback: <a class="jscall" onclick="toggleShow(this, 'traceback');">[ show ]</a></p>
             <div id="traceback">%s</div>
-            </div>
             ''' % (excName, excArgs, '<br/>\n'.join(excTb))
             
         if not content:
@@ -1693,7 +1692,6 @@ class EadAdminHandler(EadHandler):
             content = read_file('adminmenu.html')
             self.logger.log('Administration options')
             
-        content = '<div id="wrapper">%s</div>' % (content)
         page = multiReplace(tmpl, {'%REP_NAME%': repository_name,
                      '%REP_LINK%': repository_link,
                      '%REP_LOGO%': repository_logo,

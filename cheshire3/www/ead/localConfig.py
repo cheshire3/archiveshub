@@ -107,6 +107,7 @@ stopwords = '''
 a
 and
 by
+etc
 for
 in
 is

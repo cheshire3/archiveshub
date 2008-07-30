@@ -105,7 +105,8 @@
 # 0.39 - 03/06/2008 - JH - Highlight debugging
 # 0.40 - 12/06/2008 - JH - Search Facet stuff :)
 # 0.41 - 24/07/2008 - JH - Email function split to make more modular (for future progressive enhancements e.g. Ajax)
-#                        - Inline JavaScript removed where possible for more graceful degradation when JS disabled 
+#                        - Inline JavaScript removed where possible for more graceful degradation when JS disabled
+#                        - 'ajax' parameter in form will cause handler to return the smallest portion of HTML that fulfils the request (i.e. the only bit that needs to be updated on screen)
 #
 #
 
@@ -156,12 +157,17 @@ class EadSearchHandler(EadHandler):
         global stopwords
         words = txt.split()
         for x,w in enumerate(words):
-            if w[0].isdigit():
+            try:
+                if w[0].isdigit():
+                    continue
+                elif (not w[0].isalpha()) and w[1].isdigit():
+                    continue
+                elif (w[-2:] == "'s"):
+                    words[x] = w[:-2].title() + "'s"
+                elif (x == 0) or (w not in stopwords):
+                    words[x] = w.title()
+            except IndexError:
                 continue
-            elif (w[-2:] == "'s"):
-                words[x] = w[:-2].title() + "'s"
-            elif (x == 0) or (w not in stopwords):
-                words[x] = w.title()
             
         return ' '.join(words)
         #- end _cleverTitleCase() --------------------------------------------------
@@ -377,21 +383,21 @@ class EadSearchHandler(EadHandler):
         if (hits > numreq):
             if (firstrec > 1):
                 hitlinks = ['<div class="backlinks">'
-                           ,'<a href="%s?operation=search&amp;%s&amp;page=1&amp;numreq=%d&amp;highlight=%d">First</a>' % (script, rsidCgiString, numreq, highlight) 
-                           ,'<a href="%s?operation=search&amp;%s&amp;firstrec=%d&amp;numreq=%d&amp;highlight=%d">Previous</a>' % (script, rsidCgiString, max(firstrec-numreq, 1), numreq, highlight)
+                           ,'<a href="%s?operation=search&amp;%s&amp;page=1&amp;numreq=%d&amp;highlight=%d#leftcol" class="ajax">First</a>' % (script, rsidCgiString, numreq, highlight) 
+                           ,'<a href="%s?operation=search&amp;%s&amp;firstrec=%d&amp;numreq=%d&amp;highlight=%d#leftcol" class="ajax">Previous</a>' % (script, rsidCgiString, max(firstrec-numreq, 1), numreq, highlight)
                            ,'</div>']
             else:
                 hitlinks = []
 
             if (hits > firstrec+numreq-1):
                 hitlinks.extend(['<div class="forwardlinks">'
-                                ,'<a href="%s?operation=search&amp;%s&amp;firstrec=%d&amp;numreq=%d&amp;highlight=%d">Next</a>' % (script, rsidCgiString, firstrec+numreq, numreq, highlight)
-                                ,'<a href="%s?operation=search&amp;%s&amp;page=%d&amp;numreq=%d&amp;highlight=%d">Last</a>' % (script, rsidCgiString, (hits/numreq)+1, numreq, highlight)
+                                ,'<a href="%s?operation=search&amp;%s&amp;firstrec=%d&amp;numreq=%d&amp;highlight=%d#leftcol" class="ajax">Next</a>' % (script, rsidCgiString, firstrec+numreq, numreq, highlight)
+                                ,'<a href="%s?operation=search&amp;%s&amp;page=%d&amp;numreq=%d&amp;highlight=%d#leftcol" class="ajax">Last</a>' % (script, rsidCgiString, (hits/numreq)+1, numreq, highlight)
                                 ,'</div>'])
 
             numlinks = ['<div class="numnav">']
             # new hub style
-            numlinks.extend(['<form action="%s">' % (script)
+            numlinks.extend(['<form action="%s" class="ajax-leftcol">' % (script)
                        ,'<input type="hidden" name="operation" value="search"/>'
                        ,'<input type="hidden" name="rsid" value="%s"/>' % (cgi_encode(rsid))
                        ,'Page: <input type="text" name="page" size="3" value="%d"/> of %d' % ((firstrec / numreq)+1, (hits/numreq)+1)
@@ -416,33 +422,50 @@ class EadSearchHandler(EadHandler):
         #- end hit navigation
             
         rows.append('</table>')
-        
         return '\n'.join(rows)
         #- end format_resultSet() ---------------------------------------------------------
         
-        
-    def facetDisplay(self, qString, idxType, nTerms=0):
-        query = CQLParser.parse(qString)
-        rs = db.search(session, query)
-        try: idx = exactIndexHash[idxType]
-        except KeyError: return ''
-        facets = idx.facets(session, rs, nTerms)
-        rows = []
-        if facets:
-            rows.append('<div class="facet" id="%s-facet"><span class="facethead">%s</span>' % (idxType, idxType.title()))
-            rows.append('<ul class="facetlist">')
-            for x,fac in enumerate(facets):
-                term = fac[0]
-                href = u'%s?operation=search&amp;query=%s' % (script, cgi_encode(qString + ' and c3.%s exact "%s"' % (idx.id, term)))
-                #facetRows.append('<tr class="%s"><td width="10"/><td><a href="%s" title="Narrow results">%s</a></td><td class="hitcount">(%d)</td></tr>' % ('even' if (x % 2) else 'odd', href, term, fac[1][1]))
-                rows.append('<li><a href="%s" title="Refine results">%s</a> <span class="facet-hitcount">(%d)</span></li>' % (href, term, fac[1][1]))
-
-            rows.append('</ul></div>')
-        
-        return ''.join(rows)
-        #- end get_facetDisplay() ---------------------------------------------------------
+    def format_facet(self, rs, type, truncate=True):
+        facetRows = ['<span class="facethead">%s</span>' % (type.title())]
+        try: idx = exactIndexHash[type]
+        except KeyError:
+            pass
+        else:
+            facets = idx.facets(session, rs)
+            if facets:
+                facetRows.append('<ul class="facetlist">')
+                if len(rs) > self.storeResultSetSizeLimit:
+                    cql = rs.query.toCQL()
+                else:
+                    cql = rs.query.toCQL()
+                    #cql = 'cql.resultSetId = "%s/%s"' % (resultSetStore.id, rs.id)
+                    
+                for x,fac in enumerate(facets):
+                    term = fac[0]
+                    href = u'%s?operation=search&amp;query=%s' % (script, cgi_encode(cql + ' and c3.%s exact "%s"' % (idx.id, term)))
+                    if (x == 3 and len(facets) > 5 and truncate):
+                        href = u'%s?operation=search&amp;query=%s' % (script, cgi_encode(cql))
+                        facetRows.append('''<li><a href="%s#%s-facet" title="View all %ss" class="ajax">%d more...</a></li>''' % (href+'&amp;fullFacet='+type, type, type, len(facets)-3))
+                        break
+                    else:
+                        facetRows.append('<li><a href="%s" title="Refine results">%s</a> <span class="facet-hitcount">(%d)</span></li>' % (href, term, fac[1][1]))
     
-
+                facetRows.append('</ul>')
+            
+        return '\n'.join(facetRows)
+        #- end format_facet ---------------------------------------------------
+        
+    def format_allFacets(self, rs, fullFacet=None):
+        global exactIndexHash
+        facetRows = ['<h3>Refine your results by:</h3>']
+        for type in ['subject', 'creator', 'date', 'genre']:
+            facetRows.append('<div class="facet" id="%s-facet">' % (type))
+            facetRows.append(self.format_facet(rs, type, type != fullFacet))
+            facetRows.append('</div>')
+            
+        return '\n'.join(facetRows)
+        #- end format_allFacets --------------------------------------------------
+        
     def search(self, form, maxResultSetSize=None):
         numreq = int(form.get('numreq', 20))
         firstrec = int(form.get('firstrec', 0))
@@ -472,13 +495,13 @@ class EadSearchHandler(EadHandler):
             elif (form.has_key('noComponents')):
                 qString = 'ead.istoplevel=1 and/relevant ' + qString
             
+            self.logger.log('Searching CQL query: %s' % (qString))
             try:
                 query = CQLParser.parse(qString)
             except:
                 self.logger.log('*** Unparsable query: %s' % qString)
                 raise
 
-            self.logger.log('Searching CQL query: %s' % (qString))
             try:
                 rs = db.search(session, query)
             except SRWDiagnostics.Diagnostic24:
@@ -512,43 +535,12 @@ class EadSearchHandler(EadHandler):
                 self.htmlTitle.append('No Matches')
                 return '<div id="searchresult">No records matched your search.</div>'
             
-            # Find some search facets
-#        facetRows = ['<table class="facets">'
-#                    ,'<tr class="headrow"><td colspan="3">Refine your results by:</td></tr>'
-#                    ,]
-        facetRows = ['<h3>Refine your results by:</h3>']
-        for type in ['subject', 'creator', 'date', 'genre']:
-            try: idx = exactIndexHash[type]
-            except KeyError:
-                continue
-            facets = idx.facets(session, rs)
-            if facets:
-                #facetRows.append('<tr class="subheadrow"><td colspan="2">%s</td></tr>' % type)
-                facetRows.append('<div class="facet" id="%s-facet"><span class="facethead">%s</span>' % (type, type.title()))
-                facetRows.append('<ul class="facetlist">')
-                if len(rs) > self.storeResultSetSizeLimit:
-                    cql = rs.query.toCQL()
-                else:
-                    cql = rs.query.toCQL()
-                    #cql = 'cql.resultSetId = "%s/%s"' % (resultSetStore.id, rs.id)
-                    
-                for x,fac in enumerate(facets):
-                    if (x == 3 and len(facets) > 5):
-                        href = u'%s?operation=facet&amp;query=%s&amp;index=%s&amp;xmlOnly=1' % (script, cgi_encode(cql), type)
-                        facetRows.append('''<li><a href="" onclick="updateElementByUrl('%s-facet', '%s');">%d more...</a></li>''' % (type, href, len(facets)-3))
-                        break
-                    term = fac[0]
-                    href = u'%s?operation=search&amp;query=%s' % (script, cgi_encode(cql + ' and c3.%s exact "%s"' % (idx.id, term)))
-                    #facetRows.append('<tr class="%s"><td width="10"/><td><a href="%s" title="Narrow results">%s</a></td><td class="hitcount">(%d)</td></tr>' % ('even' if (x % 2) else 'odd', href, term, fac[1][1]))
-                    facetRows.append('<li><a href="%s" title="Refine results">%s</a> <span class="facet-hitcount">(%d)</span></li>' % (href, term, fac[1][1]))
-
-                facetRows.append('</ul></div>')
-                    
-        #facetRows.append('</table>')
-        facetString = '<div id="padder"><div id="rightcol">%s</div></div>' % ('\n'.join(facetRows))
-            
         self.set_cookieVal('resultSetId', rsid)
-        return '<div id="leftcol">%s</div>' % (self.format_resultSet(rs, firstrec, numreq, highlight)) + facetString
+        if form.has_key('ajax'):
+            # should be from an ajax request for subsequent results page - just return formatted results
+            return self.format_resultSet(rs, firstrec, numreq, highlight)
+        else:
+            return '<div id="leftcol">%s</div><div id="padder"><div id="rightcol">%s</div></div>' % (self.format_resultSet(rs, firstrec, numreq, highlight), self.format_allFacets(rs, form.get('fullFacet', None)))
                                                                                   
         #- end search() ------------------------------------------------------------
     
@@ -684,7 +676,7 @@ class EadSearchHandler(EadHandler):
                 
             if (hitend):
                 rowCount += 1
-                rows.append('<tr class="%s"><td colspan="2">-- end of index --</td></tr>' % ('odd' if (rowCount % 2) else 'even'))
+                rows.append('<tr class="%s"><td colspan="2">-- end of index --</td></tr>' % (['even','odd'][rowCount % 2]))
                 nextlink = ''
             else:
                 nextlink = '''<a href="%s?operation=browse&amp;fieldidx1=%s&amp;fieldrel1=%s&amp;fieldcont1=%s&amp;responsePosition=%d&amp;numreq=%d#browseresult"><!-- img -->Next %d terms</a>''' % (script, idx, rel, cgi_encode(scanData[-1][0]), 0, numreq, numreq)
@@ -1344,11 +1336,11 @@ In: %s
                 if (operation == 'search'):
                     self.htmlTitle.append('Search')
                     content = self.search(form)
-                elif (operation == 'facet'):
-                    qString = form.get('query',  None)
-                    idxType = form.get('index',  None)
-                    nTerms =  form.get('numreq',  0)
-                    content = self.facetDisplay(qString, idxType, nTerms)
+#                elif (operation == 'facet'):
+#                    qString = form.get('query',  None)
+#                    idxType = form.get('index',  None)
+#                    nTerms =  form.get('numreq',  0)
+#                    content = self.facetDisplay(qString, idxType, nTerms)
                 elif (operation == 'browse'):
                     content = self.browse(form)
                 elif (operation == 'summary') or (operation == 'full'):
