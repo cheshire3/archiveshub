@@ -589,19 +589,25 @@ class EadAdminHandler(EadHandler):
             header = 'Please select file(s) to %s' % version
         if (version=='full'):
             out.extend([read_file('upload.html'), '<br/>'])    
-        out.extend(['<script type="text/javascript" src="/javascript/cookies.js"></script>',
-               '<script type="text/javascript" src="/javascript/collapsibleLists.js"></script>',
-               '''<script type="text/javascript">
-               <!--
-               function loadPage() {
-                   createTreeFromList('sourceDirTree', getCookie('sourceDirTree'), true, false);
-               }
-               function unloadPage() {
-                   setCookie('sourceDirTree', stateToString('sourceDirTree'))
-               }
-               -->
-               </script>
-               ''',
+        out.extend(['''<script type="text/javascript" src="/ead/js/collapsibleLists.js"></script>
+                <script type="text/javascript" src="/ead/js/cookies.js"></script>
+                <script type="text/javascript">
+                <!--
+                  var olf = function() { createTreeFromList('sourceDirTree', getCookie('sourceDirTree'), true, false);} ; 
+                  if (addLoadEvent) {
+                      addLoadEvent(olf);
+                  } else {
+                      window.onload = olf; 
+                  }
+                  var ulf = function() { setCookie('sourceDirTree', stateToString('sourceDirTree')); } ;
+                  if (addUnloadEvent) {
+                      addUnloadEvent(ulf);
+                  } else {
+                      window.onunload = ulf;
+                  }
+                -->
+                </script>
+                ''',
                '<h3 class="bar">%s  <a href="/ead/admin/help.html#existing_files" title="What is this?"><img src="/images/whatisthis.gif" alt="[What is this?]"/></a></h3>' % (header), 
                '<form action="files.html" name="fileops" method="post" onsubmit="return confirmOp();">',
                fileformsubmits,

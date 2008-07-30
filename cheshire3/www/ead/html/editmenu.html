@@ -1,22 +1,31 @@
 <div id="single">
 
     <script type="text/javascript" src="/ead/js/prototype.js"></script>
-	<script type="text/javascript" src="/ead/js/cookies.js"></script>
-	<script type="text/javascript" src="/ead/js/collapsibleLists.js"></script>
 	<script type="text/javascript" src="/ead/js/form.js"></script>
-        <script type="text/javascript">
-               <!--
-               function loadPage() {
-                   createTreeFromList('sourceDirTree', getCookie('sourceDirTree'), true, false);
-                   createTreeFromList('storeDirTree', getCookie('storeDirTree'), false, false);
-               }
-               function unloadPage() {
-                   setCookie('sourceDirTree', stateToString('sourceDirTree'))
-                   setCookie('storeDirTree', stateToString('storeDirTree'))
-               }
-           
-               -->
-	</script>
+    <script type="text/javascript" src="/ead/js/collapsibleLists.js"></script>
+    <script type="text/javascript" src="/ead/js/cookies.js"></script>
+    <script type="text/javascript">
+    <!--
+        var olf = function loadPage() {
+                createTreeFromList('sourceDirTree', getCookie('sourceDirTree'), true, false);
+                createTreeFromList('storeDirTree', getCookie('storeDirTree'), false, false);
+            } ; 
+        if (addLoadEvent) {
+          addLoadEvent(olf);
+        } else {
+          window.onload = olf; 
+        }
+        var ulf = function unloadPage() {
+                setCookie('sourceDirTree', stateToString('sourceDirTree'))
+                setCookie('storeDirTree', stateToString('storeDirTree'))
+            } ;
+        if (addUnloadEvent) {
+          addUnloadEvent(ulf);
+        } else {
+          window.onunload = ulf;
+        }
+    -->
+    </script>
     <h3 class="bar"><a href="javascript:document.createform.submit();">Create New EAD Description</a></h3>
      <form name="createform" action="/ead/edit/" method="post" enctype="multipart/form-data">
     	<input type="hidden" name="operation" id="operation" value="create"/>
