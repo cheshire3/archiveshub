@@ -19,7 +19,7 @@ div#wrapper
 	position: absolute;
 	text-align: left;
 	left: 0;
-	overflow: auto;
+	overflow: hide;
 }
 
 div#banner,

@@ -1,13 +1,11 @@
-
 <div id="maindiv">
-		
-		<!--This page contains a form which can be used to create an ead document.   -->
-		<!--The form uses JavaScript to compile lists and validate essential fields, -->
-		<!-- before converting the information into EAD 2002 in a new window. -->
+	
+	<!--This page contains a form which can be used to create an ead document.   -->
+	<!--The form uses JavaScript to compile lists and validate essential fields, -->
+	<!-- before converting the information into EAD 2002 in a new window. -->
 		
 	<!--<meta http-equiv="Content-Script-Type" content="text/javascript"></meta>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"></meta>-->
-	
 	
 	<script type="text/javascript" src="/ead/js/accesspoints.js"></script>
 	<script type="text/javascript" src="/ead/js/form.js"></script>
@@ -35,16 +33,6 @@
     	} );
     </script>
 
-	<!-- screen CSS -->	
-    <link rel="stylesheet" type="text/css" media="screen" href="/ead/css/struc-all.css"></link>
-     <!--[if lt IE 7] 
-		<link rel="stylesheet" type="text/css" href="/ead/css/struc-ie.css" media="screen">
-		 <script type="text/javascript">
-			onload = function() { wrapper.focus() }
-		</script> 
-	[endif]-->
-
- 	<link rel="stylesheet" type="text/css" href="/ead/css/style.css"></link>
 	<link rel="stylesheet" type="text/css" href="/ead/css/form.css" />
 	<link type="text/css" rel="stylesheet" href="/ead/css/contextmenu.css" />
 
@@ -55,8 +43,6 @@
 		</script>
 	[endif]-->
 	  	
-
-
 	<ul id="tagmenu" class="SimpleContextMenu">
 		<li><a onMouseOver="javascript: hideSubMenus()" href="javascript: toggleKeyboard()">keyboard on/off</a></li>
 		<li><a onMouseOver="javascript: hideSubMenus()" href="javascript: addTag('p')">&lt;p&gt;</a></li>
@@ -99,14 +85,15 @@
 
 </div>
 <div id="padder">
-<div id="loadingscreen" style="display: none">
-	Your form is being validated please wait
-</div>
 <div id="rightcol" class="ead" onscroll="hideAllMenus()">
 	<div id="formDiv" name="form" class="formDiv">
     %FRM%
     </div>
 </div>
+</div>
+
+<div id="loadingscreen" style="display: none">
+    Your form is being validated please wait
 </div>
 
 <div id="keyboard"  style="display:none">
