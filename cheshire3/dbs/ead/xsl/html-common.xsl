@@ -155,8 +155,8 @@
 	<!-- EADHEADER -->
 	<xsl:template match="eadheader">
 		<strong>Cataloguing Info</strong> <xsl:text> </xsl:text>
-		<a class="jscall" href="javascript:;" onclick="toggleShow(this, 'eadheader');">[ show ]</a>
-		<div id="eadheader" class="eadheader">
+		<a href="#eadheader" class="jstoggle-text">[ hide ]</a>
+		<div id="eadheader" class="jshide">
 			<xsl:apply-templates select="filedesc"/>
 			<xsl:apply-templates select="profiledesc"/>
 			<xsl:apply-templates select="revisiondesc"/>
@@ -1094,7 +1094,11 @@
                         <xsl:text>?</xsl:text>
                         <xsl:text>operation=full</xsl:text>
                         <xsl:text>&amp;recid=</xsl:text>
-                        <xsl:value-of select="@href"/>
+                        <xsl:call-template name="normalizeEadid">
+                            <xsl:with-param name="text">
+                                <xsl:value-of select="@href"/>        
+                            </xsl:with-param>
+                        </xsl:call-template>
                     </xsl:when>
                     <xsl:otherwise>
                         <xsl:value-of select="@href"/>
@@ -1543,6 +1547,7 @@
     	<xsl:param name="index"/>
 	    <a>
 	      <xsl:attribute name="href">
+            <xsl:text>javascript: updateElementByUrl('leftcol', '</xsl:text>
 	        <xsl:value-of select="$script"/>
 	        <xsl:text>?</xsl:text>
 	        <xsl:text>operation=browse</xsl:text>
@@ -1554,6 +1559,8 @@
 	            <xsl:apply-templates select="."/>
 	          </xsl:with-param>
 	        </xsl:call-template>
+            <xsl:text>&amp;xmlOnly=1</xsl:text>
+            <xsl:text>');</xsl:text>
 	      </xsl:attribute>
 	      <xsl:attribute name="title">
 	        <xsl:text>Browse </xsl:text>
@@ -1654,7 +1661,14 @@
 		<xsl:param name="text">
 			<xsl:value-of select="."/>
 		</xsl:param>
-		<xsl:value-of select="translate(translate(translate($text, ' ', ''), '\n', ''), $uc, $lc)"/>
+		<xsl:value-of select="translate(translate(translate(translate($text, '/', '-'), ' ', ''), '\n', ''), $uc, $lc)"/>
 	</xsl:template>
-  
+    
+    <xsl:template name="normalizeEadid">
+        <xsl:param name="uc" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ'"/>
+        <xsl:param name="lc" select="'abcdefghijklmnopqrstuvwxyz'"/>
+        <xsl:param name="text"/>
+        <xsl:value-of select="translate(translate(translate(translate($text, '/', '-'), ' ', ''), '\n', ''), $uc, $lc)"/>
+    </xsl:template>
+    
 </xsl:stylesheet>
