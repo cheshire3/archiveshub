@@ -9,7 +9,7 @@ var repositoryCode = null;
 var baseUnitId = null;
 var fileName = null;
 var fileOwner = null;
-
+var timeout;
 
 function setCountryCode(code){
 	if (countryCode == null){
@@ -299,6 +299,7 @@ function addComponent(){
       	var listItem = parent.parentNode;
       	var level = Number(listItem.parentNode.getAttribute('name'));
     }
+
     
     // find the right list or add a new one
     var childList = null;  
@@ -330,6 +331,7 @@ function addComponent(){
     // create the linkId
     var linkId = '';    
     var elementCount = list.childNodes.length;
+    alert(elementCount);
     if (elementCount != undefined){
       	linkId += (elementCount + 1);
     }
@@ -615,8 +617,19 @@ function checkConflicts(){
 
 
 
+function validateFieldDelay(field, asynch){
+	clearTimeout(timeout);
+	timeout = setTimeout(function() {validateXML(field, asynch)}, 2000);
+}
+
 function validateField(field, asynch){
-	var url = '/ead/edit/'
+	clearTimeout(timeout);
+	validateXML(field, asynch);
+}
+
+
+function validateXML(field, asynch){
+	var url = '/ead/edit/';
 	var data = 'operation=validate&text=' + field.value;
 	
 	var ajax = new Ajax.Request(url, {method: 'get', asynchronous: asynch, parameters: data, onSuccess: function(transport) { 		
