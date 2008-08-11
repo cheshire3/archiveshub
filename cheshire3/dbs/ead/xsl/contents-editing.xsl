@@ -21,28 +21,29 @@
   </xsl:template>
 
   <!-- templates for Table of Contents (toc) -->
-  <xsl:template name="toc">
-  		
+  <xsl:template name="toc">	
     <b>
 	    <xsl:call-template name="toc-link">
 	      <xsl:with-param name="node" select="/ead/archdesc"/>
 	      <xsl:with-param name="level" select="'collectionLevel'"/>
 	    </xsl:call-template>
 	</b>
-    <ul id="someId" class="hierarchy" name="1">    
+        
 		<xsl:apply-templates select="/ead/archdesc/dsc" mode="toc"/>		
-    </ul>
-    <br/>
-    <br/>
+    
   </xsl:template>
 
 
 	<xsl:template match="dsc" mode="toc">
-		<xsl:for-each select="c|c01">
+		<ul id="someId" class="hierarchy" name="1">
+		<xsl:for-each select="c|c01|c02|c03|c04|c05|c06|c07|c08|c09|c10|c11|c12">
 			<xsl:if test="not(./@audience and ./@audience = 'internal')">
-				<li><xsl:call-template name="toc-c"/></li>
+				<li>
+					<xsl:call-template name="toc-c"/>
+				</li>			
 			</xsl:if>
         </xsl:for-each>
+        </ul>
 	</xsl:template>
 
 

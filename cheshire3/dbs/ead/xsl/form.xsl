@@ -7,9 +7,7 @@
     version="1.0">
   
     <xsl:import href="contents-editing.xsl"/>
-  
- <!--   <xsl:output method="html" encoding="UTF-8"/>
-    <xsl:strip-space elements="*"/>     -->
+
   <xsl:output method="xml" omit-xml-declaration="yes" encoding="UTF-8"/>
 	 <xsl:preserve-space elements="*"/>
 
@@ -85,8 +83,8 @@
       <span class="isadg"><h3>3.1: Identity Statement Area</h3></span>
       <p id="unitidparent">
 	  <strong><span class="isadg">3.1.1: </span><a href="arch/refcode.shtml" title="Reference Code help - opens in new window" target="_new">Reference Code</a></strong> 
-	  Comprising of <a href="http://www.iso.org/iso/en/prods-services/iso3166ma/02iso-3166-code-lists/list-en1.html" target="_new" title="Further information on ISO Country Codes">ISO Country Code</a>, 
-	  NCA Repository Code,
+	  Comprising <a href="http://www.iso.org/iso/en/prods-services/iso3166ma/02iso-3166-code-lists/list-en1.html" target="_new" title="Further information on ISO Country Codes">ISO Country Code</a>, 
+	  Archon Code,
 	  and a unique identifier for this record or component.
 	  <xsl:if test="$leveltype = 'collection'">
 	  [<strong>all fields required</strong>]
@@ -211,7 +209,7 @@
 					<xsl:apply-templates select="did/repository"/>
 				</xsl:when>
 				<xsl:otherwise>
-					<input class="menuField" type="text" onfocus="setCurrent(this);" onchange="validateField(this, 'true');" name="did/repository" id="rep" size="80"></input>
+					<input class="menuField" type="text" onfocus="setCurrent(this);" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" name="did/repository" id="rep" size="80"></input>
 				</xsl:otherwise>
 			</xsl:choose>
 	  	</p>
@@ -976,7 +974,7 @@
 					<xsl:with-param name="name" select="concat('processinfo[', position(), ']')"/>
 					<xsl:with-param name="id" select="concat('cga', position())"/>
 					<xsl:with-param name="class" select="'menuField'"/>
-					<xsl:with-param name="optional" select="'true'"/>
+					<xsl:with-param name="optional" select="'false'"/>
 					<xsl:with-param name="content" select="$content"/>
 					<xsl:with-param name="isadg" select="'3.7.1: '"/>
 					<xsl:with-param name="title" select='"Archivist&apos;s Note"'/>
@@ -989,7 +987,7 @@
 				<xsl:with-param name="name" select="concat('processinfo[', position(), ']')"/>
 				<xsl:with-param name="id" select="concat('cga', position())"/>
 				<xsl:with-param name="class" select="'menuField'"/>
-				<xsl:with-param name="optional" select="'true'"/>
+				<xsl:with-param name="optional" select="'false'"/>
 				<xsl:with-param name="content" select="$content"/>
 				<xsl:with-param name="isadg" select="'3.7.1: '"/>
 				<xsl:with-param name="title" select='"Archivist&apos;s Note"'/>
