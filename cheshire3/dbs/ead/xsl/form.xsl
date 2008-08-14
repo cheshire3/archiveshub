@@ -119,7 +119,7 @@
 				<xsl:apply-templates select="did/unitdate"/>
 			</xsl:when>
 			<xsl:otherwise>
-				<input class="menuField" type="text" onfocus="setCurrent(this);" onchange="validateField(this, 'true');" name="did/unitdate" id="cac" size="39"></input>
+				<input class="menuField" type="text" onfocus="setCurrent(this);" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" name="did/unitdate" id="cac" size="39"></input>
 			</xsl:otherwise>
 		</xsl:choose>      
 		</p>
@@ -197,7 +197,7 @@
 				<xsl:apply-templates select="did/physdesc/extent"/>
 			</xsl:when>
 			<xsl:otherwise>
-				<input class="menuField" type="text" onfocus="setCurrent(this);" onchange="validateField(this, 'true');" name="did/physdesc/extent" id="cae" size="80"></input>
+				<input class="menuField" type="text" onfocus="setCurrent(this);" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" name="did/physdesc/extent" id="cae" size="80"></input>
 			</xsl:otherwise>
 		</xsl:choose>		
     </p>
@@ -220,7 +220,7 @@
 				</xsl:when>
 				<xsl:otherwise>
 					<strong><span class="isadg"></span>Sponsor </strong> <a class="smalllink" id="linkspo" title="add sponsor" onclick="addElement('spo')">add</a> [optional]<br/>
-					<input class="menuField" type="text" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" name="filedesc/titlestmt/sponsor" id="spo" size="80" style="display:none"></input>
+					<input class="menuField" type="text" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" name="filedesc/titlestmt/sponsor" id="spo" size="80" style="display:none"></input>
 				</xsl:otherwise>
 			</xsl:choose>
 	  	</p>
@@ -238,7 +238,7 @@
 				<xsl:apply-templates select="did/origination"/>
 			</xsl:when>
 			<xsl:otherwise>
-				<input class="menuField" type="text" onfocus="setCurrent(this);" onchange="validateField(this, 'true');" name="did/origination" id="cba" size="80"></input>
+				<input class="menuField" type="text" onfocus="setCurrent(this);" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" name="did/origination" id="cba" size="80"></input>
 			</xsl:otherwise>
 		</xsl:choose>		
     	</p>
@@ -1491,7 +1491,7 @@
   </xsl:template>
     
   <xsl:template match="unitdate">
-  	<input class="menuField" type="text" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" name="did/unitdate" id="cac" size="39">
+  	<input class="menuField" type="text" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" name="did/unitdate" id="cac" size="39">
   		<xsl:attribute name="value">
   		  <xsl:apply-templates/>
   		</xsl:attribute>	
@@ -1507,7 +1507,7 @@
   </xsl:template>
   
   <xsl:template match="did/repository">
-  	<input class="menuField" type="text" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" name="did/repository" id="rep" size="80">
+  	<input class="menuField" type="text" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" name="did/repository" id="rep" size="80">
   		<xsl:attribute name="value">
   			<xsl:apply-templates/>
   		</xsl:attribute>
@@ -1516,7 +1516,7 @@
   
   <xsl:template match="filedesc/titlestmt/sponsor">
   	<strong><span class="isadg"></span>Sponsor </strong> <a class="smalllink" id="linkspo" title="add sponsor" onclick="addElement('spo')">hide</a> [optional]<br/>
-  	<input class="menuField" type="text" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" name="filedesc/titlestmt/sponsor" id="spo" size="80">
+  	<input class="menuField" type="text" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" name="filedesc/titlestmt/sponsor" id="spo" size="80">
   		<xsl:attribute name="value">
   			<xsl:apply-templates/>
   		</xsl:attribute>
@@ -1525,7 +1525,7 @@
   
   
   <xsl:template match="did/physdesc/extent">
-  	<input class="menuField" type="text" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" name="did/physdesc/extent" id="cae" size="80">
+  	<input class="menuField" type="text" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" name="did/physdesc/extent" id="cae" size="80">
   		<xsl:attribute name="value">
   			<xsl:apply-templates/>
   		</xsl:attribute>
@@ -1533,7 +1533,7 @@
   </xsl:template>
 
   <xsl:template match="did/origination">
-  	<input class="menuField" type="text" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" name="did/origination" id="cba" size="80">
+  	<input class="menuField" type="text" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" name="did/origination" id="cba" size="80">
   		<xsl:attribute name="value">
   			<xsl:apply-templates/>
   		</xsl:attribute>
@@ -1637,7 +1637,7 @@
   		<xsl:with-param name="help" select="$help"/>  	
   		<xsl:with-param name="additional" select="$additional"/>  		
   	</xsl:call-template>
-  	<textarea onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80">
+  	<textarea onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80">
   		<xsl:attribute name="name"><xsl:value-of select="$name"/></xsl:attribute>
   		<xsl:attribute name="id"><xsl:value-of select="$id"/></xsl:attribute>
   		<xsl:attribute name="class"><xsl:value-of select="$class"/></xsl:attribute>
