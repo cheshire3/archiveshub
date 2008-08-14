@@ -82,7 +82,7 @@
   	<div id="sec-3-1" class="section">
       <span class="isadg"><h3>3.1: Identity Statement Area</h3></span>
       <p id="unitidparent">
-	  <strong><span class="isadg">3.1.1: </span><a href="arch/refcode.shtml" title="Reference Code help - opens in new window" target="_new">Reference Code</a></strong> 
+	  <strong><span class="isadg">3.1.1: </span><a href="http://www.archiveshub.ac.uk/arch/refcode.shtml" title="Reference Code help - opens in new window" target="_new">Reference Code</a></strong> 
 	  Comprising <a href="http://www.iso.org/iso/en/prods-services/iso3166ma/02iso-3166-code-lists/list-en1.html" target="_new" title="Further information on ISO Country Codes">ISO Country Code</a>, 
 	  Archon Code,
 	  and a unique identifier for this record or component.
@@ -95,14 +95,14 @@
 	  	   <xsl:apply-templates select="did/unitid"/>
 	  	</xsl:when>
 	  	<xsl:otherwise>
-	  		<input type="text" name="did/unitid/@countrycode" id="countrycode" maxlength="2" size="3" value="GB" onblur="checkId('recordStore')"></input>
-			<input type="text" onfocus="setCurrent(this);" name="did/unitid/@repositorycode" id="repositorycode" maxlength="4" size="5" onblur="checkId('recordStore')"></input>
+	  		<input type="text" onfocus="setCurrent(this);" name="did/unitid/@countrycode" id="countrycode" maxlength="2" size="3" value="GB" onblur="checkId('recordStore')"></input>
+			<input type="text" onfocus="setCurrent(this);" name="did/unitid/@repositorycode" id="archoncode" maxlength="4" size="5" onblur="checkId('recordStore')"></input>
 			<input type="text" onfocus="setCurrent(this);" name="did/unitid" id="unitid" size="50" onblur="checkId('recordStore')"></input>	
 	  	</xsl:otherwise>
 	  </xsl:choose>  		
   	</p>
   	<p>
-		<strong><span class="isadg">3.1.2: </span><a href="arch/title.shtml" title="Title help - opens in new window" target="_new">Title</a></strong><br/>
+		<strong><span class="isadg">3.1.2: </span><a href="http://www.archiveshub.ac.uk/arch/title.shtml" title="Title help - opens in new window" target="_new">Title</a></strong><br/>
 		<xsl:choose>
 			<xsl:when test="did/unittitle">
 				<xsl:apply-templates select="did/unittitle"/>
@@ -113,7 +113,7 @@
 		</xsl:choose>		
     </p>
     <div class="float">
-    	<p><strong><span class="isadg">3.1.3: </span><a href="arch/dates1.shtml" title="Dates of Creation help - opens in new window" target="_new">Dates of Creation</a></strong><br/>
+    	<p><strong><span class="isadg">3.1.3: </span><a href="http://www.archiveshub.ac.uk/arch/dates1.shtml" title="Dates of Creation help - opens in new window" target="_new">Dates of Creation</a></strong><br/>
 		<xsl:choose>
 			<xsl:when test="did/unitdate">
 				<xsl:apply-templates select="did/unitdate"/>
@@ -126,7 +126,7 @@
 	</div>
 	<div class="float">
 		<p>
-		<strong><a href="arch/dates2.shtml" title="Normalised Date help - opens in new window" target="_new">Normalised Date</a></strong><br/>
+		<strong><a href="http://www.archiveshub.ac.uk/arch/dates2.shtml" title="Normalised Date help - opens in new window" target="_new">Normalised Date</a></strong><br/>
 	    	<xsl:choose>
 	    		<xsl:when test="did/unitdate/@normal">
 	    			<xsl:apply-templates select="did/unitdate/@normal"/>
@@ -191,7 +191,7 @@
 		</xsl:if>
   	</p>
  	<p>
-		<strong><span class="isadg">3.1.5: </span><a href="arch/extent.shtml" title="Extent help - opens in new window" target="_new">Extent of Unit of Description</a></strong><br/>
+		<strong><span class="isadg">3.1.5: </span><a href="http://www.archiveshub.ac.uk/arch/extent.shtml" title="Extent help - opens in new window" target="_new">Extent of Unit of Description</a></strong><br/>
 		<xsl:choose>
 			<xsl:when test="did/physdesc/extent">
 				<xsl:apply-templates select="did/physdesc/extent"/>
@@ -232,7 +232,7 @@
    <div class="section">
 		<span class="isadg"><h3>3.2: Context Area</h3></span> 
 		<p>
-		<strong><span class="isadg">3.2.1: </span><a href="arch/name.shtml" title="Name of Creator help - opens in new window" target="_new">Name of Creator</a></strong>  [<strong>also add manually as <a href="#accesspoints" title="Add Access Point manually">Access Point</a></strong>]<br/>
+		<strong><span class="isadg">3.2.1: </span><a href="http://www.archiveshub.ac.uk/arch/name.shtml" title="Name of Creator help - opens in new window" target="_new">Name of Creator</a></strong>  [<strong>also add manually as <a href="#accesspoints" title="Add Access Point manually">Access Point</a></strong>]<br/>
 		<xsl:choose>
 			<xsl:when test="did/origination">
 				<xsl:apply-templates select="did/origination"/>
@@ -265,7 +265,7 @@
 						<xsl:with-param name="content" select="$content"/>
 						<xsl:with-param name="isadg" select="'3.2.2: '"/>
 						<xsl:with-param name="title" select="'Administrative/Biographical History'"/>
-						<xsl:with-param name="help" select="www.archiveshub.ac.uk/arch/bioghist.shtml"/>
+						<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/bioghist.shtml'"/>
 					</xsl:call-template>
 			   </xsl:for-each>
 			</xsl:when>
@@ -278,7 +278,7 @@
 					<xsl:with-param name="content" select="$content"/>
 					<xsl:with-param name="isadg" select="'3.2.2: '"/>
 					<xsl:with-param name="title" select="'Administrative/Biographical History'"/>
-					<xsl:with-param name="help" select="www.archiveshub.ac.uk/arch/bioghist.shtml"/>
+					<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/bioghist.shtml'"/>
 				</xsl:call-template>
 			</xsl:otherwise>
 		</xsl:choose>
@@ -307,7 +307,7 @@
 						<xsl:with-param name="content" select="$content"/>
 						<xsl:with-param name="isadg" select="'3.2.3: '"/>
 						<xsl:with-param name="title" select="'Archival History'"/>
-						<xsl:with-param name="help" select="''"/>
+						<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/custodhist.html'"/>
 					</xsl:call-template>
 				</xsl:for-each>
 			</xsl:when>
@@ -320,7 +320,7 @@
 					<xsl:with-param name="content" select="$content"/>
 					<xsl:with-param name="isadg" select="'3.2.3: '"/>
 					<xsl:with-param name="title" select="'Archival History'"/>
-					<xsl:with-param name="help" select="''"/>
+					<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/custodhist.html'"/>
 				</xsl:call-template>
 			</xsl:otherwise>
 		</xsl:choose>
@@ -348,7 +348,7 @@
 						<xsl:with-param name="content" select="$content"/>
 						<xsl:with-param name="isadg" select="'3.2.4: '"/>
 						<xsl:with-param name="title" select="'Immediate Source of Acquisition'"/>
-						<xsl:with-param name="help" select="''"/>
+						<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/acqinfo.html'"/>
 					</xsl:call-template>	
 				</xsl:for-each>	
 			</xsl:when>
@@ -361,7 +361,7 @@
 					<xsl:with-param name="content" select="$content"/>
 					<xsl:with-param name="isadg" select="'3.2.4: '"/>
 					<xsl:with-param name="title" select="'Immediate Source of Acquisition'"/>
-					<xsl:with-param name="help" select="''"/>
+					<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/acqinfo.html'"/>
 				</xsl:call-template>	
 			</xsl:otherwise>
 		</xsl:choose>
@@ -395,7 +395,7 @@
 						<xsl:with-param name="content" select="$content"/>
 						<xsl:with-param name="isadg" select="'3.3.1: '"/>
 						<xsl:with-param name="title" select="'Scope and Content'"/>
-						<xsl:with-param name="help" select="'www.archiveshub.ac.uk/arch/scope.shtml'"/>
+						<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/scope.shtml'"/>
 					</xsl:call-template>
 				</xsl:for-each>
 			</xsl:when>
@@ -408,7 +408,7 @@
 					<xsl:with-param name="content" select="$content"/>
 					<xsl:with-param name="isadg" select="'3.3.1: '"/>
 					<xsl:with-param name="title" select="'Scope and Content'"/>
-					<xsl:with-param name="help" select="'www.archiveshub.ac.uk/arch/scope.shtml'"/>
+					<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/scope.shtml'"/>
 				</xsl:call-template>
 			</xsl:otherwise>
 		</xsl:choose>
@@ -565,7 +565,7 @@
 					<xsl:with-param name="content" select="$content"/>
 					<xsl:with-param name="isadg" select="'3.4.1: '"/>
 					<xsl:with-param name="title" select="'Conditions Governing Access'"/>
-					<xsl:with-param name="help" select="'www.archiveshub.ac.uk/arch/restrict.shtml'"/>
+					<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/restrict.shtml'"/>
 				</xsl:call-template>
 			</xsl:for-each>
 		</xsl:when>
@@ -578,7 +578,7 @@
 				<xsl:with-param name="content" select="$content"/>
 				<xsl:with-param name="isadg" select="'3.4.1: '"/>
 				<xsl:with-param name="title" select="'Conditions Governing Access'"/>
-				<xsl:with-param name="help" select="'www.archiveshub.ac.uk/arch/restrict.shtml'"/>
+				<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/restrict.shtml'"/>
 			</xsl:call-template>
 		</xsl:otherwise>
 	</xsl:choose>
@@ -624,7 +624,7 @@
 	</p> 
 <!-- langmaterial -->
      <p>
-     	<strong><span class="isadg">3.4.3: </span><a href="/arch/lang.shtml" title="Language of Material help - opens in new window" target="_new">Language of Material</a></strong> [Must include <a href="http://www.loc.gov/standards/iso639-2/englangn.html" title="ISO 639-2 codes - opens new window" target="_new">ISO 639-2 3-letter code</a>]
+     	<strong><span class="isadg">3.4.3: </span><a href="http://www.archiveshub.ac.uk/arch/lang.shtml" title="Language of Material help - opens in new window" target="_new">Language of Material</a></strong> [Must include <a href="http://www.loc.gov/standards/iso639-2/englangn.html" title="ISO 639-2 codes - opens new window" target="_new">ISO 639-2 3-letter code</a>]
      	<xsl:for-each select="did/langmaterial/@*">
      		<input type="hidden">
      			<xsl:attribute name="name">
@@ -978,7 +978,7 @@
 					<xsl:with-param name="content" select="$content"/>
 					<xsl:with-param name="isadg" select="'3.7.1: '"/>
 					<xsl:with-param name="title" select='"Archivist&apos;s Note"'/>
-					<xsl:with-param name="help" select="'www.archiveshub.ac.uk/arch/archnote.shtml'"/>
+					<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/archnote.shtml'"/>
 				</xsl:call-template>
 			</xsl:for-each>
 		</xsl:when>
@@ -991,7 +991,7 @@
 				<xsl:with-param name="content" select="$content"/>
 				<xsl:with-param name="isadg" select="'3.7.1: '"/>
 				<xsl:with-param name="title" select='"Archivist&apos;s Note"'/>
-				<xsl:with-param name="help" select="'www.archiveshub.ac.uk/arch/archnote.shtml'"/>
+				<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/archnote.shtml'"/>
 			</xsl:call-template>
 		</xsl:otherwise>
 	</xsl:choose>
@@ -1181,7 +1181,7 @@
 						<tr NoDrop="true" NoDrag="true"><td class="label">Location:</td><td> <input type="text" onfocus="setCurrent(this);" id="geogname_location" size="40"></input></td></tr>
 						<tr NoDrop="true" NoDrag="true"><td class="label">Source:</td><td> <input type="text" onfocus="setCurrent(this);" id="geogname_source" size="40"></input></td></tr>
 						<tr NoDrop="true" NoDrag="true"><td><select onfocus="setCurrent(this);" id="geognamedropdown">				  	  			  		
-				    		<option value="geogname_dates">Dates</option>		    		
+				    		<option value="geogname_other">Other</option>		    		
 				    	</select></td>
 				    	<td><input type="text" onfocus="addField('geogname')" size="40" value="Click to Add Selected Field" style="background:#F2F2F2; color: grey;"></input></td></tr>
 				    </tbody></table>
@@ -1226,7 +1226,6 @@
 					<p class="apbutton">Rules:
 					    <select id="title_rules" onchange="checkRules('title')">
 					      <option value="none">None</option>
-					      <option value="ncarules">NCA Rules</option>
 					      <option value="aacr2">AACR2</option>
 					    </select></p>
 						<input class="apbutton" type="button" onclick="addAccessPoint('title');" value="Add To Record"></input><br />
@@ -1237,7 +1236,7 @@
 			<br/>	
 <!-- genreform -->
 		<div id="genreform" class="apcontainer">
-			<p><strong>Genre Form</strong></p>
+			<p><strong>Genre Form</strong><br/><a onclick="window.open('http://www.getty.edu/research/conducting_research/vocabularies/aat/', 'new', 'width=800 height=600');">[Search AAT] </a><a onclick="window.open('http://www.loc.gov/rr/print/tgm2/', 'new', 'width=800 height=600');"> [Search TGM]</a></p>
 			<xsl:choose>
 				<xsl:when test="controlaccess/genreform">
 					<xsl:call-template name="accesspoint">
@@ -1264,7 +1263,7 @@
 			
 <!-- function -->
 		<div id="function" class="apcontainer">
-			<p><strong>Function</strong></p>
+			<p><strong>Function</strong><br/><a onclick="window.open('http://www.getty.edu/research/conducting_research/vocabularies/aat/', 'new', 'width=800 height=600');">[Search AAT] </a><a onclick="window.open('http://www.naa.gov.au/records-management/create-capture-describe/describe/agift/index.aspx', 'new', 'width=800 height=600');"> [Search AGIFT]</a></p>
 			<xsl:choose>
 				<xsl:when test="controlaccess/function">
 					<xsl:call-template name="accesspoint">
@@ -1448,7 +1447,7 @@
   
   
   <xsl:template match="did/unitid">
-	<input type="text" name="did/unitid/@countrycode" id="countrycode" maxlength="2" size="3" onblur="checkId()">	
+	<input type="text" onfocus="setCurrent(this);" name="did/unitid/@countrycode" id="countrycode" maxlength="2" size="3" onblur="checkId()">	
 		<xsl:choose>	
 		<xsl:when test="@countrycode">
 			<xsl:attribute name="value">
@@ -1462,7 +1461,7 @@
 		</xsl:when>
 		</xsl:choose>	
 	</input>
-	<input type="text" onfocus="setCurrent(this);" name="did/unitid/@repositorycode" id="repositorycode"  maxlength="4" size="5" onblur="checkId()">
+	<input type="text" onfocus="setCurrent(this);" name="did/unitid/@repositorycode" id="archoncode"  maxlength="4" size="5" onblur="checkId()">
 		<xsl:choose>
 		<xsl:when test="@repositorycode">
 			<xsl:attribute name="value">
