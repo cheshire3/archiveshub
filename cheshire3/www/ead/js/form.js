@@ -95,10 +95,6 @@ function submit(index){
 		alert ('the following fields must be entered before proceeding:\n  - Reference Code \n  - Title')
 		return;
 	}
-	if (!checkRequiredData()){
-		alert ('the following fields must be entered before proceeding:\n  - Reference Code \n  - Title')
-		return;
-	}
 	if (currentEntryField != null && currentEntryField.value != ''){
     	validateField(currentEntryField, false)
     }
@@ -151,7 +147,7 @@ function saveForm(asynch){
 	//collect the basic id information
 	if (currentForm == 'collectionLevel'){
 		setCountryCode($('countrycode').value);
-	    setRepositoryCode($('repositorycode').value);
+	    setRepositoryCode($('archoncode').value);
 	    setBaseUnitId($('unitid').value);
 	    if ($('owner') != null){
 	    	setOwner($('owner').value);
@@ -182,7 +178,12 @@ function saveForm(asynch){
   			parentId = parent.childNodes[1].id;
   		}	  	
   		data += ('&parent=' + parentId);
-  	}   	
+  	}   
+  	else {
+  		$('countrycode').readOnly = true;
+  		$('archoncode').readOnly = true;
+  		$('unitid').readOnly = true;
+  	}	
     if (recid != null && recid != 'notSet'){
     	data += '&recid=' + recid;
     }
@@ -209,7 +210,7 @@ function displayForm(id, level){
 	   	new Ajax.Updater(loc, '/ead/edit/', {method: 'post', asynchronous:false, parameters:data, evalScripts:true});
 
 	   	($('countrycode').value) = countryCode;	   			
-	   	($('repositorycode').value) = repositoryCode;
+	   	($('archoncode').value) = repositoryCode;
 	   	($('unitid').value) = baseUnitId + '/' + currentForm.replace(/-/g, '/');
 	   	($('pui').value) = recid;
 	   	updateId();
@@ -331,7 +332,7 @@ function addComponent(){
     // create the linkId
     var linkId = '';    
     var elementCount = list.childNodes.length;
-    alert(elementCount);
+
     if (elementCount != undefined){
       	linkId += (elementCount + 1);
     }
@@ -493,7 +494,7 @@ function updateId() {
   	var link = document.getElementById(currentForm);
   	var title = ($('cab')).value;
   	var countryCode = $('countrycode').value.toLowerCase()
-  	var repositoryCode = $('repositorycode').value
+  	var repositoryCode = $('archoncode').value
   	var id = $('unitid').value;
   	
   	if (title == '' && id == ''){
@@ -630,7 +631,7 @@ function validateField(field, asynch){
 
 function validateXML(field, asynch){
 	var url = '/ead/edit/';
-	var data = 'operation=validate&text=' + field.value;
+	var data = 'operation=validate&text=' + field.value.replace('%', '%25');
 	
 	var ajax = new Ajax.Request(url, {method: 'get', asynchronous: asynch, parameters: data, onSuccess: function(transport) { 		
 		var response = transport.responseText;
@@ -647,9 +648,9 @@ function validateXML(field, asynch){
 
 function checkId(store){
 	if ($('countrycode').value != ''){
-		if ($('repositorycode').value != ''){
+		if ($('archoncode').value != ''){
 			if ($('unitid').value != ''){
-				var id = $('countrycode').value.toLowerCase() + $('repositorycode').value + $('unitid').value.replace(' ', '').toLowerCase();
+				var id = $('countrycode').value.toLowerCase() + $('archoncode').value + $('unitid').value.replace(' ', '').toLowerCase();
 				var url = '/ead/edit'
 				var data = 'operation=checkId&id=' + id + '&store=' + store;
 				new Ajax.Request(url, {method: 'get', asynchronous: true, parameters: data, onSuccess: function(transport) { 	    				
@@ -682,7 +683,7 @@ function checkRequiredData(){
 	else if ($('unitid').value == ''){
 		return false;
 	}
-	else if ($('repositorycode').value == '' && currentForm == 'collectionLevel'){
+	else if ($('archoncode').value == '' && currentForm == 'collectionLevel'){
 		return false;
 	}
 	else if ($('countrycode').value == '' && currentForm == 'collectionLevel'){
