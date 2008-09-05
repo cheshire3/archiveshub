@@ -19,13 +19,12 @@ div#wrapper
 	position: absolute;
 	text-align: left;
 	left: 0;
-	overflow: hide;
+	overflow: auto;
 }
 
 div#banner,
 div#navbar {
 	position: fixed;
-	overflow: visible;
 	width: 100%;
 }
 
@@ -33,14 +32,15 @@ div#banner {
 	top: 0;
 	height: 75px;
 	z-index: 2;
-	overflow: auto;
+	overflow-x: hidden;
+	overflow-y: auto;
 }
 div#navbar {
 	top: 75px;
 	height: 25px;
 	padding: 0px 15px 0px 15px;
 	z-index: 3;
-	overflow: display;
+	overflow: visible;
 	clear: both;
 	vertical-align: middle;
 }
@@ -52,7 +52,8 @@ div#c3logo{ float: right; }
 
 div#wrapper {
 	top: 100px;
-	bottom: 50px;	
+	bottom: 50px;
+	overflow-y: auto;
 }
 
 div#leftcol,
@@ -73,6 +74,7 @@ div#leftcol {
 	width: 39%;
 	margin: 1px 2px 1px 2px;
 	border-right: 1px solid white;
+	overflow-x: auto;
 }
 
 div#rightcol {
@@ -119,7 +121,9 @@ div#copyright
   font-size: smaller;
 }
 
-h4.ead {clear:both;}
+h4.ead {
+	clear:both;
+}
 
 #hitreport { 
   margin-top: 10px;
@@ -135,9 +139,13 @@ h4.ead {clear:both;}
 	padding:3px 0 3px 0;
 }
 
+.pagenav form {
+	margin:0px;
+}
+
 .backlinks { 
   float: left;
-  min-width: 85px;
+  /*min-width: 85px;*/
   text-align:left;
 }
 .numnav { 
@@ -147,7 +155,7 @@ h4.ead {clear:both;}
 }
 .forwardlinks { 
   float:right;
-  min-width: 85px;
+  /*min-width: 85px;*/
   text-align: right;
 }
 
@@ -186,12 +194,7 @@ div.did,
 div.eadheader {
 	margin-bottom: 2px;
 }
-/*
-div#eadheader,
-div#traceback {
-	display: none;
-}
-*/
+
 hr {
 	clear: both;
 	margin-bottom: 0;
@@ -208,23 +211,17 @@ div.archdesc {
 
 div.daos {
 	width: 200px;
-	float:right;
+	float: right;
 	padding-left: 2px;
 }
 
 div.dao {
-	overflow: auto;
+	/*overflow: auto;*/
 }
 
 div.embed-img {
 	
 }
-
-/*
-div.comphier {
-	display:none;
-}
-*/
 
 table.results {
 	width:96%;
