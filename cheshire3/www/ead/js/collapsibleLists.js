@@ -118,6 +118,7 @@ function createSubLists(listObj, level, rootListId, treeState, collapseList, con
 					nextSubList.style.display = 'block';
 				  	imgElem.setAttribute( 'src', expandedUrl );
 				  	imgElem.setAttribute( 'alt', '[-]');
+				  	expandedLists[rootListId][level] = nextSubList;
 				}
 				else {
 				  	imgElem.setAttribute( 'src', collapsedUrl );
@@ -170,12 +171,11 @@ function switchState( thisObj, level, rootListId, controlLevels, listTag ) {
   		if (linkElem) {
     		var imgElem = linkElem.getElementsByTagName( 'img' )[0];
     		if (imgElem) {
-      			if (imgElem.getAttribute('src') == expandedUrl) {
-					imgElem.setAttribute( 'src', collapsedUrl);
-					thisObj.style.display = 'none'; 
-      			} 
-      			else {
-					imgElem.setAttribute( 'src', expandedUrl);
+      			if (thisObj.style.display == 'block') {
+      				imgElem.setAttribute( 'src', collapsedUrl);
+					thisObj.style.display = 'none';
+      			} else {
+      				imgElem.setAttribute( 'src', expandedUrl);
 					thisObj.style.display = 'block';
       			}
     		}
@@ -201,6 +201,7 @@ function switchState( thisObj, level, rootListId, controlLevels, listTag ) {
 				 	var imgElem = linkElem.getElementsByTagName( 'img' )[0];
 				  	if (imgElem) {
 				    	imgElem.setAttribute( 'src', collapsedUrl);
+				    	thisObj.style.display = 'none';
 				  	}
 				}
 				if( level != x ) { 
