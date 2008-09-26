@@ -1,13 +1,13 @@
 #
 # Script:   localConfig.py
-# Version:   0.16
+# Version:   0.17
 # Description:
 #            Customisable elements for Cheshire for Archives v3.x
 #
 # Language:  Python
 # Author:    John Harrison <john.harrison@liv.ac.uk>
 # Author:    Catherine Smith <catherine.smith@liv.ac.uk>
-# Date:      3 June 2008
+# Date:      19 September 2008
 #
 # Copyright: &copy; University of Liverpool 2005-2008
 #
@@ -33,6 +33,7 @@
 # 0.14 - 26/03/2008 - JH - More configurable header + navbar display - new tags added title_separator and navbar_separator
 # 0.15 - 24/04/2008 - JH - Improvements to stopwords
 # 0.16 - 03/06/2008 - JH - Configurable highlight delimiters 
+# 0.17 - 19/09/2008 - JH - Pop-up slash screens removed permanently
 #
 # Changes to original:
 # You should make a note of any changes that you make to the originally distributed file here.
@@ -45,7 +46,6 @@
 result_graphics = True
 display_relevance = True
 graphical_relevance = False
-display_splash_screen_popup = False
 
 # Path to Cheshire Root - i.e. where Cheshire3 was installed
 cheshirePath = "/home/cheshire/cheshire3"
@@ -148,14 +148,6 @@ if ( result_graphics ):
 else:
     search_result_row = search_result_row.replace( '%FULL%', 'Full text' ).replace( '%EMAIL%', 'e-mail' ).replace( '%SIMILAR%', 'Similar' )
     search_component_row = search_component_row.replace( '%FULL%', 'Full text' ).replace( '%EMAIL%', 'e-mail' ).replace( '%SIMILAR%', 'Similar' )
-
-if ( display_splash_screen_popup ):
-    search_result_row = search_result_row.replace('%SPLASH%', 'onclick="splashScreen()"')
-    search_component_row = search_component_row.replace('%SPLASH%', 'onclick="splashScreen()"')
-else:
-    search_result_row = search_result_row.replace('%SPLASH%', '')
-    search_component_row = search_component_row.replace('%SPLASH%', '')
-
 
 # Some bits to ensure that objects are of the correct python object type - DO NOT EDIT THESE
 # split similar search stoplist at whitespace

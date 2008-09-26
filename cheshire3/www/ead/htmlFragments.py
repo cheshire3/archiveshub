@@ -1,7 +1,7 @@
 #
 # Script:      htmlFragments.py
-# Version:     0.05
-# Date:        11 January 2008
+# Version:     0.07
+# Date:        19 September 2008
 # Copyright:   &copy; University of Liverpool 2005-2008
 # Description:
 #            HTML fragments used by Cheshire for Archives
@@ -17,6 +17,7 @@
 # 0.04 - 30/10/2007 - CS - Config code for superuser and user added/modified
 # 0.05 - 11/01/2008 - CS - javascript call to collapseLists function changed to createTreeFromList()
 # 0.06 - 23/07/2008 - JH - Javascript show / hide made to degrade more gracefully when JS absent
+# 0.07 - 19/09/2008 - JH - Pop-up slash screens removed permanently
 #
 # NB:
 # - If you are not experieced in editing HTML you are advised not to edit any of the HTML fragments
@@ -62,18 +63,18 @@ search_result_row = '''
         <table width="100%">
           <tr>
             <td colspan="4">
-              <a href="SCRIPT?operation=summary&amp;%RSID%&amp;hitposition=%HITPOSITION%#rightcol" title="Display record summary" %SPLASH%><strong>%TITLE%</strong></a>
+              <a href="SCRIPT?operation=summary&amp;%RSID%&amp;hitposition=%HITPOSITION%#rightcol" title="Display record summary"><strong>%TITLE%</strong></a>
             </td>
           </tr>
           <tr>
             <td width="100">
-              <a href="SCRIPT?operation=full&amp;%RSID%&amp;hitposition=%HITPOSITION%#rightcol" title="Display Full-text" %SPLASH%>%FULL%</a>
+              <a href="SCRIPT?operation=full&amp;%RSID%&amp;hitposition=%HITPOSITION%#rightcol" title="Display Full-text">%FULL%</a>
             </td>
             <td width="100">
               <a href="SCRIPT?operation=email&amp;%RSID%&amp;hitposition=%HITPOSITION%#rightcol" title="Send record by e-mail">%EMAIL%</a>
             </td>
             <td width="100">
-              <a href="SCRIPT?operation=similar&amp;%RSID%&amp;hitposition=%HITPOSITION%#leftcol" title="Find similar records" %SPLASH%>%SIMILAR%</a>
+              <a href="SCRIPT?operation=similar&amp;%RSID%&amp;hitposition=%HITPOSITION%#leftcol" title="Find similar records">%SIMILAR%</a>
             </td>
             <td class="relv">%RELV%</td>
           </tr>
@@ -92,18 +93,18 @@ search_component_row = '''
         <table width="100%">
           <tr>
             <td colspan="4">
-              <a href="SCRIPT?operation=summary&amp;%RSID%&amp;hitposition=%HITPOSITION%#rightcol" title="Display record summary" %SPLASH%><strong>%TITLE%</strong></a>
+              <a href="SCRIPT?operation=summary&amp;%RSID%&amp;hitposition=%HITPOSITION%#rightcol" title="Display record summary"><strong>%TITLE%</strong></a>
             </td>
           </tr>
           <tr>
             <td width="100">
-            <a href="SCRIPT?operation=full&amp;%RSID%&amp;hitposition=%HITPOSITION%#rightcol" title="Display Full-text" %SPLASH%>%FULL%</a>
+            <a href="SCRIPT?operation=full&amp;%RSID%&amp;hitposition=%HITPOSITION%#rightcol" title="Display Full-text">%FULL%</a>
             </td>
             <td width="100">
             <a href="SCRIPT?operation=email&amp;%RSID%&amp;hitposition=%HITPOSITION%#rightcol" title="Send record by e-mail">%EMAIL%</a>
             </td>
             <td width="100">
-            <a href="SCRIPT?operation=similar&amp;%RSID%&amp;hitposition=%HITPOSITION%#leftcol" title="Find similar records" %SPLASH%>%SIMILAR%</a>
+            <a href="SCRIPT?operation=similar&amp;%RSID%&amp;hitposition=%HITPOSITION%#leftcol" title="Find similar records">%SIMILAR%</a>
             </td>
             <td class="relv">%RELV%</td>
           </tr>

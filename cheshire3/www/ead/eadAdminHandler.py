@@ -79,6 +79,8 @@ from eadHandler import *
 # script specific globals
 script = '/ead/admin/'
 
+from threading import Thread
+
 class AdminThread(Thread):
     
     def __init__(self):
@@ -606,8 +608,7 @@ class EadAdminHandler(EadHandler):
                       window.onunload = ulf;
                   }
                 -->
-                </script>
-                ''',
+                </script>''',
                '<h3 class="bar">%s  <a href="/ead/admin/help.html#existing_files" title="What is this?"><img src="/images/whatisthis.gif" alt="[What is this?]"/></a></h3>' % (header), 
                '<form action="files.html" name="fileops" method="post" onsubmit="return confirmOp();">',
                fileformsubmits,
@@ -1776,7 +1777,6 @@ def build_architecture(data=None):
     baseDocFac = db.get_object(session, 'baseDocumentFactory')
     sourceDir = baseDocFac.get_default(session, 'data')
     docParser = db.get_object(session, 'LxmlParser')
-    domParser = db.get_object(session, 'FtParser')
     # globals line 2: stores
     authStore = db.get_object(session, 'eadAuthStore')
     recordStore = db.get_object(session, 'recordStore')

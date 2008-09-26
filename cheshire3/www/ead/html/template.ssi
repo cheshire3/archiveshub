@@ -13,6 +13,7 @@
 		</script>
 	<![endif]-->
 	<link rel="stylesheet" type="text/css" href="/ead/css/style.css"></link>
+    <link rel="stylesheet" type="text/css" href="/ead/css/localStyles.css"></link>
 	
 	<!-- printout CSS -->
 	<link rel="stylesheet" type="text/css" media="print" href="/ead/css/print.css"></link>
@@ -21,6 +22,8 @@
 	<link rel="favourite icon" href="/images/c3.ico"></link>
 	
 	<script type="text/javascript" src="/ead/js/ead.js"></script>
+    <script type="text/javascript" src="/ead/js/visuals.js"></script>
+    <script type="text/javascript" src="/ead/js/hijax.js"></script>
 	
   </head>
   <body>
@@ -71,6 +74,10 @@
           	  <img src="/images/PythonPoweredSmall.gif" alt="Python Powered"/>
           	</a>
           	-->
+        </div>
+        <div id="supporters">
+            <a href="http://www.jisc.ac.uk/" title="Joint Information Systems Committee website">
+                <img src="/images/jisc0309.gif" width="54" height="28" alt=" [ JISC ] " /></a>
         </div>
         <div id="version">
 	  	    Cheshire for Archives v3.3.x ::	Ongoing Development

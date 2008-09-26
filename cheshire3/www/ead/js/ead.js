@@ -1,13 +1,13 @@
 /*
 // Program:   ead.js
-// Version:   0.08
+// Version:   0.09
 // Description:
 //            JavaScript functions used in the Cheshire3 EAD search/retrieve and display interface 
 //            - part of Cheshire for Archives v3.0
 //
 // Language:  JavaScript
 // Author:    John Harrison <john.harrison@liv.ac.uk>
-// Date:      23/07/2008
+// Date:      26/09/2008
 //
 // Copyright: &copy; University of Liverpool 2005-2008
 //
@@ -21,6 +21,7 @@
 // 0.06 - 03/08/2006 - JH - Non EAD specific functions separated into aptly named files in a separate javascript dir
 // 0.07 - 15/05/2007 - JH - toggleShow function added
 // 0.08 - 23/07/2008 - JH - function stacks implemented using Simon Willison's addLoadEvent
+// 0.09 - 26/09/2008 - JH - Visual effects (show/hide) superceded by those in visuals.js - removed
 //
 */ 
 
@@ -96,63 +97,4 @@ function confirmOp(){
 		else if (confirm) { return confirm(msg); }
 		else { return true; } // no mechanism for confirmation supported by browser - go ahead anyway
 	} else {return true; } // no requirement for confirmation
-}
-
-linkHash = new Array();
-linkHash['text'] = new Array('[ show ]', '[ hide ]');
-linkHash['plusMinus'] = new Array('[+]', '[-]');
-linkHash['folders'] = new Array('<img src="/images/folderClosed.jpg" alt="[+]"/>', '<img src="/images/folderOpen.jpg" alt="[-]"/>');
-
-function toggleShow(callLink, elementId, toggleStyle){
-	if( !document.getElementById) {
-		return;
-	}
-	if (typeof toggleStyle == "undefined") {
-    	toggleStyle = "text";
-  	}
-	e = document.getElementById( elementId );
-	if (e.style.display == 'block') {
-		callLink.innerHTML = linkHash[toggleStyle][0];
-		e.style.display = 'none';
-	} else {
-		callLink.innerHTML = linkHash[toggleStyle][1];
-		e.style.display = 'block';
-	}
-	return;
-}
-
-function hideStuff(){
-	if( !document.getElementsByTagName) {
-  		return;
-  	}	
-  	var linkList = document.getElementsByTagName("a");
-	for (var i = 0; i < linkList.length; i++) {
-		var el = linkList[i]
-		if (el.className.match('jstoggle')){
-			var classBits = el.className.split('-')
-			var toggleStyle = classBits[classBits.length-1]
-			el.innerHTML = linkHash[toggleStyle][0]
-			el.onclick = function() {
-				var hrefParts = this.getAttribute("href").split("#")
-				var div = hrefParts.pop()
-				var classBits = this.className.split('-')
-				var style = classBits[classBits.length-1]
-				toggleShow(this, div, style);
-				return false;
-			}
-		}
-	}
-	var divList = document.getElementsByTagName("div");
-	for (var i = 0; i < divList.length; i++) {
-		var el = divList[i]
-		if (el.className.match('jshide')){
-			el.style.display = 'none';
-		}
-	}
-}
-
-if (addLoadEvent) {
-	addLoadEvent(hideStuff);
-} else {
-	window.onload = hideStuff;
 }

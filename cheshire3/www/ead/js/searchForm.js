@@ -1,15 +1,15 @@
 /*
 // Script:	searchForm.js
-// Version:	0.05
+// Version:	0.07
 // Description:
 //          JavaScript functions used in the Cheshire3 EAD search/retrieve and display interface 
 //          - part of Cheshire for Archives v3.x
 //
 // Language:  JavaScript
 // Author:    John Harrison <john.harrison@liv.ac.uk>
-// Date:      25 January 2007
+// Date:      26 September 2007
 //
-// Copyright: &copy; University of Liverpool 2005, 2006, 2007
+// Copyright: &copy; University of Liverpool 2005-2008
 //
 // Version History:
 // 0.01 - 03/08/2006 - JH - Search form DOM manipulation functions pasted in from previous script for easier error tracking etc.
@@ -19,10 +19,12 @@
 //							- use innerHTML to setup radio buttons
 // 0.04 - 14/12/2006 - JH - Search form state maintained in cookie. Reset function added.
 // 0.05 - 25/01/2007 - JH - Muchos new stuff in anticipation of date searching
+// 0.06 - 19/12/2007 - JH - Multiple indexes specified in fieldidx
+// 0.07 - 26/09/2008 - JH - Bug fixed in createClause (title index not being assigned correct relations) ln 126
 //
 */
 
-var indexList = new Array('dc.description|||General Keyword', 'cql.anywhere|||Full Text', 'dc.title|||Title', 'dc.date|||Date', 'dc.creator|||Creator', 'dc.identifier|||Ref. Number', 'dc.subject|||Subject', 'bath.name|||Name', 'bath.personalName|||&nbsp;&nbsp;Personal Name', 'bath.corporateName|||&nbsp;&nbsp;Corporate Name', 'bath.geographicName|||&nbsp;&nbsp;Geographical Name', 'bath.genreForm|||Genre Form');
+var indexList = new Array('cql.anywhere||dc.description||dc.title|||Keywords', 'dc.title|||Titles', 'dc.date|||Dates', 'dc.creator|||Creators', 'dc.identifier|||Ref. Number', 'dc.subject|||Subjects', 'bath.name|||Names', 'bath.personalName|||&nbsp;&nbsp;Personal Names', 'bath.corporateName|||&nbsp;&nbsp;Corporate Names', 'bath.geographicName|||&nbsp;&nbsp;Geographical Names', 'bath.genreForm|||Genre');
 var kwRelationList = new Array('all/relevant/proxinfo|||All', 'any/relevant/proxinfo|||Any');
 var exactRelationList = new Array('exact/relevant/proxinfo|||Exactly');
 var proxRelationList = new Array('=/relevant/proxinfo|||Phrase');
@@ -48,10 +50,10 @@ function updateSelects(current){
 	}
 	// complex conditional to decide available relations
 	var relationList = new Array()
-	if (iSelIdx != 3) { var relationList = kwRelationList; }
-	if (iSelIdx > 1) { var relationList = relationList.concat(exactRelationList); }
-	if (iSelIdx < 3) { var relationList = relationList.concat(proxRelationList); }
-	if (iSelIdx == 3) {
+	if (iSelIdx != 2) { var relationList = kwRelationList; }
+	if (iSelIdx > 0) { var relationList = relationList.concat(exactRelationList); }
+	if (iSelIdx < 2) { var relationList = relationList.concat(proxRelationList); }
+	if (iSelIdx == 2) {
 		var rSelIdx = 4;
 		var relationList = relationList.concat(dateRelationList); 
 	}
@@ -120,10 +122,10 @@ function createClause(current, clauseState){
 	var rSelIdx = parts.shift();
 	// complex conditional to decide available relations
 	var relationList = new Array()
-	if (iSelIdx != 3) { var relationList = kwRelationList; }
-	if (iSelIdx > 1) { var relationList = relationList.concat(exactRelationList); }
-	if (iSelIdx < 3) { var relationList = relationList.concat(proxRelationList); }
-	if (iSelIdx == 3) {
+	if (iSelIdx != 2) { var relationList = kwRelationList; }
+	if (iSelIdx > 0) { var relationList = relationList.concat(exactRelationList); }
+	if (iSelIdx < 2) { var relationList = relationList.concat(proxRelationList); }
+	if (iSelIdx == 2) {
 		var relationList = relationList.concat(dateRelationList); 
 	}
 	pElem.appendChild(createSelect('fieldrel' + current, relationList, rSelIdx));
@@ -167,7 +169,10 @@ function removeClause(current) {
 	document.getElementById('addClauseLink').href = 'javascript:addSearchClause(' + current + ');';
 }
 
-function resetForm() {
+function resetForm(formid) {
+	if (typeof formid == "undefined") {
+    		formid = "searchform";
+  	}
 	var i = 1;
 	while (document.getElementById('searchClause' + i)) {
 		removeClause(i);
@@ -175,10 +180,10 @@ function resetForm() {
 	}
 	addSearchClause(0);
 	document.getElementById('addClauseLink').href = 'javascript:addSearchClause(1);';
-	setCookie('eadsearchform', '');
+	setCookie(formid, '');
 }
 
-function formToString() {
+function formToString(form) {
 	var i = 0;
 	var fields = new Array();
 	var bools = new Array();
@@ -209,7 +214,6 @@ function formFromString(s) {
 	} else {
 		var parts = new Array()
 	}
-	
 	if (parts.length == 2) {
 		var clauseList = parts[0].split('||');
 		var boolList = parts[1].split('||');
@@ -223,3 +227,4 @@ function formFromString(s) {
 
 	return;
 }
+

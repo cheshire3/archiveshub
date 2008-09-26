@@ -3,11 +3,10 @@
 import time, sys, os, re
 from crypt import crypt
 
-osp = sys.path
-sys.path = ["/home/cheshire/cheshire3/cheshire3/code", "."]
-sys.path.extend(osp)
+c3path = os.environ.get('C3HOME', '/home/cheshire/cheshire3')
+sys.path.insert(1, os.path.join(c3path, 'cheshire3', 'code'))
 
-from www_utils import *
+from cheshire3.web.www_utils import *
 # import customisable variables
 from localConfig import *
 

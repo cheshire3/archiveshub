@@ -30,25 +30,27 @@ from mod_python.util import FieldStorage, redirect
 # import generally useful modules
 import sys, traceback, os, cgitb, urllib, time, smtplib, re
 from crypt import crypt
-from threading import Thread
 from email import Message, MIMEMultipart, MIMEText # email modules
 from lxml import etree # Lxml tree manipulation
+
 # import customisable variables
 from localConfig import *
-# set sys paths 
-osp = sys.path
-sys.path = [os.path.join(cheshirePath, 'cheshire3', 'code')]
-sys.path.extend(osp)
-# import Cheshire3/PyZ3950 stuff
-from baseObjects import Session, Record, ResultSet
-from server import SimpleServer
+
+# set sys paths
+sys.path.insert(1, os.path.join(cheshirePath, 'cheshire3', 'code'))
+
+# Cheshire3 stuff
+from cheshire3.baseObjects import Session, Record, ResultSet
+from cheshire3.server import SimpleServer
+from cheshire3.document import StringDocument
+#from cheshire3.record import LxmlRecord, SaxRecord, FtDomRecord
+from cheshire3.utils import flattenTexts
+from cheshire3 import exceptions as c3errors
+from cheshire3.web.www_utils import *
+
+# PyZ39.50 stuff
 from PyZ3950 import CQLParser, SRWDiagnostics
-from document import StringDocument
-from record import LxmlRecord, SaxRecord, FtDomRecord
-from utils import flattenTexts
-import c3errors
-# C3 web search utils
-from www_utils import *
+from cheshire3.cqlParser import Diagnostic as CQLDiagnostic
 
 # regexs
 # Deprecated in favour of ProximityIndex offsets
@@ -97,11 +99,13 @@ class EadHandler:
         self.htmlTitle = []
         self.htmlNav = []
         self.templatePath = os.path.join(htmlPath, 'template.ssi')
-        self.globalReplacements = {'%REP_NAME%': repository_name,
-                              '%REP_LINK%': repository_link,
-                              '%REP_LOGO%': repository_logo,
-                              'SCRIPT': script,
-                              '%SCRIPT%': script
+        self.globalReplacements = {'%REP_NAME%': repository_name
+                                  ,'%REP_LINK%': repository_link
+                                  ,'%REP_LOGO%': repository_logo
+                                  ,'SCRIPT': script
+                                  ,'%SCRIPT%': script
+                                  ,'<br>': '<br/>'
+                                  ,'<hr>': '<hr/>'
                               }
 
         #- end __init__() ----------------------------------------------------------

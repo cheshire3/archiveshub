@@ -194,6 +194,10 @@ div.did,
 div.eadheader {
 	margin-bottom: 2px;
 }
+div.loading {
+	padding: 5px;
+	text-align: center;	
+}
 
 hr {
 	clear: both;
