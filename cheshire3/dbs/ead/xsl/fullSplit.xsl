@@ -70,6 +70,7 @@
                 <!-- ACCESS + USE RESTRICTIONS -->
                 <xsl:apply-templates select="./*/accessrestrict"/>
                 <xsl:apply-templates select="./*/userestrict"/>
+                <xsl:apply-templates select="./*/phystech"/>
                 <!-- ADMINISTRATIVE INFORMATION / ARCHIVAL HISTORY-->
                 <xsl:apply-templates select="./*/appraisal"/>
                 <xsl:apply-templates select="./*/acqinfo"/>

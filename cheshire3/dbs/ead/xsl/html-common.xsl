@@ -251,6 +251,8 @@
 		<!-- ACCESS + USE RESTRICTIONS -->
 		<xsl:apply-templates select="./accessrestrict"/>
 		<xsl:apply-templates select="./userestrict"/>
+        <xsl:apply-templates select="./phystech"/>
+        
 		<!-- ADMINISTRATIVE INFORMATION / ARCHIVAL HISTORY-->
 		<xsl:apply-templates select="./appraisal"/>
 		<xsl:apply-templates select="./acqinfo"/>
@@ -268,7 +270,7 @@
 		<xsl:apply-templates select="./prefercite"/>
 		<!-- MISCELLANEOUS -->
 		<xsl:apply-templates select="./odd"/>
-		<xsl:apply-templates select="./note"/>
+		<xsl:apply-templates select="./note" mode="own-section"/>
 		
 		<!-- CONTROLACCESS -->
 		<xsl:apply-templates select="./controlaccess"/>
@@ -303,12 +305,13 @@
 			<a name="{@id}"><xsl:text> </xsl:text></a>
 		</xsl:if>
 		<xsl:if test="not(head)">
+            <xsl:variable name="headstring"><xsl:text>Administrative / Biographical History</xsl:text></xsl:variable>
 		 	<xsl:choose>
 		 		<xsl:when test="../../archdesc or ../../../c3component">
-		 			<h3 class="ead">Administrative / Biographical History</h3>
+		 			<h3 class="ead"><xsl:value-of select="$headstring"/></h3>
 		 		</xsl:when>
 				<xsl:otherwise>
-					<h4 class="ead">Administrative / Biographical History</h4>
+					<h4 class="ead"><xsl:value-of select="$headstring"/></h4>
 				</xsl:otherwise>
 			</xsl:choose>
 		</xsl:if>
@@ -319,13 +322,15 @@
 	  	<xsl:if test="@id">
 	  		<a name="{@id}"><xsl:text> </xsl:text></a>
 	  	</xsl:if>
+        
 	    <xsl:if test="not(head)">
+            <xsl:variable name="headstring"><xsl:text>Scope and Content</xsl:text></xsl:variable>
 	    	<xsl:choose>
 		  		<xsl:when test="../../archdesc or ../../../c3component">
-		  			<h3 class="ead">Scope and Content</h3>
+		  			<h3 class="ead"><xsl:value-of select="$headstring"/></h3>
 		  		</xsl:when>
 				<xsl:otherwise>
-					<h4 class="ead">Scope and Content</h4>
+					<h4 class="ead"><xsl:value-of select="$headstring"/></h4>
 				</xsl:otherwise>
 	    	</xsl:choose>
 	    </xsl:if>
@@ -379,6 +384,24 @@
       	<xsl:otherwise>
       		<h4 class="ead">Conditions Governing Use</h4>
       	</xsl:otherwise>
+      </xsl:choose>
+    </xsl:if>
+    <xsl:apply-templates/>
+  </xsl:template>
+  
+  <xsl:template match="phystech">
+    <xsl:if test="@id">
+        <a name="{@id}"><xsl:text> </xsl:text></a>
+    </xsl:if>
+    <xsl:variable name="headstring"><xsl:text>Physical Characteristics and/or Technical Requirements</xsl:text></xsl:variable>
+    <xsl:if test="not(head)">
+        <xsl:choose>
+            <xsl:when test="../../archdesc or ../../../c3component">
+                <h3 class="ead"><xsl:value-of select="$headstring"/></h3>
+            </xsl:when>
+        <xsl:otherwise>
+            <h4 class="ead"><xsl:value-of select="$headstring"/></h4>
+        </xsl:otherwise>
       </xsl:choose>
     </xsl:if>
     <xsl:apply-templates/>
@@ -906,7 +929,7 @@
     			
     	<xsl:apply-templates select="did/physdesc" mode="component"/>
     		
-    	<xsl:apply-templates select="did/note"/>
+    	<xsl:apply-templates select="did/note" mode="own-section"/>
     	<xsl:apply-templates select="scopecontent"/>
     	<xsl:apply-templates select="bioghist"/>
     	<xsl:apply-templates select="arrangement"/>
@@ -918,6 +941,7 @@
     	<!-- ACCESS + USE RESTRICTIONS -->
     	<xsl:apply-templates select="accessrestrict"/>
     	<xsl:apply-templates select="userestrict"/>
+        <xsl:apply-templates select="phystech"/>
     	<!-- ADMINISTRATIVE INFORMATION / ARCHIVAL HISTORY-->
     	<xsl:apply-templates select="appraisal"/>
     	<xsl:apply-templates select="acqinfo"/>
@@ -935,6 +959,7 @@
     	<xsl:apply-templates select="prefercite"/>
     	<!-- MISCELLANEOUS -->
     	<xsl:apply-templates select="odd"/>
+        <xsl:apply-templates select="note" mode="own-section"/>
     	
     	<!-- CONTROLACCESS -->
     	<xsl:apply-templates select="controlaccess"/>
@@ -954,6 +979,10 @@
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
+    
+    <xsl:template match="head" mode="inline">
+        <b><xsl:value-of select="."/></b><xsl:text>: </xsl:text>
+    </xsl:template>
 	
 
 	<!-- ADDRESS -->
@@ -976,10 +1005,27 @@
 	<!--NOTES-->
 	<xsl:template match="bioghist/note">
 		<xsl:if test="not(head)">	
-	  		<b><xsl:text>Bibliographic Sources</xsl:text></b>
+	  		<br/><b><xsl:text>Bibliographic Sources</xsl:text></b>
   		</xsl:if>
 	  <xsl:apply-templates/>
 	</xsl:template>
+    
+    <xsl:template match="note">
+        <xsl:text>[ </xsl:text>
+        <xsl:if test="not(head)">   
+            <b><xsl:text>Note</xsl:text></b><xsl:text>: </xsl:text>
+        </xsl:if>
+            <xsl:apply-templates mode="inline"/>        
+        <xsl:text> ]</xsl:text>
+    </xsl:template>
+    
+    <xsl:template match="note" mode="own-section">
+        <xsl:if test="not(head)">   
+            <br/><b><xsl:text>Note</xsl:text></b>
+        </xsl:if>
+      <xsl:apply-templates/>
+    </xsl:template>
+    
 	
     <!-- Simple Link -->
     <xsl:template name="simplelink">
@@ -1353,13 +1399,20 @@
 	
 	<!-- MISCELLANEOUS -->
 	<xsl:template match="p">
-  	<xsl:if test="@id">
-  		<a name="{@id}"><xsl:text> </xsl:text></a>
-  	</xsl:if>
-  	<p>
-  		<xsl:apply-templates />
-  	</p>
+      	<xsl:if test="@id">
+            <a name="{@id}"><xsl:text> </xsl:text></a>
+        </xsl:if>
+      	<p>
+      		<xsl:apply-templates />
+      	</p>
 	</xsl:template>
+    
+    <xsl:template match="p" mode="inline">
+        <xsl:if test="@id">
+            <a name="{@id}"><xsl:text> </xsl:text></a>
+        </xsl:if>
+        <xsl:value-of select="."/>
+    </xsl:template>
 
 	<xsl:template match="defitem">
 		<xsl:apply-templates/>
@@ -1368,7 +1421,7 @@
 	
 	<!-- rendering/altrendering for all elements -->	
 	<xsl:template match="*">
-		<xsl:text> </xsl:text>
+        <xsl:text> </xsl:text>
 		<xsl:choose>
 			<!--  @render -->
 			<xsl:when test="@render='bold'">
@@ -1449,7 +1502,6 @@
 				</xsl:choose>
 			</xsl:otherwise>
 	    </xsl:choose>
-    	<xsl:text> </xsl:text>
 	</xsl:template>
 	
 	
@@ -1547,7 +1599,6 @@
     	<xsl:param name="index"/>
 	    <a>
 	      <xsl:attribute name="href">
-            <xsl:text>javascript: updateElementByUrl('leftcol', '</xsl:text>
 	        <xsl:value-of select="$script"/>
 	        <xsl:text>?</xsl:text>
 	        <xsl:text>operation=browse</xsl:text>
@@ -1559,8 +1610,7 @@
 	            <xsl:apply-templates select="."/>
 	          </xsl:with-param>
 	        </xsl:call-template>
-            <xsl:text>&amp;xmlOnly=1</xsl:text>
-            <xsl:text>');</xsl:text>
+            <xsl:text>#leftcol</xsl:text>
 	      </xsl:attribute>
 	      <xsl:attribute name="title">
 	        <xsl:text>Browse </xsl:text>

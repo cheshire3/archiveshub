@@ -184,7 +184,7 @@
     <xsl:template match="ref[@target]">
         <xsl:element name="a">
             <xsl:attribute name="href">
-                <xsl:text>SCRIPT/?operation=full&amp;recid=PARENTID#</xsl:text>
+                <xsl:text>SCRIPT/?operation=full&amp;recid=RECID#</xsl:text>
                 <xsl:value-of select="./@target"/>
             </xsl:attribute>
             <xsl:attribute name="target">
