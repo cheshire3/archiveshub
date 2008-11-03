@@ -10,21 +10,21 @@
 	<subConfigs>
 	
 		<subConfig type="xpathProcessor" id="identifierXPath">
-			<objectType>xpathProcessor.MetadataXPath</objectType>
+			<objectType>cheshire3.xpathProcessor.MetadataXPath</objectType>
 			<source>
 				<xpath>id</xpath>
 			</source>
 		</subConfig>
 
 		<subConfig type="xpathProcessor" id="nowTimeXPath">
-			<objectType>xpathProcessor.MetadataXPath</objectType>
+			<objectType>cheshire3.xpathProcessor.MetadataXPath</objectType>
 			<source>
 				<xpath>now</xpath>
 			</source>
 		</subConfig>
 		
 		<subConfig type="xpathProcessor" id="descriptionXPath">
-			<objectType>xpathProcessor.SimpleXPathProcessor</objectType>
+			<objectType>cheshire3.xpathProcessor.SimpleXPathProcessor</objectType>
 			<source>
 				<xpath>/ead//did/unittitle</xpath>
 				<xpath>/ead//did/origination</xpath>
@@ -38,7 +38,7 @@
 		</subConfig>
 		
 		<subConfig type="xpathProcessor" id="anywhereXPath">
-			<objectType>xpathProcessor.SimpleXPathProcessor</objectType>
+			<objectType>cheshire3.xpathProcessor.SimpleXPathProcessor</objectType>
 			<source>
 				<xpath>/ead/eadheader/*</xpath>
 				<xpath>/ead/archdesc/*</xpath>
@@ -47,7 +47,7 @@
 		</subConfig>
 		
 		<subConfig type="xpathProcessor" id="componentXPath">
-			<objectType>xpathProcessor.SimpleXPathProcessor</objectType>
+			<objectType>cheshire3.xpathProcessor.SimpleXPathProcessor</objectType>
 			<source>
 				<xpath>c</xpath>
 				<xpath>c01</xpath>

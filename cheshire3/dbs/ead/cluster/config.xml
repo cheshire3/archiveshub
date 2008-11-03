@@ -6,7 +6,7 @@
 	Copyright &copy; 2005, 2006, 2007 the University of Liverpool
 -->
 	
-    <objectType>database.SimpleDatabase</objectType>
+    <objectType>cheshire3.database.SimpleDatabase</objectType>
 
     <options>
         <setting type="srw">1</setting>
@@ -25,32 +25,32 @@
     
     <!-- protocol maps -->
     <subConfig type="protocolMap" id="eadClusterCQLProtocolMap">
-      <objectType>protocolMap.CQLProtocolMap</objectType>
+      <objectType>cheshire3.protocolMap.CQLProtocolMap</objectType>
       <paths>
         <path type="zeerexPath">zeerex_srw.xml</path>
       </paths>
     </subConfig>
     
 <!--    <subConfig type="protocolMap" id="eadClusterZProtocolMap">-->
-<!--      <objectType>protocolMap.Z3950ProtocolMap</objectType>-->
+<!--      <objectType>cheshire3.web.protocolMap.Z3950ProtocolMap</objectType>-->
 <!--      <paths>-->
 <!--        <path type="zeerexPath">zeerex_z3950.xml</path>-->
 <!--      </paths>-->
 <!--    </subConfig>-->
 
-    <subConfig type="documentFactory" id="clusterDocumentFactory">
-        <objectType>documentFactory.SimpleDocumentFactory</objectType>
-        <options>
-            <default type="data">tempCluster.data</default>
-            <default type="cache">0</default>
-            <default type="format">cluster</default>
-            <default type="codec">utf-8</default>
-        </options>
-    </subConfig>
+<!--    <subConfig type="documentFactory" id="clusterDocumentFactory">-->
+<!--        <objectType>cheshire3.documentFactory.SimpleDocumentFactory</objectType>-->
+<!--        <options>-->
+<!--            <default type="data">tempCluster.data</default>-->
+<!--            <default type="cache">0</default>-->
+<!--            <default type="format">cluster</default>-->
+<!--            <default type="codec">utf-8</default>-->
+<!--        </options>-->
+<!--    </subConfig>-->
     
     <!-- recordStores -->
     <subConfig type="recordStore" id="eadClusterStore">
-        <objectType>recordStore.BdbRecordStore</objectType>
+        <objectType>cheshire3.recordStore.BdbRecordStore</objectType>
         <paths>
             <path type="defaultPath">stores</path>
             <path type="databasePath">clusterStore.bdb</path>
@@ -65,7 +65,7 @@
 
     <!-- indexes -->
     <subConfig type="indexStore" id="eadClusterIndexStore">
-      <objectType>indexStore.BdbIndexStore</objectType>
+      <objectType>cheshire3.indexStore.BdbIndexStore</objectType>
       <paths>
          <path type="defaultPath">indexes</path>
          <path type="tempPath">temp</path>
@@ -74,7 +74,7 @@
     </subConfig>
     
     <subConfig type="transformer" id="tpgrsTxr">
-		<objectType>transformer.GrsMapTransformer</objectType>
+		<objectType>cheshire3.web.transformer.GrsMapTransformer</objectType>
 		<transform>
 			<map>
 				<xpath>#RAWRELEVANCE#</xpath>

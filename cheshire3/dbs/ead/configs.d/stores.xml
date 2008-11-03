@@ -8,16 +8,18 @@
  -->
 
 	<subConfigs>
-	
+        
 		<subConfig type="authStore" id="eadAuthStore">
-		  <objectType>objectStore.BdbObjectStore</objectType>
+		  <objectType>cheshire3.objectStore.BdbObjectStore</objectType>
 		  <paths>
 		    <path type="databasePath">eadAuthStore.bdb</path>
+            <object type="inTransformer" ref="XmlTransformer" />
+            <object type="outParser" ref="LxmlParser" />
 		  </paths>
 		</subConfig>
 	
 		<subConfig type="recordStore" id="recordStore">
-	      <objectType>recordStore.BdbRecordStore</objectType>
+	      <objectType>cheshire3.recordStore.BdbRecordStore</objectType>
 	      <paths>
 	      	<path type="defaultPath">stores</path>
 	        <path type="databasePath">recordStore.bdb</path>
@@ -31,7 +33,7 @@
 	    </subConfig>
 
 	    <subConfig type="recordStore" id="eadDcStore">
-	      <objectType>recordStore.BdbRecordStore</objectType>
+	      <objectType>cheshire3.recordStore.BdbRecordStore</objectType>
 	      <paths>
 	      	<path type="defaultPath">stores</path>
 	        <path type="databasePath">dcStore.bdb</path>
@@ -45,7 +47,7 @@
 	    </subConfig>
 
 	    <subConfig type="recordStore" id="componentStore">
-	      <objectType>recordStore.BdbRecordStore</objectType>
+	      <objectType>cheshire3.recordStore.BdbRecordStore</objectType>
 	      <paths>
 			<path type="defaultPath">stores</path>
 	        <path type="databasePath">compStore.bdb</path>
@@ -60,7 +62,7 @@
 
             <!-- Only needed for Editing interface - currently a work in progress -->
 	    <subConfig type="recordStore" id="editingStore">
-	      <objectType>recordStore.BdbRecordStore</objectType>
+	      <objectType>cheshire3.recordStore.BdbRecordStore</objectType>
 	      <paths>
 		<path type="defaultPath">stores</path>
 	        <path type="databasePath">editingStore.bdb</path>

@@ -9,9 +9,9 @@
   </serverInfo>
 
   <databaseInfo>
-     <title lang="en" primary="true">EAD Finding Aid Subject Cluster Database</title>
+	<title lang="en" primary="true">EAD Finding Aid Subject Cluster Database</title>
     <description lang="en" primary="true">
-	A database containing subject cluster records derived from Encoded Archival Data (EAD) records
+	   A database containing subject cluster records derived from Encoded Archival Data (EAD) records
     </description>
   </databaseInfo>
 
@@ -20,8 +20,9 @@
   </metaInfo>
 
   <indexInfo>
+    <set identifier="info:srw/cql-context-set/1/cql-v1.2" name="cql"/>
+    <set identifier="info:srw/cql-context-set/1/cql-v1.1" name="cql1-1"/>
     <set identifier="info:srw/cql-context-set/1/dc-v1.1" name="dc"/>
-    <set identifier="info:srw/cql-context-set/1/cql-v1.1" name="cql"/>
     <set identifier="info:srw/cql-context-set/2/rec-1.1" name="rec"/>
 
     <index c3:index="ead-cluster-idx-id">
@@ -33,19 +34,17 @@
 			<supports type="relation">=</supports>
 			<supports type="relation">&lt;</supports>
 			<supports type="relation">&lt;=</supports>
-			<supports type="relation">&gt;</supports>
-			<supports type="relation">&gt;=</supports>
 			<supports type="relation">any</supports>
 			<supports type="relation">all</supports>
 			<supports type="relation">exact</supports>
-			<supports type="relation">within</supports>
 		</configInfo>
     </index>
-
+    
     <index c3:index="ead-cluster-idx-all">
       <title>Full-text Proximity Keywords</title>
       <map>
         <name set="cql">anywhere</name>
+        <name set="cql1-1">anywhere</name>
       </map>
       <configInfo>
         <supports type="relation" c3:index="ead-cluster-idx-all">any</supports>

@@ -1,5 +1,5 @@
 <config type="user" id="%USERNAME%">
-  <objectType>user.SimpleUser</objectType>
+  <objectType>cheshire3.user.SimpleUser</objectType>
   <username>%USERNAME%</username>
   %password% %realName% %email%
   <flags>

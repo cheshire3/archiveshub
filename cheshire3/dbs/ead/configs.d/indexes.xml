@@ -11,7 +11,7 @@
         
     <!-- indexStore -->
     <subConfig type="indexStore" id="indexStore">
-        <objectType>indexStore.BdbIndexStore</objectType>
+        <objectType>cheshire3.indexStore.BdbIndexStore</objectType>
         <paths>
             <path type="defaultPath">indexes</path>
             <path type="tempPath">temp</path>
@@ -22,7 +22,7 @@
 	<!-- Custom normalizers -->
 		
     <subConfig type="normalizer" id="StoplistNormalizer">
-        <objectType>normalizer.StoplistNormalizer</objectType>
+        <objectType>cheshire3.normalizer.StoplistNormalizer</objectType>
         <paths>
             <path type="stoplist">stopwords.txt</path>
         </paths>
@@ -30,7 +30,7 @@
 		
     <!-- mini-workflows for processing chains -->
     <subConfig type="workflow" id="PreserveMaskingKeywordExtractorWorkflow">
-        <objectType>workflow.CachingWorkflow</objectType>
+        <objectType>cheshire3.workflow.CachingWorkflow</objectType>
         <workflow>
             <object type="extractor" ref="SimpleExtractor" />
             <object type="tokenizer" ref="PreserveMaskingTokenizer" />
@@ -39,7 +39,7 @@
     </subConfig>
     
     <subConfig type="workflow" id="ProximityExtractorWorkflow">
-        <objectType>workflow.CachingWorkflow</objectType>
+        <objectType>cheshire3.workflow.CachingWorkflow</objectType>
         <workflow>
             <object type="extractor" ref="ProxExtractor" />
             <object type="tokenizer" ref="RegexpFindOffsetTokenizer"/>
@@ -48,7 +48,7 @@
     </subConfig>
     
     <subConfig type="workflow" id="ProxDataWorkflow">
-        <objectType>workflow.CachingWorkflow</objectType>
+        <objectType>cheshire3.workflow.CachingWorkflow</objectType>
         <workflow>
             <object type="extractor" ref="ProxExtractor" />
             <object type="normalizer" ref="CaseNormalizer" />
@@ -61,7 +61,7 @@
     </subConfig>
     
     <subConfig type="workflow" id="ProxSearchWorkflow">
-        <objectType>workflow.CachingWorkflow</objectType>
+        <objectType>cheshire3.workflow.CachingWorkflow</objectType>
         <workflow>
             <object type="extractor" ref="ProxExtractor" />
             <object type="normalizer" ref="CaseNormalizer" />
@@ -74,7 +74,7 @@
     </subConfig>
     
 	<subConfig type="workflow" id="Diacritic-Case-NormalizerWorkflow">
-        <objectType>workflow.CachingWorkflow</objectType>
+        <objectType>cheshire3.workflow.CachingWorkflow</objectType>
         <workflow>
             <object type="normalizer" ref="DiacriticNormalizer" />
             <object type="normalizer" ref="CaseNormalizer" />
@@ -82,7 +82,7 @@
     </subConfig>
 	
 	<subConfig type="workflow" id="Space-Diacritic-Case-NormalizerWorkflow">
-        <objectType>workflow.CachingWorkflow</objectType>
+        <objectType>cheshire3.workflow.CachingWorkflow</objectType>
         <workflow>
             <object type="normalizer" ref="SpaceNormalizer" />
             <object type="workflow" ref="Diacritic-Case-NormalizerWorkflow"/>
@@ -90,7 +90,7 @@
 	</subConfig>
 	
 	<subConfig type="workflow" id="Diacritic-Case-Possessive-NormalizerWorkflow">
-        <objectType>workflow.CachingWorkflow</objectType>
+        <objectType>cheshire3.workflow.CachingWorkflow</objectType>
         <workflow>
             <object type="workflow" ref="Diacritic-Case-NormalizerWorkflow"/>
             <object type="normalizer" ref="PossessiveNormalizer" />
@@ -98,7 +98,7 @@
 	</subConfig>
 	
 	<subConfig type="workflow" id="Space-Diacritic-Case-Possessive-NormalizerWorkflow">
-        <objectType>workflow.CachingWorkflow</objectType>
+        <objectType>cheshire3.workflow.CachingWorkflow</objectType>
         <workflow>
             <object type="normalizer" ref="SpaceNormalizer" />
             <object type="workflow" ref="Diacritic-Case-Possessive-NormalizerWorkflow"/>
@@ -106,7 +106,7 @@
 	</subConfig>
 	
 	<subConfig type="workflow" id="Diacritic-Case-Possessive-EnglishStem-NormalizerWorkflow">
-        <objectType>workflow.CachingWorkflow</objectType>
+        <objectType>cheshire3.workflow.CachingWorkflow</objectType>
         <workflow>
         	<object type="workflow" ref="Diacritic-Case-Possessive-NormalizerWorkflow"/>
         	<object type="normalizer" ref="EnglishStemNormalizer" />
@@ -114,7 +114,7 @@
 	</subConfig>
 	
 	<subConfig type="workflow" id="Diacritic-Case-Possessive-Stoplist-EnglishStem-NormalizerWorkflow">
-        <objectType>workflow.CachingWorkflow</objectType>
+        <objectType>cheshire3.workflow.CachingWorkflow</objectType>
         <workflow>
         	<object type="workflow" ref="Diacritic-Case-Possessive-NormalizerWorkflow"/>
         	<object type="normalizer" ref="StoplistNormalizer" />
@@ -122,12 +122,11 @@
         </workflow>
 	</subConfig>
 	
-	
 	<!-- Indexes -->
 	
 	<!-- record identifier index -->
 	<subConfig type="index" id="ead-idx-recid">
-            <objectType>index.SimpleIndex</objectType>
+            <objectType>cheshire3.index.SimpleIndex</objectType>
             <paths>
             	<object type="indexStore" ref="indexStore" />
             </paths>
@@ -141,7 +140,7 @@
 	
 	<!-- docid index - for Z39.50 access -->
 	<subConfig type="index" id="ead-idx-docid">
-            <objectType>index.RecordIdentifierIndex</objectType>
+            <objectType>cheshire3.index.RecordIdentifierIndex</objectType>
             <paths>
                 <object type="recordStore" ref="recordStore" />
             </paths>
@@ -149,7 +148,7 @@
 	
 	<!-- componentid index - for Z39.50 access -->
 	<subConfig type="index" id="ead-idx-componentid">
-            <objectType>index.RecordIdentifierIndex</objectType>
+            <objectType>cheshire3.index.RecordIdentifierIndex</objectType>
             <paths>
                 <object type="recordStore" ref="componentStore" />
             </paths>
@@ -157,7 +156,7 @@
 	
 	<!-- is a component index -->
 	<subConfig type="index" id="ead-idx-istoplevel">
-            <objectType>index.SimpleIndex</objectType>
+            <objectType>cheshire3.index.SimpleIndex</objectType>
             <paths>
             	<object type="indexStore" ref="indexStore" />
             </paths>
@@ -172,7 +171,7 @@
 	
 	<!-- parentid index -->
 	<subConfig type="index" id="ead-idx-parentid">
-            <objectType>index.SimpleIndex</objectType>
+            <objectType>cheshire3.index.SimpleIndex</objectType>
             <paths>
             	<object type="indexStore" ref="indexStore" />
             </paths>
@@ -187,7 +186,7 @@
 
 	<!-- reference numbers -->
 	<subConfig type="index" id="ead-idx-unitid">
-            <objectType>index.SimpleIndex</objectType>
+            <objectType>cheshire3.index.SimpleIndex</objectType>
             <paths>
             	<object type="indexStore" ref="indexStore" />
             </paths>
@@ -205,7 +204,7 @@
 	</subConfig>
 
 	<subConfig type="index" id="ead-idx-unitidword">
-            <objectType>index.SimpleIndex</objectType>
+            <objectType>cheshire3.index.SimpleIndex</objectType>
             <paths>
             	<object type="indexStore" ref="indexStore" />
             </paths>
@@ -236,7 +235,7 @@
 
 	<!-- titles -->
 	<subConfig type="index" id="ead-idx-title">
-            <objectType>index.SimpleIndex</objectType>
+            <objectType>cheshire3.index.SimpleIndex</objectType>
             <paths>
             	<object type="indexStore" ref="indexStore" />
             </paths>
@@ -255,7 +254,7 @@
 	</subConfig>
 
 	<subConfig type="index" id="ead-idx-titleword">
-        <objectType>index.ProximityIndex</objectType>
+        <objectType>cheshire3.index.ProximityIndex</objectType>
         <paths>
         	<object type="indexStore" ref="indexStore" />
         </paths>
@@ -285,7 +284,7 @@
 
 	<!-- creators -->
 	<subConfig type="index" id="ead-idx-creator">
-            <objectType>index.SimpleIndex</objectType>
+            <objectType>cheshire3.index.SimpleIndex</objectType>
             <paths>
             	<object type="indexStore" ref="indexStore" />
             </paths>
@@ -304,7 +303,7 @@
 	</subConfig>
 
 	<subConfig type="index" id="ead-idx-creatorword">
-            <objectType>index.SimpleIndex</objectType>
+            <objectType>cheshire3.index.SimpleIndex</objectType>
             <paths>
             	<object type="indexStore" ref="indexStore" />
             </paths>
@@ -338,7 +337,7 @@
 
 	<!-- date -->
 	<subConfig type="index" id="ead-idx-date">
-	    <objectType>index.SimpleIndex</objectType>
+	    <objectType>cheshire3.index.SimpleIndex</objectType>
 	    <paths>
 	        <object type="indexStore" ref="indexStore" />
 	    </paths>
@@ -357,7 +356,7 @@
 	</subConfig>
     
     <subConfig type="index" id="ead-idx-dateYear">
-        <objectType>index.SimpleIndex</objectType>
+        <objectType>cheshire3.index.SimpleIndex</objectType>
         <paths>
             <object type="indexStore" ref="indexStore" />
         </paths>
@@ -378,7 +377,7 @@
     </subConfig>
 
 	<subConfig type="index" id="ead-idx-dateRange">
-	    <objectType>index.RangeIndex</objectType>
+	    <objectType>cheshire3.index.RangeIndex</objectType>
 	    <paths>
 	        <object type="indexStore" ref="indexStore" />
 	    </paths>
@@ -398,7 +397,7 @@
 
 	<!-- description/topic/quick search index -->
 	<subConfig type="index" id="ead-idx-description">
-	    <objectType>index.ProximityIndex</objectType>
+	    <objectType>cheshire3.index.ProximityIndex</objectType>
 	    <paths>
 	        <object type="indexStore" ref="indexStore" />
 	    </paths>
@@ -428,7 +427,7 @@
 
 	<!-- full text index -->
 	<subConfig type="index" id="ead-idx-all">
-		<objectType>index.ProximityIndex</objectType>
+		<objectType>cheshire3.index.ProximityIndex</objectType>
 		<paths>
 			<object type="indexStore" ref="indexStore" />
 		</paths>
@@ -457,7 +456,7 @@
 
 	<!-- subjects -->
 	<subConfig type="index" id="ead-idx-subject">
-		<objectType>index.SimpleIndex</objectType>
+		<objectType>cheshire3.index.SimpleIndex</objectType>
 		<paths>
 			<object type="indexStore" ref="indexStore" />
 		</paths>
@@ -477,7 +476,7 @@
 	</subConfig>
 
     	<subConfig type="index" id="ead-idx-subjectword">
-    		<objectType>index.SimpleIndex</objectType>
+    		<objectType>cheshire3.index.SimpleIndex</objectType>
     		<paths>
     			<object type="indexStore" ref="indexStore" />
     		</paths>
@@ -506,7 +505,7 @@
     	</subConfig>
 
         <subConfig type="index" id="ead-idx-name">
-            <objectType>index.SimpleIndex</objectType>
+            <objectType>cheshire3.index.SimpleIndex</objectType>
             <paths>
             	<object type="indexStore" ref="indexStore" />
             </paths>
@@ -538,7 +537,7 @@
         </subConfig>
 
 	<subConfig type="index" id="ead-idx-nameword">
-		<objectType>index.SimpleIndex</objectType>
+		<objectType>cheshire3.index.SimpleIndex</objectType>
 		<paths>
 			<object type="indexStore" ref="indexStore" />
 		</paths>
@@ -572,7 +571,7 @@
 
 	<!-- personal names -->
 	<subConfig type="index" id="ead-idx-persname">
-		<objectType>index.SimpleIndex</objectType>
+		<objectType>cheshire3.index.SimpleIndex</objectType>
 		<paths>
 			<object type="indexStore" ref="indexStore" />
 		</paths>
@@ -591,7 +590,7 @@
 	</subConfig>
 
 	<subConfig type="index" id="ead-idx-persnameword">
-		<objectType>index.SimpleIndex</objectType>
+		<objectType>cheshire3.index.SimpleIndex</objectType>
 		<paths>
 			<object type="indexStore" ref="indexStore" />
 		</paths>
@@ -621,7 +620,7 @@
 	
 	<!-- epithets -->
 	<subConfig type="index" id="ead-idx-persnameepithet">
-		<objectType>index.SimpleIndex</objectType>
+		<objectType>cheshire3.index.SimpleIndex</objectType>
 		<paths>
 			<object type="indexStore" ref="indexStore" />
 		</paths>
@@ -638,7 +637,7 @@
 	</subConfig>
 	
 	<subConfig type="index" id="ead-idx-persnameepithetword">
-		<objectType>index.SimpleIndex</objectType>
+		<objectType>cheshire3.index.SimpleIndex</objectType>
 		<paths>
 			<object type="indexStore" ref="indexStore" />
 		</paths>
@@ -668,7 +667,7 @@
 
 	<!-- family names - assume single word or hyphenated -->
 	<subConfig type="index" id="ead-idx-famname">
-		<objectType>index.SimpleIndex</objectType>
+		<objectType>cheshire3.index.SimpleIndex</objectType>
 		<paths>
 			<object type="indexStore" ref="indexStore" />
 		</paths>
@@ -687,7 +686,7 @@
 
 	<!-- corporate names -->
 	<subConfig type="index" id="ead-idx-corpname">
-		<objectType>index.SimpleIndex</objectType>
+		<objectType>cheshire3.index.SimpleIndex</objectType>
 		<paths>
 			<object type="indexStore" ref="indexStore" />
 		</paths>
@@ -708,7 +707,7 @@
 	</subConfig>
 
 	<subConfig type="index" id="ead-idx-corpnameword">
-		<objectType>index.SimpleIndex</objectType>
+		<objectType>cheshire3.index.SimpleIndex</objectType>
 		<paths>
 			<object type="indexStore" ref="indexStore" />
 		</paths>
@@ -743,7 +742,7 @@
 
 	<!-- geographic names -->
 	<subConfig type="index" id="ead-idx-geogname">
-		<objectType>index.SimpleIndex</objectType>
+		<objectType>cheshire3.index.SimpleIndex</objectType>
 		<paths>
 			<object type="indexStore" ref="indexStore" />
 		</paths>
@@ -763,7 +762,7 @@
 	</subConfig>
 
 	<subConfig type="index" id="ead-idx-geognameword">
-        <objectType>index.SimpleIndex</objectType>
+        <objectType>cheshire3.index.SimpleIndex</objectType>
         <paths>
             <object type="indexStore" ref="indexStore" />
         </paths>
@@ -794,7 +793,7 @@
 	
 	<!-- genreform -->
 	<subConfig type="index" id="ead-idx-genreform">
-        <objectType>index.SimpleIndex</objectType>
+        <objectType>cheshire3.index.SimpleIndex</objectType>
         <paths>
         	<object type="indexStore" ref="indexStore" />
         </paths>
@@ -813,7 +812,7 @@
 
 	<!-- genreform -->
 	<subConfig type="index" id="ead-idx-genreformword">
-        <objectType>index.SimpleIndex</objectType>
+        <objectType>cheshire3.index.SimpleIndex</objectType>
         <paths>
         	<object type="indexStore" ref="indexStore" />
         </paths>
@@ -843,7 +842,7 @@
 		
     <!-- metadata indexes for OAI -->
     <subConfig type="index" id="ead-idx-creationDate">
-        <objectType>index.SimpleIndex</objectType>
+        <objectType>cheshire3.index.SimpleIndex</objectType>
         <paths>
             <object type="indexStore" ref="indexStore" />
         </paths>
@@ -865,7 +864,7 @@
     </subConfig>
 
     <subConfig type="index" id="ead-idx-modificationDate">
-        <objectType>index.SimpleIndex</objectType>
+        <objectType>cheshire3.index.SimpleIndex</objectType>
         <paths>
             <object type="indexStore" ref="indexStore" />
         </paths>
@@ -884,39 +883,39 @@
     </subConfig>
       
     <!-- subject cluster extraction -->
-    <subConfig type="index" id="clusterExtractionIndex">
-        <objectType>index.ClusterExtractionIndex</objectType>
-        <paths>
-            <path type="tempPath">cluster/tempCluster.data</path>
-            <object type="indexStore" ref="indexStore"/>
-        </paths>
-        <cluster>
-	        <map type="key">
-                <xpath>controlaccess/subject</xpath>
-                <xpath>key</xpath>
-                <process>
-                <object type="extractor" ref="SimpleExtractor"/>
-                <object type="normalizer" ref="CaseNormalizer"/>
-                </process>
-	        </map>
-	        <map>
-                <xpath>did/unittitle</xpath>
-                <xpath>title</xpath>
-                <process>
-    	            <object type="extractor" ref="SimpleExtractor"/>
-    	            <object type="normalizer" ref="CaseNormalizer"/>
-                </process>
-	        </map>
-	        <map>
-                <xpath>subject</xpath>
-                <xpath>description</xpath>
-                <process>
-    	            <object type="extractor" ref="SimpleExtractor"/>
-    	            <object type="normalizer" ref="CaseNormalizer"/>
-                </process>
-	        </map>
-        </cluster>
-    </subConfig>
+<!--    <subConfig type="index" id="clusterExtractionIndex">-->
+<!--        <objectType>cheshire3.index.ClusterExtractionIndex</objectType>-->
+<!--        <paths>-->
+<!--            <path type="tempPath">cluster/tempCluster.data</path>-->
+<!--            <object type="indexStore" ref="indexStore"/>-->
+<!--        </paths>-->
+<!--        <cluster>-->
+<!--	        <map type="key">-->
+<!--                <xpath>controlaccess/subject</xpath>-->
+<!--                <xpath>key</xpath>-->
+<!--                <process>-->
+<!--                <object type="extractor" ref="SimpleExtractor"/>-->
+<!--                <object type="normalizer" ref="CaseNormalizer"/>-->
+<!--                </process>-->
+<!--	        </map>-->
+<!--	        <map>-->
+<!--                <xpath>did/unittitle</xpath>-->
+<!--                <xpath>title</xpath>-->
+<!--                <process>-->
+<!--    	            <object type="extractor" ref="SimpleExtractor"/>-->
+<!--    	            <object type="normalizer" ref="CaseNormalizer"/>-->
+<!--                </process>-->
+<!--	        </map>-->
+<!--	        <map>-->
+<!--                <xpath>subject</xpath>-->
+<!--                <xpath>description</xpath>-->
+<!--                <process>-->
+<!--    	            <object type="extractor" ref="SimpleExtractor"/>-->
+<!--    	            <object type="normalizer" ref="CaseNormalizer"/>-->
+<!--                </process>-->
+<!--	        </map>-->
+<!--        </cluster>-->
+<!--    </subConfig>-->
 
 	</subConfigs>
 

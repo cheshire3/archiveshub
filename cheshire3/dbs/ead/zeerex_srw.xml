@@ -26,8 +26,9 @@
 
 	<indexInfo>
 	
-	  <set identifier="info:srw/cql-context-set/1/dc-v1.1" name="dc"/>
-	  <set identifier="info:srw/cql-context-set/1/cql-v1.1" name="cql"/>
+	  <set identifier="info:srw/cql-context-set/1/cql-v1.2" name="cql"/>
+      <set identifier="info:srw/cql-context-set/1/cql-v1.1" name="cql1-1"/>
+      <set identifier="info:srw/cql-context-set/1/dc-v1.1" name="dc"/>
 	  <set identifier="http://zing.z3950.org/cql/bath/2.0/" name="bath"/>
 	  <set identifier="info:srw/cql-context-set/1/ead-v2002" name="ead"/>
 	  <set identifier="info:srw/cql-context-set/2/relevance-1.0" name="rel"/>
@@ -63,7 +64,6 @@
 	    <configInfo>
 	      <supports type="relation">exact</supports>
 	      <supports type="relation">=</supports>
-	      <supports type="relation">within</supports>
 	      <supports type="relation" c3:index="ead-idx-unitidword">all</supports>
 	      <supports type="relation" c3:index="ead-idx-unitidword">any</supports>
 	      <supports type="relationModifier">string</supports>
@@ -79,7 +79,6 @@
 	    </map>
 	    <configInfo>
 	      <supports type="relation">exact</supports>
-	      <supports type="relation">within</supports>
 	      <supports type="relation" c3:index="ead-idx-titleword">all</supports>
 	      <supports type="relation" c3:index="ead-idx-titleword">any</supports>
 	      <supports type="relation" c3:index="ead-idx-titleword">=</supports>
@@ -97,7 +96,6 @@
 	    <configInfo>
 	      <supports type="relation">=</supports>
 	      <supports type="relation">exact</supports>
-	      <supports type="relation">within</supports>
 	      <supports type="relation" c3:index="ead-idx-creatorword">all</supports>
 	      <supports type="relation" c3:index="ead-idx-creatorword">any</supports>
 	      <supports type="relationModifier">string</supports>
@@ -122,6 +120,7 @@
 	    <title>Full-text Proximity Keywords</title>
 	    <map>
 	      <name set="cql">anywhere</name>
+          <name set="cql1-1">anywhere</name>
 	    </map>
 	    <configInfo>
 	      <supports type="relation">any</supports>
@@ -140,7 +139,6 @@
 	    <configInfo>
 	      <supports type="relation">exact</supports>
 	      <supports type="relation">=</supports>
-	      <supports type="relation">within</supports>
 	      <supports type="relation" c3:index="ead-idx-subjectword">all</supports>
 	      <supports type="relation" c3:index="ead-idx-subjectword">any</supports>
 	      <supports type="relationModifier">string</supports>
@@ -157,7 +155,6 @@
 	    <configInfo>
 	      <supports type="relation">exact</supports>
 	      <supports type="relation">=</supports>
-	      <supports type="relation">within</supports>
 	      <supports type="relation" c3:index="ead-idx-nameword">all</supports>
 	      <supports type="relation" c3:index="ead-idx-nameword">any</supports>
 	      <supports type="relationModifier">string</supports>
@@ -173,7 +170,6 @@
 	    <configInfo>
 	      <supports type="relation">exact</supports>
 	      <supports type="relation">=</supports>
-	      <supports type="relation">within</supports>
 	      <supports type="relation" c3:index="ead-idx-persnameword">all</supports>
 	      <supports type="relation" c3:index="ead-idx-persnameword">any</supports>
 	      <supports type="relationModifier">string</supports>
@@ -191,7 +187,6 @@
 	      <supports type="relation" c3:index="ead-idx-persnameepithet">exact</supports>
 	      <supports type="relation" c3:index="ead-idx-persnameepithet">=</supports>
 	      <supports type="relation" c3:index="ead-idx-persnameepithetword">any</supports>
-	      <supports type="relation" c3:index="ead-idx-persnameepithet">within</supports>
 	      <supports type="relation" c3:index="ead-idx-persnameepithetword">all</supports>
 	      <supports type="relationModifier" c3:index="ead-idx-persnameepithet">string</supports>
 	      <supports type="relationModifier" c3:index="ead-idx-persnameepithetword">word</supports>
@@ -207,7 +202,6 @@
 	    <configInfo>
 	      <supports type="relation" c3:index="ead-idx-famname">exact</supports>
 	      <supports type="relation" c3:index="ead-idx-famname">=</supports>
-	      <supports type="relation" c3:index="ead-idx-famname">within</supports>
 	      <supports type="relationModifier" c3:index="ead-idx-famname">string</supports>
 	    </configInfo>
 	  </index>
@@ -220,7 +214,6 @@
 	    <configInfo>
 	      <supports type="relation" c3:index="ead-idx-corpname">exact</supports>
 	      <supports type="relation" c3:index="ead-idx-corpname">=</supports>
-	      <supports type="relation" c3:index="ead-idx-corpname">within</supports>
 	      <supports type="relation" c3:index="ead-idx-corpnameword">all</supports>
 	      <supports type="relation" c3:index="ead-idx-corpnameword">any</supports>
 	      <supports type="relationModifier" c3:index="ead-idx-corpname">string</supports>
@@ -236,7 +229,6 @@
 	    <configInfo>
 	      <supports type="relation" c3:index="ead-idx-geogname">exact</supports>
 	      <supports type="relation" c3:index="ead-idx-geogname">=</supports>
-	      <supports type="relation" c3:index="ead-idx-geogname">within</supports>
 	      <supports type="relation" c3:index="ead-idx-geognameword">all</supports>
 	      <supports type="relation" c3:index="ead-idx-geognameword">any</supports>
 	      <supports type="relationModifier" c3:index="ead-idx-geogname">string</supports>
@@ -252,7 +244,6 @@
 	    <configInfo>
 		  <supports type="relation" c3:index="ead-idx-genreform">exact</supports>
 	      <supports type="relation" c3:index="ead-idx-genreform">=</supports>
-	      <supports type="relation" c3:index="ead-idx-genreform">within</supports>
 	      <supports type="relation" c3:index="ead-idx-genreformword">all</supports>
 	      <supports type="relation" c3:index="ead-idx-genreformword">any</supports>
 	      <supports type="relationModifier" c3:index="ead-idx-genreform">string</supports>
@@ -322,7 +313,6 @@
 				<supports type="relation">any</supports>
 				<supports type="relation">all</supports>
 				<supports type="relation">exact</supports>
-				<supports type="relation">within</supports>
 			</configInfo>
 		</index>
 	
@@ -373,7 +363,7 @@
         </supports>
         
         <supports type="extension"
-            c3:type="search"
+            c3:type="searchRetrieve"
             c3:function="resultSetSummaryHandler"
             c3:sruName="archiveshub-2-resultSet">http://www.archiveshub.ac.uk/srw/extension/2/resultSet-1.1 rs
         </supports>

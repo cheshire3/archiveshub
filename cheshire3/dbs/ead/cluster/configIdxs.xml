@@ -1,15 +1,21 @@
 <config>
+
+<!-- 
+    This file was produced, and released as part of Cheshire for Archives v3.x.
+    Copyright &#169; 2005-2008 the University of Liverpool
+-->
+
   <subConfigs>
   
     <subConfig type="index" id="ead-cluster-idx-id">
-        <objectType>index.RecordIdentifierIndex</objectType>
+        <objectType>cheshire3.index.RecordIdentifierIndex</objectType>
         <paths>
             <object type="recordStore" ref="eadClusterStore" />
         </paths>
     </subConfig>
 
     <subConfig type="index" id="ead-cluster-idx-all">
-      <objectType>index.SimpleIndex</objectType>
+      <objectType>cheshire3.index.SimpleIndex</objectType>
       <paths>
         <object type="indexStore" ref="eadClusterIndexStore"/>
       </paths>
@@ -26,7 +32,7 @@
     </subConfig>
 
     <subConfig type="index" id="ead-cluster-idx-key">
-      <objectType>index.SimpleIndex</objectType>
+      <objectType>cheshire3.index.SimpleIndex</objectType>
       <paths>
         <object type="indexStore" ref="eadClusterIndexStore"/>
       </paths>
@@ -41,7 +47,7 @@
     </subConfig>
 
     <subConfig type="index" id="ead-cluster-idx-title">
-      <objectType>index.SimpleIndex</objectType>
+      <objectType>cheshire3.index.SimpleIndex</objectType>
       <paths>
         <object type="indexStore" ref="eadClusterIndexStore"/>
       </paths>
@@ -56,7 +62,7 @@
     </subConfig>
 
     <subConfig type="index" id="ead-cluster-idx-description">
-      <objectType>index.SimpleIndex</objectType>
+      <objectType>cheshire3.index.SimpleIndex</objectType>
       <paths>
         <object type="indexStore" ref="eadClusterIndexStore"/>
       </paths>

@@ -2,15 +2,16 @@
 
 <!-- 
 	This file was produced, and released as part of Cheshire for Archives v3.x.
-	Copyright &copy; 2005-2008 the University of Liverpool
+	Copyright &#169; 2005-2008 the University of Liverpool
 -->
 
     <subConfigs>
 	
         <subConfig type="workflow" id="buildClusterWorkflow">
-            <objectType>workflow.CachingWorkflow</objectType>
+            <objectType>cheshire3.workflow.CachingWorkflow</objectType>
             <workflow>
                 <!-- input type:  documentFactory -->
+                <log level="info">"Storing + Indexing Clusters"</log>
                 <object type="recordStore" function="begin_storing"/>
                 <object type="database" function="begin_indexing"/>
                 <for-each>
@@ -24,7 +25,7 @@
 
 
 	<subConfig type="workflow" id="buildClusterSingleWorkflow">
-            <objectType>workflow.CachingWorkflow</objectType>
+            <objectType>cheshire3.workflow.CachingWorkflow</objectType>
             <workflow>
 		<!-- input type: document -->
 		<object type="preParser" ref="PrintableOnlyPreParser"/>
@@ -34,7 +35,7 @@
                     <object type="parser" ref="LxmlParser"/>
 		</try>
 		<except>
-                    <log>"*** unparsable"</log>
+                    <log level="warning">"*** unparsable"</log>
                     <return/>
 		</except>
 		<!-- type: record -->
@@ -44,7 +45,7 @@
                     <object type="database" function="index_record"/>
 		</try>
 		<except>
-                    <log>"*** error"</log>
+                    <log level="error">"***"</log>
                     <raise/>
 		</except>
             </workflow>

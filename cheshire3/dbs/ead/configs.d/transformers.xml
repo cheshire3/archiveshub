@@ -8,91 +8,91 @@
 	<subConfigs>
 	
 		<subConfig type="transformer" id="sruOutgoingTxr">
-	      <objectType>transformer.LxmlXsltTransformer</objectType>
+	      <objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
 	      <paths>
 	         <path type="xsltPath">xsl/sruOut.xsl</path>
 	      </paths>
 	    </subConfig>
         
         <subConfig type="transformer" id="oaiOutgoingTxr">
-          <objectType>transformer.LxmlXsltTransformer</objectType>
+          <objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
           <paths>
              <path type="xsltPath">xsl/oaiOut.xsl</path>
           </paths>
         </subConfig>
 	    
 	    <subConfig type="transformer" id="htmlFullTxr">
-	      <objectType>transformer.LxmlXsltTransformer</objectType>
+	      <objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
 	      <paths>
 	         <path type="xsltPath">xsl/full.xsl</path>
 	      </paths>
 	    </subConfig>
 	
 	    <subConfig type="transformer" id="htmlFullSplitTxr">
-	      <objectType>transformer.LxmlXsltTransformer</objectType>
+	      <objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
 	      <paths>
 	         <path type="xsltPath">xsl/fullSplit.xsl</path>
 	      </paths>
 	    </subConfig>
 	
 	    <subConfig type="transformer" id="htmlSummaryTxr">
-	      <objectType>transformer.LxmlXsltTransformer</objectType>
+	      <objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
 	      <paths>
 	         <path type="xsltPath">xsl/summary.xsl</path>
 	      </paths>
 	    </subConfig>
 	
 	    <subConfig type="transformer" id="textTxr">
-	      <objectType>transformer.LxmlXsltTransformer</objectType>
+	      <objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
 	      <paths>
 	         <path type="xsltPath">xsl/text.xsl</path>
 	      </paths>
 	    </subConfig>
 	    
 	    <subConfig type="transformer" id="formCreationTxr">
-	      <objectType>transformer.LxmlXsltTransformer</objectType>
+	      <objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
 	      <paths>
 	         <path type="xsltPath">xsl/form.xsl</path>
 	      </paths>
 	    </subConfig>
 	    
 	    <subConfig type="transformer" id="orderingTxr">
-	    	<objectType>transformer.LxmlXsltTransformer</objectType>
+	    	<objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
 	      <paths>
 	         <path type="xsltPath">xsl/ead_order.xsl</path>
 	      </paths>
 	    </subConfig>
 	    
 	    <subConfig type="transformer" id="indentingTxr">
-	    	<objectType>transformer.LxmlXsltTransformer</objectType>
+	    	<objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
 	      <paths>
 	         <path type="xsltPath">xsl/reindent.xsl</path>
 	      </paths>
 	    </subConfig>
 	    
 	    <subConfig type="transformer" id="editingTocTxr">
-	    	<objectType>transformer.LxmlXsltTransformer</objectType>
+	    	<objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
 	      <paths>
 	         <path type="xsltPath">xsl/contents-editing.xsl</path>
 	      </paths>
 	    </subConfig>
 	
 	    <subConfig type="transformer" id="eadDublinCoreTxr">
-	      <objectType>transformer.LxmlXsltTransformer</objectType>
+	      <objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
 	      <paths>
 	         <path type="xsltPath">xsl/ead2srw_dc.xsl</path>
 	      </paths>
 	    </subConfig>
 	    
 	    <subConfig type="transformer" id="OAIDublinCoreTransformer">
-	      <objectType>transformer.LxmlXsltTransformer</objectType>
+	      <objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
 	      <paths>
 	         <path type="xsltPath">xsl/ead2oai_dc.xsl</path>
 	      </paths>
 	    </subConfig>
     
 		<subConfig type="transformer" id="tpgrsTxr">
-			<objectType>transformer.GrsMapTransformer</objectType>
+			<objectType>cheshire3.web.transformer.GrsMapTransformer</objectType>
 			<transform>
 				<map>
 					<xpath>#RAWRELEVANCE#</xpath>
@@ -118,7 +118,7 @@
 		</subConfig>
 		
 		<subConfig type="transformer" id="cTpgrsTxr">
-			<objectType>transformer.GrsMapTransformer</objectType>
+			<objectType>cheshire3.web.transformer.GrsMapTransformer</objectType>
 			<transform>
 				<map>
 					<xpath>#RAWRELEVANCE#</xpath>

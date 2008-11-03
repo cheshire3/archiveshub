@@ -1,7 +1,7 @@
-#!/home/cheshire/cheshire3/install/bin/python
+#!/home/cheshire/cheshire3/install/bin/python -i
 #
 # Script:    run.py
-# Date:      11 February 2008
+# Date:      18 August 2008
 # Copyright: &copy; University of Liverpool 2005-2008
 # Description:
 #            script for maintaining a Cheshire3 database of EAD finding aid documents.
@@ -29,19 +29,17 @@ if ('-h' in sys.argv) or ('--help' in sys.argv) or ('--options' in sys.argv):
         ])
     sys.exit()    
     
-osp = sys.path
-sys.path = ["/home/cheshire/cheshire3/cheshire3/code"]
-sys.path.append("/home/cheshire/cheshire3/cheshire3/www/ead")
-sys.path.extend(osp)
+sys.path.insert(1, "/home/cheshire/cheshire3/cheshire3/code")
 
-from baseObjects import Session
-from server import SimpleServer
-from document import StringDocument
-import c3errors
+from cheshire3.baseObjects import Session
+from cheshire3.server import SimpleServer
+from cheshire3.document import StringDocument
+from cheshire3 import exceptions as c3errors
 
-from www_utils import *
+from cheshire3.web.www_utils import read_file
+
 # import customisable variables
-from localConfig import *
+#from localConfig import *
 
 # Build environment...
 session = Session()
@@ -49,17 +47,20 @@ serv = SimpleServer(session, "/home/cheshire/cheshire3/cheshire3/configs/serverC
 session.database = 'db_ead'
 
 db = serv.get_object(session, 'db_ead')
-clusDb = serv.get_object(session, 'db_ead_cluster')
+lgr = db.get_path(session, 'defaultLogger')
 recordStore = db.get_object(session, 'recordStore')
-compStore = db.get_object(session, 'componentStore')
-clusRecordStore = clusDb.get_object(session, 'eadClusterStore')
 authStore = db.get_object(session, 'eadAuthStore')
+compStore = db.get_object(session, 'componentStore')
+clusDocFac = db.get_object(session, 'clusterDocumentFactory')
+
+clusDb = serv.get_object(session, 'db_ead_cluster')
+clusRecordStore = clusDb.get_object(session, 'eadClusterStore')
+
 
 xmlp = db.get_object(session, 'LxmlParser')
 
-
 def inputError(msg):
-    print 'ERROR: ' + msg
+    lgr.log_error(session, msg)
     sys.exit()
 
 
@@ -101,12 +102,12 @@ if ('-load' in sys.argv):
     flow = db.get_object(session, 'buildIndexWorkflow')
     baseDocFac = db.get_object(session, 'baseDocumentFactory')
     baseDocFac.load(session)
-    print 'Loading from %s...' % (baseDocFac.dataPath)
-    flow.load_cache(session, db)
+    lgr.log_info(session, 'Loading files from %s...' % (baseDocFac.dataPath))
+    #flow.load_cache(session, db)
     flow.process(session, baseDocFac)
     (mins, secs) = divmod(time.time() - start, 60)
     (hours, mins) = divmod(mins, 60)
-    print 'Loading, Indexing complete (%dh %dm %ds)' % (hours, mins, secs)
+    lgr.log_info(session, 'Loading, Indexing complete (%dh %dm %ds)' % (hours, mins, secs))
     
 
 if ('-index' in sys.argv):
@@ -117,45 +118,61 @@ if ('-index' in sys.argv):
         if not idx.get_setting(session, 'noUnindexDefault', 0):
             idx.clear(session)
     db.begin_indexing(session)
-    print "Indexing records..."
+    lgr.log_info(session, "Indexing records...")
     for rec in recordStore:
-        print rec.id.ljust(40),
         try:
             db.index_record(session, rec)
-            print '[OK]'
+            lgr.log_info(session, rec.id.ljust(40) + '[OK]')
         except UnicodeDecodeError:
-            print '[Some indexes not built - non unicode characters!]'
+            lgr.log_warning(session, rec.id.ljust(40) + '[Some indexes not built - non unicode characters!]')
         del rec
      
     db.commit_indexing(session)
     db.commit_metadata(session)
     (mins, secs) = divmod(time.time() - start, 60)
     (hours, mins) = divmod(mins, 60)
-    print 'Indexing complete (%dh %dm %ds)' % (hours, mins, secs)
+    lgr.log_info(session, 'Indexing complete (%dh %dm %ds)' % (hours, mins, secs))
 
 
 if ('-cluster' in sys.argv):
     start = time.time()
-    # set session.database to the cluster DB
+    lgr.log_info(session, 'Accumulating subject clusters...')
+    for rec in recordStore:
+        clusDocFac.load(session, rec)
+    
     session.database = clusDb.id
-    # build necessary objects
     clusDb.clear_indexes(session)
     clusFlow = clusDb.get_object(session, 'buildClusterWorkflow')
-    clusDocFac = clusDb.get_object(session, 'clusterDocumentFactory')
-    try:
-        clusDocFac.load(session)
-    except c3errors.FileDoesNotExistException:
-        # return session.database to the default (finding aid) DB
-        print '*** No cluster data present.'
-    else:
-        print 'Clustering subjects...'
-        clusFlow.process(session, clusDocFac)
-    
+    clusFlow.process(session, clusDocFac)
     (mins, secs) = divmod(time.time() - start, 60)
     (hours, mins) = divmod(mins, 60)
-    print 'Cluster Indexing complete (%dh %dm %ds)' % (hours, mins, secs)
+    lgr.log_info(session, 'Subject Clustering complete (%dh %dm %ds)' % (hours, mins, secs))
     # return session.database to the default (finding aid) DB
     session.database = db.id
+    
+    
+#if ('-cluster' in sys.argv):
+#    start = time.time()
+#    # set session.database to the cluster DB
+#    session.database = clusDb.id
+#    # build necessary objects
+#    clusDb.clear_indexes(session)
+#    clusFlow = clusDb.get_object(session, 'buildClusterWorkflow')
+#    clusDocFac = clusDb.get_object(session, 'clusterDocumentFactory')
+#    try:
+#        clusDocFac.load(session)
+#    except c3errors.FileDoesNotExistException:
+#        # return session.database to the default (finding aid) DB
+#        print '*** No cluster data present.'
+#    else:
+#        print 'Clustering subjects...'
+#        clusFlow.process(session, clusDocFac)
+#    
+#    (mins, secs) = divmod(time.time() - start, 60)
+#    (hours, mins) = divmod(mins, 60)
+#    print 'Cluster Indexing complete (%dh %dm %ds)' % (hours, mins, secs)
+#    # return session.database to the default (finding aid) DB
+#    session.database = db.id
     
 
 if ('-load_components' in sys.argv) or ('-load_cs' in sys.argv):

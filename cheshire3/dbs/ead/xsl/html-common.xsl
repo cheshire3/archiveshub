@@ -1617,6 +1617,9 @@
 	        <xsl:value-of select="$index"/>
 	        <xsl:text> index</xsl:text>
 	      </xsl:attribute>
+          <xsl:attribute name="class">
+            <xsl:text>ajax</xsl:text>
+          </xsl:attribute>
 	      <xsl:apply-templates select="."/>
 	    </a>
 	</xsl:template>
