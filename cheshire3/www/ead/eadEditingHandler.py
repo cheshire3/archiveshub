@@ -25,6 +25,7 @@
 
 
 from eadHandler import *
+from cheshire3.record import LxmlRecord
 from copy import deepcopy
 import datetime, glob
 import traceback
@@ -49,6 +50,33 @@ class EadEditingHandler(EadHandler):
                       'loc' : 'z'                    
                      }
 
+    
+    persnamePunct = {'a': [', '],
+                     'forename': ['. '],
+                     'y': ['(', ') '],
+                     'epithet': [', ']
+                     }
+    
+    famnamePunct = {'a': [' family. '],
+                    'title':['. '],
+                    'y': ['(', ') '],
+                    'z':['. ']
+                    }
+    
+    corpnamePunct = {'x': [' -- ', ' '],
+                     'y': ['(', ') '],
+                     'z': [' -- ', ' ']                            
+                     }
+    
+    subjectPunct = {'x': [' -- ', ' '],
+                     'y': [' -- ', ' '],
+                     'z': [' -- ', ' ']                            
+                     }
+    
+    locationPunct = {'x': [' -- ', ' ']
+                     }
+
+    typeDict = {'persname': persnamePunct, 'famname': famnamePunct, 'corpname': corpnamePunct, 'subject': subjectPunct, 'location': locationPunct}
 
     def __init__(self, lgr):
         EadHandler.__init__(self, lgr)
@@ -299,6 +327,7 @@ class EadEditingHandler(EadHandler):
        
        
     def _create_controlaccess(self, startNode, name, value):
+        #get the controlaccess node or create it 
         if not (startNode.xpath('controlaccess')):
             controlaccess = etree.Element('controlaccess')
             #need to insert before dsc?
@@ -306,10 +335,12 @@ class EadEditingHandler(EadHandler):
             caNode = controlaccess
         else:
             caNode = startNode.xpath('controlaccess')[0]   
-        type = etree.Element(name[name.find('/')+1:])
+        typeString = name[name.find('/')+1:]    
+        type = etree.Element(typeString)
+        
         caNode.append(type)
         fields = value.split(' ||| ')
-        for f in fields :
+        for i, f in enumerate(fields) :
             if not (f == ''):
                 field = f.split(' | ')
                 typelabel = field[0].split('_')[0]
@@ -318,6 +349,10 @@ class EadEditingHandler(EadHandler):
                     if (field[1] != 'none') :
                         type.set(fieldlabel, field[1])                         
                 else :
+                    try:
+                        punctList = self.typeDict[typeString]
+                    except:
+                        punctList = None                      
                     if (fieldlabel == typelabel):
                         attributeValue = 'a'
                     else:
@@ -326,7 +361,21 @@ class EadEditingHandler(EadHandler):
                             attributeValue = fieldlabel
                     emph = etree.Element('emph', altrender='%s' % attributeValue)
                     self._add_text(emph, field[1])
+                    if i < len(fields):
+                        if punctList and punctList.get(attributeValue, None):
+                            punct = punctList.get(attributeValue, None)
+                            if len(punct) == 1:
+                                emph.tail = punct[0]
+                            else:
+                                type[-1].tail = '%s%s' % (type[-1].tail, punct[0])
+                                emph.tail = punct[1]
+                        else:
+                            emph.tail = ' '
                     type.append(emph)    
+        lastTail = type[-1].tail   
+        if re.match('(\s+)?[,\.\-](\s+)?', lastTail):
+            type[-1].tail = ''
+         
     #- end _create_controlacess    
  
  
