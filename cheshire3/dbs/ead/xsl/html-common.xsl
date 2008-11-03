@@ -1421,7 +1421,6 @@
 	
 	<!-- rendering/altrendering for all elements -->	
 	<xsl:template match="*">
-        <xsl:text> </xsl:text>
 		<xsl:choose>
 			<!--  @render -->
 			<xsl:when test="@render='bold'">
