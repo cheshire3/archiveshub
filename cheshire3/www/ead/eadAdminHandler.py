@@ -1,7 +1,7 @@
 #
 # Script:    eadAdminHandler.py
-# Version:   0.31
-# Date:      8 April 2008
+# Version:   0.32
+# Date:      28 October 2008
 # Copyright: &copy; University of Liverpool 2005-2008
 # Description:
 #            Web interface for administering a cheshire 3 database of EAD finding aids
@@ -70,11 +70,13 @@
 # 0.29 - 11/01/2008 - CS - javascript call to collapseLists function changed to createTreeFromList()
 # 0.30 - xx/02/2008 - JH - Some new display stuff while rebuilding / reindexing
 # 0.31 - 08/04/2008 - JH - Contraints placed on usernames (alphanumeric only)
+# 0.32 - 28/10/2008 - JH - User editing migrated to Lxml
 #
 #
 
 
 from eadHandler import *
+from cheshire3.record import LxmlRecord
 
 # script specific globals
 script = '/ead/admin/'
@@ -279,7 +281,7 @@ class EadAdminHandler(EadHandler):
                          })
         return multiReplace(html, paramDict)
         
-    #- end _get_genericHtml()
+        #- end _get_genericHtml()
     
     def _get_timeStamp(self):
         return time.strftime('%Y-%m-%dT%H%M%S')
@@ -316,7 +318,7 @@ class EadAdminHandler(EadHandler):
                       multiReplace(read_file('adduser.html'), values),])
                                                                 
         return '\n'.join(lines)
-    #- end list_users()
+        #- end list_users()
  
            
     def _error(self, msg, page=""):
@@ -334,38 +336,28 @@ class EadAdminHandler(EadHandler):
             link = '<a href="database.html">Return to \'Database Management\' page</a>'
         self.htmlTitle.append('Error')
         return '<span class="error">%s</span><br/>\n<br/>%s' % (msg, link)
-  
+        #- end _error()
+        
     
-    def _modify_userDom(self, userDom, updateHash):
-        global authStore
-        # manipulate DOM to make changes
-        docNode = userDom.documentElement
-        for c in docNode.childNodes:
-            if (c.nodeType == c.ELEMENT_NODE) and (updateHash.has_key(c.localName)):
-                newNode = userDom.createElementNS(None, c.localName)        # create new node
-                txtNode = userDom.createTextNode(updateHash[c.localName])    # create new value as text node
-                newNode.appendChild(txtNode)                                # add new value text node
-                docNode.replaceChild(newNode, c)                            # replace existing node with new one
-                del newNode, txtNode, updateHash[c.localName]                # nullify things and pop item from hash
-        
-        # add any new information
+    def _modify_userLxml(self, userNode, updateHash):
+        for c in userNode.iterchildren(tag=etree.Element):
+            if c.tag in updateHash:
+                c.text = updateHash[c.tag]
+                del updateHash[c.localName]
+
         for k,v in updateHash.iteritems():
-            newNode = userDom.createElementNS(None, k)
-            txtNode = userDom.createTextNode(v)
-            newNode.appendChild(txtNode)
-            docNode.appendChild(newNode)
-        
-        return userDom
-    #- end _modify_userDom()
-        
-    def _submit_userDom(self, id, userDom):
-        rec = FtDomRecord(userDom)
-        # nasty hacks to get DOM based record accepted
-        rec = docParser.process_document(session, StringDocument(rec.get_xml(session)))
+            el = etree.SubElement(userNode, k)
+            el.text = v
+            
+        return userNode
+        #- end _modify_userLxml() 
+
+    def _submit_userLxml(self, id, userNode):
+        rec = LxmlRecord(userNode)
         rec.id = id
         authStore.store_record(session, rec)
         authStore.commit_storing(session)
-    #- end _submit_userDom()
+        #- end _submit_userLxml()
 
     def _confirm_userDetails(self, user):
         return '''
@@ -387,6 +379,7 @@ class EadAdminHandler(EadHandler):
               <td>%s</td>
             </tr>
         </table>''' % (user.id, user.realName, user.email, user.tel)
+        #- end _confirm_userDetails()
     
     def add_user(self, form):
         values = {'%USERNAME%' : form.get('userid', ''),
@@ -415,13 +408,18 @@ class EadAdminHandler(EadHandler):
             
             try:
                 user = authStore.fetch_object(session, userid)
-            except:
+            except c3errors.ObjectDoesNotExistException:
+                user = None
+                
+            if user is not None:
+                return self._error('User with username/id "%s" already exists! Please try again with a different username.' % (userid), 'users.html') + multiReplace(read_file('adduser.html'), values)
+            else:
                 # we do want to add this user
                 if (usertype == 'superuser'):
-                    userRec = domParser.process_document(session, StringDocument(new_superuser_template.replace('%USERNAME%', userid)))
+                    userRec = docParser.process_document(session, StringDocument(new_superuser_template.replace('%USERNAME%', userid)))
                 else :
-                    userRec = domParser.process_document(session, StringDocument(new_user_template.replace('%USERNAME%', userid)))
-                userDom = userRec.get_dom(session)
+                    userRec = docParser.process_document(session, StringDocument(new_user_template.replace('%USERNAME%', userid)))
+                userNode = userRec.get_dom(session)
                 passwd = form.get('passwd', None)
                 # check password
                 newHash = {}
@@ -452,64 +450,61 @@ class EadAdminHandler(EadHandler):
                     output.append(adduser)
                     return ''.join(output)               
                 # update DOM
-                userDom = self._modify_userDom(userDom, newHash)    
-                self._submit_userDom(userid, userDom)                    
+                userNode = self._modify_userLxml(userNode, newHash)    
+                self._submit_userLxml(userid, userNode)                    
                 user = authStore.fetch_object(session, userid)
                 return '<span class="ok">User successfully added.</span>' + self.list_users()
-            else:
-                return self._error('User with username/id "%s" already exists! Please try again with a different username.' % (userid), 'users.html') + multiReplace(read_file('adduser.html'), values)
                 
         return multiReplace(read_file('adduser.html'), values)
-    #- end add_user()
+        #- end add_user()
     
     def edit_user(self, form):
         global authStore, rebuild
-        
         userid = form.get('userid', session.user.id)
         try:
             user = authStore.fetch_object(session, userid)
         except:
             return self._error('User with id "%s" does not exist!' % (userid), 'users.html')
-        else:
-            self.htmlTitle.append('User Management')
-            self.htmlTitle.append('Edit')
-            self.htmlNav.append('<a href="users.html" title="User Management" class="navlink">Users</a>')
-            if (form.get('submit', None)):
-                userRec = authStore.fetch_record(session, userid)
-                userDom = userRec.get_dom(session)
-                passwd = form.get('passwd', None)
-                # check password
-                if (passwd and crypt(passwd, passwd[:2]) == user.password):
-                    newHash = {}
-                    for f in user.simpleNodes:
-                        if form.has_key(f):
-                            newHash[f] = form.getfirst(f)
-                    passwd1 = form.get('passwd1', None)
-                    if (passwd1 and passwd1 != ''):
-                        passwd2 = form.get('passwd2', None)
-                        if (passwd1 == passwd2):
-                            newHash['password'] = crypt(passwd1, passwd1[:2])
-                        else:
-                            self.htmlTitle = self.htmlTitle[:-2]
-                            self.htmlNav = self.htmlNav[:-1]
-                            return self._error('Unable to update details - new passwords did not match.', 'users.html')
-                    
-                    # update DOM
-                    userDom = self._modify_userDom(userDom, newHash)    
-                    self._submit_userDom(userid, userDom)                    
-                    user = authStore.fetch_object(session, userid)
-                    rebuild = True                   
-                    return '<h3 class="bar">Details successfully updated.</h3>' + self._confirm_userDetails(user) + '<br/><a href="users.html">Return to \'User Management\' Page<a/>'
-                else:
-                    self.htmlTitle = self.htmlTitle[:-2]
-                    self.htmlNav = self.htmlNav[:-1]
-                    return self._error('Unable to update details - current password missing or incorrect.', 'users.html')               
-            form = read_file('edituser.html').replace('%USERNAME%', userid)
-            for f in user.simpleNodes:
-                if hasattr(user,f): form = form.replace('%%%s%%' % f, getattr(user,f))
-                else: form = form.replace('%%%s%%' % f, '')
-            return form
-    #- end edit_user()
+        
+        self.htmlTitle.append('User Management')
+        self.htmlTitle.append('Edit')
+        self.htmlNav.append('<a href="users.html" title="User Management" class="navlink">Users</a>')
+        if (form.get('submit', None)):
+            userRec = authStore.fetch_record(session, userid)
+            userNode = userRec.get_dom(session)
+            passwd = form.get('passwd', None)
+            # check password
+            if (passwd and user.check_password(session, passwd)):
+                newHash = {}
+                for f in user.simpleNodes:
+                    if form.has_key(f):
+                        newHash[f] = form.getfirst(f)
+                passwd1 = form.get('passwd1', None)
+                if (passwd1 and passwd1 != ''):
+                    passwd2 = form.get('passwd2', None)
+                    if (passwd1 == passwd2):
+                        newHash['password'] = crypt(passwd1, passwd1[:2])
+                    else:
+                        self.htmlTitle = self.htmlTitle[:-2]
+                        self.htmlNav = self.htmlNav[:-1]
+                        return self._error('Unable to update details - new passwords did not match.', 'users.html')
+                
+                # update DOM
+                userNode = self._modify_userLxml(userNode, newHash)    
+                self._submit_userLxml(userid, userNode)                    
+                user = authStore.fetch_object(session, userid)
+                rebuild = True                   
+                return '<h3 class="bar">Details successfully updated.</h3>' + self._confirm_userDetails(user) + '<br/><a href="users.html">Return to \'User Management\' Page<a/>'
+            else:
+                self.htmlTitle = self.htmlTitle[:-2]
+                self.htmlNav = self.htmlNav[:-1]
+                return self._error('Unable to update details - current password missing or incorrect.', 'users.html')               
+        form = read_file('edituser.html').replace('%USERNAME%', userid)
+        for f in user.simpleNodes:
+            if hasattr(user,f): form = form.replace('%%%s%%' % f, getattr(user,f))
+            else: form = form.replace('%%%s%%' % f, '')
+        return form
+        #- end edit_user()
     
     def delete_user(self, form):
         global authStore, rebuild               
@@ -1551,7 +1546,6 @@ class EadAdminHandler(EadHandler):
                 rows.append('<tr><td>%d</td><td>%s</td></tr>' % (reqs, id))
                  
         rows.extend(['</table>','</div>'])
-        
 
         return '\n'.join(rows)
         #- end view_statistics() 
@@ -1854,7 +1848,7 @@ def authenhandler(req):
     un = req.user
     try: session.user = authStore.fetch_object(session, un)
     except: return apache.HTTP_UNAUTHORIZED    
-    if (session.user and session.user.password == crypt(pw, pw[:2])):
+    if (session.user and session.user.check_password(session, pw)):
         return apache.OK
     else:
         return apache.HTTP_UNAUTHORIZED

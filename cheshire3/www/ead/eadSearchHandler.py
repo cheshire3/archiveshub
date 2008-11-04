@@ -798,8 +798,7 @@ class EadSearchHandler(EadHandler):
                     xps[x] = tree.getpath(n)
             
             endPointRe = regexpFindOffsetTokenizer.regexp
-            for x, ni in enumerate(nodeIdxs):
-                offset = wordOffsets[x] 
+            for ni, offset in zip(nodeIdxs, wordOffsets):
                 wordCount = 0
                 try:
                     xp = xps[ni]

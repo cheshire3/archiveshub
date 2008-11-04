@@ -43,7 +43,6 @@ sys.path.insert(1, os.path.join(cheshirePath, 'cheshire3', 'code'))
 from cheshire3.baseObjects import Session, Record, ResultSet
 from cheshire3.server import SimpleServer
 from cheshire3.document import StringDocument
-#from cheshire3.record import LxmlRecord, SaxRecord, FtDomRecord
 from cheshire3.utils import flattenTexts
 from cheshire3 import exceptions as c3errors
 from cheshire3.web.www_utils import *
