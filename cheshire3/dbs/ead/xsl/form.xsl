@@ -84,7 +84,7 @@
       <p id="unitidparent">
 	  <strong><span class="isadg">3.1.1: </span><a href="http://www.archiveshub.ac.uk/arch/refcode.shtml" title="Reference Code help - opens in new window" target="_new">Reference Code</a></strong> 
 	  Comprising <a href="http://www.iso.org/iso/en/prods-services/iso3166ma/02iso-3166-code-lists/list-en1.html" target="_new" title="Further information on ISO Country Codes">ISO Country Code</a>, 
-	  Archon Code,
+	  <a href="http://www.nationalarchives.gov.uk/archon/" target="_new" title="ARCHON Service">Archon Code</a>,
 	  and a unique identifier for this record or component.
 	  <xsl:if test="$leveltype = 'collection'">
 	  [<strong>all fields required</strong>]
@@ -436,7 +436,7 @@
 						<xsl:with-param name="content" select="$content"/>
 						<xsl:with-param name="isadg" select="'3.3.2: '"/>
 						<xsl:with-param name="title" select="'Appraisal'"/>
-						<xsl:with-param name="help" select="''"/>
+						<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/appraisal.html'"/>
 					</xsl:call-template>	
 				</xsl:for-each>
 			</xsl:when>
@@ -449,7 +449,7 @@
 					<xsl:with-param name="content" select="$content"/>
 					<xsl:with-param name="isadg" select="'3.3.2: '"/>
 					<xsl:with-param name="title" select="'Appraisal'"/>
-					<xsl:with-param name="help" select="''"/>
+					<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/appraisal.html'"/>
 				</xsl:call-template>
 			</xsl:otherwise>
 		</xsl:choose>
@@ -477,7 +477,7 @@
 						<xsl:with-param name="content" select="$content"/>
 						<xsl:with-param name="isadg" select="'3.3.3: '"/>
 						<xsl:with-param name="title" select="'Accruals'"/>
-						<xsl:with-param name="help" select="''"/>
+						<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/accruals.html'"/>
 					</xsl:call-template>
 				</xsl:for-each>	
 			</xsl:when>
@@ -490,7 +490,7 @@
 					<xsl:with-param name="content" select="$content"/>
 					<xsl:with-param name="isadg" select="'3.3.3: '"/>
 					<xsl:with-param name="title" select="'Accruals'"/>
-					<xsl:with-param name="help" select="''"/>
+					<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/accruals.html'"/>
 				</xsl:call-template>
 			</xsl:otherwise>
 		</xsl:choose>
@@ -518,7 +518,7 @@
 						<xsl:with-param name="content" select="$content"/>
 						<xsl:with-param name="isadg" select="'3.3.4: '"/>
 						<xsl:with-param name="title" select="'System of Arrangement'"/>
-						<xsl:with-param name="help" select="''"/>
+						<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/arrangement.html'"/>
 					</xsl:call-template>	
 				</xsl:for-each>
 			</xsl:when>
@@ -531,7 +531,7 @@
 					<xsl:with-param name="content" select="$content"/>
 					<xsl:with-param name="isadg" select="'3.3.4: '"/>
 					<xsl:with-param name="title" select="'System of Arrangement'"/>
-					<xsl:with-param name="help" select="''"/>
+					<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/arrangement.html'"/>
 				</xsl:call-template>
 			</xsl:otherwise>
 		</xsl:choose>
@@ -606,6 +606,7 @@
 					<xsl:with-param name="content" select="$content"/>
 					<xsl:with-param name="isadg" select="'3.4.2: '"/>
 					<xsl:with-param name="title" select="'Conditions Governing Reproduction'"/>
+					<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/userestrict.html'"/>
 				</xsl:call-template>
 			</xsl:for-each>
 		</xsl:when>
@@ -618,6 +619,7 @@
 				<xsl:with-param name="content" select="$content"/>
 				<xsl:with-param name="isadg" select="'3.4.2: '"/>
 				<xsl:with-param name="title" select="'Conditions Governing Reproduction'"/>
+				<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/userestrict.html'"/>
 			</xsl:call-template>
 		</xsl:otherwise>
 	</xsl:choose>
@@ -682,6 +684,7 @@
 					<xsl:with-param name="content" select="$content"/>
 					<xsl:with-param name="isadg" select="'3.4.4: '"/>
 					<xsl:with-param name="title" select="'Physical Characteristics'"/>
+					<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/phystech.html'"/>
 				</xsl:call-template>
 			</xsl:for-each>
 		</xsl:when>
@@ -694,6 +697,7 @@
 					<xsl:with-param name="content" select="$content"/>
 					<xsl:with-param name="isadg" select="'3.4.4: '"/>
 					<xsl:with-param name="title" select="'Physical Characteristics'"/>
+					<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/phystech.html'"/>
 				</xsl:call-template>
 		</xsl:otherwise>
 	</xsl:choose>
@@ -722,6 +726,7 @@
 					<xsl:with-param name="content" select="$content"/>
 					<xsl:with-param name="isadg" select="'3.4.5: '"/>
 					<xsl:with-param name="title" select="'Finding Aids'"/>
+					<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/other.shtml'"/>					
 				</xsl:call-template>	
 			</xsl:for-each>		
 		</xsl:when>
@@ -734,6 +739,7 @@
 				<xsl:with-param name="content" select="$content"/>
 				<xsl:with-param name="isadg" select="'3.4.5: '"/>
 				<xsl:with-param name="title" select="'Finding Aids'"/>
+				<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/other.shtml'"/>
 			</xsl:call-template>	
 		</xsl:otherwise>
 	</xsl:choose>
@@ -768,6 +774,7 @@
 					<xsl:with-param name="content" select="$content"/>
 					<xsl:with-param name="isadg" select="'3.5.1: '"/>
 					<xsl:with-param name="title" select="'Existence/Location of Originals'"/>
+					<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/originalsloc.html'"/>
 				</xsl:call-template>
 			</xsl:for-each>
 		</xsl:when>
@@ -780,6 +787,7 @@
 				<xsl:with-param name="content" select="$content"/>
 				<xsl:with-param name="isadg" select="'3.5.1: '"/>
 				<xsl:with-param name="title" select="'Existence/Location of Originals'"/>
+				<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/originalsloc.html'"/>
 			</xsl:call-template>
 		</xsl:otherwise>
 	</xsl:choose>
@@ -807,6 +815,7 @@
 					<xsl:with-param name="content" select="$content"/>
 					<xsl:with-param name="isadg" select="'3.5.2: '"/>
 					<xsl:with-param name="title" select="'Existence/Location of Copies'"/>
+					<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/altformavail.html'"/>
 				</xsl:call-template>
 			</xsl:for-each>
 		</xsl:when>
@@ -819,6 +828,7 @@
 				<xsl:with-param name="content" select="$content"/>
 				<xsl:with-param name="isadg" select="'3.5.2: '"/>
 				<xsl:with-param name="title" select="'Existence/Location of Copies'"/>
+				<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/altformavail.html'"/>
 			</xsl:call-template>
 		</xsl:otherwise>
 	</xsl:choose>
@@ -846,6 +856,7 @@
 					<xsl:with-param name="content" select="$content"/>
 					<xsl:with-param name="isadg" select="'3.5.3: '"/>
 					<xsl:with-param name="title" select="'Related Units of Description'"/>
+					<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/relatedmaterial.html'"/>
 				</xsl:call-template>
 			</xsl:for-each>		
 		</xsl:when>
@@ -858,6 +869,7 @@
 				<xsl:with-param name="content" select="$content"/>
 				<xsl:with-param name="isadg" select="'3.5.3: '"/>
 				<xsl:with-param name="title" select="'Related Units of Description'"/>
+				<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/relatedmaterial.html'"/>
 			</xsl:call-template>
 		</xsl:otherwise>
 	</xsl:choose>
@@ -885,6 +897,7 @@
 					<xsl:with-param name="content" select="$content"/>
 					<xsl:with-param name="isadg" select="'3.5.4: '"/>
 					<xsl:with-param name="title" select="'Publication Note'"/>
+					<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/bibliography.html'"/>
 					<xsl:with-param name="additional" select="'[Works based on or about the collection]'"/>
 				</xsl:call-template>
 			</xsl:for-each>
@@ -898,6 +911,7 @@
 				<xsl:with-param name="content" select="$content"/>
 				<xsl:with-param name="isadg" select="'3.5.4: '"/>
 				<xsl:with-param name="title" select="'Publication Note'"/>
+				<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/bibliography.html'"/>
 				<xsl:with-param name="additional" select="'[Works based on or about the collection]'"/>
 			</xsl:call-template>
 		</xsl:otherwise>
@@ -932,6 +946,7 @@
 					<xsl:with-param name="content" select="$content"/>
 					<xsl:with-param name="isadg" select="'3.6.1: '"/>
 					<xsl:with-param name="title" select="'Note'"/>
+					<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/note.html'"/>
 				</xsl:call-template>
 			</xsl:for-each>
 		</xsl:when>
@@ -944,6 +959,7 @@
 					<xsl:with-param name="content" select="$content"/>
 					<xsl:with-param name="isadg" select="'3.6.1: '"/>
 					<xsl:with-param name="title" select="'Note'"/>
+					<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/note.html'"/>
 				</xsl:call-template>
 		</xsl:otherwise>
 	</xsl:choose>
@@ -1006,7 +1022,7 @@
 <!-- ACCESSPOINTS -->
 <!--  -->
 	<div id="accesspointssection" class="section">
-		<h3><a id="accesspoints" name="accesspoints">Access Points</a></h3>
+		<h3><a id="accesspoints" name="accesspoints" target="_new" href="http://www.archiveshub.ac.uk/arch/access.shtml">Access Points</a></h3>
 <!-- subject -->
 		<div id="subject" class="apcontainer">
 			<p><strong>Subject</strong><br /><a onclick="window.open('http://www.archiveshub.ac.uk/unesco/', 'new', 'width=800 height=600');">[Search UNESCO] </a> <a onclick="window.open('http://www.archiveshub.ac.uk/lcsh/', 'new', 'width=800 height=600');"> [Search LCSH]</a></p>
