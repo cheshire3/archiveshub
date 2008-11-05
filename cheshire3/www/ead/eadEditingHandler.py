@@ -692,6 +692,7 @@ class EadEditingHandler(EadHandler):
             
             
             #cycle through the form and replace any node that need it
+            deleteList = []
             for field in list :                
                 if field.name not in ['ctype','location','operation','newForm','nocache','recid', 'parent', 'pui', 'filedesc/titlestmt/sponsor']:               
                     #do archdesc stuff
@@ -707,9 +708,14 @@ class EadEditingHandler(EadHandler):
                     else :
                         if (field.value.strip() != '' and field.value.strip() != ' '):
                             target = self._create_path(node, field.name)
-                            self._add_text(target, field.value)       
+                            self._add_text(target, field.value)   
+                            if field.name.find('scopecontent') == 0:
+                                self.logger.log(field.value)
                         else:
-                            self._delete_path(node, field.name)              
+                            deleteList.append(field.name)
+            if len(deleteList):
+                for name in deleteList:
+                    self._delete_path(node, name)             
             rec = LxmlRecord(tree)
             rec.id = retrievedRec.id
             editStore.store_record(session, rec)
@@ -754,6 +760,7 @@ class EadEditingHandler(EadHandler):
                 self._delete_currentControlaccess(node)
                 self._delete_currentLangmaterial(node)
                 self.logger.log('deleted stuff')
+                deleteList = []
                 for field in list :
                     if field.name not in ['ctype','location','operation','newForm','nocache','recid', 'parent']:           
                         if field.name.find('controlaccess') == 0 :                        
@@ -770,7 +777,10 @@ class EadEditingHandler(EadHandler):
                                 target = self._create_path(node, field.name)
                                 self._add_text(target, field.value)       
                             else:
-                                self._delete_path(node, field.name)                              
+                                deleteList.append(field.name)
+                if len(deleteList):
+                    for name in deleteList:
+                        self._delete_path(node, name)                                
                 rec = LxmlRecord(tree[0])
                 rec.id = retrievedRec.id
                 editStore.store_record(session, rec)
