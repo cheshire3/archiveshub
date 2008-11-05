@@ -53,11 +53,12 @@ var defaultsetting = "100%, *"
 
 function cursorInsert(field, insert) {
 	/*
-	// Description: a function to insert text at the cursor position in a specified field (text, textarea)
+	// Description: a function to insert text at the cursor position in a specified field (textarea, text)
 	*/
 	if (insert == 'quot'){
 		insert = '"';
 	}
+	var scrollPos = field.scrollTop;
 	if (field.selectionStart || field.selectionStart == '0') {
 		// Firefox 1.0.7, 1.5.0.6 - tested
 		var startPos = field.selectionStart;
@@ -70,6 +71,7 @@ function cursorInsert(field, insert) {
 		var selected = field.value.substring(startPos, endPos);
 		field.value = field.value.substring(0, startPos) + insert + field.value.substring(endPos, field.value.length);
 		//for FF at least we can get the curser to stay after the entered letter instead of at end of field
+		//see http://www.scottklarr.com/topic/425/how-to-insert-text-into-a-textarea-where-the-cursor-is/ for possible improvements to IE version
 		field.focus(); 
 		field.selectionEnd = endPos + 1;
 		field.selectionStart = endPos + 1;
@@ -96,7 +98,8 @@ function cursorInsert(field, insert) {
 		}
 		field.focus(); //this puts cursor at end
 	}
-	
+	//scrolls to right place in text box
+	field.scrollTop = scrollPos;
 
 	
 

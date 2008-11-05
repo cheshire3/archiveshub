@@ -26,11 +26,13 @@
         }
     -->
     </script>
-    <h3 class="bar"><a href="javascript:document.createform.submit();">Create New EAD Description</a></h3>
+    <h3 class="bar">Create New EAD Description</h3>
      <form name="createform" action="/ead/edit/" method="post" enctype="multipart/form-data">
     	<input type="hidden" name="operation" id="operation" value="create"/>
+    	<p>Use this data creation template to create a new collection-level description.</p>
+    	<p>Note: the numbers on the template refer to the corresponding ISAD(G) section.</p>  
+    	<input type="submit" value=" Create File "/>
     </form>
-    <p>Create a new EAD description</p>
     
     <h3 class="bar">Edit Existing EAD Description</h3>
     <div style="float: left; padding-right:50px;">
@@ -44,8 +46,9 @@
 	    %%%FILES%%%
 	    </ul>
     	</li>
+    	<input type="button" onclick="checkConflicts();" value=" Edit File "/>
     </ul>
-    <input type="button" onclick="checkConflicts();" value=" Edit File "/>
+    
     </form>
     </div>
     <div style="float: left">
@@ -62,9 +65,10 @@
     	%%%RECORDS%%%
     	</ul>
     	</li>
+    	<input type="submit" value=" Load File "/>
+    	<input type="button" onclick="deleteFromStore()" value=" Delete "/>
     </ul>
-    <input type="submit" value=" Load File "/>
-    <input type="button" onclick="deleteFromStore()" value=" Delete "/>
+
     </form>
 
     </div>
