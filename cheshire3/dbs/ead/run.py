@@ -30,7 +30,7 @@ if ('-h' in sys.argv) or ('--help' in sys.argv) or ('--options' in sys.argv):
     sys.exit()    
     
 cheshirePath = os.environ.get('C3HOME', '/home/cheshire/cheshire3/')    
-sys.path.insert(1, sys.path.join(cheshirePath, 'cheshire3', 'code'))
+sys.path.insert(1, os.path.join(cheshirePath, 'cheshire3', 'code'))
 
 from cheshire3.baseObjects import Session
 from cheshire3.server import SimpleServer
@@ -44,7 +44,7 @@ from cheshire3.web.www_utils import read_file
 
 # Build environment...
 session = Session()
-serv = SimpleServer(session, sys.path.join(cheshirePath, 'cheshire3', 'configs', 'serverConfig.xml'))
+serv = SimpleServer(session, os.path.join(cheshirePath, 'cheshire3', 'configs', 'serverConfig.xml'))
 session.database = 'db_ead'
 
 db = serv.get_object(session, 'db_ead')
