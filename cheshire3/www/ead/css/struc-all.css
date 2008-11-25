@@ -5,7 +5,7 @@
 
 body {
   margin: 0;
-  padding: 75px 10px 60px 0;
+  padding: 80px 10px 60px 0;
   /* Prevent body becoming narrower than wrapper - keeps the content from disappearing off the left edge with Gecko browsers */ 
   min-width: 770px;
   height: 100%;
@@ -30,13 +30,13 @@ div#navbar {
 
 div#banner {
 	top: 0;
-	height: 75px;
+	height: 80px;
 	z-index: 2;
 	overflow-x: hidden;
 	overflow-y: auto;
 }
 div#navbar {
-	top: 75px;
+	top: 80px;
 	height: 25px;
 	padding: 0px 15px 0px 15px;
 	z-index: 3;
@@ -51,7 +51,7 @@ img.rep-logo { max-height: 65px; }
 div#c3logo{ float: right; }
 
 div#wrapper {
-	top: 100px;
+	top: 105px;
 	bottom: 50px;
 	overflow-y: auto;
 }
@@ -122,7 +122,7 @@ div#copyright
 }
 
 h4.ead {
-	clear:both;
+	clear:left;
 }
 
 #hitreport { 

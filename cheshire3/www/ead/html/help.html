@@ -9,6 +9,7 @@
 						<a href="#queries">Queries</a>
 					</li>
 					<li><a href="#results">Results</a></li>
+                    <li><a href="#refine">Refining Your Search</a></li>
 					<li>
 						<a href=#display>Record Displays</a>
 						<ul>
@@ -32,8 +33,8 @@
 				<a name="queries"></a>
 				<h4>Queries</h4>
 				<p>On the <a href="index.html">main search page</a> you will find a form allowing you to create a search.  
-					The 'General Keywords' search looks for your search term(s) in an index which includes the titles, main content and subjects of archival descriptions.
-					You can change this index using the drop-down list to a more specific one (e.g. 'Title' or 'Personal Name'), or even the all encompassing 'Full Text'.
+					The 'Keywords' search looks for your search term(s) occuring anywhere in the record, however occurences within key areas of the record (e.g. titles, content description and subjects) will cause the record to appear higher in the list of results.
+					You can change this index using the drop-down list to a more specific one (e.g. 'Title' or 'Personal Name').
 					If you are entering more than one word as a search, you can use the second drop-down list to specify whether the system should search for 'All' or 'Any' of your terms, or whether they should be treated as a 'Phrase'.
 					When you select an index, the system will automatically select the most appropriate way to treat your terms from the drop-down list, however you may still change this.
 				</p>
@@ -59,9 +60,9 @@
 				</p>
 				<h5>Using Quotation Marks</h5>
 				<p>
-					You may use quotation marks to delimit a phrase within your search terms when searching 'General Keywords', 'Full Text' or 'Title'.
+					You may use quotation marks to delimit a phrase within your search terms when searching 'Keywords' or 'Title'.
 					For example the following search is legal:<br/>
-				<img src="/images/v3_clause.png" alt="[General Keywords] [All] [legal correspondence &quot;john smith&quot;]" /><br/>
+				<img src="/images/v3.4_quoteclause.png" alt="[Keywords] [All] [legal correspondence &quot;john smith&quot;]" /><br/>
 					This will only work if you have selected 'All' or 'Any' from the drop-down list.
 					If you enter quotations in an 'Exactly' search, then the system will search for the string <em>exactly</em> as you entered it (including the quotation marks).
 					You should ensure that you use such quotations in pairs to avoid errors, or unexpected search results.
@@ -87,7 +88,7 @@
 						A single question mark (?) matches a single character.
 						This is particularly useful when searching for words, or names, you know can have variant spellings. Examples:
 						<ul class="unmarked">
-							<li><img src="/images/v3_wildcard3.png" alt="[General Keywords] [All] [coloni?ation]" /> will match records with keywords: "colonisation", "colonization" etc.</li>
+							<li><img src="/images/v3.4_wildcard3.png" alt="[Keywords] [All] [coloni?ation]" /> will match records with keywords: "colonisation", "colonization" etc.</li>
 							<li><img src="/images/v3_wildcard4.png" alt="[Personal Name] [All] [sm?th]" /> will match records with personal names: "smith", "smyth" etc.</li>
 						</ul>
 					</li>
@@ -115,13 +116,27 @@
 				<p>The software will tell you how many records matched your search (i.e. how many hits there were), and which it is currently displaying.
 					The response should look something like this:
 				</p>
-				<img src="/images/v3_results.png" alt="[screenshot unavailable]" class="screenshot" title="Screenshot of search results" />
-				<p>The first hit displayed above is a collection description, the second a component record.
-					Component records can be recognised both by the title of the parent document on the top line in italics, and by the use of the folder icon next to the unit title.
-					You will also see a representation of the relevance of this record, represented as either a number of stars out of five, or a percentage.
+				<img src="/images/v3.4_results.png" alt="[screenshot unavailable]" class="screenshot" title="Screenshot of search results" />
+				<p>The first hit displayed above is a collection description, the second and third component records.
+                    Component records can be recognised both by the title of the parent document on the top line in italics, and by the use of the folder icon next to the unit title.
+                    Depending on the type of search you used, and local configuration decisions, you may also see a representation of the relevance of this record, represented as either a number of stars out of five, or a percentage.
+                    In most cases you will be able to click on the folder icon show/hide a display of the context of this component on and off - this is demonstrated in the third result.
 					There are a number of different display options for each hit.
 					A discussion of each of these is included in the <a href="#display">Record Displays</a> section below.
 				</p>
+                <a name="refine"></a>
+                <h4>Refining your search</h4>
+                <p>When your search results are displayed, thie right hand column should look something like:</p>
+                <img src="/images/v3.4_refine.png" alt="[screenshot unavailable]" class="screenshot" title="Screenshot of search refinement"/>
+                <p>This section allows you to refine your search results by a number of different attributes or facets.
+                    Clicking on one of the terms will refine your results to just those which share that term.
+                    The number in brackets following each term tells you how many of your results share that particular term, and how many you can expect to see if you click on the term.
+                </p>
+                <p>
+                    Terms are grouped under the headings 'Subject', 'Creator', 'Date' and 'Genre'.
+                    The most frequently occurring terms under each section are shown by default.
+                    The full list for a particular section can be viewed by clicking on the 'x more...' link.
+                </p>
 			</div>
 			<div>
 				<a name="display"></a>
