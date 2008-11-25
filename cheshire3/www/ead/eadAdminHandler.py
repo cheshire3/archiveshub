@@ -76,6 +76,7 @@
 
 
 from eadHandler import *
+from cheshire3.baseObjects import Record
 from cheshire3.record import LxmlRecord
 
 # script specific globals
@@ -733,7 +734,7 @@ class EadAdminHandler(EadHandler):
         
         self.logger.log('Preview requested')
         rec = self._parse_upload(f.value)
-        if not isinstance(rec, LxmlRecord):
+        if not isinstance(rec, Record):
             return rec
         
         val = self._validate_isadg(rec)
@@ -785,8 +786,8 @@ class EadAdminHandler(EadHandler):
             return read_file('upload.html')
         
         rec = self._parse_upload(f.value)
-        # TODO: handle file not successfully parsed
-        if not isinstance(rec, LxmlRecord):
+        # TODO: (?) handle file not successfully parsed
+        if not isinstance(rec, Record):
             return rec
         
         val = self._validate_isadg(rec)
@@ -800,7 +801,10 @@ class EadAdminHandler(EadHandler):
         req.write(head)
         fn = f.filename.split('\\')[-1]
         fnparts = fn.split('.')
-        newname = '%s-%s-%s.%s' % ('.'.join(fnparts[:-1]), session.user.username, self._get_timeStamp(), fnparts[-1])
+        try:
+            newname = '%s-%s-%s.%s' % ('.'.join(fnparts[:-1]), session.user.username, self._get_timeStamp(), fnparts[-1])
+        except:
+            newname = '%s-unauth-%s.%s' % ('.'.join(fnparts[:-1]), self._get_timeStamp(), fnparts[-1])
         write_file(os.path.join(sourceDir,newname), f.value)
         req.write('File <code>%s</code> uploaded and stored on server as <code>%s</code><br/>\n' % (f.filename, newname))
         if (op == 'insert'):
@@ -816,7 +820,10 @@ class EadAdminHandler(EadHandler):
             self._run_thread(t, req)
             if t.error:
                 # thread failed to complete - nothing else will work!
-                self.logger.log('File upload attempt by %s failed to complete.' % (session.user.username))
+                try:
+                    self.logger.log('File upload attempt by %s failed to complete.' % (session.user.username))
+                except:
+                    self.logger.log('File upload attempt by unauth failed to complete.')
                 req.write('<span class="error">Parsing/Indexing exited abnormally with message:<br/>\n%s</span>' % t.error)
             else:
                 recordStore.commit_storing(session)
@@ -919,7 +926,7 @@ class EadAdminHandler(EadHandler):
                     if len(rec.process_xpath(session, 'dsc')):
                         # now the tricky bit - component records
                         compStore.begin_storing(session)
-                        q = CQLParser.parse('ead.parentid exact "%s/%s"' % (rec.recordStore, rec.id))
+                        q = queryFactory.get_query(session, 'ead.parentid exact "%s/%s"' % (rec.recordStore, rec.id))
                         rs = db.search(session, q)
                         req.write('<script type="text/javascript" src="/javascript/counter.js"></script>')
                         req.write('Unindexing component <b><span id="comp-count">0</span></b> of %d.' % (len(rs)))
@@ -1084,8 +1091,6 @@ class EadAdminHandler(EadHandler):
             return ''.join(output)
     #- end rename_file()        
             
-
-    
 #    def view_file(self, form):
 #
 #        global script
@@ -1113,7 +1118,8 @@ class EadAdminHandler(EadHandler):
             fp = os.path.join(dir, f)
             if os.path.isdir(fp):
                 if f <> 'preview':
-                    os.shutil.rmtree(fp, ignore_errors=True)
+                    try: os.shutil.rmtree(fp, ignore_errors=True)
+                    except: pass
                 else:
                     self._clear_dir(fp)
 
@@ -1146,8 +1152,6 @@ class EadAdminHandler(EadHandler):
         # delete main stores, metadata, and indexes
         self._clear_dir(os.path.join(dbPath, 'stores'))
         db.clear_indexes(session)
-        self._clear_dir(os.path.join(dbPath, 'cluster', 'stores'))
-        clusDb.clear_indexes(session)
         # now we've blitzed everything, we'll have to rediscover/build the objects
         build_architecture()
         # rebuild and reindex
@@ -1205,7 +1209,6 @@ class EadAdminHandler(EadHandler):
                 req.write('<br/>\n')
                 
         except:
-            raise
             # failed to complete - nothing else will work!
             self.logger.log('Database rebuild attempt by %s failed to complete.' % (session.user.username))
             cla, exc, trbk = sys.exc_info()
@@ -1215,14 +1218,7 @@ class EadAdminHandler(EadHandler):
             #req.write('<span class="error">Indexing exited abnormally with message:<br/>\n%s</span>' % t.error) # thread version
             req.write('<span class="error">Indexing exited abnormally:<br/>\n %s:%s</span>' % (excName, excArgs))
         else:
-            # finish clusters
-            req.write('Finishing subject clusters...')
-            session.database = 'db_ead_cluster'
-            clusDocFac = clusDb.get_object(session, 'clusterDocumentFactory')
-            clusDocFac.load(session, os.path.join(dbPath, 'cluster', 'tempCluster.data'))
-            hours, mins, secs = self._timeop(clusFlow.process, (session, clusDocFac))
-            req.write('<span class="ok">[OK]</span> %dh %dm %ds<br/>\n' % (hours, mins, secs))
-            session.database = 'db_ead'
+            clusDocFac = db.get_object(session, 'clusterDocumentFactory')
             # rebuild and reindex components
             # have to do this manually otherwise times out :(
             req.write('Loading and indexing components.<br/>\n')
@@ -1231,6 +1227,7 @@ class EadAdminHandler(EadHandler):
             compStore.begin_storing(session)
             dotcount = 0
             for rec in recordStore:
+                clusDocFac.load(session, rec) # extract subject clusters to use later
                 try: compRecordFlow.process(session, rec)
                 except:
                      req.write('<span class="error">.</span>')
@@ -1242,11 +1239,20 @@ class EadAdminHandler(EadHandler):
             compStore.commit_storing(session)
             db.commit_indexing(session)
             db.commit_metadata(session)
-#            hours, mins, secs = self._timeop(compFlow.process, (session, recordStore))
             mins, secs = divmod(time.time() - start, 60)
             hours, mins = divmod(mins, 60)
-            req.write('<span class="ok">[OK]</span> %dh %dm %ds<br/>\nDATABASE REBUILD COMPLETE' % (hours, mins, secs))
-            req.write('<br/>\n<a href="database.html" title="Database Management" class="navlink">Back to \'Database Management\' Page</a>')
+            req.write('<span class="ok">[OK]</span> %dh %dm %ds<br/>' % (hours, mins, secs))
+            # finish clusters
+            req.write('Finishing subject clusters...')
+            self._clear_dir(os.path.join(dbPath, 'cluster', 'stores'))
+            build_architecture()
+            session.database = 'db_ead_cluster'
+            req.write('about to clusDb.clear_indexes')
+            clusDb.clear_indexes(session)
+            hours, mins, secs = self._timeop(clusFlow.process, (session, clusDocFac))
+            req.write('<span class="ok">[OK]</span> %dh %dm %ds<br/>\n' % (hours, mins, secs))
+            session.database = 'db_ead'
+            req.write('\nDATABASE REBUILD COMPLETE<br/>\n<a href="database.html" title="Database Management" class="navlink">Back to \'Database Management\' Page</a>')
             self.logger.log('Database rebuilt by: %s' % (session.user.username))
 
         # finish HTML, log
@@ -1296,6 +1302,7 @@ class EadAdminHandler(EadHandler):
             # Table version
             req.write('<table class="rebuildtable"><tr class="headrow"><td><i>n</i> of %d</td><td>Outcome</td><td>Message</td></tr>' % (recordStore.totalItems))
         
+        clusDocFac = db.get_object(session, 'clusterDocumentFactory')
         for reccount, rec in enumerate(recordStore):
             if style == 1:
                 req.write('<script type="text/javascript">e = document.getElementById("rec-count");e.innerHTML = "%d" \n</script><noscript>.</noscript>' % (reccount+1))
@@ -1320,6 +1327,8 @@ class EadAdminHandler(EadHandler):
                     if ((reccount+1) % 200 == 0): req.write('<br/>')
                 elif style == 2:
                     req.write('<td class="ok" style="text-align: center;">OK</td><td>Record Identifier: %s</td></tr>' % (rec.id))
+                
+                clusDocFac.load(session, rec) # extract subject clusters to use later
         
         if style == 2:
             req.write('</table>Indexing Complete ')
@@ -1335,14 +1344,6 @@ class EadAdminHandler(EadHandler):
             req.write('<br/>\n'.join(['%s - %r:%r' % (p[0], p[1][0], p[1][1]) for p in problems]))
             req.write('<br/>\n')
                       
-        # finish clusters
-        req.write('Finishing subject clusters...')
-        session.database = 'db_ead_cluster'
-        clusDocFac = clusDb.get_object(session, 'clusterDocumentFactory')
-        clusDocFac.load(session, os.path.join(dbPath, 'cluster', 'tempCluster.data'))
-        hours, mins, secs = self._timeop(clusFlow.process, (session, clusDocFac))
-        req.write('[<span class="ok"> OK </span>] %dh %dm %ds<br/>' % (hours, mins, secs))
-        session.database = 'db_ead'
         # reindex components
         start = time.time()
         # refresh compStore - seems to be busted :?
@@ -1370,6 +1371,13 @@ class EadAdminHandler(EadHandler):
         hours, mins, secs = self._timeop(db.commit_indexing, [session])
         hours2, mins2, secs2 = self._timeop(db.commit_metadata, [session])
         hours+=hours2; mins+=mins2; secs+=secs2
+        req.write('[<span class="ok"> OK </span>] %dh %dm %ds<br/>' % (hours, mins, secs))
+        # finish clusters
+        req.write('Finishing subject clusters...')
+        session.database = clusDb.id
+        clusDb.clear_indexes(session)
+        hours, mins, secs = self._timeop(clusFlow.process, (session, clusDocFac))
+        session.database = db.id
         req.write('[<span class="ok"> OK </span>] %dh %dm %ds<br/>\nDATABASE REINDEX COMPLETE' % (hours, mins, secs))
         req.write('<br/>\n<a href="database.html" title="Database Management" class="navlink">Back to \'Database Management\' Page</a>')
         # finish HTML, log
@@ -1377,7 +1385,6 @@ class EadAdminHandler(EadHandler):
         req.write(foot)
         self.logger.log('Database reindexed by: %s' % (session.user.username))
         rebuild = True
-        
         #- end reindex_databases() -------------------------------------------------
         
     
@@ -1580,6 +1587,7 @@ class EadAdminHandler(EadHandler):
         directFiles = {'index.html': 'adminmenu.html'
                       ,'menu.html': 'adminmenu.html'
                       ,'help.html': 'adminhelp.html'
+                      ,'login.html': 'login.html'
                       }
                 
         try:
@@ -1612,7 +1620,7 @@ class EadAdminHandler(EadHandler):
                         content = self.preview_file(form)
                         if not (content): 
                             content = read_file(path)
-                        else :
+                        else:
                             self.send_html(content, req)
                             return 1
                     elif (operation == 'upload' or operation == 'insert'):
@@ -1714,6 +1722,7 @@ db = None
 dbPath = None
 # ingest
 baseDocFac = None
+queryFactory = None
 sourceDir = None
 docParser = None
 domParser = None
@@ -1750,7 +1759,7 @@ rebuild = True
 
 def build_architecture(data=None):
     # data argument provided for when function run as clean-up - always None
-    global session, serv, db, dbPath, baseDocFac, sourceDir, docParser, domParser, \
+    global session, serv, db, dbPath, baseDocFac, queryFactory, sourceDir, docParser, domParser, \
     authStore, recordStore, dcRecordStore, compStore, resultSetStore, \
     clusDb, clusStore, clusFlow, \
     summaryTxr, fullTxr, fullSplitTxr, textTxr, \
@@ -1769,6 +1778,7 @@ def build_architecture(data=None):
     db = serv.get_object(session, 'db_ead')
     dbPath = db.get_path(session, 'defaultPath')
     baseDocFac = db.get_object(session, 'baseDocumentFactory')
+    queryFactory = db.get_object(session, 'defaultQueryFactory')
     sourceDir = baseDocFac.get_default(session, 'data')
     docParser = db.get_object(session, 'LxmlParser')
     # globals line 2: stores
@@ -1781,7 +1791,7 @@ def build_architecture(data=None):
     session.database = 'db_ead_cluster'
     clusDb = serv.get_object(session, 'db_ead_cluster')
     clusStore = clusDb.get_object(session, 'eadClusterStore')
-    clusFlow = clusDb.get_object(session, 'buildClusterWorkflow'); clusFlow.load_cache(session, clusDb) 
+    clusFlow = clusDb.get_object(session, 'buildClusterWorkflow'); clusFlow.load_cache(session, clusDb)
     session.database = 'db_ead'
     # globals line 4: transformers
     summaryTxr = db.get_object(session, 'htmlSummaryTxr')
@@ -1810,6 +1820,7 @@ def handler(req):
     global script, rebuild
     script = req.subprocess_env['SCRIPT_NAME']
     req.register_cleanup(build_architecture)
+    authenhandler(req)
     try:
 #        if rebuild:
 #            build_architecture()
@@ -1841,9 +1852,20 @@ def handler(req):
 
 
 def authenhandler(req):
-    global session, authStore, rebuild
+    #global session, authStore
+    global rebuild
     if (rebuild):
         build_architecture()                                                    # build the architecture
+    
+#    cookies = Cookie.get_cookies(req)
+#    try:
+#        tok = cookies['c3authtoken'].value
+#    except KeyError:
+#        req.internal_redirect('login.html')
+#    else:
+#        # check authn token
+#        return apache.OK
+    
     pw = req.get_basic_auth_pw()
     un = req.user
     try: session.user = authStore.fetch_object(session, un)
@@ -1853,4 +1875,3 @@ def authenhandler(req):
     else:
         return apache.HTTP_UNAUTHORIZED
 #- end authenhandler()
-

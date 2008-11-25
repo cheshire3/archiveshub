@@ -116,7 +116,7 @@ class EadSearchHandler(EadHandler):
     
     def __init__(self, lgr):
         EadHandler.__init__(self, lgr)
-        self.storeResultSetSizeLimit = 5000
+        self.storeResultSetSizeLimit = 1000
         self.redirected = False
     
 

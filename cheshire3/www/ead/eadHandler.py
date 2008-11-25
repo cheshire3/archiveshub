@@ -48,7 +48,7 @@ from cheshire3 import exceptions as c3errors
 from cheshire3.web.www_utils import *
 
 # PyZ39.50 stuff
-from PyZ3950 import CQLParser, SRWDiagnostics
+from PyZ3950 import SRWDiagnostics
 from cheshire3.cqlParser import Diagnostic as CQLDiagnostic
 
 # regexs
@@ -154,15 +154,18 @@ class EadHandler:
             except:
                 self.htmlTitle.append('Error')
                 e = sys.exc_info()
-                self.logger.log('*** %s: %s' % (e[0], e[1]))
+                self.logger.log('*** %s: %s' % (repr(e[0]), e[1]))
                 # try and highlight error in specified place
                 lines = doc.get_raw(session).split('\n')
                 positionRe = re.compile(':(\d+):(\d+):')
                 mo = positionRe.search(str(e[1]))
+                if (mo is None):
+                    positionRe = re.compile('line (\d+), column (\d+)')
+                    mo = positionRe.search(str(e[1]))
                 line, posn = lines[int(mo.group(1))-1], int(mo.group(2))
                 startspace = newlineRe.match(line).group(0)
                 return '''\
-        <div id="wrapper"><p class="error">An error occured while parsing your file. 
+        <div id="single"><p class="error">An error occured while parsing your file. 
         Please check the file at the suggested location and try again.</p>
         <code>%s: %s</code>
         <pre>
@@ -170,7 +173,7 @@ class EadHandler:
         <span class="error">%s</span>
         </pre>
         <p><a href="files.html">Back to file page</a></p></div>
-                ''' % (e[0], e[1], html_encode(line[:posn+20]) + '...',  startspace + str('-'*(posn-len(startspace))) +'^')
+                ''' % (html_encode(repr(e[0])), e[1], html_encode(line[:posn+20]) + '...',  startspace + str('-'*(posn-len(startspace))) +'^')
         
         del data, doc
         return rec
@@ -376,6 +379,7 @@ db = None
 dbPath = None
 # ingest
 baseDocFac = None
+queryFactory = None
 sourceDir = None
 docParser = None
 # stores
@@ -410,7 +414,7 @@ rebuild = True
 
 def build_architecture(data=None):
     # data argument provided for when function run as clean-up - always None
-    global session, serv, db, dbPath, baseDocFac, sourceDir, docParser, \
+    global session, serv, db, dbPath, baseDocFac, queryFactory, sourceDir, docParser, \
     authStore, recordStore, dcRecordStore, compStore, resultSetStore, \
     clusDb, clusStore, clusFlow, \
     summaryTxr, fullTxr, fullSplitTxr, textTxr, \
@@ -429,6 +433,7 @@ def build_architecture(data=None):
     db = serv.get_object(session, 'db_ead')
     dbPath = db.get_path(session, 'defaultPath')
     baseDocFac = db.get_object(session, 'baseDocumentFactory')
+    queryFactory = db.get_object(session, 'defaultQueryFactory')
     sourceDir = baseDocFac.get_default(session, 'data')
     docParser = db.get_object(session, 'LxmlParser')
     # globals line 2: stores
