@@ -76,6 +76,28 @@
       	<xsl:text>link</xsl:text>
       </xsl:attribute>
       <xsl:choose>
+      	<xsl:when test="$level = 'collectionLevel'">
+	      <xsl:choose>
+		      <xsl:when test="$node/did/unitid and $node/did/unittitle and $node/did/unitdate and $node/did/origination and $node/did/physdesc/extent and $node/did/langmaterial/language and $node/bioghist and $node/scopecontent and $node/accessrestrict and $node/controlaccess">
+		      	<xsl:attribute name="class"><xsl:text>valid</xsl:text></xsl:attribute>
+		      </xsl:when>
+		      <xsl:otherwise>
+		      	<xsl:attribute name="class"><xsl:text>invalid</xsl:text></xsl:attribute>
+		      </xsl:otherwise>
+		      </xsl:choose>
+		  </xsl:when>
+	     <xsl:otherwise>
+	     	 <xsl:choose>
+	     	 	<xsl:when test="$node/did/unitid and $node/did/unittitle and $node/did/unitdate and $node/did/physdesc/extent">
+			      	<xsl:attribute name="class"><xsl:text>valid</xsl:text></xsl:attribute>
+			      </xsl:when>
+			      <xsl:otherwise>
+			      	<xsl:attribute name="class"><xsl:text>invalid</xsl:text></xsl:attribute>
+			      </xsl:otherwise>
+	      </xsl:choose>
+	     </xsl:otherwise>
+	  </xsl:choose>
+      <xsl:choose>
         <xsl:when test="$level = 'collectionLevel'">
           <xsl:attribute name="id">
         	<xsl:text>collectionLevel</xsl:text>
@@ -83,9 +105,7 @@
           <xsl:attribute name="href">
         	<xsl:text>javascript: displayForm('collectionLevel')</xsl:text>
 	  	  </xsl:attribute>
-	  	  <xsl:attribute name="class">
-	  	  	<xsl:text>selected</xsl:text>
-	  	  </xsl:attribute>
+	  	  <xsl:attribute name="style"><xsl:text>background:yellow</xsl:text></xsl:attribute>
         </xsl:when>
         <xsl:otherwise>
           <xsl:attribute name="id">
@@ -116,6 +136,7 @@
  	      	<xsl:text>(untitled)</xsl:text>
 	      </xsl:otherwise>
       </xsl:choose>
+      
     </a>    
   </xsl:template>
 

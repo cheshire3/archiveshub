@@ -41,7 +41,7 @@
 	  </div>
 	  <xsl:if test="/ead/archdesc/dsc">
 	    <exsl:document
-	    	href="file:///home/cheshire/cheshire3/install/htdocs/ead/tocs/foo.bar"
+	    	href="file:///home/cheshire/install/htdocs/ead/tocs/foo.bar"
 		method="xml"
 	      	omit-xml-declaration="yes"
 	      	indent="yes">

@@ -29,7 +29,7 @@ if ('-h' in sys.argv) or ('--help' in sys.argv) or ('--options' in sys.argv):
         ])
     sys.exit()    
     
-cheshirePath = os.environ.get('C3HOME', '/home/cheshire/cheshire3/')    
+cheshirePath = os.environ.get('C3HOME', '/home/cheshire/')    
 sys.path.insert(1, os.path.join(cheshirePath, 'cheshire3', 'code'))
 
 from cheshire3.baseObjects import Session

@@ -59,20 +59,32 @@
 	        <setting type="digest">sha</setting>
 	      </options>
 	    </subConfig>
-
-            <!-- Only needed for Editing interface - currently a work in progress -->
-	    <subConfig type="recordStore" id="editingStore">
+	    
+ 	<!--    	    <subConfig type="recordStore" id="editingStore">
 	      <objectType>cheshire3.recordStore.BdbRecordStore</objectType>
 	      <paths>
-		<path type="defaultPath">stores</path>
-	        <path type="databasePath">editingStore.bdb</path>
-	        <path type="metadataPath">editingStoreMetadata.bdb</path>
+			<path type="defaultPath">stores</path>
+	        <path type="databasePath">editStore.bdb</path>
+	        <path type="metadataPath">editStoreMetadata.bdb</path>
+	        <object type="inTransformer" ref="XmlTransformer" />
+	        <object type="outParser" ref="LxmlParser" />
+	      </paths>
+	    </subConfig>-->
+            <!-- Only needed for Editing interface - currently a work in progress -->
+ 	    <subConfig type="recordStore" id="editingStore">
+	      <objectType>cheshire3.sql.postgres.PostgresRecordStore</objectType>
+	      <paths>
+			<path type="databaseName">db_eadedit</path>
+            <path type="tableName">eadEditingStore</path>
 	        <object type="inTransformer" ref="XmlTransformer" />
 	        <object type="outParser" ref="LxmlParser" />
 	      </paths>
 	      <options>
 	      </options>
 	    </subConfig>
+	    
+	    
+
             
 
 	</subConfigs>

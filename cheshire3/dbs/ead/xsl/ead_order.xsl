@@ -4,7 +4,7 @@
 	xmlns:exsl="http://exslt.org/common" extension-element-prefixes="exsl"
 	version="1.0">
 
-	<xsl:output method="xml" omit-xml-declaration="yes" indent="yes" encoding="iso-8859-1"/>
+	<xsl:output method="xml" omit-xml-declaration="yes" indent="yes" encoding="ascii"/>
 	
 
 	<xsl:template match="/">

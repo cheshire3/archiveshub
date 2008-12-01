@@ -50,7 +50,7 @@
     	</div>
     
     <br/>
-      <div class="section">
+       <div class="section">
     	<xsl:choose>
     		<xsl:when test="/ead/eadheader">	
     			<h3>Collection Level Description</h3>
@@ -91,8 +91,8 @@
 	  </xsl:if>
 	  <br/>
 	  <xsl:choose>
-	  	<xsl:when test="did/unitid">
-	  	   <xsl:apply-templates select="did/unitid"/>
+	  	<xsl:when test="did/unitid[1]">
+	  	   <xsl:apply-templates select="did/unitid[1]"/>
 	  	</xsl:when>
 	  	<xsl:otherwise>
 	  		<input type="text" onfocus="setCurrent(this);" name="did/unitid/@countrycode" id="countrycode" maxlength="2" size="3" value="GB" onblur="checkId('recordStore')"></input>
@@ -101,18 +101,18 @@
 	  	</xsl:otherwise>
 	  </xsl:choose>  		
   	</p>
-  	<p>
+   	<p>
 		<strong><span class="isadg">3.1.2: </span><a href="http://www.archiveshub.ac.uk/arch/title.shtml" title="Title help - opens in new window" target="_new">Title</a></strong><br/>
 		<xsl:choose>
 			<xsl:when test="did/unittitle">
 				<xsl:apply-templates select="did/unittitle"/>
 			</xsl:when>
 			<xsl:otherwise>
-				<input class="menuField" type="text" onfocus="setCurrent(this);" name="did/unittitle" id="cab" size="80" onchange="updateTitle(this)"></input>
+				<input class="menuField" type="text" onfocus="setCurrent(this);" name="did/unittitle" id="cab" size="80" onchange="updateTitle(this)" onkeypress="validateFieldDelay(this, 'true');"></input>
 			</xsl:otherwise>
 		</xsl:choose>		
     </p>
-    <div class="float">
+   <div class="float">
     	<p><strong><span class="isadg">3.1.3: </span><a href="http://www.archiveshub.ac.uk/arch/dates1.shtml" title="Dates of Creation help - opens in new window" target="_new">Dates of Creation</a></strong><br/>
 		<xsl:choose>
 			<xsl:when test="did/unitdate">
@@ -136,7 +136,7 @@
 	    		</xsl:otherwise>
 	    	</xsl:choose>      	            
 		</p>
-	</div>
+	</div> 
   	<br/>
   	<p>
   		<xsl:if test="$leveltype = 'component'">
@@ -203,7 +203,7 @@
     </p>
     <xsl:if test="$leveltype = 'collection'">
 	    <p>
-	  		<strong><span class="isadg"></span>Repository</strong><br/>
+	  		<strong>Repository</strong><br/>
 	  		<xsl:choose>
 				<xsl:when test="did/repository">
 					<xsl:apply-templates select="did/repository"/>
@@ -219,11 +219,11 @@
 					<xsl:apply-templates select="filedesc/titlestmt/sponsor"/>
 				</xsl:when>
 				<xsl:otherwise>
-					<strong><span class="isadg"></span>Sponsor </strong> <a class="smalllink" id="linkspo" title="add sponsor" onclick="addElement('spo')">add</a> [optional]<br/>
+					<strong>Sponsor </strong> <a class="smalllink" id="linkspo" title="add sponsor" onclick="addElement('spo')">add</a> [optional]<br/>
 					<input class="menuField" type="text" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" name="filedesc/titlestmt/sponsor" id="spo" size="80" style="display:none"></input>
 				</xsl:otherwise>
 			</xsl:choose>
-	  	</p>
+	  	</p>  
   	</xsl:if>
    </div>
 <!--  -->
@@ -1462,7 +1462,7 @@
 
   
   
-  <xsl:template match="did/unitid">
+  <xsl:template match="did/unitid[1]">
 	<input type="text" onfocus="setCurrent(this);" name="did/unitid/@countrycode" id="countrycode" maxlength="2" size="3" onblur="checkId()">	
 		<xsl:choose>	
 		<xsl:when test="@countrycode">
@@ -1499,7 +1499,7 @@
   </xsl:template>
   
   <xsl:template match="did/unittitle">
-  	<input class="menuField" type="text" onfocus="setCurrent(this);" name="did/unittitle" id="cab" size="80" onchange="updateTitle(this)">
+  	<input class="menuField" type="text" onfocus="setCurrent(this);" name="did/unittitle" id="cab" size="80" onchange="updateTitle(this)" onkeypress="validateFieldDelay(this, 'true');">
   		<xsl:attribute name="value">
   			<xsl:apply-templates/>
   		</xsl:attribute>
