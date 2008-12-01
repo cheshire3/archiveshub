@@ -24,46 +24,46 @@
 
   	<!-- DID -->
 	<xsl:template match="did">
-            <a>
-            	<xsl:attribute name="name">
-                    <xsl:choose>
-                    	<xsl:when test="@id">
-                            <xsl:value-of select="@id" />
-                    	</xsl:when>
-                    	<xsl:when test="unitid/@id">
-                            <xsl:value-of select="unitid/@id" />
-                    	</xsl:when>
-                    	<xsl:otherwise>
-                            <xsl:value-of select="generate-id(.)" />
-                    	</xsl:otherwise>
-                    </xsl:choose>
-            	</xsl:attribute>
-            	<xsl:text> </xsl:text>
-            </a>
-	
-            <h2 class="unittitle">
-	       <xsl:choose>
-	        <xsl:when test="unittitle">
-	          <xsl:apply-templates select="unittitle[1]"/>
-	        </xsl:when>
-	        <xsl:when test="/ead/archdesc/did/unittitle">
-	          <xsl:apply-templates select="/ead/archdesc/did/unittitle"/>
-	        </xsl:when>
-	        <xsl:when test="/ead/eadheader/filedesc/titlestmt/titleproper">
-	          <xsl:apply-templates select="/ead/eadheader/filedesc/titlestmt/titleproper"/>
-	        </xsl:when>
-	        <xsl:otherwise>
-	          <xsl:text>(untitled)</xsl:text>
-	        </xsl:otherwise>
-	       </xsl:choose>
-            </h2>
+        <a>
+        	<xsl:attribute name="name">
+                <xsl:choose>
+                	<xsl:when test="@id">
+                        <xsl:value-of select="@id" />
+                	</xsl:when>
+                	<xsl:when test="unitid/@id">
+                        <xsl:value-of select="unitid/@id" />
+                	</xsl:when>
+                	<xsl:otherwise>
+                        <xsl:value-of select="generate-id(.)" />
+                	</xsl:otherwise>
+                </xsl:choose>
+        	</xsl:attribute>
+        	<xsl:text> </xsl:text>
+        </a>
+        
+        <h2 class="unittitle">
+            <xsl:choose>
+                <xsl:when test="unittitle">
+                    <xsl:apply-templates select="unittitle[1]"/>
+                </xsl:when>
+                <xsl:when test="/ead/archdesc/did/unittitle">
+                    <xsl:apply-templates select="/ead/archdesc/did/unittitle"/>
+                </xsl:when>
+                <xsl:when test="/ead/eadheader/filedesc/titlestmt/titleproper">
+                    <xsl:apply-templates select="/ead/eadheader/filedesc/titlestmt/titleproper"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:text>(untitled)</xsl:text>
+                </xsl:otherwise>
+            </xsl:choose>
+        </h2>
 		
-            <xsl:if test="./dao|../dao|../odd/dao|../scopecontent/dao|./daogrp|../daogrp|../odd/daogrp|../scopecontent/daogrp">
-                <div class="daos">
-                    <div class="daohead">Digital Objects</div>
-                    <xsl:apply-templates select="./dao|../dao|../odd/dao|../scopecontent/dao|./daogrp|../daogrp|../odd/daogrp|../scopecontent/daogrp"/>
-                </div>
-            </xsl:if>
+        <xsl:if test="./dao|../dao|../odd/dao|../scopecontent/dao|./daogrp|../daogrp|../odd/daogrp|../scopecontent/daogrp">
+            <div class="daos">
+                <div class="daohead">Digital Objects</div>
+                <xsl:apply-templates select="./dao|../dao|../odd/dao|../scopecontent/dao|./daogrp|../daogrp|../odd/daogrp|../scopecontent/daogrp"/>
+            </div>
+        </xsl:if>
 
 	    <div class="did">
 			<strong>Reference Number</strong><xsl:text>: </xsl:text>
@@ -1054,7 +1054,7 @@
             <!-- inner HTML -->
             <xsl:choose>
                 <xsl:when test="string(.)">
-                    <xsl:value-of select="string(.)" />
+                    <xsl:value-of select="normalize-space()" />
                 </xsl:when>
                 <xsl:when test="./@title">
                     <xsl:value-of select="./@title"/>
@@ -1080,7 +1080,10 @@
 			<xsl:attribute name="alt">
 				<xsl:choose>
 					<xsl:when test="./daodesc">
-					      <xsl:value-of select="./daodesc"/>
+                        <xsl:variable name="txt">
+                            <xsl:value-of select="string(./daodesc)"/>
+                        </xsl:variable>
+                        <xsl:value-of select="normalize-space($txt)"/>
 					</xsl:when>
 					<xsl:when test="./@title">
 					      <xsl:value-of select="./@title"/>
@@ -1091,6 +1094,8 @@
 				</xsl:choose>
 			</xsl:attribute>
 		</xsl:element>
+        <!-- caption -->
+        <xsl:apply-templates select="./daodesc"/>
 	</xsl:template>
 
 	<!--BUILDING REFS AND ANCS-->
@@ -1220,7 +1225,7 @@
 
     <!-- DAOGRP - representing thumbnail link to main object -->
     <xsl:template name="daogrp-thumb">
-	<xsl:element name="a">
+	   <xsl:element name="a">
             <xsl:attribute name="href">
                 <xsl:value-of select="./daoloc[@label='reference']/@href"/>
             </xsl:attribute>
@@ -1241,7 +1246,7 @@
                 </xsl:choose>
             </xsl:attribute>
             <xsl:choose>
-        	<xsl:when test="./daoloc/@label='thumb'">
+            	<xsl:when test="./daoloc/@label='thumb'">
                     <xsl:element name="img">
                         <xsl:attribute name="src">
                             <xsl:value-of select="./daoloc[@label='thumb']/@href"/>
@@ -1255,7 +1260,7 @@
                                     <xsl:text>Thumbnail unavailable</xsl:text>
                                 </xsl:otherwise>
                             </xsl:choose>
-    			</xsl:attribute>
+                        </xsl:attribute>
                     </xsl:element>
                     <br/>
             	</xsl:when>
@@ -1266,8 +1271,9 @@
                     <xsl:text>Full image</xsl:text>
             	</xsl:otherwise>
             </xsl:choose>
-        </xsl:element>			
-        <xsl:apply-templates select="string(./daodesc)" />		
+        </xsl:element>
+        <!-- caption -->
+        <xsl:apply-templates select="./daodesc" />		
     </xsl:template>
 	
     <!-- DAOGRP - representing single, bundled or nested links + description -->
