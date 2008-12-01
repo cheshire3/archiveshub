@@ -30,18 +30,31 @@ from copy import deepcopy
 import datetime, glob
 import traceback
 import codecs
-
-saveByUser = True
-
+import time
+import cProfile
+import gc
 
 class EadEditingHandler(EadHandler):
     global repository_name, repository_link, repository_logo, htmlPath
     templatePath = os.path.join(htmlPath, 'template.ssi')
-    
+    gc.set_debug(gc.DEBUG_LEAK)
     htmlTitle = None
     htmlNav = None
     logger = None
-    errorFields = []
+    errorFields = []    
+    required_xpaths_components = ['did/unitid', 'did/unittitle', 'did/unitdate', 'did/physdesc/extent']
+    required_xpaths = [
+'did/unitid',
+'did/unittitle',
+'did/unitdate',
+'did/origination',
+'did/physdesc/extent',
+'did/langmaterial/language',
+'bioghist',
+'scopecontent',
+'accessrestrict',
+'controlaccess'
+]
     
     altrenderDict = { 'surname' : 'a',
                       'organisation' : 'a',
@@ -83,6 +96,7 @@ class EadEditingHandler(EadHandler):
         self.htmlTitle = ['Data Creation and Editing']
         self.htmlNav = ['<a href="">Editing Menu</a>', '<a href="javascript: toggleKeyboard();">Character Keyboard</a>']
         self.logger = lgr
+
     #- end __init__ ---------------------------------------------------------
 
 
@@ -160,14 +174,16 @@ class EadEditingHandler(EadHandler):
         self.logger.log('building ead')
         ctype = form.get('ctype', None)
         level = form.get('location', None)
-        collection = False;
+        collection = False
+        validList = None
         if (level == 'collectionLevel'):
+            validList = [l for l in self.required_xpaths]
             collection = True;
             tree = etree.fromstring('<ead><eadheader></eadheader><archdesc></archdesc></ead>')           
             header = tree.xpath('/ead/eadheader')[0]
             target = self._create_path(header, 'eadid')
             if form.get('eadid', '') != '':
-                self._add_text(target, form.get('eadid', ''))
+                self._add_text(target, form.get('eadid', ''))            
             else :
                 self._add_text(target, form.get('pui', ''))
             target = self._create_path(header, 'filedesc/titlestmt/titleproper')
@@ -184,6 +200,7 @@ class EadEditingHandler(EadHandler):
             target = self._create_path(header, 'profiledesc/creation/date')
             self._add_text(target, '%s' % datetime.date.today())
         else :
+            validList = [l for l in self.required_xpaths_components]
             tree = etree.fromstring('<%s id="%s"></%s>' % (ctype, level, ctype))           
         list = form.list     
         for field in list :
@@ -195,15 +212,34 @@ class EadEditingHandler(EadHandler):
                     node = tree.xpath('/*[not(name() = "ead")]')[0]
                 if field.name.find('controlaccess') == 0 :
                     self._create_controlaccess(node, field.name, field.value) 
+                    try:
+                        validList.remove('controlaccess')
+                    except:
+                        pass
                 elif field.name.find('did/langmaterial') == 0 :
                     did = self._create_path(node, 'did')
                     self._create_langmaterial(did, field.value)
+                    try:
+                        validList.remove('did/langmaterial/language')
+                    except:
+                        pass
                 else :
                     if (field.value.strip() != '' and field.value.strip() != ' '):
                         target = self._create_path(node, field.name)
                         self._add_text(target, field.value)
+                        try:
+                            validList.remove(field.name[:field.name.rfind('[')])
+                        except:
+                            try:
+                                validList.remove(field.name)
+                            except:
+                                pass
+        if (len(validList)):
+            valid = False
+        else:
+            valid = True
         self.logger.log('build complete')
-        return tree    
+        return (tree, valid)    
     #- end build_ead    
         
             
@@ -383,11 +419,17 @@ class EadEditingHandler(EadHandler):
 
 # Navigation related functions ==================================================================
        
-    def navigate(self, form):    
+    def navigate(self, form): 
+        self.logger.log('NAVIGATING FORM')
+        start = time.clock()
         recid = form.get('recid', None)
         owner = form.get('owner', session.user.username)
         new = form.get('newForm', None)
         page = self.populate_form(recid, owner, new, form)  
+        (mins, secs) = divmod(time.time() - start, 60)
+        (hours, mins) = divmod(mins, 60)
+        self.logger.log('Navigating complete')
+        self.logger.log(time.clock()-start)
         return page    
     
     def populate_form(self, recid, owner, new, form):  
@@ -438,9 +480,9 @@ class EadEditingHandler(EadHandler):
                             if compre.match(el.tag):
                                 parentId = el.get('id')                             
                                 break
-                        idString = '%d-%s' % (posCount, parentId)
-                        if idString[-1] == '-':
-                            idString = idString[:-1]
+                        idString = '%s-%d' % (parentId, posCount)
+                        if idString[0] == '-':
+                            idString = idString[1:]
                         element.set('id', idString)                       
                 except :
                     raise
@@ -455,7 +497,7 @@ class EadEditingHandler(EadHandler):
         page = structure.replace('%FRM%', htmlform) 
         page = page.replace('%RECID%', '<input type="hidden" id="recid" value="notSet"/>')
         page = page.replace('%PUI%', '<input type="text" onfocus="setCurrent(this);" name="pui" id="pui" size="30" readonly="true" class="readonly"/>')
-        page = page.replace('%TOC%', '<b><a id="collectionLevel" name="link" class="selected" onclick="javascript: displayForm(this.id)" href="#" style="display: inline">Collection Level</a></b>')  
+        page = page.replace('%TOC%', '<b><a id="collectionLevel" name="link" class="valid" onclick="javascript: displayForm(this.id)" style="display:inline; background:yellow">Collection Level</a></b>')  
         return page
   
     
@@ -520,7 +562,7 @@ class EadEditingHandler(EadHandler):
             page = page.replace('%TOC%', tocTxr.process_record(session, rec).get_raw(session))
             return page
         
-    #loads from recordStore
+    #loads from file
     def edit_file(self, form):
         f = form.get('filepath', None)
         if not f or not len(f.value):
@@ -542,7 +584,7 @@ class EadEditingHandler(EadHandler):
         recid = rec2.id
         rec2.id = '%s-%s' % (recid, session.user.username.encode('ascii', 'ignore'))
         editStore.store_record(session, rec2)
-        editStore.commit_storing(session) 
+#        editStore.commit_storing(session) 
         
         structure = read_file('ead2002.html')
         htmlform = formTxr.process_record(session, rec2).get_raw(session)
@@ -649,23 +691,32 @@ class EadEditingHandler(EadHandler):
 
 
     def save_form(self, form):
+        self.logger.log('SAVING FORM')
+        start = time.clock()
         loc = form.get('location', None)
         recid = form.get('recid', None)
         parent = form.get('parent', None)
         fileOwner = form.get('owner', session.user.username)
+        valid = True
         #if there this is a new collection level file
         if (loc == 'collectionLevel' and (recid == None or recid == 'None')):
             self.logger.log('new collection level')
             #save the form in any free slot
-            rec = LxmlRecord(self.build_ead(form))
+            (temp, valid) = self.build_ead(form)
+            rec = LxmlRecord(temp)
             rec = assignDataIdFlow.process(session, rec)
             recid = rec.id
             rec.id = '%s-%s' % (rec.id, fileOwner)
             editStore.store_record(session, rec)
-            editStore.commit_storing(session) 
-            return recid
+#            editStore.commit_storing(session) 
+            (mins, secs) = divmod(time.time() - start, 60)
+            (hours, mins) = divmod(mins, 60)
+            self.logger.log('SAVing complete')
+            self.logger.log(time.clock()-start)
+            return (recid, valid)
         #this is an existing collection level file
         elif (loc == 'collectionLevel'):
+            validList = [l for l in self.required_xpaths]
             list = form.list  
             #pull existing xml and make into a tree
             retrievedRec = editStore.fetch_record(session, '%s-%s' % (recid, fileOwner))
@@ -697,7 +748,11 @@ class EadEditingHandler(EadHandler):
                 if field.name not in ['ctype','location','operation','newForm','nocache','recid', 'parent', 'pui', 'filedesc/titlestmt/sponsor']:               
                     #do archdesc stuff
                     if field.name.find('controlaccess') == 0 :                        
-                        self._create_controlaccess(node, field.name, field.value)      
+                        self._create_controlaccess(node, field.name, field.value)  
+                        try:
+                            validList.remove('controlaccess')
+                        except:
+                            pass
                     elif field.name.find('did/langmaterial') == 0 :     
                         if field.name.find('did/langmaterial/@') == 0:
                             target = self._create_path(node, field.name)
@@ -705,29 +760,49 @@ class EadEditingHandler(EadHandler):
                         else:
                             did = self._create_path(node, 'did')
                             self._create_langmaterial(did, field.value)
+                        try:
+                            validList.remove('did/langmaterial/language')
+                        except:
+                            pass
                     else :
                         if (field.value.strip() != '' and field.value.strip() != ' '):
                             target = self._create_path(node, field.name)
                             self._add_text(target, field.value)   
-                            if field.name.find('scopecontent') == 0:
-                                self.logger.log(field.value)
+                            try:
+                                validList.remove(field.name[:field.name.rfind('[')])
+                            except:
+                                try:
+                                    validList.remove(field.name)
+                                except:
+                                    pass
                         else:
                             deleteList.append(field.name)
+            
             if len(deleteList):
                 for name in deleteList:
-                    self._delete_path(node, name)             
+                    self._delete_path(node, name) 
+            if len(validList):
+                valid = False
+            else:
+                valid = True      
             rec = LxmlRecord(tree)
             rec.id = retrievedRec.id
             editStore.store_record(session, rec)
-            editStore.commit_storing(session)
-            return recid       
+#            editStore.commit_storing(session)
+            self.logger.log('SAVing complete') 
+            self.logger.log(time.clock()-start)
+            return (recid, valid)       
         #check if C exists, if not add it, if so replace it
         else :
             self.logger.log('component')
             #pull record from store            
             retrievedRec = editStore.fetch_record(session, '%s-%s' % (recid, fileOwner))
+            self.logger.log('got record in')
+            self.logger.log(time.clock()-start) 
             retrievedxml= retrievedRec.get_xml(session)
-            tree = etree.XMLID(retrievedxml)            
+            tree = etree.XMLID(retrievedxml)   
+            self.logger.log('turned xml to tree in')
+            self.logger.log(time.clock()-start)         
             #first check there is a dsc element and if not add one (needed for next set of xpath tests)
             self.logger.log('testing dsc exists')
             
@@ -745,15 +820,19 @@ class EadEditingHandler(EadHandler):
                     parentNode = tree[0].xpath('/ead/archdesc/dsc')[0]
                 else :
                     parentNode = tree[1].get(parent)
-                parentNode.append(self.build_ead(form))
+                (rec, valid) = self.build_ead(form)
+                parentNode.append(rec)
                 rec = LxmlRecord(tree[0])
                 rec.id = retrievedRec.id
                 editStore.store_record(session, rec)
-                editStore.commit_storing(session)   
+#                editStore.commit_storing(session)   
                                              
             #if the component does exist change it
             else :   
                 self.logger.log('existing component')
+                validList = [l for l in self.required_xpaths_components]
+                self.logger.log('xpath_components list: %s' % ' '.join(self.required_xpaths_components))
+                self.logger.log('new list: %s' % ' '.join(validList))
                 list = form.list
                 node = tree[1].get(loc) 
                 #first delete current accesspoints
@@ -761,31 +840,67 @@ class EadEditingHandler(EadHandler):
                 self._delete_currentLangmaterial(node)
                 self.logger.log('deleted stuff')
                 deleteList = []
+                self.logger.log('starting to create fields')
+                self.logger.log(time.clock()-start) 
                 for field in list :
                     if field.name not in ['ctype','location','operation','newForm','nocache','recid', 'parent']:           
                         if field.name.find('controlaccess') == 0 :                        
-                            self._create_controlaccess(node, field.name, field.value)      
+                            self._create_controlaccess(node, field.name, field.value) 
+                            try:
+                                validList.remove('controlaccess')
+                            except:
+                                pass     
                         elif field.name.find('did/langmaterial') == 0 :
                             if field.name.find('did/langmaterial/@') == 0:
                                 target = self._create_path(node, field.name)
-                                self._add_text(target, field.value)
+                                self._add_text(target, field.value)                        
                             else:
                                 did = self._create_path(node, 'did')
                                 self._create_langmaterial(did, field.value)
+                            try:
+                                validList.remove('did/langmaterial/language')
+                            except:
+                                pass
                         else :
                             if (field.value.strip() != '' and field.value.strip() != ' '):
                                 target = self._create_path(node, field.name)
-                                self._add_text(target, field.value)       
+                                self._add_text(target, field.value)    
+                                try:
+                                    validList.remove(field.name[:field.name.rfind('[')])
+                                except:
+                                    try:
+                                        validList.remove(field.name)
+                                    except:
+                                        pass
                             else:
                                 deleteList.append(field.name)
+                self.logger.log('created fields in')
+                self.logger.log(time.clock()-start) 
                 if len(deleteList):
                     for name in deleteList:
-                        self._delete_path(node, name)                                
+                        self._delete_path(node, name)   
+                if len(validList):
+                    valid = False
+                else:
+                    valid = True   
+                self.logger.log('deleted old elements in ')
+                self.logger.log(time.clock()-start)           
                 rec = LxmlRecord(tree[0])
+                self.logger.log('made lxml record in ')
+                self.logger.log(time.clock()-start) 
                 rec.id = retrievedRec.id
+                self.logger.log('started storing in ')
+                self.logger.log(time.clock()-start) 
                 editStore.store_record(session, rec)
-                editStore.commit_storing(session)
-            return recid    
+                self.logger.log('finished storing in ')
+                self.logger.log(time.clock()-start) 
+#                editStore.commit_storing(session)
+#             = time.time() - start, 60)
+#            (hours, mins) = divmod(mins, 60)
+#            self.logger.log('SAVing complete (%dh %dm %ds)' % (hours, mins, secs))
+            self.logger.log('SAVing complete')
+            self.logger.log(time.clock()-start)
+            return (recid, valid)
   
 
     def delete_record(self, form):
@@ -913,13 +1028,12 @@ class EadEditingHandler(EadHandler):
                 try: dcRecordStore.delete_record(session, rec.id)
                 except: pass
                 else: dcRecordStore.commit_storing(session)
-                req.write('[OK]')
+                req.write('<span class="ok">[OK]</span><br/>\n')
                 if len(rec.process_xpath(session, 'dsc')) and exists :
                     # now the tricky bit - component records
                     compStore.begin_storing(session)
-                    q = CQLParser.parse('ead.parentid exact "%s/%s"' % (oldRec.recordStore, oldRec.id))
-                    req.write('ead.parentid exact "%s/%s"' % (oldRec.recordStore, oldRec.id))
-                    req.write('Removing components')
+                    q = queryFactory.get_query(session, 'ead.parentid exact "%s/%s"' % (oldRec.recordStore, oldRec.id))
+                    req.write('Removing components...')
                     rs = db.search(session, q)
                     for r in rs:
                         try:
@@ -932,7 +1046,7 @@ class EadEditingHandler(EadHandler):
                             compStore.delete_record(session, compRec.id)
          
                     compStore.commit_storing(session)
-                    req.write('components removed')
+                    req.write('<span class="ok">[OK]</span><br/>\n')
             #add and index new record
             req.write('indexing new record... ')
             doc = ppFlow.process(session, StringDocument(xml))
@@ -956,29 +1070,38 @@ class EadEditingHandler(EadHandler):
                 compStore.commit_storing(session)
                 db.commit_indexing(session)
                 db.commit_metadata(session)
-                req.write('[OK]')
+                req.write('<span class="ok">[OK]</span><br/>\n')
             else :
                 db.commit_indexing(session)
                 db.commit_metadata(session)   
-                req.write('[OK]')
+                req.write('<span class="ok">[OK]</span><br/>\n')
             # write to file
         if valid:
             req.write('writing to file system... ')
             filepath = os.path.join(sourceDir, filename)
+            pre = ''
             if os.path.exists(filepath):
+                ws = re.compile('[\s]+')
+                xml = ws.sub(' ', read_file(filepath))
+                m = re.match('(.*?)<ead[>\s]', xml)
+                try :           
+                    pre = m.group(1)    
+                except:
+                    pass
                 os.remove(filepath)
             try :
                 file = open(filepath, 'w')
             except :
                 file = open(os.path.join(sourceDir,'%s.xml' % recid), 'w')
-                
+            
             tempRec = xmlp.process_document(session, orderTxr.process_record(session, rec))
             indentTxr = db.get_object(session, 'indentingTxr')
-            file.write(indentTxr.process_record(session, tempRec).get_raw(session))
-            file.close     
+            file.write('%s\n%s' % (pre, indentTxr.process_record(session, tempRec).get_raw(session)))
+            file.flush()
+            file.close()    
             editStore.delete_record(session, editRecid)
             editStore.commit_storing(session)
-            req.write('\n<p><a href="/ead/admin/files.html">Back to \'File Management\' page.</a></p>')
+            req.write('<span class="ok">[OK]</span><br/>\n<p><a href="/ead/edit">Back to \'Editing Menu\'.</a></p>')
             foot = self._get_genericHtml('footer.html')          
             req.write('</div>' + foot)
         return None 
@@ -1033,7 +1156,7 @@ class EadEditingHandler(EadHandler):
             rec.id = ('%s-%s') % (rec.id[:rec.id.rfind('-')], newUser)
             editStore.delete_record(session, recid)
             id = editStore.store_record(session, rec)           
-            editStore.commit_storing(session) 
+#            editStore.commit_storing(session) 
             return rec.id
 
          
@@ -1042,8 +1165,8 @@ class EadEditingHandler(EadHandler):
         self.logger.log('Create/Edit Options')
         page = read_file('editmenu.html')
         userStore = db.get_object(session, 'eadAuthStore')
-        files = self._walk_directory(sourceDir, 'radio')
-        recids = self._walk_store('editingStore', 'radio', 'eadAuthStore')  
+        files = self._walk_directory(sourceDir, 'radio', False)
+        recids = self._walk_store(editStore, 'radio', 'eadAuthStore')  
         if session.user.has_flag(session, 'info:srw/operation/1/create', 'eadAuthStore'):
             users = []
             for user in userStore :
@@ -1054,8 +1177,7 @@ class EadEditingHandler(EadHandler):
         return multiReplace(page, {'%%%SOURCEDIR%%%': sourceDir, '%%%FILES%%%': ''.join(files), '%%%RECORDS%%%': ''.join(recids), '%%%USROPTNS%%%': assignmentOptn})
        
              
-    def _walk_store(self, storeName, type='checkbox', userStore=None):
-        store = db.get_object(session, storeName)
+    def _walk_store(self, store, type='checkbox', userStore=None):
         if not userStore:
             out = []
             for s in store :
@@ -1113,7 +1235,9 @@ class EadEditingHandler(EadHandler):
 #================================================================================================================    
                                      
     def handle (self, req):
-        global script
+        global script, editStore
+        editStore = db.get_object(session, 'editingStore')
+        editStore.begin_storing(session)
         form = FieldStorage(req, True)  
         tmpl = read_file(templatePath)
         content = None      
@@ -1123,8 +1247,8 @@ class EadEditingHandler(EadHandler):
                 content = self.add_form(form)   
                 self.send_html(content, req)
             elif (operation == 'save'):
-                content = self.save_form(form)
-                self.send_xml('<recid>%s</recid>' % content, req)
+                (content, valid) = self.save_form(form)
+                self.send_xml('<recid>%s</recid><valid>%s</valid>' % (content, valid), req)
             elif (operation == 'delete'):
                 content = self.delete_record(form)
                 self.send_xml('<recid>%s</recid>' % content, req)
@@ -1166,6 +1290,7 @@ class EadEditingHandler(EadHandler):
             elif (operation == 'create'):
                 content = self.generate_file(form)
                 self.send_fullHtml(content, req) 
+            editStore.commit_storing(session) 
         else :              
             content = self.show_editMenu()
             page = multiReplace(tmpl, {'%REP_NAME%': repository_name,
@@ -1178,7 +1303,7 @@ class EadEditingHandler(EadHandler):
 
             # send the display
             self.send_html(page, req)
-                     
+           
     
         #- end handle() ---------------------------------------------------
         
@@ -1191,6 +1316,7 @@ serv = None
 session = None
 db = None
 baseDocFac = None
+queryFactory = None
 sourceDir = None
 editStore = None
 recordStore = None
@@ -1207,17 +1333,17 @@ logfilepath = editinglogfilepath
 
 
 def build_architecture(data=None):
-    global session, serv, db, editStore, recordStore, dcRecordStore, compStore, authStore, formTxr, tocTxr, orderTxr, xmlp, assignDataIdFlow, indexNewRecordFlow, compRecordFlow, ppFlow, sourceDir, baseDocFac
+    global session, serv, db, recordStore, dcRecordStore, compStore, authStore, formTxr, tocTxr, orderTxr, xmlp, assignDataIdFlow, indexNewRecordFlow, compRecordFlow, ppFlow, sourceDir, baseDocFac, queryFactory
     #Discover objects
     session = Session()
     session.database = 'db_ead'
     session.environment = 'apache'
     session.user = None
-    serv = SimpleServer(session, '/home/cheshire/cheshire3/cheshire3/configs/serverConfig.xml')
+    serv = SimpleServer(session, cheshirePath + '/cheshire3/configs/serverConfig.xml')
     db = serv.get_object(session, 'db_ead')
     baseDocFac = db.get_object(session, 'baseDocumentFactory')
+    queryFactory = db.get_object(session, 'defaultQueryFactory')
     sourceDir = baseDocFac.get_default(session, 'data')
-    editStore = db.get_object(session, 'editingStore')
     recordStore = db.get_object(session, 'recordStore')
     dcRecordStore = db.get_object(session, 'eadDcStore')
     compStore = db.get_object(session, 'componentStore')
@@ -1242,6 +1368,8 @@ def handler(req):
     req.register_cleanup(build_architecture)
 
     try :
+#        if (rebuild):
+#            build_architecture()    
 
         remote_host = req.get_remote_host(apache.REMOTE_NOLOOKUP)
         os.chdir(os.path.join(cheshirePath, 'cheshire3', 'www', 'ead', 'html'))     # cd to where html fragments are
@@ -1261,7 +1389,7 @@ def handler(req):
     else :
         return apache.OK
 
-
+#
 def authenhandler(req):
     global session, authStore, rebuild
     if (rebuild):

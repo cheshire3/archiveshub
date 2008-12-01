@@ -201,7 +201,7 @@ class EadHandler:
 
 
 
-    def _walk_directory(self, d, type='checkbox'):
+    def _walk_directory(self, d, type='checkbox', link=True):
         global script
         # we want to keep all dirs at the top, followed by all files
         outD = []
@@ -217,11 +217,18 @@ class EadHandler:
                             ])
             else:
                 fp = os.path.join(d,f)
-                outF.extend(['<li>'
-                            ,'<span class="fileops"><input type="%s" name="filepath" value="%s"/></span>' % (type, fp)
-                            ,'<span class="filename"><a href="files.html?operation=view&amp;filepath=%s" title="View file contents">%s</a></span>' % (cgi_encode(fp), f)
-                            ,'</li>'
-                            ])
+                if link:
+                    outF.extend(['<li>'
+                                ,'<span class="fileops"><input type="%s" name="filepath" value="%s"/></span>' % (type, fp)
+                                ,'<span class="filename"><a href="files.html?operation=view&amp;filepath=%s" title="View file contents">%s</a></span>' % (cgi_encode(fp), f)
+                                ,'</li>'
+                                ])
+                else:
+                     outF.extend(['<li>'
+                                ,'<span class="fileops"><input type="%s" name="filepath" value="%s"/></span>' % (type, fp)
+                                ,'<span class="filename">%s</span>' % (f)
+                                ,'</li>'
+                                ])                   
 
         return outD + outF
         

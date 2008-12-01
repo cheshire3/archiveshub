@@ -2,6 +2,7 @@
 var recid = 'notSet';
 var idExists = null;
 var currentForm = 'collectionLevel';
+var previousForm = null;
 var accessPoints = new Array("subject", "persname", "famname", "corpname", "geogname", "title", "genreform", "function");
 var someIdSet = false;
 var countryCode = null;
@@ -100,10 +101,18 @@ function submit(index){
     }
 	errors = document.getElementsByClassName('menuFieldError');
     if (errors.length != 0){
-    	alert('please fix errors');
+    	alert('Please fix the errors in the xml before submitting. Errors will be marked with red shading in the text box.');
     	return;
     }
 	saveForm(false);
+	
+	//validate whole record
+	invalid = document.getElementsByClassName('invalid');
+	if (invalid.length != 0){
+		alert('Not all components of your record have the required fields completed. Please complete any components which are coloured red in the contents tree.');
+		return;
+	}
+	
 	url = "?operation=submit&recid=" + recid;
 	if (fileOwner != null){
 		url += '&owner=' + fileOwner;
@@ -142,8 +151,27 @@ function resetForm(){
 }
 
 
-function saveForm(asynch){
+function save(){
 
+	//validate and check id existence etc.
+    if (!checkRequiredData()){
+		alert ('the following fields must be entered before proceeding:\n  - Reference Code \n  - Title');
+		return;
+	}
+	errors = document.getElementsByClassName('menuFieldError');
+    if (errors.length != 0){
+    	alert('Please fix the errors in the xml before saving. Errors will be marked with red shading in the text box.');
+    	return;
+    }
+	else {
+			saveForm(false)
+	    	alert('This form is now saved as ' + recid + ' and can be reloaded from the admin menu for further editing at a later date.');
+	}
+}
+
+
+function saveForm(asynch){
+	
 	//collect the basic id information
 	if (currentForm == 'collectionLevel'){
 		setCountryCode($('countrycode').value);
@@ -167,7 +195,7 @@ function saveForm(asynch){
 	}
   	var data = ($('eadForm')).serialize();
   	data += ('&operation=save&location=' + currentForm);
-  		
+  	previousForm = currentForm
   	if (currentForm != 'collectionLevel'){	  			
   		var parent = $(currentForm).parentNode.parentNode.parentNode;	  		
   		if (parent.tagName != 'LI'){
@@ -193,11 +221,17 @@ function saveForm(asynch){
     if (fileOwner != null){
     	data += '&owner' + fileOwner;
     }
-
     var loc = $('rightcol');
   	var ajax = new Ajax.Request(loc, {method:'post', asynchronous:asynch, postBody:data, evalScripts:true,  onSuccess: function(transport){ 
     	var response = transport.responseText;
-	    var rid = response.substring(7,response.indexOf('</recid>'));		    	
+	    var rid = response.substring(7,response.indexOf('</recid>'));	
+	    var valid = response.substring(response.indexOf('<valid>')+7, response.indexOf('</valid>'));
+		if (valid == 'False'){
+			($(previousForm)).className = 'invalid';
+		}
+		else{
+			($(previousForm)).className = 'valid';
+		}
 	}});	
 }
 
@@ -221,6 +255,11 @@ function displayForm(id, level){
 			alert ('the following fields must be entered before proceeding:\n  - Reference Code \n  - Title')
 			return;
 		} 	
+		errors = document.getElementsByClassName('menuFieldError');
+	    if (errors.length != 0){
+	    	alert('Please fix the errors in the xml before leaving this page. Errors will be marked with red shading in the text box.');
+	    	return;
+	    }
 	  	saveForm(false);
 		var data = 'operation=navigate&recid=' + recid + '&newForm=' + id
 		if (fileOwner != null){
@@ -229,9 +268,9 @@ function displayForm(id, level){
 		var loc = $('rightcol');
 		new Ajax.Updater(loc, '/ead/edit', {method: 'get', asynchronous:false, parameters:data, evalScripts:true, onSuccess: function(transport){		   	
 
-		   	($(currentForm)).className = 'link';
+		   	($(currentForm)).setAttribute('style', 'background:none');
 		    currentForm = id;
-		    $(id).className = 'selected';		    
+		    $(id).setAttribute('style', 'background:yellow');		    
 		}});	    		  	 	  	
   	}
 }
@@ -259,7 +298,7 @@ function addComponent(){
     }
     errors = document.getElementsByClassName('menuFieldError');
     if (errors.length != 0){
-    	alert('please fix errors');
+    	alert('Please fix the errors in the xml before adding a component. Errors will be marked with red shading in the text box.');
     	return;
     }
     else if (currentForm == 'collectionLevel' && recid == 'notSet'){
@@ -300,7 +339,7 @@ function addComponent(){
       	var listItem = parent.parentNode;
       	var level = Number(listItem.parentNode.getAttribute('name'));
     }
-
+	parent.setAttribute('style', 'background:none');
     
     // find the right list or add a new one
     var childList = null;  
@@ -333,30 +372,32 @@ function addComponent(){
     var linkId = '';    
     var elementCount = list.childNodes.length;
 
-    if (elementCount != undefined){
-      	linkId += (elementCount + 1);
-    }
+    
     var parentLoc = '';
     if (level > 0){
       	var parentId = parent.getAttribute('id');
       	var parentLoc = parentId;
       	if (parentLoc != undefined){
-        	linkId += ('-' + parentLoc);
+        	linkId += (parentLoc + '-');
       	}	
     }
+    if (elementCount != undefined){
+      	linkId += (elementCount + 1);
+    }
+    
 	// create the html
     var newItem = document.createElement('li');
 
     var newLink = document.createElement('a');
     newLink.style.display = 'inline';
     newLink.setAttribute('id', linkId);
-    newLink.className = 'selected';
+    newLink.setAttribute('style', 'background:yellow')
     newLink.setAttribute('name', 'link');
     newLink.onclick = new Function("javascript: displayForm(this.id, 0)");
     newLink.href = "#";
     newLink.appendChild(document.createTextNode(linkId));
  
-    parent.className = 'none';
+    
              
     newItem.appendChild(newLink);
     list.appendChild(newItem);
@@ -381,7 +422,7 @@ function viewXml(){
     }
     errors = document.getElementsByClassName('menuFieldError');
     if (errors.length != 0){
-    	alert('please fix errors');
+    	alert('Please fix the errors in the xml before viewing. Errors will be marked with red shading in the text box.');
     	return;
     }
 	saveForm(false);
@@ -403,7 +444,7 @@ function previewRec(){
     }
     errors = document.getElementsByClassName('menuFieldError');
     if (errors.length != 0){
-    	alert('please fix errors');
+    	alert('Please fix the errors in the xml before viewing. Errors will be marked with red shading in the text box.');
     	return;
     }
 	saveForm(false);
@@ -698,22 +739,39 @@ function checkRequiredData(){
 //================================================================================================
 //keyboard related functions
 
+var currentCharTable = 'lower';
+
 function toggleKeyboard(){
   	var keyboard = ($('keyboard')); 
-    keyboard.style.top = '100px';
-    keyboard.style.left = '10px';
   	keyboard.toggle();  
-  	showCharTable();
+  	showCharTable('lower');
 }
 
 
-function showCharTable(){
-  	($('chartable')).style.display = 'block';
+function showCharTable(type){
+	if (type == 'lower'){
+  		($('chartablelower')).style.display = 'block';
+  		($('chartableupper')).style.display = 'none';
+  	}
+  	else if (type == 'upper'){
+  		($('chartableupper')).style.display = 'block';
+  		($('chartablelower')).style.display = 'none';   	
+  	}
+  	else {
+		($('chartable' + currentCharTable)).style.display = 'block';
+  	}
 }
 
 
 function hideCharTable(){
-  	($('chartable')).style.display = 'none';
+	if (($('chartableupper')).style.display == 'block'){
+		currentCharTable = 'upper';
+	}
+	else {
+		currentCharTable = 'lower';
+	}
+  	($('chartableupper')).style.display = 'none';
+  	($('chartablelower')).style.display = 'none';
 }
 
 

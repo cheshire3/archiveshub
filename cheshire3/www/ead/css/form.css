@@ -6,11 +6,7 @@ body {
 	overflow: hidden;	
 }
 
-#keyboardlink {
-	font-size: 10pt;
-	float: right;
-	
-	}
+
 
 span.isadg {
 	display: inline;	
@@ -115,22 +111,71 @@ buttoncontainer p {
 /* should use scroll for windows */
 }
 
-
+/*======================================*/
 
 
 #keyboard {
   	border: solid black 1px;
-	position: relative;
-	top: 140px;
+	position: fixed;
+	bottom: 50px;
 	left: 10px;
 	width: 9cm;
+	heigth: 10cm;
    	background: #0b2277;
 }
 
+#keyboardtitle {
+	font-weight: normal; 
+	font-size: 11pt; 
+	padding-left: 2px; 
+	width: 63%; 
+	text-align: right;
+	float: left;
+	}
 
+.capslock {
+	float: left;
+	margin-left: 5px;
+	height: 15px;
+	
+	}
+
+#charlink, 
+#charlinkpressed {
+	font-size: 9pt;
+	float: left;
+	width: 100px;
+	padding: 4px;
+	margin-left: 3px;
+	margin-bottom: 4px;
+	}
+	
+#charlinkpressed {
+	border-top: 2px solid gray;
+	border-left: 2px solid gray;
+	border-bottom: 2px solid white;
+	border-right: 2px solid white;
+	}
+	
+#charlink {
+	border-top: 2px solid white;
+	border-left: 2px solid white;
+	border-bottom: 2px solid gray;
+	border-right: 2px solid gray;
+	}
+
+#keyboardlink {
+	font-size: 10pt;
+	float: right;
+	}
 
 td button {
 	width: 0.8cm;
+	height: 0.7cm;
+	border-top: 2px solid white;
+	border-left: 2px solid white;
+	border-bottom: 2px solid gray;
+	border-right: 2px solid gray;
 	}
 
 #keyboardcontrolbar {
@@ -138,14 +183,24 @@ td button {
 	}
 	
 
-#chartable {
+#chartableupper,
+#chartablelower {
 	padding: 7px;
 	background: #e5e5e5;
+	position: relative;
+
+	}
+	
+/*======================================*/
+
+a.valid {
+	color: black;
 	}
 
-.selected {
-	background: yellow;
-}
+a.invalid {
+	color: red;
+	}
+
 
 .readonly {
 	background: #e7e7e7;
