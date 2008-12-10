@@ -1712,7 +1712,7 @@
   		<xsl:text> </xsl:text>
   		<a class="smalllink">
   			<xsl:attribute name="title">
-  				<xsl:text>add </xsl:text>
+  				<xsl:text>add content</xsl:text>
   				<xsl:value-of select="$title"/>
   			</xsl:attribute>
   			<xsl:attribute name="id">
@@ -1724,10 +1724,10 @@
   			</xsl:attribute>
   		    <xsl:choose>
   				<xsl:when test="$content = 'true'">
-  					<xsl:text>hide</xsl:text>
+  					<xsl:text>hide content</xsl:text>
   				</xsl:when>
   				<xsl:otherwise>
-  					<xsl:text>add</xsl:text>
+  					<xsl:text>add content</xsl:text>
   				</xsl:otherwise>
   			</xsl:choose>
   		</a>
