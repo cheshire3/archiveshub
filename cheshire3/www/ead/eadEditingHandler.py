@@ -554,11 +554,11 @@ class EadEditingHandler(EadHandler):
             htmlform = formTxr.process_record(session, rec).get_raw(session)
             page = structure.replace('%FRM%', htmlform) 
             splitId = recid.split('-')
-            page = page.replace('%RECID%', '<input type="hidden" id="recid" value="%s"/>' % splitId[0])
-            if splitId[1] == session.user.username:
-                page = page.replace('%PUI%', '<input type="text" onfocus="setCurrent(this);" name="pui" id="pui" size="30" disabled="true" value="%s"/>' % splitId[0])
+            page = page.replace('%RECID%', '<input type="hidden" id="recid" value="%s"/>' % '-'.join(splitId[:-1]))
+            if splitId[-1] == session.user.username:
+                page = page.replace('%PUI%', '<input type="text" onfocus="setCurrent(this);" name="pui" id="pui" size="30" disabled="true" value="%s"/>' % '-'.join(splitId[:-1]))
             else :
-                page = page.replace('%PUI%', '<input type="text" onfocus="setCurrent(this);" name="pui" id="pui" size="30" disabled="true" value="%s"/><input type="hidden" id="owner" value="%s"/>' % (splitId[0], splitId[1]))
+                page = page.replace('%PUI%', '<input type="text" onfocus="setCurrent(this);" name="pui" id="pui" size="30" disabled="true" value="%s"/><input type="hidden" id="owner" value="%s"/>' % ('-'.join(splitId[:-1], splitId[-1])))                                 
             page = page.replace('%TOC%', tocTxr.process_record(session, rec).get_raw(session))
             return page
         
