@@ -246,7 +246,7 @@ function displayForm(id, level){
 	   	($('countrycode').value) = countryCode;	   			
 	   	($('archoncode').value) = repositoryCode;
 	   	($('unitid').value) = baseUnitId + '/' + currentForm.replace(/-/g, '/');
-	   	($('pui').value) = recid;
+	   	($('pui').value) = recid
 	   	updateId();
 	}
 	/* for navigating to an existing form*/
@@ -498,13 +498,13 @@ function reassignToUser(){
 function addElement(s){
 	$(s).toggle();
   	if ($(s).visible($(s))){
-  		$(('link' + s)).update('hide');		
+  		$(('link' + s)).update('hide content');		
   	}
  	else if ($(s).getValue($(s)) == '' || $(s).getValue($(s)) == ' '){
-		$(('link' + s)).update('add');	
+		$(('link' + s)).update('add content');	
   	} 
   	else { 
-		$(('link' + s)).update('show');
+		$(('link' + s)).update('show content');
   	}
 }
 
@@ -816,7 +816,8 @@ function hideSubMenu(type){
 // Date:      04 January 2006
 */
 function addTag(tagtype) {
-	field = currentEntryField;
+	var field = currentEntryField;
+	var scrollPos = field.scrollTop;
 	if (tagtype == 'list'){
 		var startTag = '<list><item>'
 		var endTag = '</item></list>'
@@ -861,6 +862,9 @@ function addTag(tagtype) {
 		selection.text = startTag + seltext + endTag;
 	} 
 	else field.value += startTag + endTag;
+	if (scrollPos){
+		field.scrollTop = scrollPos;
+	}
 }
 
 

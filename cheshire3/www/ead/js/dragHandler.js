@@ -17,6 +17,8 @@ var DragHandler = {
 	// public method. Attach drag handler to an element.
 	attach : function(oElem) {
 		oElem.onmousedown = DragHandler._dragBegin;
+
+
 		return oElem;
 	},
 
@@ -26,8 +28,8 @@ var DragHandler = {
 
 		var oElem = DragHandler._oElem = this;
 
-		_lowerBound = window.innerHeight - (document.getElementById('banner').offsetHeight + document.getElementById('footer').offsetHeight + document.getElementById('keyboardcontrolbar').offsetHeight)
-		_rightBound = window.innerWidth - document.getElementById('keyboardcontrolbar').offsetWidth
+	//	_lowerBound = window.innerHeight - (document.getElementById('banner').offsetHeight + document.getElementById('footer').offsetHeight + document.getElementById('keyboardcontrolbar').offsetHeight)
+	//	_rightBound = window.innerWidth - document.getElementById('keyboardcontrolbar').offsetWidth
 		
 		if (isNaN(parseInt(oElem.style.left))) { oElem.style.left = '10px'; }
 		if (isNaN(parseInt(oElem.style.top))) { oElem.style.top = '100px'; }
@@ -39,10 +41,10 @@ var DragHandler = {
 		oElem.mouseX = e.clientX;
 		oElem.mouseY = e.clientY;
 
-		if ((oElem.mouseY - document.getElementById('banner').offsetHeight) - document.getElementById('keyboardcontrolbar').offsetHeight <= y + document.getElementById('keyboardcontrolbar').offsetHeight){
+	//	if ((oElem.mouseY - document.getElementById('banner').offsetHeight) - document.getElementById('keyboardcontrolbar').offsetHeight <= y + document.getElementById('keyboardcontrolbar').offsetHeight){
 			oElem.onmousemove = DragHandler._drag;
 			oElem.onmouseup = DragHandler._dragEnd;
-		}
+	//	}
 		return false;
 		
 	},
