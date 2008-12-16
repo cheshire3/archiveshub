@@ -204,7 +204,7 @@ class EadEditingHandler(EadHandler):
             tree = etree.fromstring('<%s id="%s"></%s>' % (ctype, level, ctype))           
         list = form.list     
         for field in list :
-            if field.name not in ['ctype','location','operation','newForm','nocache','recid', 'parent', 'pui', 'eadid', 'filedesc/titlestmt/sponsor']:        
+            if field.name not in ['ctype','location','operation','newForm','nocache','recid', 'parent', 'pui', 'eadid', 'filedesc/titlestmt/sponsor', 'daooptns']:        
                 #do did level stuff
                 if (collection):
                     node = tree.xpath('/ead/archdesc')[0]
@@ -234,6 +234,13 @@ class EadEditingHandler(EadHandler):
                                 validList.remove(field.name)
                             except:
                                 pass
+        emptydaolocs = tree.xpath('//daoloc[not(@href)]')
+        for node in emptydaolocs:
+            try:
+                parent = node.getparent()
+                parent.remove(node)
+            except:
+                pass
         if (len(validList)):
             valid = False
         else:
@@ -251,7 +258,7 @@ class EadEditingHandler(EadHandler):
             if nodePath.find('/') == -1 :
                 parent = startNode
             else :
-                parent = parent = startNode.xpath(''.join(nodePath[:nodePath.rfind('/')]))[0]
+                parent = startNode.xpath(''.join(nodePath[:nodePath.rfind('/')]))[0]
             parent.remove(child)
             if len(parent.getchildren()) > 0 :
                 return
@@ -745,7 +752,7 @@ class EadEditingHandler(EadHandler):
             #cycle through the form and replace any node that need it
             deleteList = []
             for field in list :                
-                if field.name not in ['ctype','location','operation','newForm','nocache','recid', 'parent', 'pui', 'filedesc/titlestmt/sponsor']:               
+                if field.name not in ['ctype','location','operation','newForm','nocache','recid', 'parent', 'pui', 'filedesc/titlestmt/sponsor', 'daooptns']:               
                     #do archdesc stuff
                     if field.name.find('controlaccess') == 0 :                        
                         self._create_controlaccess(node, field.name, field.value)  
@@ -777,7 +784,13 @@ class EadEditingHandler(EadHandler):
                                     pass
                         else:
                             deleteList.append(field.name)
-            
+            emptydaolocs = tree.xpath('//daoloc[not(@href)]')
+            for node in emptydaolocs:
+                try:
+                    parent = node.getparent()
+                    parent.remove(node)
+                except:
+                    pass            
             if len(deleteList):
                 for name in deleteList:
                     self._delete_path(node, name) 
@@ -843,7 +856,7 @@ class EadEditingHandler(EadHandler):
                 self.logger.log('starting to create fields')
                 self.logger.log(time.clock()-start) 
                 for field in list :
-                    if field.name not in ['ctype','location','operation','newForm','nocache','recid', 'parent']:           
+                    if field.name not in ['ctype','location','operation','newForm','nocache','recid', 'parent', 'daooptns']:           
                         if field.name.find('controlaccess') == 0 :                        
                             self._create_controlaccess(node, field.name, field.value) 
                             try:
@@ -876,6 +889,14 @@ class EadEditingHandler(EadHandler):
                                 deleteList.append(field.name)
                 self.logger.log('created fields in')
                 self.logger.log(time.clock()-start) 
+                
+                emptydaolocs = tree.xpath('//daoloc[not(@href)]')
+                for node in emptydaolocs:
+                    try:
+                        parent = node.getparent()
+                        parent.remove(node)
+                    except:
+                        pass
                 if len(deleteList):
                     for name in deleteList:
                         self._delete_path(node, name)   

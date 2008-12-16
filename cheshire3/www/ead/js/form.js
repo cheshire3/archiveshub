@@ -867,5 +867,381 @@ function addTag(tagtype) {
 	}
 }
 
+/*
+DAO related stuff
+*/
 
+function addFile(){
+	var doform = document.getElementById('digitalobjectsform');
+	var tbody = document.getElementById('multipletbody');
+	var jsrow = document.getElementById('jsrow');
+	rows = tbody.getElementsByTagName('tr').length;
+	
+	nextfile = ((rows - 2)/2) + 1
+	
+	if (nextfile%2 == 0){
+		var shading = 'odd';
+	}
+	else{
+		var shading = 'even';
+	}
+		
+//file uri
+ 	var tr = document.createElement('tr');
+ 	tr.className = shading;
+ 	var td = document.createElement('td');
+ 	td.appendChild(document.createTextNode('File ' + nextfile + ' URI: '));
+ 	td.className = 'label';
+ 	tr.appendChild(td);
+  				
+ 	href = document.createElement('input');
+ 	href.setAttribute('type', 'text');
+ 	href.setAttribute('name', 'daogrp/daoloc[' + nextfile + ']/@href');
+ 	href.setAttribute('size', '70');
+ 	td = document.createElement('td');		
+ 	td.appendChild(href);
+ 			
+ 	tr.appendChild(td);
+  
+ 	tbody.insertBefore(tr, jsrow);   	
+   			
+   			
+//file title   			
+  	tr = document.createElement('tr');
+  	tr.className = shading;
+   	td = document.createElement('td');
+   	td.appendChild(document.createTextNode('File ' + nextfile + ' title: '));
+   	td.className = 'label';
+   	tr.appendChild(td);
+   			
+   	href = document.createElement('input');
+   	href.setAttribute('type', 'text');
+   	href.setAttribute('name', 'daogrp/daoloc[' + nextfile + ']/@title');
+   	href.setAttribute('size', '70');
+   	td = document.createElement('td');		
+   	td.appendChild(href);
+   			
+   	tr.appendChild(td);
+   			
+   	tbody.insertBefore(tr, jsrow);  
+   			 
+ //role info
+    role = document.createElement('input');
+   	role.setAttribute('type', 'hidden');
+   	role.setAttribute('name', 'daogrp/daoloc[' + nextfile + ']/@role');
+   	role.setAttribute('value', 'reference');
+   	doform.appendChild(role);				
+	
+	
+}
+
+
+function createObjectsForm() {
+	var type = null;
+	for (var i=0; i < document.eadForm.daooptns.length; i++) {
+   		if (document.eadForm.daooptns[i].checked) {
+     		type = document.eadForm.daooptns[i].value;
+     	}
+   	}
+   	if (type == null) {
+   		return;
+   	}
+   	else {
+   		var doform = document.getElementById('digitalobjectsform');
+   		if (doform.childNodes.length > 0){
+	   		for (var i = doform.childNodes.length-1; i > -1; i--) {
+	   			doform.removeChild(doform.childNodes[i]);
+	   		}
+   		}
+   		if (type == 'singlefile' || type == 'embed') {
+   		
+   			var table = document.createElement('table');
+   			var tbody = document.createElement('tbody');
+   			
+
+	//file location   			
+   			var tr = document.createElement('tr');
+   			var td = document.createElement('td');
+   			td.appendChild(document.createTextNode('File URI: '));
+   			td.className = 'label';
+   			tr.appendChild(td);
+   			
+   			var href = document.createElement('input');
+   			href.setAttribute('type', 'text');
+   			href.setAttribute('name', 'dao/@href');
+   			href.setAttribute('size', '70');
+   			td = document.createElement('td');		
+   			td.appendChild(href);
+   			
+   			tr.appendChild(td);
+   			
+   			tbody.appendChild(tr);
+
+	//title   			
+   			tr = document.createElement('tr');
+   			td = document.createElement('td');
+   			td.appendChild(document.createTextNode('Title: '));
+   			td.className = 'label';
+   			tr.appendChild(td);
+   			
+   			var title = document.createElement('input');
+   			title.setAttribute('type', 'text');
+   			title.setAttribute('name', 'dao/@title');
+   			title.setAttribute('size', '70');
+			td = document.createElement('td');
+   			td.appendChild(title);
+   			
+   			tr.appendChild(td);
+   			
+   			tbody.appendChild(tr);
+
+	//DAO desciption
+   			tr = document.createElement('tr');
+   			td = document.createElement('td');
+   			td.appendChild(document.createTextNode('Description: '));
+   			td.className = 'label';
+   			tr.appendChild(td);
+   			
+   			var desc = document.createElement('input');
+   			desc.setAttribute('type', 'text');
+   			desc.setAttribute('name', 'dao/daodesc');
+   			desc.setAttribute('size', '70');
+ 			td = document.createElement('td');
+   			td.appendChild(desc);
+   			
+   			tr.appendChild(td);
+   			
+   			tbody.appendChild(tr);  			
+ 
+ 	//show  			   			
+   			var show = document.createElement('input');
+   			show.setAttribute('type', 'hidden');
+   			show.setAttribute('name', 'dao/@show');
+   			
+   			if (type == 'singlefile'){
+   				show.setAttribute('value', 'new');
+   			}
+   			else {
+   				show.setAttribute('value', 'embed');
+   			}
+
+			table.appendChild(tbody);
+			doform.appendChild(table);
+   			doform.appendChild(show);
+
+   		} 
+   		else if (type=='thumb'){
+   		
+   			var table = document.createElement('table');
+   			var tbody = document.createElement('tbody');
+
+	//thumbnail location   			
+  			var tr = document.createElement('tr');
+   			var td = document.createElement('td');
+   			td.appendChild(document.createTextNode('Thumbnail URI: '));
+   			td.className = 'label';
+   			tr.appendChild(td);
+   			
+   			var href = document.createElement('input');
+   			href.setAttribute('type', 'text');
+   			href.setAttribute('name', 'daogrp/daoloc[1]/@href');
+   			href.setAttribute('size', '70');
+   			td = document.createElement('td');		
+   			td.appendChild(href);
+   			
+   			tr.appendChild(td);
+   			
+   			tbody.appendChild(tr);  
+
+	//thumbnail title   			
+ /* 			tr = document.createElement('tr');
+   			td = document.createElement('td');
+   			td.appendChild(document.createTextNode('Thumbnail title: '));
+   			td.className = 'label';
+   			tr.appendChild(td);
+   			
+   			href = document.createElement('input');
+   			href.setAttribute('type', 'text');
+   			href.setAttribute('name', 'daogrp/daoloc[1]/@title');
+   			href.setAttribute('size', '70');
+   			td = document.createElement('td');		
+   			td.appendChild(href);
+   			
+   			tr.appendChild(td);
+   			
+   			tbody.appendChild(tr);     		*/	
+   			
+   	//role info
+    		var role = document.createElement('input');
+   			role.setAttribute('type', 'hidden');
+   			role.setAttribute('name', 'daogrp/daoloc[1]/@role');
+   			role.setAttribute('value', 'thumb');
+   			doform.appendChild(role);
+
+	//file location
+  			tr = document.createElement('tr');
+   			td = document.createElement('td');
+   			td.appendChild(document.createTextNode('File URI: '));
+   			td.className = 'label';
+   			tr.appendChild(td);
+   			
+   			href = document.createElement('input');
+   			href.setAttribute('type', 'text');
+   			href.setAttribute('name', 'daogrp/daoloc[2]/@href');
+   			href.setAttribute('size', '70');
+   			td = document.createElement('td');		
+   			td.appendChild(href);
+   			
+   			tr.appendChild(td);
+   			
+   			tbody.appendChild(tr);  
+   			
+	//file title   			
+  			tr = document.createElement('tr');
+   			td = document.createElement('td');
+   			td.appendChild(document.createTextNode('Title: '));
+   			td.className = 'label';
+   			tr.appendChild(td);
+   			
+   			href = document.createElement('input');
+   			href.setAttribute('type', 'text');
+   			href.setAttribute('name', 'daogrp/daoloc[2]/@title');
+   			href.setAttribute('size', '70');
+   			td = document.createElement('td');		
+   			td.appendChild(href);
+   			
+   			tr.appendChild(td);
+   			
+   			tbody.appendChild(tr);  
+   			 
+ 	//role info
+    		role = document.createElement('input');
+   			role.setAttribute('type', 'hidden');
+   			role.setAttribute('name', 'daogrp/daoloc[2]/@role');
+   			role.setAttribute('value', 'reference');
+   			doform.appendChild(role);
+
+	//DAO desciption
+   			tr = document.createElement('tr');
+   			td = document.createElement('td');
+   			td.appendChild(document.createTextNode('Description: '));
+   			td.className = 'label';
+   			tr.appendChild(td);
+   			
+   			var desc = document.createElement('input');
+   			desc.setAttribute('type', 'text');
+   			desc.setAttribute('name', 'daogrp/daodesc');
+   			desc.setAttribute('size', '70');
+ 			td = document.createElement('td');
+   			td.appendChild(desc);
+   			
+   			tr.appendChild(td);
+   			
+   			tbody.appendChild(tr);  			
+
+			table.appendChild(tbody);
+			doform.appendChild(table);	
+   		}
+   		else if (type=='multiple'){
+   		
+   		   	var table = document.createElement('table');
+   			var tbody = document.createElement('tbody');
+   			tbody.setAttribute('id', 'multipletbody');
+   			var start = 2;
+   			for (var i=1; i<=start; i++){
+   			
+   				if (i%2 == 0){
+   					var shading = 'odd';
+   				}
+   				else {
+   					var shading = 'even';
+   				}
+   			//file uri
+   				var tr = document.createElement('tr');
+   				tr.className = shading;
+   				var td = document.createElement('td');
+   				td.appendChild(document.createTextNode('File ' + i + ' URI: '));
+   				td.className = 'label';
+   				tr.appendChild(td);
+   				
+	   			href = document.createElement('input');
+	   			href.setAttribute('type', 'text');
+	   			href.setAttribute('name', 'daogrp/daoloc[' + i + ']/@href');
+	   			href.setAttribute('size', '70');
+	   			td = document.createElement('td');		
+	   			td.appendChild(href);
+	   			
+	   			tr.appendChild(td);
+	   			
+	   			tbody.appendChild(tr);     	
+	   			
+	   			
+		//file title   			
+	  			tr = document.createElement('tr');
+	  			tr.className = shading;
+	   			td = document.createElement('td');
+	   			td.appendChild(document.createTextNode('File ' + i + ' title: '));
+	   			td.className = 'label';
+	   			tr.appendChild(td);
+	   			
+	   			href = document.createElement('input');
+	   			href.setAttribute('type', 'text');
+	   			href.setAttribute('name', 'daogrp/daoloc[' + i + ']/@title');
+	   			href.setAttribute('size', '70');
+	   			td = document.createElement('td');		
+	   			td.appendChild(href);
+	   			
+	   			tr.appendChild(td);
+	   			
+	   			tbody.appendChild(tr);  
+	   			 
+	 	//role info
+	    		role = document.createElement('input');
+	   			role.setAttribute('type', 'hidden');
+	   			role.setAttribute('name', 'daogrp/daoloc[' + i + ']/@role');
+	   			role.setAttribute('value', 'reference');
+	   			doform.appendChild(role);			
+   			}
+   			
+   			tr = document.createElement('tr');
+   			td = document.createElement('td');
+   			td.className = 'label';
+   			tr.appendChild(td);
+   			
+   			td = document.createElement('td');
+   			link = document.createElement('a');
+   			link.appendChild(document.createTextNode('add another file'));
+   			link.className = 'smalllink';
+   			
+   			link.onclick = function () {addFile(); };
+   			td.appendChild(link);
+   			tr.setAttribute('id', 'jsrow');
+   			tr.appendChild(td);
+   			
+   			tbody.appendChild(tr); 
+   			
+   		//DAO desciption
+   			tr = document.createElement('tr');
+   			td = document.createElement('td');
+   			td.appendChild(document.createTextNode('Description: '));
+   			td.className = 'label';
+   			tr.appendChild(td);
+   			
+   			var desc = document.createElement('input');
+   			desc.setAttribute('type', 'text');
+   			desc.setAttribute('name', 'daogrp/daodesc');
+   			desc.setAttribute('size', '70');
+ 			td = document.createElement('td');
+   			td.appendChild(desc);
+   			
+   			tr.appendChild(td);
+   			
+   			tbody.appendChild(tr);  	
+   			
+   			table.appendChild(tbody);
+			doform.appendChild(table);
+   			
+   		}
+   	}
+}
 

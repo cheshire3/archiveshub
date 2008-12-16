@@ -71,6 +71,7 @@ A:hover {text-decoration: underline; color: red;}*/
 	margin-top: 8px;
 }
 
+
 .tablecontainer .label {
 	width: 75px;
 }
@@ -224,4 +225,11 @@ a.invalid {
 	float: left;
 	margin-top: 5px;
 	margin-left: 10px;
+}
+
+/* ==========================================*/
+DAO STUFF
+
+.odd {
+	background: #F2F2F2;
 }
