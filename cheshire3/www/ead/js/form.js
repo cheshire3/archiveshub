@@ -500,7 +500,7 @@ function addElement(s){
   	if ($(s).visible($(s))){
   		$(('link' + s)).update('hide content');		
   	}
- 	else if ($(s).getValue($(s)) == '' || $(s).getValue($(s)) == ' '){
+ 	else if (s == 'daooptnsdiv' || $(s).getValue($(s)) == '' || $(s).getValue($(s)) == ' '){
 		$(('link' + s)).update('add content');	
   	} 
   	else { 
