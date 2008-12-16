@@ -1784,7 +1784,7 @@
   		<xsl:text> </xsl:text>
   		<a class="smalllink">
   			<xsl:attribute name="title">
-  				<xsl:text>add content</xsl:text>
+  				<xsl:text>add content </xsl:text>
   				<xsl:value-of select="$title"/>
   			</xsl:attribute>
   			<xsl:attribute name="id">
