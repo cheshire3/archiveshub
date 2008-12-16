@@ -219,7 +219,7 @@
 					<xsl:apply-templates select="filedesc/titlestmt/sponsor"/>
 				</xsl:when>
 				<xsl:otherwise>
-					<strong>Sponsor </strong> <a class="smalllink" id="linkspo" title="add sponsor" onclick="addElement('spo')">add</a> [optional]<br/>
+					<strong>Sponsor </strong> <a class="smalllink" id="linkspo" title="add sponsor" onclick="addElement('spo')">add content</a> [optional]<br/>
 					<input class="menuField" type="text" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" name="filedesc/titlestmt/sponsor" id="spo" size="80" style="display:none"></input>
 				</xsl:otherwise>
 			</xsl:choose>
@@ -1065,11 +1065,14 @@
 					</xsl:for-each>
 				</xsl:when>
 				<xsl:otherwise>
+					<a class="smalllink" id="linkdaooptnsdiv" title="add digital object" onclick="addElement('daooptnsdiv')">add content</a><br />
+					<div id="daooptnsdiv" style="display:none">
 					<input type="radio" name="daooptns" value="singlefile" onchange="createObjectsForm()">Link to file</input><br />
 					<input type="radio" name="daooptns" value="embed" onchange="createObjectsForm()">Display image</input><br />
 					<input type="radio" name="daooptns" value="thumb" onchange="createObjectsForm()">Display thumbnail link to file</input><br />
 					<input type="radio" name="daooptns" value="multiple" onchange="createObjectsForm()">Link to multiple files</input><br />
 					<div id="digitalobjectsform"><xsl:text> </xsl:text></div>
+					</div>
 				</xsl:otherwise>
 			</xsl:choose>
 			<xsl:choose>
@@ -1598,7 +1601,7 @@
   </xsl:template>
   
   <xsl:template match="filedesc/titlestmt/sponsor">
-  	<strong><span class="isadg"></span>Sponsor </strong> <a class="smalllink" id="linkspo" title="add sponsor" onclick="addElement('spo')">hide</a> [optional]<br/>
+  	<strong><span class="isadg"></span>Sponsor </strong> <a class="smalllink" id="linkspo" title="add sponsor" onclick="addElement('spo')">hide content</a> [optional]<br/>
   	<input class="menuField" type="text" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" name="filedesc/titlestmt/sponsor" id="spo" size="80">
   		<xsl:attribute name="value">
   			<xsl:apply-templates/>
