@@ -1017,6 +1017,73 @@
 <!--  -->
 <!--  -->
 <!--  -->
+<!-- DIGITAL OBJECTS -->
+	<div id="digialobjectssection" class="section">
+		<h3>Digital Objects</h3>
+		<p>
+			<xsl:choose>
+				<xsl:when test="dao">
+					<xsl:for-each select="dao">
+						<xsl:choose>
+							<xsl:when test="@show='embed'">
+								<div id="digitalobjectsform">
+									<xsl:call-template name="dao">
+										<xsl:with-param name="type" select="'embed'"/>
+										<xsl:with-param name="number" select="position()"/>
+									</xsl:call-template>
+								</div>						
+							</xsl:when>
+							<xsl:otherwise>
+								<div id="digitalobjectsform">
+									<xsl:call-template name="dao">
+										<xsl:with-param name="type" select="'new'"/>
+										<xsl:with-param name="number" select="position()"/>
+									</xsl:call-template>
+								</div>
+							</xsl:otherwise>
+						</xsl:choose>
+					</xsl:for-each>
+				</xsl:when>
+				<xsl:when test="daogrp">
+					<xsl:for-each select="daogrp">
+						<xsl:choose>
+							<xsl:when test="daoloc/@role='thumb'">
+								<div id="digitalobjectsform">
+									<xsl:call-template name="thumb">
+										<xsl:with-param name="number" select="position()"/>									
+									</xsl:call-template>
+								</div>
+							</xsl:when>
+							<xsl:otherwise>
+								<div id="digitalobjectsform">
+									<xsl:call-template name="multiple">
+										<xsl:with-param name="number" select="position()"/>									
+									</xsl:call-template>
+								</div>
+							</xsl:otherwise>
+						</xsl:choose>
+					</xsl:for-each>
+				</xsl:when>
+				<xsl:otherwise>
+					<input type="radio" name="daooptns" value="singlefile" onchange="createObjectsForm()">Link to file</input><br />
+					<input type="radio" name="daooptns" value="embed" onchange="createObjectsForm()">Display image</input><br />
+					<input type="radio" name="daooptns" value="thumb" onchange="createObjectsForm()">Display thumbnail link to file</input><br />
+					<input type="radio" name="daooptns" value="multiple" onchange="createObjectsForm()">Link to multiple files</input><br />
+					<div id="digitalobjectsform"><xsl:text> </xsl:text></div>
+				</xsl:otherwise>
+			</xsl:choose>
+			<xsl:choose>
+				<xsl:when test="did/dao">
+					
+				</xsl:when>
+				<xsl:when test="did/daogrp">
+				
+				</xsl:when>
+			</xsl:choose>
+		</p>
+		
+	</div>
+
 <!--  -->
 <!--  -->
 <!-- ACCESSPOINTS -->
@@ -1673,6 +1740,8 @@
   	
   </xsl:template>
    
+  
+
    
   <xsl:template name="label">
   	<xsl:param name="id" />
@@ -1752,6 +1821,204 @@
         <xsl:text>&lt;/</xsl:text><xsl:value-of select="name()"/><xsl:text>&gt;</xsl:text>
   </xsl:template> 
   
+  
+    <xsl:template name="dao">
+  	<xsl:param name="type" />
+  	<xsl:param name="number" />
+  	<table><tbody>
+  		<tr>
+  			<td class="label">File URI: </td>
+  			<td>
+  				<input size="70" type="text">
+  					<xsl:attribute name="value">
+  						<xsl:value-of select="@href"/>
+  					</xsl:attribute>
+  					<xsl:attribute name="name">
+  						<xsl:text>dao[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/@href</xsl:text>
+  					</xsl:attribute>
+  				</input>
+  			</td>
+  		</tr>
+  		<tr><td class="label">Title: </td>
+  			<td>
+  				<input size="70" type="text">
+  					<xsl:attribute name="value">
+  						<xsl:value-of select="@title"/>
+  					</xsl:attribute>
+  					<xsl:attribute name="name">
+  						<xsl:text>dao[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/@title</xsl:text>
+  					</xsl:attribute>
+  				</input>  				
+  			</td>
+  		</tr>
+  		<tr><td class="label">Description: </td>
+  			<td>
+  				<input size="70" type="text">
+  					<xsl:attribute name="value">
+  						<xsl:apply-templates select="daodesc"/>
+  					</xsl:attribute>
+  					<xsl:attribute name="name">
+  						<xsl:text>dao[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daodesc</xsl:text>
+  					</xsl:attribute>
+  				</input>    			
+  			</td>
+  		</tr>
+  	</tbody></table>
+  	<input type="hidden">
+  		<xsl:attribute name="value">
+  			<xsl:value-of select="$type"/>
+  		</xsl:attribute>
+  		<xsl:attribute name="name">
+			<xsl:text>dao[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/@show</xsl:text>
+		</xsl:attribute>
+  	</input>
+  </xsl:template>
+  
+  <xsl:template name="thumb">
+  	<xsl:param name="number" />
+  	<table><tbody>		
+  		<tr>
+  			<td class="label">Thumbnail URI: </td>
+  			<td>
+  				<input size="70" type="text">
+  					<xsl:attribute name="value">
+  						<xsl:value-of select="daoloc[@role='thumb']/@href"/>
+  					</xsl:attribute>
+  					<xsl:attribute name="name">
+  						<xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[1]/@href</xsl:text>
+  					</xsl:attribute>
+  				</input>
+  			</td>
+  		</tr>  	
+  		<input type="hidden" value="thumb">
+  			<xsl:attribute name="name">
+				<xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[1]/@role</xsl:text>
+			</xsl:attribute>
+  		</input>
+  		<tr>
+  			<td class="label">File URI: </td>
+  			<td>
+  				<input size="70" type="text">
+  					<xsl:attribute name="value">
+  						<xsl:value-of select="daoloc[@role='reference']/@href"/>
+  					</xsl:attribute>
+  					<xsl:attribute name="name">
+  						<xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[2]/@href</xsl:text>
+  					</xsl:attribute>
+  				</input>
+  			</td>
+  		</tr>
+  		<tr><td class="label">Title: </td>
+  			<td>
+  				<input size="70" type="text">
+  					<xsl:attribute name="value">
+  						<xsl:value-of select="daoloc[@role='reference']/@title"/>
+  					</xsl:attribute>
+  					<xsl:attribute name="name">
+  						<xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[2]/@title</xsl:text>
+  					</xsl:attribute>
+  				</input>  				
+  			</td>
+  		</tr>
+  		<tr><td class="label">Description: </td>
+  			<td>
+  				<input size="70" type="text">
+  					<xsl:attribute name="value">
+  						<xsl:apply-templates select="daodesc"/>
+  					</xsl:attribute>
+  					<xsl:attribute name="name">
+  						<xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daodesc</xsl:text>
+  					</xsl:attribute>
+  				</input>    			
+  			</td>
+  		</tr>
+  	</tbody></table>
+	<input type="hidden" value="thumb">
+		<xsl:attribute name="name">
+			<xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[1]/@role</xsl:text>
+		</xsl:attribute>
+	</input>
+	<input type="hidden" value="reference">
+		<xsl:attribute name="name">
+			<xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[2]/@role</xsl:text>
+		</xsl:attribute>
+	</input>
+  </xsl:template>
+
+  <xsl:template name="multiple">
+  	<xsl:param name="number" />
+  	<table><tbody id="multipletbody">		
+  		<xsl:for-each select="daoloc">
+  			<xsl:variable name="class">
+  				<xsl:choose>
+  					<xsl:when test="position() mod 2 = 1">even</xsl:when>
+  					<xsl:otherwise>odd</xsl:otherwise>
+  				</xsl:choose>
+  			</xsl:variable>
+  			<tr>
+  			<xsl:attribute name="class">
+  				<xsl:value-of select="$class"/>
+  			</xsl:attribute>
+  			<td class="label">
+  				<xsl:text>File </xsl:text><xsl:value-of select="position()"/><xsl:text> URI: </xsl:text>
+  			</td>
+  			<td>
+	  			<input type="text" size="70">
+	  				<xsl:attribute name="name">
+	  					<xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[</xsl:text><xsl:value-of select="position()"/><xsl:text>]/@href</xsl:text>
+	  				</xsl:attribute>
+	  				<xsl:attribute name="value">
+	  					<xsl:value-of select="@href"/>
+	  				</xsl:attribute>
+	  			</input>
+  			</td>
+  			</tr>
+  			<tr>
+  			<xsl:attribute name="class">
+  				<xsl:value-of select="$class"/>
+  			</xsl:attribute>
+  			<td class="label">
+  				<xsl:text>File </xsl:text><xsl:value-of select="position()"/><xsl:text> Title: </xsl:text>
+  			</td>
+  			<td>
+	  			<input type="text" size="70">
+	  				<xsl:attribute name="name">
+	  					<xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[</xsl:text><xsl:value-of select="position()"/><xsl:text>]/@title</xsl:text>
+	  				</xsl:attribute>
+	  				<xsl:attribute name="value">
+	  					<xsl:value-of select="@title"/>
+	  				</xsl:attribute>
+	  			</input>
+  			</td>
+  			</tr>
+  			<input type="hidden" value="reference">
+				<xsl:attribute name="name">
+					<xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[</xsl:text><xsl:value-of select="position()"/><xsl:text>]/@role</xsl:text>
+				</xsl:attribute>
+			</input>
+  		</xsl:for-each> 		
+  		<tr id="jsrow"><td></td><td><a class="smalllink" onclick="addFile();">add another file</a></td></tr>
+  		<tr><td class="label">Description: </td>
+  			<td>
+  				<input size="70" type="text">
+  					<xsl:attribute name="value">
+  						<xsl:apply-templates select="daodesc"/>
+  					</xsl:attribute>
+  					<xsl:attribute name="name">
+  						<xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daodesc</xsl:text>
+  					</xsl:attribute>
+  				</input>    			
+  			</td>
+  		</tr>
+  	</tbody></table>
+
+
+  </xsl:template>
+
+   
+   <xsl:template match="daodesc">
+   		<xsl:apply-templates/>
+   </xsl:template>
   
 </xsl:stylesheet>
 
