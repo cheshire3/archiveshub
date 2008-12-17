@@ -1067,10 +1067,10 @@
 				<xsl:otherwise>
 					<a class="smalllink" id="linkdaooptnsdiv" title="add digital object" onclick="addElement('daooptnsdiv')">add content</a><br />
 					<div id="daooptnsdiv" style="display:none">
-					<input type="radio" name="daooptns" value="singlefile" onchange="createObjectsForm()">Link to file</input><br />
-					<input type="radio" name="daooptns" value="embed" onchange="createObjectsForm()">Display image</input><br />
-					<input type="radio" name="daooptns" value="thumb" onchange="createObjectsForm()">Display thumbnail link to file</input><br />
-					<input type="radio" name="daooptns" value="multiple" onchange="createObjectsForm()">Link to multiple files</input><br />
+					<input type="radio" name="daooptns" value="singlefile" onclick="createObjectsForm()">Link to file</input><br />
+					<input type="radio" name="daooptns" value="embed" onclick="createObjectsForm()">Display image</input><br />
+					<input type="radio" name="daooptns" value="thumb" onclick="createObjectsForm()">Display thumbnail link to file</input><br />
+					<input type="radio" name="daooptns" value="multiple" onclick="createObjectsForm()">Link to multiple files</input><br />
 					<div id="digitalobjectsform"><xsl:text> </xsl:text></div>
 					</div>
 				</xsl:otherwise>
