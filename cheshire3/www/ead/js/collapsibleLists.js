@@ -229,14 +229,13 @@ function refreshTree(listId){
   	if( !rootListObj ) { 
     	return; 
   	}
-  	
-  	refreshSubTrees(rootListObj, 0, listId, rootListObj.tagName.toLowerCase())
+  	refreshSubTrees(rootListObj, 0, listId, rootListObj.tagName.toLowerCase());
 }
 
 function refreshSubTrees(listObj, level, rootListId, listTag){
 	
 	var temp = listObj.childNodes;
- 	var listItems = []
+ 	var listItems = [];
  	var j = 0;
  	for (var i=0; i<temp.length; i++){
  		if (temp[i].tagName == 'LI'){
@@ -250,16 +249,19 @@ function refreshSubTrees(listObj, level, rootListId, listTag){
 	    if( listItems[i].tagName) {
 	      	var nextSubList = listItems[i].getElementsByTagName( listTag )[0];
 	      	if( nextSubList ) {    	      			
-	      		var image = listItems[i].getElementsByTagName('IMG')[0]
+	      		var image = listItems[i].getElementsByTagName('IMG')[0];
 				if (image.getAttribute('src') == expandedUrl || image.getAttribute('src') == collapsedUrl){
-					var span = listItems[i].getElementsByTagName('SPAN')[0]
-					span.firstChild.nodeValue = ' {' + nextSubList.getElementsByTagName('li').length + ' entries}'
-					
+					var span = listItems[i].getElementsByTagName('SPAN')[0];
+					span.firstChild.nodeValue = ' {' + nextSubList.getElementsByTagName('li').length + ' entries}';			
 				}
 				else {
-				
-					listItems[i].removeChild(listItems[i].getElementsByTagName('IMG')[0]);
-					
+					image = listItems[i].getElementsByTagName('IMG')[0];
+					try{
+						listItems[i].removeChild(image);
+					}
+					catch (e){
+						image.parentNode.removeChild(image);
+					}
 					//create a link for expanding/collapsing
 					var newLink = document.createElement('a');
 					newLink.setAttribute( 'href', '#' );
@@ -267,10 +269,10 @@ function refreshSubTrees(listObj, level, rootListId, listTag){
 					// wrap everything upto child list in the link
 					var imgElem = document.createElement('img');
 					var countElem = document.createElement('span');
-					countElem.setAttribute( 'class', 'subcount');
+					countElem.className = 'subcount';
 					var countTxt = document.createTextNode(' {' + nextSubList.getElementsByTagName('li').length + ' entries}');
 					countElem.appendChild(countTxt);
-	
+
 					imgElem.setAttribute( 'src', expandedUrl );
 					imgElem.setAttribute( 'alt', '[-]');
 	

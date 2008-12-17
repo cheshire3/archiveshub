@@ -790,7 +790,8 @@ class EadEditingHandler(EadHandler):
                     parent = node.getparent()
                     parent.remove(node)
                 except:
-                    pass            
+                    pass         
+            
             if len(deleteList):
                 for name in deleteList:
                     self._delete_path(node, name) 
@@ -810,12 +811,7 @@ class EadEditingHandler(EadHandler):
             self.logger.log('component')
             #pull record from store            
             retrievedRec = editStore.fetch_record(session, '%s-%s' % (recid, fileOwner))
-            self.logger.log('got record in')
-            self.logger.log(time.clock()-start) 
-            retrievedxml= retrievedRec.get_xml(session)
-            tree = etree.XMLID(retrievedxml)   
-            self.logger.log('turned xml to tree in')
-            self.logger.log(time.clock()-start)         
+            retrievedxml= retrievedRec.get_xml(session)   
             #first check there is a dsc element and if not add one (needed for next set of xpath tests)
             self.logger.log('testing dsc exists')
             
@@ -844,17 +840,12 @@ class EadEditingHandler(EadHandler):
             else :   
                 self.logger.log('existing component')
                 validList = [l for l in self.required_xpaths_components]
-                self.logger.log('xpath_components list: %s' % ' '.join(self.required_xpaths_components))
-                self.logger.log('new list: %s' % ' '.join(validList))
                 list = form.list
                 node = tree[1].get(loc) 
                 #first delete current accesspoints
                 self._delete_currentControlaccess(node)
                 self._delete_currentLangmaterial(node)
-                self.logger.log('deleted stuff')
                 deleteList = []
-                self.logger.log('starting to create fields')
-                self.logger.log(time.clock()-start) 
                 for field in list :
                     if field.name not in ['ctype','location','operation','newForm','nocache','recid', 'parent', 'daooptns']:           
                         if field.name.find('controlaccess') == 0 :                        
@@ -887,10 +878,8 @@ class EadEditingHandler(EadHandler):
                                         pass
                             else:
                                 deleteList.append(field.name)
-                self.logger.log('created fields in')
-                self.logger.log(time.clock()-start) 
                 
-                emptydaolocs = tree.xpath('//daoloc[not(@href)]')
+                emptydaolocs = tree[0].xpath('//daoloc[not(@href)]')                                        
                 for node in emptydaolocs:
                     try:
                         parent = node.getparent()
@@ -903,18 +892,10 @@ class EadEditingHandler(EadHandler):
                 if len(validList):
                     valid = False
                 else:
-                    valid = True   
-                self.logger.log('deleted old elements in ')
-                self.logger.log(time.clock()-start)           
+                    valid = True        
                 rec = LxmlRecord(tree[0])
-                self.logger.log('made lxml record in ')
-                self.logger.log(time.clock()-start) 
                 rec.id = retrievedRec.id
-                self.logger.log('started storing in ')
-                self.logger.log(time.clock()-start) 
                 editStore.store_record(session, rec)
-                self.logger.log('finished storing in ')
-                self.logger.log(time.clock()-start) 
 #                editStore.commit_storing(session)
 #             = time.time() - start, 60)
 #            (hours, mins) = divmod(mins, 60)
@@ -1314,11 +1295,13 @@ class EadEditingHandler(EadHandler):
             editStore.commit_storing(session) 
         else :              
             content = self.show_editMenu()
+            htmlNav = ['<a href="help.html" title="Administration Help" class="navlink">Admin Help</a>',
+                       '<a href="/ead/admin/index.html" title="Administration Interface Main Menu">Administration</a>']
             page = multiReplace(tmpl, {'%REP_NAME%': repository_name,
                      '%REP_LINK%': repository_link,
                      '%REP_LOGO%': repository_logo,
                      '%TITLE%': ' :: '.join(self.htmlTitle),
-                     '%NAVBAR%': '',#' | '.join(self.htmlNav),
+                     '%NAVBAR%': ' | '.join(htmlNav),
                      '%CONTENT%': content
                      })
 

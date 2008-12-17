@@ -238,11 +238,9 @@ function saveForm(asynch){
 
 function displayForm(id, level){
 	/* for adding a new form */
-	alert(id);
 	if (id == 'new'){
 		var data = 'operation=add&recid=' + recid + '&clevel=' + level;
 		var loc = $('rightcol');		
-		alert(data);
 	   	new Ajax.Updater(loc, '/ead/edit/', {method: 'post', asynchronous:false, parameters:data, evalScripts:true});
 
 	   	($('countrycode').value) = countryCode;	   			
@@ -270,10 +268,8 @@ function displayForm(id, level){
 		var loc = $('rightcol');
 		new Ajax.Updater(loc, '/ead/edit', {method: 'get', asynchronous:false, parameters:data, evalScripts:true, onSuccess: function(transport){		   	
 			
-		//   	($(currentForm)).setAttribute('style', 'background:none');
 			($(currentForm)).style.background = 'none';
 		    currentForm = id;
-		//    $(id).setAttribute('style', 'background:yellow');
 		    ($(currentForm)).style.background = 'yellow';		    
 		}});	    		  	 	  	
   	}
@@ -398,27 +394,21 @@ function addComponent(){
     var newLink = document.createElement('a');
     newLink.style.display = 'inline';
     newLink.setAttribute('id', linkId);
-//    newLink.setAttribute('style', 'background:yellow')
   	newLink.style.background = 'yellow';
     newLink.setAttribute('name', 'link');
     newLink.onclick = new Function("javascript: displayForm(this.id, 0)");
     newLink.href = "#";
     newLink.appendChild(document.createTextNode(linkId));
  
-    
-             
+       
     newItem.appendChild(newLink);
     list.appendChild(newItem);
 
-	alert('pre tree refresh');
 	refreshTree('someId');
-	alert('post tree refresh');
 	
 	//save the current form and display the new one
 	saveForm(true);
-	alert('post save');
 	currentForm = linkId;
-	alert('currentForm: ' + linkId);
 	setCurrent('none'); //used by character keyboard to display current field - when swap forms need to set to none
 	displayForm('new', level + 1);
 }

@@ -140,8 +140,9 @@ var SimpleContextMenu = {
 
         if (menuElementId) {
             var m = SimpleContextMenu._getMousePosition(e);
+          //  alert(m.y);
             var s = SimpleContextMenu._getScrollPosition(e);
-
+        //    alert(s.y);
             SimpleContextMenu._menuElement = document.getElementById(menuElementId);
             SimpleContextMenu._menuElement.style.left = m.x + s.x + 'px';
             SimpleContextMenu._menuElement.style.top = m.y + s.y + 'px';
@@ -169,11 +170,19 @@ var SimpleContextMenu = {
     _getMousePosition : function (e) {
 
         e = e ? e : window.event;
-        var position = {
+        height = document.getElementById('rightcol').offsetHeight + 75; // 75 = header max-height
+        if ((e.clientY)+160 > height){
+        	var position = {
             'x' : e.clientX,
-            'y' : e.clientY - 100
+            'y' : e.clientY - 100 - 160 //160 = hardcoded offsetHeight of tagmenu
+        	}
         }
-
+        else{
+	        var position = {
+	            'x' : e.clientX,
+	            'y' : e.clientY - 100
+	        }
+		}
         return position;
 
     },
