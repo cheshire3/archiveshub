@@ -518,8 +518,8 @@ function addElement(s){
 function updateTitle(field) {
   	var link = document.getElementById(currentForm);
   	var title = ($('cab')).value;
-  	if (title.indexOf('<') = -1){
-		
+  	if (title.indexOf('<') != -1){
+		title = title.replace(/<\/?\S+?>/g, '');
   	}
   	var id = $('unitid').value;
   	if(field){
@@ -539,6 +539,9 @@ function updateTitle(field) {
 function updateId() {
   	var link = document.getElementById(currentForm);
   	var title = ($('cab')).value;
+  	if (title.indexOf('<') != -1){
+		title = title.replace(/<\/?\S+?>/g, '');
+  	}
   	var countryCode = $('countrycode').value.toLowerCase()
   	var repositoryCode = $('archoncode').value
   	var id = $('unitid').value;
