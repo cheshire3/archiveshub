@@ -518,6 +518,9 @@ function addElement(s){
 function updateTitle(field) {
   	var link = document.getElementById(currentForm);
   	var title = ($('cab')).value;
+  	if (title.indexOf('<') = -1){
+		
+  	}
   	var id = $('unitid').value;
   	if(field){
   		validateField(field);
@@ -762,6 +765,8 @@ function showCharTable(type){
   	else {
 		($('chartable' + currentCharTable)).style.display = 'block';
   	}
+  	($('hideicon')).style.display = 'inline';
+  	($('showicon')).style.display = 'none';
 }
 
 
@@ -774,6 +779,9 @@ function hideCharTable(){
 	}
   	($('chartableupper')).style.display = 'none';
   	($('chartablelower')).style.display = 'none';
+  	
+  	($('showicon')).style.display = 'inline';
+  	($('hideicon')).style.display = 'none';
 }
 
 
@@ -1054,24 +1062,6 @@ function createObjectsForm() {
    			tr.appendChild(td);
    			
    			tbody.appendChild(tr);  
-
-	//thumbnail title   			
- /* 			tr = document.createElement('tr');
-   			td = document.createElement('td');
-   			td.appendChild(document.createTextNode('Thumbnail title: '));
-   			td.className = 'label';
-   			tr.appendChild(td);
-   			
-   			href = document.createElement('input');
-   			href.setAttribute('type', 'text');
-   			href.setAttribute('name', 'daogrp/daoloc[1]/@title');
-   			href.setAttribute('size', '70');
-   			td = document.createElement('td');		
-   			td.appendChild(href);
-   			
-   			tr.appendChild(td);
-   			
-   			tbody.appendChild(tr);     		*/	
    			
    	//role info
     		var role = document.createElement('input');
