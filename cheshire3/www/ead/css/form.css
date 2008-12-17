@@ -6,6 +6,10 @@ body {
 	overflow: hidden;	
 }
 
+body.waiting, body.waiting textarea, body.waiting input, body.waiting a {
+	cursor: wait;
+	}
+
 
 
 span.isadg {
