@@ -812,6 +812,7 @@ class EadEditingHandler(EadHandler):
             #pull record from store            
             retrievedRec = editStore.fetch_record(session, '%s-%s' % (recid, fileOwner))
             retrievedxml= retrievedRec.get_xml(session)   
+            tree = etree.XMLID(retrievedxml)
             #first check there is a dsc element and if not add one (needed for next set of xpath tests)
             self.logger.log('testing dsc exists')
             
