@@ -152,21 +152,26 @@ function resetForm(){
 
 
 function save(){
-
+	var body = document.getElementsByTagName('body')[0];
+	body.className = 'waiting';
 	//validate and check id existence etc.
     if (!checkRequiredData()){
 		alert ('the following fields must be entered before proceeding:\n  - Reference Code \n  - Title');
+		body.className = 'none';
 		return;
 	}
 	errors = document.getElementsByClassName('menuFieldError');
     if (errors.length != 0){
     	alert('Please fix the errors in the xml before saving. Errors will be marked with red shading in the text box.');
+    	body.className = 'none';
     	return;
     }
 	else {
-			saveForm(false)
+			saveForm(false);
+			body.className = 'none';
 	    	alert('This form is now saved as ' + recid + ' and can be reloaded from the admin menu for further editing at a later date.');
 	}
+	
 }
 
 
@@ -542,8 +547,8 @@ function updateId() {
   	if (title.indexOf('<') != -1){
 		title = title.replace(/<\/?\S+?>/g, '');
   	}
-  	var countryCode = $('countrycode').value.toLowerCase()
-  	var repositoryCode = $('archoncode').value
+  	var countryCode = $('countrycode').value.toLowerCase();
+  	var repositoryCode = $('archoncode').value;
   	var id = $('unitid').value;
   	
   	if (title == '' && id == ''){
@@ -950,12 +955,14 @@ function addFile(){
 
 
 function createObjectsForm() {
+
 	var type = null;
 	for (var i=0; i < document.eadForm.daooptns.length; i++) {
    		if (document.eadForm.daooptns[i].checked) {
      		type = document.eadForm.daooptns[i].value;
      	}
    	}
+
    	if (type == null) {
    		return;
    	}
@@ -1138,7 +1145,6 @@ function createObjectsForm() {
 			doform.appendChild(table);	
    		}
    		else if (type=='multiple'){
-   		
    		   	var table = document.createElement('table');
    			var tbody = document.createElement('tbody');
    			tbody.setAttribute('id', 'multipletbody');
@@ -1204,11 +1210,11 @@ function createObjectsForm() {
    			tr.appendChild(td);
    			
    			td = document.createElement('td');
-   			link = document.createElement('a');
-   			link.appendChild(document.createTextNode('add another file'));
+   			var link = document.createElement('a');
+  			link.appendChild(document.createTextNode('add another file'));
    			link.className = 'smalllink';
    			
-   			link.onclick = function () {addFile(); };
+  			link.onclick = function () {addFile(); };
    			td.appendChild(link);
    			tr.setAttribute('id', 'jsrow');
    			tr.appendChild(td);

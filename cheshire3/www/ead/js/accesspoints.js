@@ -133,6 +133,7 @@ function resetAccessPoint(s){
 	}
 	else {
 		if (s == 'genreform' || s == 'function'){
+			alert(rows.length);
 			for (var i=rows.length-1; i>0; i--){
 	    		table.removeChild(rows[i]);
 	  		}
@@ -459,7 +460,12 @@ function checkRules(s){
 		newRow.appendChild(cell2);
 		newRow.setAttribute('NoDrag', 'True');
 		newRow.setAttribute('NoDrop', 'True');
-		table.insertBefore(newRow, rows[1]);
+		try {
+			table.insertBefore(newRow, rows[1]);
+		}
+		catch (e){
+			table.appendChild(newRow);
+		}
 	}
 	else if (rules.value == 'none'){
 		var newRow = document.createElement('tr')
@@ -472,6 +478,7 @@ function checkRules(s){
 		newRow.setAttribute('NoDrag', 'True');
 		newRow.setAttribute('NoDrop', 'True');
 		table.insertBefore(newRow, rows[1]);
+		
 	}
 	else if (rows[1].getElementsByTagName('input')[0].id == s + '_source'){
 			table.removeChild(rows[1])		
