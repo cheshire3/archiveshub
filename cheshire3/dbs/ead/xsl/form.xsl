@@ -1018,7 +1018,7 @@
 <!--  -->
 <!--  -->
 <!-- DIGITAL OBJECTS -->
-	<div id="digialobjectssection" class="section">
+	<div id="digitalobjectssection" class="section">
 		<h3>Digital Objects</h3>
 		<p>
 			<xsl:choose>
@@ -1077,10 +1077,50 @@
 			</xsl:choose>
 			<xsl:choose>
 				<xsl:when test="did/dao">
-					
+					<xsl:for-each select="did/dao">
+						<xsl:choose>
+							<xsl:when test="@show='embed'">
+								<div id="digitalobjectsform">
+									<xsl:call-template name="dao">
+										<xsl:with-param name="type" select="'embed'"/>
+										<xsl:with-param name="number" select="position()"/>
+										<xsl:with-param name="path" select="'did/'"/>
+									</xsl:call-template>
+								</div>						
+							</xsl:when>
+							<xsl:otherwise>
+								<div id="digitalobjectsform">
+									<xsl:call-template name="dao">
+										<xsl:with-param name="type" select="'new'"/>
+										<xsl:with-param name="number" select="position()"/>
+										<xsl:with-param name="path" select="'did/'"/>
+									</xsl:call-template>
+								</div>
+							</xsl:otherwise>
+						</xsl:choose>
+					</xsl:for-each>
 				</xsl:when>
 				<xsl:when test="did/daogrp">
-				
+					<xsl:for-each select="did/daogrp">
+						<xsl:choose>
+							<xsl:when test="daoloc/@role='thumb'">
+								<div id="digitalobjectsform">
+									<xsl:call-template name="thumb">
+										<xsl:with-param name="number" select="position()"/>	
+										<xsl:with-param name="path" select="'did/'"/>								
+									</xsl:call-template>
+								</div>
+							</xsl:when>
+							<xsl:otherwise>
+								<div id="digitalobjectsform">
+									<xsl:call-template name="multiple">
+										<xsl:with-param name="number" select="position()"/>	
+										<xsl:with-param name="path" select="'did/'"/>									
+									</xsl:call-template>
+								</div>
+							</xsl:otherwise>
+						</xsl:choose>
+					</xsl:for-each>
 				</xsl:when>
 			</xsl:choose>
 		</p>
@@ -1095,7 +1135,7 @@
 		<h3><a id="accesspoints" name="accesspoints" target="_new" href="http://www.archiveshub.ac.uk/arch/access.shtml">Access Points</a></h3>
 <!-- subject -->
 		<div id="subject" class="apcontainer">
-			<p><strong>Subject</strong><br /><a onclick="window.open('http://www.archiveshub.ac.uk/unesco/', 'new', 'width=800 height=600');">[Search UNESCO] </a> <a onclick="window.open('http://www.archiveshub.ac.uk/lcsh/', 'new', 'width=800 height=600');"> [Search LCSH]</a></p>
+			<p><strong>Subject</strong><br /><a class="extSearch" onclick="window.open('http://www.archiveshub.ac.uk/unesco/', 'new', 'width=800 height=600');">[Search UNESCO] </a> <a class="extSearch" onclick="window.open('http://www.archiveshub.ac.uk/lcsh/', 'new', 'width=800 height=600');"> [Search LCSH]</a></p>
 			<xsl:choose>
 				<xsl:when test="controlaccess/subject">
 					<xsl:call-template name="accesspoint">
@@ -1129,7 +1169,7 @@
 		<br/>	
 <!--persname -->
         <div id="persname" class="apcontainer">				
-			<p><strong>Personal Name</strong><br /><a onclick="window.open('http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=P', 'new', 'width=800 height=600');">[Search NRA]</a></p>
+			<p><strong>Personal Name</strong><br /><a class="extSearch" onclick="window.open('http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=P', 'new', 'width=800 height=600');">[Search NRA]</a></p>
 			
 			<xsl:choose>
 				<xsl:when test="controlaccess/persname">
@@ -1171,7 +1211,7 @@
 		<br/>
 <!--famname -->
 		<div id="famname" class="apcontainer">
-			<p><strong>Family Name</strong><br /><a onclick="window.open('http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=F', 'new', 'width=800 height=600');">[Search NRA]</a></p>
+			<p><strong>Family Name</strong><br /><a class="extSearch" onclick="window.open('http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=F', 'new', 'width=800 height=600');">[Search NRA]</a></p>
 			<xsl:choose>
 				<xsl:when test="controlaccess/famname">
 					<xsl:call-template name="accesspoint">
@@ -1212,7 +1252,7 @@
 		<br/>		
 <!-- corpname -->
 		<div id="corpname" class="apcontainer">
-			<p><strong>Corporate Name</strong><br /><a onclick="window.open('http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=O', 'new', 'width=800 height=600');">[Search NRA]</a></p>
+			<p><strong>Corporate Name</strong><br /><a class="extSearch" onclick="window.open('http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=O', 'new', 'width=800 height=600');">[Search NRA]</a></p>
 			<xsl:choose>
 				<xsl:when test="controlaccess/corpname">
 					<xsl:call-template name="accesspoint">
@@ -1251,7 +1291,7 @@
 		<br/>	
 <!-- placename -->
 		<div id="geogname" class="apcontainer">
-			<p><strong>Place Name</strong><br /><a onclick="window.open('http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=PL', 'new', 'width=800 height=600');">[Search NRA]</a></p>
+			<p><strong>Place Name</strong><br /><a class="extSearch" onclick="window.open('http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=PL', 'new', 'width=800 height=600');">[Search NRA]</a></p>
 			<xsl:choose>
 				<xsl:when test="controlaccess/geogname">
 					<xsl:call-template name="accesspoint">
@@ -1322,7 +1362,7 @@
 			<br/>	
 <!-- genreform -->
 		<div id="genreform" class="apcontainer">
-			<p><strong>Genre Form</strong><br/><a onclick="window.open('http://www.getty.edu/research/conducting_research/vocabularies/aat/', 'new', 'width=800 height=600');">[Search AAT] </a><a onclick="window.open('http://www.loc.gov/rr/print/tgm2/', 'new', 'width=800 height=600');"> [Search TGM]</a></p>
+			<p><strong>Genre Form</strong><br/><a class="extSearch" onclick="window.open('http://www.getty.edu/research/conducting_research/vocabularies/aat/', 'new', 'width=800 height=600');">[Search AAT] </a><a class="extSearch" onclick="window.open('http://www.loc.gov/rr/print/tgm2/', 'new', 'width=800 height=600');"> [Search TGM]</a></p>
 			<xsl:choose>
 				<xsl:when test="controlaccess/genreform">
 					<xsl:call-template name="accesspoint">
@@ -1349,7 +1389,7 @@
 			
 <!-- function -->
 		<div id="function" class="apcontainer">
-			<p><strong>Function</strong><br/><a onclick="window.open('http://www.getty.edu/research/conducting_research/vocabularies/aat/', 'new', 'width=800 height=600');">[Search AAT] </a><a onclick="window.open('http://www.naa.gov.au/records-management/create-capture-describe/describe/agift/index.aspx', 'new', 'width=800 height=600');"> [Search AGIFT]</a></p>
+			<p><strong>Function</strong><br/><a class="extSearch" onclick="window.open('http://www.getty.edu/research/conducting_research/vocabularies/aat/', 'new', 'width=800 height=600');">[Search AAT] </a><a class="extSearch" onclick="window.open('http://www.naa.gov.au/records-management/create-capture-describe/describe/agift/index.aspx', 'new', 'width=800 height=600');"> [Search AGIFT]</a></p>
 			<xsl:choose>
 				<xsl:when test="controlaccess/function">
 					<xsl:call-template name="accesspoint">
@@ -1828,6 +1868,7 @@
     <xsl:template name="dao">
   	<xsl:param name="type" />
   	<xsl:param name="number" />
+  	<xsl:param name="path" />
   	<table><tbody>
   		<tr>
   			<td class="label">File URI: </td>
@@ -1837,7 +1878,7 @@
   						<xsl:value-of select="@href"/>
   					</xsl:attribute>
   					<xsl:attribute name="name">
-  						<xsl:text>dao[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/@href</xsl:text>
+  						<xsl:value-of select="$path"/><xsl:text>dao[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/@href</xsl:text>
   					</xsl:attribute>
   				</input>
   			</td>
@@ -1849,7 +1890,7 @@
   						<xsl:value-of select="@title"/>
   					</xsl:attribute>
   					<xsl:attribute name="name">
-  						<xsl:text>dao[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/@title</xsl:text>
+  						<xsl:value-of select="$path"/><xsl:text>dao[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/@title</xsl:text>
   					</xsl:attribute>
   				</input>  				
   			</td>
@@ -1861,7 +1902,7 @@
   						<xsl:apply-templates select="daodesc"/>
   					</xsl:attribute>
   					<xsl:attribute name="name">
-  						<xsl:text>dao[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daodesc</xsl:text>
+  						<xsl:value-of select="$path"/><xsl:text>dao[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daodesc</xsl:text>
   					</xsl:attribute>
   				</input>    			
   			</td>
@@ -1872,13 +1913,14 @@
   			<xsl:value-of select="$type"/>
   		</xsl:attribute>
   		<xsl:attribute name="name">
-			<xsl:text>dao[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/@show</xsl:text>
+			<xsl:value-of select="$path"/><xsl:text>dao[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/@show</xsl:text>
 		</xsl:attribute>
   	</input>
   </xsl:template>
   
   <xsl:template name="thumb">
   	<xsl:param name="number" />
+  	<xsl:param name="path" />
   	<table><tbody>		
   		<tr>
   			<td class="label">Thumbnail URI: </td>
@@ -1888,14 +1930,14 @@
   						<xsl:value-of select="daoloc[@role='thumb']/@href"/>
   					</xsl:attribute>
   					<xsl:attribute name="name">
-  						<xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[1]/@href</xsl:text>
+  						<xsl:value-of select="$path"/><xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[1]/@href</xsl:text>
   					</xsl:attribute>
   				</input>
   			</td>
   		</tr>  	
   		<input type="hidden" value="thumb">
   			<xsl:attribute name="name">
-				<xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[1]/@role</xsl:text>
+				<xsl:value-of select="$path"/><xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[1]/@role</xsl:text>
 			</xsl:attribute>
   		</input>
   		<tr>
@@ -1906,7 +1948,7 @@
   						<xsl:value-of select="daoloc[@role='reference']/@href"/>
   					</xsl:attribute>
   					<xsl:attribute name="name">
-  						<xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[2]/@href</xsl:text>
+  						<xsl:value-of select="$path"/><xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[2]/@href</xsl:text>
   					</xsl:attribute>
   				</input>
   			</td>
@@ -1918,7 +1960,7 @@
   						<xsl:value-of select="daoloc[@role='reference']/@title"/>
   					</xsl:attribute>
   					<xsl:attribute name="name">
-  						<xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[2]/@title</xsl:text>
+  						<xsl:value-of select="$path"/><xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[2]/@title</xsl:text>
   					</xsl:attribute>
   				</input>  				
   			</td>
@@ -1930,7 +1972,7 @@
   						<xsl:apply-templates select="daodesc"/>
   					</xsl:attribute>
   					<xsl:attribute name="name">
-  						<xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daodesc</xsl:text>
+  						<xsl:value-of select="$path"/><xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daodesc</xsl:text>
   					</xsl:attribute>
   				</input>    			
   			</td>
@@ -1938,18 +1980,19 @@
   	</tbody></table>
 	<input type="hidden" value="thumb">
 		<xsl:attribute name="name">
-			<xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[1]/@role</xsl:text>
+			<xsl:value-of select="$path"/><xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[1]/@role</xsl:text>
 		</xsl:attribute>
 	</input>
 	<input type="hidden" value="reference">
 		<xsl:attribute name="name">
-			<xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[2]/@role</xsl:text>
+			<xsl:value-of select="$path"/><xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[2]/@role</xsl:text>
 		</xsl:attribute>
 	</input>
   </xsl:template>
 
   <xsl:template name="multiple">
   	<xsl:param name="number" />
+  	<xsl:param name="path" />
   	<table><tbody id="multipletbody">		
   		<xsl:for-each select="daoloc">
   			<xsl:variable name="class">
@@ -1968,7 +2011,7 @@
   			<td>
 	  			<input type="text" size="70">
 	  				<xsl:attribute name="name">
-	  					<xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[</xsl:text><xsl:value-of select="position()"/><xsl:text>]/@href</xsl:text>
+	  					<xsl:value-of select="$path"/><xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[</xsl:text><xsl:value-of select="position()"/><xsl:text>]/@href</xsl:text>
 	  				</xsl:attribute>
 	  				<xsl:attribute name="value">
 	  					<xsl:value-of select="@href"/>
@@ -1986,7 +2029,7 @@
   			<td>
 	  			<input type="text" size="70">
 	  				<xsl:attribute name="name">
-	  					<xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[</xsl:text><xsl:value-of select="position()"/><xsl:text>]/@title</xsl:text>
+	  					<xsl:value-of select="$path"/><xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[</xsl:text><xsl:value-of select="position()"/><xsl:text>]/@title</xsl:text>
 	  				</xsl:attribute>
 	  				<xsl:attribute name="value">
 	  					<xsl:value-of select="@title"/>
@@ -1996,7 +2039,7 @@
   			</tr>
   			<input type="hidden" value="reference">
 				<xsl:attribute name="name">
-					<xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[</xsl:text><xsl:value-of select="position()"/><xsl:text>]/@role</xsl:text>
+					<xsl:value-of select="$path"/><xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[</xsl:text><xsl:value-of select="position()"/><xsl:text>]/@role</xsl:text>
 				</xsl:attribute>
 			</input>
   		</xsl:for-each> 		
@@ -2008,7 +2051,7 @@
   						<xsl:apply-templates select="daodesc"/>
   					</xsl:attribute>
   					<xsl:attribute name="name">
-  						<xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daodesc</xsl:text>
+  						<xsl:value-of select="$path"/><xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daodesc</xsl:text>
   					</xsl:attribute>
   				</input>    			
   			</td>
