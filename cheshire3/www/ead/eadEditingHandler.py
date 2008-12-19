@@ -917,7 +917,6 @@ class EadEditingHandler(EadHandler):
         global session, repository_name, repository_link, repository_logo, cache_path, cache_url, toc_cache_path, toc_cache_url, toc_scripts, script, fullTxr, fullSplitTxr
         form = FieldStorage(req)
         self.htmlTitle.append('Preview File')
-        self.htmlNav.append('<a href="/ead/admin/files.html" title="Preview File" class="navlink">Files</a>')
         try :
             files = glob.glob('%s/preview/%s.*' % (toc_cache_path, session.user.username))
             for f in files :
@@ -950,7 +949,8 @@ class EadEditingHandler(EadHandler):
         recid = rec.id = 'preview/%s' % (session.user.username)    # assign rec.id so that html is stored in a restricted access directory
         paramDict = self.globalReplacements
         paramDict.update({'%TITLE%': ' :: '.join(self.htmlTitle)
-                         ,'%NAVBAR%': ' | '.join(self.htmlNav)
+                  #       ,'%NAVBAR%': ' | '.join(self.htmlNav)
+                          ,'%NAVBAR%' : ''
                          ,'LINKTOPARENT': ''
                          ,'TOC_CACHE_URL' : toc_cache_url
                          , 'RECID': recid

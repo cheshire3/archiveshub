@@ -437,7 +437,8 @@ function viewXml(){
 	if (fileOwner != null){
 		url += '&owner=' + fileOwner;
 	}
-	window.open(url, 'new');	
+	var xml = window.open(url);	
+	if (window.focus) {xml.focus();}
 }
 
 
@@ -459,8 +460,11 @@ function previewRec(){
 	if (fileOwner != null){
 		url += '&owner=' + fileOwner;
 	}
-	window.open(url, 'new');
+	var preview = window.open(url);	
+	if (window.focus) {preview.focus();}
+
 }
+	
 
 
 /* */
