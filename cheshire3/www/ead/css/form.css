@@ -60,6 +60,16 @@ br {
 	cursor: pointer;
 	
 }
+
+.valid, .invalid {
+	cursor: pointer;	
+	}
+
+.whatsthis {
+	padding-right: 2px;
+	padding-left: 2px;
+	}
+
 /*
 A:link {text-decoration: none}
 A:visited {text-decoration: none}

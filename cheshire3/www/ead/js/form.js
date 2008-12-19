@@ -402,7 +402,7 @@ function addComponent(){
   	newLink.style.background = 'yellow';
     newLink.setAttribute('name', 'link');
     newLink.onclick = new Function("javascript: displayForm(this.id, 0)");
-    newLink.href = "#";
+    newLink.className = 'invalid';
     newLink.appendChild(document.createTextNode(linkId));
  
        
@@ -889,9 +889,9 @@ function addTag(tagtype) {
 DAO related stuff
 */
 
-function addFile(){
+function addFile(number){
 	var doform = document.getElementById('digitalobjectsform');
-	var tbody = document.getElementById('multipletbody');
+	var tbody = document.getElementById('multipletbody' + number);
 	var jsrow = document.getElementById('jsrow');
 	rows = tbody.getElementsByTagName('tr').length;
 	
@@ -1147,7 +1147,7 @@ function createObjectsForm() {
    		else if (type=='multiple'){
    		   	var table = document.createElement('table');
    			var tbody = document.createElement('tbody');
-   			tbody.setAttribute('id', 'multipletbody');
+   			tbody.setAttribute('id', 'multipletbody1');
    			var start = 2;
    			for (var i=1; i<=start; i++){
    			
@@ -1214,7 +1214,7 @@ function createObjectsForm() {
   			link.appendChild(document.createTextNode('add another file'));
    			link.className = 'smalllink';
    			
-  			link.onclick = function () {addFile(); };
+  			link.onclick = function () {addFile(1); };
    			td.appendChild(link);
    			tr.setAttribute('id', 'jsrow');
    			tr.appendChild(td);
