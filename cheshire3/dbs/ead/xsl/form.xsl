@@ -1161,7 +1161,7 @@
 			    		<option value="subject_loc">Location</option>
 			    		<option value="subject_other">Other</option>
 			    	</select></td>
-			    	<td><input type="text" onfocus="addField('subject')" size="40" value="Click to Add Selected Field" style="background:#F2F2F2; color: grey;"></input></td></tr>
+			    	<td><a class="addfield" onclick="addField('subject');">Add Selected Field</a><!-- <input type="text" onfocus="addField('subject')" size="40" value="Click to Add Selected Field" style="background:#F2F2F2; color: grey;"></input> --></td></tr>
 			    </tbody>
 				</table>
 			</div>
@@ -1197,7 +1197,7 @@
 			    		<option value="persname_epithet">Epithet</option>
 			    		<option value="persname_other">Other</option>		    		
 			    	</select></td>
-			    	<td><input type="text" onfocus="addField('persname')" size="40" value="Click to Add Selected Field" style="background:#F2F2F2; color: grey;"></input></td></tr>
+			    	<td><a class="addfield" onclick="addField('persname');">Add Selected Field</a><!-- <input type="text" onfocus="addField('persname')" size="40" value="Click to Add Selected Field" style="background:#F2F2F2; color: grey;"></input> --></td></tr>
 				</tbody></table>
 			</div>
 			<div id="persnamebuttons" class="buttoncontainer">
@@ -1238,7 +1238,7 @@
 			    		<option value="famname_epithet">Epithet</option>
 			    		<option value="famname_loc">Location</option>		    		
 			    	</select></td>
-			    	<td><input type="text" onfocus="addField('famname')" size="40" value="Click to Add Selected Field" style="background:#F2F2F2; color: grey;"></input></td></tr>
+			    	<td><a class="addfield" onclick="addField('famname');">Add Selected Field</a><!-- <input type="text" onfocus="addField('famname')" size="40" value="Click to Add Selected Field" style="background:#F2F2F2; color: grey;"></input> --></td></tr>
 			      </tbody></table>
 			</div>
 			<div id="famnamebuttons" class="buttoncontainer">
@@ -1277,7 +1277,7 @@
 			    		<option value="corpname_loc">Location</option>
 			    		<option value="corpname_other">Other</option>		    		
 			    	</select></td>
-			    	<td><input type="text" onfocus="addField('corpname')" size="40" value="Click to Add Selected Field" style="background:#F2F2F2; color: grey;"></input></td></tr>
+			    	<td><a class="addfield" onclick="addField('corpname');">Add Selected Field</a><!-- <input type="text" onfocus="addField('corpname')" size="40" value="Click to Add Selected Field" style="background:#F2F2F2; color: grey;"></input> --></td></tr>
 				</tbody></table>
 			</div>
 			<div id="corpnamebuttons" class="buttoncontainer">
@@ -1314,7 +1314,7 @@
 						<tr NoDrop="true" NoDrag="true"><td><select onfocus="setCurrent(this);" id="geognamedropdown">				  	  			  		
 				    		<option value="geogname_other">Other</option>		    		
 				    	</select></td>
-				    	<td><input type="text" onfocus="addField('geogname')" size="40" value="Click to Add Selected Field" style="background:#F2F2F2; color: grey;"></input></td></tr>
+				    	<td><a class="addfield" onclick="addField('geogname');">Add Selected Field</a><!-- <input type="text" onfocus="addField('geogname')" size="40" value="Click to Add Selected Field" style="background:#F2F2F2; color: grey;"></input> --></td></tr>
 				    </tbody></table>
 				</div>
 				<div id="geognamebuttons" class="buttoncontainer">
@@ -1350,7 +1350,7 @@
 						<tr NoDrop="true" NoDrag="true"><td><select onfocus="setCurrent(this);" id="titledropdown">				  	  			  		
 				    		<option value="title_dates">Dates</option>			    		
 				    	</select></td>
-				    	<td><input type="text" onfocus="addField('title')" size="40" value="Click to Add Selected Field" style="background:#F2F2F2; color: grey;"></input></td></tr>
+				    	<td><a class="addfield" onclick="addField('title');">Add Selected Field</a><!-- <input type="text" onfocus="addField('title')" size="40" value="Click to Add Selected Field" style="background:#F2F2F2; color: grey;"></input> --></td></tr>
 					</tbody></table>
 				</div>
 				<div id="titlebuttons" class="buttoncontainer">
