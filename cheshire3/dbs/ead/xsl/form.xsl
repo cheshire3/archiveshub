@@ -82,7 +82,7 @@
   	<div id="sec-3-1" class="section">
       <span class="isadg"><h3>3.1: Identity Statement Area</h3></span>
       <p id="unitidparent">
-	  <strong><span class="isadg">3.1.1: </span><a href="http://www.archiveshub.ac.uk/arch/refcode.shtml" title="Reference Code help - opens in new window" target="_new">Reference Code</a></strong> 
+	  <strong><span class="isadg">3.1.1: </span>Reference Code<a href="http://www.archiveshub.ac.uk/arch/refcode.shtml" title="Reference Code help - opens in new window" target="_new"><img class="whatsthis" src="/images/whatisthissmall.gif" alt="[What is this?]"/></a></strong> 
 	  Comprising <a href="http://www.iso.org/iso/en/prods-services/iso3166ma/02iso-3166-code-lists/list-en1.html" target="_new" title="Further information on ISO Country Codes">ISO Country Code</a>, 
 	  <a href="http://www.nationalarchives.gov.uk/archon/" target="_new" title="ARCHON Service">Archon Code</a>,
 	  and a unique identifier for this record or component.
@@ -102,7 +102,7 @@
 	  </xsl:choose>  		
   	</p>
    	<p>
-		<strong><span class="isadg">3.1.2: </span><a href="http://www.archiveshub.ac.uk/arch/title.shtml" title="Title help - opens in new window" target="_new">Title</a></strong><br/>
+		<strong><span class="isadg">3.1.2: </span>Title<a href="http://www.archiveshub.ac.uk/arch/title.shtml" title="Title help - opens in new window" target="_new"><img class="whatsthis" src="/images/whatisthissmall.gif" alt="[What is this?]"/></a></strong><br/>
 		<xsl:choose>
 			<xsl:when test="did/unittitle">
 				<xsl:apply-templates select="did/unittitle"/>
@@ -113,7 +113,7 @@
 		</xsl:choose>		
     </p>
    <div class="float">
-    	<p><strong><span class="isadg">3.1.3: </span><a href="http://www.archiveshub.ac.uk/arch/dates1.shtml" title="Dates of Creation help - opens in new window" target="_new">Dates of Creation</a></strong><br/>
+    	<p><strong><span class="isadg">3.1.3: </span>Dates of Creation<a href="http://www.archiveshub.ac.uk/arch/dates1.shtml" title="Dates of Creation help - opens in new window" target="_new"><img class="whatsthis" src="/images/whatisthissmall.gif" alt="[What is this?]"/></a></strong><br/>
 		<xsl:choose>
 			<xsl:when test="did/unitdate">
 				<xsl:apply-templates select="did/unitdate"/>
@@ -126,7 +126,7 @@
 	</div>
 	<div class="float">
 		<p>
-		<strong><a href="http://www.archiveshub.ac.uk/arch/dates2.shtml" title="Normalised Date help - opens in new window" target="_new">Normalised Date</a></strong><br/>
+		<strong>Normalised Date<a href="http://www.archiveshub.ac.uk/arch/dates2.shtml" title="Normalised Date help - opens in new window" target="_new"><img class="whatsthis" src="/images/whatisthissmall.gif" alt="[What is this?]"/></a></strong><br/>
 	    	<xsl:choose>
 	    		<xsl:when test="did/unitdate/@normal">
 	    			<xsl:apply-templates select="did/unitdate/@normal"/>
@@ -191,7 +191,7 @@
 		</xsl:if>
   	</p>
  	<p>
-		<strong><span class="isadg">3.1.5: </span><a href="http://www.archiveshub.ac.uk/arch/extent.shtml" title="Extent help - opens in new window" target="_new">Extent of Unit of Description</a></strong><br/>
+		<strong><span class="isadg">3.1.5: </span>Extent of Unit of Description<a href="http://www.archiveshub.ac.uk/arch/extent.shtml" title="Extent help - opens in new window" target="_new"><img class="whatsthis" src="/images/whatisthissmall.gif" alt="[What is this?]"/></a></strong><br/>
 		<xsl:choose>
 			<xsl:when test="did/physdesc/extent">
 				<xsl:apply-templates select="did/physdesc/extent"/>
@@ -232,7 +232,7 @@
    <div class="section">
 		<span class="isadg"><h3>3.2: Context Area</h3></span> 
 		<p>
-		<strong><span class="isadg">3.2.1: </span><a href="http://www.archiveshub.ac.uk/arch/name.shtml" title="Name of Creator help - opens in new window" target="_new">Name of Creator</a></strong>  [<strong>also add manually as <a href="#accesspoints" title="Add Access Point manually">Access Point</a></strong>]<br/>
+		<strong><span class="isadg">3.2.1: </span>Name of Creator<a href="http://www.archiveshub.ac.uk/arch/name.shtml" title="Name of Creator help - opens in new window" target="_new"><img class="whatsthis" src="/images/whatisthissmall.gif" alt="[What is this?]"/></a></strong>  [<strong>also add manually as <a href="#accesspoints" title="Add Access Point manually">Access Point</a></strong>]<br/>
 		<xsl:choose>
 			<xsl:when test="did/origination">
 				<xsl:apply-templates select="did/origination"/>
@@ -626,7 +626,7 @@
 	</p> 
 <!-- langmaterial -->
      <p>
-     	<strong><span class="isadg">3.4.3: </span><a href="http://www.archiveshub.ac.uk/arch/lang.shtml" title="Language of Material help - opens in new window" target="_new">Language of Material</a></strong> [Must include <a href="http://www.loc.gov/standards/iso639-2/englangn.html" title="ISO 639-2 codes - opens new window" target="_new">ISO 639-2 3-letter code</a>]
+     	<strong><span class="isadg">3.4.3: </span>Language of Material</strong><a href="http://www.archiveshub.ac.uk/arch/lang.shtml" title="Language of Material help - opens in new window" target="_new"><img class="whatsthis" src="/images/whatisthissmall.gif" alt="[What is this?]"/></a> [Must include <a href="http://www.loc.gov/standards/iso639-2/englangn.html" title="ISO 639-2 codes - opens new window" target="_new">ISO 639-2 3-letter code</a>]
      	<xsl:for-each select="did/langmaterial/@*">
      		<input type="hidden">
      			<xsl:attribute name="name">
@@ -1065,14 +1065,16 @@
 					</xsl:for-each>
 				</xsl:when>
 				<xsl:otherwise>
-					<a class="smalllink" id="linkdaooptnsdiv" title="add digital object" onclick="addElement('daooptnsdiv')">add content</a><br />
-					<div id="daooptnsdiv" style="display:none">
-					<input type="radio" name="daooptns" value="singlefile" onclick="createObjectsForm()">Link to file</input><br />
-					<input type="radio" name="daooptns" value="embed" onclick="createObjectsForm()">Display image</input><br />
-					<input type="radio" name="daooptns" value="thumb" onclick="createObjectsForm()">Display thumbnail link to file</input><br />
-					<input type="radio" name="daooptns" value="multiple" onclick="createObjectsForm()">Link to multiple files</input><br />
-					<div id="digitalobjectsform"><xsl:text> </xsl:text></div>
-					</div>
+					<xsl:if test="not(did/dao) and not(did/daogrp)">
+						<a class="smalllink" id="linkdaooptnsdiv" title="add digital object" onclick="addElement('daooptnsdiv')">add content</a><br />
+						<div id="daooptnsdiv" style="display:none">
+						<input type="radio" name="daooptns" value="singlefile" onclick="createObjectsForm()">Link to file</input><br />
+						<input type="radio" name="daooptns" value="embed" onclick="createObjectsForm()">Display image</input><br />
+						<input type="radio" name="daooptns" value="thumb" onclick="createObjectsForm()">Display thumbnail link to file</input><br />
+						<input type="radio" name="daooptns" value="multiple" onclick="createObjectsForm()">Link to multiple files</input><br />
+						<div id="digitalobjectsform"><xsl:text> </xsl:text></div>
+						</div>
+					</xsl:if>
 				</xsl:otherwise>
 			</xsl:choose>
 			<xsl:choose>
@@ -1132,7 +1134,10 @@
 <!-- ACCESSPOINTS -->
 <!--  -->
 	<div id="accesspointssection" class="section">
-		<h3><a id="accesspoints" name="accesspoints" target="_new" href="http://www.archiveshub.ac.uk/arch/access.shtml">Access Points</a></h3>
+		<h3>Access Points<a id="accesspoints" name="accesspoints" target="_new" href="http://www.archiveshub.ac.uk/arch/access.shtml">
+		<img class="whatsthis" src="/images/whatisthissmall.gif" alt="[What is this?]"/>
+		</a></h3>
+		
 <!-- subject -->
 		<div id="subject" class="apcontainer">
 			<p><strong>Subject</strong><br /><a class="extSearch" onclick="window.open('http://www.archiveshub.ac.uk/unesco/', 'new', 'width=800 height=600');">[Search UNESCO] </a> <a class="extSearch" onclick="window.open('http://www.archiveshub.ac.uk/lcsh/', 'new', 'width=800 height=600');"> [Search LCSH]</a></p>
@@ -1796,26 +1801,23 @@
   	<xsl:param name="additional" />
   	<br/>
   	<strong><span class="isadg"><xsl:value-of select="$isadg"/></span> 	
-  	<xsl:choose>
-		<xsl:when test="not($help='')">
-			<a>
-			<xsl:attribute name="href">
-				<xsl:value-of select="$help"/>
-			</xsl:attribute>
-			<xsl:attribute name="title">
-				<xsl:value-of select="$title"/><xsl:text> help - opens in new window</xsl:text>
-			</xsl:attribute>
-			<xsl:attribute name="target">
-				<xsl:text>_new</xsl:text>
-			</xsl:attribute>
-			<xsl:value-of select="$title"/>
-			</a>
-		</xsl:when>
-		<xsl:otherwise>
-			<xsl:value-of select="$title"/>
-		</xsl:otherwise>
-  	</xsl:choose>  	
-  	</strong>
+		<xsl:value-of select="$title"/>
+		</strong>
+	<xsl:if test="not($help='')">
+		<a>
+		<xsl:attribute name="href">
+			<xsl:value-of select="$help"/>
+		</xsl:attribute>
+		<xsl:attribute name="title">
+			<xsl:value-of select="$title"/><xsl:text> help - opens in new window</xsl:text>
+		</xsl:attribute>
+		<xsl:attribute name="target">
+			<xsl:text>_new</xsl:text>
+		</xsl:attribute>
+		<img class="whatsthis" src="/images/whatisthissmall.gif" alt="[What is this?]"/>
+		</a>
+	</xsl:if>
+
   	<xsl:if test="not($additional = '')">
   		<xsl:text> </xsl:text>
   		<xsl:value-of select="$additional"/>
@@ -1993,7 +1995,10 @@
   <xsl:template name="multiple">
   	<xsl:param name="number" />
   	<xsl:param name="path" />
-  	<table><tbody id="multipletbody">		
+  	<table><tbody>
+  		<xsl:attribute name="id">
+  			<xsl:text>multipletbody</xsl:text><xsl:value-of select="$number"/>
+  		</xsl:attribute>	
   		<xsl:for-each select="daoloc">
   			<xsl:variable name="class">
   				<xsl:choose>
@@ -2043,7 +2048,11 @@
 				</xsl:attribute>
 			</input>
   		</xsl:for-each> 		
-  		<tr id="jsrow"><td></td><td><a class="smalllink" onclick="addFile();">add another file</a></td></tr>
+  		<tr id="jsrow"><td></td><td><a class="smalllink">
+  		<xsl:attribute name="onclick">
+  			<xsl:text>addFile(</xsl:text><xsl:value-of select="$number"/><xsl:text>);</xsl:text>
+  		</xsl:attribute>		
+  		add another file</a></td></tr>
   		<tr><td class="label">Description: </td>
   			<td>
   				<input size="70" type="text">
