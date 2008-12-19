@@ -1015,7 +1015,7 @@ class EadEditingHandler(EadHandler):
             except :
                 #this is a new record so we don't need to delete anything
                 exists = False
-                req.write('<span class="error">[ERROR]</span> - Record not present in recordStore<br/>\n')
+                req.write('<span class="ok">[OK]</span> - New Record<br/>\n')
             else :
                 req.write('undindexing existing version of record... ')
                 db.unindex_record(session, oldRec)
