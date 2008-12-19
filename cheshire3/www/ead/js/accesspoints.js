@@ -133,7 +133,6 @@ function resetAccessPoint(s){
 	}
 	else {
 		if (s == 'genreform' || s == 'function'){
-			alert(rows.length);
 			for (var i=rows.length-1; i>0; i--){
 	    		table.removeChild(rows[i]);
 	  		}

@@ -117,6 +117,10 @@ buttoncontainer p {
 /* should use scroll for windows */
 }
 
+.extSearch{
+	cursor: pointer;
+	}
+
 /*======================================*/
 
 
