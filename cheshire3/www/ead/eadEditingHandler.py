@@ -726,11 +726,11 @@ class EadEditingHandler(EadHandler):
         elif (loc == 'collectionLevel'):
             self.logger.log('existing collection level')
             validList = [l for l in self.required_xpaths]
+            self.logger.log(validList)
             list = form.list  
             #pull existing xml and make into a tree
             retrievedRec = editStore.fetch_record(session, '%s-%s' % (recid, fileOwner))
             retrievedXml = retrievedRec.get_xml(session)
-            self.logger.log('existing collection level')
             tree = etree.fromstring(retrievedXml)
             
             node = tree.xpath('/ead/archdesc')[0]         
