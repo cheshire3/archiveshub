@@ -308,7 +308,7 @@ class EadEditingHandler(EadHandler):
         return [parentNode, attribute]
 
        
-    def _delete_currentControlaccess(self, startNode, list=['subject','persname', 'famname', 'corpname', 'geogname', 'title', 'genreform']):
+    def _delete_currentControlaccess(self, startNode, list=['subject','persname', 'famname', 'corpname', 'geogname', 'title', 'genreform', 'function']):
         if (startNode.xpath('controlaccess')):
             self.logger.log('deleting control access')
             parent = startNode.xpath('controlaccess')[0]        
