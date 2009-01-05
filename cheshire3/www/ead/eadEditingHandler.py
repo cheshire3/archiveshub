@@ -701,6 +701,7 @@ class EadEditingHandler(EadHandler):
         self.logger.log('SAVING FORM')
         start = time.clock()
         loc = form.get('location', None)
+        self.logger.log(loc)
         recid = form.get('recid', None)
         parent = form.get('parent', None)
         fileOwner = form.get('owner', session.user.username)
