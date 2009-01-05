@@ -732,6 +732,7 @@ class EadEditingHandler(EadHandler):
             try :
                 retrievedRec = editStore.fetch_record(session, '%s-%s' % (recid, fileOwner))
             except:
+                self.logger.log('%s-%s' % (recid, fileOwner))
                 self.logger.log('failed')
             self.logger.log(retrievedRec)
             retrievedXml = retrievedRec.get_xml(session)
