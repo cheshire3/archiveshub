@@ -723,6 +723,7 @@ class EadEditingHandler(EadHandler):
             return (recid, valid)
         #this is an existing collection level file
         elif (loc == 'collectionLevel'):
+            self.logger.log('existing collection level')
             validList = [l for l in self.required_xpaths]
             list = form.list  
             #pull existing xml and make into a tree
