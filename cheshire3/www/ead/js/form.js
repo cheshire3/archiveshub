@@ -93,6 +93,9 @@ function deleteRec(id){
 function discardRec(id){
 	var url = '/ead/edit/';
 	var data = 'operation=discard&recid=' + id;
+    if ($('owner') != null){    
+    	setOwner($('owner').value);
+    }	
 	if (fileOwner != null){
 		data += '&owner=' + fileOwner;
 	}

@@ -910,6 +910,12 @@ class EadEditingHandler(EadHandler):
             editStore.delete_record(session, recid)
         return 'done'  
 
+    def discard_record(self, form):
+        recid = form.get('recid', None)
+        owner = form.get('owner', session.user.username)
+        if not recid == None :
+            editStore.delete_record(session, '%s-%s' % (recid, owner))
+        return 'done'          
 
     def preview_file(self, req):
         global session, repository_name, repository_link, repository_logo, cache_path, cache_url, toc_cache_path, toc_cache_url, toc_scripts, script, fullTxr, fullSplitTxr
@@ -1252,6 +1258,8 @@ class EadEditingHandler(EadHandler):
                 self.send_xml('<recid>%s</recid><valid>%s</valid>' % (content, valid), req)
             elif (operation == 'delete'):
                 content = self.delete_record(form)
+            elif (operation == 'discard'):
+                content = self.discard_record(form)
                 self.send_xml('<recid>%s</recid>' % content, req)
             elif (operation == 'reassign'):
                 content = self.reassign_record(form)
