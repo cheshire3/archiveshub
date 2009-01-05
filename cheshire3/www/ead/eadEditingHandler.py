@@ -729,7 +729,10 @@ class EadEditingHandler(EadHandler):
             self.logger.log(validList)
             list = form.list  
             #pull existing xml and make into a tree
-            retrievedRec = editStore.fetch_record(session, '%s-%s' % (recid, fileOwner))
+            try :
+                retrievedRec = editStore.fetch_record(session, '%s-%s' % (recid, fileOwner))
+            except:
+                self.logger.log('failed')
             self.logger.log(retrievedRec)
             retrievedXml = retrievedRec.get_xml(session)
             tree = etree.fromstring(retrievedXml)
