@@ -730,9 +730,10 @@ class EadEditingHandler(EadHandler):
             list = form.list  
             #pull existing xml and make into a tree
             retrievedRec = editStore.fetch_record(session, '%s-%s' % (recid, fileOwner))
+            self.logger.log(retrievedRec)
             retrievedXml = retrievedRec.get_xml(session)
             tree = etree.fromstring(retrievedXml)
-            
+            self.logger.log(tree)
             node = tree.xpath('/ead/archdesc')[0]         
             #first delete current accesspoints
             self._delete_currentControlaccess(node)
