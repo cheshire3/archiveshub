@@ -204,7 +204,7 @@ class EadEditingHandler(EadHandler):
             tree = etree.fromstring('<%s id="%s"></%s>' % (ctype, level, ctype))           
         list = form.list     
         for field in list :
-            if field.name not in ['ctype','location','operation','newForm','nocache','recid', 'parent', 'pui', 'eadid', 'filedesc/titlestmt/sponsor', 'daooptns']:        
+            if field.name not in ['ctype','location','operation','newForm','owner','recid', 'parent', 'pui', 'eadid', 'filedesc/titlestmt/sponsor', 'daooptns']:        
                 #do did level stuff
                 if (collection):
                     node = tree.xpath('/ead/archdesc')[0]
@@ -719,25 +719,19 @@ class EadEditingHandler(EadHandler):
 #            editStore.commit_storing(session) 
             (mins, secs) = divmod(time.time() - start, 60)
             (hours, mins) = divmod(mins, 60)
-            self.logger.log('SAVing complete')
+            self.logger.log('Saving complete')
             self.logger.log(time.clock()-start)
             return (recid, valid)
         #this is an existing collection level file
         elif (loc == 'collectionLevel'):
             self.logger.log('existing collection level')
             validList = [l for l in self.required_xpaths]
-            self.logger.log(validList)
             list = form.list  
             #pull existing xml and make into a tree
-            try :
-                retrievedRec = editStore.fetch_record(session, '%s-%s' % (recid, fileOwner))
-            except:
-                self.logger.log('%s-%s' % (recid, fileOwner))
-                self.logger.log('failed')
-            self.logger.log(retrievedRec)
+            self.logger.log(fileOwner)
+            retrievedRec = editStore.fetch_record(session, '%s-%s' % (recid, fileOwner))
             retrievedXml = retrievedRec.get_xml(session)
             tree = etree.fromstring(retrievedXml)
-            self.logger.log(tree)
             node = tree.xpath('/ead/archdesc')[0]         
             #first delete current accesspoints
             self._delete_currentControlaccess(node)
@@ -759,7 +753,7 @@ class EadEditingHandler(EadHandler):
             #cycle through the form and replace any node that need it
             deleteList = []
             for field in list :                
-                if field.name not in ['ctype','location','operation','newForm','nocache','recid', 'parent', 'pui', 'filedesc/titlestmt/sponsor', 'daooptns']:               
+                if field.name not in ['ctype','location','operation','newForm','owner','recid', 'parent', 'pui', 'filedesc/titlestmt/sponsor', 'daooptns']:               
                     #do archdesc stuff
                     if field.name.find('controlaccess') == 0 :                        
                         self._create_controlaccess(node, field.name, field.value)  
@@ -855,7 +849,7 @@ class EadEditingHandler(EadHandler):
                 self._delete_currentLangmaterial(node)
                 deleteList = []
                 for field in list :
-                    if field.name not in ['ctype','location','operation','newForm','nocache','recid', 'parent', 'daooptns']:           
+                    if field.name not in ['ctype','location','operation','newForm','owner','recid', 'parent', 'daooptns']:           
                         if field.name.find('controlaccess') == 0 :                        
                             self._create_controlaccess(node, field.name, field.value) 
                             try:
@@ -905,10 +899,7 @@ class EadEditingHandler(EadHandler):
                 rec.id = retrievedRec.id
                 editStore.store_record(session, rec)
 #                editStore.commit_storing(session)
-#             = time.time() - start, 60)
-#            (hours, mins) = divmod(mins, 60)
-#            self.logger.log('SAVing complete (%dh %dm %ds)' % (hours, mins, secs))
-            self.logger.log('SAVing complete')
+            self.logger.log('Saving complete')
             self.logger.log(time.clock()-start)
             return (recid, valid)
   

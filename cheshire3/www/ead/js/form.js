@@ -90,6 +90,17 @@ function deleteRec(id){
 	}});		
 }
 
+function discardRec(id){
+	var url = '/ead/edit/';
+	var data = 'operation=discard&recid=' + id;
+	if (fileOwner != null){
+		data += '&owner=' + fileOwner;
+	}
+	var ajax = new Ajax.Request(url, {method:'post', asynchronous:false, postBody:data, evalScripts:true, onSuccess: function(transport) {	
+		location.href="";		    
+	}});		
+}
+
 
 function submit(index){
 	if (!checkRequiredData()){
@@ -182,7 +193,7 @@ function saveForm(asynch){
 		setCountryCode($('countrycode').value);
 	    setRepositoryCode($('archoncode').value);
 	    setBaseUnitId($('unitid').value);
-	    if ($('owner') != null){
+	    if ($('owner') != null){    
 	    	setOwner($('owner').value);
 	    }
 	}
@@ -224,7 +235,7 @@ function saveForm(asynch){
     	recid = ($('pui')).value;
     }
     if (fileOwner != null){
-    	data += '&owner' + fileOwner;
+    	data += '&owner=' + fileOwner;
     }
     var loc = $('rightcol');
   	var ajax = new Ajax.Request(loc, {method:'post', asynchronous:asynch, postBody:data, evalScripts:true,  onSuccess: function(transport){ 
