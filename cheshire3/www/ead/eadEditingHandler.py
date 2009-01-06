@@ -234,11 +234,19 @@ class EadEditingHandler(EadHandler):
                                 validList.remove(field.name)
                             except:
                                 pass
-        emptydaolocs = tree.xpath('//daoloc[not(@href)]')
-        for node in emptydaolocs:
+        emptydao = []
+        try:
+            emptydao.extend(tree.xpath('//daoloc[not(@href)]'))
+        except:
+            pass
+        try:
+            emptydao.extend(tree.xpath('//dao[not(@href)]'))
+        except:
+            pass
+        for n in emptydao:
             try:
-                parent = node.getparent()
-                parent.remove(node)
+                parent = n.getparent()
+                parent.remove(n)
             except:
                 pass
         if (len(validList)):
@@ -254,13 +262,29 @@ class EadEditingHandler(EadHandler):
         if not (startNode.xpath(nodePath)) :
             return 
         else :
-            child = startNode.xpath(nodePath)[0]
-            if nodePath.find('/') == -1 :
-                parent = startNode
+            if nodePath.find('@') > -1 :
+                string = nodePath[nodePath.rfind('@')+1:]
+                if nodePath.find('/') == -1 : 
+                    parent = startNode        
+                else :
+                    parent = startNode.xpath(''.join(nodePath[:nodePath.rfind('/')]))[0]  
+                del parent.attrib[string] 
             else :
-                parent = startNode.xpath(''.join(nodePath[:nodePath.rfind('/')]))[0]
-            parent.remove(child)
-            if len(parent.getchildren()) > 0 :
+                child = startNode.xpath(nodePath)[0]
+                if child.tag == 'dao':
+                    if child.get('href') != None:
+                        return
+                if nodePath.find('/') == -1 :
+                    parent = startNode
+                else :
+                    parent = startNode.xpath(''.join(nodePath[:nodePath.rfind('/')]))[0]
+                parent.remove(child)
+#            if parent.tag == 'dao':
+#                if parent.get('href') != None:
+#                    return
+#                else:
+#                    return self._delete_path(startNode, nodePath[:nodePath.rfind('/')])
+            if len(parent.getchildren()) > 0 or parent.text != None :
                 return
             else :
                 return self._delete_path(startNode, nodePath[:nodePath.rfind('/')])
@@ -728,7 +752,6 @@ class EadEditingHandler(EadHandler):
             validList = [l for l in self.required_xpaths]
             list = form.list  
             #pull existing xml and make into a tree
-            self.logger.log(fileOwner)
             retrievedRec = editStore.fetch_record(session, '%s-%s' % (recid, fileOwner))
             retrievedXml = retrievedRec.get_xml(session)
             tree = etree.fromstring(retrievedXml)
@@ -736,7 +759,6 @@ class EadEditingHandler(EadHandler):
             #first delete current accesspoints
             self._delete_currentControlaccess(node)
             self._delete_currentLangmaterial(node)
-            self.logger.log('deleted stuff')
             #change title in header             
             header = tree.xpath('/ead/eadheader')[0]
             if form.get('filedesc/titlestmt/sponsor', '').value.strip() != '' and form.get('filedesc/titlestmt/sponsor', '').value.strip() != ' ': 
@@ -784,18 +806,41 @@ class EadEditingHandler(EadHandler):
                                 except:
                                     pass
                         else:
-                            deleteList.append(field.name)
-            emptydaolocs = tree.xpath('//daoloc[not(@href)]')
-            for node in emptydaolocs:
-                try:
-                    parent = node.getparent()
-                    parent.remove(node)
-                except:
-                    pass         
-            
+                            deleteList.append(field.name)      
             if len(deleteList):
+                deleteList.sort(reverse=True)
                 for name in deleteList:
                     self._delete_path(node, name) 
+            emptydao = []
+            try:
+                emptydao.extend(tree.xpath('//daoloc[not(@href)]'))
+            except:
+                self.logger.log('failed daoloc')
+                pass
+            try:
+                emptydao.extend(tree.xpath('//dao[not(@href)]'))
+            except:
+                self.logger.log('failed dao')
+                pass
+            self.logger.log('empty daos')
+            self.logger.log(emptydao)
+            for n in emptydao:
+                try:
+                    parent = n.getparent()
+                    parent.remove(n)
+                except:
+                    pass 
+            emptydaogrp = []
+            try:
+                emptydaogrp.extend(tree.xpath('//daogrp[not(child::daoloc)]'))
+            except:
+                pass
+            for n in emptydaogrp:
+                try:
+                    parent = n.getparent()
+                    parent.remove(n)
+                except:
+                    pass
             if len(validList):
                 valid = False
             else:
@@ -880,17 +925,36 @@ class EadEditingHandler(EadHandler):
                                         pass
                             else:
                                 deleteList.append(field.name)
-                
-                emptydaolocs = tree[0].xpath('//daoloc[not(@href)]')                                        
-                for node in emptydaolocs:
+                if len(deleteList):
+                    deleteList.sort(reverse=True)
+                    for name in deleteList:
+                        self._delete_path(node, name)                   
+                emptydao = []
+                try:
+                    emptydao.extend(tree.xpath('//daoloc[not(@href)]'))
+                except:
+                    pass
+                try:
+                    emptydao.extend(tree.xpath('//dao[not(@href)]'))
+                except:
+                    pass                           
+                for n in emptydao:
                     try:
-                        parent = node.getparent()
-                        parent.remove(node)
+                        parent = n.getparent()
+                        parent.remove(n)
                     except:
                         pass
-                if len(deleteList):
-                    for name in deleteList:
-                        self._delete_path(node, name)   
+                emptydaogrp = []
+                try:
+                    emptydaogrp.extend(tree.xpath('//daogrp[not(child::daoloc)]'))
+                except:
+                    pass
+                for n in emptydaogrp:
+                    try:
+                        parent = n.getparent()
+                        parent.remove(n)
+                    except:
+                        pass
                 if len(validList):
                     valid = False
                 else:
