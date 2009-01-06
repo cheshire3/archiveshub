@@ -1140,7 +1140,7 @@
 		
 <!-- subject -->
 		<div id="subject" class="apcontainer">
-			<p><strong>Subject</strong><br /><a class="extSearch" onclick="window.open('http://www.archiveshub.ac.uk/unesco/', 'new', 'width=800 height=600');">[Search UNESCO] </a> <a class="extSearch" onclick="window.open('http://www.archiveshub.ac.uk/lcsh/', 'new', 'width=800 height=600');"> [Search LCSH]</a></p>
+			<p><strong>Subject</strong><br /><a class="extSearch" onclick="window.open('http://databases.unesco.org/thesaurus/', 'new', 'width=800 height=600');">[Search UNESCO]</a><xsl:text>  </xsl:text><a class="extSearch" onclick="window.open('http://www.archiveshub.ac.uk/lcsh/', 'new', 'width=800 height=600');">[Search LCSH]</a></p>
 			<xsl:choose>
 				<xsl:when test="controlaccess/subject">
 					<xsl:call-template name="accesspoint">
@@ -1367,7 +1367,7 @@
 			<br/>	
 <!-- genreform -->
 		<div id="genreform" class="apcontainer">
-			<p><strong>Genre Form</strong><br/><a class="extSearch" onclick="window.open('http://www.getty.edu/research/conducting_research/vocabularies/aat/', 'new', 'width=800 height=600');">[Search AAT] </a><a class="extSearch" onclick="window.open('http://www.loc.gov/rr/print/tgm2/', 'new', 'width=800 height=600');"> [Search TGM]</a></p>
+			<p><strong>Genre Form</strong><br/><a class="extSearch" onclick="window.open('http://www.getty.edu/research/conducting_research/vocabularies/aat/', 'new', 'width=800 height=600');">[Search AAT]</a><xsl:text> </xsl:text><a class="extSearch" onclick="window.open('http://www.loc.gov/rr/print/tgm2/', 'new', 'width=800 height=600');">[Search TGM]</a></p>
 			<xsl:choose>
 				<xsl:when test="controlaccess/genreform">
 					<xsl:call-template name="accesspoint">
@@ -1394,7 +1394,7 @@
 			
 <!-- function -->
 		<div id="function" class="apcontainer">
-			<p><strong>Function</strong><br/><a class="extSearch" onclick="window.open('http://www.getty.edu/research/conducting_research/vocabularies/aat/', 'new', 'width=800 height=600');">[Search AAT] </a><a class="extSearch" onclick="window.open('http://www.naa.gov.au/records-management/create-capture-describe/describe/agift/index.aspx', 'new', 'width=800 height=600');"> [Search AGIFT]</a></p>
+			<p><strong>Function</strong><br/><a class="extSearch" onclick="window.open('http://www.getty.edu/research/conducting_research/vocabularies/aat/', 'new', 'width=800 height=600');">[Search AAT]</a><xsl:text> </xsl:text><a class="extSearch" onclick="window.open('http://www.naa.gov.au/records-management/create-capture-describe/describe/agift/index.aspx', 'new', 'width=800 height=600');">[Search AGIFT]</a></p>
 			<xsl:choose>
 				<xsl:when test="controlaccess/function">
 					<xsl:call-template name="accesspoint">
@@ -1630,7 +1630,7 @@
   </xsl:template>
   
   <xsl:template match="unitdate/@normal">
-  	<input type="text" onfocus="setCurrent(this);" name="did/unitdate" id="can" size="39" maxlength="10">
+  	<input type="text" onfocus="setCurrent(this);" name="did/unitdate/@normal" id="can" size="39" maxlength="10">
   		<xsl:attribute name="value">
   			<xsl:value-of select="."/>
   		</xsl:attribute>
