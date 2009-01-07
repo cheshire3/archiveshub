@@ -109,6 +109,17 @@ class EadEditingHandler(EadHandler):
             if compre.match(element.tag) or element.tag == 'archdesc':
                 depth += 1
         return depth            
+
+    def send_html(self, data, req, code=200):
+        req.content_type = 'text/html'
+        req.headers_out['Cache-Control'] = "no-cache, no-store"
+        req.content_length = len(data)
+        req.send_http_header()
+        if (type(data) == unicode):
+          data = data.encode('utf-8')
+        req.write(data)
+        req.flush()
+        #- end send_html() ---------------------------------------------------------
     
 
     def send_fullHtml(self, data, req, code=200):
