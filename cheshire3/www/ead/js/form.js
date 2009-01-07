@@ -118,6 +118,71 @@ function submit(index){
     	alert('Please fix the errors in the xml before submitting. Errors will be marked with red shading in the text box.');
     	return;
     }
+    
+    //check the daoform details
+    var daoform = document.getElementById('digitalobjectsform');
+    var type = daoform.className;
+    if (daoform){
+    	var inputs = daoform.getElementsByTagName('input');
+    	if (type == 'embed' || type == 'singlefile'){
+    		if (inputs[0].value.strip() == '' && (inputs[1].value.strip() != '' || inputs[2].value.strip() != '')){
+    			var confirmbox = confirm('The File URI value required for the digital object has not been completed. If you choose to proceed with this operation the digital object will not be included and the current details in the form will be lost.\n\nDo you want to continue?');
+    			if (confirmbox == false){
+    				body.className = 'none';
+    				return;
+    			}
+    			else{
+    				inputs[1].value = '';
+    				inputs[2].value = '';
+    			}
+    		}
+
+    	}
+    	else if (type == 'thumb') {
+    		if ((inputs[0].value.strip() == '' || inputs[1].value.strip() == '') && (inputs[2].value.strip() != '' || inputs[3].value.strip() != '')){   			
+    			var confirmbox = confirm('The Thumbnail URI and/or File URI value required for the digital object has not been completed. If you choose to proceed with this operation the digital object will not be included and the current details in the form will be lost.\n\nDo you want to continue?');
+    			if (confirmbox == false){
+    				body.className = 'none';
+    				return;
+    			}
+    			else{
+    				inputs[0].value = '';
+    				inputs[1].value = '';
+    				inputs[2].value = '';
+    				inputs[3].value = '';
+    			}
+    		} 		
+    	}
+    	else if (type == 'multiple'){
+    		var length = inputs.length;
+    		var number = (length-1)/3;
+    		var problems = false;
+    		var list = new Array();
+    		for (var i = number; i < length-1; i+=2){
+				if (inputs[i].value.strip() == '' && (inputs[i+1].value.strip() != '' || inputs[length-1].value.strip() != '')){
+					list[list.length] = i;
+					problems = true;
+				}
+    		}
+    		if (problems == true){
+    			var confirmbox = confirm('At least one of File URI values required for the digital object has not been completed. If you choose to proceed with this operation any incomplete URIs will not be included and the remaining incomplete details in the form will be lost.\n\nDo you want to continue?');
+    			if (confirmbox == false){
+    				body.className = 'none';
+    				return;
+    			}
+    			else{
+    				for (var j = 0; j < list.length; j++){
+    					inputs[list[j]+1].value = '';
+    				}
+					if (list.length == number){
+						inputs[length-1].value = '';
+					}
+    			}
+    		}
+    		
+    	}
+    }   
+    
 	saveForm(false);
 	
 	//validate whole record
@@ -174,17 +239,80 @@ function save(){
 		body.className = 'none';
 		return;
 	}
-	errors = document.getElementsByClassName('menuFieldError');
+	var errors = document.getElementsByClassName('menuFieldError');
     if (errors.length != 0){
     	alert('Please fix the errors in the xml before saving. Errors will be marked with red shading in the text box.');
     	body.className = 'none';
     	return;
     }
-	else {
-			saveForm(false);
-			body.className = 'none';
-	    	alert('This form is now saved as ' + recid + ' and can be reloaded from the admin menu for further editing at a later date.');
-	}
+    //check the daoform details
+    var daoform = document.getElementById('digitalobjectsform');
+    var type = daoform.className;
+    if (daoform){
+    	var inputs = daoform.getElementsByTagName('input');
+    	if (type == 'embed' || type == 'singlefile'){
+    		if (inputs[0].value.strip() == '' && (inputs[1].value.strip() != '' || inputs[2].value.strip() != '')){
+    			var confirmbox = confirm('The File URI value required for the digital object has not been completed. If you choose to proceed with saving this file the digital object will not be included and the current details in the form will be lost.\n\nDo you want to continue saving this file?');
+    			if (confirmbox == false){
+    				body.className = 'none';
+    				return;
+    			}
+    			else{
+    				inputs[1].value = '';
+    				inputs[2].value = '';
+    			}
+    		}
+
+    	}
+    	else if (type == 'thumb') {
+    		if ((inputs[0].value.strip() == '' || inputs[1].value.strip() == '') && (inputs[2].value.strip() != '' || inputs[3].value.strip() != '')){   			
+    			var confirmbox = confirm('The Thumbnail URI and/or File URI value required for the digital object has not been completed. If you choose to proceed with saving this file the digital object will not be included and the current details in the form will be lost.\n\nDo you want to continue saving this file?');
+    			if (confirmbox == false){
+    				body.className = 'none';
+    				return;
+    			}
+    			else{
+    				inputs[0].value = '';
+    				inputs[1].value = '';
+    				inputs[2].value = '';
+    				inputs[3].value = '';
+    			}
+    		} 		
+    	}
+    	else if (type == 'multiple'){
+    		var length = inputs.length;
+    		var number = (length-1)/3;
+    		var problems = false;
+    		var list = new Array();
+    		for (var i = number; i < length-1; i+=2){
+				if (inputs[i].value.strip() == '' && (inputs[i+1].value.strip() != '' || inputs[length-1].value.strip() != '')){
+					list[list.length] = i;
+					problems = true;
+				}
+    		}
+    		if (problems == true){
+    			var confirmbox = confirm('At least one of File URI values required for the digital object has not been completed. If you choose to proceed with saving this file any incomplete URIs will not be included and the remaining incomplete details in the form will be lost.\n\nDo you want to continue saving this file?');
+    			if (confirmbox == false){
+    				body.className = 'none';
+    				return;
+    			}
+    			else{
+    				for (var j = 0; j < list.length; j++){
+    					inputs[list[j]+1].value = '';
+    				}
+					if (list.length == number){
+						inputs[length-1].value = '';
+					}
+    			}
+    		}
+    		
+    	}
+    }
+
+	saveForm(false);
+	body.className = 'none';
+    alert('This form is now saved as ' + recid + ' and can be reloaded from the admin menu for further editing at a later date.');
+	
 	
 }
 
@@ -446,6 +574,71 @@ function viewXml(){
     	alert('Please fix the errors in the xml before viewing. Errors will be marked with red shading in the text box.');
     	return;
     }
+    
+    //check the daoform details
+    var daoform = document.getElementById('digitalobjectsform');
+    var type = daoform.className;
+    if (daoform){
+    	var inputs = daoform.getElementsByTagName('input');
+    	if (type == 'embed' || type == 'singlefile'){
+    		if (inputs[0].value.strip() == '' && (inputs[1].value.strip() != '' || inputs[2].value.strip() != '')){
+    			var confirmbox = confirm('The File URI value required for the digital object has not been completed. If you choose to proceed with this operation the digital object will not be included and the current details in the form will be lost.\n\nDo you want to continue?');
+    			if (confirmbox == false){
+    				body.className = 'none';
+    				return;
+    			}
+    			else{
+    				inputs[1].value = '';
+    				inputs[2].value = '';
+    			}
+    		}
+
+    	}
+    	else if (type == 'thumb') {
+    		if ((inputs[0].value.strip() == '' || inputs[1].value.strip() == '') && (inputs[2].value.strip() != '' || inputs[3].value.strip() != '')){   			
+    			var confirmbox = confirm('The Thumbnail URI and/or File URI value required for the digital object has not been completed. If you choose to proceed with this operation the digital object will not be included and the current details in the form will be lost.\n\nDo you want to continue?');
+    			if (confirmbox == false){
+    				body.className = 'none';
+    				return;
+    			}
+    			else{
+    				inputs[0].value = '';
+    				inputs[1].value = '';
+    				inputs[2].value = '';
+    				inputs[3].value = '';
+    			}
+    		} 		
+    	}
+    	else if (type == 'multiple'){
+    		var length = inputs.length;
+    		var number = (length-1)/3;
+    		var problems = false;
+    		var list = new Array();
+    		for (var i = number; i < length-1; i+=2){
+				if (inputs[i].value.strip() == '' && (inputs[i+1].value.strip() != '' || inputs[length-1].value.strip() != '')){
+					list[list.length] = i;
+					problems = true;
+				}
+    		}
+    		if (problems == true){
+    			var confirmbox = confirm('At least one of File URI values required for the digital object has not been completed. If you choose to proceed with this operation any incomplete URIs will not be included and the remaining incomplete details in the form will be lost.\n\nDo you want to continue?');
+    			if (confirmbox == false){
+    				body.className = 'none';
+    				return;
+    			}
+    			else{
+    				for (var j = 0; j < list.length; j++){
+    					inputs[list[j]+1].value = '';
+    				}
+					if (list.length == number){
+						inputs[length-1].value = '';
+					}
+    			}
+    		}
+    		
+    	}
+    }      
+    
 	saveForm(false);
 	url = '/ead/edit?operation=display&recid=' + recid;
 	if (fileOwner != null){
@@ -469,6 +662,71 @@ function previewRec(){
     	alert('Please fix the errors in the xml before viewing. Errors will be marked with red shading in the text box.');
     	return;
     }
+    
+    //check the daoform details
+    var daoform = document.getElementById('digitalobjectsform');
+    var type = daoform.className;
+    if (daoform){
+    	var inputs = daoform.getElementsByTagName('input');
+    	if (type == 'embed' || type == 'singlefile'){
+    		if (inputs[0].value.strip() == '' && (inputs[1].value.strip() != '' || inputs[2].value.strip() != '')){
+    			var confirmbox = confirm('The File URI value required for the digital object has not been completed. If you choose to proceed with this operation the digital object will not be included and the current details in the form will be lost.\n\nDo you want to continue?');
+    			if (confirmbox == false){
+    				body.className = 'none';
+    				return;
+    			}
+    			else{
+    				inputs[1].value = '';
+    				inputs[2].value = '';
+    			}
+    		}
+
+    	}
+    	else if (type == 'thumb') {
+    		if ((inputs[0].value.strip() == '' || inputs[1].value.strip() == '') && (inputs[2].value.strip() != '' || inputs[3].value.strip() != '')){   			
+    			var confirmbox = confirm('The Thumbnail URI and/or File URI value required for the digital object has not been completed. If you choose to proceed with this operation the digital object will not be included and the current details in the form will be lost.\n\nDo you want to continue?');
+    			if (confirmbox == false){
+    				body.className = 'none';
+    				return;
+    			}
+    			else{
+    				inputs[0].value = '';
+    				inputs[1].value = '';
+    				inputs[2].value = '';
+    				inputs[3].value = '';
+    			}
+    		} 		
+    	}
+    	else if (type == 'multiple'){
+    		var length = inputs.length;
+    		var number = (length-1)/3;
+    		var problems = false;
+    		var list = new Array();
+    		for (var i = number; i < length-1; i+=2){
+				if (inputs[i].value.strip() == '' && (inputs[i+1].value.strip() != '' || inputs[length-1].value.strip() != '')){
+					list[list.length] = i;
+					problems = true;
+				}
+    		}
+    		if (problems == true){
+    			var confirmbox = confirm('At least one of File URI values required for the digital object has not been completed. If you choose to proceed with this operation any incomplete URIs will not be included and the remaining incomplete details in the form will be lost.\n\nDo you want to continue?');
+    			if (confirmbox == false){
+    				body.className = 'none';
+    				return;
+    			}
+    			else{
+    				for (var j = 0; j < list.length; j++){
+    					inputs[list[j]+1].value = '';
+    				}
+					if (list.length == number){
+						inputs[length-1].value = '';
+					}
+    			}
+    		}
+    		
+    	}
+    }    
+       
 	saveForm(false);
 	url = '/ead/edit?operation=preview&recid=' + recid;	
 	if (fileOwner != null){
@@ -966,7 +1224,7 @@ function addFile(number){
    	role.setAttribute('type', 'hidden');
    	role.setAttribute('name', 'daogrp/daoloc[' + nextfile + ']/@role');
    	role.setAttribute('value', 'reference');
-   	doform.appendChild(role);				
+   	doform.insertBefore(role, tbody.parentNode);				
 	
 	
 }
@@ -986,6 +1244,7 @@ function createObjectsForm() {
    	}
    	else {
    		var doform = document.getElementById('digitalobjectsform');
+   		doform.className = type;
    		if (doform.childNodes.length > 0){
 	   		for (var i = doform.childNodes.length-1; i > -1; i--) {
 	   			doform.removeChild(doform.childNodes[i]);
@@ -1092,11 +1351,11 @@ function createObjectsForm() {
    			tbody.appendChild(tr);  
    			
    	//role info
-    		var role = document.createElement('input');
-   			role.setAttribute('type', 'hidden');
-   			role.setAttribute('name', 'daogrp/daoloc[1]/@role');
-   			role.setAttribute('value', 'thumb');
-   			doform.appendChild(role);
+    		var role1 = document.createElement('input');
+   			role1.setAttribute('type', 'hidden');
+   			role1.setAttribute('name', 'daogrp/daoloc[1]/@role');
+   			role1.setAttribute('value', 'thumb');
+   			
 
 	//file location
   			tr = document.createElement('tr');
@@ -1133,13 +1392,13 @@ function createObjectsForm() {
    			tr.appendChild(td);
    			
    			tbody.appendChild(tr);  
-   			 
+
  	//role info
-    		role = document.createElement('input');
-   			role.setAttribute('type', 'hidden');
-   			role.setAttribute('name', 'daogrp/daoloc[2]/@role');
-   			role.setAttribute('value', 'reference');
-   			doform.appendChild(role);
+    		var role2 = document.createElement('input');
+   			role2.setAttribute('type', 'hidden');
+   			role2.setAttribute('name', 'daogrp/daoloc[2]/@role');
+   			role2.setAttribute('value', 'reference');
+
 
 	//DAO desciption
    			tr = document.createElement('tr');
@@ -1161,6 +1420,10 @@ function createObjectsForm() {
 
 			table.appendChild(tbody);
 			doform.appendChild(table);	
+			doform.appendChild(role1);
+			doform.appendChild(role2);
+
+			
    		}
    		else if (type=='multiple'){
    		   	var table = document.createElement('table');
