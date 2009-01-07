@@ -424,6 +424,8 @@ function displayForm(id, level){
 
 
 function addComponent(){	
+	var body = document.getElementsByTagName('body')[0];
+	body.className = 'waiting';
     // check it does not exceed the c12 limit 
     if (currentForm != 'collectionLevel'){
      	var parent = document.getElementById(currentForm);    
@@ -431,6 +433,7 @@ function addComponent(){
       	var level = Number(listItem.parentNode.getAttribute('name'));
       	if (level == 12){
       		alert('You cannot add any more component levels to this description');
+      		body.className = 'none';
       		return;
       	}
     }
@@ -438,6 +441,7 @@ function addComponent(){
     //validate and check id existence etc.
     if (!checkRequiredData()){
 		alert ('the following fields must be entered before proceeding:\n  - Reference Code \n  - Title')
+		body.className = 'none';
 		return;
 	}
     if (currentEntryField != null && currentEntryField.value != ''){
@@ -446,6 +450,7 @@ function addComponent(){
     errors = document.getElementsByClassName('menuFieldError');
     if (errors.length != 0){
     	alert('Please fix the errors in the xml before adding a component. Errors will be marked with red shading in the text box.');
+    	body.className = 'none';
     	return;
     }
     else if (currentForm == 'collectionLevel' && recid == 'notSet'){
@@ -457,6 +462,7 @@ function addComponent(){
 	 	}});
 	 	if (idExists == 'true'){
    				alert('A record with this ID already exists in this database\nyou must supply a unique id before proceeding');
+   				body.className = 'none';
    				return;
    		}   
 	}
@@ -469,11 +475,76 @@ function addComponent(){
    			if (idExists == 'true'){
    				var cont = confirmOp('A record with this ID already exists within the editing store which means it has either been loaded for editing or is in the process of being created by you or another user and has not yet been submitted to the main database. If you continue you will overwrite this record and it will be lost \n\n Are you sure you want to continue? ');
    				if (!cont){
+					body.className = 'none';
 					return;
 				} 	
    			}     			
 	 	}});
-	}   	
+	}  
+	
+	//check the daoform details
+    var daoform = document.getElementById('digitalobjectsform');
+    var type = daoform.className;
+    if (daoform){
+    	var inputs = daoform.getElementsByTagName('input');
+    	if (type == 'embed' || type == 'singlefile'){
+    		if (inputs[0].value.strip() == '' && (inputs[1].value.strip() != '' || inputs[2].value.strip() != '')){
+    			var confirmbox = confirm('The File URI value required for the digital object has not been completed. If you choose to proceed with this operation the digital object will not be included and the current details in the form will be lost.\n\nDo you want to continue?');
+    			if (confirmbox == false){
+    				body.className = 'none';
+    				return;
+    			}
+    			else{
+    				inputs[1].value = '';
+    				inputs[2].value = '';
+    			}
+    		}
+
+    	}
+    	else if (type == 'thumb') {
+    		if ((inputs[0].value.strip() == '' || inputs[1].value.strip() == '') && (inputs[2].value.strip() != '' || inputs[3].value.strip() != '')){   			
+    			var confirmbox = confirm('The Thumbnail URI and/or File URI value required for the digital object has not been completed. If you choose to proceed with this operation the digital object will not be included and the current details in the form will be lost.\n\nDo you want to continue?');
+    			if (confirmbox == false){
+    				body.className = 'none';
+    				return;
+    			}
+    			else{
+    				inputs[0].value = '';
+    				inputs[1].value = '';
+    				inputs[2].value = '';
+    				inputs[3].value = '';
+    			}
+    		} 		
+    	}
+    	else if (type == 'multiple'){
+    		var length = inputs.length;
+    		var number = (length-1)/3;
+    		var problems = false;
+    		var list = new Array();
+    		for (var i = number; i < length-1; i+=2){
+				if (inputs[i].value.strip() == '' && (inputs[i+1].value.strip() != '' || inputs[length-1].value.strip() != '')){
+					list[list.length] = i;
+					problems = true;
+				}
+    		}
+    		if (problems == true){
+    			var confirmbox = confirm('At least one of File URI values required for the digital object has not been completed. If you choose to proceed with this operation any incomplete URIs will not be included and the remaining incomplete details in the form will be lost.\n\nDo you want to continue?');
+    			if (confirmbox == false){
+    				body.className = 'none';
+    				return;
+    			}
+    			else{
+    				for (var j = 0; j < list.length; j++){
+    					inputs[list[j]+1].value = '';
+    				}
+					if (list.length == number){
+						inputs[length-1].value = '';
+					}
+    			}
+    		}
+    		
+    	}
+    }       	
 	
 	//update the menu bar first
     if (currentForm == 'collectionLevel'){	    	
@@ -558,6 +629,7 @@ function addComponent(){
 	currentForm = linkId;
 	setCurrent('none'); //used by character keyboard to display current field - when swap forms need to set to none
 	displayForm('new', level + 1);
+	body.className = 'none';
 }
 
 
