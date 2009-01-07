@@ -94,7 +94,7 @@ class EadEditingHandler(EadHandler):
     def __init__(self, lgr):
         EadHandler.__init__(self, lgr)
         self.htmlTitle = ['Data Creation and Editing']
-        self.htmlNav = ['<a href="">Editing Menu</a>', '<a href="javascript: toggleKeyboard();">Character Keyboard</a>']
+        self.htmlNav = ['<a href="menu.html">Editing Menu</a>', '<a href="javascript: toggleKeyboard();">Character Keyboard</a>']
         self.logger = lgr
 
     #- end __init__ ---------------------------------------------------------
