@@ -1026,7 +1026,7 @@
 					<xsl:for-each select="dao">
 						<xsl:choose>
 							<xsl:when test="@show='embed'">
-								<div id="digitalobjectsform">
+								<div id="digitalobjectsform" class="embed">
 									<xsl:call-template name="dao">
 										<xsl:with-param name="type" select="'embed'"/>
 										<xsl:with-param name="number" select="position()"/>
@@ -1034,7 +1034,7 @@
 								</div>						
 							</xsl:when>
 							<xsl:otherwise>
-								<div id="digitalobjectsform">
+								<div id="digitalobjectsform" class="singlefile">
 									<xsl:call-template name="dao">
 										<xsl:with-param name="type" select="'new'"/>
 										<xsl:with-param name="number" select="position()"/>
@@ -1048,14 +1048,14 @@
 					<xsl:for-each select="daogrp">
 						<xsl:choose>
 							<xsl:when test="daoloc/@role='thumb'">
-								<div id="digitalobjectsform">
+								<div id="digitalobjectsform" class="thumb">
 									<xsl:call-template name="thumb">
 										<xsl:with-param name="number" select="position()"/>									
 									</xsl:call-template>
 								</div>
 							</xsl:when>
 							<xsl:otherwise>
-								<div id="digitalobjectsform">
+								<div id="digitalobjectsform" class="multiple">
 									<xsl:call-template name="multiple">
 										<xsl:with-param name="number" select="position()"/>									
 									</xsl:call-template>
@@ -1082,7 +1082,7 @@
 					<xsl:for-each select="did/dao">
 						<xsl:choose>
 							<xsl:when test="@show='embed'">
-								<div id="digitalobjectsform">
+								<div id="digitalobjectsform" class="embed">
 									<xsl:call-template name="dao">
 										<xsl:with-param name="type" select="'embed'"/>
 										<xsl:with-param name="number" select="position()"/>
@@ -1091,7 +1091,7 @@
 								</div>						
 							</xsl:when>
 							<xsl:otherwise>
-								<div id="digitalobjectsform">
+								<div id="digitalobjectsform" class="singlefile">
 									<xsl:call-template name="dao">
 										<xsl:with-param name="type" select="'new'"/>
 										<xsl:with-param name="number" select="position()"/>
@@ -1106,7 +1106,7 @@
 					<xsl:for-each select="did/daogrp">
 						<xsl:choose>
 							<xsl:when test="daoloc/@role='thumb'">
-								<div id="digitalobjectsform">
+								<div id="digitalobjectsform" class="thumb">
 									<xsl:call-template name="thumb">
 										<xsl:with-param name="number" select="position()"/>	
 										<xsl:with-param name="path" select="'did/'"/>								
@@ -1114,7 +1114,7 @@
 								</div>
 							</xsl:when>
 							<xsl:otherwise>
-								<div id="digitalobjectsform">
+								<div id="digitalobjectsform" class="multiple">
 									<xsl:call-template name="multiple">
 										<xsl:with-param name="number" select="position()"/>	
 										<xsl:with-param name="path" select="'did/'"/>									
@@ -1937,11 +1937,11 @@
   				</input>
   			</td>
   		</tr>  	
-  		<input type="hidden" value="thumb">
+  		<!--<input type="hidden" value="thumb">
   			<xsl:attribute name="name">
 				<xsl:value-of select="$path"/><xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[1]/@role</xsl:text>
 			</xsl:attribute>
-  		</input>
+  		</input>-->
   		<tr>
   			<td class="label">File URI: </td>
   			<td>
