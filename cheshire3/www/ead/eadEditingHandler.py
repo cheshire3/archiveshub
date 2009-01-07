@@ -583,15 +583,14 @@ class EadEditingHandler(EadHandler):
 
             
     #loads from editStore
-    def load_file(self, form):
+    def load_file(self, form, req):
         recid = form.get('recid', None)
         if not recid :
             return self.show_editMenu();
         try :
             rec = editStore.fetch_record(session, recid)
         except:
-            #to do - fix this
-            pass
+            return self.show_editMenu();
         else :
             structure = read_file('ead2002.html') 
             htmlform = formTxr.process_record(session, rec).get_raw(session)
@@ -1184,7 +1183,7 @@ class EadEditingHandler(EadHandler):
             file.close()    
             editStore.delete_record(session, editRecid)
             editStore.commit_storing(session)
-            req.write('<span class="ok">[OK]</span><br/>\n<p><a href="/ead/edit">Back to \'Editing Menu\'.</a></p>')
+            req.write('<span class="ok">[OK]</span><br/>\n<p><a href="/ead/edit/menu.html">Back to \'Editing Menu\'.</a></p>')
             foot = self._get_genericHtml('footer.html')          
             req.write('</div>' + foot)
         return None 
@@ -1370,7 +1369,7 @@ class EadEditingHandler(EadHandler):
                 content = self.edit_file(form)
                 self.send_fullHtml(content, req) 
             elif (operation == 'load'):
-                content = self.load_file(form)
+                content = self.load_file(form, req)
                 self.send_fullHtml(content, req)             
             elif (operation == 'create'):
                 content = self.generate_file(form)
