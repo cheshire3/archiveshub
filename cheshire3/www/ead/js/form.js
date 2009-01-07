@@ -126,7 +126,7 @@ function submit(index){
     	var inputs = daoform.getElementsByTagName('input');
     	if (type == 'embed' || type == 'singlefile'){
     		if (inputs[0].value.strip() == '' && (inputs[1].value.strip() != '' || inputs[2].value.strip() != '')){
-    			var confirmbox = confirm('The File URI value required for the digital object has not been completed. If you choose to proceed with this operation the digital object will not be included and the current details in the form will be lost.\n\nDo you want to continue?');
+    			var confirmbox = confirm('The File URI value required for the digital object has not been completed. If you proceed with this operation the digital object will not be included and the title and/or description information relating to it will be lost. All other content will be saved.\n\nDo you want to continue?');
     			if (confirmbox == false){
     				body.className = 'none';
     				return;
@@ -140,7 +140,7 @@ function submit(index){
     	}
     	else if (type == 'thumb') {
     		if ((inputs[0].value.strip() == '' || inputs[1].value.strip() == '') && (inputs[2].value.strip() != '' || inputs[3].value.strip() != '')){   			
-    			var confirmbox = confirm('The Thumbnail URI and/or File URI value required for the digital object has not been completed. If you choose to proceed with this operation the digital object will not be included and the current details in the form will be lost.\n\nDo you want to continue?');
+    			var confirmbox = confirm('The Thumbnail URI and/or File URI value required for the digital object has not been completed. If you proceed with this operation the digital object will not be included and the title and/or description information relating to it will be lost. All other content will be saved.\n\nDo you want to continue?');
     			if (confirmbox == false){
     				body.className = 'none';
     				return;
@@ -165,7 +165,7 @@ function submit(index){
 				}
     		}
     		if (problems == true){
-    			var confirmbox = confirm('At least one of File URI values required for the digital object has not been completed. If you choose to proceed with this operation any incomplete URIs will not be included and the remaining incomplete details in the form will be lost.\n\nDo you want to continue?');
+    			var confirmbox = confirm('At least one of File URI values required for the digital object has not been completed. If you proceed with this operation any incomplete URIs will not be included and the title and/or description information relating to the missing URI will be lost. All other content will be saved.\n\nDo you want to continue?');
     			if (confirmbox == false){
     				body.className = 'none';
     				return;
@@ -252,7 +252,7 @@ function save(){
     	var inputs = daoform.getElementsByTagName('input');
     	if (type == 'embed' || type == 'singlefile'){
     		if (inputs[0].value.strip() == '' && (inputs[1].value.strip() != '' || inputs[2].value.strip() != '')){
-    			var confirmbox = confirm('The File URI value required for the digital object has not been completed. If you choose to proceed with saving this file the digital object will not be included and the current details in the form will be lost.\n\nDo you want to continue saving this file?');
+    			var confirmbox = confirm('The File URI value required for the digital object has not been completed. If you proceed with saving this file the digital object will not be included and the title and/or description information relating to it will be lost. All other content will be saved.\n\nDo you want to continue saving this file?');
     			if (confirmbox == false){
     				body.className = 'none';
     				return;
@@ -266,7 +266,7 @@ function save(){
     	}
     	else if (type == 'thumb') {
     		if ((inputs[0].value.strip() == '' || inputs[1].value.strip() == '') && (inputs[2].value.strip() != '' || inputs[3].value.strip() != '')){   			
-    			var confirmbox = confirm('The Thumbnail URI and/or File URI value required for the digital object has not been completed. If you choose to proceed with saving this file the digital object will not be included and the current details in the form will be lost.\n\nDo you want to continue saving this file?');
+    			var confirmbox = confirm('The Thumbnail URI and/or File URI value required for the digital object has not been completed. If you proceed with saving this file the digital object will not be included and the title and/or description information relating to it will be lost. All other content will be saved.\n\nDo you want to continue saving this file?');
     			if (confirmbox == false){
     				body.className = 'none';
     				return;
@@ -291,7 +291,7 @@ function save(){
 				}
     		}
     		if (problems == true){
-    			var confirmbox = confirm('At least one of File URI values required for the digital object has not been completed. If you choose to proceed with saving this file any incomplete URIs will not be included and the remaining incomplete details in the form will be lost.\n\nDo you want to continue saving this file?');
+    			var confirmbox = confirm('At least one of File URI values required for the digital object has not been completed. If you proceed with saving this file any incomplete URIs will not be included and the title and/or description information relating to the missing URI will be lost. All other content will be saved.\n\nDo you want to continue saving this file?');
     			if (confirmbox == false){
     				body.className = 'none';
     				return;
@@ -489,7 +489,7 @@ function addComponent(){
     	var inputs = daoform.getElementsByTagName('input');
     	if (type == 'embed' || type == 'singlefile'){
     		if (inputs[0].value.strip() == '' && (inputs[1].value.strip() != '' || inputs[2].value.strip() != '')){
-    			var confirmbox = confirm('The File URI value required for the digital object has not been completed. If you choose to proceed with this operation the digital object will not be included and the current details in the form will be lost.\n\nDo you want to continue?');
+    			var confirmbox = confirm('The File URI value required for the digital object has not been completed. If you proceed with this operation the digital object will not be included and the title and/or description information relating to it will be lost. All other content will be saved.\n\nDo you want to continue?');
     			if (confirmbox == false){
     				body.className = 'none';
     				return;
@@ -503,7 +503,7 @@ function addComponent(){
     	}
     	else if (type == 'thumb') {
     		if ((inputs[0].value.strip() == '' || inputs[1].value.strip() == '') && (inputs[2].value.strip() != '' || inputs[3].value.strip() != '')){   			
-    			var confirmbox = confirm('The Thumbnail URI and/or File URI value required for the digital object has not been completed. If you choose to proceed with this operation the digital object will not be included and the current details in the form will be lost.\n\nDo you want to continue?');
+    			var confirmbox = confirm('The Thumbnail URI and/or File URI value required for the digital object has not been completed. If you proceed with this operation the digital object will not be included and the title and/or description information relating to it will be lost. All other content will be saved.\n\nDo you want to continue?');
     			if (confirmbox == false){
     				body.className = 'none';
     				return;
@@ -528,7 +528,7 @@ function addComponent(){
 				}
     		}
     		if (problems == true){
-    			var confirmbox = confirm('At least one of File URI values required for the digital object has not been completed. If you choose to proceed with this operation any incomplete URIs will not be included and the remaining incomplete details in the form will be lost.\n\nDo you want to continue?');
+    			var confirmbox = confirm('At least one of File URI values required for the digital object has not been completed. If you proceed with this operation any incomplete URIs will not be included and the title and/or description information relating to the missing URI will be lost. All other content will be saved.\n\nDo you want to continue?');
     			if (confirmbox == false){
     				body.className = 'none';
     				return;
@@ -654,7 +654,7 @@ function viewXml(){
     	var inputs = daoform.getElementsByTagName('input');
     	if (type == 'embed' || type == 'singlefile'){
     		if (inputs[0].value.strip() == '' && (inputs[1].value.strip() != '' || inputs[2].value.strip() != '')){
-    			var confirmbox = confirm('The File URI value required for the digital object has not been completed. If you choose to proceed with this operation the digital object will not be included and the current details in the form will be lost.\n\nDo you want to continue?');
+    			var confirmbox = confirm('The File URI value required for the digital object has not been completed. If you proceed with this operation the digital object will not be included and the title and/or description information relating to it will be lost. All other content will be saved.\n\nDo you want to continue?');
     			if (confirmbox == false){
     				body.className = 'none';
     				return;
@@ -668,7 +668,7 @@ function viewXml(){
     	}
     	else if (type == 'thumb') {
     		if ((inputs[0].value.strip() == '' || inputs[1].value.strip() == '') && (inputs[2].value.strip() != '' || inputs[3].value.strip() != '')){   			
-    			var confirmbox = confirm('The Thumbnail URI and/or File URI value required for the digital object has not been completed. If you choose to proceed with this operation the digital object will not be included and the current details in the form will be lost.\n\nDo you want to continue?');
+    			var confirmbox = confirm('The Thumbnail URI and/or File URI value required for the digital object has not been completed. If you proceed with this operation the digital object will not be included and the title and/or description information relating to it will be lost. All other content will be saved.\n\nDo you want to continue?');
     			if (confirmbox == false){
     				body.className = 'none';
     				return;
@@ -693,7 +693,7 @@ function viewXml(){
 				}
     		}
     		if (problems == true){
-    			var confirmbox = confirm('At least one of File URI values required for the digital object has not been completed. If you choose to proceed with this operation any incomplete URIs will not be included and the remaining incomplete details in the form will be lost.\n\nDo you want to continue?');
+    			var confirmbox = confirm('At least one of File URI values required for the digital object has not been completed. If you proceed with this operation any incomplete URIs will not be included and the title and/or description information relating to the missing URI will be lost. All other content will be saved.\n\nDo you want to continue?');
     			if (confirmbox == false){
     				body.className = 'none';
     				return;
@@ -742,7 +742,7 @@ function previewRec(){
     	var inputs = daoform.getElementsByTagName('input');
     	if (type == 'embed' || type == 'singlefile'){
     		if (inputs[0].value.strip() == '' && (inputs[1].value.strip() != '' || inputs[2].value.strip() != '')){
-    			var confirmbox = confirm('The File URI value required for the digital object has not been completed. If you choose to proceed with this operation the digital object will not be included and the current details in the form will be lost.\n\nDo you want to continue?');
+    			var confirmbox = confirm('The File URI value required for the digital object has not been completed. If you proceed with this operation the digital object will not be included and the title and/or description information relating to it will be lost. All other content will be saved.\n\nDo you want to continue?');
     			if (confirmbox == false){
     				body.className = 'none';
     				return;
@@ -756,7 +756,7 @@ function previewRec(){
     	}
     	else if (type == 'thumb') {
     		if ((inputs[0].value.strip() == '' || inputs[1].value.strip() == '') && (inputs[2].value.strip() != '' || inputs[3].value.strip() != '')){   			
-    			var confirmbox = confirm('The Thumbnail URI and/or File URI value required for the digital object has not been completed. If you choose to proceed with this operation the digital object will not be included and the current details in the form will be lost.\n\nDo you want to continue?');
+    			var confirmbox = confirm('The Thumbnail URI and/or File URI value required for the digital object has not been completed. If you proceed with this operation the digital object will not be included and the title and/or description information relating to it will be lost. All other content will be saved.\n\nDo you want to continue?');
     			if (confirmbox == false){
     				body.className = 'none';
     				return;
@@ -781,7 +781,7 @@ function previewRec(){
 				}
     		}
     		if (problems == true){
-    			var confirmbox = confirm('At least one of File URI values required for the digital object has not been completed. If you choose to proceed with this operation any incomplete URIs will not be included and the remaining incomplete details in the form will be lost.\n\nDo you want to continue?');
+    			var confirmbox = confirm('At least one of File URI values required for the digital object has not been completed. If you proceed with this operation any incomplete URIs will not be included and the title and/or description information relating to the missing URI will be lost. All other content will be saved.\n\nDo you want to continue?');
     			if (confirmbox == false){
     				body.className = 'none';
     				return;
