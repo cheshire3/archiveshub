@@ -122,6 +122,7 @@ class EadEditingHandler(EadHandler):
     
         page = multiReplace(page, self.globalReplacements)
         req.content_type = 'text/html'
+        req.headers_out['Cache-Control'] = "no-cache, no-store"
         req.content_length = len(page)
         req.send_http_header()
         if (type(page) == unicode):
@@ -133,7 +134,7 @@ class EadEditingHandler(EadHandler):
     
     def send_xml(self, data, req, code=200):
         req.content_type = 'text/xml'
-        req.content_length = len(data)
+        req.content_length = len(data) 
         req.send_http_header()
         if (type(data) == unicode):
             data = data.encode('utf-8')

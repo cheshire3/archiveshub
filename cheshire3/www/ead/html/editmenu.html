@@ -27,7 +27,7 @@
     -->
     </script>
     <h3 class="bar">Create New EAD Description</h3>
-     <form name="createform" action="/ead/edit/" method="post" enctype="multipart/form-data">
+     <form name="createform" action="/ead/edit/" method="get" enctype="multipart/form-data">
     	<input type="hidden" name="operation" id="operation" value="create"/>
     	<p>Use this data creation template to create a new collection-level description.</p>
     	<p>Note: the numbers on the template refer to the corresponding ISAD(G) section.</p>  
@@ -37,7 +37,7 @@
     <h3 class="bar">Edit Existing EAD Description</h3>
     <div style="float: left; padding-right:50px;">
     <h4>A file from the main database</h4>
-    <form id="sourceDirForm" name="sourceDirForm" action="/ead/edit/" method="post" enctype="multipart/form-data">
+    <form id="sourceDirForm" name="sourceDirForm" action="/ead/edit/" method="get" enctype="multipart/form-data">
     <input type="hidden" name="operation" id="operation" value="edit"/>
     <input type="button" onclick="checkConflicts();" value=" Edit File "/>
     <ul class="unmarked">
@@ -53,7 +53,7 @@
     </div>
     <div style="float: left">
     <h4>A file already in the process of being edited or created</h4>
-    <form name="storeDirForm" id="storeDirForm" action="/ead/edit/" method="post" enctype="multipart/form-data">
+    <form name="storeDirForm" id="storeDirForm" action="/ead/edit/" method="get" enctype="multipart/form-data">
     <input type="hidden" name="operation" id="operation" value="load"/>
    <input type="submit" value=" Load File "/>
    <input type="button" onclick="deleteFromStore()" value=" Delete "/>
