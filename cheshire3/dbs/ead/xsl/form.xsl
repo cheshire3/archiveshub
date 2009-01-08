@@ -1460,7 +1460,7 @@
 						<xsl:attribute name="title">
 							<xsl:text>delete entry</xsl:text>
 						</xsl:attribute>
-						<img src="/images/deletesmall.gif">
+						<img src="/images/delete.png">
 						<xsl:attribute name="id">
 							<xsl:text>delete</xsl:text><xsl:number level="single" count="controlaccess/*[name() = $aptype]" format="1"/>
 						</xsl:attribute>
@@ -1704,7 +1704,7 @@
 						<xsl:attribute name="title">
 							<xsl:text>delete entry</xsl:text>
 						</xsl:attribute>
-						<img src="/images/deletesmall.gif">
+						<img src="/images/delete.png">
 						<xsl:attribute name="id">
 							<xsl:text>delete</xsl:text><xsl:number level="single" count="language" format="1"/>
 						</xsl:attribute>

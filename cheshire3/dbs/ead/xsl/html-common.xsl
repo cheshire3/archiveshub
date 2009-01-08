@@ -1053,7 +1053,7 @@
             </xsl:attribute>
             <!-- inner HTML -->
             <xsl:variable name="txt">
-                <xsl:value-of select="string(./daodesc)"/>
+                <xsl:value-of select="string(.)"/>
             </xsl:variable>
             <xsl:choose>
                 <xsl:when test="string(.)">
@@ -1247,7 +1247,7 @@
                     <xsl:value-of select="./daoloc[@role='reference']/@href"/>
                 </xsl:attribute>
                 <xsl:attribute name="title">
-                    <xsl:text>View Full Image</xsl:text>
+                    <xsl:text>View File</xsl:text>
                 </xsl:attribute>
                 <xsl:attribute name="target">
                     <xsl:choose>
@@ -1286,7 +1286,7 @@
                         <xsl:value-of select="./@title"/>
                     </xsl:when>
                 	<xsl:otherwise>
-                        <xsl:text>Full image</xsl:text>
+                        <xsl:text>Full file</xsl:text>
                 	</xsl:otherwise>
                 </xsl:choose>
             </xsl:element>
