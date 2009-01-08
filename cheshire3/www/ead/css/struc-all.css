@@ -52,7 +52,7 @@ div#c3logo{ float: right; }
 
 div#wrapper {
 	top: 105px;
-	bottom: 50px;
+	bottom: 60px;
 	overflow-y: auto;
 }
 
@@ -113,12 +113,23 @@ div#supporters {
   padding-right: 50px;
   margin-right: auto;
 }
+
 div#version,
 div#copyright
 {
   padding-right: 5px;
   text-align: right;
   font-size: smaller;
+}
+
+div#supporters-side {
+	float: right;
+	text-align: center;
+	border-left: 2px solid silver;
+}
+div#supporters-side a {
+	display: block;
+	padding: 10px 0 10px 0
 }
 
 h4.ead {
@@ -210,6 +221,10 @@ div#full-link {
 
 div.archdesc {
 	padding-top: 10px;
+	/*clear:both;*/
+}
+
+div.component {
 	clear:both;
 }
 
@@ -220,7 +235,7 @@ div.daos {
 }
 
 div.dao {
-	/*overflow: auto;*/
+	overflow-y: auto;
 }
 
 div.embed-img {
