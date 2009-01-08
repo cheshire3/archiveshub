@@ -281,11 +281,14 @@ function save(){
     	}
     	else if (type == 'multiple'){
     		var length = inputs.length;
+    		alert('there are ' + length + ' inputs');
     		var number = (length-1)/3;
     		var problems = false;
     		var list = new Array();
+    		alert('there are ' + number + ' files');
     		for (var i = number; i < length-1; i+=2){
 				if (inputs[i].value.strip() == '' && (inputs[i+1].value.strip() != '' || inputs[length-1].value.strip() != '')){
+					alert('input ' + i + ' is missing a uri')
 					list[list.length] = i;
 					problems = true;
 				}
