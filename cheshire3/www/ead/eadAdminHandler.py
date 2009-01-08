@@ -79,9 +79,6 @@ from eadHandler import *
 from cheshire3.baseObjects import Record
 from cheshire3.record import LxmlRecord
 
-# script specific globals
-script = '/ead/admin/'
-
 from threading import Thread
 
 class AdminThread(Thread):
@@ -344,7 +341,7 @@ class EadAdminHandler(EadHandler):
         for c in userNode.iterchildren(tag=etree.Element):
             if c.tag in updateHash:
                 c.text = updateHash[c.tag]
-                del updateHash[c.localName]
+                del updateHash[c.tag]
 
         for k,v in updateHash.iteritems():
             el = etree.SubElement(userNode, k)

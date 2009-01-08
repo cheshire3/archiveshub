@@ -1,6 +1,6 @@
 #
 # Script:   localConfig.py
-# Version:   0.17
+# Version:   0.18
 # Description:
 #            Customisable elements for Cheshire for Archives v3.x
 #
@@ -34,6 +34,7 @@
 # 0.15 - 24/04/2008 - JH - Improvements to stopwords
 # 0.16 - 03/06/2008 - JH - Configurable highlight delimiters 
 # 0.17 - 19/09/2008 - JH - Pop-up slash screens removed permanently
+# 0.18 - 01/12/2008 - JH - Changes to get install path from environment
 #
 # Changes to original:
 # You should make a note of any changes that you make to the originally distributed file here.
@@ -41,6 +42,7 @@
 #
 #
 #
+import os
 
 # Preference switches - True => ON, False => OFF
 result_graphics = True
@@ -48,10 +50,10 @@ display_relevance = True
 graphical_relevance = False
 
 # Path to Cheshire Root - i.e. where Cheshire3 was installed
-cheshirePath = "/home/cheshire"
+cheshirePath = os.environ.get('C3HOME', '/home/cheshire/cheshire3/')
 
 # Institutionally specific configurables
-repository_name = "Cheshire for Archives 3.3 Development"
+repository_name = "Cheshire for Archives 3.4 Development"
 repository_link = "http://www.archiveshub.ac.uk"                        # must begin http://
 repository_logo = "http://www.archiveshub.ac.uk/loopsmall2.gif"             # should begin http:// unless on this server
 

@@ -121,7 +121,8 @@ class EadSearchHandler(EadHandler):
     
 
     def _backwalkTitles(self, rec, xpath):
-        global asciiFriendly, normIdFlow
+        global asciiFriendly
+        normIdFlow = db.get_object(session, 'normalizeDataIdentifierWorkflow'); normIdFlow.load_cache(session, db)
         def _processNode(node):
             t = node.xpath('string(./did/unittitle)')
             if not len(t): t = '(untitled)'
@@ -797,7 +798,6 @@ class EadSearchHandler(EadHandler):
                 if x in nodeIdxs:
                     xps[x] = tree.getpath(n)
             
-            endPointRe = regexpFindOffsetTokenizer.regexp
             for ni, offset in zip(nodeIdxs, wordOffsets):
                 wordCount = 0
                 try:
@@ -812,7 +812,7 @@ class EadSearchHandler(EadHandler):
                         text = c.text
                         if len(c.text) > offset:
                             start = offset
-                            end = endPointRe.search(text, start).end()
+                            end = highlightEndPointRe.search(text, start).end()
                             if end == -1:
                                 end = len(text)
                             located = 'text'
@@ -827,7 +827,7 @@ class EadSearchHandler(EadHandler):
                         text = c.tail
                         if len(c.tail) > offset:
                             start = offset
-                            end = endPointRe.search(text, start).end()
+                            end = highlightEndPointRe.search(text, start).end()
                             if end == -1:
                                 end = len(text)
                             located = 'tail'
@@ -842,8 +842,9 @@ class EadSearchHandler(EadHandler):
         
         # NEVER cache summaries - always generate on the fly - as we highlight search terms         
         # send record to transformer
+        summaryTxr = db.get_object(session, 'htmlSummaryTxr')
         doc = summaryTxr.process_record(session, rec)
-        del rec
+        del summaryTxr, rec
         summ = unicode(doc.get_raw(session), 'utf-8')
         summ = nonAsciiRe.sub(asciiFriendly, summ)
         summ = overescapedAmpRe.sub(unescapeCharent, summ)
@@ -1158,14 +1159,18 @@ class EadSearchHandler(EadHandler):
             hierarchy = [(' ' * 4 * x) + t[1] for x,t in enumerate(titles[:-1])]
             parentTitle = '\n'.join(hierarchy)
             
+        textTxr = db.get_object(session, 'textTxr')
         doc = textTxr.process_record(session, rec)
+        del textTxr
         # cache copy
 #        doc.id = recid
 #        try: textStore.store_document(session, doc)
 #        except: pass;         # cannot cache, oh well...
 
         docString = unicode(doc.get_raw(session), 'utf-8')
+        diacriticNormalizer = db.get_object(session, 'DiacriticNormalizer')
         docString = diacriticNormalizer.process_string(session, docString)
+        del diacriticNormalizer
         try: docString = docString.encode('utf-8', 'latin-1')
         except:
             try: docString = docString.encode('utf-16')
@@ -1402,44 +1407,28 @@ serv = None
 db = None
 dbPath = None
 # ingest
-baseDocFac = None
 queryFactory = None
-sourceDir = None
-docParser = None
 # stores
-authStore = None
 recordStore = None
 dcStore = None
 compStore = None
 resultSetStore = None
 # clusters
 clusDb = None
-clusStore = None
-# transformers
-summaryTxr = None
-fullTxr = None
-fullSplitTxr = None
-textTxr = None
-# workflows
-assignDataIdFlow = None
-normIdFlow = None
 # indexes
 exactIndexHash = {}
 # other
-diacriticNormalizer = None
-
-
+highlightEndPointRe = None
 rebuild = True
+
 
 def build_architecture(data=None):
     # data argument provided for when function run as clean-up - always None
-    global session, serv, db, dbPath, baseDocFac, queryFactory, sourceDir, docParser, \
-    authStore, recordStore, dcRecordStore, compStore, resultSetStore, \
-    clusDb, clusStore, \
-    summaryTxr, fullTxr, fullSplitTxr, textTxr, \
-    assignDataIdFlow, normIdFlow, \
-    diacriticNormalizer, regexpFindOffsetTokenizer, \
-    subjectIdx, creatorIdx, genreIdx, dateIdx, persnameIdx, \
+    global session, serv, db, dbPath, queryFactory, \
+    recordStore, dcRecordStore, compStore, resultSetStore, \
+    clusDb, \
+    exactIndexHash, \
+    highlightEndPointRe, \
     rebuild
     
     # globals line 1: re-establish session; maintain user if possible
@@ -1452,12 +1441,8 @@ def build_architecture(data=None):
     serv = SimpleServer(session, os.path.join(cheshirePath, 'cheshire3', 'configs', 'serverConfig.xml'))
     db = serv.get_object(session, 'db_ead')
     dbPath = db.get_path(session, 'defaultPath')
-    baseDocFac = db.get_object(session, 'baseDocumentFactory')
     queryFactory = db.get_object(session, 'defaultQueryFactory')
-    sourceDir = baseDocFac.get_default(session, 'data')
-    docParser = db.get_object(session, 'LxmlParser')
     # globals line 2: stores
-    authStore = db.get_object(session, 'eadAuthStore')
     recordStore = db.get_object(session, 'recordStore')
     dcRecordStore = db.get_object(session, 'eadDcStore')
     compStore = db.get_object(session, 'componentStore')
@@ -1465,25 +1450,16 @@ def build_architecture(data=None):
     # globals line 3: subject clusters
     session.database = 'db_ead_cluster'
     clusDb = serv.get_object(session, 'db_ead_cluster')
-    clusStore = clusDb.get_object(session, 'eadClusterStore')
     session.database = 'db_ead'
-    # globals line 4: transformers
-    summaryTxr = db.get_object(session, 'htmlSummaryTxr')
-    fullTxr = db.get_object(session, 'htmlFullTxr')
-    fullSplitTxr = db.get_object(session, 'htmlFullSplitTxr')
-    textTxr = db.get_object(session, 'textTxr')
-    # globals line 5: workflows
-    assignDataIdFlow = db.get_object(session, 'assignDataIdentifierWorkflow'); assignDataIdFlow.load_cache(session, db)
-    normIdFlow = db.get_object(session, 'normalizeDataIdentifierWorkflow'); normIdFlow.load_cache(session, db)
     # globals line 6: indexes
     exactIndexHash['subject'] = db.get_object(session, 'ead-idx-subject')
     exactIndexHash['creator'] = db.get_object(session, 'ead-idx-creator')
     exactIndexHash['genre'] = db.get_object(session, 'ead-idx-genreform')
     exactIndexHash['date'] = db.get_object(session, 'ead-idx-dateYear')
     #exactIndexHash['persname'] = db.get_object(session, 'ead-idx-persname')
-    # globals line 7: other
-    diacriticNormalizer = db.get_object(session, 'DiacriticNormalizer')
     regexpFindOffsetTokenizer = db.get_object(session, 'RegexpFindOffsetTokenizer')
+    highlightEndPointRe = regexpFindOffsetTokenizer.regexp
+    del regexpFindOffsetTokenizer
     rebuild = False
 
 logfilepath = searchlogfilepath
