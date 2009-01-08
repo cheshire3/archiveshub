@@ -156,10 +156,8 @@ function addLanguage() {
   //checking for both lang_code and lang_name*/
 
   var form = document.getElementById('eadForm');
-
-  langcode = form["lang_code"].value;
-  language = form["lang_name"].value;
-
+  var langcode = document.getElementById('lang_code').value;
+  var language = document.getElementById('lang_name').value;
   var fields = new Array("lang_code", "lang_name"); 
   
   if (langcode == ""){
