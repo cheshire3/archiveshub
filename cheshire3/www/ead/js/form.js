@@ -261,7 +261,7 @@ function save(){
     	body.className = 'none';
     	return;
     }
-    if (checkEditStore){
+    if (checkEditStore()){
     	var confirmbox = confirm('A file with this Reference code is already in the process of being created or edited. If you proceed with this operation the existing file will be overwritten with this one.\n\nAre you sure you want to continue with this operation?');
    		if (confirmbox == false){
    			body.className = 'none';
@@ -1129,7 +1129,7 @@ function checkEditStore(){
 				}
 			}
 		}
-	}	
+	}
 }
 
 function checkId(asynch){

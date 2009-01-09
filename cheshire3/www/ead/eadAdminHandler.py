@@ -748,6 +748,7 @@ class EadAdminHandler(EadHandler):
         req.send_http_header()
         head = self._get_genericHtml('header.html')
         req.write(head)
+        req.write('<div id="single">')
         fn = f.filename.split('\\')[-1]
         fnparts = fn.split('.')
         try:
@@ -800,7 +801,8 @@ class EadAdminHandler(EadHandler):
             
         # finish HTML
         req.write('\n<p><a href="/ead/admin/files.html">Back to \'File Management\' page.</a></p>')
-        foot = self._get_genericHtml('footer.html')          
+        foot = self._get_genericHtml('footer.html') 
+        req.write('</div>')         
         req.write(foot)        
         rebuild = True                    # flag for rebuild architecture
         return None 
@@ -821,6 +823,7 @@ class EadAdminHandler(EadHandler):
         req.send_http_header()
         head = self._get_genericHtml('header.html')
         req.write(head)     
+        req.write('<div id="single">')
         if (len(filepaths) == 0):
             return '%s<br />\n<br/><a href="files.html" title="File Management" class="navlink">Back to \'File Management\' Page</a>' % self.review_records(operation)     
         deletedTotal = 0
@@ -924,7 +927,8 @@ class EadAdminHandler(EadHandler):
             req.write('\n<strong> with %d possible error(s) (see above for details)</strong>' %errorTotal)
         req.write('\n<p><a href="/ead/admin/files.html">Back to \'File Management\' page.</a></p>')
                 
-        foot = self._get_genericHtml('footer.html')          
+        foot = self._get_genericHtml('footer.html')    
+        req.write('</div>')      
         req.write(foot)
         return None
     #- end delete_file()
@@ -1097,6 +1101,7 @@ class EadAdminHandler(EadHandler):
         req.send_http_header()
         head = self._get_genericHtml('header.html')
         req.write(head)
+        req.write('<div id="single">')
         req.write('Deleting existing data stores and indexes...')
         # delete main stores, metadata, and indexes
         self._clear_dir(os.path.join(dbPath, 'stores'))
@@ -1205,7 +1210,8 @@ class EadAdminHandler(EadHandler):
             self.logger.log('Database rebuilt by: %s' % (session.user.username))
 
         # finish HTML, log
-        foot = self._get_genericHtml('footer.html')          
+        foot = self._get_genericHtml('footer.html')
+        req.write('</div>')
         req.write(foot)
         rebuild = True
         
@@ -1221,6 +1227,7 @@ class EadAdminHandler(EadHandler):
         req.send_http_header()
         head = self._get_genericHtml('header.html')
         req.write(head)
+        req.write('<div id="single">')
         req.write('Deleting existing indexes...')
         # delete existing indexes
         if not db.indexes:
@@ -1330,7 +1337,8 @@ class EadAdminHandler(EadHandler):
         req.write('[<span class="ok"> OK </span>] %dh %dm %ds<br/>\nDATABASE REINDEX COMPLETE' % (hours, mins, secs))
         req.write('<br/>\n<a href="database.html" title="Database Management" class="navlink">Back to \'Database Management\' Page</a>')
         # finish HTML, log
-        foot = self._get_genericHtml('footer.html')          
+        foot = self._get_genericHtml('footer.html')     
+        req.write('</div>')     
         req.write(foot)
         self.logger.log('Database reindexed by: %s' % (session.user.username))
         rebuild = True

@@ -1,29 +1,38 @@
 /*
-// keyboard.js
-// Author:    John Harrison <john.harrison@liv.ac.uk>
-// Date:      08 August 2006
-// Copyright &copy; University of Liverpool 2006
-// 
+// Program:		keyboard.js
+// Version:   	0.02
+// Description:
+//            	JavaScript functions for input of special characters into the ead template.  
+//            	- produced for the Archives Hub v3.x. 
+// Language:  	JavaScript
+// Author(s):   John Harrison <john.harrison@liv.ac.uk>
+//				Catherine Smith <catherine.smith@liv.ac.uk>
+// Date:      	09/01/2009
+// Copyright: 	&copy; University of Liverpool 2005-2009
+//
+// Version History:
+// 0.01 - 08/08/2006 - JH - basic functions completed for original ead2002 template
+// 0.02 - 09/01/2009 - CS - Addition of code to maintain current scroll position in text area after adding character
+//							field codes changes to represent new ead editing interface
 */
 
 
-var defaultsetting = "100%, *"
-	characterframe = null;
-	currentEntryField = null;
-	theFieldName = "Error. You have not yet selected a field to enter text into.";
 
-	fieldcodes = new Array("rep", "countrycode", "archoncode", "unitid", "spo", "cab", "cac", "can", "cae", "cba", "cbb", "cbc", "cbd", "cca", "ccb", "ccc", "ccd", "cda", "cdb", "lang_name", "cdd", "cde", "cea", "ceb", "cec", "ced", "cfa", "cga", "persname_surname", "persname_forename", "persname_dates", "persname_title", "persname_epithet", "persname_other", "persname_source", "famname_surname", "famname_other", "famname_dates", "famname_title", "famname_epithet", "famname_loc", "famname_source", "corpname_organisation", "corpname_dates", "corpname_loc", "corpname_other", "corpname_source", "subject_subject", "subject_dates", "subject_loc", "subject_other", "subject_source", "geogname_location", "geogname_other", "geogname_source", "title_title", "title_dates", "title_source", "genreform_genre", "genreform_source", "function_function", "function_source")
+var	currentEntryField = null;
+var	theFieldName = "Error. You have not yet selected a field to enter text into.";
 
-	fieldnames = new Array("Repository", "Country Code", "Archon Code", "Unit ID", "Sponsor", "Title", "Dates of Creation", "Normalised Date - This should NOT contain character entities", "Extent of Unit Description", "Name of Creator", "Administrative/Biographical History", "Archival History", "Immediate Source of Acquisition", "Scope and Content", "Appraisal", "Accruals", "System of Arrangement", "Conditions Governing Access", "Conditions Governing Reproduction", "Language of Material - Language Name", "Physical Characteristics ", "Finding Aids", "Existence/Location of Orginals", "Existence/Location of Copies", "Related Units of Description", "Publication Note", "Note", "Archivist's Note", "Personal Name - Surname", "Personal Name - Forename", "Personal Name - Dates", "Personal Name - Title", "Personal Name - Epithet", "Personal Name - Other", "Personal Name - Source", "Family Name - Surname", "Family Name - Other", "Family Name - Dates", "Family Name - Title", "Family Name - Epithet", "Family Name - Location", "Family Name - Source", "Corporate Name - Organisation", "Corporate Name -_Dates", "Corporate Name - Location", "Corporate Name - Other", "Corporate Name - Source", "Subject - Subject", "Subject - Dates", "Subject - Location", "Subject - Other", "Subject - Thesaurus", "Place Name - Location", "Place Name - Other", "Place Name - Source", "Book Title", "Book Title - Dates", "Book Title - Source", "Genre Form - Genre", "Genre Form - Source", "Function - Function", "Function - Source")
+var	fieldcodes = new Array("rep", "countrycode", "archoncode", "unitid", "spo", "cab", "cac", "can", "cae", "cba", "cbb", "cbc", "cbd", "cca", "ccb", "ccc", "ccd", "cda", "cdb", "lang_name", "cdd", "cde", "cea", "ceb", "cec", "ced", "cfa", "cga", "persname_surname", "persname_forename", "persname_dates", "persname_title", "persname_epithet", "persname_other", "persname_source", "famname_surname", "famname_other", "famname_dates", "famname_title", "famname_epithet", "famname_loc", "famname_source", "corpname_organisation", "corpname_dates", "corpname_loc", "corpname_other", "corpname_source", "subject_subject", "subject_dates", "subject_loc", "subject_other", "subject_source", "geogname_location", "geogname_other", "geogname_source", "title_title", "title_dates", "title_source", "genreform_genre", "genreform_source", "function_function", "function_source");
+
+var	fieldnames = new Array("Repository", "Country Code", "Archon Code", "Unit ID", "Sponsor", "Title", "Dates of Creation", "Normalised Date - This should NOT contain character entities", "Extent of Unit Description", "Name of Creator", "Administrative/Biographical History", "Archival History", "Immediate Source of Acquisition", "Scope and Content", "Appraisal", "Accruals", "System of Arrangement", "Conditions Governing Access", "Conditions Governing Reproduction", "Language of Material - Language Name", "Physical Characteristics ", "Finding Aids", "Existence/Location of Orginals", "Existence/Location of Copies", "Related Units of Description", "Publication Note", "Note", "Archivist's Note", "Personal Name - Surname", "Personal Name - Forename", "Personal Name - Dates", "Personal Name - Title", "Personal Name - Epithet", "Personal Name - Other", "Personal Name - Source", "Family Name - Surname", "Family Name - Other", "Family Name - Dates", "Family Name - Title", "Family Name - Epithet", "Family Name - Location", "Family Name - Source", "Corporate Name - Organisation", "Corporate Name -_Dates", "Corporate Name - Location", "Corporate Name - Other", "Corporate Name - Source", "Subject - Subject", "Subject - Dates", "Subject - Location", "Subject - Other", "Subject - Thesaurus", "Place Name - Location", "Place Name - Other", "Place Name - Source", "Book Title", "Book Title - Dates", "Book Title - Source", "Genre Form - Genre", "Genre Form - Source", "Function - Function", "Function - Source");
 
 
-	function addfield(type, tag) {
-	  tag.href = "template.html"
-	}
+/*	function addfield(type, tag) {
+	  tag.href = "template.html";
+	}*/
 
 	function getCurrentSetting(){
 	  if (document.body) {
-	    return (document.body.rows)
+	    return (document.body.rows);
 	  }
 	}
 	
@@ -59,6 +68,7 @@ function cursorInsert(field, insert) {
 		insert = '"';
 	}
 	if (field){
+		//get scroll position
 		var scrollPos = field.scrollTop;
 		if (field.selectionStart || field.selectionStart == '0') {
 			// Firefox 1.0.7, 1.5.0.6 - tested
@@ -99,7 +109,7 @@ function cursorInsert(field, insert) {
 			}
 			field.focus(); //this puts cursor at end
 		}
-		//scrolls to right place in text box
+		//reset scroll to right place in text box
 		if (scrollPos){
 			field.scrollTop = scrollPos;
 		}

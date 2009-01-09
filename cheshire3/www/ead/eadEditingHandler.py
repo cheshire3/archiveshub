@@ -614,11 +614,7 @@ class EadEditingHandler(EadHandler):
         rec = self._add_componentIds(self._parse_upload(xml))       
         # TODO: handle file not successfully parsed
         if not isinstance(rec, LxmlRecord):
-            return rec
-        
-        val = self._validate_isadg(rec)
-        if (val): return val
-        del val      
+            return rec 
         
         #add necessary information to record and get id'
         rec1 = self._add_revisionDesc(rec, f)
@@ -1077,6 +1073,7 @@ class EadEditingHandler(EadHandler):
         req.send_http_header()
         head = self._get_genericHtml('header.html')
         req.write(head)
+        req.write('<div id="single">')
         i = form.get('index', 'true')
         if i == 'false' :
             index = False
@@ -1095,6 +1092,7 @@ class EadEditingHandler(EadHandler):
         xml = rec.get_xml(session)    
         valid = self.validate_record(xml)     
         exists = True 
+        
         if valid and index:
             #delete and unindex the old version from the record store
             try : 
@@ -1102,13 +1100,13 @@ class EadEditingHandler(EadHandler):
             except :
                 #this is a new record so we don't need to delete anything
                 exists = False
-                req.write('<span class="ok">[OK]</span> - New Record<br/>\n')
+                req.write('looking for record... <span class="ok">[OK]</span> - New Record<br/>\n')
             else :
                 req.write('undindexing existing version of record... ')
                 db.unindex_record(session, oldRec)
                 req.write('record unindexed')
                 db.remove_record(session, oldRec)
-                req.write('<span class="ok">[OK]</span><br/>\nDeleting record from stores ...')
+                req.write('<span class="ok">[OK]</span><br/>\nDeleting record from stores...')
                 
                 recordStore.begin_storing(session)
                 recordStore.delete_record(session, oldRec.id)
@@ -1192,8 +1190,9 @@ class EadEditingHandler(EadHandler):
             editStore.delete_record(session, editRecid)
             editStore.commit_storing(session)
             req.write('<span class="ok">[OK]</span><br/>\n<p><a href="/ead/edit/menu.html">Back to \'Editing Menu\'.</a></p>')
-            foot = self._get_genericHtml('footer.html')          
-            req.write('</div>' + foot)
+            foot = self._get_genericHtml('footer.html')  
+            req.write('</div>')        
+            req.write(foot)
         return None 
       
       
