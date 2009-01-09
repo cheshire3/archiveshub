@@ -620,12 +620,19 @@ class EadEditingHandler(EadHandler):
         if (val): return val
         del val      
         
-        #add necessary information to record and save in editStore with id 'recid-username'
+        #add necessary information to record and get id'
         rec1 = self._add_revisionDesc(rec, f)
         rec2 = assignDataIdFlow.process(session, rec1)
         recid = rec2.id
-        rec2.id = '%s-%s' % (recid, session.user.username.encode('ascii', 'ignore'))
-        editStore.store_record(session, rec2)
+        id = '%s-%s' % (recid, session.user.username.encode('ascii', 'ignore'))
+        rec2.id = id
+        
+        #if the file exists in the record store load from there (fixes problems with back button)
+        try:
+            rec2 = editStore.fetch_record(session, id)
+        except:
+        #otherwise store in editing store
+            editStore.store_record(session, rec2)
 #        editStore.commit_storing(session) 
         
         structure = read_file('ead2002.html')
@@ -674,9 +681,9 @@ class EadEditingHandler(EadHandler):
                 if n != session.user.username :
                     ns.append(n)
             if len(names) == 1 and names[0] == session.user.username :
-                return '<wrap><value>true</value><overwrite>true</overwrite></wrap>'
+                return '<wrap><value>true</value><overwrite>true</overwrite><id>%s</id></wrap>' % rec.id
             elif len(names) > 1 and session.user.username in names :
-                return '<wrap><value>true</value><overwrite>true</overwrite><users>%s</users></wrap>' % ' \n '.join(ns)
+                return '<wrap><value>true</value><overwrite>true</overwrite><users>%s</users><id>%s</id></wrap>' % (' \n '.join(ns), rec.id)
             else :
                 return '<wrap><value>true</value><overwrite>false</overwrite><users>%s</users></wrap>' % ' \n '.join(ns)
                 
@@ -689,6 +696,7 @@ class EadEditingHandler(EadHandler):
             rs = recordStore
         elif store == 'editStore' :
             rs = editStore
+            id = '%s-%s' % (id, session.user.username)
         if (id != None and store != None):
             exists = 'false'
             for r in rs:
