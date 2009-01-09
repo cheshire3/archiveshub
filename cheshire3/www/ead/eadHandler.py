@@ -22,7 +22,7 @@
 # 0.04 - 14/12/2007 - JH - Non-ascii character handling fixes
 # 0.05 - 03/01/2008 - CS - _parse_upload function moved here from adminHandler as also used in editing handler
 # 0.06 - 12/02/2008 - CS - _walk_directory function moved here from adminHandler as also used in editing handler
-# 
+# 0.07 - 09/01/2008 - JH - _parse_upload bug fix
 
 # import mod_python stuffs
 from mod_python import apache, Cookie

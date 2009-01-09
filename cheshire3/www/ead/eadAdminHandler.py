@@ -647,49 +647,6 @@ class EadAdminHandler(EadHandler):
         return t.error
     # end _run_thread()
     
-        
-#    def _parse_upload(self, data):
-#        if (type(data) == unicode):
-#            try: data = data.encode('utf-8')
-#            except:
-#                try: data = data.encode('utf-16')
-#                except: pass # hope for the best!
-#        
-#        doc = StringDocument(data)
-#        doc = ppFlow.process(session, doc)
-#        try:
-#            rec = docParser.process_document(session, doc)
-#        except:
-#            newlineRe = re.compile('(\s\s+)')
-#            doc.text = newlineRe.sub('\n\g<1>', doc.get_raw(session))
-#            # repeat parse with correct line numbers
-#            try:
-#                rec = docParser.process_document(session, doc)
-#            except:
-#                self.htmlTitle.append('Error')
-#                e = sys.exc_info()
-#                self.logger.log('*** %s: %s' % (e[0], e[1]))
-#                # try and highlight error in specified place
-#                lines = doc.get_raw(session).split('\n')
-#                positionRe = re.compile(':(\d+):(\d+):')
-#                mo = positionRe.search(str(e[1]))
-#                line, posn = lines[int(mo.group(1))-1], int(mo.group(2))
-#                startspace = newlineRe.match(line).group(0)
-#                return '''\
-#        <p class="error">An error occured while parsing your file. 
-#        Please check the file at the suggested location and try again.</p>
-#        <code>%s: %s</code>
-#        <pre>
-#        %s
-#        <span class="error">%s</span>
-#        </pre>
-#        <p><a href="files.html">Back to file page</a></p>
-#                ''' % (e[0], e[1], html_encode(line[:posn+20]) + '...',  startspace + str('-'*(posn-len(startspace))) +'^')
-#        
-#        del data, doc
-#        return rec
-#    # end _parse_upload()
-        
     def _validate_isadg(self, rec):
         global required_xpaths
         # check record for presence of mandatory XPaths
@@ -722,20 +679,15 @@ class EadAdminHandler(EadHandler):
         pagenum = int(form.getfirst('pagenum', 1))
 
         if not f or not len(f.value):
-            head = self._get_genericHtml('header.html')
-            output = head
-            output += read_file('preview.html')
-            foot = self._get_genericHtml('footer.html')          
-            output += foot
-            return output
+            return (False, read_file('preview.html'))
         
         self.logger.log('Preview requested')
         rec = self._parse_upload(f.value)
         if not isinstance(rec, Record):
-            return rec
+            return (False, rec)
         
         val = self._validate_isadg(rec)
-        if (val): return val
+        if (val): return (False, val)
         del val
         
         # ensure restricted access directory exists
@@ -767,7 +719,7 @@ class EadAdminHandler(EadHandler):
             except:
                 page = page.replace('<!--#include virtual="%s/%s.inc"-->' % (toc_cache_url, recid), '<span class="error">There was a problem whilst generating the Table of Contents</span>')
  
-        return page
+        return (True, page)
     #- end preview_file()
 
 
@@ -1614,10 +1566,10 @@ class EadAdminHandler(EadHandler):
                     if (operation == 'view'):
                         content = self.view_file(form)
                     elif (operation == 'preview'):
-                        content = self.preview_file(form)
-                        if not (content): 
+                        send_direct, content = self.preview_file(form)
+                        if not (content):
                             content = read_file(path)
-                        else:
+                        elif (send_direct):
                             self.send_html(content, req)
                             return 1
                     elif (operation == 'upload' or operation == 'insert'):
