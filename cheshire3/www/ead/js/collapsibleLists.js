@@ -7,7 +7,7 @@
 //
 // Language:  	JavaScript
 // Authors:     John Harrison <john.harrison@liv.ac.uk>
-//				Catherine Smith >catherine.smith@liv.ac.uk>
+//				Catherine Smith <catherine.smith@liv.ac.uk>
 // Date:      	11 January 2008
 //
 // Copyright: &copy; University of Liverpool 2005-2008

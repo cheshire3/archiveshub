@@ -110,6 +110,11 @@ function submit(index){
 		alert ('the following fields must be entered before proceeding:\n  - Reference Code \n  - Title')
 		return;
 	}
+	checkId('recordStore', false);
+	if ($('idError')){
+		alert('This operation cannot be performed because a file in the database has the same reference code as the record you are creating. Please change the reference code and try again. If you are trying to replace the file in the main database you need to delete it from the database in the admin menu before creating the new file.');
+		return;
+	}
 	if (currentEntryField != null && currentEntryField.value != ''){
     	validateField(currentEntryField, false)
     }
@@ -118,7 +123,12 @@ function submit(index){
     	alert('Please fix the errors in the xml before submitting. Errors will be marked with red shading in the text box.');
     	return;
     }
-    
+    if (checkEditStore){
+    	var confirmbox = confirm('A file with this Reference code is already in the process of being created or edited. If you proceed with this operation the existing file will be overwritten with this one.\n\nAre you sure you want to continue with this operation?');
+   		if (confirmbox == false){
+   			return;
+   		}
+    }
     //check the daoform details
     var daoform = document.getElementById('digitalobjectsform');
     var type = daoform.className;
@@ -239,12 +249,26 @@ function save(){
 		body.className = 'none';
 		return;
 	}
+	checkId(false);
+	if ($('idError')){
+		alert('The form cannot be saved because a file in the database has the same reference code as the record you are creating. Please change the reference code and try again. If you are trying to replace the file in the main database you need to delete it from the database in the admin menu before creating the new file.');
+		body.className = 'none';
+		return;
+	}
 	var errors = document.getElementsByClassName('menuFieldError');
     if (errors.length != 0){
     	alert('Please fix the errors in the xml before saving. Errors will be marked with red shading in the text box.');
     	body.className = 'none';
     	return;
     }
+    if (checkEditStore){
+    	var confirmbox = confirm('A file with this Reference code is already in the process of being created or edited. If you proceed with this operation the existing file will be overwritten with this one.\n\nAre you sure you want to continue with this operation?');
+   		if (confirmbox == false){
+   			body.className = 'none';
+   			return;
+   		}
+    }
+       
     //check the daoform details
     var daoform = document.getElementById('digitalobjectsform');
     var type = daoform.className;
@@ -447,6 +471,12 @@ function addComponent(){
 		body.className = 'none';
 		return;
 	}
+	checkId('recordStore', false);
+	if ($('idError')){
+		alert('This operation cannot be performed because a file in the database has the same reference code as the record you are creating. Please change the reference code and try again. If you are trying to replace the file in the main database you need to delete it from the database in the admin menu before creating the new file.');
+		body.className = 'none';
+		return;
+	}
     if (currentEntryField != null && currentEntryField.value != ''){
     	validateField(currentEntryField, false)
     }
@@ -456,6 +486,13 @@ function addComponent(){
     	body.className = 'none';
     	return;
     }
+    if (checkEditStore){
+    	var confirmbox = confirm('A file with this Reference code is already in the process of being created or edited. If you proceed with this operation the existing file will be overwritten with this one.\n\nAre you sure you want to continue with this operation?');
+   		if (confirmbox == false){
+   			body.className = 'none';
+   			return;
+   		}
+    }    
     else if (currentForm == 'collectionLevel' && recid == 'notSet'){
 		var url = '/ead/edit'
 		var data = 'operation=checkId&id=' + ($('pui')).value + '&store=recordStore';
@@ -641,6 +678,11 @@ function viewXml(){
 		alert ('the following fields must be entered before proceeding:\n  - Reference Code \n  - Title')
 		return;
 	}
+	checkId('recordStore', false);
+	if ($('idError')){
+		alert('This operation cannot be performed because a file in the database has the same reference code as the record you are creating. Please change the reference code and try again. If you are trying to replace the file in the main database you need to delete it from the database in the admin menu before creating the new file.');
+		return;
+	}
 	if (currentEntryField != null && currentEntryField.value != ''){
     	validateField(currentEntryField, false)
     }
@@ -649,7 +691,12 @@ function viewXml(){
     	alert('Please fix the errors in the xml before viewing. Errors will be marked with red shading in the text box.');
     	return;
     }
-    
+    if (checkEditStore){
+    	var confirmbox = confirm('A file with this Reference code is already in the process of being created or edited. If you proceed with this operation the existing file will be overwritten with this one.\n\nAre you sure you want to continue with this operation?');
+   		if (confirmbox == false){
+   			return;
+   		}
+    }    
     //check the daoform details
     var daoform = document.getElementById('digitalobjectsform');
     var type = daoform.className;
@@ -729,6 +776,11 @@ function previewRec(){
 		alert ('the following fields must be entered before proceeding:\n  - Reference Code \n  - Title')
 		return;
 	}
+	checkId('recordStore', false);
+	if ($('idError')){
+		alert('This operation cannot be performed because a file in the database has the same reference code as the record you are creating. Please change the reference code and try again. If you are trying to replace the file in the main database you need to delete it from the database in the admin menu before creating the new file.');
+		return;
+	}
 	if (currentEntryField != null && currentEntryField.value != ''){
     	validateField(currentEntryField, false);
     }
@@ -737,7 +789,12 @@ function previewRec(){
     	alert('Please fix the errors in the xml before viewing. Errors will be marked with red shading in the text box.');
     	return;
     }
-    
+    if (checkEditStore){
+    	var confirmbox = confirm('A file with this Reference code is already in the process of being created or edited. If you proceed with this operation the existing file will be overwritten with this one.\n\nAre you sure you want to continue with this operation?');
+   		if (confirmbox == false){
+   			return;
+   		}
+    }    
     //check the daoform details
     var daoform = document.getElementById('digitalobjectsform');
     var type = daoform.className;
@@ -903,11 +960,9 @@ function updateId() {
   	var id = $('unitid').value;
   	
   	if (title == '' && id == ''){
-  		//link.update(currentForm);
   		link.innerHTML = currentForm;
   	}
   	else {
-    	//link.update(id + ' - ' + title);
     	link.innerHTML = id + ' - ' + title;
 	}
 	var match = true;
@@ -921,13 +976,14 @@ function updateId() {
 			}
 			for (var i=0; i < countryCode.length; i++){
 				if (countryCode.charAt(i) != lowerCaseId.charAt(i)){
-					match = false
+					match = false;
 				}
 			}
+			lowerCaseId = lowerCaseId.replace(' ', '').replace('/', '-');
 			if (match == true){
 				for (var i=0; i < repositoryCode.length; i++){
 					if (repositoryCode.charAt(i) != lowerCaseId.charAt(i+2)){
-						match = false
+						match = false;
 					}
 				}
 				if (match == true){
@@ -985,9 +1041,15 @@ function checkConflicts(){
 		var data = 'operation=getCheckId&filepath=' + filepath;
 		new Ajax.Request(url, {method: 'get', asynchronous: false, parameters: data, onSuccess: function(transport) { 
 			var response = transport.responseText;
+			if (response.substring(0, 4) == "<!--"){
+				document.sourceDirForm.submit();
+			}			
 			conflict = response.substring(response.indexOf('<value>')+7, response.indexOf('</value>'));
 			if (response.indexOf('<overwrite>') > -1){
 				overwrite = response.substring(response.indexOf('<overwrite>')+11, response.indexOf('</overwrite>'));
+			}
+			if (response.indexOf('<id>') > -1){
+				id = response.substring(response.indexOf('<id>')+4, response.indexOf('</id>'));
 			}
 			if (response.indexOf('<users>') > -1){
 				users = response.substring(response.indexOf('<users>')+7, response.indexOf('</users>'));
@@ -998,13 +1060,8 @@ function checkConflicts(){
 			document.sourceDirForm.submit();
 		}
 		else if (overwrite == 'true'){
-			var ok = confirmOp('You already have this file open for editing - continuing with this operation will delete all changes you have made since the file was last submitted to the main database. \n Are you sure you want to continue?');
-			if (ok){
-				document.sourceDirForm.submit();
-			}
-			else {
-				return;
-			}
+			alert('You already have this file open for editing as ' + id + '. Please delete the file currently being edited (right hand column) before reloading from the main database (left hand column)');
+			return;			
 		}
 		else if (users != null){
 			var ok = confirmOp('The following users already have this file open for editing\n\n ' + users + '\n\n Are you sure you want to continue?');
@@ -1050,30 +1107,57 @@ function validateXML(field, asynch){
 	}});
 }
 
+function checkEditStore(){
+	if (recid == null || recid == 'notSet'){
+		if ($('countrycode').value != ''){
+			if ($('archoncode').value != ''){
+				if ($('unitid').value != ''){
+					var id = $('countrycode').value.toLowerCase() + $('archoncode').value + $('unitid').value.replace(' ', '').replace('/', '-').toLowerCase();
+					var url = '/ead/edit'
+					var data = 'operation=checkId&id=' + id + '&store=editStore';
+					new Ajax.Request(url, {method: 'get', asynchronous: false, parameters: data, onSuccess: function(transport) { 	    				
+					    var response = transport.responseText;
+					    idExists = response.substring(7,response.indexOf('</value>'));					    
+					    if (idExists == 'true'){
+					    	return true;
+					    }
+					    else {
+					    	return false;
+					    }	
+						
+		 			}});
+				}
+			}
+		}
+	}	
+}
 
-function checkId(store){
-	if ($('countrycode').value != ''){
-		if ($('archoncode').value != ''){
-			if ($('unitid').value != ''){
-				var id = $('countrycode').value.toLowerCase() + $('archoncode').value + $('unitid').value.replace(' ', '').toLowerCase();
-				var url = '/ead/edit'
-				var data = 'operation=checkId&id=' + id + '&store=' + store;
-				new Ajax.Request(url, {method: 'get', asynchronous: true, parameters: data, onSuccess: function(transport) { 	    				
-				    var response = transport.responseText;
-				    idExists = response.substring(7,response.indexOf('</value>'));
-				    if (idExists == 'true' && !($('idError'))){
-				    	var element = document.createElement('p');
-				    	element.className = 'error';
-				    	element.setAttribute('id', 'idError');
-				    	element.appendChild(document.createTextNode('Id already exists in record store'));
-				    	($('unitidparent')).appendChild(element);
-				    }
-				    else {
-				    	if (idExists == 'false' && ($('idError'))){
-				    		($('unitidparent')).removeChild($('idError'));
-				    	}
-				    }	    			    
-	 			}});
+function checkId(asynch){
+	if (recid == null || recid == 'notSet'){
+		if ($('countrycode').value != ''){
+			if ($('archoncode').value != ''){
+				if ($('unitid').value != ''){
+					var id = $('countrycode').value.toLowerCase() + $('archoncode').value + $('unitid').value.replace(' ', '').replace('/', '-').toLowerCase();
+					var url = '/ead/edit'
+					var data = 'operation=checkId&id=' + id + '&store=recordStore';
+					new Ajax.Request(url, {method: 'get', asynchronous: asynch, parameters: data, onSuccess: function(transport) { 	    				
+					    var response = transport.responseText;
+					    idExists = response.substring(7,response.indexOf('</value>'));					    
+					    if (idExists == 'true' && !($('idError'))){
+					    	var element = document.createElement('p');
+					    	element.className = 'error';
+					    	element.setAttribute('id', 'idError');
+					    	element.appendChild(document.createTextNode('Reference code already exists in database'));
+					    	($('unitidparent')).appendChild(element);
+					    }
+					    else {
+					    	if (idExists == 'false' && ($('idError'))){
+					    		($('unitidparent')).removeChild($('idError'));
+					    	}
+					    }	
+						
+		 			}});
+				}
 			}
 		}
 	}	

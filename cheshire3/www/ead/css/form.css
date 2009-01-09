@@ -77,6 +77,7 @@ br {
 	
 
 
+
 /*
 A:link {text-decoration: none}
 A:visited {text-decoration: none}
@@ -151,7 +152,7 @@ buttoncontainer p {
 #keyboard {
   	border: solid black 1px;
 	position: fixed;
-	bottom: 50px;
+	bottom: 47px;
 	left: 10px;
 	width: 9cm;
 	heigth: 10cm;
@@ -250,8 +251,15 @@ a.invalid {
 	float: left;
 	margin-top: 5px;
 	margin-left: 10px;
-	width: 100px;
+	width: 150px;
 }
+
+.buttonlabel {
+	float: left;
+	font-weight: bold;
+	margin-top: 5px;
+	width: 70px;
+	}
 
 .formbutton {
 	float: left;
