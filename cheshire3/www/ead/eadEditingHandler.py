@@ -7,7 +7,7 @@
 #            Data creation and editing interface for EAD finding aids
 #            - part of Cheshire for Archives v3
 #
-# Author(s): CS - Catherine Smith <catherine.smith@liv.ac.uk>
+# Author(s): CS - Catherine Smith <catherine.smith@liverpool.ac.uk>
 #
 # Language:  Python
 # Required externals:
@@ -53,7 +53,6 @@ class EadEditingHandler(EadHandler):
 'bioghist',
 'scopecontent',
 'accessrestrict',
-'controlaccess'
 ]
     
     altrenderDict = { 'surname' : 'a',
@@ -291,11 +290,6 @@ class EadEditingHandler(EadHandler):
                 else :
                     parent = startNode.xpath(''.join(nodePath[:nodePath.rfind('/')]))[0]
                 parent.remove(child)
-#            if parent.tag == 'dao':
-#                if parent.get('href') != None:
-#                    return
-#                else:
-#                    return self._delete_path(startNode, nodePath[:nodePath.rfind('/')])
             if len(parent.getchildren()) > 0 or parent.text != None :
                 return
             else :
@@ -409,7 +403,6 @@ class EadEditingHandler(EadHandler):
         #get the controlaccess node or create it 
         if not (startNode.xpath('controlaccess')):
             controlaccess = etree.Element('controlaccess')
-            #need to insert before dsc?
             startNode.append(controlaccess)
             caNode = controlaccess
         else:

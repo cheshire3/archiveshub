@@ -1,13 +1,17 @@
-// accesspoints2002.js
+/*
+// Program:		accesspoints.js
+// Version:   	0.01
+// Description:
+//            	JavaScript functions for adding control access terms to Archives Hub editing interface.  
+//            	- produced for the Archives Hub v3.x. 
+// Language:  	JavaScript
+// Author(s):   Catherine Smith <catherine.smith@liv.ac.uk>	
+// Date:      	09/01/2009
+// Copyright: 	&copy; University of Liverpool 2009
 //
-// Author:        Dr Robert Sanderson (azaroth@liv.ac.uk)
-//                John Harrison (johnph@liverpool.ac.uk) - EAD 2002 Version
-//
-// Copyright:     &copy; (c) The University of Liverpool, All Rights Reserved
-// Last Modified: 11/05/04
-// Description:   EAD 2002 Online template controlled access term list support
-// Language:      JavaScript
-
+// Version History:
+// 0.01 - 09/01/2009 - CS- functions completed for first release of Archives Hub editing interface
+*/
 
 var urls = new Array("http://www.archiveshub.ac.uk/unesco/", "http://www.archiveshub.ac.uk/lcsh/", "http://www.archiveshub.ac.uk/nra-person/", "http://www.archiveshub.ac.uk/nra-fe/", "http://www.archiveshub.ac.uk/nra-corp/");
 
@@ -22,7 +26,7 @@ var labelMapping = new Array();
 	labelMapping['subject_z'] = 'Location';
 	labelMapping['subject_other'] = 'Other';
 	labelMapping['subject_x'] = 'Other';
-	labelMapping['subject_source'] = 'Thesaurus'
+	labelMapping['subject_source'] = 'Thesaurus';
 	
 	labelMapping['persname_surname'] = 'Surname';	
 	labelMapping['persname_a'] = 'Surname';
@@ -79,12 +83,13 @@ var labelMapping = new Array();
 	labelMapping['function_function'] = 'Function';
 	labelMapping['function_source'] = 'Source';
 
+//open a new window with the relevant thesaurus/source search
 function opensearch (which) {
  	var newwin = window.open(urls[which], "searchwindow");
 }
 
 
-/*adds the selected field to the access point, s is the name of the acces point ie. persname */
+/*adds the selected field to the access point, s is the name of the access point ie. persname */
 function addField(s){
 	var tableDiv = ($(s + 'table'));
 	var table = tableDiv.getElementsByTagName('tbody')[0];
@@ -295,7 +300,7 @@ function deleteAccessPoint(d){
 
 
 
-/* counter initialised for use in addpersname() function*/
+/* counter initialised for use in addAccessPoint() function*/
 var nameCount = 0;
 
 /* adds personal name to the 'addedpersnames' div etc.*/
@@ -341,7 +346,7 @@ function addAccessPoint(s){
 }
 
 
-
+/* Build the xml and strings needed for the access point */
 function buildAccessPoint(s){
    	var fm = document.getElementById('eadForm');
 	var tableDiv = ($(s + 'table'));
@@ -414,8 +419,6 @@ function buildAccessPoint(s){
 }
 
 
-
-
 function createIcons(s){
     var icondiv = document.createElement('div');
     	icondiv.className = 'icons'; 
@@ -431,7 +434,8 @@ function createIcons(s){
 
 
 
-
+/* Function to make sure only source OR rules can be completed for an access point called when a rule is selected from the
+drop down box and deletes the source box if present or puts it back if no rule is selected*/
 function checkRules(s){
 	var rules = ($(s + '_rules'));
 	var tableDiv = ($(s + 'table'))
@@ -483,7 +487,7 @@ function checkRules(s){
 }
 
 
-
+/* deletes the row from the accesspoint*/
 function deleteRow(tr){
 	var table = tr.parentNode;
 	table.removeChild(tr);

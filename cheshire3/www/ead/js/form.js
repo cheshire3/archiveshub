@@ -11,6 +11,18 @@ var baseUnitId = null;
 var fileName = null;
 var fileOwner = null;
 var timeout;
+var required_xpaths_components = new Array('did/unitid', 'did/unittitle', 'did/unitdate', 'did/physdesc/extent');
+var required_xpaths = new Array(
+'did/unitid',
+'did/unittitle',
+'did/unitdate',
+'did/origination',
+'did/physdesc/extent',
+'bioghist',
+'scopecontent',
+'accessrestrict'
+);
+
 
 function setCountryCode(code){
 	if (countryCode == null){
@@ -198,7 +210,7 @@ function submit(index){
 	//validate whole record
 	invalid = document.getElementsByClassName('invalid');
 	if (invalid.length != 0){
-		alert('Not all components of your record have the required fields completed. Please complete any components which are coloured red in the contents tree.');
+		alert('Not all components of your record have the required fields completed. Please complete any components which are coloured red in the contents tree. The missing fields will also be indicated with a red border.');
 		return;
 	}
 	
@@ -335,7 +347,7 @@ function save(){
     		
     	}
     }
-
+	findRequiredFields();
 	saveForm(false);
 	body.className = 'none';
     alert('This form is now saved as ' + recid + ' and can be reloaded from the admin menu for further editing at a later date.');
@@ -447,6 +459,7 @@ function displayForm(id, level){
 		    ($(currentForm)).style.background = 'yellow';		    
 		}});	    		  	 	  	
   	}
+  	findRequiredFields();
 }
 
 
@@ -915,12 +928,15 @@ function addElement(s){
   	if ($(s).visible($(s))){
   		$(('link' + s)).update('hide content');		
   	}
- 	else if (s == 'daooptnsdiv' || $(s).getValue($(s)) == '' || $(s).getValue($(s)) == ' '){
-		$(('link' + s)).update('add content');	
-  	} 
-  	else { 
-		$(('link' + s)).update('show content');
-  	}
+ 	else {
+ 		var value = $(s).getValue($(s)).strip();
+	 	if (s == 'daooptnsdiv' || value == '' || value == ' ' || value == '<p></p>' || value.replace(/[\s]+/g, ' ') == '<p> </p>'){
+			$(('link' + s)).update('add content');	
+	  	} 
+	  	else { 
+			$(('link' + s)).update('show content');
+	  	}
+	}
 }
 
 
@@ -930,7 +946,7 @@ function addElement(s){
 
 function updateTitle(field) {
   	var link = document.getElementById(currentForm);
-  	var title = ($('cab')).value;
+  	var title = ($('did/unittitle')).value;
   	if (title.indexOf('<') != -1){
 		title = title.replace(/<\/?\S+?>/g, '');
   	}
@@ -951,7 +967,7 @@ function updateTitle(field) {
 
 function updateId() {
   	var link = document.getElementById(currentForm);
-  	var title = ($('cab')).value;
+  	var title = ($('did/unittitle')).value;
   	if (title.indexOf('<') != -1){
 		title = title.replace(/<\/?\S+?>/g, '');
   	}
@@ -1003,6 +1019,39 @@ function updateId() {
 
 //================================================================================================
 //validation related functions
+
+
+function findRequiredFields(){
+	if (currentForm == 'collectionLevel'){
+		var reqList = required_xpaths;
+	}
+	else {
+		var reqList = required_xpaths_components;
+	}
+	for (var i=0; i<reqList.length; i++){
+		if (document.getElementById(reqList[i])){
+			var elem = document.getElementById(reqList[i]);
+			value = elem.value.strip();
+			if (value == '' || value == ' ' || value == '<p></p>' || value.replace(/[\s]+/g, '') == '<p> </p>'){
+				elem.style.border = '3px inset red';	
+			
+			}
+			else {
+				elem.style.border = '2px inset white';	
+			}
+		}
+		else if (document.getElementById(reqList[i] + '[1]')){
+			var elem = document.getElementById(reqList[i] + '[1]');
+			value = elem.value.strip();
+			if (value == '' || value == ' ' || value == '<p></p>' || value.replace(/[\s]+/g, '') == '<p> </p>'){
+				elem.style.border = '3px inset red';	
+			}		
+			else {
+				elem.style.border = '2px inset white';
+			}
+		}
+	}	
+}
 
 function conflicts(recid){
 	var conflict = null;
@@ -1166,7 +1215,7 @@ function checkId(asynch){
 
 
 function checkRequiredData(){
-	if ($('cab').value == ''){
+	if ($('did/unittitle').value == ''){
 		return false;
 	}
 	else if ($('unitid').value == ''){
