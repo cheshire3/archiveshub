@@ -21,29 +21,80 @@
 var	currentEntryField = null;
 var	theFieldName = "Error. You have not yet selected a field to enter text into.";
 
-var	fieldcodes = new Array("rep", "countrycode", "archoncode", "unitid", "spo", "cab", "cac", "can", "cae", "cba", "cbb", "cbc", "cbd", "cca", "ccb", "ccc", "ccd", "cda", "cdb", "lang_name", "cdd", "cde", "cea", "ceb", "cec", "ced", "cfa", "cga", "persname_surname", "persname_forename", "persname_dates", "persname_title", "persname_epithet", "persname_other", "persname_source", "famname_surname", "famname_other", "famname_dates", "famname_title", "famname_epithet", "famname_loc", "famname_source", "corpname_organisation", "corpname_dates", "corpname_loc", "corpname_other", "corpname_source", "subject_subject", "subject_dates", "subject_loc", "subject_other", "subject_source", "geogname_location", "geogname_other", "geogname_source", "title_title", "title_dates", "title_source", "genreform_genre", "genreform_source", "function_function", "function_source");
+var fieldMap = new Array();
 
-var	fieldnames = new Array("Repository", "Country Code", "Archon Code", "Unit ID", "Sponsor", "Title", "Dates of Creation", "Normalised Date - This should NOT contain character entities", "Extent of Unit Description", "Name of Creator", "Administrative/Biographical History", "Archival History", "Immediate Source of Acquisition", "Scope and Content", "Appraisal", "Accruals", "System of Arrangement", "Conditions Governing Access", "Conditions Governing Reproduction", "Language of Material - Language Name", "Physical Characteristics ", "Finding Aids", "Existence/Location of Orginals", "Existence/Location of Copies", "Related Units of Description", "Publication Note", "Note", "Archivist's Note", "Personal Name - Surname", "Personal Name - Forename", "Personal Name - Dates", "Personal Name - Title", "Personal Name - Epithet", "Personal Name - Other", "Personal Name - Source", "Family Name - Surname", "Family Name - Other", "Family Name - Dates", "Family Name - Title", "Family Name - Epithet", "Family Name - Location", "Family Name - Source", "Corporate Name - Organisation", "Corporate Name -_Dates", "Corporate Name - Location", "Corporate Name - Other", "Corporate Name - Source", "Subject - Subject", "Subject - Dates", "Subject - Location", "Subject - Other", "Subject - Thesaurus", "Place Name - Location", "Place Name - Other", "Place Name - Source", "Book Title", "Book Title - Dates", "Book Title - Source", "Genre Form - Genre", "Genre Form - Source", "Function - Function", "Function - Source");
-
-
-/*	function addfield(type, tag) {
-	  tag.href = "template.html";
-	}*/
-
-	function getCurrentSetting(){
-	  if (document.body) {
-	    return (document.body.rows);
-	  }
-	}
+	fieldMap['countrycode'] = 'Country Code';
+	fieldMap['archoncode'] = 'Archon Code';
+	fieldMap['unitid'] = 'Unit ID';
+	fieldMap['did/unittitle'] = 'Title';
+	fieldMap['did/unitdate'] = 'Dates of Creation';
+	fieldMap['did/unitdate/@normal'] = 'Normalised Date - This should NOT contain character entities';
+	fieldMap['did/physdesc/extent'] = 'Extent of Unit Description';
+	fieldMap['did/repository'] = 'Repository';
+	fieldMap['filedesc/titlestmt/sponsor'] = 'Sponsor';
+	fieldMap['did/origination'] = 'Name of Creator';
+	fieldMap['bioghist'] = 'Administrative/Biographical History';
+	fieldMap['custodhist'] = 'Archival History';
+	fieldMap['acqinfo'] = 'Immediate Source of Acquisition';
+	fieldMap['scopecontent'] = 'Scope and Content';
+	fieldMap['appraisal'] = 'Appraisal';
+	fieldMap['accruals'] = 'Accruals';
+	fieldMap['arrangement'] = 'System of Arrangement';
+	fieldMap['accessrestrict'] = 'Conditions Governing Access';
+	fieldMap['userestrict'] = 'Conditions Governing Reproduction';
+	fieldMap['lang_name'] = 'Language of Material - Language Name';
+	fieldMap['phystech'] = 'Physical Characteristics';
+	fieldMap['otherfindaid'] = 'Finding Aids';
+	fieldMap['originalsloc'] = 'Existence/Location of Orginals';
+	fieldMap['altformavail'] = 'Existence/Location of Copies';
+	fieldMap['relatedmaterial'] = 'Related Units of Description';
+	fieldMap['bibliography'] = 'Publication Note';
+	fieldMap['note'] = 'Note';
+	fieldMap['processinfo'] = 'Archivist\'s Note';
+	fieldMap['persname_surname'] = 'Personal Name - Surname';
+	fieldMap['persname_forename'] = 'Personal Name - Forename';
+	fieldMap['persname_dates'] = 'Personal Name - Dates';
+	fieldMap['persname_title'] = 'Personal Name - Title';
+	fieldMap['persname_epithet'] = 'Personal Name - Epithet';
+	fieldMap['persname_other'] = 'Personal Name - Other';
+	fieldMap['persname_source'] = 'Personal Name - Source';
+	fieldMap['famname_surname'] = 'Family Name - Surname';
+	fieldMap['famname_other'] = 'Family Name - Other';
+	fieldMap['famname_dates'] = 'Family Name - Dates';
+	fieldMap['famname_title'] = 'Family Name - Title';
+	fieldMap['famname_epithet'] = 'Family Name - Epithet';
+	fieldMap['famname_loc'] = 'Family Name - Location';
+	fieldMap['famname_source'] = 'Family Name - Source';
+	fieldMap['corpname_organisation'] = 'Corporate Name - Organisation';
+	fieldMap['corpname_dates'] = 'Corporate Name -_Dates';
+	fieldMap['corpname_loc'] = 'Corporate Name - Location';
+	fieldMap['corpname_other'] = 'Corporate Name - Other';
+	fieldMap['corpname_source'] = 'Corporate Name - Source';
+	fieldMap['subject_subject'] = 'Subject';
+	fieldMap['subject_dates'] = 'Subject - Dates';
+	fieldMap['subject_loc'] = 'Subject - Location';
+	fieldMap['subject_other'] = 'Subject - Other';	
+	fieldMap['subject_source'] = 'Subject - Thesaurus';
+	fieldMap['geogname_location'] = 'Place Name - Location';
+	fieldMap['geogname_other'] = 'Place Name - Other';
+	fieldMap['geogname_source'] = 'Place Name - Source';
+	fieldMap['title_title'] = 'Book Title';
+	fieldMap['title_dates'] = 'Book Title - Dates';
+	fieldMap['title_source'] = 'Book Title - Source';
+	fieldMap['genreform_genre'] = 'Genre Form';	
+	fieldMap['genreform_source'] = 'Genre Form - Source';	
+	fieldMap['function_function'] = 'Function';
+	fieldMap['function_source'] = 'Function - Source';
+			
 	
-
-	function getFieldName(code) {
-	  for (i=0;i<fieldcodes.length;i++) {
-	    if (code == fieldcodes[i] || code.substring(0, 3) == fieldcodes[i]) {
-	      return fieldnames[i];
-	      break;
-	    }
-	  }
+	function getFieldName(code){
+		if (code.indexOf('[') != -1){
+			var lookup = code.replace(/\[[0-9]+\]/g, '');
+		}
+		else {
+			var lookup = code;
+		}
+		return fieldMap[lookup];
 	}
 	
 	function setCurrent(which) {
