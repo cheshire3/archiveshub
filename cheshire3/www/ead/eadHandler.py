@@ -151,7 +151,6 @@ class EadHandler:
         except:
             newlineRe = re.compile('(\s\s+)')
             doc.text = newlineRe.sub('\n\g<1>', doc.get_raw(session))
-            del newlineRe
             # repeat parse with correct line numbers
             try:
                 rec = docParser.process_document(session, doc)
