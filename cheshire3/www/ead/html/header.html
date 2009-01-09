@@ -1,40 +1,36 @@
-<?xml version="1.0" encoding="UTF8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
     <title>%REP_NAME% :: %TITLE%</title>
-
-	  <!-- screen CSS -->
-      <link rel="stylesheet" type="text/css" media="screen" href="/ead/css/struc-all.css"></link>
-      <!--[if lt IE 7]>
-		<link rel="stylesheet" type="text/css" href="/ead/css/struc-ie.css" media="screen">
+    
+	<!-- screen CSS -->
+	<link rel="stylesheet" type="text/css" media="screen" href="/ead/css/struc-all.css"></link>
+	<!--[if lt IE 7]>
+		<link rel="stylesheet" type="text/css" media="screen" href="/ead/css/struc-ie.css"></link>
 		<script type="text/javascript">
 			onload = function() { wrapper.focus() }
 		</script>
-	  <![endif]-->
-	  <link rel="stylesheet" type="text/css" href="/ead/css/style.css"></link>
-    
-      <!-- printout CSS -->
-	  <link rel="stylesheet" type="text/css" media="print" href="/ead/css/print.css"></link>
+	<![endif]-->
+	<link rel="stylesheet" type="text/css" href="/ead/css/style.css"></link>
+    <link rel="stylesheet" type="text/css" href="/ead/css/localStyles.css"></link>
+	
+	<!-- printout CSS -->
+	<link rel="stylesheet" type="text/css" media="print" href="/ead/css/print.css"></link>
 		
-    <!-- favourite icon -->
-    <link rel="favourite icon" href="/images/c3.ico"></link>
-    
-    <script type="text/javascript" src="/ead/js/ead.js"></script>
-    
-    <script type="text/javascript">
-    <!-- to prevent javascript errors - will be overridden when necessary
-    	function loadPage() {}
-    	function unloadPage() {}
-    -->
-    </script>
-    
+	<!-- favourite icon -->
+	<link rel="favourite icon" href="/images/c3.ico"></link>
+	
+	<script type="text/javascript" src="/ead/js/ead.js"></script>
+    <script type="text/javascript" src="/ead/js/visuals.js"></script>
+    <script type="text/javascript" src="/ead/js/hijax.js"></script>
+	
   </head>
-  <body onload="loadPage();" onunload="unloadPage();">
+  <body>
    	<div id="banner">
    		<div id="crest">
    			<a href="%REP_LINK%" title="%REP_NAME%">
-			  <img src="%REP_LOGO%" alt="%REP_NAME%"/>
+			  <img src="%REP_LOGO%" alt="%REP_NAME%" class="rep-logo"/>
 			</a>
    		</div>
    		<!--
@@ -46,16 +42,17 @@
    		-->
    		<div id="titles">
    			<h1>%REP_NAME%</h1>
-			<h2 class="middleleft">%TITLE%</h2>
+            <h2>%TITLE%</h2>
    		</div>
-		<!-- site navigation links -->
-		<div id="navbar" class="navbar">
-		  <a href="/ead/index.html" title="Search for EAD Records" class="navlink"> Search </a> | 
-		  <a href="/ead/browse.html" title="Browse Indexes" class="navlink"> Browse Indexes </a> | 
-		  <a href="/ead/subject.html" title="Find Subjects" class="navlink"> Find Subjects </a> | 
-		  <a href="/ead/help.html" title="Search Help" class="navlink"> Help </a> | 
-		  <a href="/ead/about.html" title="About Cheshire for Archives" class="navlink"> About </a> | 
-		  %NAVBAR%
-		</div>
-	</div> <!-- end banner div -->
+    </div> <!-- end banner div -->
+	<!-- site navigation links -->
+	<div id="navbar" class="navbar">
+        <a href="/ead/index.html" title="Search for EAD Records" class="navlink"> Search </a> | 
+        <a href="/ead/browse.html" title="Browse Indexes" class="navlink"> Browse Indexes </a> | 
+        <a href="/ead/subject.html" title="Find Subjects" class="navlink"> Find Subjects </a> | 
+        <a href="/ead/help.html" title="Search Help" class="navlink"> Help </a> | 
+        <a href="/ead/about.html" title="About Cheshire for Archives" class="navlink"> About </a> | 
+        %NAVBAR%
+	</div>
+	<!-- content here may be 1 or 2 column - div classes/ids determined by handler -->
     <div id="wrapper">
