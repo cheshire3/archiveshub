@@ -6,7 +6,7 @@
     
 <!-- 
 	This file was produced, and released as part of Cheshire for Archives v3.x.
-	Copyright &copy; 2005-2008 the University of Liverpool
+	Copyright &copy; 2005-2009 the University of Liverpool
 -->
 
 <xsl:stylesheet 
@@ -75,6 +75,7 @@
       <xsl:attribute name="name">
       	<xsl:text>link</xsl:text>
       </xsl:attribute>
+      <!-- check if all required xpaths are present or not -->
       <xsl:choose>
       	<xsl:when test="$level = 'collectionLevel'">
 	      <xsl:choose>

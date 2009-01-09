@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+<!-- 
+	This file was produced, and released as part of Cheshire for Archives v3.x.
+	Copyright &#169; 2005-2009 the University of Liverpool
+-->
+
 <xsl:stylesheet
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:exsl="http://exslt.org/common"
@@ -95,9 +100,9 @@
 	  	   <xsl:apply-templates select="did/unitid[1]"/>
 	  	</xsl:when>
 	  	<xsl:otherwise>
-	  		<input type="text" onfocus="setCurrent(this);" name="did/unitid/@countrycode" id="countrycode" maxlength="2" size="3" value="GB" onblur="checkId('recordStore')"></input>
-			<input type="text" onfocus="setCurrent(this);" name="did/unitid/@repositorycode" id="archoncode" maxlength="4" size="5" onblur="checkId('recordStore')"></input>
-			<input type="text" onfocus="setCurrent(this);" name="did/unitid" id="unitid" size="50" onblur="checkId('recordStore')"></input>	
+	  		<input type="text" onfocus="setCurrent(this);" name="did/unitid/@countrycode" id="countrycode" maxlength="2" size="3" value="GB" onblur="checkId(true)"></input>
+			<input type="text" onfocus="setCurrent(this);" name="did/unitid/@repositorycode" id="archoncode" maxlength="4" size="5" onblur="checkId(true)"></input>
+			<input type="text" onfocus="setCurrent(this);" name="did/unitid" id="unitid" size="50" onblur="checkId(true)"></input>	
 	  	</xsl:otherwise>
 	  </xsl:choose>  		
   	</p>
@@ -1578,7 +1583,7 @@
   
   
   <xsl:template match="did/unitid[1]">
-	<input type="text" onfocus="setCurrent(this);" name="did/unitid/@countrycode" id="countrycode" maxlength="2" size="3" onblur="checkId()">	
+	<input type="text" onfocus="setCurrent(this);" name="did/unitid/@countrycode" id="countrycode" maxlength="2" size="3" onblur="checkId(true)">	
 		<xsl:choose>	
 		<xsl:when test="@countrycode">
 			<xsl:attribute name="value">
@@ -1592,7 +1597,7 @@
 		</xsl:when>
 		</xsl:choose>	
 	</input>
-	<input type="text" onfocus="setCurrent(this);" name="did/unitid/@repositorycode" id="archoncode"  maxlength="4" size="5" onblur="checkId()">
+	<input type="text" onfocus="setCurrent(this);" name="did/unitid/@repositorycode" id="archoncode"  maxlength="4" size="5" onblur="checkId(true)">
 		<xsl:choose>
 		<xsl:when test="@repositorycode">
 			<xsl:attribute name="value">
@@ -1606,7 +1611,7 @@
 		</xsl:when>
 		</xsl:choose>
 	</input>
-	<input type="text" onfocus="setCurrent(this);" name="did/unitid" id="unitid" size="50" onblur="checkId()">
+	<input type="text" onfocus="setCurrent(this);" name="did/unitid" id="unitid" size="50" onblur="checkId(true)">
 		<xsl:attribute name="value">
 			<xsl:value-of select="." />
 		</xsl:attribute>
