@@ -47,8 +47,7 @@
   <div id="formDiv" name="form" class="formDiv">
     <form id="eadForm" name="eadForm"  action="#" >
     <div class="float"> <input type="button" class="formbutton" id="addC" onclick="javascript: addComponent()" value="Add Component" title="Add a component to this level of the record"></input></div>
- <!--   <div class="float"> <input type="button" class="formbutton" id="reset" onclick="javascript: resetForm()" value="Reset"></input> </div> --> 
-    
+ <!--   <div class="float"> <input type="button" class="formbutton" id="reset" onclick="javascript: resetForm()" value="Reset"></input> </div> -->  
     	<div class="pui">
     		<strong><xsl:text>Persistent Unique Identifier: </xsl:text></strong>				
     		%PUI%
@@ -76,7 +75,6 @@
   <xsl:template match="/c|/c01|/c02|/c03|/c04|/c05|/c06|/c07|/c08|/c09|/c10|/c11|/c12|/ead/archdesc">
   <xsl:if test="not(name() = 'archdesc')">
   	<p>
-    	<!--<strong>Component Label: </strong>-->
    		<input type="hidden" name="ctype" id="ctype" maxlength="3" size="4">
    			<xsl:attribute name="value">
    				<xsl:value-of select="name()"/>   					
@@ -113,7 +111,7 @@
 				<xsl:apply-templates select="did/unittitle"/>
 			</xsl:when>
 			<xsl:otherwise>
-				<input class="menuField" type="text" onfocus="setCurrent(this);" name="did/unittitle" id="cab" size="80" onchange="updateTitle(this)" onkeypress="validateFieldDelay(this, 'true');"></input>
+				<input class="menuField" type="text" onfocus="setCurrent(this);" name="did/unittitle" id="did/unittitle" size="80" onchange="updateTitle(this)" onkeypress="validateFieldDelay(this, 'true');"></input>
 			</xsl:otherwise>
 		</xsl:choose>		
     </p>
@@ -124,7 +122,7 @@
 				<xsl:apply-templates select="did/unitdate"/>
 			</xsl:when>
 			<xsl:otherwise>
-				<input class="menuField" type="text" onfocus="setCurrent(this);" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" name="did/unitdate" id="cac" size="39"></input>
+				<input class="menuField" type="text" onfocus="setCurrent(this);" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" name="did/unitdate" id="did/unitdate" size="39"></input>
 			</xsl:otherwise>
 		</xsl:choose>      
 		</p>
@@ -137,7 +135,7 @@
 	    			<xsl:apply-templates select="did/unitdate/@normal"/>
 	    		</xsl:when>
 	    		<xsl:otherwise>
-	    			<input type="text" onfocus="setCurrent(this);" name="did/unitdate/@normal" id="can" size="39" maxlength="10"></input>
+	    			<input type="text" onfocus="setCurrent(this);" name="did/unitdate/@normal" id="did/unitdate/@normal" size="39" maxlength="10"></input>
 	    		</xsl:otherwise>
 	    	</xsl:choose>      	            
 		</p>
@@ -202,7 +200,7 @@
 				<xsl:apply-templates select="did/physdesc/extent"/>
 			</xsl:when>
 			<xsl:otherwise>
-				<input class="menuField" type="text" onfocus="setCurrent(this);" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" name="did/physdesc/extent" id="cae" size="80"></input>
+				<input class="menuField" type="text" onfocus="setCurrent(this);" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" name="did/physdesc/extent" id="did/physdesc/extent" size="80"></input>
 			</xsl:otherwise>
 		</xsl:choose>		
     </p>
@@ -214,7 +212,7 @@
 					<xsl:apply-templates select="did/repository"/>
 				</xsl:when>
 				<xsl:otherwise>
-					<input class="menuField" type="text" onfocus="setCurrent(this);" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" name="did/repository" id="rep" size="80"></input>
+					<input class="menuField" type="text" onfocus="setCurrent(this);" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" name="did/repository" id="did/repository" size="80"></input>
 				</xsl:otherwise>
 			</xsl:choose>
 	  	</p>
@@ -224,8 +222,8 @@
 					<xsl:apply-templates select="filedesc/titlestmt/sponsor"/>
 				</xsl:when>
 				<xsl:otherwise>
-					<strong>Sponsor </strong> <a class="smalllink" id="linkspo" title="add sponsor" onclick="addElement('spo')">add content</a> [optional]<br/>
-					<input class="menuField" type="text" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" name="filedesc/titlestmt/sponsor" id="spo" size="80" style="display:none"></input>
+					<strong>Sponsor </strong> <a class="smalllink" id="linkfiledesc/titlestmt/sponsor" title="add sponsor" onclick="addElement('filedesc/titlestmt/sponsor')">add content</a> [optional]<br/>
+					<input class="menuField" type="text" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" name="filedesc/titlestmt/sponsor" id="filedesc/titlestmt/sponsor" size="80" style="display:none"></input>
 				</xsl:otherwise>
 			</xsl:choose>
 	  	</p>  
@@ -243,7 +241,7 @@
 				<xsl:apply-templates select="did/origination"/>
 			</xsl:when>
 			<xsl:otherwise>
-				<input class="menuField" type="text" onfocus="setCurrent(this);" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" name="did/origination" id="cba" size="80"></input>
+				<input class="menuField" type="text" onfocus="setCurrent(this);" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" name="did/origination" id="did/origination" size="80"></input>
 			</xsl:otherwise>
 		</xsl:choose>		
     	</p>
@@ -264,7 +262,6 @@
 				<xsl:for-each select="bioghist">
 					<xsl:call-template name="textarea">
 						<xsl:with-param name="name" select="concat('bioghist[', position(), ']')"/>
-						<xsl:with-param name="id" select="concat('cbb', position())"/>
 						<xsl:with-param name="class" select="'menuField'"/>
 						<xsl:with-param name="optional" select="'false'"/>
 						<xsl:with-param name="content" select="$content"/>
@@ -277,7 +274,6 @@
 			<xsl:otherwise>
 				<xsl:call-template name="textarea">
 					<xsl:with-param name="name" select="concat('bioghist[', position(), ']')"/>
-					<xsl:with-param name="id" select="concat('cbb', position())"/>
 					<xsl:with-param name="class" select="'menuField'"/>
 					<xsl:with-param name="optional" select="'false'"/>
 					<xsl:with-param name="content" select="$content"/>
@@ -306,7 +302,6 @@
 				<xsl:for-each select="custodhist">
 					<xsl:call-template name="textarea">
 						<xsl:with-param name="name" select="concat('custodhist[', position(), ']')"/>
-						<xsl:with-param name="id" select="concat('cbc', position())"/>
 						<xsl:with-param name="class" select="'menuField'"/>
 						<xsl:with-param name="optional" select="'true'"/>
 						<xsl:with-param name="content" select="$content"/>
@@ -319,7 +314,6 @@
 			<xsl:otherwise>
 				<xsl:call-template name="textarea">
 					<xsl:with-param name="name" select="concat('custodhist[', position(), ']')"/>
-					<xsl:with-param name="id" select="concat('cbc', position())"/>
 					<xsl:with-param name="class" select="'menuField'"/>
 					<xsl:with-param name="optional" select="'true'"/>
 					<xsl:with-param name="content" select="$content"/>
@@ -347,7 +341,6 @@
 				<xsl:for-each select="acqinfo">
 			      	<xsl:call-template name="textarea">
 						<xsl:with-param name="name" select="concat('acqinfo[', position(), ']')"/>
-						<xsl:with-param name="id" select="concat('cbd', position())"/>
 						<xsl:with-param name="class" select="'menuField'"/>
 						<xsl:with-param name="optional" select="'true'"/>
 						<xsl:with-param name="content" select="$content"/>
@@ -360,7 +353,6 @@
 			<xsl:otherwise>
 				<xsl:call-template name="textarea">
 					<xsl:with-param name="name" select="concat('acqinfo[', position(), ']')"/>
-					<xsl:with-param name="id" select="concat('cbd', position())"/>
 					<xsl:with-param name="class" select="'menuField'"/>
 					<xsl:with-param name="optional" select="'true'"/>
 					<xsl:with-param name="content" select="$content"/>
@@ -394,7 +386,6 @@
 				<xsl:for-each select="scopecontent">
 			      	<xsl:call-template name="textarea">
 						<xsl:with-param name="name" select="concat('scopecontent[', position(), ']')"/>
-						<xsl:with-param name="id" select="concat('cca', position())"/>
 						<xsl:with-param name="class" select="'menuField'"/>
 						<xsl:with-param name="optional" select="'false'"/>
 						<xsl:with-param name="content" select="$content"/>
@@ -407,7 +398,6 @@
 			<xsl:otherwise>
 				<xsl:call-template name="textarea">
 					<xsl:with-param name="name" select="concat('scopecontent[', position(), ']')"/>
-					<xsl:with-param name="id" select="concat('cca', position())"/>
 					<xsl:with-param name="class" select="'menuField'"/>
 					<xsl:with-param name="optional" select="'false'"/>
 					<xsl:with-param name="content" select="$content"/>
@@ -435,7 +425,6 @@
 				<xsl:for-each select="appraisal">
 			      	<xsl:call-template name="textarea">
 						<xsl:with-param name="name" select="concat('appraisal[', position(), ']')"/>
-						<xsl:with-param name="id" select="concat('ccb', position())"/>
 						<xsl:with-param name="class" select="'menuField'"/>
 						<xsl:with-param name="optional" select="'true'"/>
 						<xsl:with-param name="content" select="$content"/>
@@ -448,7 +437,6 @@
 			<xsl:otherwise>
 				<xsl:call-template name="textarea">
 					<xsl:with-param name="name" select="concat('appraisal[', position(), ']')"/>
-					<xsl:with-param name="id" select="concat('ccb', position())"/>
 					<xsl:with-param name="class" select="'menuField'"/>
 					<xsl:with-param name="optional" select="'true'"/>
 					<xsl:with-param name="content" select="$content"/>
@@ -476,7 +464,6 @@
 				<xsl:for-each select="accruals">
 			      	<xsl:call-template name="textarea">
 						<xsl:with-param name="name" select="concat('accruals[', position(), ']')"/>
-						<xsl:with-param name="id" select="concat('ccc', position())"/>
 						<xsl:with-param name="class" select="'menuField'"/>
 						<xsl:with-param name="optional" select="'true'"/>
 						<xsl:with-param name="content" select="$content"/>
@@ -489,7 +476,6 @@
 			<xsl:otherwise>
 				<xsl:call-template name="textarea">
 					<xsl:with-param name="name" select="concat('accruals[', position(), ']')"/>
-					<xsl:with-param name="id" select="concat('ccc', position())"/>
 					<xsl:with-param name="class" select="'menuField'"/>
 					<xsl:with-param name="optional" select="'true'"/>
 					<xsl:with-param name="content" select="$content"/>
@@ -517,7 +503,6 @@
 				<xsl:for-each select="arrangement">
 			      	<xsl:call-template name="textarea">
 						<xsl:with-param name="name" select="concat('arrangement[', position(), ']')"/>
-						<xsl:with-param name="id" select="concat('ccd', position())"/>
 						<xsl:with-param name="class" select="'menuField'"/>
 						<xsl:with-param name="optional" select="'true'"/>
 						<xsl:with-param name="content" select="$content"/>
@@ -530,7 +515,6 @@
 			<xsl:otherwise>
 				<xsl:call-template name="textarea">
 					<xsl:with-param name="name" select="concat('arrangement[', position(), ']')"/>
-					<xsl:with-param name="id" select="concat('ccd', position())"/>
 					<xsl:with-param name="class" select="'menuField'"/>
 					<xsl:with-param name="optional" select="'true'"/>
 					<xsl:with-param name="content" select="$content"/>
@@ -564,7 +548,6 @@
 			<xsl:for-each select="accessrestrict">
 			    <xsl:call-template name="textarea">
 					<xsl:with-param name="name" select="concat('accessrestrict[', position(), ']')"/>
-					<xsl:with-param name="id" select="concat('cda', position())"/>
 					<xsl:with-param name="class" select="'menuField'"/>
 					<xsl:with-param name="optional" select="'false'"/>
 					<xsl:with-param name="content" select="$content"/>
@@ -577,7 +560,6 @@
 		<xsl:otherwise>
 			<xsl:call-template name="textarea">
 				<xsl:with-param name="name" select="concat('accessrestrict[', position(), ']')"/>
-				<xsl:with-param name="id" select="concat('cda', position())"/>
 				<xsl:with-param name="class" select="'menuField'"/>
 				<xsl:with-param name="optional" select="'false'"/>
 				<xsl:with-param name="content" select="$content"/>
@@ -605,7 +587,6 @@
 			<xsl:for-each select="userestrict">
 			    <xsl:call-template name="textarea">
 					<xsl:with-param name="name" select="concat('userestrict[', position(), ']')"/>
-					<xsl:with-param name="id" select="concat('cdb', position())"/>
 					<xsl:with-param name="class" select="'menuField'"/>
 					<xsl:with-param name="optional" select="'true'"/>
 					<xsl:with-param name="content" select="$content"/>
@@ -618,7 +599,6 @@
 		<xsl:otherwise>
 			<xsl:call-template name="textarea">
 				<xsl:with-param name="name" select="concat('userestrict[', position(), ']')"/>
-				<xsl:with-param name="id" select="concat('cdb', position())"/>
 				<xsl:with-param name="class" select="'menuField'"/>
 				<xsl:with-param name="optional" select="'true'"/>
 				<xsl:with-param name="content" select="$content"/>
@@ -683,7 +663,6 @@
 			<xsl:for-each select="phystech">
 			    <xsl:call-template name="textarea">
 					<xsl:with-param name="name" select="concat('phystech[', position(), ']')"/>
-					<xsl:with-param name="id" select="concat('cdd', position())"/>
 					<xsl:with-param name="class" select="'menuField'"/>
 					<xsl:with-param name="optional" select="'true'"/>
 					<xsl:with-param name="content" select="$content"/>
@@ -696,7 +675,6 @@
 		<xsl:otherwise>
 			 <xsl:call-template name="textarea">
 					<xsl:with-param name="name" select="concat('phystech[', position(), ']')"/>
-					<xsl:with-param name="id" select="concat('cdd', position())"/>
 					<xsl:with-param name="class" select="'menuField'"/>
 					<xsl:with-param name="optional" select="'true'"/>
 					<xsl:with-param name="content" select="$content"/>
@@ -725,7 +703,6 @@
 			<xsl:for-each select="otherfindaid">
 			    <xsl:call-template name="textarea">
 					<xsl:with-param name="name" select="concat('otherfindaid[', position(), ']')"/>
-					<xsl:with-param name="id" select="concat('cde', position())"/>
 					<xsl:with-param name="class" select="'menuField'"/>
 					<xsl:with-param name="optional" select="'false'"/>
 					<xsl:with-param name="content" select="$content"/>
@@ -738,7 +715,6 @@
 		<xsl:otherwise>
 			<xsl:call-template name="textarea">
 				<xsl:with-param name="name" select="concat('otherfindaid[', position(), ']')"/>
-				<xsl:with-param name="id" select="concat('cde', position())"/>
 				<xsl:with-param name="class" select="'menuField'"/>
 				<xsl:with-param name="optional" select="'false'"/>
 				<xsl:with-param name="content" select="$content"/>
@@ -773,7 +749,6 @@
 			<xsl:for-each select="originalsloc">
 		     	<xsl:call-template name="textarea">
 					<xsl:with-param name="name" select="concat('originalsloc[', position(), ']')"/>
-					<xsl:with-param name="id" select="concat('cea', position())"/>
 					<xsl:with-param name="class" select="'menuField'"/>
 					<xsl:with-param name="optional" select="'true'"/>
 					<xsl:with-param name="content" select="$content"/>
@@ -786,7 +761,6 @@
 		<xsl:otherwise>
 			<xsl:call-template name="textarea">
 				<xsl:with-param name="name" select="concat('originalsloc[', position(), ']')"/>
-				<xsl:with-param name="id" select="concat('cea', position())"/>
 				<xsl:with-param name="class" select="'menuField'"/>
 				<xsl:with-param name="optional" select="'true'"/>
 				<xsl:with-param name="content" select="$content"/>
@@ -814,7 +788,6 @@
 			<xsl:for-each select="altformavail">
 			    <xsl:call-template name="textarea">
 					<xsl:with-param name="name" select="concat('altformavail[', position(), ']')"/>
-					<xsl:with-param name="id" select="concat('ceb', position())"/>
 					<xsl:with-param name="class" select="'menuField'"/>
 					<xsl:with-param name="optional" select="'true'"/>
 					<xsl:with-param name="content" select="$content"/>
@@ -827,7 +800,6 @@
 		<xsl:otherwise>
 			<xsl:call-template name="textarea">
 				<xsl:with-param name="name" select="concat('altformavail[', position(), ']')"/>
-				<xsl:with-param name="id" select="concat('ceb', position())"/>
 				<xsl:with-param name="class" select="'menuField'"/>
 				<xsl:with-param name="optional" select="'true'"/>
 				<xsl:with-param name="content" select="$content"/>
@@ -855,7 +827,6 @@
 			<xsl:for-each select="relatedmaterial">
 		     	<xsl:call-template name="textarea">
 					<xsl:with-param name="name" select="concat('relatedmaterial[', position(), ']')"/>
-					<xsl:with-param name="id" select="concat('cec', position())"/>
 					<xsl:with-param name="class" select="'menuField'"/>
 					<xsl:with-param name="optional" select="'true'"/>
 					<xsl:with-param name="content" select="$content"/>
@@ -868,7 +839,6 @@
 		<xsl:otherwise>
 			<xsl:call-template name="textarea">
 				<xsl:with-param name="name" select="concat('relatedmaterial[', position(), ']')"/>
-				<xsl:with-param name="id" select="concat('cec', position())"/>
 				<xsl:with-param name="class" select="'menuField'"/>
 				<xsl:with-param name="optional" select="'true'"/>
 				<xsl:with-param name="content" select="$content"/>
@@ -896,7 +866,6 @@
 			<xsl:for-each select="bibliography">
 		     	<xsl:call-template name="textarea">
 					<xsl:with-param name="name" select="concat('bibliography[', position(), ']')"/>
-					<xsl:with-param name="id" select="concat('ced', position())"/>
 					<xsl:with-param name="class" select="'menuField'"/>
 					<xsl:with-param name="optional" select="'true'"/>
 					<xsl:with-param name="content" select="$content"/>
@@ -910,7 +879,6 @@
 		<xsl:otherwise>
 			<xsl:call-template name="textarea">
 				<xsl:with-param name="name" select="concat('bibliography[', position(), ']')"/>
-				<xsl:with-param name="id" select="concat('ced', position())"/>
 				<xsl:with-param name="class" select="'menuField'"/>
 				<xsl:with-param name="optional" select="'true'"/>
 				<xsl:with-param name="content" select="$content"/>
@@ -945,7 +913,6 @@
 			<xsl:for-each select="note">
 		     	<xsl:call-template name="textarea">
 					<xsl:with-param name="name" select="concat('note[', position(), ']')"/>
-					<xsl:with-param name="id" select="concat('cfa', position())"/>
 					<xsl:with-param name="class" select="'menuField'"/>
 					<xsl:with-param name="optional" select="'true'"/>
 					<xsl:with-param name="content" select="$content"/>
@@ -958,7 +925,6 @@
 		<xsl:otherwise>
 			<xsl:call-template name="textarea">
 					<xsl:with-param name="name" select="concat('note[', position(), ']')"/>
-					<xsl:with-param name="id" select="concat('cfa', position())"/>
 					<xsl:with-param name="class" select="'menuField'"/>
 					<xsl:with-param name="optional" select="'true'"/>
 					<xsl:with-param name="content" select="$content"/>
@@ -993,7 +959,6 @@
 			<xsl:for-each select="processinfo"> 
 		     	<xsl:call-template name="textarea">
 					<xsl:with-param name="name" select="concat('processinfo[', position(), ']')"/>
-					<xsl:with-param name="id" select="concat('cga', position())"/>
 					<xsl:with-param name="class" select="'menuField'"/>
 					<xsl:with-param name="optional" select="'false'"/>
 					<xsl:with-param name="content" select="$content"/>
@@ -1006,7 +971,6 @@
 		<xsl:otherwise>
 			<xsl:call-template name="textarea">
 				<xsl:with-param name="name" select="concat('processinfo[', position(), ']')"/>
-				<xsl:with-param name="id" select="concat('cga', position())"/>
 				<xsl:with-param name="class" select="'menuField'"/>
 				<xsl:with-param name="optional" select="'false'"/>
 				<xsl:with-param name="content" select="$content"/>
@@ -1465,7 +1429,7 @@
 						<xsl:attribute name="title">
 							<xsl:text>delete entry</xsl:text>
 						</xsl:attribute>
-						<img src="/images/delete.png">
+						<img src="/images/deletesmall.gif">
 						<xsl:attribute name="id">
 							<xsl:text>delete</xsl:text><xsl:number level="single" count="controlaccess/*[name() = $aptype]" format="1"/>
 						</xsl:attribute>
@@ -1619,7 +1583,7 @@
   </xsl:template>
   
   <xsl:template match="did/unittitle">
-  	<input class="menuField" type="text" onfocus="setCurrent(this);" name="did/unittitle" id="cab" size="80" onchange="updateTitle(this)" onkeypress="validateFieldDelay(this, 'true');">
+  	<input class="menuField" type="text" onfocus="setCurrent(this);" name="did/unittitle" id="did/unittitle" size="80" onchange="updateTitle(this)" onkeypress="validateFieldDelay(this, 'true');">
   		<xsl:attribute name="value">
   			<xsl:apply-templates/>
   		</xsl:attribute>
@@ -1627,7 +1591,7 @@
   </xsl:template>
     
   <xsl:template match="unitdate">
-  	<input class="menuField" type="text" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" name="did/unitdate" id="cac" size="39">
+  	<input class="menuField" type="text" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" name="did/unitdate" id="did/unitdate" size="39">
   		<xsl:attribute name="value">
   		  <xsl:apply-templates/>
   		</xsl:attribute>	
@@ -1635,7 +1599,7 @@
   </xsl:template>
   
   <xsl:template match="unitdate/@normal">
-  	<input type="text" onfocus="setCurrent(this);" name="did/unitdate/@normal" id="can" size="39" maxlength="10">
+  	<input type="text" onfocus="setCurrent(this);" name="did/unitdate/@normal" id="did/unitdate/@normal" size="39" maxlength="10">
   		<xsl:attribute name="value">
   			<xsl:value-of select="."/>
   		</xsl:attribute>
@@ -1643,7 +1607,7 @@
   </xsl:template>
   
   <xsl:template match="did/repository">
-  	<input class="menuField" type="text" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" name="did/repository" id="rep" size="80">
+  	<input class="menuField" type="text" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" name="did/repository" id="did/repository" size="80">
   		<xsl:attribute name="value">
   			<xsl:apply-templates/>
   		</xsl:attribute>
@@ -1651,8 +1615,8 @@
   </xsl:template>
   
   <xsl:template match="filedesc/titlestmt/sponsor">
-  	<strong><span class="isadg"></span>Sponsor </strong> <a class="smalllink" id="linkspo" title="add sponsor" onclick="addElement('spo')">hide content</a> [optional]<br/>
-  	<input class="menuField" type="text" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" name="filedesc/titlestmt/sponsor" id="spo" size="80">
+  	<strong><span class="isadg"></span>Sponsor </strong> <a class="smalllink" id="linkspo" title="add sponsor" onclick="addElement('filedesc/titlestmt/sponsor')">hide content</a> [optional]<br/>
+  	<input class="menuField" type="text" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" name="filedesc/titlestmt/sponsor" id="filedesc/titlestmt/sponsor" size="80">
   		<xsl:attribute name="value">
   			<xsl:apply-templates/>
   		</xsl:attribute>
@@ -1661,7 +1625,7 @@
   
   
   <xsl:template match="did/physdesc/extent">
-  	<input class="menuField" type="text" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" name="did/physdesc/extent" id="cae" size="80">
+  	<input class="menuField" type="text" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" name="did/physdesc/extent" id="did/physdesc/extent" size="80">
   		<xsl:attribute name="value">
   			<xsl:apply-templates/>
   		</xsl:attribute>
@@ -1669,7 +1633,7 @@
   </xsl:template>
 
   <xsl:template match="did/origination">
-  	<input class="menuField" type="text" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" name="did/origination" id="cba" size="80">
+  	<input class="menuField" type="text" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" name="did/origination" id="did/origination" size="80">
   		<xsl:attribute name="value">
   			<xsl:apply-templates/>
   		</xsl:attribute>
@@ -1709,7 +1673,7 @@
 						<xsl:attribute name="title">
 							<xsl:text>delete entry</xsl:text>
 						</xsl:attribute>
-						<img src="/images/delete.png">
+						<img src="/images/deletesmall.gif">
 						<xsl:attribute name="id">
 							<xsl:text>delete</xsl:text><xsl:number level="single" count="language" format="1"/>
 						</xsl:attribute>
@@ -1756,7 +1720,6 @@
   
   <xsl:template name="textarea">
   	<xsl:param name="name" />
-  	<xsl:param name="id" />
   	<xsl:param name="class" />
   	<xsl:param name="optional" />
   	<xsl:param name="content" />  
@@ -1765,7 +1728,7 @@
   	<xsl:param name="help" />
   	<xsl:param name="additional" />
   	<xsl:call-template name="label">
-  		<xsl:with-param name="id" select="$id"/>
+  		<xsl:with-param name="id" select="$name"/>
   		<xsl:with-param name="optional" select="$optional"/>
   		<xsl:with-param name="content" select="$content"/> 
   		<xsl:with-param name="isadg" select="$isadg"/>
@@ -1775,17 +1738,16 @@
   	</xsl:call-template>
   	<textarea onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80">
   		<xsl:attribute name="name"><xsl:value-of select="$name"/></xsl:attribute>
-  		<xsl:attribute name="id"><xsl:value-of select="$id"/></xsl:attribute>
+  		<xsl:attribute name="id"><xsl:value-of select="$name"/></xsl:attribute>
   		<xsl:attribute name="class"><xsl:value-of select="$class"/></xsl:attribute>
   		<xsl:if test="$optional = 'true' and $content = 'false'">
   			<xsl:attribute name="style">display:none</xsl:attribute>	
   		</xsl:if>
   		<xsl:choose>
   			<xsl:when test="$content = 'false'">
-  				<xsl:text> </xsl:text>
+  				<xsl:text>&lt;p&gt;&lt;/p&gt;</xsl:text>
   			</xsl:when>
   			<xsl:otherwise>
-  				<xsl:text> </xsl:text>
   				<xsl:apply-templates select="./node()"/>	
   			</xsl:otherwise>
   		</xsl:choose>
@@ -1942,11 +1904,6 @@
   				</input>
   			</td>
   		</tr>  	
-  		<!--<input type="hidden" value="thumb">
-  			<xsl:attribute name="name">
-				<xsl:value-of select="$path"/><xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[1]/@role</xsl:text>
-			</xsl:attribute>
-  		</input>-->
   		<tr>
   			<td class="label">File URI: </td>
   			<td>
