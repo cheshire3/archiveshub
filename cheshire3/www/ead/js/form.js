@@ -1,3 +1,18 @@
+/*
+// Program:		form.js
+// Version:   	0.01
+// Description:
+//            	JavaScript functions for the editing form in the Archives Hub editing interface.  
+//            	- produced for the Archives Hub v3.x. 
+// Language:  	JavaScript
+// Author(s):   Catherine Smith <catherine.smith@liv.ac.uk>	
+// Date:      	12/01/2009
+// Copyright: 	&copy; University of Liverpool 2009
+//
+// Version History:
+// 0.01 - 09/01/2009 - CS- functions completed for first release of Archives Hub editing interface
+*/
+
 
 var recid = 'notSet';
 var idExists = null;
@@ -11,9 +26,11 @@ var baseUnitId = null;
 var fileName = null;
 var fileOwner = null;
 var timeout;
-var required_xpaths_components = new Array('did/unitid', 'did/unittitle', 'did/unitdate', 'did/physdesc/extent');
+var required_xpaths_components = new Array('countrycode', 'archoncode', 'unitid', 'did/unittitle', 'did/unitdate', 'did/physdesc/extent');
 var required_xpaths = new Array(
-'did/unitid',
+'unitid',
+'archoncode',
+'countrycode',
 'did/unittitle',
 'did/unitdate',
 'did/origination',
@@ -22,7 +39,6 @@ var required_xpaths = new Array(
 'scopecontent',
 'accessrestrict'
 );
-
 
 function setCountryCode(code){
 	if (countryCode == null){
@@ -135,7 +151,7 @@ function submit(index){
     	alert('Please fix the errors in the xml before submitting. Errors will be marked with red shading in the text box.');
     	return;
     }
-    if (checkEditStore){
+    if (checkEditStore()){
     	var confirmbox = confirm('A file with this Reference code is already in the process of being created or edited. If you proceed with this operation the existing file will be overwritten with this one.\n\nAre you sure you want to continue with this operation?');
    		if (confirmbox == false){
    			return;
@@ -704,7 +720,7 @@ function viewXml(){
     	alert('Please fix the errors in the xml before viewing. Errors will be marked with red shading in the text box.');
     	return;
     }
-    if (checkEditStore){
+    if (checkEditStore()){
     	var confirmbox = confirm('A file with this Reference code is already in the process of being created or edited. If you proceed with this operation the existing file will be overwritten with this one.\n\nAre you sure you want to continue with this operation?');
    		if (confirmbox == false){
    			return;
@@ -781,6 +797,7 @@ function viewXml(){
 	}
 	var xml = window.open(url);	
 	if (window.focus) {xml.focus();}
+
 }
 
 
@@ -802,7 +819,7 @@ function previewRec(){
     	alert('Please fix the errors in the xml before viewing. Errors will be marked with red shading in the text box.');
     	return;
     }
-    if (checkEditStore){
+    if (checkEditStore()){
     	var confirmbox = confirm('A file with this Reference code is already in the process of being created or edited. If you proceed with this operation the existing file will be overwritten with this one.\n\nAre you sure you want to continue with this operation?');
    		if (confirmbox == false){
    			return;
@@ -1024,6 +1041,17 @@ function updateId() {
 function findRequiredFields(){
 	if (currentForm == 'collectionLevel'){
 		var reqList = required_xpaths;
+		//check there is a language
+		lang = document.getElementById('lang_name');
+		langcode = document.getElementById('lang_code');
+		if (document.getElementById('addedlanguages').style.display == 'none'){
+			lang.style.borderColor = 'red';
+			langcode.style.borderColor = 'red';
+		}
+		else {
+			lang.style.borderColor = 'white';
+			langcode.style.borderColor = 'white';			
+		}
 	}
 	else {
 		var reqList = required_xpaths_components;
@@ -1032,22 +1060,22 @@ function findRequiredFields(){
 		if (document.getElementById(reqList[i])){
 			var elem = document.getElementById(reqList[i]);
 			value = elem.value.strip();
-			if (value == '' || value == ' ' || value == '<p></p>' || value.replace(/[\s]+/g, '') == '<p> </p>'){
-				elem.style.border = '3px inset red';	
+			if (value == '' || value == ' ' || value == '<p></p>' || value.replace(/[\s]+/g, '') == '<p> </p>'){	
+				elem.style.borderColor = 'red';
 			
 			}
-			else {
-				elem.style.border = '2px inset white';	
+			else {	
+				elem.style.borderColor = 'white';
 			}
 		}
 		else if (document.getElementById(reqList[i] + '[1]')){
 			var elem = document.getElementById(reqList[i] + '[1]');
 			value = elem.value.strip();
 			if (value == '' || value == ' ' || value == '<p></p>' || value.replace(/[\s]+/g, '') == '<p> </p>'){
-				elem.style.border = '3px inset red';	
+				elem.style.borderColor = 'red';	
 			}		
 			else {
-				elem.style.border = '2px inset white';
+				elem.style.borderColor = 'white';
 			}
 		}
 	}	
@@ -1157,6 +1185,7 @@ function validateXML(field, asynch){
 }
 
 function checkEditStore(){
+	var value = false;
 	if (recid == null || recid == 'notSet'){
 		if ($('countrycode').value != ''){
 			if ($('archoncode').value != ''){
@@ -1168,17 +1197,15 @@ function checkEditStore(){
 					    var response = transport.responseText;
 					    idExists = response.substring(7,response.indexOf('</value>'));					    
 					    if (idExists == 'true'){
-					    	return true;
-					    }
-					    else {
-					    	return false;
+					    	value = true;
 					    }	
 						
 		 			}});
-				}
-			}
-		}
-	}
+				} 
+			} 
+		} 
+	} 
+	return value;
 }
 
 function checkId(asynch){
@@ -1398,7 +1425,9 @@ function addFile(number){
   				
  	href = document.createElement('input');
  	href.setAttribute('type', 'text');
+ 	href.onclick = function () {setCurrent(this); },
  	href.setAttribute('name', 'daogrp/daoloc[' + nextfile + ']/@href');
+ 	href.setAttribute('id', 'daogrp/daoloc[' + nextfile + ']/@href');
  	href.setAttribute('size', '70');
  	td = document.createElement('td');		
  	td.appendChild(href);
@@ -1418,7 +1447,9 @@ function addFile(number){
    			
    	href = document.createElement('input');
    	href.setAttribute('type', 'text');
+   	href.onclick = function () {setCurrent(this); },
    	href.setAttribute('name', 'daogrp/daoloc[' + nextfile + ']/@title');
+   	href.setAttribute('id', 'daogrp/daoloc[' + nextfile + ']/@title');
    	href.setAttribute('size', '70');
    	td = document.createElement('td');		
    	td.appendChild(href);
@@ -1431,6 +1462,7 @@ function addFile(number){
     role = document.createElement('input');
    	role.setAttribute('type', 'hidden');
    	role.setAttribute('name', 'daogrp/daoloc[' + nextfile + ']/@role');
+   	role.setAttribute('id', 'daogrp/daoloc[' + nextfile + ']/@role');
    	role.setAttribute('value', 'reference');
    	doform.insertBefore(role, tbody.parentNode);				
 	
@@ -1473,7 +1505,9 @@ function createObjectsForm() {
    			
    			var href = document.createElement('input');
    			href.setAttribute('type', 'text');
+   			href.onclick = function () {setCurrent(this); },
    			href.setAttribute('name', 'dao/@href');
+   			href.setAttribute('id', 'dao/@href');
    			href.setAttribute('size', '70');
    			td = document.createElement('td');		
    			td.appendChild(href);
@@ -1491,7 +1525,9 @@ function createObjectsForm() {
    			
    			var title = document.createElement('input');
    			title.setAttribute('type', 'text');
+   			title.onclick = function () {setCurrent(this); },
    			title.setAttribute('name', 'dao/@title');
+   			title.setAttribute('id', 'dao/@title');
    			title.setAttribute('size', '70');
 			td = document.createElement('td');
    			td.appendChild(title);
@@ -1509,7 +1545,9 @@ function createObjectsForm() {
    			
    			var desc = document.createElement('input');
    			desc.setAttribute('type', 'text');
+   			desc.onclick = function () {setCurrent(this); },
    			desc.setAttribute('name', 'dao/daodesc');
+   			desc.setAttribute('id', 'dao/daodesc');
    			desc.setAttribute('size', '70');
  			td = document.createElement('td');
    			td.appendChild(desc);
@@ -1549,7 +1587,9 @@ function createObjectsForm() {
    			
    			var href = document.createElement('input');
    			href.setAttribute('type', 'text');
+   			href.onclick = function () {setCurrent(this); },
    			href.setAttribute('name', 'daogrp/daoloc[1]/@href');
+   			href.setAttribute('id', 'daogrp/daoloc[1]/@href');
    			href.setAttribute('size', '70');
    			td = document.createElement('td');		
    			td.appendChild(href);
@@ -1562,6 +1602,7 @@ function createObjectsForm() {
     		var role1 = document.createElement('input');
    			role1.setAttribute('type', 'hidden');
    			role1.setAttribute('name', 'daogrp/daoloc[1]/@role');
+   			role1.setAttribute('id', 'daogrp/daoloc[1]/@role');
    			role1.setAttribute('value', 'thumb');
    			
 
@@ -1574,7 +1615,9 @@ function createObjectsForm() {
    			
    			href = document.createElement('input');
    			href.setAttribute('type', 'text');
+   			href.onclick = function () {setCurrent(this); },
    			href.setAttribute('name', 'daogrp/daoloc[2]/@href');
+   			href.setAttribute('id', 'daogrp/daoloc[2]/@href');
    			href.setAttribute('size', '70');
    			td = document.createElement('td');		
    			td.appendChild(href);
@@ -1592,7 +1635,9 @@ function createObjectsForm() {
    			
    			href = document.createElement('input');
    			href.setAttribute('type', 'text');
+   			href.onclick = function () {setCurrent(this); },
    			href.setAttribute('name', 'daogrp/daoloc[2]/@title');
+   			href.setAttribute('id', 'daogrp/daoloc[2]/@title');
    			href.setAttribute('size', '70');
    			td = document.createElement('td');		
    			td.appendChild(href);
@@ -1605,6 +1650,7 @@ function createObjectsForm() {
     		var role2 = document.createElement('input');
    			role2.setAttribute('type', 'hidden');
    			role2.setAttribute('name', 'daogrp/daoloc[2]/@role');
+   			role2.setAttribute('id', 'daogrp/daoloc[2]/@role');
    			role2.setAttribute('value', 'reference');
 
 
@@ -1617,7 +1663,9 @@ function createObjectsForm() {
    			
    			var desc = document.createElement('input');
    			desc.setAttribute('type', 'text');
+   			desc.onclick = function () {setCurrent(this); },
    			desc.setAttribute('name', 'daogrp/daodesc');
+   			desc.setAttribute('id', 'daogrp/daodesc');
    			desc.setAttribute('size', '70');
  			td = document.createElement('td');
    			td.appendChild(desc);
@@ -1656,7 +1704,9 @@ function createObjectsForm() {
    				
 	   			href = document.createElement('input');
 	   			href.setAttribute('type', 'text');
+	   			href.onclick = function () {setCurrent(this); },
 	   			href.setAttribute('name', 'daogrp/daoloc[' + i + ']/@href');
+	   			href.setAttribute('id', 'daogrp/daoloc[' + i + ']/@href');
 	   			href.setAttribute('size', '70');
 	   			td = document.createElement('td');		
 	   			td.appendChild(href);
@@ -1676,7 +1726,9 @@ function createObjectsForm() {
 	   			
 	   			href = document.createElement('input');
 	   			href.setAttribute('type', 'text');
+	   			href.onclick = function () {setCurrent(this); },
 	   			href.setAttribute('name', 'daogrp/daoloc[' + i + ']/@title');
+	   			href.setAttribute('id', 'daogrp/daoloc[' + i + ']/@title');
 	   			href.setAttribute('size', '70');
 	   			td = document.createElement('td');		
 	   			td.appendChild(href);
@@ -1689,6 +1741,7 @@ function createObjectsForm() {
 	    		role = document.createElement('input');
 	   			role.setAttribute('type', 'hidden');
 	   			role.setAttribute('name', 'daogrp/daoloc[' + i + ']/@role');
+	   			role.setAttribute('id', 'daogrp/daoloc[' + i + ']/@role');
 	   			role.setAttribute('value', 'reference');
 	   			doform.appendChild(role);			
    			}
@@ -1719,7 +1772,9 @@ function createObjectsForm() {
    			
    			var desc = document.createElement('input');
    			desc.setAttribute('type', 'text');
+   			desc.onclick = function () {setCurrent(this); },
    			desc.setAttribute('name', 'daogrp/daodesc');
+   			desc.setAttribute('id', 'daogrp/daodesc');
    			desc.setAttribute('size', '70');
  			td = document.createElement('td');
    			td.appendChild(desc);

@@ -235,7 +235,7 @@ class EadEditingHandler(EadHandler):
                     except:
                         pass
                 else :
-                    if (field.value.strip() != '' and field.value.strip() != ' '):
+                    if (field.value.strip() != '' and field.value.strip() != ' ' and field.value.strip() != '<p></p>' and re.sub('[\s]+', ' ', field.value.strip()) != '<p> </p>'):
                         target = self._create_path(node, field.name)
                         self._add_text(target, field.value)
                         try:
@@ -803,7 +803,7 @@ class EadEditingHandler(EadHandler):
                         except:
                             pass
                     else :
-                        if (field.value.strip() != '' and field.value.strip() != ' '):
+                        if (field.value.strip() != '' and field.value.strip() != ' ' and field.value.strip() != '<p></p>' and re.sub('[\s]+', ' ', field.value.strip()) != '<p> </p>'):
                             target = self._create_path(node, field.name)
                             self._add_text(target, field.value)   
                             try:
@@ -921,7 +921,7 @@ class EadEditingHandler(EadHandler):
                             except:
                                 pass
                         else :
-                            if (field.value.strip() != '' and field.value.strip() != ' '):
+                            if (field.value.strip() != '' and field.value.strip() != ' ' and field.value.strip() != '<p></p>' and re.sub('[\s]+', ' ', field.value.strip()) != '<p> </p>'):
                                 target = self._create_path(node, field.name)
                                 self._add_text(target, field.value)    
                                 try:

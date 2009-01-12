@@ -1,3 +1,9 @@
+/*
+	This file was produced, and released as part of Cheshire for Archives v3.x
+	Copyright &copy; 2005-2009 the University of Liverpool
+*/
+
+
 #treeDiv {
 	font-size: small;
 }
@@ -6,7 +12,7 @@ body {
 	overflow: hidden;	
 }
 
-body.waiting, body.waiting textarea, body.waiting input, body.waiting a {
+body.waiting, body.waiting textarea, body.waiting input, body.waiting a, body.waiting select {
 	cursor: wait;
 	}
 
@@ -23,6 +29,10 @@ span.isadg {
 textarea, input {
 		font-family: arial, helvetica, gill, sans-serif;
 		font-size: 11pt; 
+	}
+	
+textarea, input[type="text"], select{
+	border: 2px inset white;	
 	}
 	
 .added {
@@ -54,35 +64,29 @@ br {
 	clear: both;
 }
 
+
+
 .smalllink {
 	color: blue;
 	text-decoration: underline;	
-	cursor: pointer;
-	
+	cursor: pointer;	
 }
+
 
 .valid, .invalid {
 	cursor: pointer;	
-	}
+}
 
 .whatsthis {
 	padding-right: 5px;
 	padding-left: 5px;
-	}
+}
 
 #digitalobjectsform {
 	padding-top: 10px;
 	padding-bottom: 10px;
-	}
+}
 	
-
-
-
-/*
-A:link {text-decoration: none}
-A:visited {text-decoration: none}
-A:active {text-decoration: none}
-A:hover {text-decoration: underline; color: red;}*/
 
 .accesspoint {
 	margin-left: 105px;
@@ -144,7 +148,8 @@ buttoncontainer p {
 
 .extSearch{
 	cursor: pointer;
-	}
+}
+	
 
 /*======================================*/
 

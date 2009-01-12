@@ -25,6 +25,7 @@
 	        closeSplash();
 	    	createTreeFromList('someId', getCookie('preview/catherine-tocstate'), false, false);
 			setRecid();
+			findRequiredFields();
 		} );
         addUnloadEvent( function(){
     		setCookie('preview/catherine-tocstate', stateToString('someId'));
