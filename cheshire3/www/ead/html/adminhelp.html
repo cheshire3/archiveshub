@@ -1,4 +1,4 @@
-<div id="single">
+<div id="single" class="adminhelp">
 	<h3 class="bar">Contents</h3>
 	<div id="contents">
 		<ul>
@@ -34,10 +34,10 @@
 					<li><a href="#database_buildhtml">Build HTML</a></li>
 				</ul>
 			</li>
-			<li><a href="#stats" title="Jump to help on statistics">View Statistics</a></li>
+			<li><a href="#stats" title="Jump to help on statistics">Statistics</a></li>
+            <li><a href="#edit" title="Jump to help on Create/Edit">Create/Edit</a></li>
 		</ul>
 	</div>
-	<br/>
 	<div id="help">
 		<div>
 			<a name="files"></a>
@@ -132,21 +132,21 @@
 						<p>
 							The file is stored to the server's hard-disk. This requires that it be issued with a filename which is guaranteed to be unique.
 							To achieve this, uploaded files are named in the following way:
-							<blockquote>&lt;original filename minus the trailing extension&gt;-&lt;username&gt;-&lt;timestamp&gt;.&lt;original file extension&gt;</blockquote>
+							
 						</p>
+                        <blockquote>&lt;original filename minus the trailing extension&gt;-&lt;username&gt;-&lt;timestamp&gt;.&lt;original file extension&gt;</blockquote>
 						<p>
 							The timestamp used may may look like a random string of digits but it is actually a structured representation of the exact time the upload took place. 
 							It takes the form:
-							<blockquote>YYYY-MM-DDThhmmss (year-month-day T hour minute second)</blockquote>
 						</p>
-
+                        <blockquote>YYYY-MM-DDThhmmss (year-month-day T hour minute second)</blockquote>
 					</td>
 					<!-- preview -->
 					<td>
 						<p>
 							The file is transformed into HTML, and stored in the password protected <a href="/ead/html/preview">preview</a> directory, with filename in the form:
-							<blockquote>&lt;username&gt;-p1.shtml</blockquote>
 						</p>
+                        <blockquote>&lt;username&gt;-p1.shtml</blockquote>
 						<p><strong>END</strong></p>
 					</td>
 				</tr>
@@ -271,10 +271,28 @@
 		</div>
 		<div>
 			<a name="stats"></a>
-			<h3 class="barheading">View Statistics</h3>
-			<p>The 'View Statistics' option will display some basic statistics about the use of your search interface for the period specified. This includes the number of each type of operation, and the average time taken to perform these operations.</p>
-			<p>There is also a section which displays the top five most requested records or components in each type of display (summary, full-text, and email).</p>
-			<p>The 'Reset Statistics' button will move the existing log file (from which these statistics are derived), marking it with a timestamp like those used for uploaded files. This effectively resets the statistics.</p>
+			<h3 class="barheading">Statistics</h3>
+			<p>
+                The &apos;Statistics&apos; option will display some basic statistics about the use of your search interface for the period specified.
+                This includes the number of each type of operation, and the average time taken to perform these operations.
+            </p>
+			<p>
+                There is also a section which displays the top five most requested records or components in each type of display (summary, full-text, and email).
+            </p>
+			<p>
+                By default, stats from the current time period (i.e. since the stats were last reset) are displayed.
+                You can access historical stats via the &quot;Statistics for period ending&quot; drop-down menu.
+                The &apos;Reset Statistics&apos; button will effectively start a new time period, and move the existing stats to a historical one.
+            </p>
 		</div>
+        <div>
+            <a name="edit"></a>
+            <h3 class="barheading">Create/Edit</h3>
+            <p>
+                The &apos;Create/Edit&apos; option will take you to the Creation and Editing Interface.
+                This section has its own help page.
+            </p>
+            
+        </div>
 	</div>
 </div> <!-- end single div -->

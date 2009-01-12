@@ -55,9 +55,9 @@
         %NAVBAR%
 	</div>
 	<!-- content here may be 1 or 2 column - div classes/ids determined by handler -->
-    <div id="wrapper">
+    <div id="content">
     %CONTENT%
-	</div> <!-- end wrapper div -->
+	</div> <!-- end content div -->
     <!-- generic footer --> 
 	<div id="footer">
         <div id="technologies">

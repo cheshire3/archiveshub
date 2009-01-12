@@ -162,6 +162,15 @@ ul.facetlist {
 	list-style: square inside;
 }
 
+/*
+ul.facetlist li:before {
+	content: "\00BB \0020";
+}
+*/
+ul.facetlist li.unmarked {
+	list-style: none;
+}
+
 
 /* LINKS */
 
@@ -189,6 +198,7 @@ a.jscall {
   color: white;
   background-color: #0b2277; /*dark blue*/
   font-size: 11pt;
+  padding-bottom: 0px;
   /*font-variant: small-caps;*/
 }
 .navbar a:link,
@@ -234,6 +244,10 @@ a.buttonlink:visited:hover {
 p {
 	padding: 0 0 0.2em 0;
 	margin: 0.75em 0 0.75em 0;
+}
+
+blockquote {
+	padding-bottom: 0.2em;	
 }
 
 .error { color: #ff0000; }

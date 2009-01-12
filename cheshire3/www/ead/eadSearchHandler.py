@@ -267,6 +267,49 @@ class EadSearchHandler(EadHandler):
         parentRecs = {}
         rsidCgiString = 'rsid=%s' % cgi_encode(rsid)
 
+        # some hit navigation
+        if (hits > numreq):
+            if (firstrec > 1):
+                hitlinks = ['<div class="backlinks">'
+                           ,'<a href="%s?operation=search&amp;%s&amp;page=1&amp;numreq=%d&amp;highlight=%d#leftcol" class="ajax">First</a>' % (script, rsidCgiString, numreq, highlight) 
+                           ,'<a href="%s?operation=search&amp;%s&amp;firstrec=%d&amp;numreq=%d&amp;highlight=%d#leftcol" class="ajax">Previous</a>' % (script, rsidCgiString, max(firstrec-numreq, 1), numreq, highlight)
+                           ,'</div>']
+            else:
+                hitlinks = []
+
+            if (hits > firstrec+numreq-1):
+                hitlinks.extend(['<div class="forwardlinks">'
+                                ,'<a href="%s?operation=search&amp;%s&amp;firstrec=%d&amp;numreq=%d&amp;highlight=%d#leftcol" class="ajax">Next</a>' % (script, rsidCgiString, firstrec+numreq, numreq, highlight)
+                                ,'<a href="%s?operation=search&amp;%s&amp;page=%d&amp;numreq=%d&amp;highlight=%d#leftcol" class="ajax">Last</a>' % (script, rsidCgiString, (hits/numreq)+1, numreq, highlight)
+                                ,'</div>'])
+
+            numlinks = ['<div class="numnav">']
+            # new hub style
+            numlinks.extend(['<form action="%s" class="ajax-leftcol">' % (script)
+                       ,'<input type="hidden" name="operation" value="search"/>'
+                       ,'<input type="hidden" name="rsid" value="%s"/>' % (cgi_encode(rsid))
+                       ,'Page: <input type="text" name="page" size="3" value="%d"/> of %d' % ((firstrec / numreq)+1, (hits/numreq)+1)
+                       ,'<input type="submit" value="Go!"/>'
+                       ,'</form>'
+                       ])
+#            for x in range(1, hits+1, numreq):
+#                if (x == firstrec):
+#                    numlinks.append('<strong>%d-%d</strong>' % (x, min(x+numreq-1, hits)))
+#                elif (x == hits):
+#                    numlinks.append('<a href="%s?operation=search%s&amp;firstrec=%d&amp;numreq=%d&amp;highlight=%d">%d</a>'
+#                                    % (script, rsidCgiString, x, numreq, highlight, x))
+#                else:
+#                    numlinks.append('<a href="%s?operation=search%s&amp;firstrec=%d&amp;numreq=%d&amp;highlight=%d">%d-%d</a>'
+#                                    % (script, rsidCgiString, x, numreq, highlight, x, min(x+numreq-1, hits)))
+
+            numlinks.append('</div>')
+            hitlinks.append('\n'.join(numlinks))
+            del numlinks
+            hitlinks = ' '.join(hitlinks)
+            rows.append('<tr class="hitnav"><td>%s</td></tr>' % (hitlinks))
+            
+        #- end hit navigation
+
         for x in range(firstrec-1, min(len(rs), firstrec -1 + numreq)):
             r = rs[x]
             try:
@@ -361,48 +404,11 @@ class EadSearchHandler(EadHandler):
         #- end for each hit
         del rs
         
-        # some hit navigation
+        # some hit navigation (generated earlier)
         if (hits > numreq):
-            if (firstrec > 1):
-                hitlinks = ['<div class="backlinks">'
-                           ,'<a href="%s?operation=search&amp;%s&amp;page=1&amp;numreq=%d&amp;highlight=%d#leftcol" class="ajax">First</a>' % (script, rsidCgiString, numreq, highlight) 
-                           ,'<a href="%s?operation=search&amp;%s&amp;firstrec=%d&amp;numreq=%d&amp;highlight=%d#leftcol" class="ajax">Previous</a>' % (script, rsidCgiString, max(firstrec-numreq, 1), numreq, highlight)
-                           ,'</div>']
-            else:
-                hitlinks = []
-
-            if (hits > firstrec+numreq-1):
-                hitlinks.extend(['<div class="forwardlinks">'
-                                ,'<a href="%s?operation=search&amp;%s&amp;firstrec=%d&amp;numreq=%d&amp;highlight=%d#leftcol" class="ajax">Next</a>' % (script, rsidCgiString, firstrec+numreq, numreq, highlight)
-                                ,'<a href="%s?operation=search&amp;%s&amp;page=%d&amp;numreq=%d&amp;highlight=%d#leftcol" class="ajax">Last</a>' % (script, rsidCgiString, (hits/numreq)+1, numreq, highlight)
-                                ,'</div>'])
-
-            numlinks = ['<div class="numnav">']
-            # new hub style
-            numlinks.extend(['<form action="%s" class="ajax-leftcol">' % (script)
-                       ,'<input type="hidden" name="operation" value="search"/>'
-                       ,'<input type="hidden" name="rsid" value="%s"/>' % (cgi_encode(rsid))
-                       ,'Page: <input type="text" name="page" size="3" value="%d"/> of %d' % ((firstrec / numreq)+1, (hits/numreq)+1)
-                       ,'<input type="submit" value="Go!"/>'
-                       ,'</form>'
-                       ])
-#            for x in range(1, hits+1, numreq):
-#                if (x == firstrec):
-#                    numlinks.append('<strong>%d-%d</strong>' % (x, min(x+numreq-1, hits)))
-#                elif (x == hits):
-#                    numlinks.append('<a href="%s?operation=search%s&amp;firstrec=%d&amp;numreq=%d&amp;highlight=%d">%d</a>'
-#                                    % (script, rsidCgiString, x, numreq, highlight, x))
-#                else:
-#                    numlinks.append('<a href="%s?operation=search%s&amp;firstrec=%d&amp;numreq=%d&amp;highlight=%d">%d-%d</a>'
-#                                    % (script, rsidCgiString, x, numreq, highlight, x, min(x+numreq-1, hits)))
-
-            numlinks.append('</div>')
-            hitlinks.append('\n'.join(numlinks))
-            
-            rows.append('<tr class="hitnav"><td>%s</td></tr>' % (' '.join(hitlinks)))
-            del numlinks, hitlinks
+            rows.append('<tr class="hitnav"><td>%s</td></tr>' % (hitlinks))
+            del hitlinks
         #- end hit navigation
-            
         rows.append('</table>')
         return '\n'.join(rows)
         #- end format_resultSet() ---------------------------------------------------------
@@ -421,25 +427,26 @@ class EadSearchHandler(EadHandler):
                 else:
                     cql = 'cql.resultSetId = "%s/%s"' % (resultSetStore.id, rs.id)
                     
-                if (len(facets) > 5) and not truncate:
-                    href = u'%s?operation=facet&amp;query=%s&amp;fullFacet=%s&amp;truncate=1' % (script, cgi_encode(cql), type)
-                    facetRows.append('''[ <a href="%s#%s-facet" title="Show top 3 %ss only" class="ajax">truncate</a> ]''' % (href, type, type))
+                fewerhref = u'%s?operation=facet&amp;query=%s&amp;fullFacet=%s&amp;truncate=1' % (script, cgi_encode(cql), type)
+                fullhref = u'%s?operation=facet&amp;query=%s&amp;fullFacet=%s' % (script, cgi_encode(cql), type)
+                if (len(facets) > 5):
+                    if not truncate:
+                        facetRows.append('''[ <a href="%s#%s-facet" title="Show top 3 %ss only" class="ajax">fewer</a> ]''' % (fewerhref, type, type))
+                    else:
+                        facetRows.append('''[ <a href="%s#%s-facet" title="Show all %d %ss" class="ajax">all</a> ]''' % (fullhref, type, len(facets), type))
                     
                 facetRows.append('<ul class="facetlist">')    
                 for x,fac in enumerate(facets):
+                    if (x == 3 and len(facets) > 5 and truncate):
+                        facetRows.append('''<li class="unmarked"><a href="%s#%s-facet" title="Show all %d %ss" class="ajax">%d more...</a></li>''' % (fullhref, type, len(facets), type, len(facets)-3))
+                        break
                     term = fac[0]
                     href = u'%s?operation=search&amp;query=%s' % (script, cgi_encode(cql + ' and c3.%s exact "%s"' % (idx.id, term)))
-                    if (x == 3 and len(facets) > 5 and truncate):
-                        href = u'%s?operation=facet&amp;query=%s&amp;fullFacet=%s' % (script, cgi_encode(cql), type)
-                        facetRows.append('''<li><a href="%s#%s-facet" title="Show all %d %ss" class="ajax">%d more...</a></li>''' % (href, type, len(facets), type, len(facets)-3))
-                        break
-                    else:
-                        facetRows.append('<li><a href="%s" title="Refine results">%s</a> <span class="facet-hitcount">(%d)</span></li>' % (href, term, fac[1][1]))
+                    facetRows.append('<li><a href="%s" title="Refine results">%s</a> <span class="facet-hitcount">(%d)</span></li>' % (href, term, fac[1][1]))
     
                 facetRows.append('</ul>')
                 if (len(facets) > 5) and not truncate:
-                    href = u'%s?operation=facet&amp;query=%s&amp;fullFacet=%s&amp;truncate=1' % (script, cgi_encode(cql), type)
-                    facetRows.append('''[ <a href="%s#%s-facet" title="Show top 3 %ss only" class="ajax">truncate list</a> ]''' % (href, type, type))
+                    facetRows.append('''[ <a href="%s#%s-facet" title="Show top 3 %ss only" class="ajax">fewer %ss</a> ]''' % (fewerhref, type, type, type))
             
         return '\n'.join(facetRows)
         #- end format_facet ---------------------------------------------------
@@ -543,6 +550,8 @@ class EadSearchHandler(EadHandler):
         firstrec = int(form.get('firstrec', 1))
         numreq = int(form.get('numreq', 25))
         rp = int(form.get('responsePosition', numreq/2))
+        if form.has_key('ajax'): ajax = True
+        else: ajax = False
         qString = '%s %s "%s"' % (idx, rel, scanTerm)
         try:
             #scanClause = CQLParser.parse(qString)
@@ -628,7 +637,11 @@ class EadSearchHandler(EadHandler):
                 rowCount += 1
                 prevlink = ''
             else:
-                prevlink = '''<a href="%s?operation=browse&amp;fieldidx1=%s&amp;fieldrel1=%s&amp;fieldcont1=%s&amp;responsePosition=%d&amp;numreq=%d#browseresult" class="ajax"><!-- img -->Previous %d terms</a>''' % (script, idx, rel, cgi_encode(scanData[0][0]), numreq+1, numreq, numreq)
+                prevlink = ['<a href="%s?operation=browse&amp;fieldidx1=%s&amp;fieldrel1=%s&amp;fieldcont1=%s&amp;responsePosition=%d&amp;numreq=%d#browseresult"' % (script, idx, rel, cgi_encode(scanData[0][0]), numreq+1, numreq)]
+                if ajax:
+                    prevlink.append(' class="ajax"')
+                prevlink.append('><!-- img -->Previous %d terms</a>''' % (numreq))
+                prevlink = ''.join(prevlink)
             
             dodgyTerms = []
             for i in range(len(scanData)):
@@ -672,12 +685,16 @@ class EadSearchHandler(EadHandler):
                 rows.append('<tr class="%s"><td colspan="2">-- end of index --</td></tr>' % (['even','odd'][rowCount % 2]))
                 nextlink = ''
             else:
-                nextlink = '''<a href="%s?operation=browse&amp;fieldidx1=%s&amp;fieldrel1=%s&amp;fieldcont1=%s&amp;responsePosition=%d&amp;numreq=%d#browseresult" class="ajax"><!-- img -->Next %d terms</a>''' % (script, idx, rel, cgi_encode(scanData[-1][0]), 0, numreq, numreq)
+                nextlink = ['<a href="%s?operation=browse&amp;fieldidx1=%s&amp;fieldrel1=%s&amp;fieldcont1=%s&amp;responsePosition=%d&amp;numreq=%d#browseresult"' % (script, idx, rel, cgi_encode(scanData[-1][0]), 0, numreq)]
+                if ajax:
+                    nextlink.append(' class="ajax"')
+                nextlink.append('><!-- img -->Next %d terms</a>' % (numreq))
+                nextlink = ''.join(nextlink)
 
             del scanData
             rows.append('</table>')           
             rows.extend(['<div class="scannav"><p>%s</p></div>' % (' | '.join([prevlink, nextlink])),
-                         '</div><!-- end of single div -->'
+                         '</div><!-- end browseresult div -->'
                          ])
             #- end hit navigation
             
@@ -880,7 +897,7 @@ class EadSearchHandler(EadHandler):
                         self.htmlTitle.append('Error')
                         return ('<p class="error">The record you requested is not available.</p>')
                     
-            return printable_toc_scripts + page
+            return '<div id="single">%s\n%s</div>' % (printable_toc_scripts, page)
 
 
     def display_record(self, form):
@@ -1322,6 +1339,8 @@ In: %s
         form = FieldStorage(req)
         content = None
         operation = form.get('operation', None)
+        if form.has_key('ajax'): ajax = True
+        else: ajax = False
         try:
             if (form.has_key('operation')):
                 operation = form.get('operation', None)
@@ -1334,7 +1353,14 @@ In: %s
                     truncate = form.get('truncate', False)
                     q = queryFactory.get_query(session, qString)
                     rs = db.search(session, q)
-                    content = self.format_facet(rs, idxType, truncate)
+                    if (ajax):
+                        content = self.format_facet(rs, idxType, truncate)
+                    else:
+                        firstrec = form.get('firstrec', 1)
+                        numreq = form.get('numreq', 20)
+                        if (truncate):
+                            idxType = None
+                        content = '<div id="leftcol">%s</div><!-- end leftcol --><div id="rightcol">%s</div><!-- en rightcol -->' % (self.format_resultSet(rs), self.format_allFacets(rs, idxType)) 
                 elif (operation == 'browse'):
                     content = self.browse(form)
                 elif (operation == 'summary') or (operation == 'full'):
@@ -1384,7 +1410,7 @@ In: %s
             self.htmlTitle.append('Search')
             content = read_file('index.html')
 
-        if form.has_key('ajax'):
+        if (ajax):
             # enable AJAX type requests
             self.send_xml(content, req)
         else:

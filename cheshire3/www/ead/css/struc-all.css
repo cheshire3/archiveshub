@@ -3,6 +3,8 @@
 	Copyright &copy; 2005-2008 the University of Liverpool
 */
 
+* {margin:0;padding:0;}
+
 body {
   margin: 0;
   padding: 80px 10px 60px 0;
@@ -10,10 +12,11 @@ body {
   min-width: 770px;
   height: 100%;
 }
+
 div#banner,
+div#content,
 div#leftcol,
-div#rightcol,
-div#wrapper
+div#rightcol
 {
 	padding: 0px;
 	position: absolute;
@@ -37,7 +40,8 @@ div#banner {
 }
 div#navbar {
 	top: 80px;
-	height: 25px;
+	min-height: 25px;
+	height: 1.5em;
 	padding: 0px 15px 0px 15px;
 	z-index: 3;
 	overflow: visible;
@@ -50,10 +54,12 @@ div#crest{ float: left; }
 img.rep-logo { max-height: 65px; }
 div#c3logo{ float: right; }
 
-div#wrapper {
+div#content {
 	top: 105px;
-	bottom: 60px;
-	overflow-y: auto;
+	bottom: 50px;
+	width: 100%;
+	width: expression(document.body.clientWidth < 800? "95%": document.body.clientWidth < 1000? "96%": document.body.clientWidth < 1200? "98%": "99%" );
+	overflow-x: hidden !important;
 }
 
 div#leftcol,
@@ -63,15 +69,22 @@ div#rightcol {
 	padding: 5px;
 	min-height: 10px;
 	overflow-y: scroll !important;
+	overflow-x: hidden;
 }
 
-
-div#wrapper {
+div#single,
+div#browseresult {
 	width: 99%;
-	padding: 5px 0 0 15px;
+	padding: 5px 5px 5px 5px;
 }
+
+div#single div#about {
+	margin-right: 250px;
+}
+
 div#leftcol {
 	width: 39%;
+	min-width: 300px;
 	margin: 1px 2px 1px 2px;
 	border-right: 1px solid white;
 	overflow-x: auto;
@@ -87,8 +100,10 @@ div#footer {
 	z-index: 1;
 	width: 100%;
 	max-height: 50px;
+	height: 50px;
 	background: white;
 	border-top: 2px solid silver;
+	vertical-align: top;
 }
 
 @media screen {
@@ -107,10 +122,8 @@ div#technologies {
 }
 div#supporters {
   float: left;
-  min-width:390px;
-  padding: 5px;
-  padding-left: 50px;
-  padding-right: 50px;
+  min-width: 100px;
+  padding: 5px 50px 5px 50px;
   margin-right: auto;
 }
 
@@ -124,6 +137,7 @@ div#copyright
 
 div#supporters-side {
 	float: right;
+	width: 250px;
 	text-align: center;
 	border-left: 2px solid silver;
 }
@@ -171,16 +185,20 @@ h4.ead {
 }
 
 ul { 
-  margin: 0 0 0 0;
-  padding-top: 0;
   padding-bottom: 2px;
 }
 
-ul.hierarchy,
-ul.unmarked {
+
+ul li, ol li {
+	margin-left: 30px;	
+}
+
+ul.hierarchy li,
+ul.unmarked li {
   list-style-type: none;
   list-style-position: outside;
-  padding-left: 10px;
+  margin-left: 0px;
+  padding-left: 15px;
 }
 
 ul.hierarchy {
@@ -193,8 +211,8 @@ ul.hierarchy li {
 	white-space: nowrap;
 }
 
-ul.facetlist {
-	padding-left: 0px;;	
+ul.facetlist li {
+	margin-left: 1em;
 }
 
 div.facet {

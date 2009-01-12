@@ -1,5 +1,4 @@
 <div id="single">
-
     <script type="text/javascript" src="/ead/js/prototype.js"></script>
 	<script type="text/javascript" src="/ead/js/form.js"></script>
     <script type="text/javascript" src="/ead/js/collapsibleLists.js"></script>
@@ -33,43 +32,39 @@
     	<p>Note: the numbers on the template refer to the corresponding ISAD(G) section.</p>  
     	<input type="submit" value=" Create File "/>
     </form>
-    
     <h3 class="bar">Edit Existing EAD Description</h3>
     <div style="float: left; padding-right:50px;">
-    <h4>A file from the main database</h4>
-    <form id="sourceDirForm" name="sourceDirForm" action="/ead/edit/" method="get" enctype="multipart/form-data">
-    <input type="hidden" name="operation" id="operation" value="edit"/>
-    <input type="button" onclick="checkConflicts();" value=" Edit File "/>
-    <ul class="unmarked">
-    	<li><img src="/images/folderOpen.jpg" alt=""/><code>%%%SOURCEDIR%%%</code>
-	    <ul id="sourceDirTree" class="unmarked">
-	    %%%FILES%%%
-	    </ul>
-    	</li>
-    	<input type="button" onclick="checkConflicts();" value=" Edit File "/>
-    </ul>
-    
-    </form>
+        <h4>A file from the main database</h4>
+        <form id="sourceDirForm" name="sourceDirForm" action="/ead/edit/" method="get" enctype="multipart/form-data">
+        <input type="hidden" name="operation" id="operation" value="edit"/>
+        <input type="button" onclick="checkConflicts();" value=" Edit File "/>
+        <ul class="unmarked">
+        	<li><img src="/images/folderOpen.jpg" alt=""/><code>%%%SOURCEDIR%%%</code>
+    	    <ul id="sourceDirTree" class="unmarked">
+    	    %%%FILES%%%
+    	    </ul>
+        	</li>
+        </ul>
+        <input type="button" onclick="checkConflicts();" value=" Edit File "/>
+        </form>
     </div>
     <div style="float: left">
-    <h4>A file already in the process of being edited or created</h4>
-    <form name="storeDirForm" id="storeDirForm" action="/ead/edit/" method="get" enctype="multipart/form-data">
-    <input type="hidden" name="operation" id="operation" value="load"/>
-   <input type="submit" value=" Load File "/>
-   <input type="button" onclick="deleteFromStore()" value=" Delete "/>
-   
-   	%%%USROPTNS%%%
-    <ul class="unmarked">
-    	<li><img src="/images/folderOpen.jpg" alt=""/><span>User Files</span>
-    	<ul id="storeDirTree" class="unmarked">
-    	%%%RECORDS%%%
-    	</ul>
-    	</li>
-    	<input type="submit" value=" Load File "/>
-    	<input type="button" onclick="deleteFromStore()" value=" Delete "/>
-    </ul>
-
-    </form>
-
+        <h4>A file already in the process of being edited or created</h4>
+        <form name="storeDirForm" id="storeDirForm" action="/ead/edit/" method="get" enctype="multipart/form-data">
+        <input type="hidden" name="operation" id="operation" value="load"/>
+        <input type="submit" value=" Load File "/>
+        <input type="button" onclick="deleteFromStore()" value=" Delete "/>
+       
+       	%%%USROPTNS%%%
+        <ul class="unmarked">
+        	<li><img src="/images/folderOpen.jpg" alt=""/><span>User Files</span>
+        	<ul id="storeDirTree" class="unmarked">
+        	%%%RECORDS%%%
+        	</ul>
+        	</li>
+        </ul>
+        <input type="submit" value=" Load File "/>
+        <input type="button" onclick="deleteFromStore()" value=" Delete "/>
+        </form>
     </div>
-</div>
+</div> <!-- end single div -->

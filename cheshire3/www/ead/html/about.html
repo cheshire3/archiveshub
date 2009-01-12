@@ -19,57 +19,87 @@
             <img src="/images/rluk80.jpg" alt=" [ RLUK Research Libraries UK ] " />
         </a>
     </div>
-    <h3>About Cheshire for Archives</h3>
-    <p>
-        Cheshire for Archives is an application of the <a href="http://www.cheshire3.org" title="To www.cheshire3.org">Cheshire3 Information Framework</a>.
-        It provides a sophisticated search engine for EAD encoded archival finding aids, as well as tools to administer the database via a web-interface.
-    </p>
-     <!-- 
-    <p>
-        The search page is simple to use, but allows advanced users to build complex, multi-index, multi-term queries, making it a powerful tool for finding exactly what you&apos;re looking for (assuming it exists of course!)
-    </p>
-    -->
-    <p>
-        <b>New Features!</b><br/>
-        As of version 3.4 there&apos;s even a data creation and editing interface!
-        Based loosely on the Archives Hub data creation template, this new interface allows you to create new catalogue entries from scratch and insert them directly into the database - there&apos;s no need to worry about tags, schemas, DTDs or any of that stuff!
-        You can even load one of your existing files into the interface to correct spelling mistakes, or even catalogue additional material within the collection.
-        For more details see the creation and editing template help page.
-    </p>
-
-    <p>
-        As well as a human useable web-interface for searching, it also exposes the database via web services (web services are the cornerstone of Web 2.0!)
-        <br/>Currently Cheshire for Archives provides the following international standard webservices/protocols:
-    </p>
-    <table>
-        <tr class="headrow">
-            <td>Webservices / Protocol</td>
-            <td>Link to Standard&apos;s Homepage</td>
-            <td>Location of service on this server</td>
-        </tr>
-        <tr>
-            <td>SRU</td>
-            <td><a href="http://www.loc.gov/standards/sru" title="SRU Official Homepage">Search/Retrieve via URL</a></td>
-            <td>
-                <a href="/services/ead" title="to webservice on this server">http://<script type="text/javascript">window.document.write(window.location.hostname);</script><noscript>&lt;see address bar&gt;</noscript>/services/ead</a>
-            </td>
-        </tr>
-        <tr>
-            <td>OAI-PMH</td>
-            <td><a href="http://www.openarchives.org/OAI/openarchivesprotocol.html" title="OAI-PMH v2.0 Homepage">The Open Archives Initiative Protocol for Metadata Harvesting</a></td>
-            <td>
-                <a href="/OAI/2.0/ead" title="to webservice on this server">http://<script type="text/javascript">window.document.write(window.location.hostname);</script><noscript>&lt;see address bar&gt;</noscript>/OAI/2.0/ead</a>
-            </td>
-        </tr>
-        <tr>
-            <td>Z39.50</td>
-            <td><a href="http://www.loc.gov/z3950/agency/" title="Z39.50 Maintenance Agency Homepage">Z39.50 International Standard Maintenance Agency</a></td>
-            <td>z3950://<script type="text/javascript">window.document.write(window.location.hostname);</script><noscript>&lt;see address bar&gt;</noscript>:2100/ead
-            </td>
-        </tr>
-    </table>
-    <p>
-        Cheshire for Archives has been developed at the <a href="http://www.liv.ac.uk" title="University of Liverpool Homepage">University of Liverpool</a> as part of the <a href="http://www.archiveshub.ac.uk">Archives Hub</a> project.
-        The support of the <a href="http://www.jisc.ac.uk/" title="Joint Information Systems Committee website">JISC</a> is gratefully acknowledged.
-    </p>
+    <div id="about">
+        <h3>About Cheshire for Archives</h3>
+        <p>
+            Cheshire for Archives provides a sophisticated search engine for EAD encoded archival finding aids, as well as tools to manage the database via a web-interface.
+            It is an application of the <a href="http://www.cheshire3.org" title="To www.cheshire3.org">Cheshire3 Information Framework</a>.
+        </p>
+        <h4>Discover</h4>
+        <p>
+            <strong>Search</strong>: The <a href="index.html" title="go to search page">Search</a> page is simple to use, yet allows advanced users to build complex queries with multiple terms in multiple indexes.
+            Boolean search logic, phrase searching, and wildcards are all supported, as is highlighting of your search term in record displays wherever possible.
+            <br/>
+            <strong>Browse</strong>: Indexes of titles, subject, names, reference numbers etc. can be browsed alphabetically from the <a href="browse.html" title="go to browse page">Browse Indexes</a> page.
+            <br/>
+            <strong>Find subjects</strong>: The system also provides a way to discover relevant subjects within controlled vocabularies based on free text that you enter (known as an <abbr title="Entry Level Vocabulary">ELV</abbr>).
+            This is available on the <a href="subject.html" title="go to subject finder">Find Subjects</a> page.
+            <br/>
+            For full details on the search features and how to use them, please see the <a href="help.html" title="go to help page">Help</a> page.
+        </p>
+        <h4>Manage</h4>
+        <p>
+            The database of EAD finding aids can be administered via a web-browser in the authenticated <a href="admin/" title="go to Administration Section">administration interface</a>.
+            This provides a multi-user environment for previewing, adding and removing files.
+            The database can be rebuilt to allow for bacth addition or deletion of files.
+            You can also view a page summarizing a number of statistics relating to how your catalogue is being used, and which entries are most popular.
+            The database of users authorized to access the administration section can also be managed within it.
+        </p>
+        <p>
+            For full details on the administation section, please see the <a href="adminhelp" title="go to Administration Help">Admin Help</a>
+        </p>
+        <h4>Create and Edit <span class="error">( NEW FEATURE! )</span></h4>
+        <p>
+            For version 3.4 we&apos;ve added a data creation and editing interface.
+            Based loosely on the Archives Hub data creation template, this new interface allows you to create new catalogue entries from scratch without worrying about schemas or DTDs.
+            The biggest change from the old template is the ability to build up multiple levels of description without needing to copy and paste into a text editor.
+            The system will even save your work allowing you to create entries over a number of days or even weeks.
+            You can preview your EAD file as it will appear when displayed to users, or look at the raw XML, at any time.
+            Once you&apos;re finished editing you can export your record to a file, and (optionally) submit them for immediate inclusion in the database.
+        </p>
+        <p>
+            It&apos;s also possible to load one of your existing files into the interface for editing.
+            This makes minor corrections, for things such as spelling mistakes, missing, or incorrect controlled access terms a quick and simple task.
+            Again, once your edits are complete you can export them to a file and (optionally) immediately replace the existing entry in the database.
+        </p>
+        <p>
+            For full details see the creation and editing template help page.
+        </p>
+        <h4>Expose</h4>
+        <p>
+            As well as a human useable web-interface for searching, it also exposes the database via web services (web services are the cornerstone of Web 2.0!)
+        </p>
+        <table>
+            <caption>Cheshire for Archives currently provides the following International Standards:</caption>
+            <tr class="headrow">
+                <td>Webservices / Protocol</td>
+                <td>Link to Standard&apos;s Homepage</td>
+                <td>Location of service on this server</td>
+            </tr>
+            <tr>
+                <td>SRU</td>
+                <td><a href="http://www.loc.gov/standards/sru" title="SRU Official Homepage">Search/Retrieve via URL</a></td>
+                <td>
+                    <a href="/services/ead" title="to webservice on this server">http://<script type="text/javascript">window.document.write(window.location.hostname);</script><noscript>&lt;see address bar&gt;</noscript>/services/ead</a>
+                </td>
+            </tr>
+            <tr>
+                <td>OAI-PMH</td>
+                <td><a href="http://www.openarchives.org/OAI/openarchivesprotocol.html" title="OAI-PMH v2.0 Homepage">The Open Archives Initiative Protocol for Metadata Harvesting</a></td>
+                <td>
+                    <a href="/OAI/2.0/ead" title="to webservice on this server">http://<script type="text/javascript">window.document.write(window.location.hostname);</script><noscript>&lt;see address bar&gt;</noscript>/OAI/2.0/ead</a>
+                </td>
+            </tr>
+            <tr>
+                <td>Z39.50</td>
+                <td><a href="http://www.loc.gov/z3950/agency/" title="Z39.50 Maintenance Agency Homepage">Z39.50 International Standard Maintenance Agency</a></td>
+                <td>z3950://<script type="text/javascript">window.document.write(window.location.hostname);</script><noscript>&lt;see address bar&gt;</noscript>:2100/ead
+                </td>
+            </tr>
+        </table>
+        <p>
+            Cheshire for Archives has been developed at the <a href="http://www.liv.ac.uk" title="University of Liverpool Homepage">University of Liverpool</a> as part of the <a href="http://www.archiveshub.ac.uk">Archives Hub</a> project.
+            The support of the <a href="http://www.jisc.ac.uk/" title="Joint Information Systems Committee website">JISC</a> is gratefully acknowledged.
+        </p>
+    </div> <!-- enbd about div -->
 </div> <!-- end single div -->

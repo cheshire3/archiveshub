@@ -573,7 +573,7 @@ class EadAdminHandler(EadHandler):
     def review_records(self, version='full'):
         global sourceDir
         self.htmlTitle.append('File Management')
-        out = []
+        out = ['<div id="single">']
         if (version=='full'):
             header = 'Existing Files'
             fileformsubmits = '''<input type="submit" name="operation" value="rename" onmousedown="op=this.value;"/>            
@@ -609,7 +609,7 @@ class EadAdminHandler(EadHandler):
                '<ul id="sourceDirTree" class="unmarked">'
                ])
         out.extend(self._walk_directory(sourceDir))
-        out.extend(['</li>','</ul>', '</ul>', fileformsubmits, '</form>'])
+        out.extend(['</li>','</ul>', '</ul>', fileformsubmits, '</form>', '</div> <!-- end single div -->'])
         self.logger.log('File options')
         return '\n'.join(out)
     #- end review_records()
