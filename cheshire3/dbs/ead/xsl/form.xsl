@@ -988,7 +988,9 @@
 <!--  -->
 <!-- DIGITAL OBJECTS -->
 	<div id="digitalobjectssection" class="section">
-		<h3>Digital Objects</h3>
+		<h3>Digital Objects<a id="daohelp" name="daohelp" target="_new" href="http://www.archiveshub.ac.uk/arch/images.shtml#dao-help">
+		<img class="whatsthis" src="/images/whatisthissmall.gif" alt="[What is this?]"/>
+		</a></h3>
 		<p>
 			<xsl:choose>
 				<xsl:when test="dao">
@@ -1429,7 +1431,7 @@
 						<xsl:attribute name="title">
 							<xsl:text>delete entry</xsl:text>
 						</xsl:attribute>
-						<img src="/images/deletesmall.gif">
+						<img src="/images/delete.png">
 						<xsl:attribute name="id">
 							<xsl:text>delete</xsl:text><xsl:number level="single" count="controlaccess/*[name() = $aptype]" format="1"/>
 						</xsl:attribute>
@@ -1673,7 +1675,7 @@
 						<xsl:attribute name="title">
 							<xsl:text>delete entry</xsl:text>
 						</xsl:attribute>
-						<img src="/images/deletesmall.gif">
+						<img src="/images/delete.png">
 						<xsl:attribute name="id">
 							<xsl:text>delete</xsl:text><xsl:number level="single" count="language" format="1"/>
 						</xsl:attribute>
@@ -1834,7 +1836,7 @@
   </xsl:template> 
   
   
-    <xsl:template name="dao">
+  <xsl:template name="dao">
   	<xsl:param name="type" />
   	<xsl:param name="number" />
   	<xsl:param name="path" />
@@ -1842,19 +1844,22 @@
   		<tr>
   			<td class="label">File URI: </td>
   			<td>
-  				<input size="70" type="text">
+  				<input size="70" type="text" onfocus="setCurrent(this);">
   					<xsl:attribute name="value">
   						<xsl:value-of select="@href"/>
   					</xsl:attribute>
   					<xsl:attribute name="name">
   						<xsl:value-of select="$path"/><xsl:text>dao[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/@href</xsl:text>
   					</xsl:attribute>
+  					<xsl:attribute name="id">
+  						<xsl:value-of select="$path"/><xsl:text>dao[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/@href</xsl:text>
+  					</xsl:attribute>  					
   				</input>
   			</td>
   		</tr>
   		<tr><td class="label">Title: </td>
   			<td>
-  				<input size="70" type="text">
+  				<input size="70" type="text" onfocus="setCurrent(this);">
   					<xsl:attribute name="value">
   						<xsl:value-of select="@title"/>
   					</xsl:attribute>
@@ -1866,7 +1871,7 @@
   		</tr>
   		<tr><td class="label">Description: </td>
   			<td>
-  				<input size="70" type="text">
+  				<input size="70" type="text" onfocus="setCurrent(this);">
   					<xsl:attribute name="value">
   						<xsl:apply-templates select="daodesc"/>
   					</xsl:attribute>
@@ -1894,7 +1899,7 @@
   		<tr>
   			<td class="label">Thumbnail URI: </td>
   			<td>
-  				<input size="70" type="text">
+  				<input size="70" type="text" onfocus="setCurrent(this);">
   					<xsl:attribute name="value">
   						<xsl:value-of select="daoloc[@role='thumb']/@href"/>
   					</xsl:attribute>
@@ -1907,7 +1912,7 @@
   		<tr>
   			<td class="label">File URI: </td>
   			<td>
-  				<input size="70" type="text">
+  				<input size="70" type="text" onfocus="setCurrent(this);">
   					<xsl:attribute name="value">
   						<xsl:value-of select="daoloc[@role='reference']/@href"/>
   					</xsl:attribute>
@@ -1919,7 +1924,7 @@
   		</tr>
   		<tr><td class="label">Title: </td>
   			<td>
-  				<input size="70" type="text">
+  				<input size="70" type="text" onfocus="setCurrent(this);">
   					<xsl:attribute name="value">
   						<xsl:value-of select="daoloc[@role='reference']/@title"/>
   					</xsl:attribute>
@@ -1931,7 +1936,7 @@
   		</tr>
   		<tr><td class="label">Description: </td>
   			<td>
-  				<input size="70" type="text">
+  				<input size="70" type="text" onfocus="setCurrent(this);">
   					<xsl:attribute name="value">
   						<xsl:apply-templates select="daodesc"/>
   					</xsl:attribute>
@@ -1976,7 +1981,7 @@
   				<xsl:text>File </xsl:text><xsl:value-of select="position()"/><xsl:text> URI: </xsl:text>
   			</td>
   			<td>
-	  			<input type="text" size="70">
+	  			<input type="text" size="70" onfocus="setCurrent(this);">
 	  				<xsl:attribute name="name">
 	  					<xsl:value-of select="$path"/><xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[</xsl:text><xsl:value-of select="position()"/><xsl:text>]/@href</xsl:text>
 	  				</xsl:attribute>
@@ -1994,7 +1999,7 @@
   				<xsl:text>File </xsl:text><xsl:value-of select="position()"/><xsl:text> Title: </xsl:text>
   			</td>
   			<td>
-	  			<input type="text" size="70">
+	  			<input type="text" size="70" onfocus="setCurrent(this);">
 	  				<xsl:attribute name="name">
 	  					<xsl:value-of select="$path"/><xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[</xsl:text><xsl:value-of select="position()"/><xsl:text>]/@title</xsl:text>
 	  				</xsl:attribute>
@@ -2017,7 +2022,7 @@
   		add another file</a></td></tr>
   		<tr><td class="label">Description: </td>
   			<td>
-  				<input size="70" type="text">
+  				<input size="70" type="text" onfocus="setCurrent(this);">
   					<xsl:attribute name="value">
   						<xsl:apply-templates select="daodesc"/>
   					</xsl:attribute>
