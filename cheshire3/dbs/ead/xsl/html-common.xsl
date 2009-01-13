@@ -871,27 +871,26 @@
 	
     <!-- COMPONENT -->
     <xsl:template name="single-component">
-	<a>
+        <a>
             <xsl:attribute name="name">
-		<xsl:choose>
+                <xsl:choose>
                     <xsl:when test="@id">
                         <xsl:value-of select="@id"/>
                     </xsl:when>
-	    	    <xsl:when test="did/@id">
+                    <xsl:when test="did/@id">
                         <xsl:value-of select="did/@id"/>
                     </xsl:when>
                     <xsl:when test="did/unitid/@id">
                         <xsl:value-of select="did/unitid/@id"/>
                     </xsl:when>
-	    	    <xsl:otherwise>
-                        <xsl:value-of select="generate-id(.)"/>
+                    <xsl:otherwise>
+                        <xsl:value-of select="generate-id(did)"/>
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:attribute>
             <xsl:text> </xsl:text>
         </a>
-	
-	<h3>
+        <h3>
             <xsl:apply-templates select ="did/unittitle"/>
             <xsl:text>(</xsl:text>
             <xsl:choose>

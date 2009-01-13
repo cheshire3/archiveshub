@@ -75,7 +75,7 @@
             <xsl:value-of select="$node/did/unitid/@id"/>
           </xsl:when>
           <xsl:otherwise>
-			<xsl:value-of select="generate-id(.)"/>
+			<xsl:value-of select="generate-id($node/did)"/>
           </xsl:otherwise>
         </xsl:choose>
       </xsl:attribute>
