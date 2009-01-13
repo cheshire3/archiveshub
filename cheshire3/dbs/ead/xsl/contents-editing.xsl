@@ -10,7 +10,7 @@
 -->
 
 <xsl:stylesheet 
-  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
   version="1.0">
 
 	<xsl:output method="xml" omit-xml-declaration="yes"/> 
@@ -51,20 +51,35 @@
 		<xsl:call-template name="toc-link">
 			  <xsl:with-param name="node" select="."/>
 		</xsl:call-template>
-	    <xsl:if test="c|c01|c02|c03|c04|c05|c06|c07|c08|c09|c10|c11|c12"> 
-	      <ul class="hierarchy">
-	      <xsl:attribute name="name">
-	      	 <xsl:value-of select="count(ancestor::*)-1"/>
-	      </xsl:attribute>
-	        <xsl:for-each select="c|c01|c02|c03|c04|c05|c06|c07|c08|c09|c10|c11|c12">
-	        	<xsl:if test="not(./@audience and ./@audience = 'internal')">
-		          <li>
-		            <xsl:call-template name="toc-c"/>
-		          </li>
-	            </xsl:if>
-	        </xsl:for-each>
-	      </ul>
-		</xsl:if>
+		<xsl:choose>
+		    <xsl:when test="c|c01|c02|c03|c04|c05|c06|c07|c08|c09|c10|c11|c12"> 
+		      <ul class="hierarchy">
+		      <xsl:attribute name="name">
+		      	 <xsl:value-of select="count(ancestor::*)-1"/>
+		      </xsl:attribute>
+		        <xsl:for-each select="c|c01|c02|c03|c04|c05|c06|c07|c08|c09|c10|c11|c12">
+		        	<xsl:if test="not(./@audience and ./@audience = 'internal')">
+			          <li>
+			            <xsl:call-template name="toc-c"/>
+			          </li>
+		            </xsl:if>
+		        </xsl:for-each>
+		      </ul>
+			</xsl:when>
+			<xsl:otherwise>
+				<a>
+					<xsl:attribute name="id">
+						<xsl:text>delete_</xsl:text><xsl:value-of select="./@c3id"/>
+					</xsl:attribute>
+					<xsl:attribute name="onclick">
+			        	<xsl:text>javascript: deleteComponent('</xsl:text>
+			        	<xsl:value-of select="./@c3id"/>       
+			        	<xsl:text>')</xsl:text>
+				  	</xsl:attribute>
+					<img src="/images/delete.png" class="componentdelete"></img>					
+				</a>
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 	
 
@@ -103,23 +118,23 @@
           <xsl:attribute name="id">
         	<xsl:text>collectionLevel</xsl:text>
           </xsl:attribute>
-          <xsl:attribute name="href">
+          <xsl:attribute name="onclick">
         	<xsl:text>javascript: displayForm('collectionLevel')</xsl:text>
 	  	  </xsl:attribute>
 	  	  <xsl:attribute name="style"><xsl:text>background:yellow</xsl:text></xsl:attribute>
         </xsl:when>
         <xsl:otherwise>
           <xsl:attribute name="id">
-        	<xsl:value-of select="$node/@id"/>
+        	<xsl:value-of select="$node/@c3id"/>
       	  </xsl:attribute>
-      	  <xsl:attribute name="href">
+      	  <xsl:attribute name="onclick">
         	<xsl:text>javascript: displayForm('</xsl:text>
-        	<xsl:value-of select="$node/@id"/>       
+        	<xsl:value-of select="$node/@c3id"/>       
         	<xsl:text>')</xsl:text>
 	  	  </xsl:attribute>
-	  	  <xsl:attribute name="onclick">
+	 <!--  	  <xsl:attribute name="onclick">
         	<xsl:text>setCookie('RECID-tocstate', stateToString('someId'))</xsl:text>
-      	  </xsl:attribute>
+      	  </xsl:attribute>-->
         </xsl:otherwise>
       </xsl:choose>
 	  <xsl:if test="$node/did/unitid">
