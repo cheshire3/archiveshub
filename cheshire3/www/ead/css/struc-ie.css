@@ -1,6 +1,6 @@
 /*
 	This file was produced, and released as part of Cheshire for Archives v3.x
-	Copyright &copy; 2005-2007 the University of Liverpool
+	Copyright &copy; 2005-2009 the University of Liverpool
 */
 
 body {
@@ -8,21 +8,26 @@ body {
 }
 
 body,
-div#wrapper,
+div#content,
 div#banner,
 div#single,
 div#leftcol,
 div#rightcol,
 div#footer
 {
-	position: static;
+	position: relative;
 	margin: 0;
 	padding: 0;
 	text-align: left;
 	clear: both;
 }
 
-div#wrapper {
+div#footer {
+	position: relative;	
+}
+
+div#content {
+	top: 0;
 	padding: 0 5px 0 5px;
 }
 
@@ -35,22 +40,23 @@ div#rightcol
 
 div#leftcol {
 	float: left;
-	width: 38%;
+	width: 39%;
 /*  content: block;*/
 }
 div#rightcol {
+	width: 100%;
 	margin-left: 40%;
 	border-top: 1px solid white; /* to stop collapsing margins in Moz */
 }
 
 div#padder { 
-	width:100%;
+	width: 100%;
 	float: right; 
-	margin-left:-40%;
+	margin-left: -40%;
 }
 
 div#footer { 
-	height: 6em;
+	height: 50px;
 	background: white;
 	border-top: 2px solid silver;
 	clear: both;

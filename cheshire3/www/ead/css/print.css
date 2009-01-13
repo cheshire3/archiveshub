@@ -27,7 +27,14 @@ div#banner div#navbar{
 }
 
 div#navbar,
-div.pagenav
+div.pagenav,
+div#full-link,
+div.daos,
+div.dsc-count,
+div.scannav,
+span.printlink,
+a.jstoggle-text,
+td.cross-search
 {
 	display: none;
 }
@@ -38,16 +45,26 @@ div#leftcol {
 	height: 0;
 }
 
+div#leftcol.searchresults,
+div#eadheader {
+	display: block;
+}
+
 div#rightcol {
 	page-break-inside: auto;
 	top: 0;
 	width: auto;
+	clear: both;
+}
+
+div#rightcol.facets {
+	display: none;
 }
 
 div#footer { 
 	display: none;
 	position: static;
-	height: 6em;
+	height: 50px;
 	background: white;
 	border-top: 2px solid silver;
 	clear: both;
@@ -55,6 +72,11 @@ div#footer {
 
 div.component {
 	page-break-inside: avoid;
+}
+
+div.toclist,
+table {
+	clear: both;	
 }
 
 div.heading,
@@ -73,6 +95,6 @@ ul.unmarked {
   padding-left: 10px;
 }
 
-span.printlink {
-	display: none;
+a:link {
+	color: black;
 }
