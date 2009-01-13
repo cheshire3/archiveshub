@@ -100,7 +100,7 @@ function deleteFromStore(){
 		return;
 	}
 	else {
-		var ok = confirmOp('You are about to delete ' + recid.split('-')[0] + ' from the editing store. All changes made since it was last submitted to the database will be lost.\nAre you sure you want to continue?')
+		var ok = confirmOp('You are about to delete ' + recid.substring(0, recid.lastIndexOf('-')) + ' from the editing store. All changes made since it was last submitted to the database will be lost.\nAre you sure you want to continue?')
 		if (ok){
 			deleteRec(recid);
 		}
@@ -333,14 +333,11 @@ function save(){
     	}
     	else if (type == 'multiple'){
     		var length = inputs.length;
-    		alert('there are ' + length + ' inputs');
     		var number = (length-1)/3;
     		var problems = false;
     		var list = new Array();
-    		alert('there are ' + number + ' files');
     		for (var i = number; i < length-1; i+=2){
 				if (inputs[i].value.strip() == '' && (inputs[i+1].value.strip() != '' || inputs[length-1].value.strip() != '')){
-					alert('input ' + i + ' is missing a uri')
 					list[list.length] = i;
 					problems = true;
 				}
@@ -438,7 +435,11 @@ function saveForm(asynch){
 }
 
 
-function displayForm(id, level){
+function displayForm(id, level, nosave){
+
+	if (nosave == undefined){
+		nosave = false;
+	}
 	/* for adding a new form */
 	if (id == 'new'){
 		var data = 'operation=add&recid=' + recid + '&clevel=' + level;
@@ -453,27 +454,32 @@ function displayForm(id, level){
 	}
 	/* for navigating to an existing form*/
 	else {	 
-		if (!checkRequiredData()){
-			alert ('the following fields must be entered before proceeding:\n  - Reference Code \n  - Title');
-			return;
-		} 	
-		errors = document.getElementsByClassName('menuFieldError');
-	    if (errors.length != 0){
-	    	alert('Please fix the errors in the xml before leaving this page. Errors will be marked with red shading in the text box.');
-	    	return;
-	    }
-	  	saveForm(false);
+		if (nosave == false){
+			if (!checkRequiredData()){
+				alert ('the following fields must be entered before proceeding:\n  - Reference Code \n  - Title');
+				return;
+			} 	
+			errors = document.getElementsByClassName('menuFieldError');
+		    if (errors.length != 0){
+		    	alert('Please fix the errors in the xml before leaving this page. Errors will be marked with red shading in the text box.');
+		    	return;
+		    }	
+			saveForm(false);
+		}	
+	  	
 		var data = 'operation=navigate&recid=' + recid + '&newForm=' + id;
 		if (fileOwner != null){
 			data += '&owner=' + fileOwner;
 		}
 		var loc = $('rightcol');
 		new Ajax.Updater(loc, '/ead/edit', {method: 'get', asynchronous:false, parameters:data, evalScripts:true, onSuccess: function(transport){		   	
-			
+	    
+		}});
+		if ($(currentForm)){
 			($(currentForm)).style.background = 'none';
-		    currentForm = id;
-		    ($(currentForm)).style.background = 'yellow';		    
-		}});	    		  	 	  	
+		}
+	    currentForm = id;
+	    ($(currentForm)).style.background = 'yellow';		    		  	 	  	
   	}
   	findRequiredFields();
 }
@@ -515,7 +521,7 @@ function addComponent(){
     	body.className = 'none';
     	return;
     }
-    if (checkEditStore){
+    if (checkEditStore()){
     	var confirmbox = confirm('A file with this Reference code is already in the process of being created or edited. If you proceed with this operation the existing file will be overwritten with this one.\n\nAre you sure you want to continue with this operation?');
    		if (confirmbox == false){
    			body.className = 'none';
@@ -628,8 +634,6 @@ function addComponent(){
     }
 	parent.style.background = 'none';
 
-	//setAttribute('style', 'background:none');
-
     
     // find the right list or add a new one
     var childList = null;  
@@ -656,13 +660,18 @@ function addComponent(){
       		}
       	}
       	listItem.appendChild(list);
+      	//if this element isn't collection level remove the delete option since it now isn't a leaf node
+		if (currentForm != 'collectionLevel'){
+			var del = null
+			if (del = document.getElementById('delete_' + currentForm)){
+				del.parentNode.removeChild(del);
+			}
+		}
     }  
 
     // create the linkId
     var linkId = '';    
-    var elementCount = list.childNodes.length;
-
-    
+      
     var parentLoc = '';
     if (level > 0){
       	var parentId = parent.getAttribute('id');
@@ -671,10 +680,25 @@ function addComponent(){
         	linkId += (parentLoc + '-');
       	}	
     }
+
+    var elementCount = list.childNodes.length;
     if (elementCount != undefined){
-      	linkId += (elementCount + 1);
+    	if (elementCount == 0){
+    		linkId += 1;
+    	}
+    	else {
+    		var previousNode;
+    		if (previousNode = list.childNodes[elementCount-1].childNodes[1]){
+	    		var previousId = previousNode.getAttribute('id');
+	    		var number = Number(previousId.substring(previousId.lastIndexOf('-')+1)); 		
+	    		linkId += number + 1;	
+	    	}	
+	    	else {
+	    		linkId += '1';
+	    	}
+    	}    	
     }
-    
+
 	// create the html
     var newItem = document.createElement('li');
 
@@ -686,10 +710,22 @@ function addComponent(){
     newLink.onclick = new Function("javascript: displayForm(this.id, 0)");
     newLink.className = 'invalid';
     newLink.appendChild(document.createTextNode(linkId));
- 
-       
+    
+    deleteLink = document.createElement('a');
+    deleteLink.setAttribute('id', 'delete_' + linkId);
+    deleteLink.onclick = new Function("javascript: deleteComponent('" + linkId + "')");
+
+    deleteImage = document.createElement('img');
+    deleteImage.setAttribute('src', '/images/delete.png');
+    deleteImage.className = 'componentdelete';
+    
+    deleteLink.appendChild(deleteImage);
+        
     newItem.appendChild(newLink);
+    newItem.appendChild(deleteLink);
+
     list.appendChild(newItem);
+    
 
 	refreshTree('someId');
 	
@@ -702,9 +738,67 @@ function addComponent(){
 }
 
 
+function deleteComponent(id){
+
+	var link = document.getElementById(id);	
+	var compid = link.innerHTML;
+	
+	var confirmbox = confirm('This operation will permanently delete the component ' + compid + '\n\n Are you sure you want to continue?');
+	if (confirmbox == false){
+		return;
+	}
+	var data = 'operation=delete&recid=' + recid + '&id=' + id;
+	if (fileOwner != null){
+    	data += '&owner=' + fileOwner;
+    }
+	var url = '/ead/edit';
+	var value = 'false';
+	new Ajax.Request(url, {method: 'get', asynchronous: false, parameters: data, onSuccess: function(transport) { 	    				
+		var response = transport.responseText;
+		value = response.substring(7,response.indexOf('</value>'));			   					
+	}});
+	if (value == 'false'){
+		alert('There was an error while deleting the component. Please reload the file and try again');
+	}
+	else{
+		//delete from tree
+		var listItem = link.parentNode;
+		var ul = listItem.parentNode;
+		ul.removeChild(listItem);
+		if (ul.childNodes.length == 0){
+			grandparent = ul.parentNode
+			grandparent.removeChild(ul);
+			if (id.length > 1){
+				grandparentId = id.substring(0, id.lastIndexOf('-')).substring(0, id.lastIndexOf('-'));
+				deleteLink = document.createElement('a');
+			    deleteLink.setAttribute('id', 'delete_' + grandparentId);
+			    deleteLink.onclick = new Function("javascript: deleteComponent('" + grandparentId + "')");
+			
+			    deleteImage = document.createElement('img');
+			    deleteImage.setAttribute('src', '/images/delete.png');
+			    deleteImage.className = 'componentdelete';
+			    
+			    deleteLink.appendChild(deleteImage);
+			    
+			    grandparent.appendChild(deleteLink);
+			}
+		}
+		//if current form has just been deleted display parent form
+		if (id == currentForm){
+			if (id.indexOf('-') == -1){
+				displayForm('collectionLevel', '0', true);
+			}
+			else {
+				displayForm(id.substring(0, id.lastIndexOf('-')), '0', true);
+			}
+		}
+	}
+	refreshTree('someId');
+}
+
 function viewXml(){
 	if (!checkRequiredData()){
-		alert ('the following fields must be entered before proceeding:\n  - Reference Code \n  - Title')
+		alert ('the following fields must be entered before proceeding:\n  - Reference Code \n  - Title');
 		return;
 	}
 	checkId('recordStore', false);
@@ -713,7 +807,7 @@ function viewXml(){
 		return;
 	}
 	if (currentEntryField != null && currentEntryField.value != ''){
-    	validateField(currentEntryField, false)
+    	validateField(currentEntryField, false);
     }
     errors = document.getElementsByClassName('menuFieldError');
     if (errors.length != 0){
@@ -1186,25 +1280,27 @@ function validateXML(field, asynch){
 
 function checkEditStore(){
 	var value = false;
-	if (recid == null || recid == 'notSet'){
-		if ($('countrycode').value != ''){
-			if ($('archoncode').value != ''){
-				if ($('unitid').value != ''){
-					var id = $('countrycode').value.toLowerCase() + $('archoncode').value + $('unitid').value.replace(' ', '').replace('/', '-').toLowerCase();
-					var url = '/ead/edit'
-					var data = 'operation=checkId&id=' + id + '&store=editStore';
-					new Ajax.Request(url, {method: 'get', asynchronous: false, parameters: data, onSuccess: function(transport) { 	    				
-					    var response = transport.responseText;
-					    idExists = response.substring(7,response.indexOf('</value>'));					    
-					    if (idExists == 'true'){
-					    	value = true;
-					    }	
-						
-		 			}});
+	if (currentForm == 'collectionLevel'){		
+		if (recid == null || recid == 'notSet'){
+			if ($('countrycode').value != ''){
+				if ($('archoncode').value != ''){
+					if ($('unitid').value != ''){
+						var id = $('countrycode').value.toLowerCase() + $('archoncode').value + $('unitid').value.replace(' ', '').replace('/', '-').toLowerCase();
+						var url = '/ead/edit'
+						var data = 'operation=checkId&id=' + id + '&store=editStore';
+						new Ajax.Request(url, {method: 'get', asynchronous: false, parameters: data, onSuccess: function(transport) { 	    				
+						    var response = transport.responseText;
+						    idExists = response.substring(7,response.indexOf('</value>'));					    
+						    if (idExists == 'true'){
+						    	value = true;
+						    }	
+							
+			 			}});
+					} 
 				} 
 			} 
 		} 
-	} 
+	}
 	return value;
 }
 

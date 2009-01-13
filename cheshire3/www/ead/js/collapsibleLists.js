@@ -289,8 +289,23 @@ function refreshSubTrees(listObj, level, rootListId, listTag){
 				refreshSubTrees(nextSubList, level+1, rootListId, listObj.tagName.toLowerCase())
 	      	}       
 		    else {
+		    	//remove the straight images
 				if (listItems[i].childNodes[0].tagName == 'IMG'){
 					listItems[i].removeChild(listItems[i].childNodes[0]);
+				}
+				//remove folder images (wrapped in links)
+				else if (listItems[i].childNodes[0].childNodes[0].tagName == 'IMG'){	
+					listItems[i].removeChild(listItems[i].childNodes[0]);				
+					//these will also have span class=subcount which needs deleting first
+					var children = listItems[i].childNodes;
+					for (var j=0; j< children.length; j++){
+						if (children[j].tagName == 'SPAN'){
+							var span = children[j];
+							if (span.className == 'subcount'){
+								listItems[i].removeChild(span);
+							}
+						}
+					} 					
 				}
 				var imgElem = document.createElement('img');
 				if (i < listItems.length-1){

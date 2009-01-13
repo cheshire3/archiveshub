@@ -2,7 +2,7 @@
 # Script:    eadEditingHandler.py
 # Version:   0.1
 # Date:      ongoing
-# Copyright: &copy; University of Liverpool 2008
+# Copyright: &copy; University of Liverpool 2009
 # Description:
 #            Data creation and editing interface for EAD finding aids
 #            - part of Cheshire for Archives v3
@@ -184,10 +184,10 @@ class EadEditingHandler(EadHandler):
     def build_ead(self, form):
         self.logger.log('building ead')
         ctype = form.get('ctype', None)
-        level = form.get('location', None)
+        loc = form.get('location', None)
         collection = False
         validList = None
-        if (level == 'collectionLevel'):
+        if (loc == 'collectionLevel'):
             validList = [l for l in self.required_xpaths]
             collection = True;
             tree = etree.fromstring('<ead><eadheader></eadheader><archdesc></archdesc></ead>')           
@@ -212,7 +212,7 @@ class EadEditingHandler(EadHandler):
             self._add_text(target, '%s' % datetime.date.today())
         else :
             validList = [l for l in self.required_xpaths_components]
-            tree = etree.fromstring('<%s id="%s"></%s>' % (ctype, level, ctype))           
+            tree = etree.fromstring('<%s c3id="%s"></%s>' % (ctype, loc, ctype))           
         list = form.list     
         for field in list :
             if field.name not in ['ctype','location','operation','newForm','owner','recid', 'parent', 'pui', 'eadid', 'filedesc/titlestmt/sponsor', 'daooptns']:        
@@ -478,11 +478,13 @@ class EadEditingHandler(EadHandler):
         else :
             retrievedXml = editStore.fetch_record(session, '%s-%s' % (recid, owner)).get_xml(session)
             root = None
-            tree = etree.XMLID(retrievedXml)
-            node = tree[1].get(new)                
-            for e in tree[0].getiterator() :
-                if e == node :
-                    root = deepcopy(e)
+            tree = etree.fromstring(retrievedXml)
+            comp = tree.xpath('//*[@c3id=\'%s\']' % new)
+            try:
+                root = deepcopy(comp[0])
+            except:
+                pass
+            
             
             if root == None :
                 ctype = form.get('ctype', 'c')
@@ -504,22 +506,21 @@ class EadEditingHandler(EadHandler):
         for element in tree.iter(tag=etree.Element):
             if compre.match(element.tag): 
                 try :                 
-                    if not element.get('id'):
-                        #add the appropriate id!
-                        posCount = 1
-                        parentId = ''
-                        for el in element.itersiblings(tag=etree.Element, preceding=True):
-                            if compre.match(el.tag):
-                                posCount += 1
-                        #get the parent component id and use it 
-                        for el in element.iterancestors():
-                            if compre.match(el.tag):
-                                parentId = el.get('id')                             
-                                break
-                        idString = '%s-%d' % (parentId, posCount)
-                        if idString[0] == '-':
-                            idString = idString[1:]
-                        element.set('id', idString)                       
+                    #add the appropriate id!
+                    posCount = 1
+                    parentId = ''
+                    for el in element.itersiblings(tag=etree.Element, preceding=True):
+                        if compre.match(el.tag):
+                            posCount += 1
+                    #get the parent component id and use it 
+                    for el in element.iterancestors():
+                        if compre.match(el.tag):
+                            parentId = el.get('c3id')                             
+                            break
+                    idString = '%s-%d' % (parentId, posCount)
+                    if idString[0] == '-':
+                        idString = idString[1:]
+                    element.set('c3id', idString)                       
                 except :
                     raise
         return LxmlRecord(tree)
@@ -623,7 +624,7 @@ class EadEditingHandler(EadHandler):
         #otherwise store in editing store
             editStore.store_record(session, rec2)
 #        editStore.commit_storing(session) 
-        
+
         structure = read_file('ead2002.html')
         htmlform = formTxr.process_record(session, rec2).get_raw(session)
         page = structure.replace('%FRM%', htmlform)
@@ -865,28 +866,29 @@ class EadEditingHandler(EadHandler):
             self.logger.log('component')
             #pull record from store            
             retrievedRec = editStore.fetch_record(session, '%s-%s' % (recid, fileOwner))
-            retrievedxml= retrievedRec.get_xml(session)   
-            tree = etree.XMLID(retrievedxml)
+            retrievedXml= retrievedRec.get_xml(session)   
+            tree = etree.fromstring(retrievedXml)
+           
             #first check there is a dsc element and if not add one (needed for next set of xpath tests)
             self.logger.log('testing dsc exists')
             
-            if not (tree[0].xpath('/ead/archdesc/dsc')):
+            if not (tree.xpath('/ead/archdesc/dsc')):
                 self.logger.log('dsc does not exist')
-                archdesc = tree[0].xpath('/ead/archdesc')[0]    
+                archdesc = tree.xpath('/ead/archdesc')[0]    
                 dsc = etree.Element('dsc')     
                 archdesc.append(dsc)    
 
             #if the component does not exist add it
-            if not (tree[1].get(loc)):
+            if not (tree.xpath('//*[@c3id=\'%s\']' % loc)):
                 self.logger.log('new component')
                 self.logger.log('parent is %s' % parent)
                 if parent == 'collectionLevel' :
-                    parentNode = tree[0].xpath('/ead/archdesc/dsc')[0]
+                    parentNode = tree.xpath('/ead/archdesc/dsc')[0]
                 else :
-                    parentNode = tree[1].get(parent)
+                    parentNode = tree.xpath('//*[@c3id=\'%s\']' % parent)[0]
                 (rec, valid) = self.build_ead(form)
                 parentNode.append(rec)
-                rec = LxmlRecord(tree[0])
+                rec = LxmlRecord(tree)
                 rec.id = retrievedRec.id
                 editStore.store_record(session, rec)
 #                editStore.commit_storing(session)   
@@ -896,7 +898,7 @@ class EadEditingHandler(EadHandler):
                 self.logger.log('existing component')
                 validList = [l for l in self.required_xpaths_components]
                 list = form.list
-                node = tree[1].get(loc) 
+                node = tree.xpath('//*[@c3id=\'%s\']' % loc)[0]
                 #first delete current accesspoints
                 self._delete_currentControlaccess(node)
                 self._delete_currentLangmaterial(node)
@@ -967,7 +969,7 @@ class EadEditingHandler(EadHandler):
                     valid = False
                 else:
                     valid = True        
-                rec = LxmlRecord(tree[0])
+                rec = LxmlRecord(tree)
                 rec.id = retrievedRec.id
                 editStore.store_record(session, rec)
 #                editStore.commit_storing(session)
@@ -1215,6 +1217,32 @@ class EadEditingHandler(EadHandler):
         return htmlform
 
 
+    def delete_component(self, form):
+        recid = form.get('recid', None)
+        fileOwner = form.get('owner', session.user.username)
+        id = form.get('id', None)   
+        retrievedRec = editStore.fetch_record(session, '%s-%s' % (recid, fileOwner))
+        retrievedXml = retrievedRec.get_xml(session)
+        tree = etree.fromstring(retrievedXml)      
+        comp = tree.xpath('//*[@c3id=\'%s\']' % id)
+        if (len(comp) == 1):
+            if (id.rfind('-') == -1):
+                parent = tree.xpath('//dsc')
+            else:                    
+                parent = tree.xpath('//*[@c3id=\'%s\']' % id[:id.rfind('-')])
+            if len(parent) == 1:
+                parent[0].remove(comp[0])
+                rec = LxmlRecord(tree)
+                rec.id = retrievedRec.id
+                editStore.store_record(session, rec)
+                value = 'true'
+            else:
+                value = 'false'
+        else:
+            value = 'notsaved'
+        return '<value>%s</value>' % value
+
+            
     def reset(self, form):
         doc = StringDocument('<ead><eadheader></eadheader><archdesc></archdesc></ead>')         
         rec = xmlp.process_document(session, doc)
@@ -1328,9 +1356,12 @@ class EadEditingHandler(EadHandler):
             if (operation == 'add'):  
                 content = self.add_form(form)   
                 self.send_html(content, req)
+            elif (operation == 'delete'):
+                content = self.delete_component(form)
+                self.send_xml(content, req)
             elif (operation == 'save'):
                 (content, valid) = self.save_form(form)
-                self.send_xml('<recid>%s</recid><valid>%s</valid>' % (content, valid), req)
+                self.send_xml('<wrap><recid>%s</recid><valid>%s</valid></wrap>' % (content, valid), req)
             elif (operation == 'delete'):
                 content = self.delete_record(form)
             elif (operation == 'discard'):

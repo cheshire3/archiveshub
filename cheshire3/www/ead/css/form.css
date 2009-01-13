@@ -241,6 +241,9 @@ a.invalid {
 	color: red;
 	}
 
+.componentdelete {
+	padding-left: 5px;
+	}
 
 .readonly {
 	background: #e7e7e7;
