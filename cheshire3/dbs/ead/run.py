@@ -29,7 +29,7 @@ if ('-h' in sys.argv) or ('--help' in sys.argv) or ('--options' in sys.argv):
         ])
     sys.exit()    
     
-cheshirePath = os.environ.get('C3HOME', '/home/cheshire/')    
+cheshirePath = os.environ.get('C3HOME', '/home/cheshire/')
 sys.path.insert(1, os.path.join(cheshirePath, 'cheshire3', 'code'))
 
 from cheshire3.baseObjects import Session
@@ -134,24 +134,6 @@ if ('-index' in sys.argv):
     (hours, mins) = divmod(mins, 60)
     lgr.log_info(session, 'Indexing complete (%dh %dm %ds)' % (hours, mins, secs))
 
-
-if ('-cluster' in sys.argv):
-    start = time.time()
-    lgr.log_info(session, 'Accumulating subject clusters...')
-    for rec in recordStore:
-        clusDocFac.load(session, rec)
-    
-    session.database = clusDb.id
-    clusDb.clear_indexes(session)
-    clusFlow = clusDb.get_object(session, 'buildClusterWorkflow')
-    clusFlow.process(session, clusDocFac)
-    (mins, secs) = divmod(time.time() - start, 60)
-    (hours, mins) = divmod(mins, 60)
-    lgr.log_info(session, 'Subject Clustering complete (%dh %dm %ds)' % (hours, mins, secs))
-    # return session.database to the default (finding aid) DB
-    session.database = db.id
-    
-    
 #if ('-cluster' in sys.argv):
 #    start = time.time()
 #    # set session.database to the cluster DB
@@ -205,6 +187,24 @@ if ('-index_components' in sys.argv) or ('-index_cs' in sys.argv):
     (mins, secs) = divmod(time.time() - start, 60)
     (hours, mins) = divmod(mins, 60)
     print 'Component Indexing complete (%dh %dm %ds)' % (hours, mins, secs)
+
+
+if ('-cluster' in sys.argv):
+    start = time.time()
+    lgr.log_info(session, 'Accumulating subject clusters...')
+    for rec in recordStore:
+        clusDocFac.load(session, rec)
+    
+    session.database = clusDb.id
+    clusDb.clear_indexes(session)
+    clusFlow = clusDb.get_object(session, 'buildClusterWorkflow')
+    clusFlow.process(session, clusDocFac)
+    (mins, secs) = divmod(time.time() - start, 60)
+    (hours, mins) = divmod(mins, 60)
+    lgr.log_info(session, 'Subject Clustering complete (%dh %dm %ds)' % (hours, mins, secs))
+    # return session.database to the default (finding aid) DB
+    session.database = db.id
+
 
 script = '/ead/search/eadSearchHandler'
         

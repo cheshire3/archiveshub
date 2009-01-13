@@ -106,6 +106,7 @@
 	    <title>Description Proximity Keywords</title>
 	    <map>
 	      <name set="dc">description</name>
+          <name set="cql">keywords</name>
 	    </map>
 	    <configInfo>
 	      <supports type="relation">any</supports>

@@ -70,31 +70,31 @@ recordStore = db.get_object(session, 'recordStore')
 rss = db.get_object(session, 'eadResultSetStore')
 qf = db.get_object(session, 'defaultQueryFactory')
 
-#if len(sys.argv[1:]):
-#    qString = ' '.join(sys.argv[1:])
-#else:
-#    qString = 'cql.anywhere all/relevant/proxinfo "money"'
-#    qString = '((cql.anywhere all/relevant/proxinfo "money") or/relevant/proxinfo (dc.description all/relevant/proxinfo "money") or/relevant/proxinfo (dc.title all/relevant/proxinfo "money"))'
-#
-#q = qf.get_query(session, qString)
-#rs = db.search(session, q)
-#hits = len(rs)
-#print hits, 'hits'
-#parents = {}
-#for x in range(min(5, hits)):
-#    rec = rs[x].fetch_record(session)
-#    try:
-#        parId = rec.process_xpath(session, '/c3component/@parent')[0]
-#        parId = parId.split('/')[-1]
-#    except IndexError:
-#        titles = [rec.process_xpath(session, '/*/*/did/unittitle/text()')[0]]
-#    else:
-#        parRec = recordStore.fetch_record(session, parId)
-#        xpath = rec.process_xpath(session, '/c3component/@xpath')[0]
-#        titles = _backwalkTitles2(parRec, xpath)
-#    
-#    print x+1,
-#    for y, t in enumerate(titles):
-#        if y: print ' ',
-#        print (' ' * (y*2) ),t
+if len(sys.argv[1:]):
+    qString = ' '.join(sys.argv[1:])
+else:
+    qString = 'cql.anywhere all/relevant/proxinfo "money"'
+    qString = '((cql.anywhere all/relevant/proxinfo "money") or/relevant/proxinfo (dc.description all/relevant/proxinfo "money") or/relevant/proxinfo (dc.title all/relevant/proxinfo "money"))'
+
+q = qf.get_query(session, qString)
+rs = db.search(session, q)
+hits = len(rs)
+print hits, 'hits'
+parents = {}
+for x in range(min(5, hits)):
+    rec = rs[x].fetch_record(session)
+    try:
+        parId = rec.process_xpath(session, '/c3component/@parent')[0]
+        parId = parId.split('/')[-1]
+    except IndexError:
+        titles = [rec.process_xpath(session, '/*/*/did/unittitle/text()')[0]]
+    else:
+        parRec = recordStore.fetch_record(session, parId)
+        xpath = rec.process_xpath(session, '/c3component/@xpath')[0]
+        titles = _backwalkTitles2(parRec, xpath)
+    
+    print x+1,
+    for y, t in enumerate(titles):
+        if y: print ' ',
+        print (' ' * (y*2) ),t
     
