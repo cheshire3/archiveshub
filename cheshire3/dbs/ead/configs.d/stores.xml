@@ -9,7 +9,7 @@
 
 	<subConfigs>
         
-		<subConfig type="authStore" id="eadAuthStore">
+		<subConfig type="objectStore" id="eadAuthStore">
 		  <objectType>cheshire3.objectStore.BdbObjectStore</objectType>
 		  <paths>
 		    <path type="databasePath">eadAuthStore.bdb</path>

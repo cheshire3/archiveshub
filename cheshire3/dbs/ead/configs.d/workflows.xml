@@ -198,7 +198,7 @@
     <subConfig type="workflow" id="indexNewRecordWorkflow">
         <objectType>cheshire3.workflow.CachingWorkflow</objectType>
         <workflow>
-            <object type="recordStore" function="store_record"/>
+            <object type="recordStore" ref="recordStore" function="store_record"/>
             <object type="database" function="add_record"/>
             <object type="index" ref="ead-idx-creationDate" function="index_record" />
             <object type="workflow" ref="indexRecordWorkflow"/>
