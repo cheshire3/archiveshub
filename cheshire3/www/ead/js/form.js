@@ -128,7 +128,7 @@ function discardRec(id){
 		data += '&owner=' + fileOwner;
 	}
 	var ajax = new Ajax.Request(url, {method:'post', asynchronous:false, postBody:data, evalScripts:true, onSuccess: function(transport) {	
-		location.href="";		    
+		location.href="/ead/edit/menu.html";		    
 	}});		
 }
 
