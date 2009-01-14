@@ -530,7 +530,7 @@ class EadSearchHandler(EadHandler):
                     rsid = rs.id = qString
             else:
                 self.htmlTitle.append('No Matches')
-                return '<div id="searchresult">No records matched your search.</div>'
+                return '<div id="single" class="searchresults"><p>No records matched your search.</p></div>'
             
         self.set_cookieVal('resultSetId', rsid)
         resultString = self.format_resultSet(rs, firstrec, numreq, highlight) 
@@ -538,7 +538,7 @@ class EadSearchHandler(EadHandler):
             # should be from an ajax request for subsequent results page - just return formatted results
             return resultString
         else:
-            return '<div id="leftcol">%s</div><div id="padder"><div id="rightcol">%s</div></div>' % (resultString, self.format_allFacets(rs, form.get('fullFacet', None)))
+            return '<div id="leftcol" class="searchresults">%s</div><div id="padder"><div id="rightcol" class="facets">%s</div></div>' % (resultString, self.format_allFacets(rs, form.get('fullFacet', None)))
                                                                                   
         #- end search() ------------------------------------------------------------
     
@@ -876,9 +876,9 @@ class EadSearchHandler(EadHandler):
         
     
     def display_toc(self, form):
-        global toc_cache_path, printable_toc_scripts
+        global toc_cache_path, toc_scripts_printable
         recid = form.getfirst('recid', None)
-        self.htmlTitle.append('Display Contents for %s' % recid)
+        #self.htmlTitle.append('Display Contents for %s' % recid)
         try:
             path = os.path.join(toc_cache_path, recid.replace('/', '-') + '.inc')
         except:
@@ -897,7 +897,7 @@ class EadSearchHandler(EadHandler):
                         self.htmlTitle.append('Error')
                         return ('<p class="error">The record you requested is not available.</p>')
                     
-            return '<div id="single">%s\n%s</div>' % (printable_toc_scripts, page)
+            return '<div id="single">%s\n%s</div>' % (toc_scripts_printable, page)
 
 
     def display_record(self, form):

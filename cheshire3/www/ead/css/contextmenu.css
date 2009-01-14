@@ -12,22 +12,23 @@ ul.SimpleContextMenu {
     z-index:1;
 }
 
-    ul.SimpleContextMenu li {
-        border-bottom: 1px solid #000000;
-    }
+ul.SimpleContextMenu li {
+    border-bottom: 1px solid #000000;
+    margin: 0px;
+}
 
-        ul.SimpleContextMenu li a {
-            display: block;
-            width: 100px;
-	        padding: 2px 10px 3px 10px;
-            text-decoration: none;
-            color: black;
-            background: #eeeeee;
-        }
+ul.SimpleContextMenu li a {
+    display: block;
+    width: 100px;
+	padding: 2px 10px 3px 10px;
+    text-decoration: none;
+    color: black;
+    background: #eeeeee;
+}
 
-        ul.SimpleContextMenu li a:hover {
-            text-decoration: none;
-            color: black;
-            background: #aaffaa;
-        }
+ul.SimpleContextMenu li a:hover {
+    text-decoration: none;
+    color: black;
+    background: #aaffaa;
+}
 

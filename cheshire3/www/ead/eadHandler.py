@@ -276,7 +276,7 @@ class EadHandler:
             page = tmpl.replace('%CONTENT%', toc_scripts + doc)
             self.logger.log(repr(paramDict))
             pages = [multiReplace(page, paramDict)]
-            write_file(os.path.join(cache_path, recid + '-p1.shtml'), pages[0])
+            write_file(os.path.join(cache_path, recid + '-p1.shtml'), pages[0].encode('utf-8'))
         else:
             # before we split need to find all internal anchors
             anchors = anchorRe.findall(doc)

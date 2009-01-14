@@ -133,9 +133,31 @@ toc_scripts = '''
 </script>
 '''
 
+toc_scripts_printable = '''
+<script type="text/javascript" src="/ead/js/collapsibleLists.js"></script>
+<script type="text/javascript" src="/ead/js/cookies.js"></script>
+<script type="text/javascript">
+  <!--
+  var olf = function() { createTreeFromList('someId', getCookie('RECID-tocstate'), true, false);} ; 
+  if (addLoadEvent) {
+      addLoadEvent(olf);
+  } else {
+      window.onload = olf; 
+  }
+  var ulf = function() { setCookie('RECID-tocstate', stateToString('someId')); } ;
+  if (addUnloadEvent) {
+      addUnloadEvent(ulf);
+  } else {
+      window.onunload = ulf;
+  }
+  -->
+</script>
+'''
+
+
 full_record_link = ''
 
-printable_toc_scripts = toc_scripts
+
 
 user_form = '''
 
