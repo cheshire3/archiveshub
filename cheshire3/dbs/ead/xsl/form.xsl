@@ -1432,9 +1432,15 @@
 							<xsl:text>delete entry</xsl:text>
 						</xsl:attribute>
 						<img src="/images/delete.png">
-						<xsl:attribute name="id">
-							<xsl:text>delete</xsl:text><xsl:number level="single" count="controlaccess/*[name() = $aptype]" format="1"/>
-						</xsl:attribute>
+                            <xsl:attribute name="onmouseover">
+                                <xsl:text>this.src='/images/delete-hover.png';</xsl:text>
+                            </xsl:attribute>
+                            <xsl:attribute name="onmouseout">
+                                <xsl:text>this.src='/images/delete.png';</xsl:text>
+                            </xsl:attribute>
+    						<xsl:attribute name="id">
+    							<xsl:text>delete</xsl:text><xsl:number level="single" count="controlaccess/*[name() = $aptype]" format="1"/>
+    						</xsl:attribute>
 						</img>
 					</a>										
 				</div>
@@ -1676,6 +1682,12 @@
 							<xsl:text>delete entry</xsl:text>
 						</xsl:attribute>
 						<img src="/images/delete.png">
+                        <xsl:attribute name="onmouseover">
+                            <xsl:text>this.src='/images/delete-hover.png';</xsl:text>
+                        </xsl:attribute>
+                        <xsl:attribute name="onmouseout">
+                            <xsl:text>this.src='/images/delete.png';</xsl:text>
+                        </xsl:attribute>
 						<xsl:attribute name="id">
 							<xsl:text>delete</xsl:text><xsl:number level="single" count="language" format="1"/>
 						</xsl:attribute>
