@@ -113,7 +113,7 @@ function addField(s){
 	else {
 		cell2.innerHTML = '<input type="text" onfocus="parent.setCurrent(this);" name="' + value + '" id="' + value + '" size="40"></input>';
 	}
-	cell3.innerHTML = '<img src="/images/delete.png" onmouseover="this.style.cursor=\'pointer\'; this.src=\'/images/delete-hover.png\';" onmouseout="this.src=\'/images/delete.png\';" onclick="deleteRow(this.parentNode.parentNode);" />';
+	cell3.innerHTML = '<img src="/images/delete.png" class="deletelogo" onmouseover="this.src=\'/images/delete-hover.png\';" onmouseout="this.src=\'/images/delete.png\';" onclick="deleteRow(this.parentNode.parentNode);" />';
 	newRow.appendChild(cell1);
 	newRow.appendChild(cell2);
 	newRow.appendChild(cell3);
@@ -249,7 +249,7 @@ function editAccessPoint(s, number){
 					}
 					else {			
 						var cell3 = document.createElement('td');
-						cell3.innerHTML = '<img src="/images/delete.png" onmouseover="this.style.cursor=\'pointer\'; this.src=\'/images/delete-hover.png\';" onmouseout="this.src=\'/images/delete.png\';" onclick="deleteRow(this.parentNode.parentNode);" />';
+						cell3.innerHTML = '<img src="/images/delete.png" class="deletelogo" onmouseover="this.src=\'/images/delete-hover.png\';" onmouseout="this.src=\'/images/delete.png\';" onclick="deleteRow(this.parentNode.parentNode);" />';
 						newRow.appendChild(cell3);		
 				  		table.insertBefore(newRow, dropdownRow);			  		
 				  	}
@@ -426,7 +426,7 @@ function createIcons(s){
    /* the delete icon */
    var d = "'" + s + nameCount + "'";
    var s = "'" + s + "'";
-   innerHTMLString = '<a onclick ="deleteAccessPoint(' + d + ');" title="delete entry"><img src="/images/delete.png" onmouseover="this.src=\'/images/delete-hover.png\';" onmouseout="this.src=\'/images/delete.png\';" id="delete' + nameCount + '"/></a>'; 
+   innerHTMLString = '<a onclick ="deleteAccessPoint(' + d + ');" title="delete entry"><img src="/images/delete.png" class="deletelogo" onmouseover="this.src=\'/images/delete-hover.png\';" onmouseout="this.src=\'/images/delete.png\';" id="delete' + nameCount + '"/></a>'; 
 
    icondiv.innerHTML = innerHTMLString;
    return icondiv

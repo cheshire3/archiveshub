@@ -719,7 +719,7 @@ function addComponent(){
     deleteImage.setAttribute('src', '/images/delete.png');
     deleteImage.setAttribute('onmouseover', 'this.src=\'/images/delete-hover.png\';')
     deleteImage.setAttribute('onmouseout', 'this.src=\'/images/delete.png\';')
-    deleteImage.className = 'componentdelete';
+    deleteImage.className = 'deletelogo';
     
     deleteLink.appendChild(deleteImage);
         
@@ -783,7 +783,7 @@ function deleteComponent(id){
 			    deleteImage.setAttribute('src', '/images/delete.png');
 			    deleteImage.setAttribute('onmouseover', 'this.src=\'/images/delete-hover.png\';')
     			deleteImage.setAttribute('onmouseout', 'this.src=\'/images/delete.png\';')
-			    deleteImage.className = 'componentdelete';
+			    deleteImage.className = 'deletelogo';
 			    
 			    deleteLink.appendChild(deleteImage);
 			    

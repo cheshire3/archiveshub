@@ -35,7 +35,7 @@
     </form>
     <h3 class="bar">Edit Existing EAD Description</h3>
     <div style="float: left; padding-right:50px;">
-        <h4>A file from the main database</h4>
+        <h4>Import a file for editing from the main database</h4>
         <form id="sourceDirForm" name="sourceDirForm" action="/ead/edit/" method="get" enctype="multipart/form-data">
         <input type="hidden" name="operation" id="operation" value="edit"/>
         <input type="button" onclick="checkConflicts();" value=" Edit File "/>
@@ -50,7 +50,7 @@
         </form>
     </div>
     <div style="float: left">
-        <h4>A file already in the process of being edited or created</h4>
+        <h4>Open a file to continue editing</h4>
         <form name="storeDirForm" id="storeDirForm" action="/ead/edit/" method="get" enctype="multipart/form-data">
         <input type="hidden" name="operation" id="operation" value="load"/>
         <input type="submit" value=" Edit File "/>

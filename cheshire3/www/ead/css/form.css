@@ -12,7 +12,7 @@ body {
 	overflow: hidden;	
 }
 
-body.waiting, body.waiting textarea, body.waiting input, body.waiting a, body.waiting select {
+body.waiting, body.waiting textarea, body.waiting input, body.waiting a, body.waiting select, body.waiting .deletelogo {
 	cursor: wait;
 	}
 
@@ -241,8 +241,9 @@ a.invalid {
 	color: red;
 	}
 
-.componentdelete {
+.deletelogo {
 	padding-left: 5px;
+	cursor: pointer;
 	}
 
 .readonly {
