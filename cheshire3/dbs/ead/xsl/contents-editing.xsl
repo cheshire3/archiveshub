@@ -76,7 +76,7 @@
 			        	<xsl:value-of select="./@c3id"/>       
 			        	<xsl:text>')</xsl:text>
 				  	</xsl:attribute>
-					<img src="/images/delete.png" class="componentdelete">
+					<img src="/images/delete.png" class="deletelogo">
                         <xsl:attribute name="onmouseover">
                             <xsl:text>this.src='/images/delete-hover.png';</xsl:text>
                         </xsl:attribute>

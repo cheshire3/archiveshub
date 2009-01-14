@@ -1431,7 +1431,7 @@
 						<xsl:attribute name="title">
 							<xsl:text>delete entry</xsl:text>
 						</xsl:attribute>
-						<img src="/images/delete.png">
+						<img src="/images/delete.png" class="deletelogo">
                             <xsl:attribute name="onmouseover">
                                 <xsl:text>this.src='/images/delete-hover.png';</xsl:text>
                             </xsl:attribute>
@@ -1681,7 +1681,7 @@
 						<xsl:attribute name="title">
 							<xsl:text>delete entry</xsl:text>
 						</xsl:attribute>
-						<img src="/images/delete.png">
+						<img src="/images/delete.png" class="deletelogo">
                         <xsl:attribute name="onmouseover">
                             <xsl:text>this.src='/images/delete-hover.png';</xsl:text>
                         </xsl:attribute>
