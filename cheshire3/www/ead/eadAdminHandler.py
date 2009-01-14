@@ -703,10 +703,10 @@ class EadAdminHandler(EadHandler):
                          ,'%NAVBAR%': navbar_separator.join(self.htmlNav)
                          ,'LINKTOPARENT': ''
                          ,'TOC_CACHE_URL' : toc_cache_url
-                         , 'RECID': recid
+                         ,'RECID': recid
                          })
         try:
-            page = self.display_full(rec, paramDict)[pagenum-1]
+            page = self.display_full(rec, paramDict, pageNavType='links')[pagenum-1]
         except IndexError:
             return 'No page number %d' % pagenum
         

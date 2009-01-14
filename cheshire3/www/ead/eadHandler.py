@@ -239,7 +239,7 @@ class EadHandler:
     
 
     
-    def display_full(self, rec, paramDict):
+    def display_full(self, rec, paramDict, pageNavType='form'):
         recid = rec.id
         try: l = rec.byteCount
         except: l = len(rec.get_xml(session))
@@ -315,8 +315,9 @@ class EadHandler:
             for x in range(len(pages)):
                 doc = pages[x]
                 # now we know how many real pages there are, generate some page navigation links
+                pagenav = []
                 if len(pages) > 1:
-                    pagenav = ['<div class="pagenav">', '<div class="backlinks">']
+                    pagenav.extend(['<div class="pagenav">', '<div class="backlinks">'])
                     if (x > 0):
                         pagenav.extend(['<a href="%s/%s-p1.shtml" title="First page" onclick="setCookie(\'%s-tocstate\', stateToString(\'someId\'))"><img src="/images/fback.gif" alt="First"/></a>' % (cache_url, recid, recid), 
                                         '<a href="%s/%s-p%d.shtml" title="Previous page" onclick="setCookie(\'%s-tocstate\', stateToString(\'someId\'))"><img src="/images/back.gif" alt="Previous"/></a>' % (cache_url, recid, x, recid)
@@ -327,24 +328,24 @@ class EadHandler:
                                         '<a href="%s/%s-p%d.shtml" title="Final page" onclick="setCookie(\'%s-tocstate\', stateToString(\'someId\'))"><img src="/images/fforward.gif" alt="Final"/></a>' % (cache_url, recid, len(pages), recid)
                                       ])
                     pagenav.extend(['</div>', '<div class="numnav">'])
-                    # individual number links
-#                    for y in range(len(pages)):
-#                        if (y == x):
-#                            pagenav.append('<strong>%d</strong>' % (y+1))
-#                        else:
-#                            pagenav.append('<a href="%s/%s-p%d.shtml" title="Page %d" onclick="setCookie(\'%s-tocstate\', stateToString(\'someId\'))">%d</a>' % (cache_url, recid, y+1, y+1, recid, y+1))
-                    # form style - Page: x of X
-                    pagenav.extend(['<form action="%s">Page: ' % (script)
-                                   ,'<input type="hidden" name="operation" value="full" />'
-                                   ,'<input type="hidden" name="recid" value="%s" />' % (recid)
-                                   ,'<input type="text" name="page" size="2" maxlength="3" value="%d"/> of %d' % (x+1, len(pages))
-                                   ,'<input type="submit" value="Go!"/>'
-                                   ,'</form>' 
-                                   ])
-                    # end case
+                    if pageNavType == 'form':
+                        # form style - Page: x of X
+                        pagenav.extend(['<form action="%s">Page: ' % (script)
+                                       ,'<input type="hidden" name="operation" value="full" />'
+                                       ,'<input type="hidden" name="recid" value="%s" />' % (recid)
+                                       ,'<input type="text" name="page" size="2" maxlength="3" value="%d"/> of %d' % (x+1, len(pages))
+                                       ,'<input type="submit" value="Go!"/>'
+                                       ,'</form>' 
+                                       ])
+                    elif pageNavType == 'links':
+                        # individual number links
+                        for y in range(len(pages)):
+                            if (y == x):
+                                pagenav.append('<strong>%d</strong>' % (y+1))
+                            else:
+                                pagenav.append('<a href="%s/%s-p%d.shtml" title="Page %d" onclick="setCookie(\'%s-tocstate\', stateToString(\'someId\'))">%d</a>' % (cache_url, recid, y+1, y+1, recid, y+1))
+                        
                     pagenav.extend(['</div> <!--end numnav div -->', '</div> <!-- end pagenav div -->'])
-                else:
-                    pagenav = []
                 
                 #doc = nonAsciiRe.sub(asciiFriendly, doc)
                 pagex = tmpl.replace('%CONTENT%', toc_scripts + doc)
