@@ -20,8 +20,8 @@
 	</xsl:template>
 
 	<xsl:template match="/ead/archdesc|dsc|c|c01|c02|c03|c04|c05|c06|c07|c08|c09|c10|c11|c12">
-		<xsl:element name="{name()}">
-			<xsl:copy-of select="@*" />
+		<xsl:element name="{name()}">			
+			<xsl:copy-of select="@*[not(name()='c3id')]"/>
 			<xsl:for-each select="node()">
 				<xsl:choose>
 					<xsl:when test="not(name() = 'dsc') and not(name() = 'controlaccess') and not(name() = 'c') and not(starts-with(name(), 'c0')) and not(starts-with(name(), 'c1'))">
