@@ -32,12 +32,10 @@ import traceback
 import codecs
 import time
 import cProfile
-import gc
 
 class EadEditingHandler(EadHandler):
     global repository_name, repository_link, repository_logo, htmlPath
     templatePath = os.path.join(htmlPath, 'template.ssi')
-    gc.set_debug(gc.DEBUG_LEAK)
     htmlTitle = None
     htmlNav = None
     logger = None
@@ -481,11 +479,11 @@ class EadEditingHandler(EadHandler):
             tree = etree.fromstring(retrievedXml)
             comp = tree.xpath('//*[@c3id=\'%s\']' % new)
             try:
-                root = deepcopy(comp[0])
+#                root = deepcopy(comp[0])
+                root = comp[0]
             except:
                 pass
-            
-            
+                      
             if root == None :
                 ctype = form.get('ctype', 'c')
                 doc = StringDocument('<%s><recid>%s</recid></%s>' % (ctype, recid, ctype))
@@ -1051,7 +1049,7 @@ class EadEditingHandler(EadHandler):
     #- end preview_file() ---------------------------------------------------------
 
 
-    def display(self, req):
+    def preview_xml(self, req):
         form = FieldStorage(req)
         recid=form.get('recid', None)
         fileOwner = form.get('owner', session.user.username)
@@ -1063,12 +1061,20 @@ class EadEditingHandler(EadHandler):
     
     
     def submit(self, req, form):
-        global sourceDir, ppFlow, xmlp
+        global sourceDir, xmlp
         req.content_type = 'text/html'
         req.send_http_header()
         head = self._get_genericHtml('header.html')
         req.write(head)
         req.write('<div id="single">')
+        req.write('Initializing... ')
+        ppFlow = db.get_object(session, 'preParserWorkflow')
+        indexNewRecordFlow = db.get_object(session, 'indexNewRecordWorkflow')
+        compRecordFlow = db.get_object(session, 'buildComponentWorkflow')
+        compStore = db.get_object(session, 'componentStore')
+        dcRecordStore = db.get_object(session, 'eadDcStore')
+        queryFactory = db.get_object(session, 'defaultQueryFactory')
+        req.write('<span class="ok">[OK]</span>\n')
         i = form.get('index', 'true')
         if i == 'false' :
             index = False
@@ -1362,7 +1368,7 @@ class EadEditingHandler(EadHandler):
             elif (operation == 'save'):
                 (content, valid) = self.save_form(form)
                 self.send_xml('<wrap><recid>%s</recid><valid>%s</valid></wrap>' % (content, valid), req)
-            elif (operation == 'delete'):
+            elif (operation == 'deleteRec'):
                 content = self.delete_record(form)
             elif (operation == 'discard'):
                 content = self.discard_record(form)
@@ -1373,8 +1379,8 @@ class EadEditingHandler(EadHandler):
             elif (operation == 'navigate'):
                 content = self.navigate(form)
                 self.send_html(content, req)
-            elif (operation == 'display'):
-                content = self.display(req)
+            elif (operation == 'xml'):
+                content = self.preview_xml(req)
                 self.send_xml(content, req)
             elif (operation == 'preview'):
                 content = self.preview_file(req)
@@ -1433,15 +1439,10 @@ serv = None
 session = None
 db = None
 baseDocFac = None
-queryFactory = None
 sourceDir = None
-editStore = None
 recordStore = None
 authStore = None
 assignDataIdFlow = None
-compRecordFlow = None
-indexNewRecordFlow = None
-preParserWorkflow = None
 xmlp = None
 formTxr = None
 tocTxr = None
@@ -1450,7 +1451,7 @@ logfilepath = editinglogfilepath
 
 
 def build_architecture(data=None):
-    global session, serv, db, recordStore, dcRecordStore, compStore, authStore, formTxr, tocTxr, orderTxr, xmlp, assignDataIdFlow, indexNewRecordFlow, compRecordFlow, ppFlow, sourceDir, baseDocFac, queryFactory
+    global session, serv, db, recordStore, authStore, formTxr, tocTxr, orderTxr, xmlp, assignDataIdFlow, sourceDir, baseDocFac
     #Discover objects
     session = Session()
     session.database = 'db_ead'
@@ -1458,17 +1459,14 @@ def build_architecture(data=None):
     session.user = None
     serv = SimpleServer(session, cheshirePath + '/cheshire3/configs/serverConfig.xml')
     db = serv.get_object(session, 'db_ead')
+    
     baseDocFac = db.get_object(session, 'baseDocumentFactory')
-    queryFactory = db.get_object(session, 'defaultQueryFactory')
     sourceDir = baseDocFac.get_default(session, 'data')
-    recordStore = db.get_object(session, 'recordStore')
-    dcRecordStore = db.get_object(session, 'eadDcStore')
-    compStore = db.get_object(session, 'componentStore')
+    
+    recordStore = db.get_object(session, 'recordStore')  
     authStore = db.get_object(session, 'eadAuthStore')
     assignDataIdFlow = db.get_object(session, 'assignDataIdentifierWorkflow')
-    compRecordFlow = db.get_object(session, 'buildComponentWorkflow')
-    indexNewRecordFlow = db.get_object(session, 'indexNewRecordWorkflow')
-    ppFlow = db.get_object(session, 'preParserWorkflow')
+    
     # transformers
     xmlp = db.get_object(session, 'LxmlParser')
     formTxr = db.get_object(session, 'formCreationTxr')
