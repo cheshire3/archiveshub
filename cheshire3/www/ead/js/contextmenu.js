@@ -144,8 +144,8 @@ var SimpleContextMenu = {
             var s = SimpleContextMenu._getScrollPosition(e);
         //    alert(s.y);
             SimpleContextMenu._menuElement = document.getElementById(menuElementId);
-            SimpleContextMenu._menuElement.style.left = m.x + s.x + 'px';
-            SimpleContextMenu._menuElement.style.top = m.y + s.y + 'px';
+            SimpleContextMenu._menuElement.style.left = (m.x - 10) + s.x + 'px';
+            SimpleContextMenu._menuElement.style.top = (m.y - 10) + s.y + 'px';
             SimpleContextMenu._menuElement.style.display = 'block';
             return false;
         }
@@ -170,11 +170,11 @@ var SimpleContextMenu = {
     _getMousePosition : function (e) {
 
         e = e ? e : window.event;
-        height = document.getElementById('rightcol').offsetHeight + 75; // 75 = header max-height
+        height = document.getElementById('rightcol').offsetHeight + 105; // 105 = header + navbar max-height
         if ((e.clientY)+160 > height){
         	var position = {
             'x' : e.clientX,
-            'y' : e.clientY - 100 - 160 //160 = hardcoded offsetHeight of tagmenu
+            'y' : e.clientY - 90 - 160 //160 = hardcoded offsetHeight of tagmenu
         	}
         }
         else{
