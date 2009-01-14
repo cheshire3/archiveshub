@@ -112,7 +112,7 @@ function deleteFromStore(){
 
 function deleteRec(id){
 	var url = '/ead/edit/';
-	var data = 'operation=delete&recid=' + id;
+	var data = 'operation=deleteRec&recid=' + id;
 	var ajax = new Ajax.Request(url, {method:'post', asynchronous:false, postBody:data, evalScripts:true, onSuccess: function(transport) {	
 		location.href="";		    
 	}});		
@@ -739,14 +739,17 @@ function addComponent(){
 
 
 function deleteComponent(id){
-
+	var body = document.getElementsByTagName('body')[0];
+	body.className = 'waiting';
 	var link = document.getElementById(id);	
 	var compid = link.innerHTML;
 	
 	var confirmbox = confirm('This operation will permanently delete the component ' + compid + '\n\n Are you sure you want to continue?');
 	if (confirmbox == false){
+		body.className = 'none';
 		return;
 	}
+	
 	var data = 'operation=delete&recid=' + recid + '&id=' + id;
 	if (fileOwner != null){
     	data += '&owner=' + fileOwner;
@@ -794,6 +797,7 @@ function deleteComponent(id){
 		}
 	}
 	refreshTree('someId');
+	body.className = 'none';
 }
 
 function viewXml(){
@@ -885,7 +889,7 @@ function viewXml(){
     }      
     
 	saveForm(false);
-	url = '/ead/edit?operation=display&recid=' + recid;
+	url = '/ead/edit?operation=xml&recid=' + recid;
 	if (fileOwner != null){
 		url += '&owner=' + fileOwner;
 	}
