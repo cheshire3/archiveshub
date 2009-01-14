@@ -26,7 +26,7 @@ var baseUnitId = null;
 var fileName = null;
 var fileOwner = null;
 var timeout;
-var required_xpaths_components = new Array('countrycode', 'archoncode', 'unitid', 'did/unittitle', 'did/unitdate', 'did/physdesc/extent');
+var required_xpaths_components = new Array('unitid', 'did/unittitle', 'did/unitdate', 'did/physdesc/extent');
 var required_xpaths = new Array(
 'unitid',
 'archoncode',
