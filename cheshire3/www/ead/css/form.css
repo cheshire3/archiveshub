@@ -14,9 +14,11 @@ body {
 
 body.waiting, body.waiting textarea, body.waiting input, body.waiting a, body.waiting select, body.waiting .deletelogo {
 	cursor: wait;
-	}
+}
 
-
+div#rightcol {
+	overflow-x: auto;	
+}
 
 span.isadg {
 	display: inline;	
@@ -256,11 +258,17 @@ a.invalid {
 	padding: 10px;
 }
 
+table.edit-ops {
+	width: 290px;	
+}
+
 .menubutton {
 	float: left;
 	margin-top: 5px;
 	margin-left: 10px;
-	width: 150px;
+	width: 95%;
+	/*max-width: 150px;*/
+	font-size: 10pt;
 }
 
 .buttonlabel {

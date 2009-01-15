@@ -69,12 +69,32 @@
     </ul>
 
 <div class="toc" id="leftcol">
+
+<table title="operations" class="edit-ops">
+    <tr>
+        <td class=buttonlabel">File</td>
+        <td><input type="button" class="menubutton" id="save-button" onclick="javascript: save()" value="Save" title="Save the current changes to the editing data store"></input></td>
+        <td><input type="button" class="menubutton" id="delete-button" onclick="javascript: var cont = confirmOp('This operation will delete the current record from the editing store and any changes made since it was last submitted to the database will be lost. If the record is also in the database that record will remain unchanged and will not be deleted.\n\nAre you sure you want to delete this record?'); if (cont) {discardRec($('pui').value);}" value="Delete" title="Delete this record from the editing data store"></input></td>
+    </tr>
+    <tr>
+        <td class=buttonlabel">Preview</td>
+        <td><input type="button" class="menubutton" id="display-button" onclick="javascript: viewXml();" value="XML" title="Preview the XML for this record (opens in new window/tab)"></input></td>
+        <td><input type="button" class="menubutton" id="preview-button" onclick="javascript: previewRec();" value="On-line Version" title="Preview the on-line version of this record (opens in new window/tab)"></input></td>
+    </tr>
+    <tr>
+        <td class=buttonlabel">Export</td>
+        <td><input type="button" class="menubutton" id="tofile-button" onclick="javascript: var cont = confirmOp('This operation will load this description into the database. If it is not a new record it will overwrite the existing version. This record will not be indexed immediately, the database will need to be rebuilt before the changes appear in the database.\n\nAre you sure you want to write this file to disk?'); if (cont) {submit(false);}"" value="To File only" title="Write this record to the data directory for indexing later"></input></td>
+        <td><input type="button" class="menubutton" id="submit-button" onclick="javascript: var cont = confirmOp('This operation will submit this record to your database for immediate display. If this is not a new file it will overwrite the existing version.\n\nAre you sure you want to submit this file?'); if (cont) {submit();}"" value=" To File + Database" title="Write this file to the data directory and index in the live database"></input></td>
+    </tr>
+</table>
+<!-- 
 <span class="buttonlabel">File</span><div class="float"><input type="button" class="menubutton" id="save-button" onclick="javascript: save()" value="Save" title="Save the current changes to the editing data store"></input></div>
 <div class="float"><input type="button" class="menubutton" id="delete-button" onclick="javascript: var cont = confirmOp('This operation will delete the current record from the editing store and any changes made since it was last submitted to the database will be lost. If the record is also in the database that record will remain unchanged and will not be deleted.\n\nAre you sure you want to delete this record?'); if (cont) {discardRec($('pui').value);}" value="Delete" title="Delete this record from the editing data store"></input></div><br/>
 <span class="buttonlabel">Preview</span><div class="float"><input type="button" class="menubutton" id="display-button" onclick="javascript: viewXml();" value="XML" title="Preview the XML for this record (opens in new window/tab)"></input></div>
 <div class="float"><input type="button" class="menubutton" id="preview-button" onclick="javascript: previewRec();" value="On-line Version" title="Preview the on-line version of this record (opens in new window/tab)"></input></div><br/>
 <span class="buttonlabel">Export</span><div class="float"><input type="button" class="menubutton" id="tofile-button" onclick="javascript: var cont = confirmOp('This operation will load this description into the database. If it is not a new record it will overwrite the existing version. This record will not be indexed immediately, the database will need to be rebuilt before the changes appear in the database.\n\nAre you sure you want to write this file to disk?'); if (cont) {submit(false);}"" value="To File only" title="Write this record to the data directory for indexing later"></input></div>
 <div class="float"><input type="button" class="menubutton" id="submit-button" onclick="javascript: var cont = confirmOp('This operation will submit this record to your database for immediate display. If this is not a new file it will overwrite the existing version.\n\nAre you sure you want to submit this file?'); if (cont) {submit();}"" value=" To File + Database" title="Write this file to the data directory and index in the live database"></input></div><br />
+ -->
 
 <br /><br />
 

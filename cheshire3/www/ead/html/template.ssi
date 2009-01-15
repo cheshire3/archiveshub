@@ -9,7 +9,7 @@
 	<!--[if lt IE 7]>
 		<link rel="stylesheet" type="text/css" media="screen" href="/ead/css/struc-ie.css"></link>
 		<script type="text/javascript">
-			onload = function() { wrapper.focus() }
+			onload = function() { content.focus() }
 		</script>
 	<![endif]-->
 	<link rel="stylesheet" type="text/css" href="/ead/css/style.css"></link>
