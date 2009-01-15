@@ -18,7 +18,6 @@
 	<script type="text/javascript" src="/ead/js/cookies.js"></script>
 	<script type="text/javascript">
         addLoadEvent( function(){
-    		/*setTimeout(this, 1000);*/
 			SimpleContextMenu.setup({'preventDefault':true, 'preventForms':true});
 	        SimpleContextMenu.attach('menuField', 'tagmenu');
 	        SimpleContextMenu.attach('menuFieldError', 'tagmenu');
@@ -28,9 +27,6 @@
 			findRequiredFields();
 			checkButtons();
 		} );
- /*       addUnloadEvent( function(){
-    		setCookie('preview/catherine-tocstate', stateToString('someId'));
-    	} );*/
     </script>
 
 	<link rel="stylesheet" type="text/css" href="/ead/css/form.css" />
@@ -203,7 +199,6 @@
 	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, '&#245;');" title="lower-case O, tilde"> &otilde; </button></td>
 	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, '&#337;');" title=""> &#337; </button></td>	
 	<td width="35"><button onClick="cursorInsert(parent.currentEntryField, '&#248;');" title="Lower-case o, slashed"> &oslash; </button></td>
-	<!-- <td width="35"><button onClick="cursorInsert(parent.currentEntryField, '&amp;eth;');"> &eth; </button></td>-->	
 	</tr>
 	<tr>
 	<!-- r -->

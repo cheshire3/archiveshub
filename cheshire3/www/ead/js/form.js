@@ -1047,13 +1047,18 @@ function addElement(s){
   		$(('link' + s)).update('hide content');		
   	}
  	else {
- 		var value = $(s).getValue($(s)).strip();
-	 	if (s == 'daooptnsdiv' || value == '' || value == ' ' || value == '<p></p>' || value.replace(/[\s]+/g, ' ') == '<p> </p>'){
-			$(('link' + s)).update('add content');	
-	  	} 
-	  	else { 
-			$(('link' + s)).update('show content');
-	  	}
+ 		if (s == 'daooptnsdiv'){
+ 			$(('link' + s)).update('add content');
+ 		}
+ 		else {
+	 		var value = $(s).getValue($(s)).strip();
+		 	if (value == '' || value == ' ' || value == '<p></p>' || value.replace(/[\s]+/g, ' ') == '<p> </p>'){
+				$(('link' + s)).update('add content');	
+		  	} 
+		  	else { 
+				$(('link' + s)).update('show content');
+		  	}
+		}
 	}
 }
 
@@ -1549,27 +1554,6 @@ function addFile(number){
   
  	tbody.insertBefore(tr, jsrow);   	
    			
-   			
-//file title   			
-  	tr = document.createElement('tr');
-  	tr.className = shading;
-   	td = document.createElement('td');
-   	td.appendChild(document.createTextNode('File ' + nextfile + ' title: '));
-   	td.className = 'label';
-   	tr.appendChild(td);
-   			
-   	href = document.createElement('input');
-   	href.setAttribute('type', 'text');
-   	href.onclick = function () {setCurrent(this); },
-   	href.setAttribute('name', 'daogrp/daoloc[' + nextfile + ']/@title');
-   	href.setAttribute('id', 'daogrp/daoloc[' + nextfile + ']/@title');
-   	href.setAttribute('size', '70');
-   	td = document.createElement('td');		
-   	td.appendChild(href);
-   			
-   	tr.appendChild(td);
-   			
-   	tbody.insertBefore(tr, jsrow);  
    			 
  //role info
     role = document.createElement('input');
@@ -1629,25 +1613,6 @@ function createObjectsForm() {
    			
    			tbody.appendChild(tr);
 
-	//title   			
-   			tr = document.createElement('tr');
-   			td = document.createElement('td');
-   			td.appendChild(document.createTextNode('Title: '));
-   			td.className = 'label';
-   			tr.appendChild(td);
-   			
-   			var title = document.createElement('input');
-   			title.setAttribute('type', 'text');
-   			title.onclick = function () {setCurrent(this); },
-   			title.setAttribute('name', 'dao/@title');
-   			title.setAttribute('id', 'dao/@title');
-   			title.setAttribute('size', '70');
-			td = document.createElement('td');
-   			td.appendChild(title);
-   			
-   			tr.appendChild(td);
-   			
-   			tbody.appendChild(tr);
 
 	//DAO desciption
    			tr = document.createElement('tr');
@@ -1662,6 +1627,8 @@ function createObjectsForm() {
    			desc.setAttribute('name', 'dao/daodesc');
    			desc.setAttribute('id', 'dao/daodesc');
    			desc.setAttribute('size', '70');
+   			desc.setAttribute('value', '<p></p>');
+   			desc.className = 'menuField';
  			td = document.createElement('td');
    			td.appendChild(desc);
    			
@@ -1738,26 +1705,7 @@ function createObjectsForm() {
    			tr.appendChild(td);
    			
    			tbody.appendChild(tr);  
-   			
-	//file title   			
-  			tr = document.createElement('tr');
-   			td = document.createElement('td');
-   			td.appendChild(document.createTextNode('Title: '));
-   			td.className = 'label';
-   			tr.appendChild(td);
-   			
-   			href = document.createElement('input');
-   			href.setAttribute('type', 'text');
-   			href.onclick = function () {setCurrent(this); },
-   			href.setAttribute('name', 'daogrp/daoloc[2]/@title');
-   			href.setAttribute('id', 'daogrp/daoloc[2]/@title');
-   			href.setAttribute('size', '70');
-   			td = document.createElement('td');		
-   			td.appendChild(href);
-   			
-   			tr.appendChild(td);
-   			
-   			tbody.appendChild(tr);  
+
 
  	//role info
     		var role2 = document.createElement('input');
@@ -1780,6 +1728,8 @@ function createObjectsForm() {
    			desc.setAttribute('name', 'daogrp/daodesc');
    			desc.setAttribute('id', 'daogrp/daodesc');
    			desc.setAttribute('size', '70');
+   			desc.setAttribute('value', '<p></p>');
+   			desc.className = 'menuField';
  			td = document.createElement('td');
    			td.appendChild(desc);
    			
@@ -1879,7 +1829,7 @@ function createObjectsForm() {
    		//DAO desciption
    			tr = document.createElement('tr');
    			td = document.createElement('td');
-   			td.appendChild(document.createTextNode('Description: '));
+   			td.appendChild(document.createTextNode('Description of group: '));
    			td.className = 'label';
    			tr.appendChild(td);
    			
@@ -1889,6 +1839,8 @@ function createObjectsForm() {
    			desc.setAttribute('name', 'daogrp/daodesc');
    			desc.setAttribute('id', 'daogrp/daodesc');
    			desc.setAttribute('size', '70');
+   			desc.setAttribute('value', '<p></p>');
+   			desc.className = 'menuField';
  			td = document.createElement('td');
    			td.appendChild(desc);
    			
@@ -1912,7 +1864,6 @@ function checkButtons(){
 		document.getElementById('tofile-button').setAttribute('disabled', 'true');
 		document.getElementById('tofile-button').setAttribute('title', 'File must be saved before this operation can be performed');
 		document.getElementById('submit-button').setAttribute('disabled', 'true');
-		document.getElementById('submit-button').setAttribute('title', 'File must be saved before this operation can be performed');
-		
+		document.getElementById('submit-button').setAttribute('title', 'File must be saved before this operation can be performed');		
 	}
 }
