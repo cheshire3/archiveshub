@@ -42,7 +42,9 @@
   		</xsl:otherwise>
   	</xsl:choose>
   </xsl:variable>
-    
+  
+ 
+      
   <xsl:template match="/">
   <div id="formDiv" name="form" class="formDiv">
     <form id="eadForm" name="eadForm"  action="#" >
@@ -218,9 +220,9 @@
 	  	</p>
 	  	<p>  		
 	  		<xsl:choose>
-				<xsl:when test="filedesc/titlestmt/sponsor">				
-					<xsl:apply-templates select="filedesc/titlestmt/sponsor"/>
-				</xsl:when>
+			 	<xsl:when test="../eadheader/filedesc/titlestmt/sponsor">				
+					<xsl:apply-templates select="../eadheader/filedesc/titlestmt/sponsor"/>
+				</xsl:when> 
 				<xsl:otherwise>
 					<strong>Sponsor </strong> <a class="smalllink" id="linkfiledesc/titlestmt/sponsor" title="add sponsor" onclick="addElement('filedesc/titlestmt/sponsor')">add content</a> [optional]<br/>
 					<input class="menuField" type="text" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" name="filedesc/titlestmt/sponsor" id="filedesc/titlestmt/sponsor" size="80" style="display:none"></input>
@@ -1622,7 +1624,7 @@
   	</input>
   </xsl:template>
   
-  <xsl:template match="filedesc/titlestmt/sponsor">
+  <xsl:template match="/ead/eadheader/filedesc/titlestmt/sponsor">
   	<strong><span class="isadg"></span>Sponsor </strong> <a class="smalllink" id="linkspo" title="add sponsor" onclick="addElement('filedesc/titlestmt/sponsor')">hide content</a> [optional]<br/>
   	<input class="menuField" type="text" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" name="filedesc/titlestmt/sponsor" id="filedesc/titlestmt/sponsor" size="80">
   		<xsl:attribute name="value">
@@ -1869,26 +1871,21 @@
   				</input>
   			</td>
   		</tr>
-  		<tr><td class="label">Title: </td>
-  			<td>
-  				<input size="70" type="text" onfocus="setCurrent(this);">
-  					<xsl:attribute name="value">
-  						<xsl:value-of select="@title"/>
-  					</xsl:attribute>
-  					<xsl:attribute name="name">
-  						<xsl:value-of select="$path"/><xsl:text>dao[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/@title</xsl:text>
-  					</xsl:attribute>
-  				</input>  				
-  			</td>
-  		</tr>
   		<tr><td class="label">Description: </td>
   			<td>
-  				<input size="70" type="text" onfocus="setCurrent(this);">
-  					<xsl:attribute name="value">
-  						<xsl:apply-templates select="daodesc"/>
-  					</xsl:attribute>
+  				<input size="70" type="text" onfocus="setCurrent(this);" class="menuField">
   					<xsl:attribute name="name">
   						<xsl:value-of select="$path"/><xsl:text>dao[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daodesc</xsl:text>
+  					</xsl:attribute>
+  					<xsl:attribute name="value">
+  					  	<xsl:choose>
+  							<xsl:when test="daodesc">
+  								<xsl:apply-templates select="daodesc"/>
+  							</xsl:when>
+  							<xsl:otherwise>
+  								<xsl:text>&lt;p&gt;&lt;/p&gt;</xsl:text>
+  							</xsl:otherwise>
+  						</xsl:choose>
   					</xsl:attribute>
   				</input>    			
   			</td>
@@ -1934,27 +1931,22 @@
   				</input>
   			</td>
   		</tr>
-  		<tr><td class="label">Title: </td>
-  			<td>
-  				<input size="70" type="text" onfocus="setCurrent(this);">
-  					<xsl:attribute name="value">
-  						<xsl:value-of select="daoloc[@role='reference']/@title"/>
-  					</xsl:attribute>
-  					<xsl:attribute name="name">
-  						<xsl:value-of select="$path"/><xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[2]/@title</xsl:text>
-  					</xsl:attribute>
-  				</input>  				
-  			</td>
-  		</tr>
   		<tr><td class="label">Description: </td>
   			<td>
-  				<input size="70" type="text" onfocus="setCurrent(this);">
-  					<xsl:attribute name="value">
-  						<xsl:apply-templates select="daodesc"/>
-  					</xsl:attribute>
+  				<input size="70" type="text" onfocus="setCurrent(this);" class="menuField">
   					<xsl:attribute name="name">
   						<xsl:value-of select="$path"/><xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daodesc</xsl:text>
   					</xsl:attribute>
+  					<xsl:attribute name="value">
+  						<xsl:choose>
+  							<xsl:when test="daodesc">
+  								<xsl:apply-templates select="daodesc"/>
+  							</xsl:when>
+  							<xsl:otherwise>
+  								<xsl:text>&lt;p&gt;&lt;/p&gt;</xsl:text>
+  							</xsl:otherwise>
+  						</xsl:choose>
+  					</xsl:attribute>  					
   				</input>    			
   			</td>
   		</tr>
@@ -2032,14 +2024,21 @@
   			<xsl:text>addFile(</xsl:text><xsl:value-of select="$number"/><xsl:text>);</xsl:text>
   		</xsl:attribute>		
   		add another file</a></td></tr>
-  		<tr><td class="label">Description: </td>
+  		<tr><td class="label">Description of group: </td>
   			<td>
-  				<input size="70" type="text" onfocus="setCurrent(this);">
-  					<xsl:attribute name="value">
-  						<xsl:apply-templates select="daodesc"/>
-  					</xsl:attribute>
+  				<input size="70" type="text" onfocus="setCurrent(this);" class="menuField">  					
   					<xsl:attribute name="name">
   						<xsl:value-of select="$path"/><xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daodesc</xsl:text>
+  					</xsl:attribute>
+  					<xsl:attribute name="value">
+  					  	<xsl:choose>
+  							<xsl:when test="daodesc">
+  								<xsl:apply-templates select="daodesc"/>
+  							</xsl:when>
+  							<xsl:otherwise>
+  								<xsl:text>&lt;p&gt;&lt;/p&gt;</xsl:text>
+  							</xsl:otherwise>
+  						</xsl:choose>
   					</xsl:attribute>
   				</input>    			
   			</td>
