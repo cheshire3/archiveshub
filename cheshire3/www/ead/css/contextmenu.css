@@ -6,14 +6,12 @@ ul.SimpleContextMenu {
     font-family: arial;
     font-size: 12px;
     list-style-type: none;
-    border-top: 1px solid #000000;
-    border-left: 1px solid #000000;
-    border-right: 1px solid #000000;
+    border: 1px solid #000000;
     z-index:1;
 }
 
 ul.SimpleContextMenu li {
-    border-bottom: 1px solid #000000;
+ /*   border-bottom: 1px solid #000000;*/
     margin: 0px;
     padding: 0px;
 }
