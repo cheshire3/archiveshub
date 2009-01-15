@@ -176,14 +176,14 @@ var SimpleContextMenu = {
         	if ((e.clientX+100) > width){ //100 = hardcoded width offsetHeight of tagmenu
  				var position = {
 	            'x' : width - 130, 
-	            'y' : e.clientY - 90 - 140 //140 = hardcoded offsetHeight of tagmenu
+	            'y' : e.clientY - 80 - 140 //140 = hardcoded offsetHeight of tagmenu
 	        	}       		
         	}
         	// if the menu is not too near the right
         	else {
 	        	var position = {
 	            'x' : e.clientX,
-	            'y' : e.clientY - 90 - 140 //140 = hardcoded offsetHeight of tagmenu
+	            'y' : e.clientY - 80 - 140 //140 = hardcoded offsetHeight of tagmenu
 	        	}
         	}
         }
