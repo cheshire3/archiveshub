@@ -23,13 +23,14 @@
 	        SimpleContextMenu.attach('menuField', 'tagmenu');
 	        SimpleContextMenu.attach('menuFieldError', 'tagmenu');
 	        closeSplash();
-	    	createTreeFromList('someId', getCookie('preview/catherine-tocstate'), false, false);
+	    	createTreeFromList('someId', getCookie(''), false, false);
 			setRecid();
 			findRequiredFields();
+			checkButtons();
 		} );
-        addUnloadEvent( function(){
+ /*       addUnloadEvent( function(){
     		setCookie('preview/catherine-tocstate', stateToString('someId'));
-    	} );
+    	} );*/
     </script>
 
 	<link rel="stylesheet" type="text/css" href="/ead/css/form.css" />
@@ -43,42 +44,63 @@
 	[endif]-->
 	  	
 	<ul id="tagmenu" class="SimpleContextMenu">
-		<li><a onMouseOver="javascript: hideSubMenus()" href="javascript: toggleKeyboard()">keyboard on/off</a></li>
-		<li><a onMouseOver="javascript: hideSubMenus()" href="javascript: addTag('p')">&lt;p&gt;</a></li>
-		<li><a onMouseOver="javascript: showSubMenu('title', 2)">title -&gt;</a></li>
-		<li><a onMouseOver="javascript: showSubMenu('emph', 3)">italic/bold -&gt;</a></li>
-		<li><a onMouseOver="javascript: hideSubMenus()" href="javascript: addTag('list')">&lt;list&gt;</a></li>
-        <li><a onMouseOver="javascript: hideSubMenus()" href="javascript: addTag('item')">&lt;item&gt;</a></li>
-        <li><a onMouseOver="javascript: showSubMenu('extref', 6)">hyperlink -&gt;</a></li>
+		<li><a onMouseOver="javascript: hideSubMenus()" href="javascript: addTag('p')">paragraph</a></li>
+		<li><a onMouseOver="javascript: showSubMenu('link', 1, 'tagmenu')">links -&gt;</a></li>		
+		<li><a onMouseOver="javascript: showSubMenu('title', 2, 'tagmenu')">titles -&gt;</a></li>
+		<li><a onMouseOver="javascript: showSubMenu('font', 3, 'tagmenu')">font -&gt;</a></li>
+		<li><a onMouseOver="javascript: showSubMenu('list', 4, 'tagmenu')">list -&gt;</a></li>
 		<li><a onMouseOver="javascript: hideSubMenus()" href="javascript: addTag('comment')">comment</a></li>
+		<li><a onMouseOver="javascript: hideSubMenus()" href="javascript: toggleKeyboard()">keyboard on/off</a></li>		
+    </ul>
+
+    <ul id="linkmenu" class="SimpleContextMenu">
+		<li><a onMouseOver="javascript: showSubMenu('archival', 0, 'linkmenu')">archival -&gt;</a></li>
+		<li><a onMouseOver="javascript: hideSubMenu('archival')" href="javascript: addTag('extref href=\' \'')">www</a></li>
+		<li><a onMouseOver="javascript: hideSubMenu('archival')" href="javascript: addTag('extref href=\'mailto: \'')">email</a></li>   
     </ul>
     
     <ul id="titlemenu" class="SimpleContextMenu">
-		<li><a  href="javascript: addTag('title')">&lt;title&gt; (italic)</a></li>
-		<li><a href="javascript: addTag('title render=\'doublequote\'')">&lt;title&gt; (quotes)</a></li>   
+		<li><a  href="javascript: addTag('title')">plain</a></li>
+		<li><a href="javascript: addTag('title render=\'bold\'')">bold</a></li>
+		<li><a href="javascript: addTag('title render=\'italic\'')">italic</a></li>
+		<li><a href="javascript: addTag('title render=\'doublequote\'')">quoted</a></li>
+		<li><a href="javascript: addTag('title render=\'underline\'')">underline</a></li>    
+    </ul>
+ 
+    <ul id="fontmenu" class="SimpleContextMenu">
+		<li><a  href="javascript: addTag('emph render=\'bold\'')">bold</a></li>
+		<li><a href="javascript: addTag('emph render=\'italic\'')">italic</a></li>   
+		<li><a  href="javascript: addTag('emph render=\'doublequote\'')">quoted</a></li>
+		<li><a href="javascript: addTag('emph render=\'underline\'')">underline</a></li> 
     </ul>
     
-     <ul id="emphmenu" class="SimpleContextMenu">
-		<li><a  href="javascript: addTag('title render=\'italic\'')">&lt;emph&gt; (italic)</a></li>
-		<li><a href="javascript: addTag('title render=\'bold\'')">&lt;emph&gt; (bold)</a></li>   
-    </ul>
+    <ul id="listmenu" class="SimpleContextMenu">
+		<li><a  href="javascript: addTag('list')">list</a></li>
+		<li><a href="javascript: addTag('item')">item</a></li>
+    </ul>   
     
-    <ul id="extrefmenu" class="SimpleContextMenu">
-		<li><a  href="javascript: addTag('extref href=\' \'')">&lt;extref&gt; (www)</a></li>
-		<li><a href="javascript: addTag('extref href=\'mailto: \'')">&lt;extref&gt; (email)</a></li>   
-    </ul>
+	<ul id="archivalmenu" class="SimpleContextMenu">
+		<li><a href="javascript: addTag('archref role=\'http://www.archiveshub.ac.uk/apps/linkroles/related\' href=\'\'')">related</a></li>
+		<li><a href="javascript: addTag('archref role=\'http://www.archiveshub.ac.uk/apps/linkroles/extended\' href=\'\'')">extended</a></li>
+		<li><a href="javascript: addTag('archref role=\'http://www.archiveshub.ac.uk/apps/linkroles/child\' href=\'\'')">child</a></li>
+		<li><a href="javascript: addTag('archref role=\'http://www.archiveshub.ac.uk/apps/linkroles/parent\' href=\'\'')">parent</a></li>
+		<li><a href="javascript: addTag('archref role=\'http://www.archiveshub.ac.uk/apps/linkroles/descendant\' href=\'\'')">descendant</a></li>
+		<li><a href="javascript: addTag('archref role=\'http://www.archiveshub.ac.uk/apps/linkroles/ancestor\' href=\'\'')">ancestor</a></li>
+	</ul>
+    
+
 
 <div class="toc" id="leftcol">
 
 <table title="operations" class="edit-ops">
     <tr>
         <td class=buttonlabel">File</td>
-        <td><input type="button" class="menubutton" id="save-button" onclick="javascript: save()" value="Save" title="Save the current changes to the editing data store"></input></td>
-        <td><input type="button" class="menubutton" id="delete-button" onclick="javascript: var cont = confirmOp('This operation will delete the current record from the editing store and any changes made since it was last submitted to the database will be lost. If the record is also in the database that record will remain unchanged and will not be deleted.\n\nAre you sure you want to delete this record?'); if (cont) {discardRec($('pui').value);}" value="Delete" title="Delete this record from the editing data store"></input></td>
+        <td><input type="button" class="menubutton" id="save-button" onclick="javascript: save()" value="Save" title="Save the current changes to the Draft File Store"></input></td>
+        <td><input type="button" class="menubutton" id="delete-button" onclick="javascript: var cont = confirmOp('This operation will delete the current record from the Draft File Store and any changes made since it was last submitted to the database will be lost. If the record is also in the database that record will remain unchanged and will not be deleted.\n\nAre you sure you want to delete this record?'); if (cont) {discardRec($('pui').value);}" value="Delete" title="Delete this record from the editing data store"></input></td>
     </tr>
     <tr>
         <td class=buttonlabel">Preview</td>
-        <td><input type="button" class="menubutton" id="display-button" onclick="javascript: viewXml();" value="XML" title="Preview the XML for this record (opens in new window/tab)"></input></td>
+        <td><input type="button" class="menubutton" id="xml-button" onclick="javascript: viewXml();" value="XML" title="Preview the XML for this record (opens in new window/tab)"></input></td>
         <td><input type="button" class="menubutton" id="preview-button" onclick="javascript: previewRec();" value="On-line Version" title="Preview the on-line version of this record (opens in new window/tab)"></input></td>
     </tr>
     <tr>
@@ -90,7 +112,7 @@
 <!-- 
 <span class="buttonlabel">File</span><div class="float"><input type="button" class="menubutton" id="save-button" onclick="javascript: save()" value="Save" title="Save the current changes to the editing data store"></input></div>
 <div class="float"><input type="button" class="menubutton" id="delete-button" onclick="javascript: var cont = confirmOp('This operation will delete the current record from the editing store and any changes made since it was last submitted to the database will be lost. If the record is also in the database that record will remain unchanged and will not be deleted.\n\nAre you sure you want to delete this record?'); if (cont) {discardRec($('pui').value);}" value="Delete" title="Delete this record from the editing data store"></input></div><br/>
-<span class="buttonlabel">Preview</span><div class="float"><input type="button" class="menubutton" id="display-button" onclick="javascript: viewXml();" value="XML" title="Preview the XML for this record (opens in new window/tab)"></input></div>
+<span class="buttonlabel">Preview</span><div class="float"><input type="button" class="menubutton" id="xml-button" onclick="javascript: viewXml();" value="XML" title="Preview the XML for this record (opens in new window/tab)"></input></div>
 <div class="float"><input type="button" class="menubutton" id="preview-button" onclick="javascript: previewRec();" value="On-line Version" title="Preview the on-line version of this record (opens in new window/tab)"></input></div><br/>
 <span class="buttonlabel">Export</span><div class="float"><input type="button" class="menubutton" id="tofile-button" onclick="javascript: var cont = confirmOp('This operation will load this description into the database. If it is not a new record it will overwrite the existing version. This record will not be indexed immediately, the database will need to be rebuilt before the changes appear in the database.\n\nAre you sure you want to write this file to disk?'); if (cont) {submit(false);}"" value="To File only" title="Write this record to the data directory for indexing later"></input></div>
 <div class="float"><input type="button" class="menubutton" id="submit-button" onclick="javascript: var cont = confirmOp('This operation will submit this record to your database for immediate display. If this is not a new file it will overwrite the existing version.\n\nAre you sure you want to submit this file?'); if (cont) {submit();}"" value=" To File + Database" title="Write this file to the data directory and index in the live database"></input></div><br />

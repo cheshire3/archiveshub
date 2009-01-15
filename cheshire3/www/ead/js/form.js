@@ -114,7 +114,7 @@ function deleteRec(id){
 	var url = '/ead/edit/';
 	var data = 'operation=deleteRec&recid=' + id;
 	var ajax = new Ajax.Request(url, {method:'post', asynchronous:false, postBody:data, evalScripts:true, onSuccess: function(transport) {	
-		location.href="";		    
+		location.href="/ead/edit/menu.html";		    
 	}});		
 }
 
@@ -370,7 +370,7 @@ function save(){
 
 
 function saveForm(asynch){
-	
+	var relocate = false;
 	//collect the basic id information
 	if (currentForm == 'collectionLevel'){
 		setCountryCode($('countrycode').value);
@@ -384,7 +384,7 @@ function saveForm(asynch){
 	if (currentForm == 'collectionLevel' && recid=='notSet'){
 		if (document.getElementById('recid') != 'notSet'){
 	    	recid = document.getElementById('recid').value;
-	    }	    		
+	    }		
 	}
 	// gets filename if it is set in the form 
 	if(currentForm == 'collectionLevel' && fileName == null){
@@ -416,6 +416,7 @@ function saveForm(asynch){
     }
     else {
     	recid = ($('pui')).value;
+    	relocate = true;
     }
     if (fileOwner != null){
     	data += '&owner=' + fileOwner;
@@ -432,6 +433,9 @@ function saveForm(asynch){
 			($(previousForm)).className = 'valid';
 		}
 	}});	
+	if (relocate == true){
+		window.location.href='/ead/edit/?operation=load&recid=' + recid;
+	}
 }
 
 
@@ -890,16 +894,13 @@ function viewXml(){
     		}
     		
     	}
-    }      
-    
+    }         
 	saveForm(false);
-	url = '/ead/edit?operation=xml&recid=' + recid;
+	var url = '/ead/edit?operation=xml&recid=' + recid;
 	if (fileOwner != null){
 		url += '&owner=' + fileOwner;
 	}
-	var xml = window.open(url);	
-	if (window.focus) {xml.focus();}
-
+	window.location.href=url;
 }
 
 
@@ -996,9 +997,7 @@ function previewRec(){
 	if (fileOwner != null){
 		url += '&owner=' + fileOwner;
 	}
-	var preview = window.open(url);	
-	if (window.focus) {preview.focus();}
-
+	window.location.href=url;
 }
 	
 
@@ -1034,7 +1033,7 @@ function reassignToUser(){
 			var url = '/ead/edit/';
 			var data = 'operation=reassign&recid=' + recid + '&user=' + user;
 			var ajax = new Ajax.Request(url, {method:'post', asynchronous:false, postBody:data, evalScripts:true, onSuccess: function(transport) {  	
-				location.href="";		    
+				location.href="/ead/edit/menu.html";		    
 			}});
 		}	
 	}
@@ -1416,27 +1415,37 @@ function hideAllMenus(){
 }
 
 
-function showSubMenu(type, pos){
-	hideSubMenus();
+function showSubMenu(type, pos, parent){
+	if (parent == 'tagmenu'){
+		hideSubMenus();
+	}
 	var menu = null;
 	
-	menu = ($(type + 'menu'))
+	menu = ($(type + 'menu'));
 
-	mainMenu = document.getElementById('tagmenu');
+	mainMenu = document.getElementById(parent);
 	size = mainMenu.getElementsByTagName('LI');
-	menu.style.top = parseInt(mainMenu.style.top) + ((mainMenu.offsetHeight / size.length) * pos) + 'px' ;
-	menu.style.left = parseInt(mainMenu.style.left) + mainMenu.offsetWidth  + 'px';
+	menu.style.top = parseInt(mainMenu.style.top) + ((mainMenu.offsetHeight / size.length) * pos) + 'px';
+	var width = document.getElementById('content').offsetWidth;
+	// if we don't have enough space on the right
+	if (parseInt(mainMenu.style.left) + (mainMenu.offsetWidth * 2) > width){
+		menu.style.left = parseInt(mainMenu.style.left) - (mainMenu.offsetWidth)  + 'px';
+	}
+	//if we do have enough space on the right
+	else {
+		menu.style.left = parseInt(mainMenu.style.left) + (mainMenu.offsetWidth) + 'px';
+	}
 	menu.style.display = 'block';
 }
 
 
 function hideSubMenus(){
+	($('linkmenu')).style.display = 'none';
 	($('titlemenu')).style.display = 'none';
-	($('emphmenu')).style.display = 'none';
-	($('extrefmenu')).style.display = 'none';
-
+	($('listmenu')).style.display = 'none';
+	($('fontmenu')).style.display = 'none';
+	($('archivalmenu')).style.display = 'none';
 }
-
 
 function hideSubMenu(type){
 	($(type + 'menu')).style.display = 'none';
@@ -1894,3 +1903,16 @@ function createObjectsForm() {
    	}
 }
 
+function checkButtons(){
+	if (document.getElementById('pui').value.strip() == ''){
+		document.getElementById('xml-button').setAttribute('disabled', 'true');
+		document.getElementById('xml-button').setAttribute('title', 'File must be saved before this operation can be performed');
+		document.getElementById('preview-button').setAttribute('disabled', 'true');
+		document.getElementById('preview-button').setAttribute('title', 'File must be saved before this operation can be performed');
+		document.getElementById('tofile-button').setAttribute('disabled', 'true');
+		document.getElementById('tofile-button').setAttribute('title', 'File must be saved before this operation can be performed');
+		document.getElementById('submit-button').setAttribute('disabled', 'true');
+		document.getElementById('submit-button').setAttribute('title', 'File must be saved before this operation can be performed');
+		
+	}
+}

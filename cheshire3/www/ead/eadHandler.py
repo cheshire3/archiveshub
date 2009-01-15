@@ -215,7 +215,7 @@ class EadHandler:
             if (os.path.isdir(os.path.join(d,f))):
                 outD.extend(['<li title="%s">%s' % (os.path.join(d,f),f),
                             '<ul class="hierarchy">',
-                            '\n'.join(self._walk_directory(os.path.join(d, f), type)),
+                            '\n'.join(self._walk_directory(os.path.join(d, f), type, link)),
                             '</ul></li>'
                             ])
             else:

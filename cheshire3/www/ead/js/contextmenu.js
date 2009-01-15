@@ -140,9 +140,7 @@ var SimpleContextMenu = {
 
         if (menuElementId) {
             var m = SimpleContextMenu._getMousePosition(e);
-          //  alert(m.y);
             var s = SimpleContextMenu._getScrollPosition(e);
-        //    alert(s.y);
             SimpleContextMenu._menuElement = document.getElementById(menuElementId);
             SimpleContextMenu._menuElement.style.left = (m.x - 10) + s.x + 'px';
             SimpleContextMenu._menuElement.style.top = (m.y - 10) + s.y + 'px';
@@ -170,18 +168,41 @@ var SimpleContextMenu = {
     _getMousePosition : function (e) {
 
         e = e ? e : window.event;
-        height = document.getElementById('rightcol').offsetHeight + 105; // 105 = header + navbar max-height
-        if ((e.clientY)+160 > height){
-        	var position = {
-            'x' : e.clientX,
-            'y' : e.clientY - 90 - 160 //160 = hardcoded offsetHeight of tagmenu
+        var height = document.getElementById('rightcol').offsetHeight + 105; // 105 = header + navbar max-height
+        var width = document.getElementById('content').offsetWidth;
+        // if the menu is too near the bottom
+        if ((e.clientY)+140 > height){ //160 = hardcoded hieght offsetHeight of tagmenu
+        	// if the menu is too near the right
+        	if ((e.clientX+100) > width){ //100 = hardcoded width offsetHeight of tagmenu
+ 				var position = {
+	            'x' : width - 130, 
+	            'y' : e.clientY - 90 - 140 //140 = hardcoded offsetHeight of tagmenu
+	        	}       		
+        	}
+        	// if the menu is not too near the right
+        	else {
+	        	var position = {
+	            'x' : e.clientX,
+	            'y' : e.clientY - 90 - 140 //140 = hardcoded offsetHeight of tagmenu
+	        	}
         	}
         }
+        //if the menu is not too near the bottom
         else{
-	        var position = {
-	            'x' : e.clientX,
+        	// if the menu is too near the right
+        	if ((e.clientX+100) > width){ //100 = hardcoded width offsetHeight of tagmenu
+ 				var position = {
+	            'x' : width - 130,
 	            'y' : e.clientY - 100
-	        }
+	        	}       		   	
+        	}
+        	// if the menu is not too near the right
+        	else {
+		        var position = {
+		            'x' : e.clientX,
+		            'y' : e.clientY - 100
+		        }
+		   }
 		}
         return position;
 

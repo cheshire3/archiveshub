@@ -577,13 +577,20 @@ class EadEditingHandler(EadHandler):
     #loads from editStore
     def load_file(self, form, req):
         recid = form.get('recid', None)
+        found = False
         if not recid :
             return self.show_editMenu();
         try :
             rec = editStore.fetch_record(session, recid)
+            found = True
         except:
-            return self.show_editMenu();
-        else :
+            try :
+                recid = '%s-%s' % (recid, session.user.username)
+                rec = editStore.fetch_record(session, recid)
+                found = True
+            except:
+                return self.show_editMenu();
+        if found :
             structure = read_file('ead2002.html') 
             htmlform = formTxr.process_record(session, rec).get_raw(session)
             page = structure.replace('%FRM%', htmlform) 
@@ -1032,7 +1039,7 @@ class EadEditingHandler(EadHandler):
                          , 'RECID': recid
                          })
         try:
-            page = self.display_full(rec, paramDict)[pagenum-1]
+            page = self.display_full(rec, paramDict, pageNavType="links")[pagenum-1]
         except IndexError:
             return 'No page number %d' % pagenum
         
@@ -1074,7 +1081,7 @@ class EadEditingHandler(EadHandler):
         compStore = db.get_object(session, 'componentStore')
         dcRecordStore = db.get_object(session, 'eadDcStore')
         queryFactory = db.get_object(session, 'defaultQueryFactory')
-        req.write('<span class="ok">[OK]</span>\n')
+        req.write('<span class="ok">[OK]</span><br/>\n')
         i = form.get('index', 'true')
         if i == 'false' :
             index = False
@@ -1414,8 +1421,8 @@ class EadEditingHandler(EadHandler):
             editStore.commit_storing(session) 
         else :              
             content = self.show_editMenu()
-            htmlNav = ['<a href="help.html" title="Administration Help" class="navlink">Admin Help</a>',
-                       '<a href="/ead/admin/index.html" title="Administration Interface Main Menu">Administration</a>']
+            htmlNav = ['<a href="/ead/admin/index.html" title="Administration Interface Main Menu">Administration</a>',
+                       '<a href="help.html" title="Edit Help" class="navlink">Edit Help</a>']
             page = multiReplace(tmpl, {'%REP_NAME%': repository_name,
                      '%REP_LINK%': repository_link,
                      '%REP_LOGO%': repository_logo,
