@@ -37,6 +37,15 @@ textarea, input[type="text"], select{
 	border: 2px inset white;	
 	}
 	
+.daooptions {
+	padding-bottom: 20px;
+	padding-left: 20px;
+	}
+	
+.thumb, .multiple, .singlefile, .embed {
+	padding-bottom: 20px;
+	}
+	
 .added {
 	float: left;
 	width: 563px;
@@ -92,7 +101,13 @@ br {
 
 .accesspoint {
 	margin-left: 105px;
+	cursor: pointer;
 }
+
+.accesspoint a {
+	color: black;
+}
+
 
 .addfield {
 	padding-left: 5px;

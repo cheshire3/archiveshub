@@ -1,9 +1,9 @@
-#!/home/cheshire/cheshire3/install/bin/python
+#!/home/cheshire/install/bin/python
 
 import time, sys, os, re
 from crypt import crypt
 
-c3path = os.environ.get('C3HOME', '/home/cheshire/cheshire3')
+c3path = os.environ.get('C3HOME', '/home/cheshire')
 sys.path.insert(1, os.path.join(c3path, 'cheshire3', 'code'))
 
 from cheshire3.web.www_utils import *

@@ -1518,8 +1518,8 @@ function addTag(tagtype) {
 DAO related stuff
 */
 
-function addFile(number){
-	var doform = document.getElementById('digitalobjectsform');
+function addFile(number, loc){
+	var doform = document.getElementById('digitalobjectsform[' + loc + number + ']');
 	var tbody = document.getElementById('multipletbody' + number);
 	var jsrow = document.getElementById('jsrow');
 	rows = tbody.getElementsByTagName('tr').length;
@@ -1544,8 +1544,8 @@ function addFile(number){
  	href = document.createElement('input');
  	href.setAttribute('type', 'text');
  	href.onclick = function () {setCurrent(this); },
- 	href.setAttribute('name', 'daogrp/daoloc[' + nextfile + ']/@href');
- 	href.setAttribute('id', 'daogrp/daoloc[' + nextfile + ']/@href');
+ 	href.setAttribute('name', loc + 'daogrp[' + number + ']/daoloc[' + nextfile + ']/@href');
+ 	href.setAttribute('id', loc + 'daogrp[' + number + ']/daoloc[' + nextfile + ']/@href');
  	href.setAttribute('size', '70');
  	td = document.createElement('td');		
  	td.appendChild(href);
@@ -1553,13 +1553,34 @@ function addFile(number){
  	tr.appendChild(td);
   
  	tbody.insertBefore(tr, jsrow);   	
-   			
+
+
+//file title   			
+	tr = document.createElement('tr');
+	tr.className = shading;
+	td = document.createElement('td');
+	td.appendChild(document.createTextNode('File ' + nextfile + ' title: '));
+	td.className = 'label';
+	tr.appendChild(td);
+	
+	href = document.createElement('input');
+	href.setAttribute('type', 'text');
+	href.onclick = function () {setCurrent(this); },
+	href.setAttribute('name', loc + 'daogrp[' + number + ']/daoloc[' + nextfile + ']/@title');
+	href.setAttribute('id', loc + 'daogrp[' + number + ']/daoloc[' + nextfile + ']/@title');
+	href.setAttribute('size', '70');
+	td = document.createElement('td');		
+	td.appendChild(href);
+	
+	tr.appendChild(td);
+	
+	tbody.insertBefore(tr, jsrow);      			
    			 
  //role info
     role = document.createElement('input');
    	role.setAttribute('type', 'hidden');
-   	role.setAttribute('name', 'daogrp/daoloc[' + nextfile + ']/@role');
-   	role.setAttribute('id', 'daogrp/daoloc[' + nextfile + ']/@role');
+   	role.setAttribute('name', loc + 'daogrp[' + number + ']/daoloc[' + nextfile + ']/@role');
+   	role.setAttribute('id', loc + 'daogrp[' + number + ']/daoloc[' + nextfile + ']/@role');
    	role.setAttribute('value', 'reference');
    	doform.insertBefore(role, tbody.parentNode);				
 	
@@ -1567,7 +1588,8 @@ function addFile(number){
 }
 
 
-function createObjectsForm() {
+function createObjectsForm(number, loc) {
+	
 
 	var type = null;
 	for (var i=0; i < document.eadForm.daooptns.length; i++) {
@@ -1580,14 +1602,45 @@ function createObjectsForm() {
    		return;
    	}
    	else {
-   		var doform = document.getElementById('digitalobjectsform');
+   		var doform = document.getElementById('digitalobjectsform[' + loc + number + ']');
    		doform.className = type;
-   		if (doform.childNodes.length > 0){
+
+   		var uri = '';
+   		var thumb = '';
+   		var description = '<p></p>';
+   		var title = '';   	
+   	
+   		if (doform.childNodes.length > 1){ // has to be 1 because empty one has to have text element to stop it autoclosing!
+   		
+	   	//get current values from the form
+
+	   		var roleInput;
+	   		if (roleInput = document.getElementById(loc + 'daogrp[' + number + ']/daoloc[1]/@role')){
+	   			if (roleInput.value == 'thumb'){
+	   				thumb = document.getElementById(loc + 'daogrp[' + number + ']/daoloc[1]/@href').value;
+	   				uri =	document.getElementById(loc + 'daogrp[' + number + ']/daoloc[2]/@href').value;
+	   				description = document.getElementById(loc + 'daogrp[' + number + ']/daodesc').value;
+	   			}
+	   			else {
+	   				uri = document.getElementById(loc + 'daogrp[' + number + ']/daoloc[1]/@href').value;
+	   				title = document.getElementById(loc + 'daogrp[' + number + ']/daoloc[1]/@title').value;
+	   				description = document.getElementById(loc + 'daogrp[' + number + ']/daodesc').value;
+	   			}
+	   		}
+	   		else {
+	   			uri = document.getElementById(loc + 'dao[' + number + ']/@href').value;
+	   			description = document.getElementById(loc + 'dao[' + number + ']/daodesc').value;
+	   		}
+	   	
+	   	
+   	
+   	//delete the current form
+   		
 	   		for (var i = doform.childNodes.length-1; i > -1; i--) {
 	   			doform.removeChild(doform.childNodes[i]);
 	   		}
    		}
-   		if (type == 'singlefile' || type == 'embed') {
+   		if (type == 'new' || type == 'embed') {
    		
    			var table = document.createElement('table');
    			var tbody = document.createElement('tbody');
@@ -1603,9 +1656,10 @@ function createObjectsForm() {
    			var href = document.createElement('input');
    			href.setAttribute('type', 'text');
    			href.onclick = function () {setCurrent(this); },
-   			href.setAttribute('name', 'dao/@href');
-   			href.setAttribute('id', 'dao/@href');
+   			href.setAttribute('name', loc + 'dao[' + number + ']/@href');
+   			href.setAttribute('id', loc + 'dao[' + number + ']/@href');
    			href.setAttribute('size', '70');
+   			href.setAttribute('value', uri);
    			td = document.createElement('td');		
    			td.appendChild(href);
    			
@@ -1624,10 +1678,10 @@ function createObjectsForm() {
    			var desc = document.createElement('input');
    			desc.setAttribute('type', 'text');
    			desc.onclick = function () {setCurrent(this); },
-   			desc.setAttribute('name', 'dao/daodesc');
-   			desc.setAttribute('id', 'dao/daodesc');
+   			desc.setAttribute('name', loc + 'dao[' + number + ']/daodesc');
+   			desc.setAttribute('id', loc + 'dao[' + number + ']/daodesc');
    			desc.setAttribute('size', '70');
-   			desc.setAttribute('value', '<p></p>');
+   			desc.setAttribute('value', description);
    			desc.className = 'menuField';
  			td = document.createElement('td');
    			td.appendChild(desc);
@@ -1639,14 +1693,10 @@ function createObjectsForm() {
  	//show  			   			
    			var show = document.createElement('input');
    			show.setAttribute('type', 'hidden');
-   			show.setAttribute('name', 'dao/@show');
-   			
-   			if (type == 'singlefile'){
-   				show.setAttribute('value', 'new');
-   			}
-   			else {
-   				show.setAttribute('value', 'embed');
-   			}
+   			show.setAttribute('name', loc + 'dao[' + number + ']/@show');
+
+   			show.setAttribute('value', type);
+
 
 			table.appendChild(tbody);
 			doform.appendChild(table);
@@ -1668,9 +1718,10 @@ function createObjectsForm() {
    			var href = document.createElement('input');
    			href.setAttribute('type', 'text');
    			href.onclick = function () {setCurrent(this); },
-   			href.setAttribute('name', 'daogrp/daoloc[1]/@href');
-   			href.setAttribute('id', 'daogrp/daoloc[1]/@href');
+   			href.setAttribute('name', loc + 'daogrp[' + number + ']/daoloc[1]/@href');
+   			href.setAttribute('id', loc + 'daogrp[' + number + ']/daoloc[1]/@href');
    			href.setAttribute('size', '70');
+   			href.setAttribute('value', thumb);
    			td = document.createElement('td');		
    			td.appendChild(href);
    			
@@ -1681,8 +1732,8 @@ function createObjectsForm() {
    	//role info
     		var role1 = document.createElement('input');
    			role1.setAttribute('type', 'hidden');
-   			role1.setAttribute('name', 'daogrp/daoloc[1]/@role');
-   			role1.setAttribute('id', 'daogrp/daoloc[1]/@role');
+   			role1.setAttribute('name', loc + 'daogrp[' + number + ']/daoloc[1]/@role');
+   			role1.setAttribute('id', loc + 'daogrp[' + number + ']/daoloc[1]/@role');
    			role1.setAttribute('value', 'thumb');
    			
 
@@ -1696,9 +1747,10 @@ function createObjectsForm() {
    			href = document.createElement('input');
    			href.setAttribute('type', 'text');
    			href.onclick = function () {setCurrent(this); },
-   			href.setAttribute('name', 'daogrp/daoloc[2]/@href');
-   			href.setAttribute('id', 'daogrp/daoloc[2]/@href');
+   			href.setAttribute('name', loc + 'daogrp[' + number + ']/daoloc[2]/@href');
+   			href.setAttribute('id', loc + 'daogrp[' + number + ']/daoloc[2]/@href');
    			href.setAttribute('size', '70');
+   			href.setAttribute('value', uri);
    			td = document.createElement('td');		
    			td.appendChild(href);
    			
@@ -1710,8 +1762,8 @@ function createObjectsForm() {
  	//role info
     		var role2 = document.createElement('input');
    			role2.setAttribute('type', 'hidden');
-   			role2.setAttribute('name', 'daogrp/daoloc[2]/@role');
-   			role2.setAttribute('id', 'daogrp/daoloc[2]/@role');
+   			role2.setAttribute('name', loc + 'daogrp[' + number + ']/daoloc[2]/@role');
+   			role2.setAttribute('id', loc + 'daogrp[' + number + ']/daoloc[2]/@role');
    			role2.setAttribute('value', 'reference');
 
 
@@ -1725,10 +1777,10 @@ function createObjectsForm() {
    			var desc = document.createElement('input');
    			desc.setAttribute('type', 'text');
    			desc.onclick = function () {setCurrent(this); },
-   			desc.setAttribute('name', 'daogrp/daodesc');
-   			desc.setAttribute('id', 'daogrp/daodesc');
+   			desc.setAttribute('name', loc + 'daogrp[' + number + ']/daodesc');
+   			desc.setAttribute('id', loc + 'daogrp[' + number + ']/daodesc');
    			desc.setAttribute('size', '70');
-   			desc.setAttribute('value', '<p></p>');
+   			desc.setAttribute('value', description);
    			desc.className = 'menuField';
  			td = document.createElement('td');
    			td.appendChild(desc);
@@ -1768,9 +1820,12 @@ function createObjectsForm() {
 	   			href = document.createElement('input');
 	   			href.setAttribute('type', 'text');
 	   			href.onclick = function () {setCurrent(this); },
-	   			href.setAttribute('name', 'daogrp/daoloc[' + i + ']/@href');
-	   			href.setAttribute('id', 'daogrp/daoloc[' + i + ']/@href');
+	   			href.setAttribute('name', loc + 'daogrp[' + number + ']/daoloc[' + i + ']/@href');
+	   			href.setAttribute('id', loc + 'daogrp[' + number + ']/daoloc[' + i + ']/@href');
 	   			href.setAttribute('size', '70');
+	   			if (i == 1){
+	   				href.setAttribute('value', uri);
+	   			}
 	   			td = document.createElement('td');		
 	   			td.appendChild(href);
 	   			
@@ -1790,9 +1845,12 @@ function createObjectsForm() {
 	   			href = document.createElement('input');
 	   			href.setAttribute('type', 'text');
 	   			href.onclick = function () {setCurrent(this); },
-	   			href.setAttribute('name', 'daogrp/daoloc[' + i + ']/@title');
-	   			href.setAttribute('id', 'daogrp/daoloc[' + i + ']/@title');
+	   			href.setAttribute('name', loc + 'daogrp[' + number + ']/daoloc[' + i + ']/@title');
+	   			href.setAttribute('id', loc + 'daogrp[' + number + ']/daoloc[' + i + ']/@title');
 	   			href.setAttribute('size', '70');
+	   			if (i == 1){
+	   				href.setAttribute('value', title);
+	   			}
 	   			td = document.createElement('td');		
 	   			td.appendChild(href);
 	   			
@@ -1803,8 +1861,8 @@ function createObjectsForm() {
 	 	//role info
 	    		role = document.createElement('input');
 	   			role.setAttribute('type', 'hidden');
-	   			role.setAttribute('name', 'daogrp/daoloc[' + i + ']/@role');
-	   			role.setAttribute('id', 'daogrp/daoloc[' + i + ']/@role');
+	   			role.setAttribute('name', loc + 'daogrp[' + number + ']/daoloc[' + i + ']/@role');
+	   			role.setAttribute('id', loc + 'daogrp[' + number + ']/daoloc[' + i + ']/@role');
 	   			role.setAttribute('value', 'reference');
 	   			doform.appendChild(role);			
    			}
@@ -1819,7 +1877,7 @@ function createObjectsForm() {
   			link.appendChild(document.createTextNode('add another file'));
    			link.className = 'smalllink';
    			
-  			link.onclick = function () {addFile(1); };
+  			link.onclick = function () {addFile(1, loc); };
    			td.appendChild(link);
    			tr.setAttribute('id', 'jsrow');
    			tr.appendChild(td);
@@ -1836,10 +1894,10 @@ function createObjectsForm() {
    			var desc = document.createElement('input');
    			desc.setAttribute('type', 'text');
    			desc.onclick = function () {setCurrent(this); },
-   			desc.setAttribute('name', 'daogrp/daodesc');
-   			desc.setAttribute('id', 'daogrp/daodesc');
+   			desc.setAttribute('name', loc + 'daogrp[' + number + ']/daodesc');
+   			desc.setAttribute('id', loc + 'daogrp[' + number + ']/daodesc');
    			desc.setAttribute('size', '70');
-   			desc.setAttribute('value', '<p></p>');
+   			desc.setAttribute('value', description);
    			desc.className = 'menuField';
  			td = document.createElement('td');
    			td.appendChild(desc);

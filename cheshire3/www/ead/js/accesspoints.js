@@ -387,9 +387,11 @@ function buildAccessPoint(s){
 	var number = nameCount;
     nameDiv = document.createElement('div');
     nameDiv.setAttribute('class', 'accesspoint');
-    nameDiv.onclick = function () {editAccessPoint(s, number); },   
-    nameDiv.setAttribute('title', 'Click to edit');
-    nameDiv.appendChild(txtnode);
+    link = document.createElement('a');    
+    link.onclick = function () {editAccessPoint(s, number); },   
+    link.setAttribute('title', 'Click to edit');
+    link.appendChild(txtnode);
+    nameDiv.appendChild(link);
     var icondiv = createIcons(s);
 
     var wrapper = document.createElement('div');
