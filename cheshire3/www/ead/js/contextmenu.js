@@ -3,7 +3,26 @@
 * Simple Context Menu
 * http://www.webtoolkit.info/
 *
+*
+*
 **/
+
+/*
+// Script:   	contextmenu.js
+// Version:   	0.01
+// Description:
+//            JavaScript functions used in the Cheshire3 EAD search/retrieve and display interface 
+//            - part of Cheshire for Archives v3.x
+// Origin: 		http://www,webtoolkit.info	
+// Language:  	JavaScript
+// Authors:     http://www.webtoolkit.info
+//				Catherine Smith <catherine.smith@liv.ac.uk>
+// Date:      	20 January 2009
+//
+//
+// Version History:
+// 0.01 - 20/01/2009 - CS - Adaptions made to downloaded script for use in editing interface of Archives Hub
+*/
 
 var SimpleContextMenu = {
 

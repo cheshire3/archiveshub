@@ -1,6 +1,6 @@
 #
 # Script:    eadEditingHandler.py
-# Version:   0.1
+# Version:   0.01
 # Date:      20 January 2009
 # Copyright: &copy; University of Liverpool 2009
 # Description:
@@ -17,12 +17,15 @@
 #            XSL: form.xsl, contents-editing.xsl, ead_order.xsl, reindent.xsl, full.xsl, fullSplit.xsl
 #            CSS: charkeyboard.css, contextmenu.css, form.css, form-ie.css, struc-all.css, struc-ie.css,
 #                        style.css, localStyles.css
-#            Javascript: prototype.js (v 1.6.0), accesspoints.js, collapsibleLists.js, contextmenu.js, 
-#                        form.js, keyboard.js, tablednd.js
-#            Images: 
-#
+#            Javascript: prototype.js (v 1.6.0), accesspoints.js, collapsibleLists.js, cookies.js, 
+#                           contextmenu.js, form.js, keyboard.js, tablednd.js                       
+#            Images: c3_black.gif, valid-xhtml10, vcss, JISCcolour7.gif, python-powered-w-70x28.png
+#                            right-mini.gif, winmin.png, winmax.png, winmin-active.png, winmax-active.png,
+#                            winclose.png, winclose-active.png, CLon.gif, whatisthissmall.gif, delete.png,
+#                            delete-hover.png
+#                            
 # Version History: # left as example
-# 0.01 - 06/12/2005 - JH - Basic administration navigations and menus
+# 0.01 - 20/01/2009 - CS - All functions for first release
 
 
 
@@ -1297,10 +1300,10 @@ class EadEditingHandler(EadHandler):
             users = []
             for user in userStore :
                 users.append('<option value="%s">%s</option>' % (user.username, user.username))
-            assignmentOptn = '<select name="user"><option value="null">Reasign to...</option>%s</select><input type="button" onclick="reassignToUser()" value=" Confirm Reassignment "/>' % ''.join(users)
+            assignmentOptn = '<select id="userSelect" name="user" disabled="true"><option value="null">Reasign to...</option>%s</select><input type="button" onclick="reassignToUser()" value=" Confirm Reassignment " disabled="true"/>' % ''.join(users)
         else :
             assignmentOptn = ''
-        return multiReplace(page, {'%%%SOURCEDIR%%%': sourceDir, '%%%FILES%%%': ''.join(files), '%%%RECORDS%%%': ''.join(recids), '%%%USROPTNS%%%': assignmentOptn})
+        return multiReplace(page, {'%%%SOURCEDIR%%%': sourceDir, '%%%FILES%%%': ''.join(files), '%%%RECORDS%%%': ''.join(recids), '%%%USROPTNS%%%': assignmentOptn}) 
        
              
     def _walk_store(self, store, type='checkbox', userStore=None):
@@ -1422,8 +1425,16 @@ class EadEditingHandler(EadHandler):
                 content = self.generate_file(form)
                 self.send_fullHtml(content, req) 
             editStore.commit_storing(session) 
-        else :              
-            content = self.show_editMenu()
+        else :      
+            path = req.uri
+            location = path[path.rfind('/'):] 
+
+            if location == '/nojavascript.html':
+                content = read_file('nojavascript.html')    
+            elif location == '/help.html':
+                content = read_file('edithelp.html')
+            else:
+                content = self.show_editMenu()
             htmlNav = ['<a href="/ead/admin/index.html" title="Administration Interface Main Menu">Administration</a>',
                        '<a href="help.html" title="Edit Help" class="navlink">Edit Help</a>']
             page = multiReplace(tmpl, {'%REP_NAME%': repository_name,

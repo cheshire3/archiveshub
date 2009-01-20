@@ -1902,3 +1902,17 @@ function checkButtons(){
 		document.getElementById('submit-button').setAttribute('title', 'File must be saved before this operation can be performed');		
 	}
 }
+
+function enableMenuButtons(){
+	var inputs = document.getElementsByTagName('input');
+	for (var i=0; i< inputs.length; i++){
+		if (inputs[i].getAttribute('type') == 'button' || inputs[i].getAttribute('type') == 'submit'){
+			inputs[i].removeAttribute('disabled');
+		}
+	}
+	var select = document.getElementById('userSelect');
+	select.removeAttribute('disabled');
+}
+
+
+

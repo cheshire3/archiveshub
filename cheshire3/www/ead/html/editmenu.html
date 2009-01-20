@@ -6,6 +6,8 @@
     <script type="text/javascript">
     <!--
         var olf = function loadPage() {
+        		enableMenuButtons();
+        		
                 createTreeFromList('sourceDirTree', getCookie('sourceDirTree'), true, false);
                 createTreeFromList('storeDirTree', getCookie('storeDirTree'), false, false);
             } ; 
@@ -25,21 +27,21 @@
         }
     -->
     </script>
-     <noscript><h2>Javascript must be enabled to use the Archives Hub Data Creation and Editing Tool</h2></noscript>
+     <noscript><h2 style="color:red;">Javascript must be enabled to use the Archives Hub Data Creation and Editing Tool</h2></noscript>
     <h3 class="bar">Create New EAD Description</h3>
-     <form name="createform" action="/ead/edit/" method="get" enctype="multipart/form-data">
+     <form name="createform" action="/ead/edit/" method="get">
     	<input type="hidden" name="operation" id="operation" value="create"/>
     	<p>Use this data creation template to create a new collection-level description.</p>
     	<p>Note: the numbers on the template refer to the corresponding ISAD(G) section.</p>  
-    	<input type="submit" value=" Create File "/>
+    	<input type="submit" value=" Create File " disabled="true"/>
     </form>
     <h3 class="bar">Edit Existing EAD Description</h3>
     <div style="float: left; padding-right:50px;">
     	<h4>Database Files</h4>
         <p><b>Import a file for editing from the main database</b></p>
-        <form id="sourceDirForm" name="sourceDirForm" action="/ead/edit/" method="get" enctype="multipart/form-data">
+        <form id="sourceDirForm" name="sourceDirForm" action="/ead/edit/" method="get">
         <input type="hidden" name="operation" id="operation" value="edit"/>
-        <input type="button" onclick="checkConflicts();" value=" Edit File "/>
+        <input type="button" onclick="checkConflicts();" value=" Edit File "  disabled="true"/>
         <ul class="unmarked">
         	<li><img src="/images/folderOpen.jpg" alt=""/><code>%%%SOURCEDIR%%%</code>
     	    <ul id="sourceDirTree" class="unmarked">
@@ -47,16 +49,16 @@
     	    </ul>
         	</li>
         </ul>
-        <input type="button" onclick="checkConflicts();" value=" Edit File "/>
+        <input type="button" onclick="checkConflicts();" value=" Edit File "  disabled="true"/>
         </form>
     </div>
     <div style="float: left">
     	<h4>Draft Store Files</h4>
         <p><b>Open a file to continue editing</b></p>
-        <form name="storeDirForm" id="storeDirForm" action="/ead/edit/" method="get" enctype="multipart/form-data">
+        <form name="storeDirForm" id="storeDirForm" action="/ead/edit/" method="get">
         <input type="hidden" name="operation" id="operation" value="load"/>
-        <input type="submit" value=" Edit File "/>
-        <input type="button" onclick="deleteFromStore()" value=" Delete "/>
+        <input type="submit" value=" Edit File "  disabled="true"/>
+        <input type="button" onclick="deleteFromStore()" value=" Delete "  disabled="true"/>
        
        	%%%USROPTNS%%%
         <ul class="unmarked">
@@ -66,8 +68,8 @@
         	</ul>
         	</li>
         </ul>
-        <input type="submit" value=" Edit File "/>
-        <input type="button" onclick="deleteFromStore()" value=" Delete "/>
+        <input type="submit" value=" Edit File "  disabled="true"/>
+        <input type="button" onclick="deleteFromStore()" value=" Delete "  disabled="true"/>
         </form>
     </div>
 </div> <!-- end single div -->
