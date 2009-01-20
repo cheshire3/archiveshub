@@ -174,10 +174,9 @@ buttoncontainer p {
 #keyboard {
   	border: solid black 1px;
 	position: fixed;
-	bottom: 47px;
+	bottom: 52px;
 	left: 10px;
 	width: 9cm;
-	heigth: 10cm;
    	background: #0b2277;
 }
 

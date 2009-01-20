@@ -1,7 +1,7 @@
 #
 # Script:    eadEditingHandler.py
 # Version:   0.1
-# Date:      ongoing
+# Date:      20 January 2009
 # Copyright: &copy; University of Liverpool 2009
 # Description:
 #            Data creation and editing interface for EAD finding aids
@@ -11,11 +11,14 @@
 #
 # Language:  Python
 # Required externals:
-#            cheshire3-base, cheshire3-web
-#            Py: 
-#            HTML: 
-#            CSS: 
-#            Javascript: 
+#            cheshire3-base, cheshire3-sql, cheshire3-web
+#            Py: localConfig.py, eadHandler.py
+#            HTML: ead2002.html, edithelp.html, editmenu.html, header.html, footer.html, template.ssi
+#            XSL: form.xsl, contents-editing.xsl, ead_order.xsl, reindent.xsl, full.xsl, fullSplit.xsl
+#            CSS: charkeyboard.css, contextmenu.css, form.css, form-ie.css, struc-all.css, struc-ie.css,
+#                        style.css, localStyles.css
+#            Javascript: prototype.js (v 1.6.0), accesspoints.js, collapsibleLists.js, contextmenu.js, 
+#                        form.js, keyboard.js, tablednd.js
 #            Images: 
 #
 # Version History: # left as example
@@ -31,7 +34,7 @@ import datetime, glob
 import traceback
 import codecs
 import time
-import cProfile
+
 
 class EadEditingHandler(EadHandler):
     global repository_name, repository_link, repository_logo, htmlPath
@@ -98,14 +101,14 @@ class EadEditingHandler(EadHandler):
 
 
 #this one possibly not used:
-
-    def _get_depth (self, node):
-        compre = re.compile('^c[0-9]*$')
-        depth = 0;
-        for element in node.iterancestors():
-            if compre.match(element.tag) or element.tag == 'archdesc':
-                depth += 1
-        return depth            
+#
+#    def _get_depth (self, node):
+#        compre = re.compile('^c[0-9]*$')
+#        depth = 0;
+#        for element in node.iterancestors():
+#            if compre.match(element.tag) or element.tag == 'archdesc':
+#                depth += 1
+#        return depth            
 
     def send_html(self, data, req, code=200):
         req.content_type = 'text/html'
@@ -213,7 +216,7 @@ class EadEditingHandler(EadHandler):
             tree = etree.fromstring('<%s c3id="%s"></%s>' % (ctype, loc, ctype))           
         list = form.list     
         for field in list :
-            if field.name not in ['ctype','location','operation','newForm','owner','recid', 'parent', 'pui', 'eadid', 'filedesc/titlestmt/sponsor', 'daooptns']:        
+            if field.name not in ['ctype','location','operation','newForm','owner','recid', 'parent', 'pui', 'eadid', 'filedesc/titlestmt/sponsor'] and field.name.find('daooptns') != 0:        
                 #do did level stuff
                 if (collection):
                     node = tree.xpath('/ead/archdesc')[0]
@@ -789,7 +792,7 @@ class EadEditingHandler(EadHandler):
             #cycle through the form and replace any node that need it
             deleteList = []
             for field in list :                
-                if field.name not in ['ctype','location','operation','newForm','owner','recid', 'parent', 'pui', 'filedesc/titlestmt/sponsor', 'daooptns']:               
+                if field.name not in ['ctype','location','operation','newForm','owner','recid', 'parent', 'pui', 'filedesc/titlestmt/sponsor'] and field.name.find('daooptns') != 0:               
                     #do archdesc stuff
                     if field.name.find('controlaccess') == 0 :                        
                         self._create_controlaccess(node, field.name, field.value)  
@@ -909,7 +912,7 @@ class EadEditingHandler(EadHandler):
                 self._delete_currentLangmaterial(node)
                 deleteList = []
                 for field in list :
-                    if field.name not in ['ctype','location','operation','newForm','owner','recid', 'parent', 'daooptns']:           
+                    if field.name not in ['ctype','location','operation','newForm','owner','recid', 'parent'] and field.name.find('daooptns') != 0:  
                         if field.name.find('controlaccess') == 0 :                        
                             self._create_controlaccess(node, field.name, field.value) 
                             try:
