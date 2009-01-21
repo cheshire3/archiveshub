@@ -705,7 +705,8 @@
 		
             <!-- Subjects -->
             <xsl:if test="subject">
-                <tr><td colspan="2"><strong><xsl:text>Subjects</xsl:text></strong></td></tr>
+                <xsl:variable name="indexName"><xsl:text>Subjects</xsl:text></xsl:variable>
+                <tr><td colspan="2"><strong><xsl:value-of select="$indexName"/></strong></td></tr>
                     <xsl:for-each select="subject">
                     <tr>
                         <td>
@@ -713,6 +714,9 @@
                               <xsl:with-param name="index">
                                 <xsl:text>dc.subject</xsl:text>
                               </xsl:with-param>
+                              <xsl:with-param name="indexName">
+                                    <xsl:value-of select="$indexName"/>
+                                </xsl:with-param>
                             </xsl:call-template>
                         </td>
                         <td class="cross-search">
@@ -724,13 +728,17 @@
             	
             <!-- Personal Names -->
             <xsl:if test="persname">
-                <tr><td colspan="2"><strong><xsl:text>Personal Names</xsl:text></strong></td></tr>
+                <xsl:variable name="indexName"><xsl:text>Personal Names</xsl:text></xsl:variable>
+                <tr><td colspan="2"><strong><xsl:value-of select="$indexName"/></strong></td></tr>
                 <xsl:for-each select="persname">
                     <tr>
                         <td>
                             <xsl:call-template name="browselink">
                                 <xsl:with-param name="index">
                                     <xsl:text>bath.personalName</xsl:text>
+                                </xsl:with-param>
+                                <xsl:with-param name="indexName">
+                                    <xsl:value-of select="$indexName"/>
                                 </xsl:with-param>
                             </xsl:call-template>
                         </td>
@@ -745,13 +753,17 @@
 		
             <!-- Family Names -->
             <xsl:if test="famname">
-                <tr><td colspan="2"><strong><xsl:text>Family Names</xsl:text></strong></td></tr>
+                <xsl:variable name="indexName"><xsl:text>Family Names</xsl:text></xsl:variable>
+                <tr><td colspan="2"><strong><xsl:value-of select="$indexName"/></strong></td></tr>
                 <xsl:for-each select="famname">
                     <tr>
                         <td>
                             <xsl:call-template name="browselink">
                                 <xsl:with-param name="index">
                                     <xsl:text>ead.familyName</xsl:text>
+                                </xsl:with-param>
+                                <xsl:with-param name="indexName">
+                                    <xsl:value-of select="$indexName"/>
                                 </xsl:with-param>
                             </xsl:call-template>
                         </td>
@@ -766,69 +778,79 @@
 		
             <!-- Corporate Names -->
             <xsl:if test="corpname">
-                <tr><td colspan="2"><strong><xsl:text>Corporate Names</xsl:text></strong></td></tr>
+                <xsl:variable name="indexName"><xsl:text>Corporate Names</xsl:text></xsl:variable>
+                <tr><td colspan="2"><strong><xsl:value-of select="$indexName"/></strong></td></tr>
                 <xsl:for-each select="corpname">
                     <tr>
-            	  	<td>
-            		    <xsl:call-template name="browselink">
+                	  	<td>
+                		    <xsl:call-template name="browselink">
                                 <xsl:with-param name="index">
                                     <xsl:text>bath.corporateName</xsl:text>
                                 </xsl:with-param>
-            		    </xsl:call-template>
-            		</td>
-            		<td class="cross-search">
+                                <xsl:with-param name="indexName">
+                                    <xsl:value-of select="$indexName"/>
+                                </xsl:with-param>
+                		    </xsl:call-template>
+                		</td>
+                		<td class="cross-search">
                             <xsl:if test="$link_to_wikipedia">
-                                <xsl:call-template name="wikipedialink"/>		    	
-            		    </xsl:if>
-            		</td>
+                                <xsl:call-template name="wikipedialink"/>    	
+                		    </xsl:if>
+                		</td>
                     </tr>
                 </xsl:for-each>
             </xsl:if>
 		
             <!-- Geographical Names -->
             <xsl:if test="geogname">
-                <tr><td colspan="2"><strong><xsl:text>Geographical Names</xsl:text></strong></td></tr>
+                <xsl:variable name="indexName"><xsl:text>Geographical Names</xsl:text></xsl:variable>
+                <tr><td colspan="2"><strong><xsl:value-of select="$indexName"/></strong></td></tr>
                 <xsl:for-each select="geogname">
-	  	    <tr>
+    	  	        <tr>
                         <td>
                             <xsl:call-template name="browselink">
                                 <xsl:with-param name="index">
                                     <xsl:text>bath.geographicName</xsl:text>
                                 </xsl:with-param>
+                                <xsl:with-param name="indexName">
+                                    <xsl:value-of select="$indexName"/>
+                                </xsl:with-param>
                             </xsl:call-template>
                         </td>
-			<td class="cross-search">
+            			<td class="cross-search">
                             <!--  cross search links -->
                             <xsl:if test="$link_to_googlemaps">
                                 <xsl:call-template name="googlemapslink"/>
                             </xsl:if>
-			</td>
+            			</td>
                     </tr>
                 </xsl:for-each>
             </xsl:if>
 		
             <xsl:if test="title">
-                <tr><td colspan="2"><strong><xsl:text>Titles</xsl:text></strong></td></tr>
+                <xsl:variable name="indexName"><xsl:text>Titles</xsl:text></xsl:variable>
+                <tr><td colspan="2"><strong><xsl:value-of select="$indexName"/></strong></td></tr>
                 <xsl:for-each select="title">
                     <tr>
-            		<td><xsl:apply-templates/></td>
-            		<!--  cross search links -->
-            		<td class="cross-search">
+                		<td><xsl:apply-templates/></td>
+                		<!--  cross search links -->
+                		<td class="cross-search">
                             <xsl:if test="$link_to_copac">
-    				<xsl:call-template name="copaclink"/>								    	
-            		    </xsl:if>
-            		</td>
-            		<td class="cross-search">
+    				            <xsl:call-template name="copaclink"/>								    	
+                            </xsl:if>
+                        </td>
+                        <td class="cross-search">
                             <xsl:if test="$link_to_amazon">
-    				<xsl:call-template name="amazonlink"/>								    	
-            		    </xsl:if>
-            		</td>
+    				            <xsl:call-template name="amazonlink"/>								    	
+                            </xsl:if>
+                        </td>
                     </tr>
                 </xsl:for-each>
             </xsl:if>
             
             <xsl:if test="function">
-                <tr><td colspan="2"><strong><xsl:text>Functions</xsl:text></strong></td></tr>
+                <xsl:variable name="indexName"><xsl:text>Functions</xsl:text></xsl:variable>
+                <tr><td colspan="2"><strong><xsl:value-of select="$indexName"/></strong></td></tr>
                 <xsl:for-each select="function">
                     <tr>
                         <td><xsl:value-of select = "."/></td>
@@ -837,22 +859,27 @@
             </xsl:if> 
             
             <xsl:if test="genreform">
-                <tr><td colspan="2"><strong><xsl:text>Genre/Form</xsl:text></strong></td></tr>
+                <xsl:variable name="indexName"><xsl:text>Genre/Form</xsl:text></xsl:variable>
+                <tr><td colspan="2"><strong><xsl:value-of select="$indexName"/></strong></td></tr>
                 <xsl:for-each select="genreform">
                     <tr>
-              		<td>
+                  		<td>
                             <xsl:call-template name="browselink">
                                 <xsl:with-param name="index">
                                     <xsl:text>bath.genreForm</xsl:text>
                                 </xsl:with-param>
+                                <xsl:with-param name="indexName">
+                                    <xsl:value-of select="$indexName"/>
+                                </xsl:with-param>
                             </xsl:call-template>
-                	</td>
+                    	</td>
                     </tr>
             	</xsl:for-each>
             </xsl:if>
             
             <xsl:if test="occupation">
-            	<tr><td colspan="2"><strong><xsl:text>Occupation</xsl:text></strong></td></tr>
+                <xsl:variable name="indexName"><xsl:text>Occupation</xsl:text></xsl:variable>
+            	<tr><td colspan="2"><strong><xsl:value-of select="$indexName"/></strong></td></tr>
             	<xsl:for-each select="occupation">
                     <tr>
                         <td>
@@ -1458,13 +1485,13 @@
 				<u><xsl:apply-templates /></u>
 			</xsl:when>
 			<xsl:when test="@render='quoted'">
-				<xsl:text>'</xsl:text><xsl:apply-templates /><xsl:text>'</xsl:text>
+				<xsl:text>&apos;</xsl:text><xsl:apply-templates /><xsl:text>&apos;</xsl:text>
 			</xsl:when>
 			<xsl:when test="@render='singlequote'">
-				<xsl:text>'</xsl:text><xsl:apply-templates /><xsl:text>'</xsl:text>
+				<xsl:text>&apos;</xsl:text><xsl:apply-templates /><xsl:text>&apos;</xsl:text>
 			</xsl:when>
 			<xsl:when test="@render='doublequote'">
-				<xsl:text>"</xsl:text><xsl:apply-templates /><xsl:text>"</xsl:text>
+				<xsl:text>&quot;</xsl:text><xsl:apply-templates /><xsl:text>&quot;</xsl:text>
 			</xsl:when>
 			<xsl:when test="@render='bolditalic'">
 				<b><i><xsl:apply-templates /></i></b>
@@ -1473,10 +1500,10 @@
 				<b><u><xsl:apply-templates /></u></b>
 			</xsl:when>
 			<xsl:when test="@render='boldquoted'">
-				<b><xsl:text>'</xsl:text><xsl:apply-templates /><xsl:text>'</xsl:text></b>
+				<b><xsl:text>&apos;</xsl:text><xsl:apply-templates /><xsl:text>&apos;</xsl:text></b>
 			</xsl:when>
 			<xsl:when test="@render='bolddoublequote'">
-				<b><xsl:text>"</xsl:text><xsl:apply-templates /><xsl:text>"</xsl:text></b>
+				<b><xsl:text>&quot;</xsl:text><xsl:apply-templates /><xsl:text>&quot;</xsl:text></b>
 			</xsl:when>
 			<!--  @altrender -->
 	   		<xsl:when test="@altrender='bold'">
@@ -1489,10 +1516,10 @@
 			   <u><xsl:apply-templates /></u>
 			</xsl:when>
 			<xsl:when test="@altrender='quoted'">
-			   <xsl:text>'</xsl:text><xsl:apply-templates /><xsl:text>'</xsl:text>
+			   <xsl:text>&apos;</xsl:text><xsl:apply-templates /><xsl:text>&apos;</xsl:text>
 			</xsl:when>
 			<xsl:when test="@altrender='doublequote'">
-			   <xsl:text>"</xsl:text><xsl:apply-templates /><xsl:text>"</xsl:text>
+			   <xsl:text>&quot;</xsl:text><xsl:apply-templates /><xsl:text>&quot;</xsl:text>
 			</xsl:when>
 			<xsl:when test="@altrender='bolditalic'">
 			   <b><i><xsl:apply-templates /></i></b>
@@ -1501,19 +1528,19 @@
 			   <b><u><xsl:apply-templates /></u></b>
 			</xsl:when>
 			<xsl:when test="@altrender='boldquoted'">
-			   <b><xsl:text>'</xsl:text><xsl:apply-templates /><xsl:text>'</xsl:text></b>
+			   <b><xsl:text>&apos;</xsl:text><xsl:apply-templates /><xsl:text>&apos;</xsl:text></b>
 			</xsl:when>
 			<xsl:when test="@altrender='bolddoublequote'">
-			   <b><xsl:text>"</xsl:text><xsl:apply-templates /><xsl:text>"</xsl:text></b>
+			   <b><xsl:text>&quot;</xsl:text><xsl:apply-templates /><xsl:text>&quot;</xsl:text></b>
 			 </xsl:when>
 			<xsl:when test="@altrender='italicunderline'">
 			 	<i><u><xsl:value-of select="."/></u></i>
 			</xsl:when>
 			<xsl:when test="@altrender='italicquoted'">
-			 	<i><xsl:text>'</xsl:text><xsl:value-of select="."/><xsl:text>'</xsl:text></i>
+			 	<i><xsl:text>&apos;</xsl:text><xsl:value-of select="."/><xsl:text>&apos;</xsl:text></i>
 			</xsl:when>
 			<xsl:when test="@altrender='italicdoublequote'">
-			 	<i><xsl:text>"</xsl:text><xsl:value-of select="."/><xsl:text>"</xsl:text></i>
+			 	<i><xsl:text>&quot;</xsl:text><xsl:value-of select="."/><xsl:text>&quot;</xsl:text></i>
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:choose>
@@ -1621,6 +1648,7 @@
 	<!-- template for constructing browse links, given the name of the index to browse -->
 	<xsl:template name="browselink">
     	<xsl:param name="index"/>
+        <xsl:param name="indexName"/>
 	    <a>
 	      <xsl:attribute name="href">
 	        <xsl:value-of select="$script"/>
@@ -1638,8 +1666,8 @@
 	      </xsl:attribute>
 	      <xsl:attribute name="title">
 	        <xsl:text>Browse </xsl:text>
-	        <xsl:value-of select="$index"/>
-	        <xsl:text> index</xsl:text>
+	        <xsl:value-of select="$indexName"/>
+	        <xsl:text> index for this term</xsl:text>
 	      </xsl:attribute>
           <xsl:attribute name="class">
             <xsl:text>ajax</xsl:text>

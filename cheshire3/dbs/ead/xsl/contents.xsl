@@ -21,15 +21,16 @@
                 <a href="SCRIPT?operation=toc&amp;recid=RECID"><xsl:text>[ printable ]</xsl:text></a>
             </span>
         </h2>
-        <b>
-	    <xsl:call-template name="toc-link">
-	      <xsl:with-param name="node" select="/ead/archdesc"/>
-	    </xsl:call-template>
-	</b>
-        <ul id="someId" class="hierarchy">    
-            <xsl:apply-templates select="/ead/archdesc/dsc" mode="toc"/>
-        </ul>
-        <br/>
+        <div class="toclist">
+            <b>
+        	    <xsl:call-template name="toc-link">
+        	      <xsl:with-param name="node" select="/ead/archdesc"/>
+        	    </xsl:call-template>
+            </b>
+            <ul id="someId" class="hierarchy">    
+                <xsl:apply-templates select="/ead/archdesc/dsc" mode="toc"/>
+            </ul>
+        </div>
     </xsl:template>
 
 	<xsl:template match="dsc" mode="toc">

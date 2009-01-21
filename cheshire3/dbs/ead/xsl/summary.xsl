@@ -52,8 +52,8 @@
         <xsl:if test="$count_subordinates_in_summary">
             <xsl:variable name="sub_count" select="count(./archdesc/dsc/c|./archdesc/dsc/c01)"/>
             <xsl:variable name="all_count" select="count(//c|//c01|//c02|//c03|//c04|//c05|//c06|//c07|//c08|//c09|//c10|//c11|//c12)"/>	
-            <div class="dsc">
-	       <xsl:if test="$sub_count &gt; 0">
+            <div class="dsc-count">
+                <xsl:if test="$sub_count &gt; 0">
                     <xsl:call-template name="count-subcomponents">
                         <xsl:with-param name="sub_count">
                             <xsl:value-of select="$sub_count"/>
@@ -93,7 +93,7 @@
         <xsl:if test="$count_subordinates_in_summary">
             <xsl:variable name="sub_count" select="count(./c/c|./c01/c02|./c02/c03|./c03/c04|./c04/c05|./c05/c06|./c06/c07|./c07/c08|./c08/c09|./c09/c10|./c10/c11|./c11/c12)"/>
             <xsl:variable name="all_count" select="count(.//c|.//c01|.//c02|.//c03|.//c04|.//c05|.//c06|.//c07|.//c08|.//c09|.//c10|.//c11|.//c12)"/>	
-            <div class="dsc">
+            <div class="dsc-count">
 	       <xsl:if test="$sub_count &gt; 0">
                     <xsl:call-template name="count-subcomponents">
                         <xsl:with-param name="sub_count">
