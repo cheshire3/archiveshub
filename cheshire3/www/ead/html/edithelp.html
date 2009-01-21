@@ -3,11 +3,34 @@
 	<div id="contents">
 		<ul>
 			<li>
-				<a href="#create" title="Jump to help on creating a new file">Create New EAD Description</a>
+				<a href="#menu" title="Jump to help on the data creation and editing menu">Data Creation and Editing Menu</a>
+				<ul>
+					<li>
+						<a href="#create" title="Jump to help on creating a new file">Creating a New File</a>
+					</li>
+					<li>
+						<a href="#existing" title="Jump to help on editing an existing file">Editing an Existing File</a>
+						<ul>
+							<li>
+								<a href="#datadir" title="Jump to help on editing files from the database">Editing Files from the Database</a>
+							</li>
+							<li>
+								<a href="#draft" title="Jump to help on editing files from the draft file store">Editing Files from the Draft File Store</a>
+							</li>
+						</ul>
+					</li>
+					<li>
+						<a href="#draftops" title="Jump to help on the user operations in the draft file store">Draft File Store User Operations</a>
+						<li>	
+							<a href="#draftdel" title="Jump to help on deleting draft files">Deleting Draft Files</a>
+						</li>
+						<li>
+							<a href="#draftassign" title="Jump to help on reassigning draft files">Reassigning Draft Files (Administrative Users Only)</a>
+						</li>
+					</li>
+				</ul>
 			</li>
-			<li>
-				<a href="#edit" title="Jump to help on editing an existing file">Edit Existing EAD Description</a>
-			</li>
+			
 			<li>
 				<a href="#form" title="Jump to help on using the form">Using the Editing and Creation Form</a>
 				<ul>
@@ -15,7 +38,7 @@
 						<a href="#file" title="Jump to help on file operations">File Operations</a>
 						<ul>
 							<li>
-								<a href="#save" title="Jump to help on saving the file">Save FIle</a>
+								<a href="#save" title="Jump to help on saving the file">Save File</a>
 							</li>
 							<li>
 								<a href="#delete" title="Jump to help on deleting the file">Delete File</a>
@@ -65,20 +88,103 @@
 	</div>
 	<div id="help">
 		<div>
-			<a name="create"></a>
-			<h3 class="bar">Create New EAD Description</h3>
+			<a name="menu"></a>
+			<h3 class="bar">Data Creation and Editing Menu</h3>
 			<p>
-				This option allows you to create a new EAD description from scratch. 
+				The data creation and editing interface allows you to create new EAD descriptions from scratch
+				and to edit those already in your spoke database. You must have javascript enabled in order to 
+				be able to use the editing interface. It is also recommended that you use Firefox 2 or higher 
+				although Internet Explorer 7 or higher should also be okay.
 			</p>
-		</div>
-		<div>
-			<a name="edit"></a>
-			<h3 class="bar">Edit Existing EAD Description</h3>
+			<a name="create"> </a>
+			<h4>Creating a New File</h4>
 			<p>
-				This option allows you to edit an existing EAD description. Either you can load a file from the main 
-				database or load in a file from your 
+				If you are creating a new file you will be presented with an empty EAD creation form to complete.
+				You will notice that many of the buttons on the form are disabled. This is because it is not
+				possible to perform those operations until you have saved the file. In order to save the file 
+				you must have completed the Reference Code and the Title. There are some restrictions placed 
+				on the Reference Code. You are not able to save a Reference Code which is the same as one
+				indexed in your spoke database. If you try to save a Reference Code which is already present in the 
+				draft file store you will be given the opportunity to cancel the operation and change the details.
 			</p>
+			<p>
+				When you export the file (see <a href="#export">export operations</a>) the 
+				EAD description from the draft file store is used to create a new record either in the data directory
+				 (see <a href="#file">export to file only</a>) or in the data directory and
+				in the live search data on your spoke (see <a href="#database">export to database and file</a>). 
+				The new file in the data directory will be named using the persistent unique identifier for the 
+				description with the '.xml' extension.
+			</p>
+			<a name="existing"> </a>
+			<h4>Editing an Existing File</h4>
+			<p>
+				Existing files can be loaded into the editing interface from two locations. The data directory of 
+				your spoke database or the draft file store. 
+			</p>
+				<a name="datadir"> </a>
+				<h5>Editing Files from the Database</h5>
+				<p>
+					The main editing menu provides a list of all the files currently in your data directory. They will
+					be listed by file name (which can be changed in the admin interface). 
+					When you select one of these files to edit it is read from your data directory and the data is shown
+					in the editing form at the same time a copy will be saved in the draft file store. You are not
+					able to load a file for editing if there is already a copy assigned to your username in the 
+					draft file store. If you want to start editing a file again and overwrite the changes you have 
+					already made in the draft file store you must first delete the copy in the draft file store 
+					(see <a href="#draftdel">deleting a file from the draft file store</a>).
+					You will be alerted if you try and edit a file from the database if another user has already
+					started editing it and has a copy in the draft file store. 					 
+				</p>				
+				<p>
+					When you save the file (see <a href="#save">save file</a>) the changes will be 
+					saved to the copy in the draft file store and will not affect the data directory or the data being
+					searched on your spoke.
+					When you export the file (see <a href="#export">export operations</a>) the 
+					EAD description from the draft file store is used to replace the existing copy of your record either 
+					just in the data directory (see <a href="#file">export to file only</a>) or in the data directory and
+					in the live search data on your spoke (see <a href="#database">export to database and file</a>)
+				</p>
+				<a name="draft"> </a>
+				<h5>Editing Files from the Draft File Store</h5>
+				<p>
+					The main editing menu provides a list of all the files currently in your draft file store.
+					They are listed by user and only Administrative users can edit files belonging to other users.
+					All the files in the draft file store will at some point have been created as new files or
+					loaded in from the database and on export they will behave in the appropriate manner
+					(see <a href="#create">creating a new file</a> and <a href="#datadir">editing files from the database</a>).
+				</p>
+			<a name="draftops"> </a>
+			<h4>Draft File Store User Operations</h4>
+			<p>
+				The same two types of user are important in the data creation and editing interface as in the
+				administration interface. General users can only edit and export files from the draft files store which are 
+				assigned to them whereas Administrative users can edit and export files assigned to any user and can also 
+				switch files between users. All users can see the names of all the EAD descriptions in the process
+				of being edited or created by all users to help prevent problems with duplicate files.
+			</p>
+			<a name="draftdel"> </a>
+				<h5>Deleting Files from the Draft File Store</h5>
+				<p>
+					To delete a file from the draft file store in the data creation and editing menu select the file using the
+					radio button and click the delete button. You will be asked to confirm that you want to delete the file.
+					Once the file has been deleted the data is not recoverable. No changes will be made to the spoke database 
+					so if there is also a copy of the file in the database that will remain unchanged.
+				</p>
+				<p>
+					General users are only able to delete files assigned to their user name. Administrative users may delete any
+					files in the draft file store.
+				</p>
+			<a name="draftassign"> </a>
+				<h5>Reassigning Draft Files (Administrative Users Only)</h5>
+				<p>
+					Administrative users are able to change the assignment of files between users. To do this first select
+					the file to be reassigned using the radio button then select the user who you want to reassign the file too
+					from the drop down menu. Once you have done this click the 'confirm reassignment' button which will reassign
+					the file to the select user.
+				</p>
+			
 		</div>
+
 		<div>
 			<a name="form"></a>
 			<h3 class="bar">Using the Editing and Creation Form</h3>
@@ -89,6 +195,8 @@
 				<img src="/images/whatisthissmall.gif" alt="[What is this?]"/> which will take you to specific help for that element of EAD.
 			</p>
 			<p>
+				The screen layout has several different sections as illustrated below.
+				
 				
 			</p>
 			<a name="file"> </a>
@@ -116,7 +224,7 @@
 			<p>
 				
 			</p>
-			<a name="tofile"> </a>
+			<a name="online"> </a>
 			<h5>Preview On-line Version</h5>
 			<p>
 				
@@ -140,26 +248,100 @@
 			<h4>Navigating through a Description</h4>
 			<p>
 				
-			</p>		
+			</p>	
+			<a name="addlang"> </a>
+			<h4>Adding and Editing Language of Material</h4>
+			<p>
+				This works in the same way as adding <a href="#accesspoints">access points</a>.
+			</p>
+				
 			<a name="addcomp"> </a>
 			<h4>Adding Components</h4>
 			<p>
-				
+				Once the collection level description has been saved components can be added by clicking on the 
+				'Add Component' button. The component will be added to whichever section of the description is 
+				currently selected. The Reference Code will be filled in automatically based on the details
+				of the parent component but these details can all be edited if required. The Reference Code and
+				Title will be updated on the navigation tree as changes are made in the form.
 			</p>
 			<a name="delcomp"> </a>
 			<h4>Deleting Components</h4>
 			<p>
-				
+				Components can be deleted by clicking on the delete icon <img src="/images/delete.png" alt="[delete icon]"/>
+				next to the relevant component in the navigation tree. You will receive a warning message confirming the 
+				reference code and title of the component to be deleted. If you click 'ok' to delete the component
+				the data will be permanently lost. Only components which do not themselves have components can be deleted.
 			</p>			
 			<a name="accesspoints"></a>
 			<h4>Adding and Editing Access Points</h4>
 			<p>
-				
+				Access Points can be added to the record by completing the relevant section of the form. 
 			</p>
+			<p>	
+				There are two compulsory elements for each access point. 
+				<ul>
+					<li>The main content of the access point itself such as 'subject' for a subject 
+					access point or 'surname' for a personal or family name access point.</li>
+					<li>Either 'source' (or thesaurus in the case of subject) <b>or</b> 'rules'. Only one of 
+					these may be entered.</li>
+				</ul>
+			</p>
+			<p>
+				The source (or thesaurus) should be entered into the relevant text box and rules should be 
+				selected from the drop down menu. If a a rule set is selected the source button will not be
+				visible. If you wish to add a source rather than a rule set then you must first select 'None' 
+				in the rules drop down menu and the source box will reappear. 
+			</p>	
+			<p>
+				Other information required by the source or rule set you are following can be added using the 
+				drop down menu underneath the compulsory boxes on the form. Select the kind of data you want to 
+				add, such as 'Dates', and then click on the 'Add Selected Field' link. This will add another 
+				text box to the form and the data can be entered. If you wish to delete any of this additional 
+				information you can click on the delete icon <img src="/images/delete.png" alt="[delete icon]"/> 
+				next to the text box. If there are two of more pieces of addition information added to an access 
+				point they can be reordered if necessary by dragging the label to the correct position. At any 
+				stage the access point can be reset using the 'reset' button. This will delete all of the information
+				in the current text boxes and delete any added fields.		
+			</p>
+			<p>
+				Once the information is completed the access point needs to be added to the record. If this is
+				not done the details will not be added to your description and will be lost. To add the access point
+				click on the 'Add to Record' button. This will put the details of the access point in a grey box
+				underneath the access point heading and the details will be added to your record. Unwanted access 
+				points can be deleted using the delete icon or edited by clicking on the text. Clicking on the text
+				will return the details to the form so they can be edited. If you do this any details already in the 
+				form fields will be overwritten so if you have details in the form already which you want to keep they 
+				must be added to the record before you try to edit an existing access point.
+			</p>
+			<p>The following access points are supported by the form but any others present in descriptions 
+				being edited will not be lost:
+				<ul>
+					<li>Subject</li>
+					<li>Personal Name</li>
+					<li>Family Name</li>
+					<li>Corporate Name</li>
+					<li>Place Name</li>
+					<li>Book Title</li>
+					<li>Genre Form</li>
+					<li>Function</li>
+				</ul>
+			</p>
+
 			<a name="specialchar"> </a>
 			<h4>Adding Special Characters</h4>
 			<p>
-				Special characters can either 
+				Special characters can either be added using their numerical code such as <b>&amp;#233;</b>
+				for <b>&#233;</b> or using the onscreen keyboard provided with the interface. Name codes 
+				such as <b>&amp;eacute;</b> cannot be used. 
+			</p>
+			<p>
+				The keyboard can be accessed by clicking on the 'Character Keyboard' link on the navigation
+				bar (clicking a second time will remove it) or the 'keyboard on/off' option on the right 
+				click menu in the form fields. Once the keyboard is visible on the screen it can be minimised,
+				maximised and closed using the icons in the top right corner. The 'Caps Lock' button switches
+				the characters between lower-case and upper-case. To enter a character into the form simply 
+				click on the field you wish to enter it into and then click the character on the keyboard.
+				To check which field the character will appear in click the 'Which field?' link.
 			</p>
 
 		</div>

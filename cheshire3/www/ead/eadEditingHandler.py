@@ -37,6 +37,7 @@ import datetime, glob
 import traceback
 import codecs
 import time
+import re
 
 
 class EadEditingHandler(EadHandler):
@@ -97,7 +98,7 @@ class EadEditingHandler(EadHandler):
     def __init__(self, lgr):
         EadHandler.__init__(self, lgr)
         self.htmlTitle = ['Data Creation and Editing']
-        self.htmlNav = ['<a href="menu.html">Editing Menu</a>', '<a href="javascript: toggleKeyboard();">Character Keyboard</a>']
+        self.htmlNav = ['<a href="menu.html" title="Editing Menu">Editing Menu</a>', '<a href="/ead/edit/help.html" title="Edit Help">Edit Help</a>', '<a href="javascript: toggleKeyboard();" title="Show/Hide Character Keyboard">Character Keyboard</a>']
         self.logger = lgr
 
     #- end __init__ ---------------------------------------------------------
@@ -384,7 +385,8 @@ class EadEditingHandler(EadHandler):
             textValue = textValue.replace('&amp;', '&#38;')
         else : 
             if not (textValue.find('&') == -1):
-                textValue = textValue.replace('&', '&#38;')
+                regex = re.compile('&(?!#[0-9]+;)')
+                textValue = regex.sub('&#38;', textValue)
         textValue = textValue.lstrip()      
         if isinstance(parent, etree._Element):
             for c in parent.getchildren() :
@@ -698,6 +700,7 @@ class EadEditingHandler(EadHandler):
         elif store == 'editStore' :
             rs = editStore
             id = '%s-%s' % (id, session.user.username)
+                       
         if (id != None and store != None):
             exists = 'false'
             for r in rs:
@@ -705,6 +708,28 @@ class EadEditingHandler(EadHandler):
                     exists = 'true'
                     break;
             return '<value>%s</value>' % exists
+
+
+    def checkEditId(self, form):
+        id = form.get('id', None)
+        rs = editStore
+        fullid = '%s-%s' % (id, session.user.username)
+        
+        if (id != None):
+            exists = 'false'
+            for r in rs:
+                if r.id == fullid:
+                    exists = 'true'
+                    break;              
+            if exists == 'false':                                  
+                for r in rs:
+                    if r.id[:r.id.rfind('-')] == id :
+                        exists = 'true'
+                        break;
+                return '<wrapper><value>%s</value><owner>other</owner></wrapper>' % exists
+            else:
+                return '<wrapper><value>%s</value><owner>user</owner></wrapper>' % exists
+                    
     
     
     def validate_record(self, xml):
@@ -1300,7 +1325,7 @@ class EadEditingHandler(EadHandler):
             users = []
             for user in userStore :
                 users.append('<option value="%s">%s</option>' % (user.username, user.username))
-            assignmentOptn = '<select id="userSelect" name="user" disabled="true"><option value="null">Reasign to...</option>%s</select><input type="button" onclick="reassignToUser()" value=" Confirm Reassignment " disabled="true"/>' % ''.join(users)
+            assignmentOptn = '<select id="userSelect" name="user" disabled="true"><option value="null">Reassign to...</option>%s</select><input type="button" onclick="reassignToUser()" value=" Confirm Reassignment " disabled="true"/>' % ''.join(users)
         else :
             assignmentOptn = ''
         return multiReplace(page, {'%%%SOURCEDIR%%%': sourceDir, '%%%FILES%%%': ''.join(files), '%%%RECORDS%%%': ''.join(recids), '%%%USROPTNS%%%': assignmentOptn}) 
@@ -1401,6 +1426,9 @@ class EadEditingHandler(EadHandler):
             elif (operation == 'checkId'):
                 content = self.checkId(form)
                 self.send_xml(content, req)
+            elif (operation == 'checkEditId'):
+                content = self.checkEditId(form)
+                self.send_xml(content, req)
             elif (operation == 'getCheckId'):
                 content = self.getAndCheckId(form)
                 self.send_xml(content, req)
@@ -1436,7 +1464,7 @@ class EadEditingHandler(EadHandler):
             else:
                 content = self.show_editMenu()
             htmlNav = ['<a href="/ead/admin/index.html" title="Administration Interface Main Menu">Administration</a>',
-                       '<a href="help.html" title="Edit Help" class="navlink">Edit Help</a>']
+                       '<a href="/ead/edit/help.html" title="Edit Help" class="navlink">Edit Help</a>']
             page = multiReplace(tmpl, {'%REP_NAME%': repository_name,
                      '%REP_LINK%': repository_link,
                      '%REP_LOGO%': repository_logo,

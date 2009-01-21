@@ -8,23 +8,15 @@
         var olf = function loadPage() {
         		enableMenuButtons();
         		
-                createTreeFromList('sourceDirTree', getCookie('sourceDirTree'), true, false);
-                createTreeFromList('storeDirTree', getCookie('storeDirTree'), false, false);
+                createTreeFromList('sourceDirTree', getCookie(''), false, false);
+                createTreeFromList('storeDirTree', getCookie(''), false, false);
             } ; 
         if (addLoadEvent) {
           addLoadEvent(olf);
         } else {
           window.onload = olf; 
         }
-        var ulf = function unloadPage() {
-                setCookie('sourceDirTree', stateToString('sourceDirTree'))
-                setCookie('storeDirTree', stateToString('storeDirTree'))
-            } ;
-        if (addUnloadEvent) {
-          addUnloadEvent(ulf);
-        } else {
-          window.onunload = ulf;
-        }
+
     -->
     </script>
      <noscript><h2 style="color:red;">Javascript must be enabled to use the Archives Hub Data Creation and Editing Tool</h2></noscript>

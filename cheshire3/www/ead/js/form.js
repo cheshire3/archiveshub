@@ -284,11 +284,21 @@ function save(){
     	body.className = 'none';
     	return;
     }
-    if (checkEditStore()){
-    	var confirmbox = confirm('A file with this Reference code is already in the process of being created or edited. If you proceed with this operation the existing file will be overwritten with this one.\n\nAre you sure you want to continue with this operation?');
-   		if (confirmbox == false){
-   			body.className = 'none';
-   			return;
+    var values = checkEditStore();
+    if (values[0]){
+    	if (values[1] == 'user'){
+    		var confirmbox = confirm('A file with this Reference code is already in the process of being created or edited. If you proceed with this operation the existing file will be overwritten with this one.\n\nAre you sure you want to continue with this operation?');
+ 			if (confirmbox == false){
+	   			body.className = 'none';
+	   			return;
+	   		}
+   		}
+   		else if (values[1] == 'other'){
+    		var confirmbox = confirm('A file with this Reference code is already in the process of being created or edited by another user.\n\nAre you sure you want to continue with this operation?');
+ 			if (confirmbox == false){
+	   			body.className = 'none';
+	   			return;
+	   		}   		
    		}
     }
        
@@ -742,7 +752,7 @@ function deleteComponent(id){
 	var link = document.getElementById(id);	
 	var compid = link.innerHTML;
 	
-	var confirmbox = confirm('This operation will permanently delete the component ' + compid + '\n\n Are you sure you want to continue?');
+	var confirmbox = confirm('This operation will permanently delete the component "' + compid + '"\n\n Are you sure you want to continue?');
 	if (confirmbox == false){
 		body.className = 'none';
 		return;
@@ -1275,6 +1285,7 @@ function validateXML(field, asynch){
 
 function checkEditStore(){
 	var value = false;
+	var owner = '';
 	if (currentForm == 'collectionLevel'){		
 		if (recid == null || recid == 'notSet'){
 			if ($('countrycode').value != ''){
@@ -1282,12 +1293,13 @@ function checkEditStore(){
 					if ($('unitid').value != ''){
 						var id = $('countrycode').value.toLowerCase() + $('archoncode').value + $('unitid').value.replace(' ', '').replace('/', '-').toLowerCase();
 						var url = '/ead/edit'
-						var data = 'operation=checkId&id=' + id + '&store=editStore';
+						var data = 'operation=checkEditId&id=' + id;
 						new Ajax.Request(url, {method: 'get', asynchronous: false, parameters: data, onSuccess: function(transport) { 	    				
 						    var response = transport.responseText;
-						    idExists = response.substring(7,response.indexOf('</value>'));					    
+						    idExists = response.substring(response.indexOf('<value>')+7, response.indexOf('</value>'));	
 						    if (idExists == 'true'){
 						    	value = true;
+						    	owner = response.substring(response.indexOf('<owner>')+7, response.indexOf('</owner>'));			    
 						    }	
 							
 			 			}});
@@ -1296,7 +1308,8 @@ function checkEditStore(){
 			} 
 		} 
 	}
-	return value;
+	var values = [value, owner];
+	return values;
 }
 
 function checkId(asynch){
@@ -1900,6 +1913,10 @@ function checkButtons(){
 		document.getElementById('tofile-button').setAttribute('title', 'File must be saved before this operation can be performed');
 		document.getElementById('submit-button').setAttribute('disabled', 'true');
 		document.getElementById('submit-button').setAttribute('title', 'File must be saved before this operation can be performed');		
+		document.getElementById('addC').setAttribute('disabled', 'true');
+		document.getElementById('addC').setAttribute('title', 'File must be saved before this operation can be performed');		
+	
+	
 	}
 }
 
