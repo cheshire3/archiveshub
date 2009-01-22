@@ -49,18 +49,18 @@
   	<xsl:text>/favicon.ico</xsl:text>
   </xsl:param>
   
-  <!-- Copac -->
-  <xsl:param name="copac_base_url">
-  	<xsl:text>http://www.copac.ac.uk</xsl:text>
-  </xsl:param>
-  <xsl:param name="copac_search_url">
-  	<xsl:value-of select="$copac_base_url"/>
-  	<xsl:text>/wzgw?form=qs&amp;fs=Search&amp;ti=</xsl:text>
-  </xsl:param>
-  <xsl:param name="copac_search_icon">
-  	<xsl:value-of select="$copac_base_url"/>
-  	<xsl:text>/favicon.ico</xsl:text>
-  </xsl:param>
+    <!-- Copac -->
+    <xsl:param name="copac_base_url">
+        <xsl:text>http://www.copac.ac.uk</xsl:text>
+    </xsl:param>
+    <xsl:param name="copac_search_url">
+      	<xsl:value-of select="$copac_base_url"/>
+      	<xsl:text>/wzgw?form=A%2FT&amp;fs=Search&amp;ti=</xsl:text>
+    </xsl:param>
+    <xsl:param name="copac_search_icon">
+      	<xsl:value-of select="$copac_base_url"/>
+      	<xsl:text>/favicon.ico</xsl:text>
+    </xsl:param>
   
   <!-- Google -->
   <xsl:param name="googlemaps_base_url">

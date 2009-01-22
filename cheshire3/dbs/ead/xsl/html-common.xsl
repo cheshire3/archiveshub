@@ -342,12 +342,13 @@
   			<a name="{@id}"><xsl:text> </xsl:text></a>
 	  	</xsl:if>
 	    <xsl:if test="not(head)">
+            <xsl:variable name="headstring"><xsl:text>Arrangement</xsl:text></xsl:variable>
 	    	<xsl:choose>
 		  		<xsl:when test="../../archdesc  or ../../../c3component">
-		  			<h3 class="ead">Arrangement</h3>
+		  			<h3 class="ead"><xsl:value-of select="$headstring"/></h3>
 		  		</xsl:when>
 		      	<xsl:otherwise>
-		      		<h4 class="ead">Arrangement</h4>
+		      		<h4 class="ead"><xsl:value-of select="$headstring"/></h4>
 		      	</xsl:otherwise>
 		    </xsl:choose>
     	</xsl:if>
@@ -360,12 +361,13 @@
   		<a name="{@id}"><xsl:text> </xsl:text></a>
   	</xsl:if>
     <xsl:if test="not(head)">
+        <xsl:variable name="headstring"><xsl:text>Conditions Governing Access</xsl:text></xsl:variable>
     	<xsl:choose>
 	  		<xsl:when test="../../archdesc  or ../../../c3component">
-	  			<h3 class="ead">Conditions Governing Access</h3>
+	  			<h3 class="ead"><xsl:value-of select="$headstring"/></h3>
 	  		</xsl:when>
       	<xsl:otherwise>
-      		<h4 class="ead">Conditions Governing Access</h4>
+      		<h4 class="ead"><xsl:value-of select="$headstring"/></h4>
       	</xsl:otherwise>
       </xsl:choose>
     </xsl:if>
@@ -377,12 +379,13 @@
   		<a name="{@id}"><xsl:text> </xsl:text></a>
   	</xsl:if>
     <xsl:if test="not(head)">
+        <xsl:variable name="headstring"><xsl:text>Conditions Governing Use</xsl:text></xsl:variable>
     	<xsl:choose>
 	  		<xsl:when test="../../archdesc or ../../../c3component">
-	  			<h3 class="ead">Conditions Governing Use</h3>
+	  			<h3 class="ead"><xsl:value-of select="$headstring"/></h3>
 	  		</xsl:when>
       	<xsl:otherwise>
-      		<h4 class="ead">Conditions Governing Use</h4>
+      		<h4 class="ead"><xsl:value-of select="$headstring"/></h4>
       	</xsl:otherwise>
       </xsl:choose>
     </xsl:if>
@@ -408,53 +411,56 @@
   </xsl:template>
 
   
-  <!-- ADMINISTRATIVE INFORMATION / ARCHIVAL HISTORY-->
-  <xsl:template match="admininfo">
-  	<xsl:if test="@id">
-  		<a name="{@id}"><xsl:text> </xsl:text></a>
-  	</xsl:if>
-    <xsl:if test="not(head)">
-    	<xsl:choose>
-	  		<xsl:when test="../../archdesc or ../../../c3component">
-	  			<h3 class="ead">Administrative Information</h3>
-	  		</xsl:when>
-      	<xsl:otherwise>
-      		<h4 class="ead">Administrative Information</h4>
-      	</xsl:otherwise>
-      </xsl:choose>
-    </xsl:if>
-    <xsl:apply-templates/>
-  </xsl:template>
+    <!-- ADMINISTRATIVE INFORMATION / ARCHIVAL HISTORY-->
+    <xsl:template match="admininfo">
+        <xsl:if test="@id">
+        	<a name="{@id}"><xsl:text> </xsl:text></a>
+        </xsl:if>
+        <xsl:if test="not(head)">
+            <xsl:variable name="headstring"><xsl:text>Administrative Information</xsl:text></xsl:variable>
+            <xsl:choose>
+          		<xsl:when test="../../archdesc or ../../../c3component">
+          			<h3 class="ead"><xsl:value-of select="$headstring"/></h3>
+          		</xsl:when>
+                <xsl:otherwise>
+                	<h4 class="ead"><xsl:value-of select="$headstring"/></h4>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:if>
+        <xsl:apply-templates/>
+    </xsl:template>
   
   
-  <xsl:template match="appraisal">
-  	<xsl:if test="@id">
-  		<a name="{@id}"><xsl:text> </xsl:text></a>
-  	</xsl:if>
-    <xsl:if test="not(head)">
-    	<xsl:choose>
-	  		<xsl:when test="../../archdesc or ../../../c3component">
-	  			<h3 class="ead">Appraisal Information</h3>
-	  		</xsl:when>
-      	<xsl:otherwise>
-      		<h4 class="ead">Appraisal Information</h4>
-      	</xsl:otherwise>
-      </xsl:choose>
-    </xsl:if>
-    <xsl:apply-templates/>
-  </xsl:template>
+    <xsl:template match="appraisal">
+      	<xsl:if test="@id">
+      		<a name="{@id}"><xsl:text> </xsl:text></a>
+      	</xsl:if>
+        <xsl:if test="not(head)">
+            <xsl:variable name="headstring"><xsl:text>Appraisal Information</xsl:text></xsl:variable>
+        	<xsl:choose>
+    	  		<xsl:when test="../../archdesc or ../../../c3component">
+    	  			<h3 class="ead"><xsl:value-of select="$headstring"/></h3>
+    	  		</xsl:when>
+          	<xsl:otherwise>
+          		<h4 class="ead"><xsl:value-of select="$headstring"/></h4>
+          	</xsl:otherwise>
+          </xsl:choose>
+        </xsl:if>
+        <xsl:apply-templates/>
+    </xsl:template>
   
   <xsl:template match="acqinfo">
   	<xsl:if test="@id">
   		<a name="{@id}"><xsl:text> </xsl:text></a>
   	</xsl:if>	  
     <xsl:if test="not(head)">
+        <xsl:variable name="headstring"><xsl:text>Acquisition Information</xsl:text></xsl:variable>
     	<xsl:choose>
 	  		<xsl:when test="../../archdesc or ../../../c3component">
-	  			<h3 class="ead">Acquisition Information</h3>
+	  			<h3 class="ead"><xsl:value-of select="$headstring"/></h3>
 	  		</xsl:when>
       	<xsl:otherwise>
-      		<h4 class="ead">Acquisition Information</h4>
+      		<h4 class="ead"><xsl:value-of select="$headstring"/></h4>
       	</xsl:otherwise>
       </xsl:choose>
     </xsl:if>
@@ -466,12 +472,13 @@
   		<a name="{@id}"><xsl:text> </xsl:text></a>
   	</xsl:if>
     <xsl:if test="not(head)">
+        <xsl:variable name="headstring"><xsl:text>Custodial History</xsl:text></xsl:variable>
     	<xsl:choose>
 	  		<xsl:when test="../../archdesc or ../../../c3component">
-	  			<h3 class="ead">Custodial History</h3>
+	  			<h3 class="ead"><xsl:value-of select="$headstring"/></h3>
 	  		</xsl:when>
       	<xsl:otherwise>
-      		<h4 class="ead">Custodial History</h4>
+      		<h4 class="ead"><xsl:value-of select="$headstring"/></h4>
       	</xsl:otherwise>
       </xsl:choose>
     </xsl:if>
@@ -483,12 +490,13 @@
   		<a name="{@id}"><xsl:text> </xsl:text></a>
   	</xsl:if>
     <xsl:if test="not(head)">
+        <xsl:variable name="headstring"><xsl:text>Accruals</xsl:text></xsl:variable>
     	<xsl:choose>
 	  		<xsl:when test="../../archdesc or ../../../c3component">
-	  			<h3 class="ead">Accruals</h3>
+	  			<h3 class="ead"><xsl:value-of select="$headstring"/></h3>
 	  		</xsl:when>
       	<xsl:otherwise>
-      		<h4 class="ead">Accruals</h4>
+      		<h4 class="ead"><xsl:value-of select="$headstring"/></h4>
       	</xsl:otherwise>
       </xsl:choose>
     </xsl:if>
@@ -500,12 +508,13 @@
   		<a name="{@id}"><xsl:text> </xsl:text></a>
   	</xsl:if>
     <xsl:if test="not(head)">
+        <xsl:variable name="headstring"><xsl:text>Archivist's Not</xsl:text></xsl:variable>
     	<xsl:choose>
 	  		<xsl:when test="../../archdesc or ../../../c3component">
-	  			<h3 class="ead">Archivist's Note</h3>
+	  			<h3 class="ead"><xsl:value-of select="$headstring"/></h3>
 	  		</xsl:when>
       	<xsl:otherwise>
-      		<h4 class="ead">Archivist's Note</h4>
+      		<h4 class="ead"><xsl:value-of select="$headstring"/></h4>
       	</xsl:otherwise>
       </xsl:choose>
     </xsl:if>
@@ -520,12 +529,13 @@
   		<a name="{@id}"><xsl:text> </xsl:text></a>
   	</xsl:if>
     <xsl:if test="not(head)">
+        <xsl:variable name="headstring"><xsl:text>Other Finding Aid</xsl:text></xsl:variable>
     	<xsl:choose>
 	  		<xsl:when test="../../archdesc or ../../../c3component">
-	  			<h3 class="ead">Other Finding Aid</h3>
+	  			<h3 class="ead"><xsl:value-of select="$headstring"/></h3>
 	  		</xsl:when>
       	<xsl:otherwise>
-      		<h4 class="ead">Other Finding Aid</h4>
+      		<h4 class="ead"><xsl:value-of select="$headstring"/></h4>
       	</xsl:otherwise>
       </xsl:choose>
     </xsl:if>
@@ -538,12 +548,13 @@
   		<a name="{@id}"><xsl:text> </xsl:text></a>
   	</xsl:if>
     <xsl:if test="not(head)">
+        <xsl:variable name="headstring"><xsl:text>Location of Originals</xsl:text></xsl:variable>
     	<xsl:choose>
 	  		<xsl:when test="../../archdesc or ../../../c3component">
-	  			<h3 class="ead">Location of Originals</h3>
+	  			<h3 class="ead"><xsl:value-of select="$headstring"/></h3>
 	  		</xsl:when>
       	<xsl:otherwise>
-      		<h4 class="ead">Location of Originals</h4>
+      		<h4 class="ead"><xsl:value-of select="$headstring"/></h4>
       	</xsl:otherwise>
       </xsl:choose>
     </xsl:if>
@@ -555,12 +566,13 @@
   		<a name="{@id}"><xsl:text> </xsl:text></a>
   	</xsl:if>
     <xsl:if test="not(head)">
+        <xsl:variable name="headstring"><xsl:text>Alternative Form Available</xsl:text></xsl:variable>
     	<xsl:choose>
 	  		<xsl:when test="../../archdesc or ../../../c3component">
-	  			<h3 class="ead">Alternative Form Available</h3>
+	  			<h3 class="ead"><xsl:value-of select="$headstring"/></h3>
 	  		</xsl:when>
       	<xsl:otherwise>
-      		<h4 class="ead">Alternative Form Available</h4>
+      		<h4 class="ead"><xsl:value-of select="$headstring"/></h4>
       	</xsl:otherwise>
       </xsl:choose>
     </xsl:if>
@@ -568,35 +580,37 @@
   </xsl:template>
 
 	<!-- SEPARATED + RELATED MATERIAL -->
-  <xsl:template match="relatedmaterial">
-  	<xsl:if test="@id">
-  		<a name="{@id}"><xsl:text> </xsl:text></a>
-  	</xsl:if>
-    <xsl:if test="not(head)">
-    	<xsl:choose>
-	  		<xsl:when test="../../archdesc or ../../../c3component">
-	  			<h3 class="ead">Related Material</h3>
-	  		</xsl:when>
-      	<xsl:otherwise>
-      		<h4 class="ead">Related Material</h4>
-      	</xsl:otherwise>
-      </xsl:choose>
-    </xsl:if>
-    <xsl:apply-templates/>
-    <br/>
-  </xsl:template>
+    <xsl:template match="relatedmaterial">
+      	<xsl:if test="@id">
+      		<a name="{@id}"><xsl:text> </xsl:text></a>
+      	</xsl:if>
+        <xsl:if test="not(head)">
+            <xsl:variable name="headstring"><xsl:text>Related Material</xsl:text></xsl:variable>
+        	<xsl:choose>
+    	  		<xsl:when test="../../archdesc or ../../../c3component">
+    	  			<h3 class="ead"><xsl:value-of select="$headstring"/></h3>
+    	  		</xsl:when>
+          	<xsl:otherwise>
+          		<h4 class="ead"><xsl:value-of select="$headstring"/></h4>
+          	</xsl:otherwise>
+          </xsl:choose>
+        </xsl:if>
+        <xsl:apply-templates/>
+        <br/>
+    </xsl:template>
   
   <xsl:template match="separatedmaterial">
   	<xsl:if test="@id">
   		<a name="{@id}"><xsl:text> </xsl:text></a>
   	</xsl:if>
     <xsl:if test="not(head)">
+        <xsl:variable name="headstring"><xsl:text>Separated Material</xsl:text></xsl:variable>
     	<xsl:choose>
 	  		<xsl:when test="../../archdesc or ../../../c3component">
-	  			<h3 class="ead">Separated Material</h3>
+	  			<h3 class="ead"><xsl:value-of select="$headstring"/></h3>
 	  		</xsl:when>
       	<xsl:otherwise>
-      		<h4 class="ead">Separated Material</h4>
+      		<h4 class="ead"><xsl:value-of select="$headstring"/></h4>
       	</xsl:otherwise>
       </xsl:choose>
     </xsl:if>
@@ -609,15 +623,16 @@
 		<xsl:if test="@id">
 		  <a name="{@id}"><xsl:text> </xsl:text></a>
 		</xsl:if>
+        <xsl:variable name="headstring"><xsl:text>Bibliography</xsl:text></xsl:variable>
 		<xsl:choose>
 			<xsl:when test="head">
 				<xsl:apply-templates select="head" />
 			</xsl:when>
 			<xsl:when test="../../archdesc or ../../../c3component">
-				<h3 class="ead">Bibliography</h3>
+				<h3 class="ead"><xsl:value-of select="$headstring"/></h3>
 			</xsl:when>
 			<xsl:otherwise>
-				<h4 class="ead">Bibliography</h4>
+				<h4 class="ead"><xsl:value-of select="$headstring"/></h4>
 			</xsl:otherwise>
 		</xsl:choose>
 		<xsl:choose>
@@ -639,12 +654,13 @@
   			<a name="{@id}"><xsl:text> </xsl:text></a>
   		</xsl:if>
 		<xsl:if test="not(head)">
+            <xsl:variable name="headstring"><xsl:text>Preferred Citation</xsl:text></xsl:variable>
 			<xsl:choose>
 		  		<xsl:when test="../../archdesc or ../../../c3component">
-		  			<h3 class="ead">Preferred Citation</h3>
+		  			<h3 class="ead"><xsl:value-of select="$headstring"/></h3>
 		  		</xsl:when>
 	      		<xsl:otherwise>
-	      			<h4 class="ead">Preferred Citation</h4>
+	      			<h4 class="ead"><xsl:value-of select="$headstring"/></h4>
 		      	</xsl:otherwise>
       		</xsl:choose>
 	  	</xsl:if>
@@ -670,12 +686,13 @@
 	  		<a name="{@id}"><xsl:text> </xsl:text></a>
 	  	</xsl:if>
 		<xsl:if test="not(head)">
+            <xsl:variable name="headstring"><xsl:text>Other Descriptive Data</xsl:text></xsl:variable>
 			<xsl:choose>
 		  		<xsl:when test="../../archdesc or ../../../c3component">
-		  			<h3 class="ead">Other Descriptive Data</h3>
+		  			<h3 class="ead"><xsl:value-of select="$headstring"/></h3>
 		  		</xsl:when>
 		      	<xsl:otherwise>
-		      		<h4 class="ead">Other Descriptive Data</h4>
+		      		<h4 class="ead"><xsl:value-of select="$headstring"/></h4>
 		      	</xsl:otherwise>
 			</xsl:choose>	
 	  	</xsl:if>
@@ -688,16 +705,17 @@
         <xsl:if test="@id">
     	   <a name="{@id}"><xsl:text> </xsl:text></a>
         </xsl:if>
+        <xsl:variable name="headstring"><xsl:text>Access Points</xsl:text></xsl:variable>
         <xsl:choose>
             <xsl:when test="local-name(..) = 'controlaccess'" />
             <xsl:when test="head">
                 <xsl:apply-templates select="head"/>
             </xsl:when>
             <xsl:when test="../../archdesc or ../../../c3component">
-                <h3 class="ead">Access Points</h3>
+                <h3 class="ead"><xsl:value-of select="$headstring"/></h3>
             </xsl:when>
             <xsl:otherwise>
-                <h4 class="ead">Access Points</h4>  
+                <h4 class="ead"><xsl:value-of select="$headstring"/></h4>  
             </xsl:otherwise>
         </xsl:choose>
 		
@@ -997,7 +1015,7 @@
 	<!--HEAD-->
 	<xsl:template match="head">
 		<xsl:choose>
-			<xsl:when test="../../head or not(../../../archdesc or ../../../c3component)">
+			<xsl:when test="../../head or not(../../../archdesc or ../../../../c3component)">
 				<h4 class="ead"><xsl:apply-templates /></h4>
 			</xsl:when>
 			<xsl:otherwise>
@@ -1703,9 +1721,17 @@
 	  			<xsl:value-of select="$copac_search_url"/>
 	  			<xsl:call-template name="cgiencode">
 		          <xsl:with-param name="text">
-		            <xsl:apply-templates select="."/>
+		            <xsl:apply-templates select="emph[@altrender='a' or @altrender='title']"/>
 		          </xsl:with-param>
 		        </xsl:call-template>
+                <xsl:if test="emph[@altrender='y']">
+                    <xsl:text>&amp;date=</xsl:text>
+                    <xsl:call-template name="cgiencode">
+                        <xsl:with-param name="text">
+                            <xsl:apply-templates select="emph[@altrender='y']"/>
+                        </xsl:with-param>
+                    </xsl:call-template>
+                </xsl:if>
 			</xsl:attribute>
 			<xsl:attribute name="title">
 		        <xsl:text>Search Copac</xsl:text>
