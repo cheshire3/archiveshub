@@ -101,7 +101,7 @@
       <xsl:choose>
       	<xsl:when test="$level = 'collectionLevel'">
 	      <xsl:choose>
-		      <xsl:when test="$node/did/unitid and $node/did/unittitle and $node/did/unitdate and $node/did/origination and $node/did/physdesc/extent and $node/did/langmaterial/language and $node/bioghist and $node/scopecontent and $node/accessrestrict">
+		      <xsl:when test="$node/did/unitid and $node/did/unittitle and $node/did/unitdate and $node/did/unitdate/@normal and $node/did/origination and $node/did/physdesc/extent and $node/did/langmaterial/language and $node/scopecontent">
 		      	<xsl:attribute name="class"><xsl:text>valid</xsl:text></xsl:attribute>
 		      </xsl:when>
 		      <xsl:otherwise>
@@ -111,7 +111,7 @@
 		  </xsl:when>
 	     <xsl:otherwise>
 	     	 <xsl:choose>
-	     	 	<xsl:when test="$node/did/unitid and $node/did/unittitle and $node/did/unitdate and $node/did/physdesc/extent">
+	     	 	<xsl:when test="$node/did/unitid and $node/did/unittitle and $node/did/unitdate and $node/@level">
 			      	<xsl:attribute name="class"><xsl:text>valid</xsl:text></xsl:attribute>
 			      </xsl:when>
 			      <xsl:otherwise>

@@ -146,7 +146,7 @@
   	<p>
   		<xsl:if test="$leveltype = 'component'">
   			<strong><span class="isadg">3.1.4: </span>Level of Description</strong><br/>
-  			<select name="@level">
+  			<select name="@level" id="@level">
 	  			<xsl:call-template name="option">
 	  				<xsl:with-param name="value" select="''"/>
 	  				<xsl:with-param name="label" select="'none'"/>
