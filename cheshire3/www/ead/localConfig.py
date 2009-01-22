@@ -50,7 +50,7 @@ display_relevance = True
 graphical_relevance = False
 
 # Path to Cheshire Root - i.e. where Cheshire3 was installed
-cheshirePath = '/home/cheshire'
+cheshirePath = os.environ.get('C3HOME', '/home/cheshire/cheshire3/')
 
 # Institutionally specific configurables
 repository_name = "Cheshire for Archives 3.4 Development"
