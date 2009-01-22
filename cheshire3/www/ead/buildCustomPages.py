@@ -15,9 +15,9 @@ pageMaps = {
     'browse.html': 'Browse Indexes',
     'subject.html':'Subject Finder',
 #    'preview.html':'Preview EAD',
-    'adminhelp.html': 'Administration Help',
+#    'adminhelp.html': 'Administration Help',
     'help.html':'Help',
-    'about.html':'About Cheshire for Archives'
+    'about.html':'About Cheshire for Archives Version 3.4'
     }
     
 tmplPage = read_file(templatePath)

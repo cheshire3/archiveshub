@@ -1,8 +1,8 @@
 #
 # Script:    eadSearchHandler.py
-# Version:   0.40
-# Date:      12 June 2008
-# Copyright: &copy; University of Liverpool 2005-2008
+# Version:   0.42
+# Date:      22 January 2009
+# Copyright: &copy; University of Liverpool 2005-2009
 # Description:
 #            Web interface for searching a cheshire 3 database of EAD finding aids
 #            - part of Cheshire for Archives v3
@@ -107,7 +107,7 @@
 # 0.41 - 24/07/2008 - JH - Email function split to make more modular (for future progressive enhancements e.g. Ajax)
 #                        - Inline JavaScript removed where possible for more graceful degradation when JS disabled
 #                        - 'ajax' parameter in form will cause handler to return the smallest portion of HTML that fulfils the request (i.e. the only bit that needs to be updated on screen)
-#
+# 0.42 - 22/01/2009 - JH - Debugging of noComponents search
 #
 
 from eadHandler import * 
@@ -123,7 +123,7 @@ class EadSearchHandler(EadHandler):
     def _backwalkTitles(self, rec, xpath):
         global asciiFriendly
         normIdFlow = db.get_object(session, 'normalizeDataIdentifierWorkflow'); normIdFlow.load_cache(session, db)
-        def _processNode(node):
+        def __processNode(node):
             t = node.xpath('string(./did/unittitle)')
             if not len(t): t = '(untitled)'
             i = node.xpath('string(./did/unitid)')
@@ -132,14 +132,14 @@ class EadSearchHandler(EadHandler):
             return [i, t.strip()]
             
         node = rec.get_dom(session).xpath(xpath)[0]
-        titles = [_processNode(node)]
+        titles = [__processNode(node)]
         for n in node.iterancestors():
             if n.tag == 'dsc':
                 continue
             elif n.tag == 'ead':
                 break
             else:
-                titles.append(_processNode(n))
+                titles.append(__processNode(n))
         
         titles.reverse()
         titles[0][0] = rec.id # top level id doesn't conform to pattern - is simply the top level record id
@@ -227,7 +227,6 @@ class EadSearchHandler(EadHandler):
                 self.logger.log('Retrieved resultSet "%s"' % (id))
         else:
             try:
-                #query = CQLParser.parse(id)
                 query = queryFactory.get_query(session, id, format='cql')
             except:
                 self.logger.log('Unparsable query %s' % (id))
@@ -271,16 +270,16 @@ class EadSearchHandler(EadHandler):
         if (hits > numreq):
             if (firstrec > 1):
                 hitlinks = ['<div class="backlinks">'
-                           ,'<a href="%s?operation=search&amp;%s&amp;page=1&amp;numreq=%d&amp;highlight=%d#leftcol" class="ajax">First</a>' % (script, rsidCgiString, numreq, highlight) 
-                           ,'<a href="%s?operation=search&amp;%s&amp;firstrec=%d&amp;numreq=%d&amp;highlight=%d#leftcol" class="ajax">Previous</a>' % (script, rsidCgiString, max(firstrec-numreq, 1), numreq, highlight)
+                           ,'<a href="%s?operation=search&amp;%s&amp;page=1&amp;numreq=%d&amp;highlight=%d#leftcol">First</a>' % (script, rsidCgiString, numreq, highlight) 
+                           ,'<a href="%s?operation=search&amp;%s&amp;firstrec=%d&amp;numreq=%d&amp;highlight=%d#leftcol">Previous</a>' % (script, rsidCgiString, max(firstrec-numreq, 1), numreq, highlight)
                            ,'</div>']
             else:
                 hitlinks = []
 
             if (hits > firstrec+numreq-1):
                 hitlinks.extend(['<div class="forwardlinks">'
-                                ,'<a href="%s?operation=search&amp;%s&amp;firstrec=%d&amp;numreq=%d&amp;highlight=%d#leftcol" class="ajax">Next</a>' % (script, rsidCgiString, firstrec+numreq, numreq, highlight)
-                                ,'<a href="%s?operation=search&amp;%s&amp;page=%d&amp;numreq=%d&amp;highlight=%d#leftcol" class="ajax">Last</a>' % (script, rsidCgiString, (hits/numreq)+1, numreq, highlight)
+                                ,'<a href="%s?operation=search&amp;%s&amp;firstrec=%d&amp;numreq=%d&amp;highlight=%d#leftcol">Next</a>' % (script, rsidCgiString, firstrec+numreq, numreq, highlight)
+                                ,'<a href="%s?operation=search&amp;%s&amp;page=%d&amp;numreq=%d&amp;highlight=%d#leftcol">Last</a>' % (script, rsidCgiString, (hits/numreq)+1, numreq, highlight)
                                 ,'</div>'])
 
             numlinks = ['<div class="numnav">']
@@ -487,9 +486,9 @@ class EadSearchHandler(EadHandler):
                     return '<p class="error">Invalid query submitted.</p>'
                 
             if (withinCollection and withinCollection != 'allcollections'):
-                qString = '(c3.ead-idx-docid exact "%s" or ead.parentid exact "%s/%s") and/relevant (%s)' % (withinCollection, recordStore.id, withinCollection, qString)
+                qString = '(c3.ead-idx-docid exact "%s" or ead.parentid exact "%s/%s") and/relevant/proxinfo (%s)' % (withinCollection, recordStore.id, withinCollection, qString)
             elif (form.has_key('noComponents')):
-                qString = 'ead.istoplevel=1 and/relevant ' + qString
+                qString = 'ead.istoplevel=1 and/relevant/proxinfo (%s)' % qString
             
             self.logger.log('Searching CQL query: %s' % (qString))
             try:
@@ -627,22 +626,21 @@ class EadSearchHandler(EadHandler):
         if (totalTerms > 0):
             self.htmlTitle.append('Results')
             rows = ['<div id="browseresult">'
-                   ,''
-                   ,'<table cellspacing="0" class="browseresults" summary="list of terms in this index">'
-                   ,'<tr class="headrow"><td>Term</td><td>Records</td></tr>']
+                   ,'<table cellspacing="0" class="browseresults" summary="list of terms in this index">']
 
-            rowCount = 0
             if (hitstart):
-                rows.append('<tr class="odd"><td colspan="2">-- start of index --</td></tr>')
-                rowCount += 1
+                #rows.append('<tr class="even"><td colspan="2">-- start of index --</td></tr>')
                 prevlink = ''
             else:
-                prevlink = ['<a href="%s?operation=browse&amp;fieldidx1=%s&amp;fieldrel1=%s&amp;fieldcont1=%s&amp;responsePosition=%d&amp;numreq=%d#browseresult"' % (script, idx, rel, cgi_encode(scanData[0][0]), numreq+1, numreq)]
+                prevlink = ['<a href="%s?operation=browse&amp;fieldidx1=%s&amp;fieldrel1=%s&amp;fieldcont1=%s&amp;responsePosition=%d&amp;numreq=%d#leftcol" title="Previous %d terms"' % (script, idx, rel, cgi_encode(scanData[0][0]), numreq+1, numreq, numreq)]
                 if ajax:
                     prevlink.append(' class="ajax"')
-                prevlink.append('><!-- img -->Previous %d terms</a>''' % (numreq))
+                prevlink.append('><img src="/images/back.gif" alt="Previous %d terms"/>&nbsp;PREVIOUS</a>''' % (numreq))
                 prevlink = ''.join(prevlink)
-            
+                rows.append('<tr class="odd"><td colspan="2">%s</td></tr>' % prevlink)
+                
+            rows.append('<tr class="headrow"><td>%s</td><td>Records</td></tr>' % (idx[idx.find('.')+1:].title()))
+
             dodgyTerms = []
             for i in range(len(scanData)):
                 item = scanData[i]
@@ -660,8 +658,7 @@ class EadSearchHandler(EadHandler):
                 if (term.lower() == scanTerm.lower()):
                     displayTerm = '<strong>%s</strong>' % displayTerm
                     
-                rowCount += 1                   
-                if (rowCount % 2): rowclass = 'odd';
+                if ((i+1) % 2): rowclass = 'odd';
                 else: rowclass = 'even';
                 row = browse_result_row
                 paramDict =  {
@@ -681,21 +678,20 @@ class EadSearchHandler(EadHandler):
             #- end for each item in scanData
                 
             if (hitend):
-                rowCount += 1
-                rows.append('<tr class="%s"><td colspan="2">-- end of index --</td></tr>' % (['even','odd'][rowCount % 2]))
+                rows.append('<tr class="odd"><td colspan="2">-- end of index --</td></tr>')
                 nextlink = ''
             else:
-                nextlink = ['<a href="%s?operation=browse&amp;fieldidx1=%s&amp;fieldrel1=%s&amp;fieldcont1=%s&amp;responsePosition=%d&amp;numreq=%d#browseresult"' % (script, idx, rel, cgi_encode(scanData[-1][0]), 0, numreq)]
+                nextlink = ['<a href="%s?operation=browse&amp;fieldidx1=%s&amp;fieldrel1=%s&amp;fieldcont1=%s&amp;responsePosition=%d&amp;numreq=%d#leftcol" title="Next %d terms"' % (script, idx, rel, cgi_encode(scanData[-1][0]), 0, numreq, numreq)]
                 if ajax:
                     nextlink.append(' class="ajax"')
-                nextlink.append('><!-- img -->Next %d terms</a>' % (numreq))
+                nextlink.append('>NEXT&nbsp;<img src="/images/forward.gif" alt="Next %d terms"/></a>' % (numreq))
                 nextlink = ''.join(nextlink)
-
+                rows.append('<tr class="odd"><td colspan="2">%s</td></tr>' % nextlink)
+                
             del scanData
             rows.append('</table>')           
-            rows.extend(['<div class="scannav"><p>%s</p></div>' % (' | '.join([prevlink, nextlink])),
-                         '</div><!-- end browseresult div -->'
-                         ])
+#            rows.append('<div class="scannav"><p>%s</p></div>' % (' | '.join([prevlink, nextlink])))
+            rows.append('</div><!-- end browseresult div -->')
             #- end hit navigation
             
             return '\n'.join(rows)
@@ -796,9 +792,18 @@ class EadSearchHandler(EadHandler):
         self.logger.log('Summary requested for record: %s' % (recid))
         # highlight search terms in rec.dom
         if (proxInfo) and highlight:
-            proxInfo2 = reduce(lambda x,y: x+y, proxInfo)        # flatten groups from phrases / multiple word terms into list of [nodeIdx, wordIdx, charOffset] triples
-            proxInfo2 = [[x[0], x[2]] for x in proxInfo2]        # strip out wordIdx, this can vary due to stoplisting - nodeIdx, offsets are reliable
-            proxInfo2 = map(eval, set(map(repr, proxInfo2)))     # filter out duplicates from multiple indexes
+            # flatten groups from phrases / multiple word terms into list of [nodeIdx, wordIdx, charOffset] triples
+            proxInfo2 = []
+            for x in proxInfo:
+                proxInfo2.extend(x)
+
+            proxInfo3 = []
+            for x in proxInfo2:
+                if [x[0], x[2]] not in proxInfo3:                # filter out duplicates from multiple indexes
+                    proxInfo3.append([x[0], x[2]])               # strip out wordIdx, this can vary due to stoplisting - nodeIdx, offsets are reliable
+
+            del proxInfo2
+            proxInfo2 = proxInfo3
             proxInfo2.sort(reverse=True)                         # sort proxInfo so that nodeIdxs are sorted descending (so that offsets don't get upset when modifying text :)
             nodeIdxs = []
             wordOffsets = []
@@ -902,7 +907,7 @@ class EadSearchHandler(EadHandler):
 
     def display_record(self, form):
         global max_page_size_bytes, cache_path, cache_url, toc_cache_path, toc_cache_url, repository_name, repository_link, repository_logo, punctuationRe, wordRe, anchorRe, highlightInLinkRe, overescapedAmpRe, highlightStartTag, highlightEndTag
-        isComponent = None
+        isComponent = False
         operation = form.get('operation', 'full')
         recid = form.getfirst('recid', None)
         pagenum = int(form.getfirst('page', 1))
@@ -993,7 +998,6 @@ class EadSearchHandler(EadHandler):
             parentId = parentId.split('/')[-1]
             parentPath = rec.process_xpath(session, '/c3component/@xpath')[0]
             parentRec = recordStore.fetch_record(session, parentId)
-            isComponent = True
             titles = self._backwalkTitles(parentRec, parentPath)
             hierarchy = []
             for x,t in enumerate(titles[:-1]):
@@ -1042,11 +1046,7 @@ class EadSearchHandler(EadHandler):
         else:
             # full record
             path = os.path.join(cache_path, recid.replace('/', '-') + '-p%d.shtml' % (pagenum))
-            if (isComponent):
-                self.logger.log('Full-text requested for component: ' + recid)
-            else:
-                self.logger.log('Full-text requested for record: ' + recid)
-            
+            self.logger.log('Full-text requested for %s: %s' % (['record', 'component'][int(isComponent)], recid))
             try:
                 page = read_file(path)
                 self.logger.log('Retrieved from cache')
@@ -1171,7 +1171,6 @@ class EadSearchHandler(EadHandler):
             parentId = parentId.split('/')[-1]
             parentPath = rec.process_xpath(session, '/c3component/@xpath')[0]
             parentRec = recordStore.fetch_record(session, parentId)
-            isComponent = True
             titles = self._backwalkTitles(parentRec, parentPath)
             hierarchy = [(' ' * 4 * x) + t[1] for x,t in enumerate(titles[:-1])]
             parentTitle = '\n'.join(hierarchy)
