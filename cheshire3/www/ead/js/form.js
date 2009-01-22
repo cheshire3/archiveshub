@@ -26,18 +26,17 @@ var baseUnitId = null;
 var fileName = null;
 var fileOwner = null;
 var timeout;
-var required_xpaths_components = new Array('unitid', 'did/unittitle', 'did/unitdate', 'did/physdesc/extent');
+var required_xpaths_components = new Array('unitid', 'did/unittitle', 'did/unitdate');
 var required_xpaths = new Array(
 'unitid',
 'archoncode',
 'countrycode',
 'did/unittitle',
 'did/unitdate',
+'did/unitdate/@normal',
 'did/origination',
 'did/physdesc/extent',
-'bioghist',
-'scopecontent',
-'accessrestrict'
+'scopecontent'
 );
 
 function setCountryCode(code){
@@ -1094,8 +1093,8 @@ function findRequiredFields(){
 	if (currentForm == 'collectionLevel'){
 		var reqList = required_xpaths;
 		//check there is a language
-		lang = document.getElementById('lang_name');
-		langcode = document.getElementById('lang_code');
+		var lang = document.getElementById('lang_name');
+		var langcode = document.getElementById('lang_code');
 		if (document.getElementById('addedlanguages').style.display == 'none'){
 			lang.style.borderColor = 'red';
 			langcode.style.borderColor = 'red';
@@ -1107,6 +1106,14 @@ function findRequiredFields(){
 	}
 	else {
 		var reqList = required_xpaths_components;
+		var level = document.getElementById('@level');
+		if(level.options[level.selectedIndex].value == ''){
+			level.style.borderColor = 'red';
+		}
+		else {
+			level.style.borderColor = 'white';
+		}
+		
 	}
 	for (var i=0; i<reqList.length; i++){
 		if (document.getElementById(reqList[i])){

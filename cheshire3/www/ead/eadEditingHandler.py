@@ -47,18 +47,19 @@ class EadEditingHandler(EadHandler):
     htmlNav = None
     logger = None
     errorFields = []    
-    required_xpaths_components = ['did/unitid', 'did/unittitle', 'did/unitdate', 'did/physdesc/extent']
+    required_xpaths_components = ['did/unitid', 'did/unittitle', 'did/unitdate', '@level']
     required_xpaths = [
 'did/unitid',
 'did/unittitle',
 'did/unitdate',
+'did/unitdate/@normal',
 'did/origination',
 'did/physdesc/extent',
 'did/langmaterial/language',
-'bioghist',
 'scopecontent',
-'accessrestrict',
+
 ]
+
     
     altrenderDict = { 'surname' : 'a',
                       'organisation' : 'a',
