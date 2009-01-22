@@ -50,8 +50,8 @@
         <a href="/ead/index.html" title="Search for EAD Records" class="navlink"> Search </a> | 
         <a href="/ead/browse.html" title="Browse Indexes" class="navlink"> Browse Indexes </a> | 
         <a href="/ead/subject.html" title="Find Subjects" class="navlink"> Find Subjects </a> | 
-        <a href="/ead/help.html" title="Search Help" class="navlink"> Help </a> | 
         <a href="/ead/about.html" title="About Cheshire for Archives" class="navlink"> About </a> | 
+        <a href="/ead/help.html" title="Search Help" class="navlink"> Help </a> | 
         %NAVBAR%
 	</div>
 	<!-- content here may be 1 or 2 column - div classes/ids determined by handler -->

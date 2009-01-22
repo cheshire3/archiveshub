@@ -135,6 +135,7 @@ h3.redheading { background-color: #ffaaaa; }
 h3.greenheading { background-color: #aaffaa; }
 h4 {font-size: 14pt; margin-top: 0.1em; margin-bottom: 0.1em;}
 h5 {font-size: 12pt; margin-top: 0.1em; margin-bottom: 0.1em;}
+h5.minor {font-size: 11pt; color: #0b2265; margin-left: 5px;}
 h6 {font-size: 11pt; margin-top: 0.1em; margin-bottom: 0.1em;}
 
 /* LISTS */
