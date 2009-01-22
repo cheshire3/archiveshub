@@ -69,6 +69,9 @@
 					</li>
 					<li>
 						<a href="#navtree" title="Jump to help on navigating through a description">Navigating through a Description</a>
+					</li>
+					<li>
+						<a href="#complete" title="Jump to help on completing the form">Completing the Form</a>
 					</li>					
 					<li>
 						<a href="#addcomp" title="Jump to help on adding components">Adding Components</a>
@@ -195,66 +198,116 @@
 				<img src="/images/whatisthissmall.gif" alt="[What is this?]"/> which will take you to specific help for that element of EAD.
 			</p>
 			<p>
-				The screen layout has several different sections as illustrated below.
-				
-				
+				The screen layout has several different sections as illustrated below. 			
+			</p>
+			<p>
+				<img style="width:800px;" src="/images/overview.png" alt="[screenshot unavailable]"/>				
+			</p>
+			<p>
+				<ul>
+					<li>A - <a href="#file">file</a>, <a href="#preview">preview</a> and <a href="#export">export</a> operations</li>
+					<li>B - <a href="#navtree">navigation tree</a></li>
+					<li>C - <a href="#complete">data creation and editing form</a></li>
+				</ul>
 			</p>
 			<a name="file"> </a>
 			<h4>File Operations</h4>
-			<p>
-				
-			</p>
 			<a name="save"> </a>
 			<h5>Save File</h5>
 			<p>
-				
+				Saving a file saves all changes to the draft editing store. If you are saving a collection level file then you must complete
+				the minimum requirement of reference code and title. If you are creating a new file there are also some restriction on the reference code 
+				(see <a href="#create"> creating a new file</a>). Once you have saved a new file the page will reload and the preview and export options will
+				become active, at this point you are also able to add components.
+			</p>
+			<p>
+				Saving also checks whether the displayed section of the description is valid and highlights any missing fields (see ???)
 			</p>
 			<a name="delete"> </a>
 			<h5>Delete File</h5>
 			<p>
-				
+				If you wish to delete the currently loaded file you can click the 'delete' button. This operation
+				will delete the file from the draft file store and the data will not be recoverable. It works in the
+				same way as the delete option in the file menu (see <a href="#draftdel">deleting files from the draft file store</a>) 
+				but deletes the file currently loaded into the data creation and editing interface and redirects you to the main menu.
 			</p>			
 			<a name="preview"> </a>
 			<h4>Preview Operations</h4>
 			<p>
-				
+				These operations allow you to preview the description you are creating or editing in different formats.
 			</p>
 			<a name="xml"> </a>
 			<h5>Preview XML</h5>
 			<p>
-				
+				This will show the EAD XML for the current description in your web browser. The back button will return you to 
+				the data creation and editing interface and description you are working with. It will however return you to the
+				collection level for that description even if you were viewing a component when you previewed the XML. Before
+				showing the XML the description is saved so any changes to the current record are reflected.
 			</p>
 			<a name="online"> </a>
 			<h5>Preview On-line Version</h5>
 			<p>
-				
+				This will show you how the description will look when it is displayed on your spoke and on the central hub. As with the
+				XML preview the back button will return you to 
+				the data creation and editing interface and description you are working with. It will however return you to the
+				collection level for that description even if you were viewing a component when you previewed the online version. Before
+				showing the online version the description is saved so any changes to the current record are reflected.
 			</p>	
 			<a name="export"> </a>
 			<h4>Export Operations</h4>
 			<p>
-				
+				These operations export the descriptions from the draft file store into the main database.
 			</p>
 			<a name="file"> </a>
 			<h5>Export to File Only</h5>
 			<p>
-				
+				This operation writes the EAD XML of the current description to the data directory of your database.
+				If this is a new description it will create an new file named using the persistent unique identifier for the 
+				description with the '.xml' extension. If you have been editing an existing file the original version in 
+				the data directory will be overwritten with the new one. The description will then be deleted from the 
+				draft file store.
+			</p>
+			<p>
+				This operation will <b>not</b> index the record so that it is available for immediate search and display in the spoke.
+				In order for the description to be part of the spoke search you will need to rebuild the database from the admin
+				interface. This is useful if you have a number of descriptions to edit and would rather just index them all 
+				in one go, maybe overnight while there is less use of the spoke. If you wish to index the description immediately
+				use the 'To File + Database' operation (see <a href="database">export to database and file</a>).
 			</p>
 			<a name="database"> </a>
 			<h5>Export to Database and File</h5>
 			<p>
-				
+				This operation writes the EAD XML of the current description to the data directory of your database <b>and</b> indexes the 
+				description so it is available for immediate search and display in the spoke. If this is a new description it will create an new file named using the persistent unique identifier for the 
+				description with the '.xml' extension and the persistent unique identifier will also provide the link to the display of the
+				description should you wish to link to it from outside the spoke. If you have been editing an existing file the original version in 
+				the data directory will be overwritten with the new one and the existing record in the database will be unindexed and replaced with the new one.
+				The description will then be deleted from the draft file store.
 			</p>	
+			<p>
+				Unindexing and indexing records may take some time. If you have a lot of files to edit and reindex it is recommeded
+				that you first export them all using 'To File Only' and then rebuild the database from the admin menu (see <a href="#file">export to file only</a>).
+			</p>
 			<a name="navtree"> </a>
 			<h4>Navigating through a Description</h4>
 			<p>
-				
+				The navigation tree present a hierarchical view of you EAD description. Clicking on any 
+				part of the tree will display the relevant component in the form on the right. The part of the
+				tree highlighted in yellow is that displayed in the form. The colour of the text in the tree is
+				also relevant, black indicates that all of the fields required to submit the file to your database
+				are complete, red indicates that some required fields have not been completed. If you click on a 
+				component which is coloured red the missing fields will be indicated on the form with a red border.
 			</p>	
+			<a name="complete"> </a>
+			<h4>Completing the Form</h4>
+			<p>
+				
+			</p>				
 			<a name="addlang"> </a>
 			<h4>Adding and Editing Language of Material</h4>
 			<p>
 				This works in the same way as adding <a href="#accesspoints">access points</a>.
-			</p>
-				
+			</p>				
 			<a name="addcomp"> </a>
 			<h4>Adding Components</h4>
 			<p>
@@ -263,6 +316,9 @@
 				currently selected. The Reference Code will be filled in automatically based on the details
 				of the parent component but these details can all be edited if required. The Reference Code and
 				Title will be updated on the navigation tree as changes are made in the form.
+			</p>
+			<p>
+				Following the EAD tag library components may only be created to a maximum depth of 12.
 			</p>
 			<a name="delcomp"> </a>
 			<h4>Deleting Components</h4>

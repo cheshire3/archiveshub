@@ -112,7 +112,7 @@ function deleteFromStore(){
 
 function deleteRec(id){
 	var url = '/ead/edit/';
-	var data = 'operation=deleteRec&recid=' + id;
+	var data = 'operation=deleteRec&recid=' + encodeURIComponent(id);
 	var ajax = new Ajax.Request(url, {method:'post', asynchronous:false, postBody:data, evalScripts:true, onSuccess: function(transport) {	
 		location.href="/ead/edit/menu.html";		    
 	}});		
@@ -120,12 +120,12 @@ function deleteRec(id){
 
 function discardRec(id){
 	var url = '/ead/edit/';
-	var data = 'operation=discard&recid=' + id;
+	var data = 'operation=discard&recid=' + encodeURIComponent(id);
     if ($('owner') != null){    
     	setOwner($('owner').value);
     }	
 	if (fileOwner != null){
-		data += '&owner=' + fileOwner;
+		data += '&owner=' + encodeURIComponent(fileOwner);
 	}
 	var ajax = new Ajax.Request(url, {method:'post', asynchronous:false, postBody:data, evalScripts:true, onSuccess: function(transport) {	
 		location.href="/ead/edit/menu.html";		    
@@ -138,11 +138,6 @@ function submit(index){
 		alert ('the following fields must be entered before proceeding:\n  - Reference Code \n  - Title')
 		return;
 	}
-	checkId('recordStore', false);
-	if ($('idError')){
-		alert('This operation cannot be performed because a file in the database has the same reference code as the record you are creating. Please change the reference code and try again. If you are trying to replace the file in the main database you need to delete it from the database in the admin menu before creating the new file.');
-		return;
-	}
 	if (currentEntryField != null && currentEntryField.value != ''){
     	validateField(currentEntryField, false)
     }
@@ -150,12 +145,6 @@ function submit(index){
     if (errors.length != 0){
     	alert('Please fix the errors in the xml before submitting. Errors will be marked with red shading in the text box.');
     	return;
-    }
-    if (checkEditStore()){
-    	var confirmbox = confirm('A file with this Reference code is already in the process of being created or edited. If you proceed with this operation the existing file will be overwritten with this one.\n\nAre you sure you want to continue with this operation?');
-   		if (confirmbox == false){
-   			return;
-   		}
     }
     //check the daoform details   
     var daodiv = document.getElementById('digitalobjectssection');
@@ -225,12 +214,12 @@ function submit(index){
 		return;
 	}
 	
-	url = "?operation=submit&recid=" + recid;
+	url = "?operation=submit&recid=" + encodeURIComponent(recid);
 	if (fileOwner != null){
-		url += '&owner=' + fileOwner;
+		url += '&owner=' + encodeURIComponent(fileOwner);
 	}
 	if (fileName != null){
-		url += '&filename=' + fileName;
+		url += '&filename=' + encodeURIComponent(fileName);
 	}
 	if (index == false || index == 'false'){
 		url += '&index=false';
@@ -249,9 +238,9 @@ function resetForm(){
     //if there is a recid (the form has a saved version in the editing store) show the saved version
     else {
     	var form = $('eadForm');
-    	var data = 'operation=navigate&recid=' + recid + '&newForm=' + currentForm; 
+    	var data = 'operation=navigate&recid=' + encodeURIComponent(recid) + '&newForm=' + currentForm; 
     	if (fileOwner != null){
-    		data += '&owner=' + fileOwner;
+    		data += '&owner=' + encodeURIComponent(fileOwner);
     	}
     	if ($('ctype')){
     		data += '&ctype=' + ($('ctype')).value;
@@ -416,14 +405,14 @@ function saveForm(asynch){
   		$('unitid').readOnly = true;
   	}	
     if (recid != null && recid != 'notSet'){
-    	data += '&recid=' + recid;
+    	data += '&recid=' + encodeURIComponent(recid);
     }
     else {
     	recid = ($('pui')).value;
     	relocate = true;
     }
     if (fileOwner != null){
-    	data += '&owner=' + fileOwner;
+    	data += '&owner=' + encodeURIComponent(fileOwner);
     }
     var loc = $('rightcol');
   	var ajax = new Ajax.Request(loc, {method:'post', asynchronous:asynch, postBody:data, evalScripts:true,  onSuccess: function(transport){ 
@@ -438,7 +427,7 @@ function saveForm(asynch){
 		}
 	}});	
 	if (relocate == true){
-		window.location.href='/ead/edit/?operation=load&recid=' + recid;
+		window.location.href='/ead/edit/?operation=load&recid=' + encodeURIComponent(recid);
 	}
 }
 
@@ -450,7 +439,7 @@ function displayForm(id, level, nosave){
 	}
 	/* for adding a new form */
 	if (id == 'new'){
-		var data = 'operation=add&recid=' + recid + '&clevel=' + level;
+		var data = 'operation=add&recid=' + encodeURIComponent(recid) + '&clevel=' + level;
 		var loc = $('rightcol');		
 	   	new Ajax.Updater(loc, '/ead/edit/', {method: 'post', asynchronous:false, parameters:data, evalScripts:true});
 
@@ -474,10 +463,9 @@ function displayForm(id, level, nosave){
 		    }	
 			saveForm(false);
 		}	
-	  	
-		var data = 'operation=navigate&recid=' + recid + '&newForm=' + id;
+		var data = 'operation=navigate&recid=' + encodeURIComponent(recid) + '&newForm=' + id;
 		if (fileOwner != null){
-			data += '&owner=' + fileOwner;
+			data += '&owner=' + encodeURIComponent(fileOwner);
 		}
 		var loc = $('rightcol');
 		new Ajax.Updater(loc, '/ead/edit', {method: 'get', asynchronous:false, parameters:data, evalScripts:true, onSuccess: function(transport){		   	
@@ -514,12 +502,6 @@ function addComponent(){
 		body.className = 'none';
 		return;
 	}
-	checkId('recordStore', false);
-	if ($('idError')){
-		alert('This operation cannot be performed because a file in the database has the same reference code as the record you are creating. Please change the reference code and try again. If you are trying to replace the file in the main database you need to delete it from the database in the admin menu before creating the new file.');
-		body.className = 'none';
-		return;
-	}
     if (currentEntryField != null && currentEntryField.value != ''){
     	validateField(currentEntryField, false)
     }
@@ -528,17 +510,10 @@ function addComponent(){
     	alert('Please fix the errors in the xml before adding a component. Errors will be marked with red shading in the text box.');
     	body.className = 'none';
     	return;
-    }
-    if (checkEditStore()){
-    	var confirmbox = confirm('A file with this Reference code is already in the process of being created or edited. If you proceed with this operation the existing file will be overwritten with this one.\n\nAre you sure you want to continue with this operation?');
-   		if (confirmbox == false){
-   			body.className = 'none';
-   			return;
-   		}
-    }    
+    }  
     else if (currentForm == 'collectionLevel' && recid == 'notSet'){
 		var url = '/ead/edit'
-		var data = 'operation=checkId&id=' + ($('pui')).value + '&store=recordStore';
+		var data = 'operation=checkId&id=' + encodeURIComponent(($('pui')).value) + '&store=recordStore';
 		new Ajax.Request(url, {method: 'get', asynchronous: false, parameters: data, onSuccess: function(transport) { 	    				
 			var response = transport.responseText;
 			var idExists = response.substring(7,response.indexOf('</value>')); 			 
@@ -551,7 +526,7 @@ function addComponent(){
 	}
 	if (currentForm == 'collectionLevel' && recid == 'notSet' && document.getElementById('recid') == 'notSet'){
 		var url = '/ead/edit'
-		var data = 'operation=checkId&id=' + ($('pui')).value + '&store=editStore';
+		var data = 'operation=checkId&id=' + encodeURIComponent(($('pui')).value) + '&store=editStore';
 		new Ajax.Request(url, {method: 'get', asynchronous: false, parameters: data, onSuccess: function(transport) { 	    				
 			var response = transport.responseText;
 			var idExists = response.substring(7,response.indexOf('</value>'));
@@ -758,9 +733,9 @@ function deleteComponent(id){
 		return;
 	}
 	
-	var data = 'operation=delete&recid=' + recid + '&id=' + id;
+	var data = 'operation=delete&recid=' + encodeURIComponent(recid) + '&id=' + id;
 	if (fileOwner != null){
-    	data += '&owner=' + fileOwner;
+    	data += '&owner=' + encodeURIComponent(fileOwner);
     }
 	var url = '/ead/edit';
 	var value = 'false';
@@ -815,11 +790,6 @@ function viewXml(){
 		alert ('the following fields must be entered before proceeding:\n  - Reference Code \n  - Title');
 		return;
 	}
-	checkId('recordStore', false);
-	if ($('idError')){
-		alert('This operation cannot be performed because a file in the database has the same reference code as the record you are creating. Please change the reference code and try again. If you are trying to replace the file in the main database you need to delete it from the database in the admin menu before creating the new file.');
-		return;
-	}
 	if (currentEntryField != null && currentEntryField.value != ''){
     	validateField(currentEntryField, false);
     }
@@ -827,13 +797,7 @@ function viewXml(){
     if (errors.length != 0){
     	alert('Please fix the errors in the xml before viewing. Errors will be marked with red shading in the text box.');
     	return;
-    }
-    if (checkEditStore()){
-    	var confirmbox = confirm('A file with this Reference code is already in the process of being created or edited. If you proceed with this operation the existing file will be overwritten with this one.\n\nAre you sure you want to continue with this operation?');
-   		if (confirmbox == false){
-   			return;
-   		}
-    }    
+    } 
     //check the daoform details   
     var daodiv = document.getElementById('digitalobjectssection');
     var divs = daodiv.getElementsByTagName('div');
@@ -894,9 +858,9 @@ function viewXml(){
     	}
     }
 	saveForm(false);
-	var url = '/ead/edit?operation=xml&recid=' + recid;
+	var url = '/ead/edit?operation=xml&recid=' + encodeURIComponent(recid);
 	if (fileOwner != null){
-		url += '&owner=' + fileOwner;
+		url += '&owner=' + encodeURIComponent(fileOwner);
 	}
 	window.location.href=url;
 }
@@ -907,11 +871,6 @@ function previewRec(){
 		alert ('the following fields must be entered before proceeding:\n  - Reference Code \n  - Title')
 		return;
 	}
-	checkId('recordStore', false);
-	if ($('idError')){
-		alert('This operation cannot be performed because a file in the database has the same reference code as the record you are creating. Please change the reference code and try again. If you are trying to replace the file in the main database you need to delete it from the database in the admin menu before creating the new file.');
-		return;
-	}
 	if (currentEntryField != null && currentEntryField.value != ''){
     	validateField(currentEntryField, false);
     }
@@ -919,13 +878,7 @@ function previewRec(){
     if (errors.length != 0){
     	alert('Please fix the errors in the xml before viewing. Errors will be marked with red shading in the text box.');
     	return;
-    }
-    if (checkEditStore()){
-    	var confirmbox = confirm('A file with this Reference code is already in the process of being created or edited. If you proceed with this operation the existing file will be overwritten with this one.\n\nAre you sure you want to continue with this operation?');
-   		if (confirmbox == false){
-   			return;
-   		}
-    }    
+    } 
     //check the daoform details   
     var daodiv = document.getElementById('digitalobjectssection');
     var divs = daodiv.getElementsByTagName('div');
@@ -986,9 +939,9 @@ function previewRec(){
     	}
     }
 	saveForm(false);
-	url = '/ead/edit?operation=preview&recid=' + recid;	
+	url = '/ead/edit?operation=preview&recid=' + encodeURIComponent(recid);	
 	if (fileOwner != null){
-		url += '&owner=' + fileOwner;
+		url += '&owner=' + encodeURIComponent(fileOwner);
 	}
 	window.location.href=url;
 }
@@ -1024,7 +977,7 @@ function reassignToUser(){
 		}
 		if (ok || !conflict){
 			var url = '/ead/edit/';
-			var data = 'operation=reassign&recid=' + recid + '&user=' + user;
+			var data = 'operation=reassign&recid=' + encodeURIComponent(recid) + '&user=' + encodeURIComponent(user);
 			var ajax = new Ajax.Request(url, {method:'post', asynchronous:false, postBody:data, evalScripts:true, onSuccess: function(transport) {  	
 				location.href="/ead/edit/menu.html";		    
 			}});
@@ -1184,7 +1137,7 @@ function conflicts(recid){
 	var conflict = null;
 	if (recid != null){
 		var url = '/ead/edit'
-		var data = 'operation=checkId&id=' + recid + '&store=editStore';
+		var data = 'operation=checkId&id=' + encodeURIComponent(recid) + '&store=editStore';
 		new Ajax.Request(url, {method: 'get', asynchronous: false, parameters: data, onSuccess: function(transport) { 
 			var response = transport.responseText;
 			conflict = response.substring(7,response.indexOf('</value>'));
@@ -1293,7 +1246,7 @@ function checkEditStore(){
 					if ($('unitid').value != ''){
 						var id = $('countrycode').value.toLowerCase() + $('archoncode').value + $('unitid').value.replace(' ', '').replace('/', '-').toLowerCase();
 						var url = '/ead/edit'
-						var data = 'operation=checkEditId&id=' + id;
+						var data = 'operation=checkEditId&id=' + encodeURIComponent(id);
 						new Ajax.Request(url, {method: 'get', asynchronous: false, parameters: data, onSuccess: function(transport) { 	    				
 						    var response = transport.responseText;
 						    idExists = response.substring(response.indexOf('<value>')+7, response.indexOf('</value>'));	
@@ -1319,7 +1272,7 @@ function checkId(asynch){
 				if ($('unitid').value != ''){
 					var id = $('countrycode').value.toLowerCase() + $('archoncode').value + $('unitid').value.replace(' ', '').replace('/', '-').toLowerCase();
 					var url = '/ead/edit'
-					var data = 'operation=checkId&id=' + id + '&store=recordStore';
+					var data = 'operation=checkId&id=' + encodeURIComponent(id) + '&store=recordStore';
 					new Ajax.Request(url, {method: 'get', asynchronous: asynch, parameters: data, onSuccess: function(transport) { 	    				
 					    var response = transport.responseText;
 					    idExists = response.substring(7,response.indexOf('</value>'));					    
