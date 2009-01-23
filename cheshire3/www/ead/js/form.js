@@ -1548,6 +1548,8 @@ function addFile(number, loc, form){
 
 function createObjectsForm(type, number, loc, form) {
 
+	alert('type: '+type+' number: '+ number + ' loc: ' + loc + ' form: '+form); 
+
 	var type = type;
 
    	if (type == null) {
@@ -1567,6 +1569,7 @@ function createObjectsForm(type, number, loc, form) {
 	   	//get current values from the form
 
 	   		var roleInput;
+	   		alert(loc + 'daogrp[' + number + ']/daoloc[1]/@role');
 	   		if (roleInput = document.getElementById(loc + 'daogrp[' + number + ']/daoloc[1]/@role')){
 	   			if (roleInput.value == 'thumb'){
 	   				thumb = document.getElementById(loc + 'daogrp[' + number + ']/daoloc[1]/@href').value;
