@@ -2026,6 +2026,9 @@
   		<xsl:attribute name="name">
 			<xsl:value-of select="$path"/><xsl:text>dao[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/@show</xsl:text>
 		</xsl:attribute>
+		<xsl:attribute name="id">
+			<xsl:value-of select="$path"/><xsl:text>dao[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/@show</xsl:text>
+		</xsl:attribute>
   	</input>
   </xsl:template>
   
@@ -2092,9 +2095,15 @@
 		<xsl:attribute name="name">
 			<xsl:value-of select="$path"/><xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[1]/@role</xsl:text>
 		</xsl:attribute>
+		<xsl:attribute name="id">
+			<xsl:value-of select="$path"/><xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[1]/@role</xsl:text>
+		</xsl:attribute>
 	</input>
 	<input type="hidden" value="reference">
 		<xsl:attribute name="name">
+			<xsl:value-of select="$path"/><xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[2]/@role</xsl:text>
+		</xsl:attribute>
+		<xsl:attribute name="id">
 			<xsl:value-of select="$path"/><xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[2]/@role</xsl:text>
 		</xsl:attribute>
 	</input>
@@ -2156,6 +2165,9 @@
   			</tr>
   			<input type="hidden" value="reference">
 				<xsl:attribute name="name">
+					<xsl:value-of select="$path"/><xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[</xsl:text><xsl:value-of select="position()"/><xsl:text>]/@role</xsl:text>
+				</xsl:attribute>
+				<xsl:attribute name="id">
 					<xsl:value-of select="$path"/><xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[</xsl:text><xsl:value-of select="position()"/><xsl:text>]/@role</xsl:text>
 				</xsl:attribute>
 			</input>
