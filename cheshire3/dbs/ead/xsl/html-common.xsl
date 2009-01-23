@@ -304,7 +304,7 @@
 		<xsl:if test="@id">
 			<a name="{@id}"><xsl:text> </xsl:text></a>
 		</xsl:if>
-		<xsl:if test="not(head)">
+		<xsl:if test="not(head/text())">
             <xsl:variable name="headstring"><xsl:text>Administrative / Biographical History</xsl:text></xsl:variable>
 		 	<xsl:choose>
 		 		<xsl:when test="../../archdesc or ../../../c3component">
@@ -323,7 +323,7 @@
 	  		<a name="{@id}"><xsl:text> </xsl:text></a>
 	  	</xsl:if>
         
-	    <xsl:if test="not(head)">
+	    <xsl:if test="not(head/text())">
             <xsl:variable name="headstring"><xsl:text>Scope and Content</xsl:text></xsl:variable>
 	    	<xsl:choose>
 		  		<xsl:when test="../../archdesc or ../../../c3component">
@@ -341,7 +341,7 @@
   		<xsl:if test="@id">
   			<a name="{@id}"><xsl:text> </xsl:text></a>
 	  	</xsl:if>
-	    <xsl:if test="not(head)">
+	    <xsl:if test="not(head/text())">
             <xsl:variable name="headstring"><xsl:text>Arrangement</xsl:text></xsl:variable>
 	    	<xsl:choose>
 		  		<xsl:when test="../../archdesc  or ../../../c3component">
@@ -360,7 +360,7 @@
   	<xsl:if test="@id">
   		<a name="{@id}"><xsl:text> </xsl:text></a>
   	</xsl:if>
-    <xsl:if test="not(head)">
+    <xsl:if test="not(head/text())">
         <xsl:variable name="headstring"><xsl:text>Conditions Governing Access</xsl:text></xsl:variable>
     	<xsl:choose>
 	  		<xsl:when test="../../archdesc  or ../../../c3component">
@@ -378,7 +378,7 @@
   	<xsl:if test="@id">
   		<a name="{@id}"><xsl:text> </xsl:text></a>
   	</xsl:if>
-    <xsl:if test="not(head)">
+    <xsl:if test="not(head/text())">
         <xsl:variable name="headstring"><xsl:text>Conditions Governing Use</xsl:text></xsl:variable>
     	<xsl:choose>
 	  		<xsl:when test="../../archdesc or ../../../c3component">
@@ -397,7 +397,7 @@
         <a name="{@id}"><xsl:text> </xsl:text></a>
     </xsl:if>
     <xsl:variable name="headstring"><xsl:text>Physical Characteristics and/or Technical Requirements</xsl:text></xsl:variable>
-    <xsl:if test="not(head)">
+    <xsl:if test="not(head/text())">
         <xsl:choose>
             <xsl:when test="../../archdesc or ../../../c3component">
                 <h3 class="ead"><xsl:value-of select="$headstring"/></h3>
@@ -416,7 +416,7 @@
         <xsl:if test="@id">
         	<a name="{@id}"><xsl:text> </xsl:text></a>
         </xsl:if>
-        <xsl:if test="not(head)">
+        <xsl:if test="not(head/text())">
             <xsl:variable name="headstring"><xsl:text>Administrative Information</xsl:text></xsl:variable>
             <xsl:choose>
           		<xsl:when test="../../archdesc or ../../../c3component">
@@ -435,7 +435,7 @@
       	<xsl:if test="@id">
       		<a name="{@id}"><xsl:text> </xsl:text></a>
       	</xsl:if>
-        <xsl:if test="not(head)">
+        <xsl:if test="not(head/text())">
             <xsl:variable name="headstring"><xsl:text>Appraisal Information</xsl:text></xsl:variable>
         	<xsl:choose>
     	  		<xsl:when test="../../archdesc or ../../../c3component">
@@ -453,7 +453,7 @@
   	<xsl:if test="@id">
   		<a name="{@id}"><xsl:text> </xsl:text></a>
   	</xsl:if>	  
-    <xsl:if test="not(head)">
+    <xsl:if test="not(head/text())">
         <xsl:variable name="headstring"><xsl:text>Acquisition Information</xsl:text></xsl:variable>
     	<xsl:choose>
 	  		<xsl:when test="../../archdesc or ../../../c3component">
@@ -471,7 +471,7 @@
   	<xsl:if test="@id">
   		<a name="{@id}"><xsl:text> </xsl:text></a>
   	</xsl:if>
-    <xsl:if test="not(head)">
+    <xsl:if test="not(head/text())">
         <xsl:variable name="headstring"><xsl:text>Custodial History</xsl:text></xsl:variable>
     	<xsl:choose>
 	  		<xsl:when test="../../archdesc or ../../../c3component">
@@ -489,7 +489,7 @@
   	<xsl:if test="@id">
   		<a name="{@id}"><xsl:text> </xsl:text></a>
   	</xsl:if>
-    <xsl:if test="not(head)">
+    <xsl:if test="not(head/text())">
         <xsl:variable name="headstring"><xsl:text>Accruals</xsl:text></xsl:variable>
     	<xsl:choose>
 	  		<xsl:when test="../../archdesc or ../../../c3component">
@@ -507,8 +507,8 @@
   	<xsl:if test="@id">
   		<a name="{@id}"><xsl:text> </xsl:text></a>
   	</xsl:if>
-    <xsl:if test="not(head)">
-        <xsl:variable name="headstring"><xsl:text>Archivist's Not</xsl:text></xsl:variable>
+    <xsl:if test="not(head/text())">
+        <xsl:variable name="headstring"><xsl:text>Archivist's Note</xsl:text></xsl:variable>
     	<xsl:choose>
 	  		<xsl:when test="../../archdesc or ../../../c3component">
 	  			<h3 class="ead"><xsl:value-of select="$headstring"/></h3>
@@ -528,7 +528,7 @@
   	<xsl:if test="@id">
   		<a name="{@id}"><xsl:text> </xsl:text></a>
   	</xsl:if>
-    <xsl:if test="not(head)">
+    <xsl:if test="not(head/text())">
         <xsl:variable name="headstring"><xsl:text>Other Finding Aid</xsl:text></xsl:variable>
     	<xsl:choose>
 	  		<xsl:when test="../../archdesc or ../../../c3component">
@@ -547,7 +547,7 @@
   	<xsl:if test="@id">
   		<a name="{@id}"><xsl:text> </xsl:text></a>
   	</xsl:if>
-    <xsl:if test="not(head)">
+    <xsl:if test="not(head/text())">
         <xsl:variable name="headstring"><xsl:text>Location of Originals</xsl:text></xsl:variable>
     	<xsl:choose>
 	  		<xsl:when test="../../archdesc or ../../../c3component">
@@ -565,7 +565,7 @@
   	<xsl:if test="@id">
   		<a name="{@id}"><xsl:text> </xsl:text></a>
   	</xsl:if>
-    <xsl:if test="not(head)">
+    <xsl:if test="not(head/text())">
         <xsl:variable name="headstring"><xsl:text>Alternative Form Available</xsl:text></xsl:variable>
     	<xsl:choose>
 	  		<xsl:when test="../../archdesc or ../../../c3component">
@@ -584,7 +584,7 @@
       	<xsl:if test="@id">
       		<a name="{@id}"><xsl:text> </xsl:text></a>
       	</xsl:if>
-        <xsl:if test="not(head)">
+        <xsl:if test="not(head/text())">
             <xsl:variable name="headstring"><xsl:text>Related Material</xsl:text></xsl:variable>
         	<xsl:choose>
     	  		<xsl:when test="../../archdesc or ../../../c3component">
@@ -603,7 +603,7 @@
   	<xsl:if test="@id">
   		<a name="{@id}"><xsl:text> </xsl:text></a>
   	</xsl:if>
-    <xsl:if test="not(head)">
+    <xsl:if test="not(head/text())">
         <xsl:variable name="headstring"><xsl:text>Separated Material</xsl:text></xsl:variable>
     	<xsl:choose>
 	  		<xsl:when test="../../archdesc or ../../../c3component">
@@ -625,7 +625,7 @@
 		</xsl:if>
         <xsl:variable name="headstring"><xsl:text>Bibliography</xsl:text></xsl:variable>
 		<xsl:choose>
-			<xsl:when test="head">
+			<xsl:when test="head/text()">
 				<xsl:apply-templates select="head" />
 			</xsl:when>
 			<xsl:when test="../../archdesc or ../../../c3component">
@@ -653,7 +653,7 @@
   		<xsl:if test="@id">
   			<a name="{@id}"><xsl:text> </xsl:text></a>
   		</xsl:if>
-		<xsl:if test="not(head)">
+		<xsl:if test="not(head/text())">
             <xsl:variable name="headstring"><xsl:text>Preferred Citation</xsl:text></xsl:variable>
 			<xsl:choose>
 		  		<xsl:when test="../../archdesc or ../../../c3component">
@@ -685,7 +685,7 @@
 	  	<xsl:if test="@id">
 	  		<a name="{@id}"><xsl:text> </xsl:text></a>
 	  	</xsl:if>
-		<xsl:if test="not(head)">
+		<xsl:if test="not(head/text())">
             <xsl:variable name="headstring"><xsl:text>Other Descriptive Data</xsl:text></xsl:variable>
 			<xsl:choose>
 		  		<xsl:when test="../../archdesc or ../../../c3component">
@@ -708,7 +708,7 @@
         <xsl:variable name="headstring"><xsl:text>Access Points</xsl:text></xsl:variable>
         <xsl:choose>
             <xsl:when test="local-name(..) = 'controlaccess'" />
-            <xsl:when test="head">
+            <xsl:when test="head/text()">
                 <xsl:apply-templates select="head"/>
             </xsl:when>
             <xsl:when test="../../archdesc or ../../../c3component">
@@ -966,6 +966,19 @@
                 <xsl:apply-templates select="."/><br/>
             </xsl:for-each>
         </xsl:if>
+        
+        <xsl:if test="langmaterial|did/langmaterial">
+            <strong>Language of Material</strong><xsl:text>: </xsl:text>
+            <xsl:choose>
+                <xsl:when test="langmaterial">
+                    <xsl:apply-templates select="langmaterial"/>
+                </xsl:when>
+                <xsl:when test="did/langmaterial">
+                    <xsl:apply-templates select="did/langmaterial"/>
+                </xsl:when>
+            </xsl:choose>
+          <br/>
+        </xsl:if>
 	
     	<xsl:if test = "did/physloc">
     	  <xsl:value-of select="did/physloc"/>
@@ -1014,14 +1027,16 @@
 
 	<!--HEAD-->
 	<xsl:template match="head">
-		<xsl:choose>
-			<xsl:when test="../../head or not(../../../archdesc or ../../../../c3component)">
-				<h4 class="ead"><xsl:apply-templates /></h4>
-			</xsl:when>
-			<xsl:otherwise>
-				<h3 class="ead"><xsl:apply-templates /></h3>				
-			</xsl:otherwise>
-		</xsl:choose>
+        <xsl:if test="./text()">
+    		<xsl:choose>
+    			<xsl:when test="../../head or not(../../../archdesc or ../../../../c3component)">
+    				<h4 class="ead"><xsl:apply-templates /></h4>
+    			</xsl:when>
+    			<xsl:otherwise>
+    				<h3 class="ead"><xsl:apply-templates /></h3>				
+    			</xsl:otherwise>
+    		</xsl:choose>
+        </xsl:if>
 	</xsl:template>
     
     <xsl:template match="head" mode="inline">
@@ -1048,7 +1063,7 @@
 	
 	<!--NOTES-->
 	<xsl:template match="bioghist/note">
-		<xsl:if test="not(head)">	
+		<xsl:if test="not(head/text())">	
 	  		<br/><b><xsl:text>Bibliographic Sources</xsl:text></b>
   		</xsl:if>
 	  <xsl:apply-templates/>
@@ -1056,7 +1071,7 @@
     
     <xsl:template match="note">
         <xsl:text>[ </xsl:text>
-        <xsl:if test="not(head)">   
+        <xsl:if test="not(head/text())">   
             <b><xsl:text>Note</xsl:text></b><xsl:text>: </xsl:text>
         </xsl:if>
             <xsl:apply-templates mode="inline"/>        
@@ -1064,7 +1079,7 @@
     </xsl:template>
     
     <xsl:template match="note" mode="own-section">
-        <xsl:if test="not(head)">   
+        <xsl:if test="not(head/text())">   
             <br/><b><xsl:text>Note</xsl:text></b>
         </xsl:if>
       <xsl:apply-templates/>
