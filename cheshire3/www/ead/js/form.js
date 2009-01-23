@@ -330,26 +330,37 @@ function save(){
     		var problems = false;
     		var list = new Array();
     		for (var i = number; i < length-1; i+=2){
-				if (inputs[i].value.strip() == '' && (inputs[i+1].value.strip() != '' || inputs[length-1].value.strip() != '')){
+				if (inputs[i].value.strip() == '' && inputs[i+1].value.strip() != ''){ //|| inputs[length-1].value.strip() != '')){
 					list[list.length] = i;
 					problems = true;
 				}
-				if (problems == true){
-	    			var confirmbox = confirm('At least one of File URI values required for the digital object has not been completed. If you proceed with this operation any incomplete URIs will not be included and the title and/or description information relating to the missing URI will be lost. All other content will be saved.\n\nDo you want to continue?');
-	    			if (confirmbox == false){
-	    				body.className = 'none';
-	    				return;
-	    			}
-	    			else{
-	    				for (var j = 0; j < list.length; j++){
-	    					inputs[list[j]+1].value = '';
-	    				}
-						if (list.length == number){
-							inputs[length-1].value = '';
+			}
+			if (problems == false){
+				if ((inputs[length-1].value.strip() != '' || inputs[length-1].value.strip() != '<p></p>' || inputs[length-1].value.strip().replace(/[\s]+/g, ' ') != '<p> </p>')){
+					var entries = false;
+					for (var i = number; i < length-1; i+=2){
+						if (inputs[i].value.strip() != ''){
+							entries = true;
 						}
-	    			}
+					}
+					if (entries == false){	
+						problems = true;
+					}				
+				}
+			}
+			if (problems == true){
+    			var confirmbox = confirm('At least one of File URI values required for the digital object has not been completed. If you proceed with this operation any incomplete URIs will not be included and the title and/or description information relating to the missing URI will be lost. All other content will be saved.\n\nDo you want to continue?');
+    			if (confirmbox == false){
+    				body.className = 'none';
+    				return;
     			}
-    		}    		
+    			else{
+    				for (var j = 0; j < list.length; j++){
+    					inputs[list[j]+1].value = '';
+    				}
+					inputs[length-1].value = '<p></p>';
+    			}
+   			}    		   		
     	}
     }
 	findRequiredFields();
@@ -363,6 +374,7 @@ function save(){
 
 function saveForm(asynch){
 	var relocate = false;
+	resetAllAccessPoints()
 	//collect the basic id information
 	if (currentForm == 'collectionLevel'){
 		setCountryCode($('countrycode').value);
@@ -1548,8 +1560,6 @@ function addFile(number, loc, form){
 
 function createObjectsForm(type, number, loc, form) {
 
-	alert('type: '+type+' number: '+ number + ' loc: ' + loc + ' form: '+form); 
-
 	var type = type;
 
    	if (type == null) {
@@ -1569,7 +1579,7 @@ function createObjectsForm(type, number, loc, form) {
 	   	//get current values from the form
 
 	   		var roleInput;
-	   		alert(loc + 'daogrp[' + number + ']/daoloc[1]/@role');
+
 	   		if (roleInput = document.getElementById(loc + 'daogrp[' + number + ']/daoloc[1]/@role')){
 	   			if (roleInput.value == 'thumb'){
 	   				thumb = document.getElementById(loc + 'daogrp[' + number + ']/daoloc[1]/@href').value;
@@ -1631,8 +1641,10 @@ function createObjectsForm(type, number, loc, form) {
    			tr.appendChild(td);
    			
    			var desc = document.createElement('input');
-   			desc.setAttribute('type', 'text');
-   			desc.onclick = function () {setCurrent(this); },
+   			desc.setAttribute('type', 'text');   			
+			desc.onclick = function () {setCurrent(this); },
+			desc.onkeypress = function () {validateFieldDelay(this, 'true'); },
+			desc.onchange = function () {validateField(this, 'true') },
    			desc.setAttribute('name', loc + 'dao[' + number + ']/daodesc');
    			desc.setAttribute('id', loc + 'dao[' + number + ']/daodesc');
    			desc.setAttribute('size', '70');
@@ -1732,6 +1744,8 @@ function createObjectsForm(type, number, loc, form) {
    			var desc = document.createElement('input');
    			desc.setAttribute('type', 'text');
    			desc.onclick = function () {setCurrent(this); },
+			desc.onkeypress = function () {validateFieldDelay(this, 'true'); },
+			desc.onchange = function () {validateField(this, 'true') },
    			desc.setAttribute('name', loc + 'daogrp[' + number + ']/daodesc');
    			desc.setAttribute('id', loc + 'daogrp[' + number + ']/daodesc');
    			desc.setAttribute('size', '70');
@@ -1847,6 +1861,8 @@ function createObjectsForm(type, number, loc, form) {
    			var desc = document.createElement('input');
    			desc.setAttribute('type', 'text');
    			desc.onclick = function () {setCurrent(this); },
+			desc.onkeypress = function () {validateFieldDelay(this, 'true'); },
+			desc.onchange = function () {validateField(this, 'true') },
    			desc.setAttribute('name', loc + 'daogrp[' + number + ']/daodesc');
    			desc.setAttribute('id', loc + 'daogrp[' + number + ']/daodesc');
    			desc.setAttribute('size', '70');

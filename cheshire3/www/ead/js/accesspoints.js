@@ -126,6 +126,13 @@ function addField(s){
 	tableDnD.init($('table_' + s));
 }
 
+function resetAllAccessPoints(){
+	var accessPoints = ['subject','persname', 'famname', 'corpname', 'geogname', 'title', 'genreform', 'function'];
+	for (var i=0; i< accessPoints.length; i++){
+		resetAccessPoint(accessPoints[i]);
+	}
+}
+
 /*resets the access point back to its original appearance deleting any content, s is the name of the access point ie. persname */
 function resetAccessPoint(s){
 	var tableDiv = ($(s + 'table'));

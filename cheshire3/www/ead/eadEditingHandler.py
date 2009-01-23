@@ -196,6 +196,7 @@ class EadEditingHandler(EadHandler):
         if (loc == 'collectionLevel'):
             validList = [l for l in self.required_xpaths]
             collection = True;
+            #set all the ead header info
             tree = etree.fromstring('<ead><eadheader></eadheader><archdesc></archdesc></ead>')           
             header = tree.xpath('/ead/eadheader')[0]
             target = self._create_path(header, 'eadid')
@@ -218,7 +219,8 @@ class EadEditingHandler(EadHandler):
             self._add_text(target, '%s' % datetime.date.today())
         else :
             validList = [l for l in self.required_xpaths_components]
-            tree = etree.fromstring('<%s c3id="%s"></%s>' % (ctype, loc, ctype))           
+            tree = etree.fromstring('<%s c3id="%s"></%s>' % (ctype, loc, ctype))   
+        #build the rest of the ead        
         list = form.list     
         for field in list :
             if field.name not in ['ctype','location','operation','newForm','owner','recid', 'parent', 'pui', 'eadid', 'filedesc/titlestmt/sponsor'] and field.name.find('daooptns') != 0:        
@@ -366,7 +368,32 @@ class EadEditingHandler(EadHandler):
                 for c in child :
                     parent.remove(c)
             did.remove(parent)
+ 
     
+    def _delete_currentDao(self, startNode):
+        #delete dao from outside did
+        children = startNode.xpath('dao')
+        if len(children) > 0:
+            for c in children :
+                startNode.remove(c)
+        #delete daogrp from outside did
+        children = startNode.xpath('daogrp')
+        if len(children) > 0:
+            for c in children :
+                startNode.remove(c)        
+        
+        did = startNode.xpath('did')[0]
+        #delete dao from inside did
+        children = did.xpath('dao')
+        if len(children) > 0:
+            for c in children :
+                did.remove(c)               
+        #delete daogrp from inside did
+        children = did.xpath('daogrp')
+        if len(children) > 0:
+            for c in children :
+                did.remove(c)   
+                       
       
     def _create_langmaterial(self, startNode, value, name=None):
         if not (startNode.xpath('langmaterial')):
@@ -802,9 +829,10 @@ class EadEditingHandler(EadHandler):
             retrievedXml = retrievedRec.get_xml(session)
             tree = etree.fromstring(retrievedXml)
             node = tree.xpath('/ead/archdesc')[0]         
-            #first delete current accesspoints
+            #first delete current accesspoints, languages and digital objects
             self._delete_currentControlaccess(node)
             self._delete_currentLangmaterial(node)
+            self._delete_currentDao(node)
             #change title in header             
             header = tree.xpath('/ead/eadheader')[0]
             if form.get('filedesc/titlestmt/sponsor', '').value.strip() != '' and form.get('filedesc/titlestmt/sponsor', '').value.strip() != ' ': 
@@ -939,6 +967,7 @@ class EadEditingHandler(EadHandler):
                 #first delete current accesspoints
                 self._delete_currentControlaccess(node)
                 self._delete_currentLangmaterial(node)
+                self._delete_currentDao(node)
                 deleteList = []
                 for field in list :
                     if field.name not in ['ctype','location','operation','newForm','owner','recid', 'parent'] and field.name.find('daooptns') != 0:  
