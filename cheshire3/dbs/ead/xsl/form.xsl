@@ -1998,7 +1998,7 @@
   		</tr>
   		<tr><td class="label">Description: </td>
   			<td>
-  				<input size="70" type="text" onfocus="setCurrent(this);" class="menuField">
+  				<input size="70" type="text" onfocus="setCurrent(this);" class="menuField" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');">
   					<xsl:attribute name="name">
   						<xsl:value-of select="$path"/><xsl:text>dao[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daodesc</xsl:text>
   					</xsl:attribute>
@@ -2070,7 +2070,7 @@
   		</tr>
   		<tr><td class="label">Description: </td>
   			<td>
-  				<input size="70" type="text" onfocus="setCurrent(this);" class="menuField">
+  				<input size="70" type="text" onfocus="setCurrent(this);" class="menuField" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');">
   					<xsl:attribute name="name">
   						<xsl:value-of select="$path"/><xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daodesc</xsl:text>
   					</xsl:attribute>			
@@ -2179,7 +2179,7 @@
   		add another file</a></td></tr>
   		<tr><td class="label">Description of group: </td>
   			<td>
-  				<input size="70" type="text" onfocus="setCurrent(this);" class="menuField">  					
+  				<input size="70" type="text" onfocus="setCurrent(this);" class="menuField" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');">  					
   					<xsl:attribute name="name">
   						<xsl:value-of select="$path"/><xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daodesc</xsl:text>
   					</xsl:attribute>
