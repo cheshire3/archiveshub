@@ -206,7 +206,7 @@ if ('-cluster' in sys.argv):
     session.database = db.id
 
 
-script = '/ead/search/eadSearchHandler'
+script = '/ead/search/'
         
 def cache_html():
     fullTxr = db.get_object(session, 'htmlFullTxr')
