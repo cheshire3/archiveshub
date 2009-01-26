@@ -1075,7 +1075,7 @@ function updateId() {
 					match = false;
 				}
 			}
-			lowerCaseId = lowerCaseId.replace(' ', '').replace('/', '-');
+			lowerCaseId = lowerCaseId.replace(' ', '').replace('/', '-').replace('\\', '-');
 			if (match == true){
 				for (var i=0; i < repositoryCode.length; i++){
 					if (repositoryCode.charAt(i) != lowerCaseId.charAt(i+2)){
