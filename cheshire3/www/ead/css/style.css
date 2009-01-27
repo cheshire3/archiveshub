@@ -242,15 +242,6 @@ a.buttonlink:visited:hover {
 
 /* text and spans */
 
-p {
-	padding: 0 0 0.2em 0;
-	margin: 0.75em 0 0.75em 0;
-}
-
-blockquote {
-	padding-bottom: 0.2em;	
-}
-
 .error { color: #ff0000; }
 .ok { color: #009900;}
 

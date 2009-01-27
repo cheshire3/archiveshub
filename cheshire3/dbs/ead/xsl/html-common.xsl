@@ -1498,6 +1498,12 @@
         </xsl:if>
         <xsl:value-of select="."/>
     </xsl:template>
+    
+    <xsl:template match="blockquote">
+        <blockquote>
+            <xsl:apply-templates/>
+        </blockquote>
+    </xsl:template>
 
 	<xsl:template match="defitem">
 		<xsl:apply-templates/>
