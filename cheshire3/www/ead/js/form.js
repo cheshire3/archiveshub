@@ -1263,7 +1263,7 @@ function checkEditStore(){
 			if ($('countrycode').value != ''){
 				if ($('archoncode').value != ''){
 					if ($('unitid').value != ''){
-						var id = $('countrycode').value.toLowerCase() + $('archoncode').value + $('unitid').value.replace(' ', '').replace('/', '-').toLowerCase();
+						var id = $('countrycode').value.toLowerCase() + $('archoncode').value + $('unitid').value.replace(' ', '').replace('/', '-').replace('\\', '-').toLowerCase();
 						var url = '/ead/edit'
 						var data = 'operation=checkEditId&id=' + encodeURIComponent(id);
 						new Ajax.Request(url, {method: 'get', asynchronous: false, parameters: data, onSuccess: function(transport) { 	    				
@@ -1289,7 +1289,7 @@ function checkId(asynch){
 		if ($('countrycode').value != ''){
 			if ($('archoncode').value != ''){
 				if ($('unitid').value != ''){
-					var id = $('countrycode').value.toLowerCase() + $('archoncode').value + $('unitid').value.replace(' ', '').replace('/', '-').toLowerCase();
+					var id = $('countrycode').value.toLowerCase() + $('archoncode').value + $('unitid').value.replace(' ', '').replace('/', '-').replace('\\', '-').toLowerCase();
 					var url = '/ead/edit'
 					var data = 'operation=checkId&id=' + encodeURIComponent(id) + '&store=recordStore';
 					new Ajax.Request(url, {method: 'get', asynchronous: asynch, parameters: data, onSuccess: function(transport) { 	    				
