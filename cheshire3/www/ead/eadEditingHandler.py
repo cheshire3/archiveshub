@@ -645,7 +645,6 @@ class EadEditingHandler(EadHandler):
         # TODO: handle file not successfully parsed
         if not isinstance(rec, LxmlRecord):
             return rec 
-        
         #add necessary information to record and get id'
         rec1 = self._add_revisionDesc(rec, f)
         rec2 = assignDataIdFlow.process(session, rec1)
@@ -668,7 +667,40 @@ class EadEditingHandler(EadHandler):
         page = page.replace('%PUI%', '<input type="text" onfocus="setCurrent(this);" name="pui" id="pui" size="30" disabled="true" value="%s"/><input type="hidden" id="filename" value="%s"/>' % (recid.encode('ascii'), f))
         page = page.replace('%TOC%', tocTxr.process_record(session, rec2).get_raw(session))
         return page    
-    
+         
+    def upload_local(self, form):
+        f = form.get('filepath', None)
+        self.logger.log('LOADING FROM FILE local file store')
+        if not f or not len(f.value):
+            return self.show_editMenu();
+        ws = re.compile('[\s]+')
+        xml = ws.sub(' ', f.value)
+        rec = self._add_componentIds(self._parse_upload(xml))       
+        # TODO: handle file not successfully parsed
+        if not isinstance(rec, LxmlRecord):
+            return rec 
+        #add necessary information to record and get id'
+        rec1 = assignDataIdFlow.process(session, rec)
+        recid = rec1.id       
+        id = '%s-%s' % (recid, session.user.username.encode('ascii', 'ignore'))
+        rec1.id = id
+        self.logger.log('record has id %s' % recid)
+        #if the file exists in the record store load from there (fixes problems with back button)
+        try:
+            rec1 = editStore.fetch_record(session, id)
+        except:
+        #otherwise store in editing store
+            editStore.store_record(session, rec1)
+#        editStore.commit_storing(session) 
+
+        structure = read_file('ead2002.html')
+        htmlform = formTxr.process_record(session, rec1).get_raw(session)
+        page = structure.replace('%FRM%', htmlform)
+        page = page.replace('%RECID%', '<input type="hidden" id="recid" value="%s"/>' % (recid.encode('ascii')))
+        page = page.replace('%PUI%', '<input type="text" onfocus="setCurrent(this);" name="pui" id="pui" size="30" disabled="true" value="%s"/>' % (recid.encode('ascii')))
+        page = page.replace('%TOC%', tocTxr.process_record(session, rec1).get_raw(session))
+        return page    
+        
     
     def _get_timeStamp(self):
         return time.strftime('%Y-%m-%dT%H%M%S')
@@ -1135,8 +1167,10 @@ class EadEditingHandler(EadHandler):
         editRecid = '%s-%s' % (recid.value, fileOwner)
         
         rec = editStore.fetch_record(session, editRecid)
-        
-        filename = form.get('filename', self._get_filename(rec))
+        try:
+            filename = form.get('filename', self._get_filename(rec))
+        except:
+            filename = None
         if filename == None:
             filename = '%s.xml' % recid
         
@@ -1416,7 +1450,8 @@ class EadEditingHandler(EadHandler):
         tmpl = read_file(templatePath)
         content = None      
         operation = form.get('operation', None)
-        if (operation) :     
+        
+        if (operation) :  
             if (operation == 'add'):  
                 content = self.add_form(form)   
                 self.send_html(content, req)
@@ -1471,6 +1506,9 @@ class EadEditingHandler(EadHandler):
                 self.send_fullHtml(content, req)             
             elif (operation == 'create'):
                 content = self.generate_file(form)
+                self.send_fullHtml(content, req) 
+            elif (operation == 'local'):
+                content = self.upload_local(form)
                 self.send_fullHtml(content, req) 
             editStore.commit_storing(session) 
         else :      

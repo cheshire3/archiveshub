@@ -1174,12 +1174,20 @@ function conflicts(recid){
 }
 
 
-function checkConflicts(){
+function checkConflicts(form){
 	var filepath = null;
-	for (var i=0; i < document.getElementById('sourceDirForm').filepath.length; i++) {
-		if (document.getElementById('sourceDirForm').filepath[i].checked) {
-	      	filepath = document.getElementById('sourceDirForm').filepath[i].value;
+	for (var i=0; i < document.getElementById(form).filepath.length; i++) {
+		if (document.getElementById(form).filepath[i].checked) {
+	      	filepath = document.getElementById(form).filepath[i].value;
 	    }
+	}
+	if (filepath == null && document.getElementById(form).filepath){
+		if (document.getElementById(form).filepath.checked) {
+	      	filepath = document.getElementById(form).filepath.value;
+	    }
+	}
+	if (filepath == null){
+		filepath = document.getElementById('localEdit').value;
 	}
 	if (filepath != null){
 	    var conflict = 'false';
@@ -1202,19 +1210,18 @@ function checkConflicts(){
 			if (response.indexOf('<users>') > -1){
 				users = response.substring(response.indexOf('<users>')+7, response.indexOf('</users>'));
 			}
-
 		}});
 		if (conflict == 'false'){
-			document.sourceDirForm.submit();
+			document.getElementById(form).submit();
 		}
 		else if (overwrite == 'true'){
-			alert('You already have this file open for editing as ' + id + '. Please delete the file currently being edited (right hand column) before reloading from the main database (left hand column)');
+			alert('You already have this file open for editing as ' + id + '. Please delete the file currently in the Draft File Store before reloading');
 			return;			
 		}
 		else if (users != null){
 			var ok = confirmOp('The following users already have this file open for editing\n\n ' + users + '\n\n Are you sure you want to continue?');
 			if (ok){
-				document.sourceDirForm.submit();
+				document.getElementById(form).submit();
 			}
 			else {
 				return;
