@@ -13,7 +13,7 @@
 //
 // Version History:
 // 0.01 - 28/07/2008 - JH - functions scripted
-//
+// 0.02 - 28/01/2009 - JH - useability tweaks
 */
 
 function createXMLHttpRequest() {
@@ -40,11 +40,10 @@ function createXMLHttpRequest() {
 	return xmlHttp;
 }
 
-
 function updateElementByUrl(id, url) {
 	if( !document.getElementById) {
 		window.alert("Your browser does not support functions essential for updating this page with AJAX!")
-		return;
+		return true;
 	}
 	var el = document.getElementById(id);
 	// first obscure target to avoid repeat clicks
@@ -52,7 +51,7 @@ function updateElementByUrl(id, url) {
 	var xmlHttp = createXMLHttpRequest();
 	if (xmlHttp==null) {
 		alert ("Your browser does not support AJAX!");
-		return;
+		return true;
 	}
 	xmlHttp.onreadystatechange=function() {
 		if(xmlHttp.readyState==4) {
@@ -68,13 +67,12 @@ function updateElementByUrl(id, url) {
 	}
 	xmlHttp.open("GET",url,true);
   	xmlHttp.send(null);
+  	return false;
 }
-
 
 function displayLoading(el) {
 	el.innerHTML = '<div class="loading"><img src="/images/ajax-loader.gif" alt=""/></div>';
 }
-
 
 function ajaxifyLinks(el){
 	if( !el.getElementsByTagName) {
@@ -88,14 +86,14 @@ function ajaxifyLinks(el){
 				var hrefParts = this.getAttribute("href").split("#")
 				var div = hrefParts.pop()
 				hrefParts.push("&ajax=1")
-				updateElementByUrl(div, hrefParts.join(""));
-				return false;
+				return updateElementByUrl(div, hrefParts.join(""));
+				
 			}
 		}
 	}
 }
 
-olf = function() { ajaxifyLinks(document); };
+olf = function() { ajaxifyLinks(document);};
 if (addLoadEvent) {
 	addLoadEvent(olf);
 } else {

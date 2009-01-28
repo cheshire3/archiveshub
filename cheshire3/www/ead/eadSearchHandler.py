@@ -157,9 +157,9 @@ class EadSearchHandler(EadHandler):
                 elif (not w[0].isalpha()) and w[1].isdigit():
                     continue
                 elif (w[-2:] == "'s"):
-                    words[x] = w[:-2].title() + "'s"
+                    words[x] = w[:-2].capitalize() + "'s"
                 elif (x == 0) or (w not in stopwords):
-                    words[x] = w.title()
+                    words[x] = w.capitalize()
             except IndexError:
                 continue
             
@@ -553,18 +553,15 @@ class EadSearchHandler(EadHandler):
         else: ajax = False
         qString = '%s %s "%s"' % (idx, rel, scanTerm)
         try:
-            #scanClause = CQLParser.parse(qString)
             scanClause = queryFactory.get_query(session, qString, format="cql")
         except:
-            #qString = generate_cqlQuery(form)
             try:
-                #scanClause = CQLParser.parse(qString)
                 scanClause = queryFactory.get_query(session, form, format="www")
             except:
                 self.logger.log('Unparsable query: %s' % qString)
                 self.htmlTitle.append('Error')
                 return '<div id="browseresult"><p class="error">Invalid CQL query:<br/>%s</p></div>' % (qString)
-            
+        
         self.htmlTitle.append('Browse Indexes')
         self.logger.log('Browsing for "%s"' % (qString))
 
@@ -597,20 +594,15 @@ class EadSearchHandler(EadHandler):
                 scanData = []
             # ... then down
             try:
-                
                 scanData1 = db.scan(session, scanClause, (numreq-rp+1)+1, direction=">=")
             except:
                 scanData1 = []
             
+            if (len(scanData1) < (numreq-rp+1)+1): hitend = True
+            else: scanData1.pop(-1)
             
-            if (len(scanData1) < (numreq-rp+1)+1):
-                hitend = True
-            else:
-                scanData1.pop(-1)
-            if (len(scanData) < rp+1):
-                hitstart = True
-            else:
-                scanData.pop(-1)
+            if (len(scanData) < rp+1): hitstart = True
+            else: scanData.pop(-1)
             # try to stick them together
             try:
                 if scanData1[0][0] == scanData[0][0]:
@@ -639,8 +631,9 @@ class EadSearchHandler(EadHandler):
                 prevlink = ''.join(prevlink)
                 rows.append('<tr class="odd"><td colspan="2">%s</td></tr>' % prevlink)
                 
-            rows.append('<tr class="headrow"><td>%s</td><td>Records</td></tr>' % (idx[idx.find('.')+1:].title()))
-
+            idxName = idx[idx.find('.')+1:]
+            idxName = idxName[0].upper() + idxName[1:]
+            rows.append('<tr class="headrow"><td>%s</td><td>Records</td></tr>' % (idxName))
             dodgyTerms = []
             for i in range(len(scanData)):
                 item = scanData[i]

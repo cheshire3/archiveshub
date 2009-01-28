@@ -53,7 +53,7 @@ graphical_relevance = False
 cheshirePath = os.environ.get('C3HOME', '/home/cheshire/cheshire3/')
 
 # Institutionally specific configurables
-repository_name = "Cheshire for Archives 3.4 Development"
+repository_name = "Cheshire for Archives v3.4 Development"
 repository_link = "http://www.archiveshub.ac.uk"                        # must begin http://
 repository_logo = "http://www.archiveshub.ac.uk/loopsmall2.gif"             # should begin http:// unless on this server
 
