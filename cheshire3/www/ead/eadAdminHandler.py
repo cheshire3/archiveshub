@@ -294,7 +294,8 @@ class EadAdminHandler(EadHandler):
                   '%SUPERUSER%' : ''
                   }
         self.htmlTitle.append('User Management')
-        lines = ['<table>',
+        lines = ['<div id="single">',
+                 '<table>',
                  '<tr class="headrow"><td>Username</td><td>Real Name</td><td>Email Address</td><td>Telephone</td><td>Operations</tr>']
 
         self.logger.log(session.user.address)
@@ -313,8 +314,9 @@ class EadAdminHandler(EadHandler):
         lines.append('</table><br/>')
         if (session.user.has_flag(session, 'info:srw/operation/1/create', 'eadAuthStore')):
             lines.extend(['<h3 class="bar">Add New User</h3>',
-                      multiReplace(read_file('adduser.html'), values),])
-                                                                
+                          multiReplace(read_file('adduser.html'), values)
+                        ])
+        lines.append('</div> <!-- end single div -->')
         return '\n'.join(lines)
         #- end list_users()
  
@@ -1404,7 +1406,7 @@ class EadAdminHandler(EadHandler):
         except: 
             self.htmlTitle.append('Error')
             self.logger.log('No logfile present at %s' % (logpath + '/' +  file))
-            return 'No logfile present at specified location <code>%s</code>' % (logpath + '/' +  file)
+            return '<div id="single">No logfile present at specified location <code>%s</code></div>' % (logpath + '/' +  file)
         try: 
             filestarted = firstlog_re.search(allstring).group(1)
         except: 
@@ -1440,7 +1442,7 @@ class EadAdminHandler(EadHandler):
         else :
             rows.append('<h3>Period covered: None</h3>')
         
-        rows.extend(['<table class="stats" width="100%%">',
+        rows.extend(['<table class="stats" width="95%%">',
                '<tr class="headrow"><th>Operation</th><th>Requests</th><th>Avg Time (secs)</th></tr>'])
                
         singlelogs = loginstance_re.findall(allstring)
