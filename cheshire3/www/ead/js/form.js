@@ -145,7 +145,7 @@ function submit(index){
     	alert('Please fix the errors in the xml before submitting. Errors will be marked with red shading in the text box.');
     	return;
     }
-    //check the daoform details   
+        //check the daoform details   
     var daodiv = document.getElementById('digitalobjectssection');
     var divs = daodiv.getElementsByTagName('div');
     
@@ -183,25 +183,36 @@ function submit(index){
     		var problems = false;
     		var list = new Array();
     		for (var i = number; i < length-1; i+=2){
-				if (inputs[i].value.strip() == '' && (inputs[i+1].value.strip() != '' || inputs[length-1].value.strip() != '')){
+				if (inputs[i].value.strip() == '' && inputs[i+1].value.strip() != ''){ 
 					list[list.length] = i;
 					problems = true;
 				}
-				if (problems == true){
-	    			var confirmbox = confirm('At least one of File URI values required for the digital object has not been completed. If you proceed with this operation any incomplete URIs will not be included and the title and/or description information relating to the missing URI will be lost. All other content will be saved.\n\nDo you want to continue?');
-	    			if (confirmbox == false){
-	    				return;
-	    			}
-	    			else{
-	    				for (var j = 0; j < list.length; j++){
-	    					inputs[list[j]+1].value = '';
-	    				}
-						if (list.length == number){
-							inputs[length-1].value = '';
+			}
+			if (problems == false){
+				if ((inputs[length-1].value.strip() != '' || inputs[length-1].value.strip() != '<p></p>' || inputs[length-1].value.strip().replace(/[\s]+/g, ' ') != '<p> </p>')){
+					var entries = false;
+					for (var i = number; i < length-1; i+=2){
+						if (inputs[i].value.strip() != ''){
+							entries = true;
 						}
-	    			}
+					}
+					if (entries == false){	
+						problems = true;
+					}				
+				}
+			}
+			if (problems == true){
+    			var confirmbox = confirm('At least one of File URI values required for the digital object has not been completed. If you proceed with this operation any incomplete URIs will not be included and the title and/or description information relating to the missing URI will be lost. All other content will be saved.\n\nDo you want to continue?');
+    			if (confirmbox == false){
+    				return;
     			}
-    		}    		
+    			else{
+    				for (var j = 0; j < list.length; j++){
+    					inputs[list[j]+1].value = '';
+    				}
+					inputs[length-1].value = '<p></p>';
+    			}
+   			}    		   		
     	}
     }
 	saveForm(false);
@@ -330,7 +341,7 @@ function save(){
     		var problems = false;
     		var list = new Array();
     		for (var i = number; i < length-1; i+=2){
-				if (inputs[i].value.strip() == '' && inputs[i+1].value.strip() != ''){ //|| inputs[length-1].value.strip() != '')){
+				if (inputs[i].value.strip() == '' && inputs[i+1].value.strip() != ''){ 
 					list[list.length] = i;
 					problems = true;
 				}
@@ -591,26 +602,37 @@ function addComponent(){
     		var problems = false;
     		var list = new Array();
     		for (var i = number; i < length-1; i+=2){
-				if (inputs[i].value.strip() == '' && (inputs[i+1].value.strip() != '' || inputs[length-1].value.strip() != '')){
+				if (inputs[i].value.strip() == '' && inputs[i+1].value.strip() != ''){ 
 					list[list.length] = i;
 					problems = true;
 				}
-				if (problems == true){
-	    			var confirmbox = confirm('At least one of File URI values required for the digital object has not been completed. If you proceed with this operation any incomplete URIs will not be included and the title and/or description information relating to the missing URI will be lost. All other content will be saved.\n\nDo you want to continue?');
-	    			if (confirmbox == false){
-	    				body.className = 'none';
-	    				return;
-	    			}
-	    			else{
-	    				for (var j = 0; j < list.length; j++){
-	    					inputs[list[j]+1].value = '';
-	    				}
-						if (list.length == number){
-							inputs[length-1].value = '';
+			}
+			if (problems == false){
+				if ((inputs[length-1].value.strip() != '' || inputs[length-1].value.strip() != '<p></p>' || inputs[length-1].value.strip().replace(/[\s]+/g, ' ') != '<p> </p>')){
+					var entries = false;
+					for (var i = number; i < length-1; i+=2){
+						if (inputs[i].value.strip() != ''){
+							entries = true;
 						}
-	    			}
+					}
+					if (entries == false){	
+						problems = true;
+					}				
+				}
+			}
+			if (problems == true){
+    			var confirmbox = confirm('At least one of File URI values required for the digital object has not been completed. If you proceed with this operation any incomplete URIs will not be included and the title and/or description information relating to the missing URI will be lost. All other content will be saved.\n\nDo you want to continue?');
+    			if (confirmbox == false){
+    				body.className = 'none';
+    				return;
     			}
-    		}    		
+    			else{
+    				for (var j = 0; j < list.length; j++){
+    					inputs[list[j]+1].value = '';
+    				}
+					inputs[length-1].value = '<p></p>';
+    			}
+   			}    		   		
     	}
     }
 	//update the menu bar first
@@ -809,7 +831,7 @@ function viewXml(){
     	alert('Please fix the errors in the xml before viewing. Errors will be marked with red shading in the text box.');
     	return;
     } 
-    //check the daoform details   
+        //check the daoform details   
     var daodiv = document.getElementById('digitalobjectssection');
     var divs = daodiv.getElementsByTagName('div');
     
@@ -847,25 +869,36 @@ function viewXml(){
     		var problems = false;
     		var list = new Array();
     		for (var i = number; i < length-1; i+=2){
-				if (inputs[i].value.strip() == '' && (inputs[i+1].value.strip() != '' || inputs[length-1].value.strip() != '')){
+				if (inputs[i].value.strip() == '' && inputs[i+1].value.strip() != ''){ 
 					list[list.length] = i;
 					problems = true;
 				}
-				if (problems == true){
-	    			var confirmbox = confirm('At least one of File URI values required for the digital object has not been completed. If you proceed with this operation any incomplete URIs will not be included and the title and/or description information relating to the missing URI will be lost. All other content will be saved.\n\nDo you want to continue?');
-	    			if (confirmbox == false){
-	    				return;
-	    			}
-	    			else{
-	    				for (var j = 0; j < list.length; j++){
-	    					inputs[list[j]+1].value = '';
-	    				}
-						if (list.length == number){
-							inputs[length-1].value = '';
+			}
+			if (problems == false){
+				if ((inputs[length-1].value.strip() != '' || inputs[length-1].value.strip() != '<p></p>' || inputs[length-1].value.strip().replace(/[\s]+/g, ' ') != '<p> </p>')){
+					var entries = false;
+					for (var i = number; i < length-1; i+=2){
+						if (inputs[i].value.strip() != ''){
+							entries = true;
 						}
-	    			}
+					}
+					if (entries == false){	
+						problems = true;
+					}				
+				}
+			}
+			if (problems == true){
+    			var confirmbox = confirm('At least one of File URI values required for the digital object has not been completed. If you proceed with this operation any incomplete URIs will not be included and the title and/or description information relating to the missing URI will be lost. All other content will be saved.\n\nDo you want to continue?');
+    			if (confirmbox == false){
+    				return;
     			}
-    		}    		
+    			else{
+    				for (var j = 0; j < list.length; j++){
+    					inputs[list[j]+1].value = '';
+    				}
+					inputs[length-1].value = '<p></p>';
+    			}
+   			}    		   		
     	}
     }
 	saveForm(false);
@@ -890,7 +923,7 @@ function previewRec(){
     	alert('Please fix the errors in the xml before viewing. Errors will be marked with red shading in the text box.');
     	return;
     } 
-    //check the daoform details   
+        //check the daoform details   
     var daodiv = document.getElementById('digitalobjectssection');
     var divs = daodiv.getElementsByTagName('div');
     
@@ -928,25 +961,36 @@ function previewRec(){
     		var problems = false;
     		var list = new Array();
     		for (var i = number; i < length-1; i+=2){
-				if (inputs[i].value.strip() == '' && (inputs[i+1].value.strip() != '' || inputs[length-1].value.strip() != '')){
+				if (inputs[i].value.strip() == '' && inputs[i+1].value.strip() != ''){ 
 					list[list.length] = i;
 					problems = true;
 				}
-				if (problems == true){
-	    			var confirmbox = confirm('At least one of File URI values required for the digital object has not been completed. If you proceed with this operation any incomplete URIs will not be included and the title and/or description information relating to the missing URI will be lost. All other content will be saved.\n\nDo you want to continue?');
-	    			if (confirmbox == false){
-	    				return;
-	    			}
-	    			else{
-	    				for (var j = 0; j < list.length; j++){
-	    					inputs[list[j]+1].value = '';
-	    				}
-						if (list.length == number){
-							inputs[length-1].value = '';
+			}
+			if (problems == false){
+				if ((inputs[length-1].value.strip() != '' || inputs[length-1].value.strip() != '<p></p>' || inputs[length-1].value.strip().replace(/[\s]+/g, ' ') != '<p> </p>')){
+					var entries = false;
+					for (var i = number; i < length-1; i+=2){
+						if (inputs[i].value.strip() != ''){
+							entries = true;
 						}
-	    			}
+					}
+					if (entries == false){	
+						problems = true;
+					}				
+				}
+			}
+			if (problems == true){
+    			var confirmbox = confirm('At least one of File URI values required for the digital object has not been completed. If you proceed with this operation any incomplete URIs will not be included and the title and/or description information relating to the missing URI will be lost. All other content will be saved.\n\nDo you want to continue?');
+    			if (confirmbox == false){
+    				return;
     			}
-    		}    		
+    			else{
+    				for (var j = 0; j < list.length; j++){
+    					inputs[list[j]+1].value = '';
+    				}
+					inputs[length-1].value = '<p></p>';
+    			}
+   			}    		   		
     	}
     }
 	saveForm(false);
@@ -1158,6 +1202,10 @@ function conflicts(recid){
 		var url = '/ead/edit'
 		var data = 'operation=checkId&id=' + encodeURIComponent(recid) + '&store=editStore';
 		new Ajax.Request(url, {method: 'get', asynchronous: false, parameters: data, onSuccess: function(transport) { 
+			if (response.substring(0, 4) == "<!--"){
+				alert('A problem occurred when trying to perform this operation. Please check that the spoke is responding to searches before trying again.');
+				return;
+			}
 			var response = transport.responseText;
 			conflict = response.substring(7,response.indexOf('</value>'));
 		}});
@@ -1174,7 +1222,45 @@ function conflicts(recid){
 }
 
 
-function checkConflicts(form){
+function checkRecordStoreConficts(form){
+	var filepath = null;
+	for (var i=0; i < document.getElementById(form).filepath.length; i++) {
+		if (document.getElementById(form).filepath[i].checked) {
+	      	filepath = document.getElementById(form).filepath[i].value;
+	    }
+	}
+	if (filepath == null && document.getElementById(form).filepath){
+		if (document.getElementById(form).filepath.checked) {
+	      	filepath = document.getElementById(form).filepath.value;
+	    }
+	}
+	if (filepath == null){
+		filepath = document.getElementById('localEdit').value;
+	}	
+	if (filepath != null){
+	 	var conflict = 'false';
+		var url = '/ead/edit'
+		var data = 'operation=getCheckRecStoreId&filepath=' + filepath;
+		new Ajax.Request(url, {method: 'get', asynchronous: false, parameters: data, onSuccess: function(transport) { 
+			var response = transport.responseText;	
+			if (response.substring(0, 4) == "<!--"){
+				alert('A problem occurred when trying to perform this operation. Please check that the spoke is responding to searches before trying again.');
+				return;
+			}
+			conflict = response.substring(response.indexOf('<value>')+7, response.indexOf('</value>'));
+		}});
+		if (conflict == 'false'){
+			checkEditStoreConflicts(form);
+		}
+		else {
+			alert('A file with the same ID as the file you are trying to upload already exists in your spokes database. In order to edit this file you must import it from the spoke database rather than uploading from your local file store.');
+			return;	
+		}
+	}	
+}
+
+
+function checkEditStoreConflicts(form){
 	var filepath = null;
 	for (var i=0; i < document.getElementById(form).filepath.length; i++) {
 		if (document.getElementById(form).filepath[i].checked) {
@@ -1198,7 +1284,8 @@ function checkConflicts(form){
 		new Ajax.Request(url, {method: 'get', asynchronous: false, parameters: data, onSuccess: function(transport) { 
 			var response = transport.responseText;
 			if (response.substring(0, 4) == "<!--"){
-				document.sourceDirForm.submit();
+				alert('A problem occurred when trying to perform this operation. Please check that the spoke is responding to searches before trying again.');
+				return;
 			}			
 			conflict = response.substring(response.indexOf('<value>')+7, response.indexOf('</value>'));
 			if (response.indexOf('<overwrite>') > -1){
@@ -1274,6 +1361,10 @@ function checkEditStore(){
 						var url = '/ead/edit'
 						var data = 'operation=checkEditId&id=' + encodeURIComponent(id);
 						new Ajax.Request(url, {method: 'get', asynchronous: false, parameters: data, onSuccess: function(transport) { 	    				
+						    if (response.substring(0, 4) == "<!--"){
+								alert('A problem occurred when trying to perform this operation. Please check that the spoke is responding to searches before trying again.');
+								return;
+							}						    
 						    var response = transport.responseText;
 						    idExists = response.substring(response.indexOf('<value>')+7, response.indexOf('</value>'));	
 						    if (idExists == 'true'){
@@ -1300,6 +1391,10 @@ function checkId(asynch){
 					var url = '/ead/edit'
 					var data = 'operation=checkId&id=' + encodeURIComponent(id) + '&store=recordStore';
 					new Ajax.Request(url, {method: 'get', asynchronous: asynch, parameters: data, onSuccess: function(transport) { 	    				
+					    if (response.substring(0, 4) == "<!--"){
+							alert('A problem occurred when trying to perform this operation. Please check that the spoke is responding to searches before trying again.');
+							return;
+						}
 					    var response = transport.responseText;
 					    idExists = response.substring(7,response.indexOf('</value>'));					    
 					    if (idExists == 'true' && !($('idError'))){
