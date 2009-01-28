@@ -1,4 +1,4 @@
-<div id="single">
+<div id="leftcol">
     <script type="text/javascript" src="/ead/js/prototype.js"></script>
 	<script type="text/javascript" src="/ead/js/form.js"></script>
     <script type="text/javascript" src="/ead/js/collapsibleLists.js"></script>
@@ -20,30 +20,31 @@
     -->
     </script>
      <noscript><h2 style="color:red;">Javascript must be enabled to use the Archives Hub Data Creation and Editing Tool</h2></noscript>
-    <h3 class="bar">Create New EAD Description</h3>
+    <h3 class="bar">Create</h3>
      <form name="createform" action="/ead/edit/" method="get">
     	<input type="hidden" name="operation" value="create"/>
-    	<p>Use this data creation template to create a new collection-level description.</p>
-    	<p>Note: The reference number for each field refers to the corresponding ISAD(G) rule.</p>  
+    	<p>Use this data creation template to create a new collection-level description.</p>  
     	<input type="submit" value=" Create File " disabled="true"/>
     	
     </form>
-    <h3 class="bar">Edit Existing EAD Description from Local File System</h3>
+    <h3 class="bar">Edit</h3>
     <form id="localEditForm" name="localEditForm" action="/ead/edit/" method="post" enctype="multipart/form-data">
+ 		
     	<input type="hidden" name="operation" value="local"/>
+    	<p><b>Upload a file from my hard drive to begin editing.</b></p>
     	<p>
     		File to edit:
-    		<input id="localEdit" type="file" name="filepath" size="80"/>
+    		<input id="localEdit" type="file" name="filepath" size="50"/>
     	</p>
-    	<input type="button" value=" Edit Local File " onclick="checkConflicts('localEditForm');" disabled="true"/>
+    	<input type="button" value=" Edit Local File " onclick="checkRecordStoreConficts('localEditForm');" disabled="true"/>
     </form>  
-    <h3 class="bar">Edit Existing EAD Description from Database</h3>
+    <br/>
+    <br/>
     <div style="float: left; padding-right:50px;">
-    	<h4>Database Files</h4>
-        <p><b>Import a file for editing from the main database</b></p>
+        <p><b>Import a file from the spoke database to begin editing</b></p>
         <form id="sourceDirForm" name="sourceDirForm" action="/ead/edit/" method="get">
         <input type="hidden" name="operation" value="edit"/>
-        <input type="button" onclick="checkConflicts('sourceDirForm');" value=" Edit File "  disabled="true"/>
+        <input type="button" onclick="checkEditStoreConflicts('sourceDirForm');" value=" Edit Spoke File "  disabled="true"/>
         <ul class="unmarked">
         	<li><img src="/images/folderOpen.jpg" alt=""/><code>%%%SOURCEDIR%%%</code>
     	    <ul id="sourceDirTree" class="unmarked">
@@ -51,11 +52,13 @@
     	    </ul>
         	</li>
         </ul>
-        <input type="button" onclick="checkConflicts('sourceDirForm');" value=" Edit File "  disabled="true"/>
+        <input type="button" onclick="checkEditStoreConflicts('sourceDirForm');" value=" Edit Spoke File "  disabled="true"/>
         </form>
     </div>
-    <div style="float: left">
-    	<h4>Draft Store Files</h4>
+</div> 
+
+<div id="rightcol">
+    	<h3 class="bar">Draft Files</h4>
         <p><b>Open a file to continue editing</b></p>
         <form name="storeDirForm" id="storeDirForm" action="/ead/edit/" method="get">
         <input type="hidden" name="operation" value="load"/>
@@ -73,5 +76,4 @@
         <input type="submit" value=" Edit File "  disabled="true"/>
         <input type="button" onclick="deleteFromStore()" value=" Delete "  disabled="true"/>
         </form>
-    </div>
-</div> <!-- end single div -->
+</div>

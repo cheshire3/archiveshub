@@ -12,21 +12,26 @@
 						<a href="#existing" title="Jump to help on editing an existing file">Editing an Existing File</a>
 						<ul>
 							<li>
-								<a href="#datadir" title="Jump to help on editing files from the database">Editing Files from the Database</a>
+								<a href="#localdir" title="Jump to help on editing files from the a local drive">Editing Files from a Local Drive</a>
 							</li>
 							<li>
-								<a href="#draft" title="Jump to help on editing files from the draft file store">Editing Files from the Draft File Store</a>
+								<a href="#datadir" title="Jump to help on editing files from the spokedatabase">Editing Files from the Spoke Database</a>
 							</li>
 						</ul>
 					</li>
 					<li>
-						<a href="#draftops" title="Jump to help on the user operations in the draft file store">Draft File Store User Operations</a>
-						<li>	
-							<a href="#draftdel" title="Jump to help on deleting draft files">Deleting Draft Files</a>
-						</li>
-						<li>
-							<a href="#draftassign" title="Jump to help on reassigning draft files">Reassigning Draft Files (Administrative Users Only)</a>
-						</li>
+						<a href="#draft" title="Jump to help on editing files from the draft file store">Editing Files from the Draft File Store</a>					
+						<ul>
+							<li>
+								<a href="#draftops" title="Jump to help on the user operations in the draft file store">Draft File Store User Controls</a>
+								<li>	
+									<a href="#draftdel" title="Jump to help on deleting draft files">Deleting Draft Files</a>
+								</li>
+								<li>
+									<a href="#draftassign" title="Jump to help on reassigning draft files">Reassigning Draft Files (Administrative Users Only)</a>
+								</li>
+							</li>
+						</ul>
 					</li>
 				</ul>
 			</li>
@@ -124,11 +129,29 @@
 			<a name="existing"> </a>
 			<h4>Editing an Existing File</h4>
 			<p>
-				Existing files can be loaded into the editing interface from two locations. The data directory of 
-				your spoke database or the draft file store. 
+				Existing files can be loaded into the editing interface from two locations. A local drive on the machine you are using or the data directory of 
+				your spoke database. 
 			</p>
+				<a name="localdir"> </a>
+				<h5>Editing Files from a Local Drive</h5>
+				<p>
+					Using the browse button you can select a file from a local drive on the computer you are using.
+					When you click 'edit local file' the data is shown
+					in the editing form at the same time a copy will be saved in the draft file store. You are not
+					able to load a file for editing if there is already a copy assigned to your username in the 
+					draft file store. If you want to start editing a file again and overwrite the changes you have 
+					already made in the draft file store you must first delete the copy in the draft file store 
+					(see <a href="#draftdel">deleting a file from the draft file store</a>).
+					You will be alerted if you try and edit a file from the database if another user has already
+					started editing it and has a copy in the draft file store. 					 
+				</p>				
+				<p>
+					When the file is exported it behaves as a new file (see <a href="#create">creating a new file</a>)
+				</p>
+				
+				
 				<a name="datadir"> </a>
-				<h5>Editing Files from the Database</h5>
+				<h5>Editing Files from the Spoke Database</h5>
 				<p>
 					The main editing menu provides a list of all the files currently in your data directory. They will
 					be listed by file name (which can be changed in the admin interface). 
@@ -151,16 +174,16 @@
 					in the live search data on your spoke (see <a href="#database">export to database and file</a>)
 				</p>
 				<a name="draft"> </a>
-				<h5>Editing Files from the Draft File Store</h5>
+				<h4>Editing Files from the Draft File Store</h5>
 				<p>
 					The main editing menu provides a list of all the files currently in your draft file store.
 					They are listed by user and only Administrative users can edit files belonging to other users.
 					All the files in the draft file store will at some point have been created as new files or
 					loaded in from the database and on export they will behave in the appropriate manner
-					(see <a href="#create">creating a new file</a> and <a href="#datadir">editing files from the database</a>).
+					(see <a href="#create">creating a new file</a> and <a href="#existing">editing files an exisiting file</a>).
 				</p>
 			<a name="draftops"> </a>
-			<h4>Draft File Store User Operations</h4>
+			<h5>Draft File Store User Controls</h5>
 			<p>
 				The same two types of user are important in the data creation and editing interface as in the
 				administration interface. General users can only edit and export files from the draft files store which are 

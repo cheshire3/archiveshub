@@ -708,23 +708,39 @@ class EadEditingHandler(EadHandler):
     
 # Validation related functions   ================================================================================== 
     
+    def getAndCheckRecStoreId(self, form):
+        f = form.get('filepath', None)
+        if not f or not len(f.value):
+            #TODO: create appropriate html file - this is for admin
+            return '<value>false</value>'
+        ws = re.compile('[\s]+')
+        xml = ws.sub(' ', read_file(f))
+        rec = self._parse_upload(xml)
+        # TODO: handle file not successfully parsed
+        if not isinstance(rec, LxmlRecord):
+            return '<value>false</value>'
+        
+        rec = assignDataIdFlow.process(session, rec)
+        exists = False
+        for r in recordStore:
+            if r.id == rec.id :
+                exists = True
+        if exists == True:
+            return '<value>true</value>'
+        else:
+            return '<value>false</value>'
+         
     
     def getAndCheckId(self, form):
         f = form.get('filepath', None)
         if not f or not len(f.value):
-            #TODO: create appropriate html file - this is for admin
-            return read_file('upload.html')
+            return '<value>false</value>'
         ws = re.compile('[\s]+')
         xml = ws.sub(' ', read_file(f))
-        rec = self._add_componentIds(self._parse_upload(xml))
+        rec = self._parse_upload(xml)
                 
-        # TODO: handle file not successfully parsed
         if not isinstance(rec, LxmlRecord):
-            return rec
-        
-        val = self._validate_isadg(rec)
-        if (val): return val
-        del val      
+            return '<value>false</value>'
         
         rec = assignDataIdFlow.process(session, rec)
         names = []
@@ -1483,6 +1499,9 @@ class EadEditingHandler(EadHandler):
                 self.send_xml(content, req)
             elif (operation == 'checkEditId'):
                 content = self.checkEditId(form)
+                self.send_xml(content, req)
+            elif (operation == 'getCheckRecStoreId'):
+                content = self.getAndCheckRecStoreId(form)
                 self.send_xml(content, req)
             elif (operation == 'getCheckId'):
                 content = self.getAndCheckId(form)
