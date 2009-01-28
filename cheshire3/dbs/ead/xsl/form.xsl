@@ -1101,7 +1101,8 @@
 								</xsl:attribute>
 								<xsl:call-template name="multiple">
 									<xsl:with-param name="number" select="position()"/>	
-									<xsl:with-param name="form" select="'daogrp'"/>								
+									<xsl:with-param name="form" select="'daogrp'"/>		
+									<xsl:with-param name="path" select="''"/>						
 								</xsl:call-template>
 							</div>
 						</xsl:otherwise>
@@ -2174,7 +2175,7 @@
   		</xsl:for-each> 		
   		<tr><td></td><td><a class="smalllink">
   		<xsl:attribute name="onclick">
-  			<xsl:text>addFile(</xsl:text><xsl:value-of select="$number"/><xsl:text>, </xsl:text><xsl:value-of select="$path"/><xsl:text>, </xsl:text><xsl:value-of select="$form"/><xsl:text>);</xsl:text>
+  			<xsl:text>addFile(</xsl:text><xsl:value-of select="$number"/><xsl:text>, '</xsl:text><xsl:value-of select="$path"/><xsl:text>', '</xsl:text><xsl:value-of select="$form"/><xsl:text>');</xsl:text>
   		</xsl:attribute>		
   		add another file</a></td></tr>
   		<tr><td class="label">Description of group: </td>
