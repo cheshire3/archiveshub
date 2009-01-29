@@ -1222,7 +1222,7 @@ function conflicts(recid){
 }
 
 
-function checkRecordStoreConficts(form){
+/*function checkRecordStoreConficts(form){
 	var filepath = null;
 	for (var i=0; i < document.getElementById(form).filepath.length; i++) {
 		if (document.getElementById(form).filepath[i].checked) {
@@ -1241,7 +1241,7 @@ function checkRecordStoreConficts(form){
 	 	var conflict = 'false';
 		var url = '/ead/edit'
 		var data = 'operation=getCheckRecStoreId&filepath=' + filepath;
-		new Ajax.Request(url, {method: 'get', asynchronous: false, parameters: data, onSuccess: function(transport) { 
+		new Ajax.Request(url, {method: 'post', asynchronous: false, parameters: data, onSuccess: function(transport) { 
 			var response = transport.responseText;	
 			if (response.substring(0, 4) == "<!--"){
 				alert('A problem occurred when trying to perform this operation. Please check that the spoke is responding to searches before trying again.');
@@ -1257,7 +1257,7 @@ function checkRecordStoreConficts(form){
 			return;	
 		}
 	}	
-}
+}*/
 
 
 function checkEditStoreConflicts(form){

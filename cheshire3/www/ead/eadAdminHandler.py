@@ -295,7 +295,8 @@ class EadAdminHandler(EadHandler):
                   '%SUPERUSER%' : ''
                   }
         self.htmlTitle.append('User Management')
-        lines = ['<table>',
+        lines = ['<h3 class="bar">Current Users </h3>'
+                 '<table>',
                  '<tr class="headrow"><td>Username</td><td>Real Name</td><td>Email Address</td><td>Telephone</td><td>Operations</tr>']
 
         self.logger.log(session.user.address)
@@ -313,7 +314,7 @@ class EadAdminHandler(EadHandler):
             lines.append('<tr class="%s">%s</tr>' % (rowclass, cells))
         lines.append('</table><br/>')
         if (session.user.has_flag(session, 'info:srw/operation/1/create', 'eadAuthStore')):
-            lines.extend(['<h3 class="bar">Add New User</h3>',
+            lines.extend(['<h3 class="bar">Add New User <a href="/ead/admin/help.html#users" title="What is this?"><img src="/images/whatisthis.gif" alt="[What is this?]"/></a></h3>',
                           multiReplace(read_file('adduser.html'), values)
                         ])
         return '\n'.join(lines)

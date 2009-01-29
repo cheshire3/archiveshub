@@ -681,25 +681,40 @@ class EadEditingHandler(EadHandler):
             return rec 
         #add necessary information to record and get id'
         rec1 = assignDataIdFlow.process(session, rec)
-        recid = rec1.id       
-        id = '%s-%s' % (recid, session.user.username.encode('ascii', 'ignore'))
-        rec1.id = id
-        self.logger.log('record has id %s' % recid)
-        #if the file exists in the record store load from there (fixes problems with back button)
-        try:
-            rec1 = editStore.fetch_record(session, id)
-        except:
-        #otherwise store in editing store
-            editStore.store_record(session, rec1)
-#        editStore.commit_storing(session) 
-
-        structure = read_file('ead2002.html')
-        htmlform = formTxr.process_record(session, rec1).get_raw(session)
-        page = structure.replace('%FRM%', htmlform)
-        page = page.replace('%RECID%', '<input type="hidden" id="recid" value="%s"/>' % (recid.encode('ascii')))
-        page = page.replace('%PUI%', '<input type="text" onfocus="setCurrent(this);" name="pui" id="pui" size="30" disabled="true" value="%s"/>' % (recid.encode('ascii')))
-        page = page.replace('%TOC%', tocTxr.process_record(session, rec1).get_raw(session))
-        return page    
+        recid = rec1.id   
+        
+        idCheck = self.checkExistingId(rec1.id)
+        if idCheck[0] == True:
+            if idCheck[1] == 'recordStore':
+                 self.logger.log('Already in database')
+                 return '<p>The file you have requested cannot be uplaoaded because a file with the same ID already exists in your spoke database. <br /><br />In order to edit this file you must import it from the spoke database rather than uploading from your local file store.</p><br /><a href="/ead/edit/editmenu.html">Back to Create/Edit Menu</a>'
+            else:
+                if idCheck[2] == True:
+                    self.logger.log('Already in draft file store')
+                    return '<p>You already have this file open for editing as %s. <br /><br />Please delete the file currently in the Draft File Store before reloading</p><br /><a href="/ead/edit/editmenu.html">Back to Create/Edit Menu</a>' % rec1.id
+                else :
+#                    return ''
+                    pass
+                
+        else :
+            id = '%s-%s' % (recid, session.user.username.encode('ascii', 'ignore'))
+            rec1.id = id
+            self.logger.log('record has id %s' % recid)
+            #if the file exists in the record store load from there (fixes problems with back button)
+            try:
+                rec1 = editStore.fetch_record(session, id)
+            except:
+            #otherwise store in editing store
+                editStore.store_record(session, rec1)
+    #        editStore.commit_storing(session) 
+    
+            structure = read_file('ead2002.html')
+            htmlform = formTxr.process_record(session, rec1).get_raw(session)
+            page = structure.replace('%FRM%', htmlform)
+            page = page.replace('%RECID%', '<input type="hidden" id="recid" value="%s"/>' % (recid.encode('ascii')))
+            page = page.replace('%PUI%', '<input type="text" onfocus="setCurrent(this);" name="pui" id="pui" size="30" disabled="true" value="%s"/>' % (recid.encode('ascii')))
+            page = page.replace('%TOC%', tocTxr.process_record(session, rec1).get_raw(session))
+            return page    
         
     
     def _get_timeStamp(self):
@@ -708,27 +723,30 @@ class EadEditingHandler(EadHandler):
     
 # Validation related functions   ================================================================================== 
     
-    def getAndCheckRecStoreId(self, form):
-        f = form.get('filepath', None)
-        if not f or not len(f.value):
-            #TODO: create appropriate html file - this is for admin
-            return '<value>false</value>'
-        ws = re.compile('[\s]+')
-        xml = ws.sub(' ', read_file(f.value))
-        rec = self._parse_upload(xml)
-        # TODO: handle file not successfully parsed
-        if not isinstance(rec, LxmlRecord):
-            return '<value>false</value>'
-        
-        rec = assignDataIdFlow.process(session, rec)
+    def checkExistingId(self, id):
         exists = False
+        store = None
+        users = []
+        overwrite = False
         for r in recordStore:
-            if r.id == rec.id :
+            if r.id == id :
                 exists = True
-        if exists == True:
-            return '<value>true</value>'
-        else:
-            return '<value>false</value>'
+                store = 'recordStore'
+                break
+        if exists == False:
+            names = []
+            for r in editStore:
+                if r.id[:r.id.rfind('-')] == id :
+                    names.append(r.id[r.id.rfind('-')+1:])
+            if len(names) > 0:
+                exists = True
+                store = 'editStore'
+                for n in names:
+                    if n == session.user.username :
+                        overwrite = True
+                    else:    
+                        users.append(n)    
+        return [exists, store, overwrite, users]
          
     
     def getAndCheckId(self, form):
@@ -736,7 +754,7 @@ class EadEditingHandler(EadHandler):
         if not f or not len(f.value):
             return '<value>false</value>'
         ws = re.compile('[\s]+')
-        xml = ws.sub(' ', read_file(f.value))
+        xml = ws.sub(' ', f.value)
         rec = self._parse_upload(xml)
                 
         if not isinstance(rec, LxmlRecord):
@@ -1516,6 +1534,7 @@ class EadEditingHandler(EadHandler):
                 content = self.view_file(form)   
                 self.send_fullHtml(content, req)         
             elif (operation == 'submit'):
+                raise ValueError(operation)
                 content = self.submit(req, form)
             elif (operation == 'edit'):                
                 content = self.edit_file(form)
