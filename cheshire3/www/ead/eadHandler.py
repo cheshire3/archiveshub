@@ -193,10 +193,11 @@ class EadHandler:
             return 'Could not locate specified file path'
 
         self.htmlTitle.append('View File')
-
-        out = ['<div class="heading">%s</div>' % (filepath),'<pre>']
+        out = ['<div id="single">'
+              ,'<div class="heading">%s</div>' % (filepath)
+              ,'<pre>']
         out.append(html_encode(read_file(filepath)))
-        out.append('</pre>')
+        out.append('</pre></div><!-- end single div -->')
 
         return '\n'.join(out)
     #- end view_file()

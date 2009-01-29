@@ -1,8 +1,8 @@
 #
 # Script:    eadAdminHandler.py
-# Version:   0.32
-# Date:      28 October 2008
-# Copyright: &copy; University of Liverpool 2005-2008
+# Version:   0.33
+# Date:      28 January 2009
+# Copyright: &copy; University of Liverpool 2005-2009
 # Description:
 #            Web interface for administering a cheshire 3 database of EAD finding aids
 #            - part of Cheshire for Archives v3
@@ -71,6 +71,7 @@
 # 0.30 - xx/02/2008 - JH - Some new display stuff while rebuilding / reindexing
 # 0.31 - 08/04/2008 - JH - Contraints placed on usernames (alphanumeric only)
 # 0.32 - 28/10/2008 - JH - User editing migrated to Lxml
+# 0.33 - 28/01/2009 - JH - Minor tweaks for v3.4 release
 #
 #
 
@@ -294,8 +295,7 @@ class EadAdminHandler(EadHandler):
                   '%SUPERUSER%' : ''
                   }
         self.htmlTitle.append('User Management')
-        lines = ['<div id="single">',
-                 '<table>',
+        lines = ['<table>',
                  '<tr class="headrow"><td>Username</td><td>Real Name</td><td>Email Address</td><td>Telephone</td><td>Operations</tr>']
 
         self.logger.log(session.user.address)
@@ -316,7 +316,6 @@ class EadAdminHandler(EadHandler):
             lines.extend(['<h3 class="bar">Add New User</h3>',
                           multiReplace(read_file('adduser.html'), values)
                         ])
-        lines.append('</div> <!-- end single div -->')
         return '\n'.join(lines)
         #- end list_users()
  
@@ -453,7 +452,7 @@ class EadAdminHandler(EadHandler):
                 userNode = self._modify_userLxml(userNode, newHash)    
                 self._submit_userLxml(userid, userNode)                    
                 user = authStore.fetch_object(session, userid)
-                return '<span class="ok">User successfully added.</span>' + self.list_users()
+                return '<p class="ok">User successfully added.</p>' + self.list_users()
                 
         return multiReplace(read_file('adduser.html'), values)
         #- end add_user()
@@ -528,7 +527,7 @@ class EadAdminHandler(EadHandler):
                     return self._error('Unable to delete user %s - user does not exist.' % (userid), 'users.html')
                 else :
                     rebuild = True
-                    return '<span class="ok">User %s succesfully deleted.</span>' % (userid) + self.list_users()
+                    return '<p class="ok">User %s succesfully deleted.</p>' % (userid) + self.list_users()
             else :
                 return self._error('Unable to delete user %s - incorrect password.' % (userid), 'users.html')
                #return '<span class="error">Unable to delete user %s - incorrect password.</span>' % (userid) + self.list_users()
@@ -1047,26 +1046,6 @@ class EadAdminHandler(EadHandler):
             return ''.join(output)
     #- end rename_file()        
             
-#    def view_file(self, form):
-#
-#        global script
-#        self.htmlTitle.append('File Management')
-#
-#        self.htmlNav.append('<a href="files.html" title="File Management" class="navlink">Files</a>')
-#        filepath = form.get('filepath', None)
-#        if not filepath:
-#            self.htmlTitle.append('Error')
-#            return 'Could not locate specified file path'
-#
-#        self.htmlTitle.append('View File')
-#
-#        out = ['<div class="heading">%s</div>' % (filepath),'<pre>']
-#        out.append(html_encode(read_file(filepath)))
-#        out.append('</pre>')
-#
-#        return '\n'.join(out)
-#    #- end view_file()
-
     def _clear_dir(self, dir):
         # function to recursively clear an entire directory - dangerous if used incorrectly!!!
         # imitates "rm -rf dir/*" in shell
@@ -1571,6 +1550,8 @@ class EadAdminHandler(EadHandler):
                         content = 'An invalid operation was attempted. Valid operations are:<br/>add, edit, delete.'
                 else:
                     content = self.list_users()
+                content = '<div id="single">%s</div>' % (content)
+                
             elif (path == 'files.html'):
                 # file type operations
                 if (operation):

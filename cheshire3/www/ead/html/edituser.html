@@ -1,3 +1,4 @@
+<div id="single">
 <form action="users.html" method="post">
   <input type="hidden" name="operation" value="edit"/>
   <table>
@@ -7,27 +8,28 @@
     </tr>
     <tr>
       <td>Full Name: </td>
-      <td><input type="text" name="realName" value="%realName%"/></td>
+      <td><input type="text" name="realName" size="40" value="%realName%"/></td>
     </tr>
     <tr>
       <td>Email: </td>
-      <td><input type="text" name="email" value="%email%"/></td>
+      <td><input type="text" name="email" size="40" value="%email%"/></td>
     </tr>
     <tr>
       <td>Telephone: </td>
-      <td><input type="text" name="tel" value="%tel%"/></td>
+      <td><input type="text" name="tel" size="40" maxlength="15" value="%tel%"/></td>
     </tr>
     <tr title="Leave blank if you do not want to change your password.">
       <td>New Password: </td>
-      <td><input type="password" name="passwd1"/></td>
+      <td><input type="password" name="passwd1" size="40"/></td>
     </tr>
     <tr title="This MUST be the same as the New Password you just entered.">
       <td>Re-enter New Password: </td>
-      <td><input type="password" name="passwd2"/></td>
+      <td><input type="password" name="passwd2" size="40"/></td>
     </tr>
   </table>
   <div class="passwdconfirm" title="You MUST confirm your existing password when making any changes.">
-      Password : <input type="password" name="passwd"/>
+      Password : <input type="password" name="passwd" size="40"/>
       <input type="submit" name="submit" value="Submit"/>
   </div>
 </form>
+</div>

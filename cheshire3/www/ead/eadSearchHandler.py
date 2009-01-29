@@ -683,10 +683,9 @@ class EadSearchHandler(EadHandler):
                 
             del scanData
             rows.append('</table>')           
-#            rows.append('<div class="scannav"><p>%s</p></div>' % (' | '.join([prevlink, nextlink])))
+            # rows.append('<div class="scannav"><p>%s</p></div>' % (' | '.join([prevlink, nextlink])))
             rows.append('</div><!-- end browseresult div -->')
             #- end hit navigation
-            
             return '\n'.join(rows)
 
         else:

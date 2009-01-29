@@ -1,6 +1,6 @@
 /*
 	This file was produced, and released as part of Cheshire for Archives v3.x
-	Copyright &copy; 2005-2008 the University of Liverpool
+	Copyright &copy; 2005-2009 the University of Liverpool
 */
 
 * {margin:0;padding:0;}
@@ -82,6 +82,7 @@ div#single div#about {
 	margin-right: 260px;
 }
 
+
 div#leftcol {
 	width: 39%;
 	min-width: 300px;
@@ -146,13 +147,14 @@ div#supporters-side a {
 	padding: 10px 0 10px 0
 }
 
-h4.ead {
-	clear:left;
-}
-
 #hitreport { 
   margin-top: 10px;
   margin-bottom: 10px;
+}
+
+div.passwdconfirm {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
 }
 
 .hitnav {
@@ -255,6 +257,7 @@ div.daos {
 	width: 200px;
 	float: right;
 	padding-left: 2px;
+	background-color: white;
 }
 
 div.dao {
