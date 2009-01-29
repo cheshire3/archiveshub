@@ -714,7 +714,7 @@ class EadEditingHandler(EadHandler):
             #TODO: create appropriate html file - this is for admin
             return '<value>false</value>'
         ws = re.compile('[\s]+')
-        xml = ws.sub(' ', read_file(f))
+        xml = ws.sub(' ', read_file(f.value))
         rec = self._parse_upload(xml)
         # TODO: handle file not successfully parsed
         if not isinstance(rec, LxmlRecord):
@@ -736,7 +736,7 @@ class EadEditingHandler(EadHandler):
         if not f or not len(f.value):
             return '<value>false</value>'
         ws = re.compile('[\s]+')
-        xml = ws.sub(' ', read_file(f))
+        xml = ws.sub(' ', read_file(f.value))
         rec = self._parse_upload(xml)
                 
         if not isinstance(rec, LxmlRecord):
