@@ -33,7 +33,7 @@ textarea, input {
 		font-size: 11pt; 
 	}
 	
-textarea, input[type="text"], select{
+textarea, input[type="text"], input[type="file"], select{
 	border: 2px inset white;	
 	}
 	
