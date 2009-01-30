@@ -1,4 +1,4 @@
-<div id="leftcol">
+<div id="leftcol" class="editmenu">
     <script type="text/javascript" src="/ead/js/prototype.js"></script>
 	<script type="text/javascript" src="/ead/js/form.js"></script>
     <script type="text/javascript" src="/ead/js/collapsibleLists.js"></script>
@@ -33,8 +33,8 @@
     	<input type="hidden" name="operation" value="local"/>
     	<p><b>Upload a file from my hard drive to begin editing.</b></p>
     	<p>
-    		File to edit:
-    		<input id="localEdit" type="file" name="filepath" size="50"/>
+    		File to edit:<br/>
+    		<input id="localEdit" type="file" name="filepath" size="40"/>
     	</p>
     	<input type="submit" value=" Edit Local File " disabled="true"/>
     </form>  
@@ -56,8 +56,7 @@
         </form>
     </div>
 </div> 
-
-<div id="rightcol">
+<div id="rightcol" class="editmenu">
     	<h3 class="bar">Draft Files</h4>
         <p><b>Open a file to continue editing</b></p>
         <form name="storeDirForm" id="storeDirForm" action="/ead/edit/" method="get">

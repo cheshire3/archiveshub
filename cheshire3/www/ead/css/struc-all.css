@@ -91,9 +91,18 @@ div#leftcol {
 	overflow-x: auto;
 }
 
+
 div#rightcol {
 	width: 59%;
 	margin-left: 40%;
+}
+
+div#leftcol.editmenu,
+div#rightcol.editmenu {
+	width: 49%;
+}
+div#rightcol.editmenu {
+	margin-left: 50%;
 }
 
 div#footer {
