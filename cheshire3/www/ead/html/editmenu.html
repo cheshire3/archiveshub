@@ -29,12 +29,11 @@
     </form>
     <h3 class="bar">Edit</h3>
     <form id="localEditForm" name="localEditForm" action="/ead/edit/" method="post" enctype="multipart/form-data">
- 		
     	<input type="hidden" name="operation" value="local"/>
     	<p><b>Upload a file from my hard drive to begin editing.</b></p>
     	<p>
     		File to edit:<br/>
-    		<input id="localEdit" type="file" name="filepath" size="40"/>
+    		<input id="localEdit" type="file" name="filepath" size="40" value="test"/>
     	</p>
     	<input type="submit" value=" Edit Local File " disabled="true"/>
     </form>  

@@ -693,28 +693,27 @@ class EadEditingHandler(EadHandler):
                     self.logger.log('Already in draft file store')
                     return '<p>You already have this file open for editing as %s. <br /><br />Please delete the file currently in the Draft File Store before reloading</p><br /><a href="/ead/edit/editmenu.html">Back to Create/Edit Menu</a>' % rec1.id
                 else :
-#                    return ''
                     pass
                 
-        else :
-            id = '%s-%s' % (recid, session.user.username.encode('ascii', 'ignore'))
-            rec1.id = id
-            self.logger.log('record has id %s' % recid)
-            #if the file exists in the record store load from there (fixes problems with back button)
-            try:
-                rec1 = editStore.fetch_record(session, id)
-            except:
-            #otherwise store in editing store
-                editStore.store_record(session, rec1)
-    #        editStore.commit_storing(session) 
-    
-            structure = read_file('ead2002.html')
-            htmlform = formTxr.process_record(session, rec1).get_raw(session)
-            page = structure.replace('%FRM%', htmlform)
-            page = page.replace('%RECID%', '<input type="hidden" id="recid" value="%s"/>' % (recid.encode('ascii')))
-            page = page.replace('%PUI%', '<input type="text" onfocus="setCurrent(this);" name="pui" id="pui" size="30" disabled="true" value="%s"/>' % (recid.encode('ascii')))
-            page = page.replace('%TOC%', tocTxr.process_record(session, rec1).get_raw(session))
-            return page    
+
+        id = '%s-%s' % (recid, session.user.username.encode('ascii', 'ignore'))
+        rec1.id = id
+        self.logger.log('record has id %s' % recid)
+        #if the file exists in the record store load from there (fixes problems with back button)
+        try:
+            rec1 = editStore.fetch_record(session, id)
+        except:
+        #otherwise store in editing store
+            editStore.store_record(session, rec1)
+#        editStore.commit_storing(session) 
+
+        structure = read_file('ead2002.html')
+        htmlform = formTxr.process_record(session, rec1).get_raw(session)
+        page = structure.replace('%FRM%', htmlform)
+        page = page.replace('%RECID%', '<input type="hidden" id="recid" value="%s"/>' % (recid.encode('ascii')))
+        page = page.replace('%PUI%', '<input type="text" onfocus="setCurrent(this);" name="pui" id="pui" size="30" disabled="true" value="%s"/>' % (recid.encode('ascii')))
+        page = page.replace('%TOC%', tocTxr.process_record(session, rec1).get_raw(session))
+        return page    
         
     
     def _get_timeStamp(self):
