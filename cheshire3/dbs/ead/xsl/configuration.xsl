@@ -55,7 +55,7 @@
     </xsl:param>
     <xsl:param name="copac_search_url">
       	<xsl:value-of select="$copac_base_url"/>
-      	<xsl:text>/wzgw?form=A%2FT&amp;fs=Search&amp;ti=</xsl:text>
+      	<xsl:text>/wzgw?form=A%2FT&amp;fs=Search</xsl:text>
     </xsl:param>
     <xsl:param name="copac_search_icon">
       	<xsl:value-of select="$copac_base_url"/>

@@ -396,8 +396,8 @@
     <xsl:if test="@id">
         <a name="{@id}"><xsl:text> </xsl:text></a>
     </xsl:if>
-    <xsl:variable name="headstring"><xsl:text>Physical Characteristics and/or Technical Requirements</xsl:text></xsl:variable>
     <xsl:if test="not(head/text())">
+        <xsl:variable name="headstring"><xsl:text>Physical Characteristics and/or Technical Requirements</xsl:text></xsl:variable>
         <xsl:choose>
             <xsl:when test="../../archdesc or ../../../c3component">
                 <h3 class="ead"><xsl:value-of select="$headstring"/></h3>
@@ -1740,6 +1740,7 @@
 	  	<a target="_new">
 	  		<xsl:attribute name="href">
 	  			<xsl:value-of select="$copac_search_url"/>
+                <xsl:text>&amp;ti=</xsl:text>
 	  			<xsl:call-template name="cgiencode">
 		          <xsl:with-param name="text">
 		            <xsl:apply-templates select="emph[@altrender='a' or @altrender='title']"/>
