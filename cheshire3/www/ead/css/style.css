@@ -19,9 +19,18 @@ img.screenshot {
 	border:	2px inset black;
 }
 
+div#banner,
+div#navbar {
+	background: url(/images/bg-gradient.png) repeat-y;
+}
+
 div#banner { 
   color: #000000;
   background-color: #c4d6f8;
+}
+
+div#navbar {
+	background-color: #0b2265;
 }
 
 div#leftcol.toc {
@@ -36,7 +45,24 @@ div#leftcol.toc {
 */
 
 div.daos {
-	border-left: 1px solid blue;
+}
+
+div.daos span.rnd1,
+div.daos span.rnd2,
+div.daos span.rnd3,
+div.daos span.rnd4 {background-color: white; font-size:1px; overflow:hidden; display:block;}
+
+div.daos span.rnd1 {height:2px; background:#f5f5f5; margin:0 1px; border-right:1px solid silver; border-left:1px solid silver;}
+div.daos span.rnd2 {height:1px; background:#f5f5f5; margin:0 2px; border-right:1px solid silver; border-left:1px solid silver;}
+div.daos span.rnd3 {height:1px; background:#f5f5f5; margin:0 3px; border-right:2px solid silver; border-left:2px solid silver;}
+div.daos span.rnd4 {height:1px; background:silver; margin:0 5px; }
+
+div.daohead,
+div.daobody {
+	background-color: #f5f5f5;
+	border-left:1px solid silver;
+	border-right:1px solid silver; 
+	padding: 0 5px;
 }
 
 div.daohead {
@@ -45,6 +71,7 @@ div.daohead {
 }
 
 div.dao {
+	padding: 5px 0;
 }
 
 /* TABLES */
@@ -129,11 +156,11 @@ table.nassischneiderman td {
 h1 { font-size: 14pt; margin-top: 2px; margin-bottom: 2px;}
 h2 { font-size: 14pt; margin-top: 2px; margin-bottom: 2px;}
 h2.unittitle { text-align: center; margin-bottom: 1em;}
-h3 { color: #000000; font-size: 14pt; margin-top: 0.1em; margin-bottom: 0.5em;}
+h3 { color: #000000; font-size: 12pt; margin-top: 0.1em; margin-bottom: 0.5em;}
 .bar, h3.ead, h3.redheading, h3.greenheading{ background-color: #c4d6f8; padding: 2px; border: solid black 1px; margin: 1em 0 0.5em 0;}
 h3.redheading { background-color: #ffaaaa; }
 h3.greenheading { background-color: #aaffaa; }
-h4 {font-size: 14pt; margin-top: 0.1em; margin-bottom: 0.1em;}
+h4 {font-size: 12pt; margin-top: 0.1em; margin-bottom: 0.1em;}
 h5 {font-size: 12pt; margin-top: 0.1em; margin-bottom: 0.1em;}
 h5.minor {font-size: 11pt; color: #0b2265; margin-left: 5px;}
 h6 {font-size: 11pt; margin-top: 0.1em; margin-bottom: 0.1em;}
@@ -196,11 +223,10 @@ a.jscall {
 }
 
 .navbar { 
-  color: white;
-  background-color: #0b2277; /*dark blue*/
-  font-size: 11pt;
-  padding-bottom: 0px;
-  /*font-variant: small-caps;*/
+	color: white;
+	font-size: 11pt;
+	padding-bottom: 0px;
+	/*font-variant: small-caps;*/
 }
 .navbar a:link,
 .navbar a:visited
