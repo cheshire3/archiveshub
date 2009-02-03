@@ -996,17 +996,16 @@
 		<p>
 		<xsl:if test="not(did/dao) and not(did/daogrp) and not(dao) and not(daogrp)">			
 			<div id="daooptnsdiv[1]" class="daooptions">
-				<input type="radio" name="daooptns1" value="new" onclick="createObjectsForm('new', 1, '', '')">Link to file</input><br />
-				<input type="radio" name="daooptns1" value="embed" onclick="createObjectsForm('embed', 1, '', '')">Display image</input><br />
-				<input type="radio" name="daooptns1" value="thumb" onclick="createObjectsForm('thumb', 1, '', '')">Display thumbnail link to file</input><br />
-				<input type="radio" name="daooptns1" value="multiple" onclick="createObjectsForm('multiple', 1, '', '')">Link to multiple files</input><br />
+				<input type="radio" name="daooptns1" value="new" onclick="createObjectsForm('new', 1, '', '')"><span id="new1">Link to file</span></input><br />
+				<input type="radio" name="daooptns1" value="embed" onclick="createObjectsForm('embed', 1, '', '')"><span id="embed1">Display image</span></input><br />
+				<input type="radio" name="daooptns1" value="thumb" onclick="createObjectsForm('thumb', 1, '', '')"><span id="thumb1">Display thumbnail link to file</span></input><br />
+				<input type="radio" name="daooptns1" value="multiple" onclick="createObjectsForm('multiple', 1, '', '')"><span id="multiple1">Link to multiple files</span></input><br />
 				</div>
 			  <div id="digitalobjectsform[1]"><xsl:text> </xsl:text></div>
 		</xsl:if>	
 		
 		<!-- Digital Object not in did -->							
-			<xsl:if test="dao">
-				<b>Digital Object in archdesc/component</b>
+			<xsl:if test="dao">				
 				<xsl:for-each select="dao">
 					<xsl:choose>
 						<xsl:when test="@show='embed'">
@@ -1059,7 +1058,6 @@
 		</p>
 		<p>
 			<xsl:if test="daogrp">
-				<b>Digital Object Group in archdesc/component</b>
 				<xsl:for-each select="daogrp">
 					<xsl:choose>
 						<xsl:when test="daoloc/@role='thumb'">
@@ -1114,7 +1112,6 @@
 		<p>
 			<!-- Digital Object in did -->			
 			<xsl:if test="did/dao">
-				<b>Digital Object in did</b>
 				<xsl:for-each select="did/dao">
 					<xsl:choose>
 						<xsl:when test="@show='embed'">
@@ -1170,7 +1167,6 @@
 		</p>
 		<p>
 		 	<xsl:if test="did/daogrp">
-		 		<b>Digital Object Group in did</b>
 				<xsl:for-each select="did/daogrp">
 					<xsl:choose>
 						<xsl:when test="daoloc/@role='thumb'">
@@ -2221,7 +2217,17 @@
 				<xsl:text>true</xsl:text>
 			</xsl:attribute>
 		</xsl:if>
-		<xsl:text>Link to file</xsl:text>
+		<span>
+		<xsl:if test="$type='new'">
+			<xsl:attribute name="class">
+				<xsl:text>checked</xsl:text>
+			</xsl:attribute>
+		</xsl:if>
+		<xsl:attribute name="id">
+			<xsl:text>new</xsl:text><xsl:value-of select="$path"/><xsl:value-of select="$form"/><xsl:value-of select="$number"/>
+		</xsl:attribute>
+		Link to file
+		</span>
 		</input><br />
   		
 		<input type="radio" value="embed">
@@ -2236,7 +2242,17 @@
 				<xsl:text>true</xsl:text>
 			</xsl:attribute>
 		</xsl:if>
-		<xsl:text>Display image</xsl:text>
+		<span>
+		<xsl:if test="$type='embed'">
+			<xsl:attribute name="class">
+				<xsl:text>checked</xsl:text>
+			</xsl:attribute>
+		</xsl:if>
+		<xsl:attribute name="id">
+			<xsl:text>embed</xsl:text><xsl:value-of select="$path"/><xsl:value-of select="$form"/><xsl:value-of select="$number"/>
+		</xsl:attribute>
+		Display image
+		</span>
 		</input><br />
 		
 		<input type="radio" value="thumb">
@@ -2251,7 +2267,17 @@
 				<xsl:text>true</xsl:text>
 			</xsl:attribute>
 		</xsl:if>
-		<xsl:text>Display thumbnail link to file</xsl:text>
+		<span>
+		<xsl:if test="$type='thumb'">
+			<xsl:attribute name="class">
+				<xsl:text>checked</xsl:text>
+			</xsl:attribute>
+		</xsl:if>
+		<xsl:attribute name="id">
+			<xsl:text>thumb</xsl:text><xsl:value-of select="$path"/><xsl:value-of select="$form"/><xsl:value-of select="$number"/>
+		</xsl:attribute>
+		Display thumbnail link to file
+		</span>
 		</input><br />
 		
 		<input type="radio" value="multiple">
@@ -2266,7 +2292,17 @@
 				<xsl:text>true</xsl:text>
 			</xsl:attribute>
 		</xsl:if>
-		<xsl:text>Link to multiple files</xsl:text>
+		<span>
+		<xsl:if test="$type='multiple'">
+			<xsl:attribute name="class">
+				<xsl:text>checked</xsl:text>
+			</xsl:attribute>
+		</xsl:if>
+		<xsl:attribute name="id">
+			<xsl:text>multiple</xsl:text><xsl:value-of select="$path"/><xsl:value-of select="$form"/><xsl:value-of select="$number"/>
+		</xsl:attribute>
+		Link to multiple files
+		</span>
 		</input><br />	 	
   </xsl:template>
 
