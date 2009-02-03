@@ -305,3 +305,12 @@ DAO STUFF
 .odd {
 	background: #F2F2F2;
 }
+
+.checked {
+	font-weight: bold;
+}
+
+.daooptions {
+	padding-top: 10px;
+	border-top: 1px solid gray;
+}
