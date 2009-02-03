@@ -1664,6 +1664,16 @@ function createObjectsForm(type, number, loc, form) {
 
 	var type = type;
 
+	//remove bold
+	document.getElementById('new' + loc + form + number).className = 'none';
+	document.getElementById('embed' + loc + form + number).className = 'none';
+	document.getElementById('thumb' + loc + form + number).className = 'none';
+	document.getElementById('multiple' + loc + form + number).className = 'none';
+	
+	//add bold
+	document.getElementById(type + loc + form + number).className = 'checked';
+
+
    	if (type == null) {
    		return;
    	}
