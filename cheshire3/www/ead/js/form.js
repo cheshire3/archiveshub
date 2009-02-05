@@ -284,6 +284,11 @@ function save(){
     	return;
     }
     var values = checkEditStore();
+    if (values[0] == 'error'){
+    	alert('A problem occurred when trying to perform this operation. Please check that the spoke is responding to searches before trying again.');
+    	body.className = 'none';
+	   	return;
+    }
     if (values[0]){
     	if (values[1] == 'user'){
     		var confirmbox = confirm('A file with this Reference code is already in the process of being created or edited. If you proceed with this operation the existing file will be overwritten with this one.\n\nAre you sure you want to continue with this operation?');
@@ -1198,13 +1203,14 @@ function findRequiredFields(){
 
 function conflicts(recid){
 	var conflict = null;
+	var error = false;
 	if (recid != null){
+		
 		var url = '/ead/edit'
 		var data = 'operation=checkId&id=' + encodeURIComponent(recid) + '&store=editStore';
 		new Ajax.Request(url, {method: 'get', asynchronous: false, parameters: data, onSuccess: function(transport) { 
 			if (response.substring(0, 4) == "<!--"){
-				alert('A problem occurred when trying to perform this operation. Please check that the spoke is responding to searches before trying again.');
-				return;
+				error = true;
 			}
 			var response = transport.responseText;
 			conflict = response.substring(7,response.indexOf('</value>'));
@@ -1213,11 +1219,16 @@ function conflicts(recid){
 	else {
 		return false;
 	}
-	if (conflict == 'true'){
-		return true;
+	if (error == true){
+		alert('A problem occurred when trying to perform this operation. Please check that the spoke is responding to searches before trying again.');
 	}
 	else {
-		return false;
+		if (conflict == 'true'){
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 }
 
@@ -1278,14 +1289,14 @@ function checkEditStoreConflicts(form){
 	if (filepath != null){
 	    var conflict = 'false';
 	    var overwrite = 'false';
+	    var error = false;
 	    var users = null;
 		var url = '/ead/edit'
 		var data = 'operation=getCheckId&filepath=' + filepath;
 		new Ajax.Request(url, {method: 'get', asynchronous: false, parameters: data, onSuccess: function(transport) { 
 			var response = transport.responseText;
 			if (response.substring(0, 4) == "<!--"){
-				alert('A problem occurred when trying to perform this operation. Please check that the spoke is responding to searches before trying again.');
-				return;
+				error = true;
 			}			
 			conflict = response.substring(response.indexOf('<value>')+7, response.indexOf('</value>'));
 			if (response.indexOf('<overwrite>') > -1){
@@ -1298,6 +1309,10 @@ function checkEditStoreConflicts(form){
 				users = response.substring(response.indexOf('<users>')+7, response.indexOf('</users>'));
 			}
 		}});
+		if (error == true){
+			alert('A problem occurred when trying to perform this operation. Please check that the spoke is responding to searches before trying again.');
+			return;	
+		}
 		if (conflict == 'false'){
 			document.getElementById(form).submit();
 		}
@@ -1352,6 +1367,7 @@ function validateXML(field, asynch){
 function checkEditStore(){
 	var value = false;
 	var owner = '';
+	var error = false;
 	if (currentForm == 'collectionLevel'){		
 		if (recid == null || recid == 'notSet'){
 			if ($('countrycode').value != ''){
@@ -1361,11 +1377,10 @@ function checkEditStore(){
 						var url = '/ead/edit'
 						var data = 'operation=checkEditId&id=' + encodeURIComponent(id);
 						new Ajax.Request(url, {method: 'get', asynchronous: false, parameters: data, onSuccess: function(transport) { 	    				
-						    if (response.substring(0, 4) == "<!--"){
-								alert('A problem occurred when trying to perform this operation. Please check that the spoke is responding to searches before trying again.');
-								return;
-							}						    
 						    var response = transport.responseText;
+						    if (response.substring(0, 4) == "<!--"){
+								error = true;
+							}						    					
 						    idExists = response.substring(response.indexOf('<value>')+7, response.indexOf('</value>'));	
 						    if (idExists == 'true'){
 						    	value = true;
@@ -1378,10 +1393,17 @@ function checkEditStore(){
 			} 
 		} 
 	}
-	var values = [value, owner];
-	return values;
+	if (error == true){
+		return ['error'];
+	}
+	else {
+		var values = [value, owner];
+		return values;
+	}
 }
 
+
+// NEED TO ADD ERROR CATCH HERE
 function checkId(asynch){
 	if (recid == null || recid == 'notSet'){
 		if ($('countrycode').value != ''){
@@ -1391,12 +1413,8 @@ function checkId(asynch){
 					var url = '/ead/edit'
 					var data = 'operation=checkId&id=' + encodeURIComponent(id) + '&store=recordStore';
 					new Ajax.Request(url, {method: 'get', asynchronous: asynch, parameters: data, onSuccess: function(transport) { 	    				
-					    if (response.substring(0, 4) == "<!--"){
-							alert('A problem occurred when trying to perform this operation. Please check that the spoke is responding to searches before trying again.');
-							return;
-						}
 					    var response = transport.responseText;
-					    idExists = response.substring(7,response.indexOf('</value>'));					    
+					    var idExists = response.substring(7,response.indexOf('</value>'));					    
 					    if (idExists == 'true' && !($('idError'))){
 					    	var element = document.createElement('p');
 					    	element.className = 'error';
@@ -2005,9 +2023,7 @@ function checkButtons(){
 		document.getElementById('submit-button').setAttribute('disabled', 'true');
 		document.getElementById('submit-button').setAttribute('title', 'File must be saved before this operation can be performed');		
 		document.getElementById('addC').setAttribute('disabled', 'true');
-		document.getElementById('addC').setAttribute('title', 'File must be saved before this operation can be performed');		
-	
-	
+		document.getElementById('addC').setAttribute('title', 'File must be saved before this operation can be performed');			
 	}
 }
 
