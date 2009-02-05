@@ -105,16 +105,6 @@ class EadEditingHandler(EadHandler):
     #- end __init__ ---------------------------------------------------------
 
 
-#this one possibly not used:
-#
-#    def _get_depth (self, node):
-#        compre = re.compile('^c[0-9]*$')
-#        depth = 0;
-#        for element in node.iterancestors():
-#            if compre.match(element.tag) or element.tag == 'archdesc':
-#                depth += 1
-#        return depth            
-
     def send_html(self, data, req, code=200):
         req.content_type = 'text/html'
         req.headers_out['Cache-Control'] = "no-cache, no-store"
@@ -753,9 +743,13 @@ class EadEditingHandler(EadHandler):
         if not f or not len(f.value):
             return '<value>false</value>'
         ws = re.compile('[\s]+')
-        xml = ws.sub(' ', f.value)
+        
+        try:
+            xml = ws.sub(' ', read_file(f))
+        except:
+            xml = ws.sub(' ', f.value)
         rec = self._parse_upload(xml)
-                
+                       
         if not isinstance(rec, LxmlRecord):
             return '<value>false</value>'
         
@@ -1478,13 +1472,13 @@ class EadEditingHandler(EadHandler):
     def handle (self, req):
         global script, editStore
         editStore = db.get_object(session, 'editingStore')
-        editStore.begin_storing(session)
+        
         form = FieldStorage(req, True)  
         tmpl = read_file(templatePath)
         content = None      
-        operation = form.get('operation', None)
-        
+        operation = form.get('operation', None)    
         if (operation) :  
+            editStore.begin_storing(session)
             if (operation == 'add'):  
                 content = self.add_form(form)   
                 self.send_html(content, req)
@@ -1533,7 +1527,6 @@ class EadEditingHandler(EadHandler):
                 content = self.view_file(form)   
                 self.send_fullHtml(content, req)         
             elif (operation == 'submit'):
-                raise ValueError(operation)
                 content = self.submit(req, form)
             elif (operation == 'edit'):                
                 content = self.edit_file(form)
