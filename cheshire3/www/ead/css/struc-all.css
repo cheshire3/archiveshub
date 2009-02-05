@@ -7,37 +7,48 @@
 
 body {
   margin: 0;
-  padding: 80px 10px 60px 0;
+  padding: 105px 10px 60px 0;
   /* Prevent body becoming narrower than wrapper - keeps the content from disappearing off the left edge with Gecko browsers */ 
   min-width: 770px;
   height: 100%;
 }
 
+div#header,
 div#banner,
 div#content,
 div#leftcol,
 div#rightcol
 {
-	padding: 0px;
 	position: absolute;
 	text-align: left;
 	left: 0;
-	overflow: auto;
+	overflow: hidden;
 }
 
+div#header,
 div#banner,
 div#navbar {
 	position: fixed;
 	width: 100%;
+	z-index: 1;
 }
 
+div#header,
 div#banner {
 	top: 0;
-	height: 80px;
-	z-index: 2;
 	overflow-x: hidden;
 	overflow-y: auto;
 }
+
+div#header {
+	height: 105px;	
+}
+
+div#banner {
+	z-index: 2;
+	height: 80px;
+}
+
 div#navbar {
 	top: 80px;
 	min-height: 25px;
@@ -49,7 +60,10 @@ div#navbar {
 	vertical-align: middle;
 }
 
-div#banner div { padding: 5px 15px 5px 15px; }
+div#banner div {
+	margin-top: 5px;
+	padding: 3px 15px;
+}
 div#crest{ float: left; }
 img.rep-logo { max-height: 65px; }
 div#c3logo{ float: right; }
@@ -57,8 +71,7 @@ div#c3logo{ float: right; }
 div#content {
 	top: 105px;
 	bottom: 50px;
-	width: 99%;
-	width: expression(document.body.clientWidth < 800? "95%": document.body.clientWidth < 1000? "96%": document.body.clientWidth < 1200? "98%": "99%" );
+	width: 100%;
 	overflow-x: hidden !important;
 }
 
@@ -66,10 +79,9 @@ div#leftcol,
 div#rightcol {
 	top: 0;
 	bottom: 0px;
-	padding: 5px;
 	min-height: 10px;
+	padding: 5px 0px 1em 5px;
 	overflow-y: scroll !important;
-	overflow-x: hidden;
 }
 
 div#single,
@@ -84,16 +96,17 @@ div#single div#about {
 
 div#leftcol {
 	width: 39%;
+	padding-left: 10px;
 	min-width: 300px;
-	margin: 1px 2px 1px 2px;
 	border-right: 1px solid white;
 	overflow-x: auto;
 }
 
-
 div#rightcol {
+	/*padding-right: 5px;*/
 	width: 59%;
 	margin-left: 40%;
+	overflow-x: hidden;
 }
 
 div#leftcol.editmenu,
@@ -110,7 +123,7 @@ div#footer {
 	width: 100%;
 	max-height: 50px;
 	height: 50px;
-	background: white;
+	background: inherit;
 	border-top: 2px solid silver;
 	vertical-align: top;
 }
@@ -277,7 +290,7 @@ div.embed-img {
 }
 
 table.results {
-	width:96%;
+	width:94%;
 	max-width: 600px;
 }
 

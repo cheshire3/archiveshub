@@ -30,8 +30,8 @@ var listCount = 0;
 
 /* customisable display of icons in collapsible lists */
 /* file explorer style */
-var collapsedUrl = '/images/folderClosed.jpg';
-var expandedUrl = '/images/folderOpen.jpg';
+var collapsedUrl = '/images/folderClosed.gif';
+var expandedUrl = '/images/folderOpen.gif';
 var itemUrl = '/images/folderItem.jpg';
 var lastItemUrl = '/images/folderItem.jpg';
 /* skeletal style - uncomment/comment to replace the above defaults */
@@ -152,7 +152,6 @@ function createSubLists(listObj, level, rootListId, treeState, collapseList, con
 }
 
 
-
 function switchState( thisObj, level, rootListId, controlLevels, listTag ) {
   	/* args:
      	thisObj = obj - node of tree to switch state expanded/collapsed
@@ -231,6 +230,7 @@ function refreshTree(listId){
   	}
   	refreshSubTrees(rootListObj, 0, listId, rootListObj.tagName.toLowerCase());
 }
+
 
 function refreshSubTrees(listObj, level, rootListId, listTag){
 	
@@ -321,7 +321,6 @@ function refreshSubTrees(listObj, level, rootListId, listTag){
 }
 
 
-
 function stateToString(listId) {
   	/* args:
      listId = str - id attr of list to create string representation of state for
@@ -343,6 +342,7 @@ function stateToString(listId) {
   	}
   	return stateStr;
 }
+
 
 function isInArray(obj, array) {
   	/* args:

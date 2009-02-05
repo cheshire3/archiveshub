@@ -1,8 +1,8 @@
 #
 # Script:      htmlFragments.py
-# Version:     0.07
-# Date:        19 September 2008
-# Copyright:   &copy; University of Liverpool 2005-2008
+# Version:     0.08
+# Date:        04 February 2009
+# Copyright:   &copy; University of Liverpool 2005-2009
 # Description:
 #            HTML fragments used by Cheshire for Archives
 #
@@ -18,6 +18,7 @@
 # 0.05 - 11/01/2008 - CS - javascript call to collapseLists function changed to createTreeFromList()
 # 0.06 - 23/07/2008 - JH - Javascript show / hide made to degrade more gracefully when JS absent
 # 0.07 - 19/09/2008 - JH - Pop-up slash screens removed permanently
+# 0.08 - 04/02/2009 - JH - Minor modifications for release of v3.4
 #
 # NB:
 # - If you are not experieced in editing HTML you are advised not to edit any of the HTML fragments
@@ -36,8 +37,8 @@ full_tag = '<img src="/images/v3_full.gif" alt="Full"/>'
 email_tag = '<img src="/images/v3_email.gif" alt="e-mail"/>'
 similar_tag = '<img src="/images/v3_simlr.gif" alt="Similar"/>'
 
-folder_closed_tag = '<img src="/images/folderClosed.jpg" alt="[+]"/>'
-folder_open_tag = '<img src="/images/folderOpen.jpg" alt="[-]"/>'
+folder_closed_tag = '<img src="/images/folderClosed.gif" alt="[+]"/>'
+folder_open_tag = '<img src="/images/folderOpen.gif" alt="[-]"/>'
 
 # Result rows
 browse_result_row = '''

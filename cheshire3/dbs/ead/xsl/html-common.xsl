@@ -965,8 +965,18 @@
         
         <xsl:if test="./dao|./did/dao|./daogrp|./did/daogrp">
             <div class="daos">
-                <h6 class="daohead">Digital Objects:</h6>
-                <xsl:apply-templates select="./dao|./did/dao|./daogrp|./did/daogrp"/>
+                <span class="rnd4"/>
+                <span class="rnd3"/>
+                <span class="rnd2"/>
+                <span class="rnd1"/>
+                <div class="daohead">Digital Objects</div>
+                <div class="daobody">
+                    <xsl:apply-templates select="./dao|./did/dao|./daogrp|./did/daogrp"/>
+                </div>
+                <span class="rnd1"/>
+                <span class="rnd2"/>
+                <span class="rnd3"/>
+                <span class="rnd4"/>
             </div>
         </xsl:if>
         

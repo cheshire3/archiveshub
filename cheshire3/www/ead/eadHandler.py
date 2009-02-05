@@ -28,7 +28,7 @@
 from mod_python import apache, Cookie
 from mod_python.util import FieldStorage, redirect
 # import generally useful modules
-import sys, traceback, os, cgitb, urllib, time, smtplib, re
+import sys, traceback, os, urllib, time, smtplib, re, cgitb 
 from crypt import crypt
 from email import Message, MIMEMultipart, MIMEText # email modules
 from lxml import etree # Lxml tree manipulation
@@ -89,7 +89,7 @@ class EadHandler:
     globalReplacements = {}
     txrHash = {}
     
-    def __init__(self, lgr):
+    def __init__(self, lgr=None):
         global rebuild
         if (rebuild):
             build_architecture()
@@ -108,6 +108,12 @@ class EadHandler:
                               }
 
         #- end __init__() ----------------------------------------------------------
+        
+    def log(self, txt):
+        try:
+            self.logger.log(txt)
+        except AttributeError:
+            pass
         
     def send_html(self, data, req, code=200):
         req.content_type = 'text/html'

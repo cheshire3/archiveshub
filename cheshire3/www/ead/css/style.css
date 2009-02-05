@@ -1,6 +1,6 @@
 /*
   This file was produced, and released as part of Cheshire for Archives v3.0.x
-  Copyright &copy; 2005-2008 the University of Liverpool
+  Copyright &copy; 2005-2009 the University of Liverpool
 */
 
 body { 
@@ -19,14 +19,20 @@ img.screenshot {
 	border:	2px inset black;
 }
 
-div#banner,
-div#navbar {
-	background: url(/images/bg-gradient.png) repeat-y;
+div#header {
+	background-image: url(/images/bg-gradient-t-10.png);
+	background-repeat: repeat-x;
+	background-position: top left;
+	background-color: #c4d6f8;
+  	color: #000000;
 }
 
-div#banner { 
-  color: #000000;
-  background-color: #c4d6f8;
+body,
+div#banner,
+div#navbar {
+	background-image: url(/images/bg-gradient-l-10.png);
+	background-repeat: repeat-y;
+	background-position: left;
 }
 
 div#navbar {
@@ -36,13 +42,6 @@ div#navbar {
 div#leftcol.toc {
 	font-size: 10.5pt;	
 }
-
-/*
-.titlebar { 
-  color: #000000;
-  background-color: #c4d6f8;
-}
-*/
 
 div.daos {
 }
@@ -108,8 +107,6 @@ tr.headrow {
 
 tr.odd { 
   color: black;
-  background-color: white;
-  
 }
 
 tr.even {
@@ -136,7 +133,6 @@ table.facets tr.subheadrow {
 	font-weight: bolder;
 }
 table.facets tr.even {
-	background-color: white;
 }
 
 table.nassischneiderman {
@@ -174,7 +170,6 @@ ul.unmarked {
 ul.hierarchy { 
   border-left: 1px dotted #aaaaaa;
 }
-
 
 /* Facets */
 div.facet {
@@ -294,14 +289,13 @@ label.small {
 .hitnav { 
   border: 0;
   color: black;
-  background-color: white;
 }
 
 /* border and background colour for page navigation bar */
 div.pagenav { 
   color: black;
-  background-color: #dddddd;
-  border: 1px solid #cccccc;
+  background-color: #f5f5f5;
+  border: 1px solid #c0c0c0;
 }
 
 div.component {

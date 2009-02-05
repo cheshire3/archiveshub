@@ -17,7 +17,7 @@
 #            CSS: struc.css, style.css
 #            Javascript: collapsibleLists.js, cookies.js, ead.js, email.js, searchForm.js
 #            Images: c3_black.gif, v3_full.gif, v3_email.gif, v3_simlr.gif, 
-#                    folderClosed.jpg, folderOpen.jpg folderItem.jpg
+#                    folderClosed.gif, folderOpen.gif folderItem.gif
 #                    barPlus.gif, barMinus.gif, barT.gif, barLast.gif
 #                    fback.gif, back.gif, forward.gif fforward.gif
 #
