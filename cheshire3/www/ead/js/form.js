@@ -150,7 +150,7 @@ function submit(index){
     var divs = daodiv.getElementsByTagName('div');
     
     for (var i=0; i<divs.length; i++){
-    	if (divs[i].className == 'embed' || divs[i].className == 'singlefile'){
+    	if (divs[i].className == 'embed' || divs[i].className == 'new'){
     		var inputs = divs[i].getElementsByTagName('input');
     		if (inputs[0].value.strip() == '' && (inputs[1].value.strip() != '' && inputs[1].value.strip() != '<p></p>' && inputs[1].value.strip().replace('/[\s]+/g', ' ') != '<p> </p>')){
     			var confirmbox = confirm('The File URI value required for the digital object has not been completed. If you proceed with this operation the digital object will not be included and the title and/or description information relating to it will be lost. All other content will be saved.\n\nDo you want to continue?');
@@ -311,7 +311,7 @@ function save(){
     var divs = daodiv.getElementsByTagName('div');
     
     for (var i=0; i<divs.length; i++){
-    	if (divs[i].className == 'embed' || divs[i].className == 'singlefile'){
+    	if (divs[i].className == 'embed' || divs[i].className == 'new'){
     		var inputs = divs[i].getElementsByTagName('input');
     		if (inputs[0].value.strip() == '' && (inputs[1].value.strip() != '' && inputs[1].value.strip() != '<p></p>' && inputs[1].value.strip().replace('/[\s]+/g', ' ') != '<p> </p>')){
     			var confirmbox = confirm('The File URI value required for the digital object has not been completed. If you proceed with this operation the digital object will not be included and the title and/or description information relating to it will be lost. All other content will be saved.\n\nDo you want to continue?');
@@ -345,13 +345,16 @@ function save(){
     		var number = (length-1)/3;
     		var problems = false;
     		var list = new Array();
+
     		for (var i = number; i < length-1; i+=2){
 				if (inputs[i].value.strip() == '' && inputs[i+1].value.strip() != ''){ 
 					list[list.length] = i;
 					problems = true;
+
 				}
 			}
 			if (problems == false){
+
 				if ((inputs[length-1].value.strip() != '' || inputs[length-1].value.strip() != '<p></p>' || inputs[length-1].value.strip().replace(/[\s]+/g, ' ') != '<p> </p>')){
 					var entries = false;
 					for (var i = number; i < length-1; i+=2){
@@ -361,6 +364,7 @@ function save(){
 					}
 					if (entries == false){	
 						problems = true;
+
 					}				
 				}
 			}
@@ -414,7 +418,7 @@ function saveForm(asynch){
 	}
   	var data = ($('eadForm')).serialize();
   	data += ('&operation=save&location=' + currentForm);
-  	previousForm = currentForm
+  	previousForm = currentForm;
   	if (currentForm != 'collectionLevel'){	  			
   		var parent = $(currentForm).parentNode.parentNode.parentNode;	  		
   		if (parent.tagName != 'LI'){
@@ -473,7 +477,7 @@ function displayForm(id, level, nosave){
 	   	($('countrycode').value) = countryCode;	   			
 	   	($('archoncode').value) = repositoryCode;
 	   	($('unitid').value) = baseUnitId + '/' + currentForm.replace(/-/g, '/');
-	   	($('pui').value) = recid
+	   	($('pui').value) = recid;
 	   	updateId();
 	}
 	/* for navigating to an existing form*/
@@ -530,7 +534,7 @@ function addComponent(){
 		return;
 	}
     if (currentEntryField != null && currentEntryField.value != ''){
-    	validateField(currentEntryField, false)
+    	validateField(currentEntryField, false);
     }
     errors = document.getElementsByClassName('menuFieldError');
     if (errors.length != 0){
@@ -552,7 +556,7 @@ function addComponent(){
    		}   
 	}
 	if (currentForm == 'collectionLevel' && recid == 'notSet' && document.getElementById('recid') == 'notSet'){
-		var url = '/ead/edit'
+		var url = '/ead/edit';
 		var data = 'operation=checkId&id=' + encodeURIComponent(($('pui')).value) + '&store=editStore';
 		new Ajax.Request(url, {method: 'get', asynchronous: false, parameters: data, onSuccess: function(transport) { 	    				
 			var response = transport.responseText;
@@ -572,7 +576,7 @@ function addComponent(){
     var divs = daodiv.getElementsByTagName('div');
     
     for (var i=0; i<divs.length; i++){
-    	if (divs[i].className == 'embed' || divs[i].className == 'singlefile'){
+    	if (divs[i].className == 'embed' || divs[i].className == 'new'){
     		var inputs = divs[i].getElementsByTagName('input');
     		if (inputs[0].value.strip() == '' && (inputs[1].value.strip() != '' && inputs[1].value.strip() != '<p></p>' && inputs[1].value.strip().replace('/[\s]+/g', ' ') != '<p> </p>')){
     			var confirmbox = confirm('The File URI value required for the digital object has not been completed. If you proceed with this operation the digital object will not be included and the title and/or description information relating to it will be lost. All other content will be saved.\n\nDo you want to continue?');
@@ -841,7 +845,7 @@ function viewXml(){
     var divs = daodiv.getElementsByTagName('div');
     
     for (var i=0; i<divs.length; i++){
-    	if (divs[i].className == 'embed' || divs[i].className == 'singlefile'){
+    	if (divs[i].className == 'embed' || divs[i].className == 'new'){
     		var inputs = divs[i].getElementsByTagName('input');
     		if (inputs[0].value.strip() == '' && (inputs[1].value.strip() != '' && inputs[1].value.strip() != '<p></p>' && inputs[1].value.strip().replace('/[\s]+/g', ' ') != '<p> </p>')){
     			var confirmbox = confirm('The File URI value required for the digital object has not been completed. If you proceed with this operation the digital object will not be included and the title and/or description information relating to it will be lost. All other content will be saved.\n\nDo you want to continue?');
@@ -933,7 +937,7 @@ function previewRec(){
     var divs = daodiv.getElementsByTagName('div');
     
     for (var i=0; i<divs.length; i++){
-    	if (divs[i].className == 'embed' || divs[i].className == 'singlefile'){
+    	if (divs[i].className == 'embed' || divs[i].className == 'new'){
     		var inputs = divs[i].getElementsByTagName('input');
     		if (inputs[0].value.strip() == '' && (inputs[1].value.strip() != '' && inputs[1].value.strip() != '<p></p>' && inputs[1].value.strip().replace('/[\s]+/g', ' ') != '<p> </p>')){
     			var confirmbox = confirm('The File URI value required for the digital object has not been completed. If you proceed with this operation the digital object will not be included and the title and/or description information relating to it will be lost. All other content will be saved.\n\nDo you want to continue?');
@@ -1124,7 +1128,7 @@ function updateId() {
 					match = false;
 				}
 			}
-			lowerCaseId = lowerCaseId.replace(' ', '').replace('/', '-').replace('\\', '-');
+			lowerCaseId = lowerCaseId.replace(' ', '').replace('/', '-').replace('\\', '-').replace('\'', '');
 			if (match == true){
 				for (var i=0; i < repositoryCode.length; i++){
 					if (repositoryCode.charAt(i) != lowerCaseId.charAt(i+2)){
@@ -1373,7 +1377,7 @@ function checkEditStore(){
 			if ($('countrycode').value != ''){
 				if ($('archoncode').value != ''){
 					if ($('unitid').value != ''){
-						var id = $('countrycode').value.toLowerCase() + $('archoncode').value + $('unitid').value.replace(' ', '').replace('/', '-').replace('\\', '-').toLowerCase();
+						var id = $('countrycode').value.toLowerCase() + $('archoncode').value + $('unitid').value.replace(' ', '').replace('/', '-').replace('\\', '-').replace('\'', '').toLowerCase();
 						var url = '/ead/edit'
 						var data = 'operation=checkEditId&id=' + encodeURIComponent(id);
 						new Ajax.Request(url, {method: 'get', asynchronous: false, parameters: data, onSuccess: function(transport) { 	    				
@@ -1409,7 +1413,7 @@ function checkId(asynch){
 		if ($('countrycode').value != ''){
 			if ($('archoncode').value != ''){
 				if ($('unitid').value != ''){
-					var id = $('countrycode').value.toLowerCase() + $('archoncode').value + $('unitid').value.replace(' ', '').replace('/', '-').replace('\\', '-').toLowerCase();
+					var id = $('countrycode').value.toLowerCase() + $('archoncode').value + $('unitid').value.replace(' ', '').replace('/', '-').replace('\\', '-').replace('\'', '').toLowerCase();
 					var url = '/ead/edit'
 					var data = 'operation=checkId&id=' + encodeURIComponent(id) + '&store=recordStore';
 					new Ajax.Request(url, {method: 'get', asynchronous: asynch, parameters: data, onSuccess: function(transport) { 	    				
