@@ -342,23 +342,33 @@ function save(){
     	} else if (divs[i].className == 'multiple'){
     		var inputs = divs[i].getElementsByTagName('input');
     		var length = inputs.length;
-    		var number = (length-1)/3;
+    		var amount = (length-1)/3;
     		var problems = false;
     		var list = new Array();
 
-    		for (var i = number; i < length-1; i+=2){
-				if (inputs[i].value.strip() == '' && inputs[i+1].value.strip() != ''){ 
-					list[list.length] = i;
-					problems = true;
+			var divid = divs[i].getAttribute('id');
+			divid = divid.substring(divid.indexOf('[')+1, divid.indexOf(']'));
 
+			var path = divid.substring(0, divid.indexOf('dao'));
+			var number = divid.match(/\d+/,divid);
+
+
+			for (var i = 1; i<=amount; i++){
+				var href = document.getElementById(path + 'daogrp[' + number + ']/daoloc[' + i + ']/@href');
+				var title = document.getElementById(path + 'daogrp[' + number + ']/daoloc[' + i + ']/@title');
+				if (href.value.strip() == '' && title.value.strip() != ''){
+					list[list.length] = title.getAttribute('id');
+					problems = true;
 				}
 			}
+			var entries = false;
 			if (problems == false){
-
-				if ((inputs[length-1].value.strip() != '' || inputs[length-1].value.strip() != '<p></p>' || inputs[length-1].value.strip().replace(/[\s]+/g, ' ') != '<p> </p>')){
-					var entries = false;
-					for (var i = number; i < length-1; i+=2){
-						if (inputs[i].value.strip() != ''){
+				var desc = document.getElementById(path + 'daogrp[' + number + ']/daodesc');
+				if ((desc.value.strip() != '' || desc.value.strip() != '<p></p>' || desc.value.strip().replace(/[\s]+/g, ' ') != '<p> </p>')){
+					
+					for (var i = 1; i<=amount; i++){
+						var href = document.getElementById(path + 'daogrp[' + number + ']/daoloc[' + i + ']/@href');
+						if (href.value.strip() != ''){
 							entries = true;
 						}
 					}
@@ -376,9 +386,11 @@ function save(){
     			}
     			else{
     				for (var j = 0; j < list.length; j++){
-    					inputs[list[j]+1].value = '';
+    					document.getElementById(list[j]).value = '';
     				}
-					inputs[length-1].value = '<p></p>';
+    				if (list.length == amount || entries == true){
+						document.getElementById(path + 'daogrp[' + number + ']/daodesc').value = '<p></p>';
+					}
     			}
    			}    		   		
     	}

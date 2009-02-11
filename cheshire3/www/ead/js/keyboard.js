@@ -43,6 +43,7 @@ var fieldMap = new Array();
 	fieldMap['accessrestrict'] = 'Conditions Governing Access';
 	fieldMap['userestrict'] = 'Conditions Governing Reproduction';
 	fieldMap['lang_name'] = 'Language of Material - Language Name';
+	fieldMap['lang_code'] = 'Language of Material - Language Code - This should NOT contain character entities';
 	fieldMap['phystech'] = 'Physical Characteristics';
 	fieldMap['otherfindaid'] = 'Finding Aids';
 	fieldMap['originalsloc'] = 'Existence/Location of Orginals';

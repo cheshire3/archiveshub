@@ -143,7 +143,7 @@ class EadHandler:
         return text[:exception.start] + '<span class="error" title="This character could not be encoded for display">*</span>' + text[exception.end:]
     
     
-    def _parse_upload(self, data):
+    def _parse_upload(self, data, interface='admin'):
         if (type(data) == unicode):
             try: data = data.encode('utf-8')
             except:
@@ -172,18 +172,31 @@ class EadHandler:
                     positionRe = re.compile('line (\d+), column (\d+)')
                     mo = positionRe.search(str(e[1]))
                 line, posn = lines[int(mo.group(1))-1], int(mo.group(2))
-                startspace = newlineRe.match(line).group(0)
-                return '''\
-        <div id="single"><p class="error">An error occured while parsing your file. 
-        Please check the file at the suggested location and try again.</p>
-        <code>%s: %s</code>
-        <pre>
-        %s
-        <span class="error">%s</span>
-        </pre>
-        <p><a href="files.html">Back to file page</a></p></div>
-                ''' % (html_encode(repr(e[0])), e[1], html_encode(line[:posn+20]) + '...',  startspace + str('-'*(posn-len(startspace))) +'^')
-
+                try:
+                    startspace = newlineRe.match(line).group(0)
+                except:
+                    if interface=='admin':
+                        link = '<a href="files.html">Back to file page</a>'
+                    else :
+                        link = '<a href="edit.html">Back to edit/create menu</a>'
+                    return '''<div id="single"><p class="error">An error occured while parsing your file. 
+        Please check the file is a valid ead file and try again.</p><p>%s</p></div>''' % link
+                else:
+                    if interface=='admin':
+                        link = '<a href="files.html">Back to file page</a>'
+                    else :
+                        link = '<a href="edit.html">Back to edit/create menu</a>'
+                    return '''\
+            <div id="single"><p class="error">An error occured while parsing your file. 
+            Please check the file at the suggested location and try again.</p>
+            <code>%s: %s</code>
+            <pre>
+            %s
+            <span class="error">%s</span>
+            </pre>
+            <p>%s</p></div>
+                    ''' % (html_encode(repr(e[0])), e[1], html_encode(line[:posn+20]) + '...',  startspace + str('-'*(posn-len(startspace))) +'^', link)
+                    
         del doc
         return rec
     # end _parse_upload()

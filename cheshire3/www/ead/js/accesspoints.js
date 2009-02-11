@@ -61,10 +61,12 @@ var labelMapping = new Array();
 	labelMapping['corpname_x'] = 'Other';
 	labelMapping['corpname_source'] = 'Source';
 	
-	labelMapping['geogname_geogname'] = 'Location';
-	labelMapping['geogname_a'] = 'Location';
+	labelMapping['geogname_geogname'] = 'Place Name';
+	labelMapping['geogname_a'] = 'Place Name';
 	labelMapping['geogname_dates'] = 'Dates';
 	labelMapping['geogname_y'] = 'Dates';
+	labelMapping['geogname_loc'] = 'Location';
+	labelMapping['geogname_z'] = 'Location';
 	labelMapping['geogname_source'] = 'Source';
 	labelMapping['geogname_other'] = 'Other';
 	labelMapping['geogname_x'] = 'Other';
