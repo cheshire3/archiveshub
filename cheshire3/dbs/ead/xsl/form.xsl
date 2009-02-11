@@ -123,6 +123,9 @@
 			<xsl:when test="did/unitdate">
 				<xsl:apply-templates select="did/unitdate"/>
 			</xsl:when>
+			<xsl:when test="did/unittitle/unitdate">
+				<xsl:apply-templates select="did/unittitle/unitdate"/>
+			</xsl:when>
 			<xsl:otherwise>
 				<input class="menuField" type="text" onfocus="setCurrent(this);" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" name="did/unitdate" id="did/unitdate" size="39"></input>
 			</xsl:otherwise>
@@ -136,8 +139,11 @@
 	    		<xsl:when test="did/unitdate/@normal">
 	    			<xsl:apply-templates select="did/unitdate/@normal"/>
 	    		</xsl:when>
+	    		<xsl:when test="did/unittitle/unitdate/@normal">
+	    			<xsl:apply-templates select="did/unittitle/unitdate/@normal"/>
+	    		</xsl:when>
 	    		<xsl:otherwise>
-	    			<input type="text" onfocus="setCurrent(this);" name="did/unitdate/@normal" id="did/unitdate/@normal" size="39" maxlength="10"></input>
+	    			<input type="text" onfocus="setCurrent(this);" name="did/unitdate/@normal" id="did/unitdate/@normal" size="39" maxlength="21"></input>
 	    		</xsl:otherwise>
 	    	</xsl:choose>      	            
 		</p>
@@ -371,7 +377,7 @@
  <!--  -->
     <div class="section">
 	<span class="isadg"><h3>3.3: Content and Structure Area</h3></span> 
-<!-- scopecontent -->
+ <!-- scopecontent -->
 	 <p>
 	 <xsl:variable name="content">
 			<xsl:choose>
@@ -995,13 +1001,13 @@
 		</a></h3>
 		<p>
 		<xsl:if test="not(did/dao) and not(did/daogrp) and not(dao) and not(daogrp)">			
-			<div id="daooptnsdiv[1]" class="daooptions">
-				<input type="radio" name="daooptns1" value="new" onclick="createObjectsForm('new', 1, '', '')"><span id="new1">Link to file</span></input><br />
-				<input type="radio" name="daooptns1" value="embed" onclick="createObjectsForm('embed', 1, '', '')"><span id="embed1">Display image</span></input><br />
-				<input type="radio" name="daooptns1" value="thumb" onclick="createObjectsForm('thumb', 1, '', '')"><span id="thumb1">Display thumbnail link to file</span></input><br />
-				<input type="radio" name="daooptns1" value="multiple" onclick="createObjectsForm('multiple', 1, '', '')"><span id="multiple1">Link to multiple files</span></input><br />
+			<div id="daooptnsdiv[did/daogrp1]" class="daooptions">
+				<input type="radio" name="daooptns1" value="new" onclick="createObjectsForm('new', 1, 'did/', 'daogrp')"><span id="newdid/daogrp1">Link to file</span></input><br />
+				<input type="radio" name="daooptns1" value="embed" onclick="createObjectsForm('embed', 1, 'did/', 'daogrp')"><span id="embeddid/daogrp1">Display image</span></input><br />
+				<input type="radio" name="daooptns1" value="thumb" onclick="createObjectsForm('thumb', 1, 'did/', 'daogrp')"><span id="thumbdid/daogrp1">Display thumbnail link to file</span></input><br />
+				<input type="radio" name="daooptns1" value="multiple" onclick="createObjectsForm('multiple', 1, 'did/', 'daogrp')"><span id="multipledid/daogrp1">Link to multiple files</span></input><br />
 				</div>
-			  <div id="digitalobjectsform[1]"><xsl:text> </xsl:text></div>
+			  <div id="digitalobjectsform[did/daogrp1]"><xsl:text> </xsl:text></div>
 		</xsl:if>	
 		
 		<!-- Digital Object not in did -->							
@@ -1232,7 +1238,9 @@
 		
 <!-- subject -->
 		<div id="subject" class="apcontainer">
-			<p><strong>Subject</strong><br /><a class="extSearch" onclick="window.open('http://databases.unesco.org/thesaurus/', 'new', 'width=800 height=600');">[Search UNESCO]</a><xsl:text>  </xsl:text><a class="extSearch" onclick="window.open('http://www.archiveshub.ac.uk/lcsh/', 'new', 'width=800 height=600');">[Search LCSH]</a></p>
+			<p><strong>Subject</strong><a id="subjecthelp" name="subjecthelp" target="_new" href="http://www.archiveshub.ac.uk/arch/subject.shtml">
+		<img class="whatsthis" src="/images/whatisthissmall.gif" alt="[What is this?]"/>
+		</a><br /><a class="extSearch" onclick="window.open('http://databases.unesco.org/thesaurus/', 'new', 'width=800 height=600');">[Search UNESCO]</a><xsl:text>  </xsl:text><a class="extSearch" onclick="window.open('http://www.archiveshub.ac.uk/lcsh/', 'new', 'width=800 height=600');">[Search LCSH]</a></p>
 			<xsl:choose>
 				<xsl:when test="controlaccess/subject">
 					<xsl:call-template name="accesspoint">
@@ -1266,7 +1274,9 @@
 		<br/>	
 <!--persname -->
         <div id="persname" class="apcontainer">				
-			<p><strong>Personal Name</strong><br /><a class="extSearch" onclick="window.open('http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=P', 'new', 'width=800 height=600');">[Search NRA]</a></p>
+			<p><strong>Personal Name</strong><a id="persnamehelp" name="persnamehelp" target="_new" href="http://www.archiveshub.ac.uk/arch/persname.shtml">
+		<img class="whatsthis" src="/images/whatisthissmall.gif" alt="[What is this?]"/>
+		</a><br /><a class="extSearch" onclick="window.open('http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=P', 'new', 'width=800 height=600');">[Search NRA]</a></p>
 			
 			<xsl:choose>
 				<xsl:when test="controlaccess/persname">
@@ -1308,7 +1318,9 @@
 		<br/>
 <!--famname -->
 		<div id="famname" class="apcontainer">
-			<p><strong>Family Name</strong><br /><a class="extSearch" onclick="window.open('http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=F', 'new', 'width=800 height=600');">[Search NRA]</a></p>
+			<p><strong>Family Name</strong><a id="famnamehelp" name="famnamehelp" target="_new" href="http://www.archiveshub.ac.uk/arch/famname.shtml">
+		<img class="whatsthis" src="/images/whatisthissmall.gif" alt="[What is this?]"/>
+		</a><br /><a class="extSearch" onclick="window.open('http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=F', 'new', 'width=800 height=600');">[Search NRA]</a></p>
 			<xsl:choose>
 				<xsl:when test="controlaccess/famname">
 					<xsl:call-template name="accesspoint">
@@ -1349,7 +1361,9 @@
 		<br/>		
 <!-- corpname -->
 		<div id="corpname" class="apcontainer">
-			<p><strong>Corporate Name</strong><br /><a class="extSearch" onclick="window.open('http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=O', 'new', 'width=800 height=600');">[Search NRA]</a></p>
+			<p><strong>Corporate Name</strong><a id="corpnamehelp" name="corpnamehelp" target="_new" href="http://www.archiveshub.ac.uk/arch/corpname.shtml">
+		<img class="whatsthis" src="/images/whatisthissmall.gif" alt="[What is this?]"/>
+		</a><br /><a class="extSearch" onclick="window.open('http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=O', 'new', 'width=800 height=600');">[Search NRA]</a></p>
 			<xsl:choose>
 				<xsl:when test="controlaccess/corpname">
 					<xsl:call-template name="accesspoint">
@@ -1388,7 +1402,9 @@
 		<br/>	
 <!-- placename -->
 		<div id="geogname" class="apcontainer">
-			<p><strong>Place Name</strong><br /><a class="extSearch" onclick="window.open('http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=PL', 'new', 'width=800 height=600');">[Search NRA]</a></p>
+			<p><strong>Place Name</strong><a id="geognamehelp" name="geognamehelp" target="_new" href="http://www.archiveshub.ac.uk/arch/geogname.shtml">
+		<img class="whatsthis" src="/images/whatisthissmall.gif" alt="[What is this?]"/>
+		</a><br /><a class="extSearch" onclick="window.open('http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=PL', 'new', 'width=800 height=600');">[Search NRA]</a></p>
 			<xsl:choose>
 				<xsl:when test="controlaccess/geogname">
 					<xsl:call-template name="accesspoint">
@@ -1401,10 +1417,12 @@
 			</xsl:choose>	
 				<div id="geognametable" class="tablecontainer">
 				    <table id="table_geogname"><tbody>
-						<tr NoDrop="true" NoDrag="true"><td class="label">Location:</td><td> <input type="text" onfocus="setCurrent(this);" id="geogname_location" size="40"></input></td></tr>
+						<tr NoDrop="true" NoDrag="true"><td class="label">Place Name:</td><td> <input type="text" onfocus="setCurrent(this);" id="geogname_location" size="40"></input></td></tr>
 						<tr NoDrop="true" NoDrag="true"><td class="label">Source:</td><td> <input type="text" onfocus="setCurrent(this);" id="geogname_source" size="40"></input></td></tr>
-						<tr NoDrop="true" NoDrag="true"><td><select onfocus="setCurrent(this);" id="geognamedropdown">				  	  			  		
-				    		<option value="geogname_other">Other</option>		    		
+						<tr NoDrop="true" NoDrag="true"><td><select onfocus="setCurrent(this);" id="geognamedropdown">				  	  			  			
+				    		<option value="geogname_dates">Dates</option>		    		
+				    		<option value="geogname_loc">Location</option>
+				    		<option value="geogname_other">Other</option>
 				    	</select></td>
 				    	<td><a class="addfield" onclick="addField('geogname');">Add Selected Field</a><!-- <input type="text" onfocus="addField('geogname')" size="40" value="Click to Add Selected Field" style="background:#F2F2F2; color: grey;"></input> --></td></tr>
 				    </tbody></table>
@@ -1424,7 +1442,9 @@
 		<br/>
 <!--title -->
 		<div id="title" class="apcontainer">
-			<p><strong>Book Title</strong></p>
+			<p><strong>Book Title</strong><a id="booktitlehelp" name="booktitlehelp" target="_new" href="http://www.archiveshub.ac.uk/arch/booktitle.shtml">
+		<img class="whatsthis" src="/images/whatisthissmall.gif" alt="[What is this?]"/>
+		</a></p>
 			<xsl:choose>
 				<xsl:when test="controlaccess/title">
 					<xsl:call-template name="accesspoint">
@@ -1459,7 +1479,9 @@
 			<br/>	
 <!-- genreform -->
 		<div id="genreform" class="apcontainer">
-			<p><strong>Genre Form</strong><br/><a class="extSearch" onclick="window.open('http://www.getty.edu/research/conducting_research/vocabularies/aat/', 'new', 'width=800 height=600');">[Search AAT]</a><xsl:text> </xsl:text><a class="extSearch" onclick="window.open('http://www.loc.gov/rr/print/tgm2/', 'new', 'width=800 height=600');">[Search TGM]</a></p>
+			<p><strong>Genre Form</strong><a id="genreformhelp" name="genreformhelp" target="_new" href="http://www.archiveshub.ac.uk/arch/genreform.shtml">
+		<img class="whatsthis" src="/images/whatisthissmall.gif" alt="[What is this?]"/>
+		</a><br/><a class="extSearch" onclick="window.open('http://www.getty.edu/research/conducting_research/vocabularies/aat/', 'new', 'width=800 height=600');">[Search AAT]</a><xsl:text> </xsl:text><a class="extSearch" onclick="window.open('http://www.loc.gov/rr/print/tgm2/', 'new', 'width=800 height=600');">[Search TGM]</a></p>
 			<xsl:choose>
 				<xsl:when test="controlaccess/genreform">
 					<xsl:call-template name="accesspoint">
@@ -1486,7 +1508,9 @@
 			
 <!-- function -->
 		<div id="function" class="apcontainer">
-			<p><strong>Function</strong><br/><a class="extSearch" onclick="window.open('http://www.getty.edu/research/conducting_research/vocabularies/aat/', 'new', 'width=800 height=600');">[Search AAT]</a><xsl:text> </xsl:text><a class="extSearch" onclick="window.open('http://www.naa.gov.au/records-management/create-capture-describe/describe/agift/index.aspx', 'new', 'width=800 height=600');">[Search AGIFT]</a></p>
+			<p><strong>Function</strong><a id="functionhelp" name="functionhelp" target="_new" href="http://www.archiveshub.ac.uk/arch/function.shtml">
+		<img class="whatsthis" src="/images/whatisthissmall.gif" alt="[What is this?]"/>
+		</a><br/><a class="extSearch" onclick="window.open('http://www.getty.edu/research/conducting_research/vocabularies/aat/', 'new', 'width=800 height=600');">[Search AAT]</a><xsl:text> </xsl:text><a class="extSearch" onclick="window.open('http://www.naa.gov.au/records-management/create-capture-describe/describe/agift/index.aspx', 'new', 'width=800 height=600');">[Search AGIFT]</a></p>
 			<xsl:choose>
 				<xsl:when test="controlaccess/function">
 					<xsl:call-template name="accesspoint">
@@ -1730,7 +1754,7 @@
   </xsl:template>
   
   <xsl:template match="unitdate/@normal">
-  	<input type="text" onfocus="setCurrent(this);" name="did/unitdate/@normal" id="did/unitdate/@normal" size="39" maxlength="10">
+  	<input type="text" onfocus="setCurrent(this);" name="did/unitdate/@normal" id="did/unitdate/@normal" size="39" maxlength="21">
   		<xsl:attribute name="value">
   			<xsl:value-of select="."/>
   		</xsl:attribute>
