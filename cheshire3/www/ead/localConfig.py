@@ -50,7 +50,7 @@ display_relevance = True
 graphical_relevance = False
 
 # Path to Cheshire Root - i.e. where Cheshire3 was installed
-cheshirePath = os.environ.get('C3HOME', '/home/cheshire/cheshire3/')
+cheshirePath = '/home/cheshire/'
 
 # Institutionally specific configurables
 repository_name = "Cheshire for Archives v3.4 Development"
@@ -74,6 +74,9 @@ logpath = cheshirePath + '/cheshire3/www/ead/logs'
 searchlogfilepath = logpath + '/searchHandler.log'
 adminlogfilepath = logpath + '/adminHandler.log'
 editinglogfilepath = logpath + '/editingHandler.log'
+
+#lock file path
+lockfilepath = cheshirePath + '/cheshire3/dbs/ead/indexing.lock'
 
 # Path where HTML fragments (browse.html, email.html, resolve.html, search.html)
 # and template.ssi are located
