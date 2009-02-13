@@ -6,13 +6,13 @@
     
 	<!-- screen CSS -->
 	<link rel="stylesheet" type="text/css" media="screen" href="/ead/css/struc-all.css"></link>
-	<!--[if lt IE 7]>
-		<link rel="stylesheet" type="text/css" media="screen" href="/ead/css/struc-ie.css"></link>
-		<script type="text/javascript">
-			onload = function() { wrapper.focus() }
-		</script>
-	<![endif]-->
 	<link rel="stylesheet" type="text/css" href="/ead/css/style.css"></link>
+    <!--[if lt IE 7]>
+        <link rel="stylesheet" type="text/css" media="screen" href="/ead/css/ie6.css"></link>
+        <script type="text/javascript">
+            onload = function() { content.focus() }
+        </script>
+    <![endif]-->
     <link rel="stylesheet" type="text/css" href="/ead/css/localStyles.css"></link>
 	
 	<!-- printout CSS -->
@@ -27,32 +27,34 @@
 	
   </head>
   <body>
-   	<div id="banner">
-   		<div id="crest">
-   			<a href="%REP_LINK%" title="%REP_NAME%">
-			  <img src="%REP_LOGO%" alt="%REP_NAME%" class="rep-logo"/>
-			</a>
-   		</div>
-   		<!--
-   		<div id="c3logo">
-   			<a href="http://www.cheshire3.org" title="To www.cheshire3.org">
-			  <img src="/images/c3_black.gif" alt="cheshire | 3"/>
-			</a>
-   		</div>
-   		-->
-   		<div id="titles">
-   			<h1>%REP_NAME%</h1>
-            <h2>%TITLE%</h2>
-   		</div>
-    </div> <!-- end banner div -->
-	<!-- site navigation links -->
-	<div id="navbar" class="navbar">
-        <a href="/ead/index.html" title="Search for EAD Records" class="navlink"> Search </a> | 
-        <a href="/ead/browse.html" title="Browse Indexes" class="navlink"> Browse Indexes </a> | 
-        <a href="/ead/subject.html" title="Find Subjects" class="navlink"> Find Subjects </a> | 
-        <a href="/ead/help.html" title="Search Help" class="navlink"> Help </a> | 
-        <a href="/ead/about.html" title="About Cheshire for Archives" class="navlink"> About </a> | 
-        %NAVBAR%
-	</div>
+    <div id="header">
+       	<div id="banner">
+       		<div id="crest">
+       			<a href="%REP_LINK%" title="%REP_NAME%">
+    			  <img src="%REP_LOGO%" alt="%REP_NAME%" class="rep-logo"/>
+    			</a>
+       		</div>
+       		<!--
+       		<div id="c3logo">
+       			<a href="http://www.cheshire3.org" title="To www.cheshire3.org">
+    			  <img src="/images/c3_black.gif" alt="cheshire | 3"/>
+    			</a>
+       		</div>
+       		-->
+       		<div id="titles">
+       			<h1>%REP_NAME%</h1>
+                <h2>%TITLE%</h2>
+       		</div>
+        </div> <!-- end banner div -->
+    	<!-- site navigation links -->
+    	<div id="navbar" class="navbar">
+            <a href="/ead/index.html" title="Search for EAD Records" class="navlink"> Search </a> | 
+            <a href="/ead/browse.html" title="Browse Indexes" class="navlink"> Browse Indexes </a> | 
+            <a href="/ead/subject.html" title="Find Subjects" class="navlink"> Find Subjects </a> |
+            <a href="/ead/about.html" title="About Cheshire for Archives" class="navlink"> About </a> |  
+            <a href="/ead/help.html" title="Search Help" class="navlink"> Help </a> | 
+            %NAVBAR%
+    	</div>
+    </div>
 	<!-- content here may be 1 or 2 column - div classes/ids determined by handler -->
     <div id="content">
