@@ -13,8 +13,6 @@
 // 0.01 - 09/01/2009 - CS- functions completed for first release of Archives Hub editing interface
 */
 
-var urls = new Array("http://www.archiveshub.ac.uk/unesco/", "http://www.archiveshub.ac.uk/lcsh/", "http://www.archiveshub.ac.uk/nra-person/", "http://www.archiveshub.ac.uk/nra-fe/", "http://www.archiveshub.ac.uk/nra-corp/");
-
     
 var labelMapping = new Array();
 
@@ -85,10 +83,6 @@ var labelMapping = new Array();
 	labelMapping['function_function'] = 'Function';
 	labelMapping['function_source'] = 'Source';
 
-//open a new window with the relevant thesaurus/source search
-function opensearch (which) {
- 	var newwin = window.open(urls[which], "searchwindow");
-}
 
 
 /*adds the selected field to the access point, s is the name of the access point ie. persname */

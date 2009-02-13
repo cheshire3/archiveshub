@@ -37,13 +37,28 @@ textarea, input[type="text"], input[type="file"], select{
 	border: 2px inset white;	
 	}
 	
-.daooptions {
-	padding-bottom: 20px;
-	padding-left: 20px;
-	}
-	
+
 .thumb, .multiple, .new, .embed {
 	padding-bottom: 20px;
+	border-bottom: 1px solid gray;
+	padding-top: 20px;
+	}
+	
+
+	
+#digitalobjectsform {
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+.daotable td.label{
+	width: 120px;	
+}
+	
+	
+div#createnewdao {
+	padding-bottom: 20px;
+	padding-top: 20px;
 	}
 	
 .added {
@@ -93,11 +108,7 @@ br {
 	padding-left: 5px;
 }
 
-#digitalobjectsform {
-	padding-top: 10px;
-	padding-bottom: 10px;
-}
-	
+
 
 .accesspoint {
 	margin-left: 105px;
@@ -274,8 +285,9 @@ a.invalid {
 }
 
 table.edit-ops {
-	width: 290px;	
+	width: 310px;	
 }
+
 
 .menubutton {
 	float: left;

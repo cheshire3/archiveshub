@@ -209,14 +209,16 @@ class EadEditingHandler(EadHandler):
             validList = [l for l in self.required_xpaths_components]
             tree = etree.fromstring('<%s c3id="%s"></%s>' % (ctype, loc, ctype))   
         #build the rest of the ead        
-        list = form.list     
+        list = form.list  
+        daonames = {}   
+        if (collection):
+            node = tree.xpath('/ead/archdesc')[0]
+        else :
+            node = tree.xpath('/*[not(name() = "ead")]')[0]
         for field in list :
-            if field.name not in ['ctype','location','operation','newForm','owner','recid', 'parent', 'pui', 'eadid', 'filedesc/titlestmt/sponsor'] and field.name.find('daooptns') != 0:        
+            if field.name not in ['ctype','location','operation','newForm','owner','recid', 'parent', 'pui', 'eadid', 'filedesc/titlestmt/sponsor', 'daoselect']:                        
                 #do did level stuff
-                if (collection):
-                    node = tree.xpath('/ead/archdesc')[0]
-                else :
-                    node = tree.xpath('/*[not(name() = "ead")]')[0]
+                
                 if field.name.find('controlaccess') == 0 :
                     self._create_controlaccess(node, field.name, field.value) 
                     try:
@@ -230,6 +232,16 @@ class EadEditingHandler(EadHandler):
                         validList.remove('did/langmaterial/language')
                     except:
                         pass
+                elif field.name.find('dao') == 0 :
+                    daoname = field.name.split('|')
+                    try :
+                        daodict = daonames[daoname[0]]
+                    except:
+                        daodict = {}
+                    if (field.value.strip() != '' and field.value.strip() != ' ' and field.value.strip() != '<p></p>' and re.sub('[\s]+', ' ', field.value.strip()) != '<p> </p>'):
+                        daodict[daoname[1]] = field.value
+                    daonames[daoname[0]] = daodict                
+                    
                 else :
                     if (field.value.strip() != '' and field.value.strip() != ' ' and field.value.strip() != '<p></p>' and re.sub('[\s]+', ' ', field.value.strip()) != '<p> </p>'):
                         target = self._create_path(node, field.name)
@@ -241,21 +253,24 @@ class EadEditingHandler(EadHandler):
                                 validList.remove(field.name)
                             except:
                                 pass
-        emptydao = []
-        try:
-            emptydao.extend(tree.xpath('//daoloc[not(@href)]'))
-        except:
-            pass
-        try:
-            emptydao.extend(tree.xpath('//dao[not(@href)]'))
-        except:
-            pass
-        for n in emptydao:
-            try:
-                parent = n.getparent()
-                parent.remove(n)
-            except:
-                pass
+        self.log(daonames)   
+        self._create_dao(daonames, node)
+
+#        emptydao = []
+#        try:
+#            emptydao.extend(tree.xpath('//daoloc[not(@href)]'))
+#        except:
+#            pass
+#        try:
+#            emptydao.extend(tree.xpath('//dao[not(@href)]'))
+#        except:
+#            pass
+#        for n in emptydao:
+#            try:
+#                parent = n.getparent()
+#                parent.remove(n)
+#            except:
+#                pass
         if (len(validList)):
             valid = False
         else:
@@ -264,6 +279,79 @@ class EadEditingHandler(EadHandler):
         return (tree, valid)    
     #- end build_ead    
         
+        
+    def _create_dao(self, dict, node):
+        if node.xpath('did'):
+            startnode = node.xpath('did')[0]
+        else :
+            startnode = self._create_path(node, 'did')
+        for k in dict.keys():
+            dao = dict[k]
+            keys = dao.keys()
+            if 'new' in keys:
+                if 'href' in keys:
+                    daoelem = etree.Element('dao')
+                    daoelem.attrib['href'] = dao['href']
+                    daoelem.attrib['show'] = dao['new']
+                    if 'desc' in keys:
+                        descelem = etree.Element('daodesc')
+                        self._add_text(descelem, dao['desc'])
+                        daoelem.append(descelem)
+                    startnode.append(daoelem)                 
+            elif 'embed' in keys:
+                if 'href' in keys:
+                    daoelem = etree.Element('dao')
+                    daoelem.attrib['href'] = dao['href']
+                    daoelem.attrib['show'] = dao['embed']
+                    if 'desc' in keys:
+                        descelem = etree.Element('daodesc')
+                        self._add_text(descelem, dao['desc'])
+                        daoelem.append(descelem)
+                    startnode.append(daoelem)     
+            elif 'thumb' in keys:
+                if 'href1' in keys and 'href2' in keys:
+                    daoelem = etree.Element('daogrp')
+                    startnode.append(daoelem)
+                    
+                    daoloc = etree.Element('daoloc')
+                    daoloc.attrib['href'] = dao['href1']
+                    daoloc.attrib['role'] = dao['thumb']
+                    daoelem.append(daoloc)
+                    daoloc = etree.Element('daoloc')
+                    daoloc.attrib['href'] = dao['href2']
+                    daoloc.attrib['role'] = dao['reference']
+                    daoelem.append(daoloc)      
+                    if 'desc' in keys:
+                        descelem = etree.Element('daodesc')
+                        self._add_text(descelem, dao['desc'])
+                        daoelem.append(descelem)
+                      
+            else:
+                hrefpresent = False
+                hrefs = []
+                for key in keys:                   
+                    if key.find('href') == 0:
+                        hrefs.append(key)
+                self.log(hrefs)
+                if len(hrefs) > 0:
+                    daoelem = etree.Element('daogrp')
+                    startnode.append(daoelem)  
+                    for i in range(1, len(hrefs)+1) :
+                        daoloc = etree.Element('daoloc')
+                        daoloc.attrib['href'] = dao['href%d' % i]
+                        daoloc.attrib['role'] = dao['role%d' % i]
+                        if 'title%d' % i in keys:
+                            daoloc.attrib['title'] = dao['title%d' % i]
+                        daoelem.append(daoloc)
+                    if 'desc' in keys:
+                        descelem = etree.Element('daodesc')
+                        self._add_text(descelem, dao['desc'])
+                        daoelem.append(descelem)
+                      
+                        
+            
+            
+
             
     def _delete_path(self, startNode, nodePath):
         if not (startNode.xpath(nodePath)) :
@@ -911,8 +999,9 @@ class EadEditingHandler(EadHandler):
                        
             #cycle through the form and replace any node that need it
             deleteList = []
+            daonames = {} 
             for field in list :                
-                if field.name not in ['ctype','location','operation','newForm','owner','recid', 'parent', 'pui', 'filedesc/titlestmt/sponsor'] and field.name.find('daooptns') != 0:               
+                if field.name not in ['ctype','location','operation','newForm','owner','recid', 'parent', 'pui', 'filedesc/titlestmt/sponsor', 'daoselect']:               
                     #do archdesc stuff
                     if field.name.find('controlaccess') == 0 :                        
                         self._create_controlaccess(node, field.name, field.value)  
@@ -931,6 +1020,17 @@ class EadEditingHandler(EadHandler):
                             validList.remove('did/langmaterial/language')
                         except:
                             pass
+                        
+                    elif field.name.find('dao') == 0 :
+                        daoname = field.name.split('|')
+                        try :
+                            daodict = daonames[daoname[0]]
+                        except:
+                            daodict = {}
+                        if (field.value.strip() != '' and field.value.strip() != ' ' and field.value.strip() != '<p></p>' and re.sub('[\s]+', ' ', field.value.strip()) != '<p> </p>'):
+                            daodict[daoname[1]] = field.value
+                        daonames[daoname[0]] = daodict                           
+                        
                     else :
                         if (field.value.strip() != '' and field.value.strip() != ' ' and field.value.strip() != '<p></p>' and re.sub('[\s]+', ' ', field.value.strip()) != '<p> </p>'):
                             target = self._create_path(node, field.name)
@@ -948,32 +1048,35 @@ class EadEditingHandler(EadHandler):
                 deleteList.sort(reverse=True)
                 for name in deleteList:
                     self._delete_path(node, name) 
-            emptydao = []
-            try:
-                emptydao.extend(tree.xpath('//daoloc[not(@href)]'))
-            except:
-                pass
-            try:
-                emptydao.extend(tree.xpath('//dao[not(@href)]'))
-            except:
-                pass
-            for n in emptydao:
-                try:
-                    parent = n.getparent()
-                    parent.remove(n)
-                except:
-                    pass 
-            emptydaogrp = []
-            try:
-                emptydaogrp.extend(tree.xpath('//daogrp[not(child::daoloc)]'))
-            except:
-                pass
-            for n in emptydaogrp:
-                try:
-                    parent = n.getparent()
-                    parent.remove(n)
-                except:
-                    pass
+            self.log(daonames)
+            self._create_dao(daonames, node)
+              
+#            emptydao = []
+#            try:
+#                emptydao.extend(tree.xpath('//daoloc[not(@href)]'))
+#            except:
+#                pass
+#            try:
+#                emptydao.extend(tree.xpath('//dao[not(@href)]'))
+#            except:
+#                pass
+#            for n in emptydao:
+#                try:
+#                    parent = n.getparent()
+#                    parent.remove(n)
+#                except:
+#                    pass 
+#            emptydaogrp = []
+#            try:
+#                emptydaogrp.extend(tree.xpath('//daogrp[not(child::daoloc)]'))
+#            except:
+#                pass
+#            for n in emptydaogrp:
+#                try:
+#                    parent = n.getparent()
+#                    parent.remove(n)
+#                except:
+#                    pass
             if len(validList):
                 valid = False
             else:
@@ -1024,8 +1127,9 @@ class EadEditingHandler(EadHandler):
                 self._delete_currentLangmaterial(node)
                 self._delete_currentDao(node)
                 deleteList = []
+                daonames = {} 
                 for field in list :
-                    if field.name not in ['ctype','location','operation','newForm','owner','recid', 'parent'] and field.name.find('daooptns') != 0:  
+                    if field.name not in ['ctype','location','operation','newForm','owner','recid', 'parent', 'daoselect']:  
                         if field.name.find('controlaccess') == 0 :                        
                             self._create_controlaccess(node, field.name, field.value) 
                             try:
@@ -1043,6 +1147,18 @@ class EadEditingHandler(EadHandler):
                                 validList.remove('did/langmaterial/language')
                             except:
                                 pass
+                            
+                        elif field.name.find('dao') == 0 :
+                            daoname = field.name.split('|')
+                            try :
+                                daodict = daonames[daoname[0]]
+                            except:
+                                daodict = {}
+                            if (field.value.strip() != '' and field.value.strip() != ' ' and field.value.strip() != '<p></p>' and re.sub('[\s]+', ' ', field.value.strip()) != '<p> </p>'):
+                                daodict[daoname[1]] = field.value
+                            daonames[daoname[0]] = daodict   
+                        
+                            
                         else :
                             if (field.value.strip() != '' and field.value.strip() != ' ' and field.value.strip() != '<p></p>' and re.sub('[\s]+', ' ', field.value.strip()) != '<p> </p>'):
                                 target = self._create_path(node, field.name)
@@ -1059,33 +1175,36 @@ class EadEditingHandler(EadHandler):
                 if len(deleteList):
                     deleteList.sort(reverse=True)
                     for name in deleteList:
-                        self._delete_path(node, name)                   
-                emptydao = []
-                try:
-                    emptydao.extend(tree.xpath('//daoloc[not(@href)]'))
-                except:
-                    pass
-                try:
-                    emptydao.extend(tree.xpath('//dao[not(@href)]'))
-                except:
-                    pass                           
-                for n in emptydao:
-                    try:
-                        parent = n.getparent()
-                        parent.remove(n)
-                    except:
-                        pass
-                emptydaogrp = []
-                try:
-                    emptydaogrp.extend(tree.xpath('//daogrp[not(child::daoloc)]'))
-                except:
-                    pass
-                for n in emptydaogrp:
-                    try:
-                        parent = n.getparent()
-                        parent.remove(n)
-                    except:
-                        pass
+                        self._delete_path(node, name) 
+                self.log(daonames)    
+                self._create_dao(daonames, node)  
+                            
+#                emptydao = []
+#                try:
+#                    emptydao.extend(tree.xpath('//daoloc[not(@href)]'))
+#                except:
+#                    pass
+#                try:
+#                    emptydao.extend(tree.xpath('//dao[not(@href)]'))
+#                except:
+#                    pass                           
+#                for n in emptydao:
+#                    try:
+#                        parent = n.getparent()
+#                        parent.remove(n)
+#                    except:
+#                        pass
+#                emptydaogrp = []
+#                try:
+#                    emptydaogrp.extend(tree.xpath('//daogrp[not(child::daoloc)]'))
+#                except:
+#                    pass
+#                for n in emptydaogrp:
+#                    try:
+#                        parent = n.getparent()
+#                        parent.remove(n)
+#                    except:
+#                        pass
                 if len(validList):
                     valid = False
                 else:
