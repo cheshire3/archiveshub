@@ -214,7 +214,9 @@
     </p>
     <xsl:if test="$leveltype = 'collection'">
 	    <p>
-	  		<strong>Repository</strong><br/>
+	  		<strong>Repository</strong><a id="repositoryhelp" name="repositoryhelp" target="_new" href="http://www.archiveshub.ac.uk/arch/repository.shtml">
+		<img class="whatsthis" src="/images/whatisthissmall.gif" alt="[What is this?]"/>
+		</a><br/>
 	  		<xsl:choose>
 				<xsl:when test="did/repository">
 					<xsl:apply-templates select="did/repository"/>
@@ -230,7 +232,9 @@
 					<xsl:apply-templates select="../eadheader/filedesc/titlestmt/sponsor"/>
 				</xsl:when> 
 				<xsl:otherwise>
-					<strong>Sponsor </strong> <a class="smalllink" id="linkfiledesc/titlestmt/sponsor" title="add sponsor" onclick="addElement('filedesc/titlestmt/sponsor')">add content</a> [optional]<br/>
+					<strong>Sponsor</strong><a id="sponsorhelp" name="sponsorhelp" target="_new" href="http://www.archiveshub.ac.uk/arch/sponsor.shtml ">
+		<img class="whatsthis" src="/images/whatisthissmall.gif" alt="[What is this?]"/>
+		</a><a class="smalllink" id="linkfiledesc/titlestmt/sponsor" title="add sponsor" onclick="addElement('filedesc/titlestmt/sponsor')">add content</a> [optional]<br/>
 					<input class="menuField" type="text" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" name="filedesc/titlestmt/sponsor" id="filedesc/titlestmt/sponsor" size="80" style="display:none"></input>
 				</xsl:otherwise>
 			</xsl:choose>
@@ -999,234 +1003,189 @@
 		<h3>Digital Objects<a id="daohelp" name="daohelp" target="_new" href="http://www.archiveshub.ac.uk/arch/images.shtml#dao-help">
 		<img class="whatsthis" src="/images/whatisthissmall.gif" alt="[What is this?]"/>
 		</a></h3>
-		<p>
-		<xsl:if test="not(did/dao) and not(did/daogrp) and not(dao) and not(daogrp)">			
-			<div id="daooptnsdiv[did/daogrp1]" class="daooptions">
-				<input type="radio" name="daooptns1" value="new" onclick="createObjectsForm('new', 1, 'did/', 'daogrp')"><span id="newdid/daogrp1">Link to file</span></input><br />
-				<input type="radio" name="daooptns1" value="embed" onclick="createObjectsForm('embed', 1, 'did/', 'daogrp')"><span id="embeddid/daogrp1">Display image</span></input><br />
-				<input type="radio" name="daooptns1" value="thumb" onclick="createObjectsForm('thumb', 1, 'did/', 'daogrp')"><span id="thumbdid/daogrp1">Display thumbnail link to file</span></input><br />
-				<input type="radio" name="daooptns1" value="multiple" onclick="createObjectsForm('multiple', 1, 'did/', 'daogrp')"><span id="multipledid/daogrp1">Link to multiple files</span></input><br />
-				</div>
-			  <div id="digitalobjectsform[did/daogrp1]"><xsl:text> </xsl:text></div>
-		</xsl:if>	
-		
-		<!-- Digital Object not in did -->							
+		<div id="daocontainer">
+			<!-- Digital Object not in did -->							
 			<xsl:if test="dao">				
 				<xsl:for-each select="dao">
 					<xsl:choose>
 						<xsl:when test="@show='embed'">
-							<div class="daooptions">
-								<xsl:attribute name="id">
-									<xsl:text>daooptnsdiv[dao</xsl:text><xsl:value-of select="position()"/><xsl:text>]</xsl:text>
-								</xsl:attribute>
-								<xsl:call-template name="daooptns">
-									<xsl:with-param name="type" select="'embed'"/>
-									<xsl:with-param name="number" select="position()"/>
-									<xsl:with-param name="form" select="'dao'"/>
-									<xsl:with-param name="path" select="''"/>
-								</xsl:call-template>									
-							</div>
 							<div class="embed">
 								<xsl:attribute name="id">
-									<xsl:text>digitalobjectsform[dao</xsl:text><xsl:value-of select="position()"/><xsl:text>]</xsl:text>
+									<xsl:text>daoformxdao</xsl:text><xsl:value-of select="position()"/>
 								</xsl:attribute>
+								<b>Display image</b>
 								<xsl:call-template name="dao">
 									<xsl:with-param name="type" select="'embed'"/>
 									<xsl:with-param name="number" select="position()"/>
 								</xsl:call-template>
+								<input type="button" value="Delete">
+									<xsl:attribute name="onclick">
+										<xsl:text>deleteDao('daoformxdao</xsl:text><xsl:value-of select="position()"/><xsl:text>')</xsl:text>
+									</xsl:attribute>					
+								</input>
 							</div>						
 						</xsl:when>
 						<xsl:otherwise>
-							<div class="daooptions">
+							<div class="new">
 								<xsl:attribute name="id">
-									<xsl:text>daooptnsdiv[dao</xsl:text><xsl:value-of select="position()"/><xsl:text>]</xsl:text>
+									<xsl:text>daoformxdao</xsl:text><xsl:value-of select="position()"/>
 								</xsl:attribute>
-								<xsl:call-template name="daooptns">
-									<xsl:with-param name="type" select="'new'"/>
-									<xsl:with-param name="number" select="position()"/>
-									<xsl:with-param name="form" select="'dao'"/>
-									<xsl:with-param name="path" select="''"/>
-								</xsl:call-template>									
-							</div>
-							<div class="singlefile">
-								<xsl:attribute name="id">
-									<xsl:text>digitalobjectsform[dao</xsl:text><xsl:value-of select="position()"/><xsl:text>]</xsl:text>
-								</xsl:attribute>
+								<b>Link to file</b>
 								<xsl:call-template name="dao">
 									<xsl:with-param name="type" select="'new'"/>
 									<xsl:with-param name="number" select="position()"/>
 								</xsl:call-template>
+								<input type="button" value="Delete">
+									<xsl:attribute name="onclick">
+										<xsl:text>deleteDao('daoformxdao</xsl:text><xsl:value-of select="position()"/><xsl:text>')</xsl:text>
+									</xsl:attribute>					
+								</input>
 							</div>
 						</xsl:otherwise>
 					</xsl:choose>
 				</xsl:for-each>
 			</xsl:if>
-		</p>
-		<p>
 			<xsl:if test="daogrp">
 				<xsl:for-each select="daogrp">
 					<xsl:choose>
 						<xsl:when test="daoloc/@role='thumb'">
-							<div class="daooptions">
-								<xsl:attribute name="id">
-									<xsl:text>daooptnsdiv[daogrp</xsl:text><xsl:value-of select="position()"/><xsl:text>]</xsl:text>
-								</xsl:attribute>
-								<xsl:call-template name="daooptns">
-									<xsl:with-param name="type" select="'thumb'"/>
-									<xsl:with-param name="number" select="position()"/>
-									<xsl:with-param name="form" select="'daogrp'"/>
-									<xsl:with-param name="path" select="''"/>
-								</xsl:call-template>									
-							</div>
 							<div class="thumb">
 								<xsl:attribute name="id">
-									<xsl:text>digitalobjectsform[daogrp</xsl:text><xsl:value-of select="position()"/><xsl:text>]</xsl:text>
+									<xsl:text>daoformxgrp</xsl:text><xsl:value-of select="position()"/>
 								</xsl:attribute>
+								<b>Thumbnail link to file</b>
 								<xsl:call-template name="thumb">
 									<xsl:with-param name="number" select="position()"/>									
 								</xsl:call-template>
+								<input type="button" value="Delete">
+									<xsl:attribute name="onclick">
+										<xsl:text>deleteDao('daoformxgrp</xsl:text><xsl:value-of select="position()"/><xsl:text>')</xsl:text>
+									</xsl:attribute>					
+								</input>
 							</div>
 						</xsl:when>
 						<xsl:otherwise>
-							<div class="daooptions">
-								<xsl:attribute name="id">
-									<xsl:text>daooptnsdiv[daogrp</xsl:text><xsl:value-of select="position()"/><xsl:text>]</xsl:text>
-								</xsl:attribute>
-								<xsl:call-template name="daooptns">
-									<xsl:with-param name="type" select="'multiple'"/>
-									<xsl:with-param name="number" select="position()"/>
-									<xsl:with-param name="form" select="'daogrp'"/>
-									<xsl:with-param name="path" select="''"/>
-								</xsl:call-template>									
-							</div>
 							<div class="multiple">
 								<xsl:attribute name="id">
-									<xsl:text>digitalobjectsform[daogrp</xsl:text><xsl:value-of select="position()"/><xsl:text>]</xsl:text>
+									<xsl:text>daoformxgrp</xsl:text><xsl:value-of select="position()"/>
 								</xsl:attribute>
+								<b>Link to multiple files</b>
 								<xsl:call-template name="multiple">
 									<xsl:with-param name="number" select="position()"/>	
 									<xsl:with-param name="form" select="'daogrp'"/>		
 									<xsl:with-param name="path" select="''"/>						
 								</xsl:call-template>
+								<input type="button" value="Delete">
+									<xsl:attribute name="onclick">
+										<xsl:text>deleteDao('daoformxgrp</xsl:text><xsl:value-of select="position()"/><xsl:text>')</xsl:text>
+									</xsl:attribute>					
+								</input>
+							</div>
+						</xsl:otherwise>
+					</xsl:choose>
+				</xsl:for-each>
+			</xsl:if>
+	<!-- DAO in did -->			
+			<xsl:if test="did/dao">
+				<xsl:for-each select="did/dao">
+					<xsl:choose>
+						<xsl:when test="@show='embed'">
+							<div class="embed">
+								<xsl:attribute name="id">
+									<xsl:text>daoformxdiddao</xsl:text><xsl:value-of select="position()"/>
+								</xsl:attribute>
+								<b>Display image</b>
+								<xsl:call-template name="dao">
+									<xsl:with-param name="type" select="'embed'"/>
+									<xsl:with-param name="number" select="position()"/>
+									<xsl:with-param name="path" select="'did'"/>
+								</xsl:call-template>
+								<input type="button" value="Delete">
+									<xsl:attribute name="onclick">
+										<xsl:text>deleteDao('daoformxdiddao</xsl:text><xsl:value-of select="position()"/><xsl:text>')</xsl:text>
+									</xsl:attribute>					
+								</input>
+							</div>						
+						</xsl:when>
+						<xsl:otherwise>
+							<div class="new">
+								<xsl:attribute name="id">
+									<xsl:text>daoformxdiddao</xsl:text><xsl:value-of select="position()"/>
+								</xsl:attribute>
+								<b>Link to file</b>
+								<xsl:call-template name="dao">
+									<xsl:with-param name="type" select="'new'"/>
+									<xsl:with-param name="number" select="position()"/>
+									<xsl:with-param name="form" select="'dao'"/>
+									<xsl:with-param name="path" select="'did'"/>
+								</xsl:call-template>
+								<input type="button" value="Delete">
+									<xsl:attribute name="onclick">
+										<xsl:text>deleteDao('daoformxdiddao</xsl:text><xsl:value-of select="position()"/><xsl:text>')</xsl:text>
+									</xsl:attribute>					
+								</input>
 							</div>
 						</xsl:otherwise>
 					</xsl:choose>
 				</xsl:for-each>
 			</xsl:if>
 
-		</p>
-		<p>
-			<!-- Digital Object in did -->			
-			<xsl:if test="did/dao">
-				<xsl:for-each select="did/dao">
-					<xsl:choose>
-						<xsl:when test="@show='embed'">
-							<div class="daooptions">
-								<xsl:attribute name="id">
-									<xsl:text>daooptnsdiv[did/dao</xsl:text><xsl:value-of select="position()"/><xsl:text>]</xsl:text>
-								</xsl:attribute>
-								<xsl:call-template name="daooptns">
-									<xsl:with-param name="type" select="'embed'"/>
-									<xsl:with-param name="number" select="position()"/>
-									<xsl:with-param name="form" select="'dao'"/>
-									<xsl:with-param name="path" select="'did/'"/>
-								</xsl:call-template>									
-							</div>
-							<div class="embed">
-								<xsl:attribute name="id">
-									<xsl:text>digitalobjectsform[did/dao</xsl:text><xsl:value-of select="position()"/><xsl:text>]</xsl:text>
-								</xsl:attribute>
-								<xsl:call-template name="dao">
-									<xsl:with-param name="type" select="'embed'"/>
-									<xsl:with-param name="number" select="position()"/>
-									<xsl:with-param name="path" select="'did/'"/>
-								</xsl:call-template>
-							</div>						
-						</xsl:when>
-						<xsl:otherwise>
-							<div class="daooptions">
-								<xsl:attribute name="id">
-									<xsl:text>daooptnsdiv[did/dao</xsl:text><xsl:value-of select="position()"/><xsl:text>]</xsl:text>
-								</xsl:attribute>
-								<xsl:call-template name="daooptns">
-									<xsl:with-param name="type" select="'new'"/>
-									<xsl:with-param name="number" select="position()"/>
-									<xsl:with-param name="form" select="'dao'"/>
-									<xsl:with-param name="path" select="'did/'"/>
-								</xsl:call-template>									
-							</div>
-							<div class="singlefile">
-								<xsl:attribute name="id">
-									<xsl:text>digitalobjectsform[did/dao</xsl:text><xsl:value-of select="position()"/><xsl:text>]</xsl:text>
-								</xsl:attribute>
-								<xsl:call-template name="dao">
-									<xsl:with-param name="type" select="'new'"/>
-									<xsl:with-param name="number" select="position()"/>
-									<xsl:with-param name="form" select="'dao'"/>
-									<xsl:with-param name="path" select="'did/'"/>
-								</xsl:call-template>
-							</div>
-						</xsl:otherwise>
-					</xsl:choose>
-				</xsl:for-each>
-			</xsl:if>
-		</p>
-		<p>
 		 	<xsl:if test="did/daogrp">
 				<xsl:for-each select="did/daogrp">
 					<xsl:choose>
 						<xsl:when test="daoloc/@role='thumb'">
-							<div class="daooptions">
-								<xsl:attribute name="id">
-									<xsl:text>daooptnsdiv[did/daogrp</xsl:text><xsl:value-of select="position()"/><xsl:text>]</xsl:text>
-								</xsl:attribute>
-								<xsl:call-template name="daooptns">
-									<xsl:with-param name="type" select="'thumb'"/>
-									<xsl:with-param name="number" select="position()"/>
-									<xsl:with-param name="form" select="'daogrp'"/>
-									<xsl:with-param name="path" select="'did/'"/>
-								</xsl:call-template>									
-							</div>
 							<div class="thumb">
 								<xsl:attribute name="id">
-									<xsl:text>digitalobjectsform[did/daogrp</xsl:text><xsl:value-of select="position()"/><xsl:text>]</xsl:text>
+									<xsl:text>daoformxdidgrp</xsl:text><xsl:value-of select="position()"/>
 								</xsl:attribute>
+								<b>Thumbnail link to file</b>
 								<xsl:call-template name="thumb">
 									<xsl:with-param name="number" select="position()"/>	
-									<xsl:with-param name="path" select="'did/'"/>								
+									<xsl:with-param name="path" select="'did'"/>								
 								</xsl:call-template>
+								<input type="button" value="Delete">
+									<xsl:attribute name="onclick">
+										<xsl:text>deleteDao('daoformxdidgrp</xsl:text><xsl:value-of select="position()"/><xsl:text>')</xsl:text>
+									</xsl:attribute>					
+								</input>	
 							</div>
 						</xsl:when>
 						<xsl:otherwise>
-							<div class="daooptions">
-								<xsl:attribute name="id">
-									<xsl:text>daooptnsdiv[did/daogrp</xsl:text><xsl:value-of select="position()"/><xsl:text>]</xsl:text>
-								</xsl:attribute>
-								<xsl:call-template name="daooptns">
-									<xsl:with-param name="type" select="'multiple'"/>
-									<xsl:with-param name="number" select="position()"/>
-									<xsl:with-param name="form" select="'daogrp'"/>
-									<xsl:with-param name="path" select="'did/'"/>
-								</xsl:call-template>									
-							</div>
 							<div class="multiple">
 								<xsl:attribute name="id">
-									<xsl:text>digitalobjectsform[did/daogrp</xsl:text><xsl:value-of select="position()"/><xsl:text>]</xsl:text>
+									<xsl:text>daoformxdidgrp</xsl:text><xsl:value-of select="position()"/>
 								</xsl:attribute>
+								<b>Link to multiple files</b>
 								<xsl:call-template name="multiple">
 									<xsl:with-param name="number" select="position()"/>	
 									<xsl:with-param name="form" select="'daogrp'"/>
-									<xsl:with-param name="path" select="'did/'"/>									
+									<xsl:with-param name="path" select="'did'"/>									
 								</xsl:call-template>
+								<input type="button" value="Delete">
+									<xsl:attribute name="onclick">
+										<xsl:text>deleteDao('daoformxdidgrp</xsl:text><xsl:value-of select="position()"/><xsl:text>')</xsl:text>
+									</xsl:attribute>					
+								</input>	
 							</div>
 						</xsl:otherwise>
 					</xsl:choose>
 				</xsl:for-each>
 			</xsl:if> 
-			
-		</p>		
+		
+		
+			<div id="createnewdao">		
+				<span>Add new DAO  </span>
+				<select name="daoselect" id="daoselect">
+					<option value="null">Select...</option>
+					<option value="new">Link to file</option>
+					<option value="embed">Display image</option>
+					<option value="thumb">Display thumbnail link to file</option>
+					<option value="multiple">Link to multiple files</option>
+				</select>	
+				<input type="button" value="Create" onclick="javascript: createDaoForm()"/>
+			</div>
+		</div>
 	</div>
-
 <!--  -->
 <!--  -->
 <!-- ACCESSPOINTS -->
@@ -1240,7 +1199,7 @@
 		<div id="subject" class="apcontainer">
 			<p><strong>Subject</strong><a id="subjecthelp" name="subjecthelp" target="_new" href="http://www.archiveshub.ac.uk/arch/subject.shtml">
 		<img class="whatsthis" src="/images/whatisthissmall.gif" alt="[What is this?]"/>
-		</a><br /><a class="extSearch" onclick="window.open('http://databases.unesco.org/thesaurus/', 'new', 'width=800 height=600');">[Search UNESCO]</a><xsl:text>  </xsl:text><a class="extSearch" onclick="window.open('http://www.archiveshub.ac.uk/lcsh/', 'new', 'width=800 height=600');">[Search LCSH]</a></p>
+		</a><br /><a class="extSearch" onclick="window.open('http://databases.unesco.org/thesaurus/', 'new', 'width=800 height=600');">[Search UNESCO]</a><xsl:text>  </xsl:text><a class="extSearch" onclick="window.open('http://authorities.loc.gov/cgi-bin/Pwebrecon.cgi?DB=local&amp;PAGE=First', 'new', 'width=800 height=600');">[Search LCSH]</a></p>
 			<xsl:choose>
 				<xsl:when test="controlaccess/subject">
 					<xsl:call-template name="accesspoint">
@@ -1533,9 +1492,7 @@
 				</div>
 				<br/>
 			</div>
-			<br/>						
-			
-								
+			<br/>													
 		</div>	
   </xsl:template>
   
@@ -1770,7 +1727,9 @@
   </xsl:template>
   
   <xsl:template match="/ead/eadheader/filedesc/titlestmt/sponsor">
-  	<strong><span class="isadg"></span>Sponsor </strong> <a class="smalllink" id="linkspo" title="add sponsor" onclick="addElement('filedesc/titlestmt/sponsor')">hide content</a> [optional]<br/>
+  	<strong><span class="isadg"></span>Sponsor</strong><a id="sponsorhelp" name="sponsorhelp" target="_new" href="http://www.archiveshub.ac.uk/arch/sponsor.shtml ">
+		<img class="whatsthis" src="/images/whatisthissmall.gif" alt="[What is this?]"/>
+		</a><a class="smalllink" id="linkspo" title="add sponsor" onclick="addElement('filedesc/titlestmt/sponsor')">hide content</a> [optional]<br/>
   	<input class="menuField" type="text" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" name="filedesc/titlestmt/sponsor" id="filedesc/titlestmt/sponsor" size="80">
   		<xsl:attribute name="value">
   			<xsl:apply-templates/>
@@ -2009,10 +1968,10 @@
   						<xsl:value-of select="@href"/>
   					</xsl:attribute>
   					<xsl:attribute name="name">
-  						<xsl:value-of select="$path"/><xsl:text>dao[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/@href</xsl:text>
+  						<xsl:text>daox</xsl:text><xsl:value-of select="$path"/><text>dao</text><xsl:value-of select="$number"/><xsl:text>|href</xsl:text>
   					</xsl:attribute>
   					<xsl:attribute name="id">
-  						<xsl:value-of select="$path"/><xsl:text>dao[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/@href</xsl:text>
+  						<xsl:text>daox</xsl:text><xsl:value-of select="$path"/><text>dao</text><xsl:value-of select="$number"/><xsl:text>|href</xsl:text>
   					</xsl:attribute>				
   				</input>
   			</td>
@@ -2021,11 +1980,11 @@
   			<td>
   				<input size="70" type="text" onfocus="setCurrent(this);" class="menuField" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');">
   					<xsl:attribute name="name">
-  						<xsl:value-of select="$path"/><xsl:text>dao[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daodesc</xsl:text>
+  						<xsl:text>daox</xsl:text><xsl:value-of select="$path"/><text>dao</text><xsl:value-of select="$number"/><xsl:text>|desc</xsl:text>
   					</xsl:attribute>
   					<xsl:attribute name="id">
-  						<xsl:value-of select="$path"/><xsl:text>dao[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daodesc</xsl:text>
-  					</xsl:attribute> 					
+  						<xsl:text>daox</xsl:text><xsl:value-of select="$path"/><text>dao</text><xsl:value-of select="$number"/><xsl:text>|desc</xsl:text>
+  					</xsl:attribute>						
   					<xsl:attribute name="value">
   					  	<xsl:choose>
   							<xsl:when test="daodesc">
@@ -2045,11 +2004,11 @@
   			<xsl:value-of select="$type"/>
   		</xsl:attribute>
   		<xsl:attribute name="name">
-			<xsl:value-of select="$path"/><xsl:text>dao[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/@show</xsl:text>
+			<xsl:text>daox</xsl:text><xsl:value-of select="$path"/><text>dao</text><xsl:value-of select="$number"/><xsl:text>|</xsl:text><xsl:value-of select="$type"/>
 		</xsl:attribute>
 		<xsl:attribute name="id">
-			<xsl:value-of select="$path"/><xsl:text>dao[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/@show</xsl:text>
-		</xsl:attribute>
+			<xsl:text>daox</xsl:text><xsl:value-of select="$path"/><text>dao</text><xsl:value-of select="$number"/><xsl:text>|</xsl:text><xsl:value-of select="$type"/>
+		</xsl:attribute>	
   	</input>
   </xsl:template>
   
@@ -2065,11 +2024,11 @@
   						<xsl:value-of select="daoloc[@role='thumb']/@href"/>
   					</xsl:attribute>
   					<xsl:attribute name="name">
-  						<xsl:value-of select="$path"/><xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[1]/@href</xsl:text>
-  					</xsl:attribute> 
-  					<xsl:attribute name="id">
-  						<xsl:value-of select="$path"/><xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[1]/@href</xsl:text>
-  					</xsl:attribute> 					
+						<xsl:text>daox</xsl:text><xsl:value-of select="$path"/><text>grp</text><xsl:value-of select="$number"/><xsl:text>|href1</xsl:text>
+					</xsl:attribute>
+					<xsl:attribute name="id">
+						<xsl:text>daox</xsl:text><xsl:value-of select="$path"/><text>grp</text><xsl:value-of select="$number"/><xsl:text>|href1</xsl:text>
+					</xsl:attribute>					
   				</input>
   			</td>
   		</tr>  	
@@ -2081,11 +2040,11 @@
   						<xsl:value-of select="daoloc[@role='reference']/@href"/>
   					</xsl:attribute>
   					<xsl:attribute name="name">
-  						<xsl:value-of select="$path"/><xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[2]/@href</xsl:text>
-  					</xsl:attribute>
-  					<xsl:attribute name="id">
-  						<xsl:value-of select="$path"/><xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[2]/@href</xsl:text>
-  					</xsl:attribute>			
+						<xsl:text>daox</xsl:text><xsl:value-of select="$path"/><text>grp</text><xsl:value-of select="$number"/><xsl:text>|href2</xsl:text>
+					</xsl:attribute>
+					<xsl:attribute name="id">
+						<xsl:text>daox</xsl:text><xsl:value-of select="$path"/><text>grp</text><xsl:value-of select="$number"/><xsl:text>|href2</xsl:text>
+					</xsl:attribute>		
   				</input>
   			</td>
   		</tr>
@@ -2093,11 +2052,11 @@
   			<td>
   				<input size="70" type="text" onfocus="setCurrent(this);" class="menuField" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');">
   					<xsl:attribute name="name">
-  						<xsl:value-of select="$path"/><xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daodesc</xsl:text>
-  					</xsl:attribute>			
-  					<xsl:attribute name="id">
-  						<xsl:value-of select="$path"/><xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daodesc</xsl:text>
-  					</xsl:attribute>			
+						<xsl:text>daox</xsl:text><xsl:value-of select="$path"/><text>grp</text><xsl:value-of select="$number"/><xsl:text>|desc</xsl:text>
+					</xsl:attribute>
+					<xsl:attribute name="id">
+						<xsl:text>daox</xsl:text><xsl:value-of select="$path"/><text>grp</text><xsl:value-of select="$number"/><xsl:text>|desc</xsl:text>
+					</xsl:attribute>			
   					<xsl:attribute name="value">
   						<xsl:choose>
   							<xsl:when test="daodesc">
@@ -2114,18 +2073,18 @@
   	</tbody></table>
 	<input type="hidden" value="thumb">
 		<xsl:attribute name="name">
-			<xsl:value-of select="$path"/><xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[1]/@role</xsl:text>
+			<xsl:text>daox</xsl:text><xsl:value-of select="$path"/><text>grp</text><xsl:value-of select="$number"/><xsl:text>|thumb</xsl:text>
 		</xsl:attribute>
 		<xsl:attribute name="id">
-			<xsl:value-of select="$path"/><xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[1]/@role</xsl:text>
+			<xsl:text>daox</xsl:text><xsl:value-of select="$path"/><text>grp</text><xsl:value-of select="$number"/><xsl:text>|thumb</xsl:text>
 		</xsl:attribute>
 	</input>
 	<input type="hidden" value="reference">
 		<xsl:attribute name="name">
-			<xsl:value-of select="$path"/><xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[2]/@role</xsl:text>
+			<xsl:text>daox</xsl:text><xsl:value-of select="$path"/><text>grp</text><xsl:value-of select="$number"/><xsl:text>|reference</xsl:text>
 		</xsl:attribute>
 		<xsl:attribute name="id">
-			<xsl:value-of select="$path"/><xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[2]/@role</xsl:text>
+			<xsl:text>daox</xsl:text><xsl:value-of select="$path"/><text>grp</text><xsl:value-of select="$number"/><xsl:text>|reference</xsl:text>
 		</xsl:attribute>
 	</input>
   </xsl:template>
@@ -2134,7 +2093,7 @@
   	<xsl:param name="number" />
   	<xsl:param name="form" />
   	<xsl:param name="path" />
-  	<table><tbody>
+  	<table class="daotable"><tbody>
   		<xsl:for-each select="daoloc">
   			<xsl:variable name="class">
   				<xsl:choose>
@@ -2152,11 +2111,11 @@
   			<td>
 	  			<input type="text" size="70" onfocus="setCurrent(this);">
 	  				<xsl:attribute name="name">
-	  					<xsl:value-of select="$path"/><xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[</xsl:text><xsl:value-of select="position()"/><xsl:text>]/@href</xsl:text>
-	  				</xsl:attribute>
-	  				<xsl:attribute name="id">
-	  					<xsl:value-of select="$path"/><xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[</xsl:text><xsl:value-of select="position()"/><xsl:text>]/@href</xsl:text>
-	  				</xsl:attribute>	  				
+						<xsl:text>daox</xsl:text><xsl:value-of select="$path"/><text>grp</text><xsl:value-of select="$number"/><xsl:text>|href</xsl:text><xsl:value-of select="position()"/>
+					</xsl:attribute>
+					<xsl:attribute name="id">
+						<xsl:text>daox</xsl:text><xsl:value-of select="$path"/><text>grp</text><xsl:value-of select="$number"/><xsl:text>|href</xsl:text><xsl:value-of select="position()"/>
+					</xsl:attribute>		
 	  				<xsl:attribute name="value">
 	  					<xsl:value-of select="@href"/>
 	  				</xsl:attribute>
@@ -2173,11 +2132,11 @@
   			<td>
 	  			<input type="text" size="70" onfocus="setCurrent(this);">
 	  				<xsl:attribute name="name">
-	  					<xsl:value-of select="$path"/><xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[</xsl:text><xsl:value-of select="position()"/><xsl:text>]/@title</xsl:text>
-	  				</xsl:attribute>
-	  				<xsl:attribute name="id">
-	  					<xsl:value-of select="$path"/><xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[</xsl:text><xsl:value-of select="position()"/><xsl:text>]/@title</xsl:text>
-	  				</xsl:attribute>	  				
+						<xsl:text>daox</xsl:text><xsl:value-of select="$path"/><text>grp</text><xsl:value-of select="$number"/><xsl:text>|title</xsl:text><xsl:value-of select="position()"/>
+					</xsl:attribute>
+					<xsl:attribute name="id">
+						<xsl:text>daox</xsl:text><xsl:value-of select="$path"/><text>grp</text><xsl:value-of select="$number"/><xsl:text>|title</xsl:text><xsl:value-of select="position()"/>
+					</xsl:attribute>	  				
 	  				<xsl:attribute name="value">
 	  					<xsl:value-of select="@title"/>
 	  				</xsl:attribute>
@@ -2186,27 +2145,27 @@
   			</tr>
   			<input type="hidden" value="reference">
 				<xsl:attribute name="name">
-					<xsl:value-of select="$path"/><xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[</xsl:text><xsl:value-of select="position()"/><xsl:text>]/@role</xsl:text>
+					<xsl:text>daox</xsl:text><xsl:value-of select="$path"/><text>grp</text><xsl:value-of select="$number"/><xsl:text>|role</xsl:text><xsl:value-of select="position()"/>
 				</xsl:attribute>
 				<xsl:attribute name="id">
-					<xsl:value-of select="$path"/><xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daoloc[</xsl:text><xsl:value-of select="position()"/><xsl:text>]/@role</xsl:text>
+					<xsl:text>daox</xsl:text><xsl:value-of select="$path"/><text>grp</text><xsl:value-of select="$number"/><xsl:text>|role</xsl:text><xsl:value-of select="position()"/>
 				</xsl:attribute>
 			</input>
   		</xsl:for-each> 		
   		<tr><td></td><td><a class="smalllink">
   		<xsl:attribute name="onclick">
-  			<xsl:text>addFile(</xsl:text><xsl:value-of select="$number"/><xsl:text>, '</xsl:text><xsl:value-of select="$path"/><xsl:text>', '</xsl:text><xsl:value-of select="$form"/><xsl:text>');</xsl:text>
+  			<xsl:text>addFile('daoformx</xsl:text><xsl:value-of select="$path"/><xsl:text>grp</xsl:text><xsl:value-of select="$number"/><xsl:text>');</xsl:text>
   		</xsl:attribute>		
   		add another file</a></td></tr>
   		<tr><td class="label">Description of group: </td>
   			<td>
   				<input size="70" type="text" onfocus="setCurrent(this);" class="menuField" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');">  					
   					<xsl:attribute name="name">
-  						<xsl:value-of select="$path"/><xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daodesc</xsl:text>
-  					</xsl:attribute>
-  					<xsl:attribute name="id">
-  						<xsl:value-of select="$path"/><xsl:text>daogrp[</xsl:text><xsl:value-of select="$number"/><xsl:text>]/daodesc</xsl:text>
-  					</xsl:attribute>  					
+						<xsl:text>daox</xsl:text><xsl:value-of select="$path"/><text>grp</text><xsl:value-of select="$number"/><xsl:text>|desc</xsl:text>
+					</xsl:attribute>
+					<xsl:attribute name="id">
+						<xsl:text>daox</xsl:text><xsl:value-of select="$path"/><text>grp</text><xsl:value-of select="$number"/><xsl:text>|desc</xsl:text>
+					</xsl:attribute>  					
   					<xsl:attribute name="value">
   					  	<xsl:choose>
   							<xsl:when test="daodesc">
@@ -2223,112 +2182,7 @@
   	</tbody></table>
   </xsl:template>
   
-  <xsl:template name="daooptns">
-  	<xsl:param name="type" />
-  	<xsl:param name="number" />
-  	<xsl:param name="form" />
-  	<xsl:param name="path" />
-  	
-		<input type="radio" value="new">
-		<xsl:attribute name="name">
-			<xsl:text>daooptns</xsl:text><xsl:value-of select="$path"/><xsl:value-of select="$form"/><xsl:value-of select="$number"/>
-		</xsl:attribute>
-		<xsl:attribute name="onclick">
-			<xsl:text>createObjectsForm('new', </xsl:text><xsl:value-of select="$number"/><xsl:text>, '</xsl:text><xsl:value-of select="$path"/><xsl:text>', '</xsl:text><xsl:value-of select="$form"/><xsl:text>')</xsl:text>
-		</xsl:attribute>
-		<xsl:if test="$type='new'">
-			<xsl:attribute name="checked">
-				<xsl:text>true</xsl:text>
-			</xsl:attribute>
-		</xsl:if>
-		<span>
-		<xsl:if test="$type='new'">
-			<xsl:attribute name="class">
-				<xsl:text>checked</xsl:text>
-			</xsl:attribute>
-		</xsl:if>
-		<xsl:attribute name="id">
-			<xsl:text>new</xsl:text><xsl:value-of select="$path"/><xsl:value-of select="$form"/><xsl:value-of select="$number"/>
-		</xsl:attribute>
-		Link to file
-		</span>
-		</input><br />
-  		
-		<input type="radio" value="embed">
-		<xsl:attribute name="name">
-			<xsl:text>daooptns</xsl:text><xsl:value-of select="$path"/><xsl:value-of select="$form"/><xsl:value-of select="$number"/>
-		</xsl:attribute>
-		<xsl:attribute name="onclick">
-			<xsl:text>createObjectsForm('embed', </xsl:text><xsl:value-of select="$number"/><xsl:text>, '</xsl:text><xsl:value-of select="$path"/><xsl:text>', '</xsl:text><xsl:value-of select="$form"/><xsl:text>')</xsl:text>
-		</xsl:attribute>
-		<xsl:if test="$type='embed'">
-			<xsl:attribute name="checked">
-				<xsl:text>true</xsl:text>
-			</xsl:attribute>
-		</xsl:if>
-		<span>
-		<xsl:if test="$type='embed'">
-			<xsl:attribute name="class">
-				<xsl:text>checked</xsl:text>
-			</xsl:attribute>
-		</xsl:if>
-		<xsl:attribute name="id">
-			<xsl:text>embed</xsl:text><xsl:value-of select="$path"/><xsl:value-of select="$form"/><xsl:value-of select="$number"/>
-		</xsl:attribute>
-		Display image
-		</span>
-		</input><br />
-		
-		<input type="radio" value="thumb">
-		<xsl:attribute name="name">
-			<xsl:text>daooptns</xsl:text><xsl:value-of select="$path"/><xsl:value-of select="$form"/><xsl:value-of select="$number"/>
-		</xsl:attribute>
-		<xsl:attribute name="onclick">
-			<xsl:text>createObjectsForm('thumb', </xsl:text><xsl:value-of select="$number"/><xsl:text>, '</xsl:text><xsl:value-of select="$path"/><xsl:text>', '</xsl:text><xsl:value-of select="$form"/><xsl:text>')</xsl:text>
-		</xsl:attribute>
-		<xsl:if test="$type='thumb'">
-			<xsl:attribute name="checked">
-				<xsl:text>true</xsl:text>
-			</xsl:attribute>
-		</xsl:if>
-		<span>
-		<xsl:if test="$type='thumb'">
-			<xsl:attribute name="class">
-				<xsl:text>checked</xsl:text>
-			</xsl:attribute>
-		</xsl:if>
-		<xsl:attribute name="id">
-			<xsl:text>thumb</xsl:text><xsl:value-of select="$path"/><xsl:value-of select="$form"/><xsl:value-of select="$number"/>
-		</xsl:attribute>
-		Display thumbnail link to file
-		</span>
-		</input><br />
-		
-		<input type="radio" value="multiple">
-		<xsl:attribute name="name">
-			<xsl:text>daooptns</xsl:text><xsl:value-of select="$path"/><xsl:value-of select="$form"/><xsl:value-of select="$number"/>
-		</xsl:attribute>
-		<xsl:attribute name="onclick">
-			<xsl:text>createObjectsForm('multiple', </xsl:text><xsl:value-of select="$number"/><xsl:text>, '</xsl:text><xsl:value-of select="$path"/><xsl:text>', '</xsl:text><xsl:value-of select="$form"/><xsl:text>')</xsl:text>
-		</xsl:attribute>
-		<xsl:if test="$type='multiple'">
-			<xsl:attribute name="checked">
-				<xsl:text>true</xsl:text>
-			</xsl:attribute>
-		</xsl:if>
-		<span>
-		<xsl:if test="$type='multiple'">
-			<xsl:attribute name="class">
-				<xsl:text>checked</xsl:text>
-			</xsl:attribute>
-		</xsl:if>
-		<xsl:attribute name="id">
-			<xsl:text>multiple</xsl:text><xsl:value-of select="$path"/><xsl:value-of select="$form"/><xsl:value-of select="$number"/>
-		</xsl:attribute>
-		Link to multiple files
-		</span>
-		</input><br />	 	
-  </xsl:template>
+
 
    
    <xsl:template match="daodesc">
