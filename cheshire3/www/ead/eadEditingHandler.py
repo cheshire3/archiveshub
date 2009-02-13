@@ -1319,9 +1319,9 @@ class EadEditingHandler(EadHandler):
             req.write('<p>Another user is already indexing this database. Please try again in 10 minutes.</p>')
             req.write('</div>')
         else :  
-            if index :      
-                lock = open(lockfilepath, 'w')
-                lock.close()         
+#            if index :      
+ #               lock = open(lockfilepath, 'w')
+ #               lock.close()         
             req.write('<div id="single">')
             req.write('Initializing... ')
             ppFlow = db.get_object(session, 'preParserWorkflow')
