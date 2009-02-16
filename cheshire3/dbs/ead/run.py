@@ -60,6 +60,8 @@ clusRecordStore = clusDb.get_object(session, 'eadClusterStore')
 
 xmlp = db.get_object(session, 'LxmlParser')
 
+lockfilepath = db.get_path(session, 'defaultPath') + '/indexing.lock'
+
 def inputError(msg):
     lgr.log_error(session, msg)
     sys.exit()
@@ -95,117 +97,129 @@ if ('-adduser' in sys.argv):
     #print user
     sys.exit()
 
+if os.path.exists(lockfilepath):
+    print '''ERROR: Another user is currently indexing this database. Please try again in 10 minutes. 
+    If you continue to get this message and you are sure no one is reindexing the database please contact the archives hub team for advice.'''   
+    sys.exit()
+else :
+    lock = open(lockfilepath, 'w')
+    lock.close() 
+    try :
 
-if ('-load' in sys.argv):
-    db.clear_indexes(session)
-    start = time.time()
-    # build necessary objects
-    flow = db.get_object(session, 'buildIndexWorkflow')
-    baseDocFac = db.get_object(session, 'baseDocumentFactory')
-    baseDocFac.load(session)
-    lgr.log_info(session, 'Loading files from %s...' % (baseDocFac.dataPath))
-    #flow.load_cache(session, db)
-    flow.process(session, baseDocFac)
-    (mins, secs) = divmod(time.time() - start, 60)
-    (hours, mins) = divmod(mins, 60)
-    lgr.log_info(session, 'Loading, Indexing complete (%dh %dm %ds)' % (hours, mins, secs))
-    
-
-if ('-index' in sys.argv):
-    start = time.time()
-    if not db.indexes:
-        db._cacheIndexes(session)
-    for idx in db.indexes.itervalues():
-        if not idx.get_setting(session, 'noUnindexDefault', 0):
-            idx.clear(session)
-    db.begin_indexing(session)
-    lgr.log_info(session, "Indexing records...")
-    for rec in recordStore:
-        try:
-            db.index_record(session, rec)
-            lgr.log_info(session, rec.id.ljust(40) + '[OK]')
-        except UnicodeDecodeError:
-            lgr.log_warning(session, rec.id.ljust(40) + '[Some indexes not built - non unicode characters!]')
-        del rec
-     
-    db.commit_indexing(session)
-    db.commit_metadata(session)
-    (mins, secs) = divmod(time.time() - start, 60)
-    (hours, mins) = divmod(mins, 60)
-    lgr.log_info(session, 'Indexing complete (%dh %dm %ds)' % (hours, mins, secs))
-
-#if ('-cluster' in sys.argv):
-#    start = time.time()
-#    # set session.database to the cluster DB
-#    session.database = clusDb.id
-#    # build necessary objects
-#    clusDb.clear_indexes(session)
-#    clusFlow = clusDb.get_object(session, 'buildClusterWorkflow')
-#    clusDocFac = clusDb.get_object(session, 'clusterDocumentFactory')
-#    try:
-#        clusDocFac.load(session)
-#    except c3errors.FileDoesNotExistException:
-#        # return session.database to the default (finding aid) DB
-#        print '*** No cluster data present.'
-#    else:
-#        print 'Clustering subjects...'
-#        clusFlow.process(session, clusDocFac)
-#    
-#    (mins, secs) = divmod(time.time() - start, 60)
-#    (hours, mins) = divmod(mins, 60)
-#    print 'Cluster Indexing complete (%dh %dm %ds)' % (hours, mins, secs)
-#    # return session.database to the default (finding aid) DB
-#    session.database = db.id
-    
-
-if ('-load_components' in sys.argv) or ('-load_cs' in sys.argv):
-    start = time.time()
-    compFlow = db.get_object(session, 'buildAllComponentWorkflow')
-    compFlow.load_cache(session, db)
-    compFlow.process(session, recordStore)
-    (mins, secs) = divmod(time.time() - start, 60)
-    (hours, mins) = divmod(mins, 60)
-    print 'Component Indexing complete (%dh %dm %ds)' % (hours, mins, secs)
-    
-    
-if ('-index_components' in sys.argv) or ('-index_cs' in sys.argv):
-    start = time.time()
-    db.begin_indexing(session)
-    print "Indexing components..."
-    parent = ''
-    for rec in compStore:
-        print rec.id.ljust(40),
-        try:
-            db.index_record(session, rec)
-            print '[OK]'
-        except UnicodeDecodeError:
-            print '[Some indexes not built - non unicode characters!]'
-        del rec
+        if ('-load' in sys.argv):
+            db.clear_indexes(session)
+            start = time.time()
+            # build necessary objects
+            flow = db.get_object(session, 'buildIndexWorkflow')
+            baseDocFac = db.get_object(session, 'baseDocumentFactory')
+            baseDocFac.load(session)
+            lgr.log_info(session, 'Loading files from %s...' % (baseDocFac.dataPath))
+            #flow.load_cache(session, db)
+            flow.process(session, baseDocFac)
+            (mins, secs) = divmod(time.time() - start, 60)
+            (hours, mins) = divmod(mins, 60)
+            lgr.log_info(session, 'Loading, Indexing complete (%dh %dm %ds)' % (hours, mins, secs))
             
-    db.commit_indexing(session)
-    db.commit_metadata(session)
-    (mins, secs) = divmod(time.time() - start, 60)
-    (hours, mins) = divmod(mins, 60)
-    print 'Component Indexing complete (%dh %dm %ds)' % (hours, mins, secs)
-
-
-if ('-cluster' in sys.argv):
-    start = time.time()
-    lgr.log_info(session, 'Accumulating subject clusters...')
-    for rec in recordStore:
-        clusDocFac.load(session, rec)
+        
+        if ('-index' in sys.argv):
+            start = time.time()
+            if not db.indexes:
+                db._cacheIndexes(session)
+            for idx in db.indexes.itervalues():
+                if not idx.get_setting(session, 'noUnindexDefault', 0):
+                    idx.clear(session)
+            db.begin_indexing(session)
+            lgr.log_info(session, "Indexing records...")
+            for rec in recordStore:
+                try:
+                    db.index_record(session, rec)
+                    lgr.log_info(session, rec.id.ljust(40) + '[OK]')
+                except UnicodeDecodeError:
+                    lgr.log_warning(session, rec.id.ljust(40) + '[Some indexes not built - non unicode characters!]')
+                del rec
+             
+            db.commit_indexing(session)
+            db.commit_metadata(session)
+            (mins, secs) = divmod(time.time() - start, 60)
+            (hours, mins) = divmod(mins, 60)
+            lgr.log_info(session, 'Indexing complete (%dh %dm %ds)' % (hours, mins, secs))
+        
+        #if ('-cluster' in sys.argv):
+        #    start = time.time()
+        #    # set session.database to the cluster DB
+        #    session.database = clusDb.id
+        #    # build necessary objects
+        #    clusDb.clear_indexes(session)
+        #    clusFlow = clusDb.get_object(session, 'buildClusterWorkflow')
+        #    clusDocFac = clusDb.get_object(session, 'clusterDocumentFactory')
+        #    try:
+        #        clusDocFac.load(session)
+        #    except c3errors.FileDoesNotExistException:
+        #        # return session.database to the default (finding aid) DB
+        #        print '*** No cluster data present.'
+        #    else:
+        #        print 'Clustering subjects...'
+        #        clusFlow.process(session, clusDocFac)
+        #    
+        #    (mins, secs) = divmod(time.time() - start, 60)
+        #    (hours, mins) = divmod(mins, 60)
+        #    print 'Cluster Indexing complete (%dh %dm %ds)' % (hours, mins, secs)
+        #    # return session.database to the default (finding aid) DB
+        #    session.database = db.id
+            
+        
+        if ('-load_components' in sys.argv) or ('-load_cs' in sys.argv):
+            start = time.time()
+            compFlow = db.get_object(session, 'buildAllComponentWorkflow')
+            compFlow.load_cache(session, db)
+            compFlow.process(session, recordStore)
+            (mins, secs) = divmod(time.time() - start, 60)
+            (hours, mins) = divmod(mins, 60)
+            print 'Component Indexing complete (%dh %dm %ds)' % (hours, mins, secs)
+            
+            
+        if ('-index_components' in sys.argv) or ('-index_cs' in sys.argv):
+            start = time.time()
+            db.begin_indexing(session)
+            print "Indexing components..."
+            parent = ''
+            for rec in compStore:
+                print rec.id.ljust(40),
+                try:
+                    db.index_record(session, rec)
+                    print '[OK]'
+                except UnicodeDecodeError:
+                    print '[Some indexes not built - non unicode characters!]'
+                del rec
+                    
+            db.commit_indexing(session)
+            db.commit_metadata(session)
+            (mins, secs) = divmod(time.time() - start, 60)
+            (hours, mins) = divmod(mins, 60)
+            print 'Component Indexing complete (%dh %dm %ds)' % (hours, mins, secs)
+        
+        
+        if ('-cluster' in sys.argv):
+            start = time.time()
+            lgr.log_info(session, 'Accumulating subject clusters...')
+            for rec in recordStore:
+                clusDocFac.load(session, rec)
+            
+            session.database = clusDb.id
+            clusDb.clear_indexes(session)
+            clusFlow = clusDb.get_object(session, 'buildClusterWorkflow')
+            clusFlow.process(session, clusDocFac)
+            (mins, secs) = divmod(time.time() - start, 60)
+            (hours, mins) = divmod(mins, 60)
+            lgr.log_info(session, 'Subject Clustering complete (%dh %dm %ds)' % (hours, mins, secs))
+            # return session.database to the default (finding aid) DB
+            session.database = db.id
+            
+    finally:
+        if os.path.exists(lockfilepath):
+            os.remove(lockfilepath)
     
-    session.database = clusDb.id
-    clusDb.clear_indexes(session)
-    clusFlow = clusDb.get_object(session, 'buildClusterWorkflow')
-    clusFlow.process(session, clusDocFac)
-    (mins, secs) = divmod(time.time() - start, 60)
-    (hours, mins) = divmod(mins, 60)
-    lgr.log_info(session, 'Subject Clustering complete (%dh %dm %ds)' % (hours, mins, secs))
-    # return session.database to the default (finding aid) DB
-    session.database = db.id
-
-
+    
 script = '/ead/search/'
         
 def cache_html():

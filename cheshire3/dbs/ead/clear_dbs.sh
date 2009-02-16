@@ -7,9 +7,19 @@ find /home/cheshire/cheshire3/install/htdocs/ead/tocs/ -name '*.inc' -print0 | x
 current=`pwd`
 
 cd /home/cheshire/cheshire3/cheshire3/dbs/ead
-rm -f stores/*.bdb
-# rm -rf indexes/* # this is now handled within Cheshire3
 
-./cluster/clear_dbs.sh
-
-cd $current
+ 
+FILE="indexing.lock"
+if test -f $FILE
+    then
+       echo "ERROR: Another user is currently indexing this database. Please try again in 10 minutes. 
+    If you continue to get this message and you are sure no one is reindexing the database please contact the archives hub team for advice."
+    else
+		touch indexing.lock
+		rm -f stores/*.bdb
+		# rm -rf indexes/* # this is now handled within Cheshire3
+		
+		./cluster/clear_dbs.sh
+		rm indexing.lock
+		cd $current
+fi
