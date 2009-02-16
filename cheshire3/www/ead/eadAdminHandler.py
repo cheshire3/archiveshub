@@ -840,107 +840,116 @@ class EadAdminHandler(EadHandler):
         req.write('<div id="single">')
         if (len(filepaths) == 0):
             return '%s<br />\n<br/><a href="files.html" title="File Management" class="navlink">Back to \'File Management\' Page</a>' % self.review_records(operation)     
-        deletedTotal = 0
-        unindexedTotal = 0
-        errorTotal = 0
-        for i, filepath in enumerate(filepaths):
-            if not filepath:
-                self.htmlTitle.append('Error')
-                return 'Could not locate specified file path'     
-            # first we have to find the recid by parsing the record
-            req.write('Reading original file <code>%s</code> ...' % filepath)
+        if os.path.exists(lockfilepath):
+            req.write('<p><span class="error">[ERROR]</span> - Another user is already indexing this database so no files can currently be deleted or unindexed. Please try again in 10 minutes.</p>\n<p><a href="/ead/admin/files.html">Back to \'File Management\' page.</a></p>')
+        else :  
+            lock = open(lockfilepath, 'w')
+            lock.close() 
             try:
-                doc = StringDocument(read_file(filepath))
-            except IOError:
-                req.write('<span class="error">[ERROR]</span> - File not present on disk<br/>')
-            else:
-                req.write('<span class="ok">[OK]</span><br/>\nDeleting file from disk ...')
-                # remove file
-                os.remove(filepath)
-                req.write('<span class="ok">[OK]</span><br/>\n')
-                deletedTotal += 1;
-                self.logger.log('File Delete: %s removed from disk' % (filepath))               
-                if (operation == 'unindex'):
-                    req.write('Processing...')
-                    doc = ppFlow.process(session, doc)
-                    rec = docParser.process_document(session, doc)
-                    rec = assignDataIdFlow.process(session, rec)
-                    recid = rec.id
-                    req.write('<br/>\nUnindexing record: %s ...' % recid)
+                deletedTotal = 0
+                unindexedTotal = 0
+                errorTotal = 0
+                for i, filepath in enumerate(filepaths):
+                    if not filepath:
+                        self.htmlTitle.append('Error')
+                        return 'Could not locate specified file path'     
+                    # first we have to find the recid by parsing the record
+                    req.write('Reading original file <code>%s</code> ...' % filepath)
                     try:
-                        rec = recordStore.fetch_record(session, recid)
-                    except (c3errors.FileDoesNotExistException, c3errors.ObjectDoesNotExistException):
-                        # hmm record doesn't exists, simply remove file from disk (already done!)
-                        req.write('<span class="error">[ERROR]</span> - Record not present in recordStore<br/>\n')
-                        errorTotal += 1
+                        doc = StringDocument(read_file(filepath))
+                    except IOError:
+                        req.write('<span class="error">[ERROR]</span> - File not present on disk<br/>')
                     else:
-                        # delete from indexes
-                        db.unindex_record(session, rec)
-                        db.remove_record(session, rec)
-                        req.write('<span class="ok">[OK]</span><br/>\nDeleting record from stores ...')
-                        # delete from recordStore
-                        recordStore.begin_storing(session)
-                        recordStore.delete_record(session, rec.id)
-                        recordStore.commit_storing(session)
-                        # delete DC in dcRecordStore
-                        dcRecordStore.begin_storing(session)
-                        try: dcRecordStore.delete_record(session, rec.id)
-                        except: pass
-                        else: dcRecordStore.commit_storing(session)
+                        req.write('<span class="ok">[OK]</span><br/>\nDeleting file from disk ...')
+                        # remove file
+                        os.remove(filepath)
                         req.write('<span class="ok">[OK]</span><br/>\n')
-                        
-                    if len(rec.process_xpath(session, 'dsc')):
-                        # now the tricky bit - component records
-                        compStore.begin_storing(session)
-                        q = queryFactory.get_query(session, 'ead.parentid exact "%s/%s"' % (rec.recordStore, rec.id))
-                        rs = db.search(session, q)
-                        req.write('<script type="text/javascript" src="/javascript/counter.js"></script>')
-                        req.write('Unindexing component <b><span id="comp-count">0</span></b> of %d.' % (len(rs)))
-                        dotcount = 0
-                        for r in rs:
+                        deletedTotal += 1;
+                        self.logger.log('File Delete: %s removed from disk' % (filepath))               
+                        if (operation == 'unindex'):
+                            req.write('Processing...')
+                            doc = ppFlow.process(session, doc)
+                            rec = docParser.process_document(session, doc)
+                            rec = assignDataIdFlow.process(session, rec)
+                            recid = rec.id
+                            req.write('<br/>\nUnindexing record: %s ...' % recid)
                             try:
-                                compRec = r.fetch_record(session)
+                                rec = recordStore.fetch_record(session, recid)
                             except (c3errors.FileDoesNotExistException, c3errors.ObjectDoesNotExistException):
-                                pass
+                                # hmm record doesn't exists, simply remove file from disk (already done!)
+                                req.write('<span class="error">[ERROR]</span> - Record not present in recordStore<br/>\n')
+                                errorTotal += 1
                             else:
-                                db.unindex_record(session, compRec)
-                                db.remove_record(session, compRec)
-                                compStore.delete_record(session, compRec.id)
+                                # delete from indexes
+                                db.unindex_record(session, rec)
+                                db.remove_record(session, rec)
+                                req.write('<span class="ok">[OK]</span><br/>\nDeleting record from stores ...')
+                                # delete from recordStore
+                                recordStore.begin_storing(session)
+                                recordStore.delete_record(session, rec.id)
+                                recordStore.commit_storing(session)
+                                # delete DC in dcRecordStore
+                                dcRecordStore.begin_storing(session)
+                                try: dcRecordStore.delete_record(session, rec.id)
+                                except: pass
+                                else: dcRecordStore.commit_storing(session)
+                                req.write('<span class="ok">[OK]</span><br/>\n')
+                                
+                            if len(rec.process_xpath(session, 'dsc')):
+                                # now the tricky bit - component records
+                                compStore.begin_storing(session)
+                                q = queryFactory.get_query(session, 'ead.parentid exact "%s/%s"' % (rec.recordStore, rec.id))
+                                rs = db.search(session, q)
+                                req.write('<script type="text/javascript" src="/javascript/counter.js"></script>')
+                                req.write('Unindexing component <b><span id="comp-count">0</span></b> of %d.' % (len(rs)))
+                                dotcount = 0
+                                for r in rs:
+                                    try:
+                                        compRec = r.fetch_record(session)
+                                    except (c3errors.FileDoesNotExistException, c3errors.ObjectDoesNotExistException):
+                                        pass
+                                    else:
+                                        db.unindex_record(session, compRec)
+                                        db.remove_record(session, compRec)
+                                        compStore.delete_record(session, compRec.id)
+                                    
+                                    req.write('<script type="text/javascript">incr("comp-count");</script><noscript>.</noscript>\n')
+                                    dotcount +=1
+                                    if (dotcount % 200 == 0):
+                                        req.write('<noscript><br/></noscript>')
                             
-                            req.write('<script type="text/javascript">incr("comp-count");</script><noscript>.</noscript>\n')
-                            dotcount +=1
-                            if (dotcount % 200 == 0):
-                                req.write('<noscript><br/></noscript>')
-                    
-                        compStore.commit_storing(session)
-                        req.write(' [<span class="ok"> OK </span>]<br/>\n')
-                    
-                    req.write('Merging modified indexes...')
-                    try:
-                        db.commit_indexing(session)
-                    except c3errors.FileDoesNotExistException:
-                        # FIXME: R to investigate Cheshire3 quirk
-                        req.write('<span class="ok">[OK]</span><br/>\n')
-                        unindexedTotal += 1
-                    except:
-                        req.write('<span class="ok">[INCOMPLETE]</span> - File may still be available until the database is rebuilt.<br/>\n')
-                        unindexTotal +=1
-                        errorTotal += 1
-                    else:
-                        db.commit_metadata(session)
-                        req.write('<span class="ok">[OK]</span><br/>\n')
-                        unindexedTotal += 1
-                    self.logger.log('File Delete: %s removed from database' % (rec.id))
-                    rebuild = True
-        if (operation == 'unindex'):
-            req.write('\n<strong>%d file(s) unindexed and deleted</strong>' % unindexedTotal)
-        else :
-            req.write('\n<strong>%d file(s) deleted</strong>' % deletedTotal)
-            req.write('\n<p>Files will remain in the database until the database is rebuilt. This can be done from the <a href="/ead/admin/database.html">\'Database Management\'</a> page</p>')
-        if (errorTotal > 0):
-            req.write('\n<strong> with %d possible error(s) (see above for details)</strong>' %errorTotal)
-        req.write('\n<p><a href="/ead/admin/files.html">Back to \'File Management\' page.</a></p>')
+                                compStore.commit_storing(session)
+                                req.write(' [<span class="ok"> OK </span>]<br/>\n')
+                            
+                            req.write('Merging modified indexes...')
+                            try:
+                                db.commit_indexing(session)
+                            except c3errors.FileDoesNotExistException:
+                                # FIXME: R to investigate Cheshire3 quirk
+                                req.write('<span class="ok">[OK]</span><br/>\n')
+                                unindexedTotal += 1
+                            except:
+                                req.write('<span class="ok">[INCOMPLETE]</span> - File may still be available until the database is rebuilt.<br/>\n')
+                                unindexTotal +=1
+                                errorTotal += 1
+                            else:
+                                db.commit_metadata(session)
+                                req.write('<span class="ok">[OK]</span><br/>\n')
+                                unindexedTotal += 1
+                            self.logger.log('File Delete: %s removed from database' % (rec.id))
+                            rebuild = True
+                if (operation == 'unindex'):
+                    req.write('\n<strong>%d file(s) unindexed and deleted</strong>' % unindexedTotal)
+                else :
+                    req.write('\n<strong>%d file(s) deleted</strong>' % deletedTotal)
+                    req.write('\n<p>Files will remain in the database until the database is rebuilt. This can be done from the <a href="/ead/admin/database.html">\'Database Management\'</a> page</p>')
+                if (errorTotal > 0):
+                    req.write('\n<strong> with %d possible error(s) (see above for details)</strong>' %errorTotal)
+                req.write('\n<p><a href="/ead/admin/files.html">Back to \'File Management\' page.</a></p>')
                 
+            finally:
+                if os.path.exists(lockfilepath):
+                    os.remove(lockfilepath)    
         foot = self._get_genericHtml('footer.html')    
         req.write('</div>')      
         req.write(foot)
