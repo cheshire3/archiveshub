@@ -390,7 +390,7 @@ function buildAccessPoint(s){
 	var number = nameCount;
     nameDiv = document.createElement('div');
     nameDiv.setAttribute('class', 'accesspoint');
-    link = document.createElement('a');    
+    var link = document.createElement('a');    
     link.onclick = function () {editAccessPoint(s, number); },   
     link.setAttribute('title', 'Click to edit');
     link.appendChild(txtnode);

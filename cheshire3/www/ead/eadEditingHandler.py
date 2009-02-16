@@ -256,21 +256,6 @@ class EadEditingHandler(EadHandler):
         self.log(daonames)   
         self._create_dao(daonames, node)
 
-#        emptydao = []
-#        try:
-#            emptydao.extend(tree.xpath('//daoloc[not(@href)]'))
-#        except:
-#            pass
-#        try:
-#            emptydao.extend(tree.xpath('//dao[not(@href)]'))
-#        except:
-#            pass
-#        for n in emptydao:
-#            try:
-#                parent = n.getparent()
-#                parent.remove(n)
-#            except:
-#                pass
         if (len(validList)):
             valid = False
         else:
@@ -701,7 +686,6 @@ class EadEditingHandler(EadHandler):
                 rec = editStore.fetch_record(session, recid)
                 found = True
             except:
-                raise 
                 return self.show_editMenu();
         if found :
             structure = read_file('ead2002.html') 
@@ -821,11 +805,6 @@ class EadEditingHandler(EadHandler):
             exists = True
             store = 'recordStore'
         
-#        for r in recordStore:
-#            if r.id == id :
-#                exists = True
-#                store = 'recordStore'
-#                break
         if exists == False:
             names = []
             for r in editStore:
@@ -1051,32 +1030,6 @@ class EadEditingHandler(EadHandler):
             self.log(daonames)
             self._create_dao(daonames, node)
               
-#            emptydao = []
-#            try:
-#                emptydao.extend(tree.xpath('//daoloc[not(@href)]'))
-#            except:
-#                pass
-#            try:
-#                emptydao.extend(tree.xpath('//dao[not(@href)]'))
-#            except:
-#                pass
-#            for n in emptydao:
-#                try:
-#                    parent = n.getparent()
-#                    parent.remove(n)
-#                except:
-#                    pass 
-#            emptydaogrp = []
-#            try:
-#                emptydaogrp.extend(tree.xpath('//daogrp[not(child::daoloc)]'))
-#            except:
-#                pass
-#            for n in emptydaogrp:
-#                try:
-#                    parent = n.getparent()
-#                    parent.remove(n)
-#                except:
-#                    pass
             if len(validList):
                 valid = False
             else:
@@ -1179,32 +1132,6 @@ class EadEditingHandler(EadHandler):
                 self.log(daonames)    
                 self._create_dao(daonames, node)  
                             
-#                emptydao = []
-#                try:
-#                    emptydao.extend(tree.xpath('//daoloc[not(@href)]'))
-#                except:
-#                    pass
-#                try:
-#                    emptydao.extend(tree.xpath('//dao[not(@href)]'))
-#                except:
-#                    pass                           
-#                for n in emptydao:
-#                    try:
-#                        parent = n.getparent()
-#                        parent.remove(n)
-#                    except:
-#                        pass
-#                emptydaogrp = []
-#                try:
-#                    emptydaogrp.extend(tree.xpath('//daogrp[not(child::daoloc)]'))
-#                except:
-#                    pass
-#                for n in emptydaogrp:
-#                    try:
-#                        parent = n.getparent()
-#                        parent.remove(n)
-#                    except:
-#                        pass
                 if len(validList):
                     valid = False
                 else:
@@ -1301,6 +1228,14 @@ class EadEditingHandler(EadHandler):
             return '<p>Unable to display xml</p>'
     
     
+#    def _write_file(self, filename, xml):
+#        global sourceDir
+#        
+#        # write to file
+    
+
+                    
+                    
     def submit(self, req, form):
         global sourceDir, xmlp, lockfilepath
         self.log('File submitted')
@@ -1316,13 +1251,9 @@ class EadEditingHandler(EadHandler):
         req.write(head)
         if index and os.path.exists(lockfilepath):
             req.write('<div id="single">')
-            req.write('<p>Another user is already indexing this database. Please try again in 10 minutes.</p>')
+            req.write('<p><span class="error">[ERROR]</span> - Another user is already indexing this database. Please try again in 10 minutes.</p>\n<p><a href="/ead/edit/menu.html">Back to \'Editing Menu\'.</a></p>')
             req.write('</div>')
         else :  
-            if index :      
-                lock = open(lockfilepath, 'w')
-                lock.close() 
-      
             req.write('<div id="single">')
             req.write('Initializing... ')
             ppFlow = db.get_object(session, 'preParserWorkflow')
@@ -1348,125 +1279,127 @@ class EadEditingHandler(EadHandler):
             
             xml = rec.get_xml(session)    
             valid = self.validate_record(xml)     
-            exists = True 
+            if index :      
+                lock = open(lockfilepath, 'w')
+                lock.close() 
+                try:
+                    exists = True 
+                    if valid:
+                        if index:
+                            self.log('Preparing to index file')
+                            #delete and unindex the old version from the record store
+                            try : 
+                                oldRec = recordStore.fetch_record(session, recid)
+                            except :
+                                self.log('New record - nothing to unindex')
+                                #this is a new record so we don't need to delete anything
+                                exists = False
+                                req.write('looking for record... <span class="ok">[OK]</span> - New Record <br/>\n')
+                            else :
+                                self.log('Unindexing existing record')
+                                req.write('undindexing existing version of record... ')
+                                db.unindex_record(session, oldRec)
+                                req.write('record unindexed')
+                                db.remove_record(session, oldRec)
+                                req.write('<span class="ok">[OK]</span><br/>\nDeleting record from stores...')
+                                self.log('file unindexed')
+                                recordStore.begin_storing(session)
+                                recordStore.delete_record(session, oldRec.id)
+                                recordStore.commit_storing(session)
+                                self.log('deleted from record store')
+                                dcRecordStore.begin_storing(session)
+                                try: dcRecordStore.delete_record(session, rec.id)
+                                except: pass
+                                else: dcRecordStore.commit_storing(session)
+                                self.log('deleted from dc store')                
+                                req.write('<span class="ok">[OK]</span><br/>\n')
+                                if len(rec.process_xpath(session, 'dsc')) and exists :
+                                    self.log('unindexing and deleting components')
+                                    # now the tricky bit - component records
+                                    compStore.begin_storing(session)
+                                    q = queryFactory.get_query(session, 'ead.parentid exact "%s/%s"' % (oldRec.recordStore, oldRec.id))
+                                    req.write('Removing components...')
+                                    rs = db.search(session, q)
+                                    for r in rs:
+                                        try:
+                                            compRec = r.fetch_record(session)
+                                        except (c3errors.FileDoesNotExistException, c3errors.ObjectDoesNotExistException):
+                                            pass
+                                        else:
+                                            db.unindex_record(session, compRec)
+                                            db.remove_record(session, compRec)
+                                            compStore.delete_record(session, compRec.id)
+                         
+                                    compStore.commit_storing(session)
+                                    req.write('<span class="ok">[OK]</span><br/>\n')
+                                    
+                            #add and index new record
+                            self.log('indexing new record')
+                            req.write('indexing new record... ')
+                            doc = ppFlow.process(session, StringDocument(xml))
+                            rec = xmlp.process_document(session, doc)
+                            assignDataIdFlow.process(session, rec)
+                            
+                            db.begin_indexing(session)
+                            recordStore.begin_storing(session)
+                            dcRecordStore.begin_storing(session)
+                            
+                            indexNewRecordFlow.process(session, rec)
+                            
+                            recordStore.commit_storing(session)
+                            dcRecordStore.commit_storing(session)
+                            
+                            
+                            if len(rec.process_xpath(session, 'dsc')):
+                                compStore.begin_storing(session)
+                                # extract and index components
+                                compRecordFlow.process(session, rec)
+                                compStore.commit_storing(session)
+                                db.commit_indexing(session)
+                                db.commit_metadata(session)
+                                req.write('<span class="ok">[OK]</span><br/>\n')
+                            else :
+                                db.commit_indexing(session)
+                                db.commit_metadata(session)   
+                                req.write('<span class="ok">[OK]</span><br/>\n')                  
+    
+                finally:
+                    if os.path.exists(lockfilepath):
+                        os.remove(lockfilepath)
+                            
+            self.log('writing to file system')
+            req.write('writing to file system... ')
+            filepath = os.path.join(sourceDir, filename)
+            pre = ''
+            if os.path.exists(filepath):
+                ws = re.compile('[\s]+')
+                xml = ws.sub(' ', read_file(filepath))
+                m = re.match('(.*?)<ead[>\s]', xml)
+                try :           
+                    pre = m.group(1)    
+                except:
+                    pass
+                os.remove(filepath)
+            try :
+                file = open(filepath, 'w')
+            except :
+                file = open(os.path.join(sourceDir,'%s.xml' % recid), 'w')
             
-            if valid and index:
-                self.log('Preparing to index file')
-                #delete and unindex the old version from the record store
-                try : 
-                    oldRec = recordStore.fetch_record(session, recid)
-                except :
-                    self.log('New record - nothing to unindex')
-                    #this is a new record so we don't need to delete anything
-                    exists = False
-                    req.write('looking for record... <span class="ok">[OK]</span> - New Record <br/>\n')
-                else :
-                    self.log('Unindexing existing record')
-                    req.write('undindexing existing version of record... ')
-                    db.unindex_record(session, oldRec)
-                    req.write('record unindexed')
-                    db.remove_record(session, oldRec)
-                    req.write('<span class="ok">[OK]</span><br/>\nDeleting record from stores...')
-                    self.log('file unindexed')
-                    recordStore.begin_storing(session)
-                    recordStore.delete_record(session, oldRec.id)
-                    recordStore.commit_storing(session)
-                    self.log('deleted from record store')
-                    dcRecordStore.begin_storing(session)
-                    try: dcRecordStore.delete_record(session, rec.id)
-                    except: pass
-                    else: dcRecordStore.commit_storing(session)
-                    self.log('deleted from dc store')                
-                    req.write('<span class="ok">[OK]</span><br/>\n')
-                    if len(rec.process_xpath(session, 'dsc')) and exists :
-                        self.log('unindexing and deleting components')
-                        # now the tricky bit - component records
-                        compStore.begin_storing(session)
-                        q = queryFactory.get_query(session, 'ead.parentid exact "%s/%s"' % (oldRec.recordStore, oldRec.id))
-                        req.write('Removing components...')
-                        rs = db.search(session, q)
-                        for r in rs:
-                            try:
-                                compRec = r.fetch_record(session)
-                            except (c3errors.FileDoesNotExistException, c3errors.ObjectDoesNotExistException):
-                                pass
-                            else:
-                                db.unindex_record(session, compRec)
-                                db.remove_record(session, compRec)
-                                compStore.delete_record(session, compRec.id)
-             
-                        compStore.commit_storing(session)
-                        req.write('<span class="ok">[OK]</span><br/>\n')
-                        
-                #add and index new record
-                self.log('indexing new record')
-                req.write('indexing new record... ')
-                doc = ppFlow.process(session, StringDocument(xml))
-                rec = xmlp.process_document(session, doc)
-                assignDataIdFlow.process(session, rec)
-                
-                db.begin_indexing(session)
-                recordStore.begin_storing(session)
-                dcRecordStore.begin_storing(session)
-                
-                indexNewRecordFlow.process(session, rec)
-                
-                recordStore.commit_storing(session)
-                dcRecordStore.commit_storing(session)
-                
-                
-                if len(rec.process_xpath(session, 'dsc')):
-                    compStore.begin_storing(session)
-                    # extract and index components
-                    compRecordFlow.process(session, rec)
-                    compStore.commit_storing(session)
-                    db.commit_indexing(session)
-                    db.commit_metadata(session)
-                    req.write('<span class="ok">[OK]</span><br/>\n')
-                else :
-                    db.commit_indexing(session)
-                    db.commit_metadata(session)   
-                    req.write('<span class="ok">[OK]</span><br/>\n')
-                
-                # write to file
-            if valid:
-                self.log('writing to file system')
-                req.write('writing to file system... ')
-                filepath = os.path.join(sourceDir, filename)
-                pre = ''
-                if os.path.exists(filepath):
-                    ws = re.compile('[\s]+')
-                    xml = ws.sub(' ', read_file(filepath))
-                    m = re.match('(.*?)<ead[>\s]', xml)
-                    try :           
-                        pre = m.group(1)    
-                    except:
-                        pass
-                    os.remove(filepath)
-                try :
-                    file = open(filepath, 'w')
-                except :
-                    file = open(os.path.join(sourceDir,'%s.xml' % recid), 'w')
-                
-                orderTxr = db.get_object(session, 'orderingTxr')
-                tempRec = xmlp.process_document(session, orderTxr.process_record(session, rec))
-                del orderTxr
-                indentTxr = db.get_object(session, 'indentingTxr')
-                file.write('%s\n%s' % (pre, indentTxr.process_record(session, tempRec).get_raw(session)))
-                file.flush()
-                file.close()    
-                editStore.delete_record(session, editRecid)
-                editStore.commit_storing(session)
-                req.write('<span class="ok">[OK]</span><br/>\n<p><a href="/ead/edit/menu.html">Back to \'Editing Menu\'.</a></p>')
-                foot = self._get_genericHtml('footer.html')  
-                req.write('</div>')        
-                req.write(foot)
-                self.log('file saved as %s' % filepath)
-                if os.path.exists(lockfilepath):
-                    os.remove(lockfilepath)
-            else:
-                if os.path.exists(lockfilepath):
-                    os.remove(lockfilepath)
+            orderTxr = db.get_object(session, 'orderingTxr')
+            tempRec = xmlp.process_document(session, orderTxr.process_record(session, rec))
+            del orderTxr
+            indentTxr = db.get_object(session, 'indentingTxr')
+            file.write('%s\n%s' % (pre, indentTxr.process_record(session, tempRec).get_raw(session)))
+            file.flush()
+            file.close()    
+            editStore.delete_record(session, editRecid)
+            editStore.commit_storing(session)
+            req.write('<span class="ok">[OK]</span><br/>\n<p><a href="/ead/edit/menu.html">Back to \'Editing Menu\'.</a></p>')
+            foot = self._get_genericHtml('footer.html')  
+            req.write('</div>')        
+            req.write(foot)
+            self.log('file saved as %s' % filepath)
+            
             return None 
       
       
@@ -1734,11 +1667,12 @@ assignDataIdFlow = None
 xmlp = None
 formTxr = None
 tocTxr = None
+lockfilepath = None
 logfilepath = editinglogfilepath
 
 
 def build_architecture(data=None):
-    global session, serv, db, recordStore, editStore, authStore, formTxr, tocTxr, xmlp, assignDataIdFlow, sourceDir
+    global session, serv, db, recordStore, editStore, authStore, formTxr, tocTxr, xmlp, assignDataIdFlow, sourceDir, lockfilepath
     #Discover objects
     session = Session()
     session.database = 'db_ead'
@@ -1758,7 +1692,11 @@ def build_architecture(data=None):
     xmlp = db.get_object(session, 'LxmlParser')
     formTxr = db.get_object(session, 'formCreationTxr')
     tocTxr = db.get_object(session, 'editingTocTxr')
+    lockfilepath = db.get_path(session, 'defaultPath') + '/indexing.lock'
+    
     rebuild = False
+    
+    
 
 eadEditingHandler = EadEditingHandler()                                      # initialise handler
 

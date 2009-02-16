@@ -728,6 +728,7 @@ class EadAdminHandler(EadHandler):
 
 
     def upload_file(self, req, form):
+        global lockfilepath
         self.htmlTitle.append('File Management')
         self.htmlTitle.append('Upload File')
         self.htmlNav.append('<a href="files.html" title="File Management" class="navlink">Files</a>')
@@ -761,43 +762,53 @@ class EadAdminHandler(EadHandler):
         write_file(os.path.join(sourceDir,newname), f.value)
         req.write('File <code>%s</code> uploaded and stored on server as <code>%s</code><br/>\n' % (f.filename, newname))
         if (op == 'insert'):
-            # 'open' all dbs and recordStores
-            db.begin_indexing(session)
-            recordStore.begin_storing(session)
-            dcRecordStore.begin_storing(session)
-            
-            # index record in thread to allow feedback
-            req.write('Loading and Indexing record .')
-            rec = assignDataIdFlow.process(session, rec)
-            t = WorkflowThread(session, indexNewRecordFlow, rec)
-            self._run_thread(t, req)
-            if t.error:
-                # thread failed to complete - nothing else will work!
+            if os.path.exists(lockfilepath):
+                req.write('<p><span class="error">[ERROR]</span> - Another user is already indexing this database. Your file has been uploaded but has not been indexed. Please try again in 10 minutes or reindex the full database using the database menu.</p>')
+
+            else :  
+                lock = open(lockfilepath, 'w')
+                lock.close() 
                 try:
-                    self.logger.log('File upload attempt by %s failed to complete.' % (session.user.username))
-                except:
-                    self.logger.log('File upload attempt by unauth failed to complete.')
-                req.write('<span class="error">Parsing/Indexing exited abnormally with message:<br/>\n%s</span>' % t.error)
-            else:
-                recordStore.commit_storing(session)
-                dcRecordStore.commit_storing(session)
-                if len(rec.process_xpath(session, 'dsc')):
-                    req.write('Loading and Indexing components .')
-                    compStore.begin_storing(session)
-                    # extract and index components
-                    t = WorkflowThread(session, compRecordFlow, rec)
+                    # 'open' all dbs and recordStores
+                    db.begin_indexing(session)
+                    recordStore.begin_storing(session)
+                    dcRecordStore.begin_storing(session)
+                    
+                    # index record in thread to allow feedback
+                    req.write('Loading and Indexing record .')
+                    rec = assignDataIdFlow.process(session, rec)
+                    t = WorkflowThread(session, indexNewRecordFlow, rec)
                     self._run_thread(t, req)
-                    compStore.commit_storing(session)
-                
-                req.write('Merging indexes ...')
-                try:
-                    db.commit_indexing(session)
-                    db.commit_metadata(session)
-                except:
-                    req.write('<span class="error">[ERROR]</span> - Could not finish merging indexes. Your record may not be available to search.<br/>\n')
-                else:
-                    req.write('<span class="ok">[OK]</span><br/>\nUPLOAD + INDEXING COMPLETE')
-                    self.logger.log('File Upload: %s added and indexed with id %s' % (newname, rec.id))
+                    if t.error:
+                        # thread failed to complete - nothing else will work!
+                        try:
+                            self.logger.log('File upload attempt by %s failed to complete.' % (session.user.username))
+                        except:
+                            self.logger.log('File upload attempt by unauth failed to complete.')
+                        req.write('<span class="error">Parsing/Indexing exited abnormally with message:<br/>\n%s</span>' % t.error)
+                    else:
+                        recordStore.commit_storing(session)
+                        dcRecordStore.commit_storing(session)
+                        if len(rec.process_xpath(session, 'dsc')):
+                            req.write('Loading and Indexing components .')
+                            compStore.begin_storing(session)
+                            # extract and index components
+                            t = WorkflowThread(session, compRecordFlow, rec)
+                            self._run_thread(t, req)
+                            compStore.commit_storing(session)
+                        
+                        req.write('Merging indexes ...')
+                        try:
+                            db.commit_indexing(session)
+                            db.commit_metadata(session)
+                        except:
+                            req.write('<span class="error">[ERROR]</span> - Could not finish merging indexes. Your record may not be available to search.<br/>\n')
+                        else:
+                            req.write('<span class="ok">[OK]</span><br/>\nUPLOAD + INDEXING COMPLETE')
+                            self.logger.log('File Upload: %s added and indexed with id %s' % (newname, rec.id))
+                finally:
+                    if os.path.exists(lockfilepath):
+                        os.remove(lockfilepath)
         else:
             req.write('UPLOAD COMPLETE')
             self.logger.log('File Upload: %s added' % (newname))
@@ -1077,6 +1088,8 @@ class EadAdminHandler(EadHandler):
         global clusDb, clusStore, clusFlow
         global compStore, compFlow, compRecordFlow, rebuild
         global admin_reload_display_type
+        global lockfilepath
+        
         # setup http headers etc
         self.htmlTitle.append('Rebuild Database')
         self.htmlNav.append('<a href="database.html" title="Database Management" class="navlink">Database</a>')    
@@ -1085,112 +1098,122 @@ class EadAdminHandler(EadHandler):
         head = self._get_genericHtml('header.html')
         req.write(head)
         req.write('<div id="single">')
-        req.write('Deleting existing data stores and indexes...')
-        # delete main stores, metadata, and indexes
-        self._clear_dir(os.path.join(dbPath, 'stores'))
-        db.clear_indexes(session)
-        # now we've blitzed everything, we'll have to rediscover/build the objects
-        build_architecture()
-        # rebuild and reindex
-        req.write('<span class="ok">[OK]</span><br/>Loading and Indexing records from <code>%s</code><br/>\n' % sourceDir)
-        recordStore.begin_storing(session)
-        dcRecordStore.begin_storing(session)
-        db.begin_indexing(session)
-        # for some reason this doesn't work well in threads...
-        start = time.time()
-        style = admin_reload_display_type
-        problems = []
-        try:
-            baseDocFac.load(session)
-            # TODO: figure out how many files we're loading
-            if style == 1:
-                req.write('<span id="rec-progress">Processing File: <span id="rec-count" style="font-weight:bold;font-size:larger;">0</span></span> ')
-            elif style == 2:
-                req.write('<table class="rebuildtable"><tr class="headrow"><td>File</td><td>Outcome</td><td>Message</td></tr>')
-                
-            for x, doc in enumerate(baseDocFac):
-                if style == 1:
-                    req.write('<script type="text/javascript">e = document.getElementById("rec-count");e.innerHTML = "%d"\n</script><noscript>.</noscript>' % (x+1))
-                elif style == 2:
-                    req.write('<tr><td><code>%s</code></td>' % (doc.filename.replace(sourceDir, '')[1:]))
-                retval = buildSingleFlow.process(session, doc)
-                if not isinstance(retval, Record):
-                    if style < 2:
-                        problems.append((doc.filename, (retval)))
-                    else:
-                        req.write('<td class="error" style="text-align: center;">ERROR</td><td>%s</td></tr>' % (retval))
-                else:
-                    if style == 0:
-                        req.write('.')
-                        if ((x+1) % 200 == 0): req.write('<br/>')
+        
+        if os.path.exists(lockfilepath):
+            req.write('<p><span class="error">[ERROR]</span> - Another user is already indexing this database. Please try again in 10 minutes.</p>\n<p><a href="database.html" title="Database Management" class="navlink">Back to \'Database Management\' Page</a></p>')
+        else :
+            lock = open(lockfilepath, 'w')
+            lock.close() 
+            try:
+                req.write('Deleting existing data stores and indexes...')
+                # delete main stores, metadata, and indexes
+                self._clear_dir(os.path.join(dbPath, 'stores'))
+                db.clear_indexes(session)
+                # now we've blitzed everything, we'll have to rediscover/build the objects
+                build_architecture()
+                # rebuild and reindex
+                req.write('<span class="ok">[OK]</span><br/>Loading and Indexing records from <code>%s</code><br/>\n' % sourceDir)
+                recordStore.begin_storing(session)
+                dcRecordStore.begin_storing(session)
+                db.begin_indexing(session)
+                # for some reason this doesn't work well in threads...
+                start = time.time()
+                style = admin_reload_display_type
+                problems = []
+                try:
+                    baseDocFac.load(session)
+                    # TODO: figure out how many files we're loading
+                    if style == 1:
+                        req.write('<span id="rec-progress">Processing File: <span id="rec-count" style="font-weight:bold;font-size:larger;">0</span></span> ')
                     elif style == 2:
-                        req.write('<td class="ok" style="text-align: center;">OK</td><td>Record Identifier: %s</td></tr>' % (retval.id))
-    
-            if style == 2:
-                req.write('</table>Indexing Complete ')
-            else:    
-                req.write('[<span class="ok"> OK </span>] ')
+                        req.write('<table class="rebuildtable"><tr class="headrow"><td>File</td><td>Outcome</td><td>Message</td></tr>')
+                        
+                    for x, doc in enumerate(baseDocFac):
+                        if style == 1:
+                            req.write('<script type="text/javascript">e = document.getElementById("rec-count");e.innerHTML = "%d"\n</script><noscript>.</noscript>' % (x+1))
+                        elif style == 2:
+                            req.write('<tr><td><code>%s</code></td>' % (doc.filename.replace(sourceDir, '')[1:]))
+                        retval = buildSingleFlow.process(session, doc)
+                        if not isinstance(retval, Record):
+                            if style < 2:
+                                problems.append((doc.filename, (retval)))
+                            else:
+                                req.write('<td class="error" style="text-align: center;">ERROR</td><td>%s</td></tr>' % (retval))
+                        else:
+                            if style == 0:
+                                req.write('.')
+                                if ((x+1) % 200 == 0): req.write('<br/>')
+                            elif style == 2:
+                                req.write('<td class="ok" style="text-align: center;">OK</td><td>Record Identifier: %s</td></tr>' % (retval.id))
             
-            recordStore.commit_storing(session)
-            dcRecordStore.commit_storing(session)
-            db.commit_indexing(session)
-            db.commit_metadata(session)
-            
-            mins, secs = divmod(time.time() - start, 60)
-            hours, mins = divmod(mins, 60)
-            req.write('%dh %dm %ds<br/>' % (hours, mins, secs))
-            
-            if len(problems):
-                req.write('<span class="error">The following file(s) were omitted due to errors that occured while loading: </span><br/>\n')
-                req.write('<br/>\n'.join(['%s - %s' % (p[0], p[1]) for p in problems]))
-                req.write('<br/>\n')
-                
-        except:
-            # failed to complete - nothing else will work!
-            self.logger.log('Database rebuild attempt by %s failed to complete.' % (session.user.username))
-            cla, exc, trbk = sys.exc_info()
-            excName = cla.__name__
-            try: excArgs = exc.__dict__["args"]
-            except KeyError: excArgs = str(exc)
-            #req.write('<span class="error">Indexing exited abnormally with message:<br/>\n%s</span>' % t.error) # thread version
-            req.write('<span class="error">Indexing exited abnormally:<br/>\n %s:%s</span>' % (excName, excArgs))
-        else:
-            clusDocFac = db.get_object(session, 'clusterDocumentFactory')
-            # rebuild and reindex components
-            # have to do this manually otherwise times out :(
-            req.write('Loading and indexing components.<br/>\n')
-            start = time.time()
-            db.begin_indexing(session)
-            compStore.begin_storing(session)
-            dotcount = 0
-            for rec in recordStore:
-                clusDocFac.load(session, rec) # extract subject clusters to use later
-                try: compRecordFlow.process(session, rec)
+                    if style == 2:
+                        req.write('</table>Indexing Complete ')
+                    else:    
+                        req.write('[<span class="ok"> OK </span>] ')
+                    
+                    recordStore.commit_storing(session)
+                    dcRecordStore.commit_storing(session)
+                    db.commit_indexing(session)
+                    db.commit_metadata(session)
+                    
+                    mins, secs = divmod(time.time() - start, 60)
+                    hours, mins = divmod(mins, 60)
+                    req.write('%dh %dm %ds<br/>' % (hours, mins, secs))
+                    
+                    if len(problems):
+                        req.write('<span class="error">The following file(s) were omitted due to errors that occured while loading: </span><br/>\n')
+                        req.write('<br/>\n'.join(['%s - %s' % (p[0], p[1]) for p in problems]))
+                        req.write('<br/>\n')
+                        
                 except:
-                     req.write('<span class="error">.</span>')
+                    # failed to complete - nothing else will work!
+                    self.logger.log('Database rebuild attempt by %s failed to complete.' % (session.user.username))
+                    cla, exc, trbk = sys.exc_info()
+                    excName = cla.__name__
+                    try: excArgs = exc.__dict__["args"]
+                    except KeyError: excArgs = str(exc)
+                    #req.write('<span class="error">Indexing exited abnormally with message:<br/>\n%s</span>' % t.error) # thread version
+                    req.write('<span class="error">Indexing exited abnormally:<br/>\n %s:%s</span>' % (excName, excArgs))
                 else:
-                    req.write('.')
-                if ((dotcount+1) % 200 == 0): req.write('<br/>\n')
-                dotcount += 1
-                
-            compStore.commit_storing(session)
-            db.commit_indexing(session)
-            db.commit_metadata(session)
-            mins, secs = divmod(time.time() - start, 60)
-            hours, mins = divmod(mins, 60)
-            req.write('<span class="ok">[OK]</span> %dh %dm %ds<br/>' % (hours, mins, secs))
-            # finish clusters
-            req.write('Finishing subject clusters...')
-            self._clear_dir(os.path.join(dbPath, 'cluster', 'stores'))
-            build_architecture()
-            session.database = 'db_ead_cluster'
-            req.write('about to clusDb.clear_indexes')
-            clusDb.clear_indexes(session)
-            hours, mins, secs = self._timeop(clusFlow.process, (session, clusDocFac))
-            req.write('<span class="ok">[OK]</span> %dh %dm %ds<br/>\n' % (hours, mins, secs))
-            session.database = 'db_ead'
-            req.write('\nDATABASE REBUILD COMPLETE<br/>\n<a href="database.html" title="Database Management" class="navlink">Back to \'Database Management\' Page</a>')
-            self.logger.log('Database rebuilt by: %s' % (session.user.username))
+                    clusDocFac = db.get_object(session, 'clusterDocumentFactory')
+                    # rebuild and reindex components
+                    # have to do this manually otherwise times out :(
+                    req.write('Loading and indexing components.<br/>\n')
+                    start = time.time()
+                    db.begin_indexing(session)
+                    compStore.begin_storing(session)
+                    dotcount = 0
+                    for rec in recordStore:
+                        clusDocFac.load(session, rec) # extract subject clusters to use later
+                        try: compRecordFlow.process(session, rec)
+                        except:
+                             req.write('<span class="error">.</span>')
+                        else:
+                            req.write('.')
+                        if ((dotcount+1) % 200 == 0): req.write('<br/>\n')
+                        dotcount += 1
+                        
+                    compStore.commit_storing(session)
+                    db.commit_indexing(session)
+                    db.commit_metadata(session)
+                    mins, secs = divmod(time.time() - start, 60)
+                    hours, mins = divmod(mins, 60)
+                    req.write('<span class="ok">[OK]</span> %dh %dm %ds<br/>' % (hours, mins, secs))
+                    # finish clusters
+                    req.write('Finishing subject clusters...')
+                    self._clear_dir(os.path.join(dbPath, 'cluster', 'stores'))
+                    build_architecture()
+                    session.database = 'db_ead_cluster'
+                    req.write('about to clusDb.clear_indexes')
+                    clusDb.clear_indexes(session)
+                    hours, mins, secs = self._timeop(clusFlow.process, (session, clusDocFac))
+                    req.write('<span class="ok">[OK]</span> %dh %dm %ds<br/>\n' % (hours, mins, secs))
+                    session.database = 'db_ead'
+                    req.write('\nDATABASE REBUILD COMPLETE<br/>\n<a href="database.html" title="Database Management" class="navlink">Back to \'Database Management\' Page</a>')
+                    self.logger.log('Database rebuilt by: %s' % (session.user.username))
+            finally:
+                if os.path.exists(lockfilepath):
+                    os.remove(lockfilepath)                    
 
         # finish HTML, log
         foot = self._get_genericHtml('footer.html')
@@ -1203,6 +1226,8 @@ class EadAdminHandler(EadHandler):
 
     def reindex_database(self, req):
         global dbPath, db, recordStore, compStore, clusDb, clusStore, clusFlow, rebuild
+        global lockfilepath
+        
         self.htmlTitle.append('Reindex Database')
         self.htmlNav.append('<a href="database.html" title="Database Operations">Database</a>')
         # setup http headers etc
@@ -1211,115 +1236,124 @@ class EadAdminHandler(EadHandler):
         head = self._get_genericHtml('header.html')
         req.write(head)
         req.write('<div id="single">')
-        req.write('Deleting existing indexes...')
-        # delete existing indexes
-        if not db.indexes:
-            db._cacheIndexes(session)
-        for idx in db.indexes.itervalues():
-            if not idx.get_setting(session, 'noUnindexDefault', 0):
-                idx.clear(session)
-            
-        # delete cluster stores, metadata, and indexes
-        self._clear_dir(os.path.join(dbPath, 'cluster', 'stores'))
-        clusDb.clear_indexes(session)
-        # now we've blitzed everything, we'll have to rediscover/build the objects
-        build_architecture()
-        req.write('[<span class="ok"> OK </span>]<br/>')
-        db.begin_indexing(session)
-        # reindex records
-        start = time.time()
-        style = admin_reload_display_type
-        style = 2 # may be 0: dots, 1: incrementing counter, 2: table
-        problems = []
-        if style == 0:
-            # Basic dot version
-            req.write('Indexing records.')
-        elif style == 1:
-            # Incrementing counter version
-            req.write('<span id="rec-progress">Indexing Record: <span id="rec-count" style="font-weight:bold;font-size:larger;">0</span> of %d</span>' % recordStore.totalItems)
-        else:
-            # Table version
-            req.write('<table class="rebuildtable"><tr class="headrow"><td><i>n</i> of %d</td><td>Outcome</td><td>Message</td></tr>' % (recordStore.totalItems))
-        
-        clusDocFac = db.get_object(session, 'clusterDocumentFactory')
-        for reccount, rec in enumerate(recordStore):
-            if style == 1:
-                req.write('<script type="text/javascript">e = document.getElementById("rec-count");e.innerHTML = "%d" \n</script><noscript>.</noscript>' % (reccount+1))
-            elif style == 2:
-                req.write('<tr><td>%d</td>' % (reccount+1))
-            try: 
-                db.index_record(session, rec)
-            except Exception:
-                cla, exc, trbk = sys.exc_info()
-                excName = cla.__name__
-                try:
-                    excArgs = exc.__dict__["args"]
-                except KeyError:
-                    excArgs = str(exc)
-                if style < 2:
-                    problems.append((rec.id, (excName, excArgs)))
-                else:
-                    req.write('<td class="error" style="text-align: center;">ERROR</td><td>Record Identifier: %s<br/>%s:%s</td></tr>' % (rec.id, excName, excArgs))
-            else:
-                if style == 0:
-                    req.write('.')
-                    if ((reccount+1) % 200 == 0): req.write('<br/>')
-                elif style == 2:
-                    req.write('<td class="ok" style="text-align: center;">OK</td><td>Record Identifier: %s</td></tr>' % (rec.id))
-                
-                clusDocFac.load(session, rec) # extract subject clusters to use later
-        
-        if style == 2:
-            req.write('</table>Indexing Complete ')
-        else:    
-            req.write('[<span class="ok"> OK </span>]')
-            
-        mins, secs = divmod(time.time() - start, 60)
-        hours, mins = divmod(mins, 60)
-        req.write('%dh %dm %ds<br/>' % (hours, mins, secs))
-         
-        if len(problems):
-            req.write('<span class="error">The following record(s) were omitted due to errors that occured while indexing: </span><br/>\n')
-            req.write('<br/>\n'.join(['%s - %r:%r' % (p[0], p[1][0], p[1][1]) for p in problems]))
-            req.write('<br/>\n')
-                      
-        # reindex components
-        start = time.time()
-        # refresh compStore - seems to be busted :?
-        compStore = db.get_object(session, 'componentStore')
-        req.write('<span id="comp-progress">Indexing Component: <span id="comp-count" style="font-weight:bold;font-size:larger;">0</span> of %d</span>' % compStore.totalItems)
-        for x, rec in enumerate(compStore):
-            if ((x+1) % 5) == 0:
-                req.write('<script type="text/javascript">e = document.getElementById("comp-count");e.innerHTML = "%d"</script>\n' % (x+1))
+        if os.path.exists(lockfilepath):
+            req.write('<p><span class="error">[ERROR]</span> - Another user is already indexing this database. Please try again in 10 minutes.</p>\n<p><a href="database.html" title="Database Management" class="navlink">Back to \'Database Management\' Page</a></p>')
+        else :
+            lock = open(lockfilepath, 'w')
+            lock.close() 
             try:
-                db.index_record(session, rec)
-            except:
-                continue
-            else:
-                if ((x+1) % 10 == 0): req.write('<noscript>.</noscript>')
-                if ((x+1) % (200 * 10) == 0): req.write('<noscript><br/></noscript>')
-        
-        # make sure final report represents totalItems
-        req.write('<script type="text/javascript">e = document.getElementById("comp-count");e.innerHTML = "%d"</script>\n' % (compStore.totalItems))
-        
-        mins, secs = divmod(time.time() - start, 60)
-        hours, mins = divmod(mins, 60)
-        req.write('[<span class="ok"> OK </span>] %dh %dm %ds<br/>' % (hours, mins, secs))    
-        req.write('Merging indexes...')
-        start = time.time()
-        hours, mins, secs = self._timeop(db.commit_indexing, [session])
-        hours2, mins2, secs2 = self._timeop(db.commit_metadata, [session])
-        hours+=hours2; mins+=mins2; secs+=secs2
-        req.write('[<span class="ok"> OK </span>] %dh %dm %ds<br/>' % (hours, mins, secs))
-        # finish clusters
-        req.write('Finishing subject clusters...')
-        session.database = clusDb.id
-        clusDb.clear_indexes(session)
-        hours, mins, secs = self._timeop(clusFlow.process, (session, clusDocFac))
-        session.database = db.id
-        req.write('[<span class="ok"> OK </span>] %dh %dm %ds<br/>\nDATABASE REINDEX COMPLETE' % (hours, mins, secs))
-        req.write('<br/>\n<a href="database.html" title="Database Management" class="navlink">Back to \'Database Management\' Page</a>')
-        # finish HTML, log
+                req.write('Deleting existing indexes...')
+                # delete existing indexes
+                if not db.indexes:
+                    db._cacheIndexes(session)
+                for idx in db.indexes.itervalues():
+                    if not idx.get_setting(session, 'noUnindexDefault', 0):
+                        idx.clear(session)
+                    
+                # delete cluster stores, metadata, and indexes
+                self._clear_dir(os.path.join(dbPath, 'cluster', 'stores'))
+                clusDb.clear_indexes(session)
+                # now we've blitzed everything, we'll have to rediscover/build the objects
+                build_architecture()
+                req.write('[<span class="ok"> OK </span>]<br/>')
+                db.begin_indexing(session)
+                # reindex records
+                start = time.time()
+                style = admin_reload_display_type
+                style = 2 # may be 0: dots, 1: incrementing counter, 2: table
+                problems = []
+                if style == 0:
+                    # Basic dot version
+                    req.write('Indexing records.')
+                elif style == 1:
+                    # Incrementing counter version
+                    req.write('<span id="rec-progress">Indexing Record: <span id="rec-count" style="font-weight:bold;font-size:larger;">0</span> of %d</span>' % recordStore.totalItems)
+                else:
+                    # Table version
+                    req.write('<table class="rebuildtable"><tr class="headrow"><td><i>n</i> of %d</td><td>Outcome</td><td>Message</td></tr>' % (recordStore.totalItems))
+                
+                clusDocFac = db.get_object(session, 'clusterDocumentFactory')
+                for reccount, rec in enumerate(recordStore):
+                    if style == 1:
+                        req.write('<script type="text/javascript">e = document.getElementById("rec-count");e.innerHTML = "%d" \n</script><noscript>.</noscript>' % (reccount+1))
+                    elif style == 2:
+                        req.write('<tr><td>%d</td>' % (reccount+1))
+                    try: 
+                        db.index_record(session, rec)
+                    except Exception:
+                        cla, exc, trbk = sys.exc_info()
+                        excName = cla.__name__
+                        try:
+                            excArgs = exc.__dict__["args"]
+                        except KeyError:
+                            excArgs = str(exc)
+                        if style < 2:
+                            problems.append((rec.id, (excName, excArgs)))
+                        else:
+                            req.write('<td class="error" style="text-align: center;">ERROR</td><td>Record Identifier: %s<br/>%s:%s</td></tr>' % (rec.id, excName, excArgs))
+                    else:
+                        if style == 0:
+                            req.write('.')
+                            if ((reccount+1) % 200 == 0): req.write('<br/>')
+                        elif style == 2:
+                            req.write('<td class="ok" style="text-align: center;">OK</td><td>Record Identifier: %s</td></tr>' % (rec.id))
+                        
+                        clusDocFac.load(session, rec) # extract subject clusters to use later
+                
+                if style == 2:
+                    req.write('</table>Indexing Complete ')
+                else:    
+                    req.write('[<span class="ok"> OK </span>]')
+                    
+                mins, secs = divmod(time.time() - start, 60)
+                hours, mins = divmod(mins, 60)
+                req.write('%dh %dm %ds<br/>' % (hours, mins, secs))
+                 
+                if len(problems):
+                    req.write('<span class="error">The following record(s) were omitted due to errors that occured while indexing: </span><br/>\n')
+                    req.write('<br/>\n'.join(['%s - %r:%r' % (p[0], p[1][0], p[1][1]) for p in problems]))
+                    req.write('<br/>\n')
+                              
+                # reindex components
+                start = time.time()
+                # refresh compStore - seems to be busted :?
+                compStore = db.get_object(session, 'componentStore')
+                req.write('<span id="comp-progress">Indexing Component: <span id="comp-count" style="font-weight:bold;font-size:larger;">0</span> of %d</span>' % compStore.totalItems)
+                for x, rec in enumerate(compStore):
+                    if ((x+1) % 5) == 0:
+                        req.write('<script type="text/javascript">e = document.getElementById("comp-count");e.innerHTML = "%d"</script>\n' % (x+1))
+                    try:
+                        db.index_record(session, rec)
+                    except:
+                        continue
+                    else:
+                        if ((x+1) % 10 == 0): req.write('<noscript>.</noscript>')
+                        if ((x+1) % (200 * 10) == 0): req.write('<noscript><br/></noscript>')
+                
+                # make sure final report represents totalItems
+                req.write('<script type="text/javascript">e = document.getElementById("comp-count");e.innerHTML = "%d"</script>\n' % (compStore.totalItems))
+                
+                mins, secs = divmod(time.time() - start, 60)
+                hours, mins = divmod(mins, 60)
+                req.write('[<span class="ok"> OK </span>] %dh %dm %ds<br/>' % (hours, mins, secs))    
+                req.write('Merging indexes...')
+                start = time.time()
+                hours, mins, secs = self._timeop(db.commit_indexing, [session])
+                hours2, mins2, secs2 = self._timeop(db.commit_metadata, [session])
+                hours+=hours2; mins+=mins2; secs+=secs2
+                req.write('[<span class="ok"> OK </span>] %dh %dm %ds<br/>' % (hours, mins, secs))
+                # finish clusters
+                req.write('Finishing subject clusters...')
+                session.database = clusDb.id
+                clusDb.clear_indexes(session)
+                hours, mins, secs = self._timeop(clusFlow.process, (session, clusDocFac))
+                session.database = db.id
+                req.write('[<span class="ok"> OK </span>] %dh %dm %ds<br/>\nDATABASE REINDEX COMPLETE' % (hours, mins, secs))
+                req.write('<br/>\n<a href="database.html" title="Database Management" class="navlink">Back to \'Database Management\' Page</a>')
+                # finish HTML, log
+            finally:
+                if os.path.exists(lockfilepath):
+                    os.remove(lockfilepath)
         foot = self._get_genericHtml('footer.html')     
         req.write('</div>')     
         req.write(foot)
@@ -1695,6 +1729,7 @@ compRecordFlow = None
 # other
 extractor = None
 diacriticNormalizer = None
+lockfilepath = None
 
 rebuild = True
 
@@ -1706,7 +1741,7 @@ def build_architecture(data=None):
     clusDb, clusStore, clusFlow, \
     summaryTxr, fullTxr, fullSplitTxr, textTxr, \
     ppFlow, buildFlow, buildSingleFlow, indexNewRecordFlow, assignDataIdFlow, normIdFlow, compFlow, compRecordFlow, \
-    extractor, diacriticNormalizer, \
+    extractor, diacriticNormalizer, lockfilepath, \
     rebuild
     
     # globals line 1: re-establish session; maintain user if possible
@@ -1752,6 +1787,8 @@ def build_architecture(data=None):
     # globals line 6: other
     extractor = db.get_object(session, 'SimpleExtractor')
     diacriticNormalizer = db.get_object(session, 'DiacriticNormalizer')
+    
+    lockfilepath = db.get_path(session, 'defaultPath') + '/indexing.lock'
     
     rebuild = False
 
