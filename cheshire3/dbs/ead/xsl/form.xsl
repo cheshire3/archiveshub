@@ -87,7 +87,7 @@
   	<div id="sec-3-1" class="section">
       <span class="isadg"><h3>3.1: Identity Statement Area</h3></span>
       <p id="unitidparent">
-	  <strong><span class="isadg">3.1.1: </span>Reference Code<a href="http://www.archiveshub.ac.uk/arch/refcode.shtml" title="Reference Code help - opens in new window" target="_new"><img class="whatsthis" src="/images/whatisthissmall.gif" alt="[What is this?]"/></a></strong> 
+	  <strong><span class="isadg">3.1.1: </span>Reference Code<a href="http://www.archiveshub.ac.uk/arch/refcode.shtml" title="Reference Code help - opens in new window" target="_new"><img class="whatsthis" src="/ead/img/whatisthissmall.gif" alt="[What is this?]"/></a></strong> 
 	  Comprising <a href="http://www.iso.org/iso/en/prods-services/iso3166ma/02iso-3166-code-lists/list-en1.html" target="_new" title="Further information on ISO Country Codes">ISO Country Code</a>, 
 	  <a href="http://www.nationalarchives.gov.uk/archon/" target="_new" title="ARCHON Service">Archon Code</a>,
 	  and a unique identifier for this record or component.
@@ -107,7 +107,7 @@
 	  </xsl:choose>  		
   	</p>
    	<p>
-		<strong><span class="isadg">3.1.2: </span>Title<a href="http://www.archiveshub.ac.uk/arch/title.shtml" title="Title help - opens in new window" target="_new"><img class="whatsthis" src="/images/whatisthissmall.gif" alt="[What is this?]"/></a></strong><br/>
+		<strong><span class="isadg">3.1.2: </span>Title<a href="http://www.archiveshub.ac.uk/arch/title.shtml" title="Title help - opens in new window" target="_new"><img class="whatsthis" src="/ead/img/whatisthissmall.gif" alt="[What is this?]"/></a></strong><br/>
 		<xsl:choose>
 			<xsl:when test="did/unittitle">
 				<xsl:apply-templates select="did/unittitle"/>
@@ -118,7 +118,7 @@
 		</xsl:choose>		
     </p>
    <div class="float">
-    	<p><strong><span class="isadg">3.1.3: </span>Dates of Creation<a href="http://www.archiveshub.ac.uk/arch/dates1.shtml" title="Dates of Creation help - opens in new window" target="_new"><img class="whatsthis" src="/images/whatisthissmall.gif" alt="[What is this?]"/></a></strong><br/>
+    	<p><strong><span class="isadg">3.1.3: </span>Dates of Creation<a href="http://www.archiveshub.ac.uk/arch/dates1.shtml" title="Dates of Creation help - opens in new window" target="_new"><img class="whatsthis" src="/ead/img/whatisthissmall.gif" alt="[What is this?]"/></a></strong><br/>
 		<xsl:choose>
 			<xsl:when test="did/unitdate">
 				<xsl:apply-templates select="did/unitdate"/>
@@ -134,7 +134,7 @@
 	</div>
 	<div class="float">
 		<p>
-		<strong>Normalised Date<a href="http://www.archiveshub.ac.uk/arch/dates2.shtml" title="Normalised Date help - opens in new window" target="_new"><img class="whatsthis" src="/images/whatisthissmall.gif" alt="[What is this?]"/></a></strong><br/>
+		<strong>Normalised Date<a href="http://www.archiveshub.ac.uk/arch/dates2.shtml" title="Normalised Date help - opens in new window" target="_new"><img class="whatsthis" src="/ead/img/whatisthissmall.gif" alt="[What is this?]"/></a></strong><br/>
 	    	<xsl:choose>
 	    		<xsl:when test="did/unitdate/@normal">
 	    			<xsl:apply-templates select="did/unitdate/@normal"/>
@@ -202,7 +202,7 @@
 		</xsl:if>
   	</p>
  	<p>
-		<strong><span class="isadg">3.1.5: </span>Extent of Unit of Description<a href="http://www.archiveshub.ac.uk/arch/extent.shtml" title="Extent help - opens in new window" target="_new"><img class="whatsthis" src="/images/whatisthissmall.gif" alt="[What is this?]"/></a></strong><br/>
+		<strong><span class="isadg">3.1.5: </span>Extent of Unit of Description<a href="http://www.archiveshub.ac.uk/arch/extent.shtml" title="Extent help - opens in new window" target="_new"><img class="whatsthis" src="/ead/img/whatisthissmall.gif" alt="[What is this?]"/></a></strong><br/>
 		<xsl:choose>
 			<xsl:when test="did/physdesc/extent">
 				<xsl:apply-templates select="did/physdesc/extent"/>
@@ -215,7 +215,7 @@
     <xsl:if test="$leveltype = 'collection'">
 	    <p>
 	  		<strong>Repository</strong><a id="repositoryhelp" name="repositoryhelp" target="_new" href="http://www.archiveshub.ac.uk/arch/repository.shtml">
-		<img class="whatsthis" src="/images/whatisthissmall.gif" alt="[What is this?]"/>
+		<img class="whatsthis" src="/ead/img/whatisthissmall.gif" alt="[What is this?]"/>
 		</a><br/>
 	  		<xsl:choose>
 				<xsl:when test="did/repository">
@@ -233,7 +233,7 @@
 				</xsl:when> 
 				<xsl:otherwise>
 					<strong>Sponsor</strong><a id="sponsorhelp" name="sponsorhelp" target="_new" href="http://www.archiveshub.ac.uk/arch/sponsor.shtml ">
-		<img class="whatsthis" src="/images/whatisthissmall.gif" alt="[What is this?]"/>
+		<img class="whatsthis" src="/ead/img/whatisthissmall.gif" alt="[What is this?]"/>
 		</a><a class="smalllink" id="linkfiledesc/titlestmt/sponsor" title="add sponsor" onclick="addElement('filedesc/titlestmt/sponsor')">add content</a> [optional]<br/>
 					<input class="menuField" type="text" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" name="filedesc/titlestmt/sponsor" id="filedesc/titlestmt/sponsor" size="80" style="display:none"></input>
 				</xsl:otherwise>
@@ -247,7 +247,7 @@
    <div class="section">
 		<span class="isadg"><h3>3.2: Context Area</h3></span> 
 		<p>
-		<strong><span class="isadg">3.2.1: </span>Name of Creator<a href="http://www.archiveshub.ac.uk/arch/name.shtml" title="Name of Creator help - opens in new window" target="_new"><img class="whatsthis" src="/images/whatisthissmall.gif" alt="[What is this?]"/></a></strong>  [<strong>also add manually as <a href="#accesspoints" title="Add Access Point manually">Access Point</a></strong>]<br/>
+		<strong><span class="isadg">3.2.1: </span>Name of Creator<a href="http://www.archiveshub.ac.uk/arch/name.shtml" title="Name of Creator help - opens in new window" target="_new"><img class="whatsthis" src="/ead/img/whatisthissmall.gif" alt="[What is this?]"/></a></strong>  [<strong>also add manually as <a href="#accesspoints" title="Add Access Point manually">Access Point</a></strong>]<br/>
 		<xsl:choose>
 			<xsl:when test="did/origination">
 				<xsl:apply-templates select="did/origination"/>
@@ -623,7 +623,7 @@
 	</p> 
 <!-- langmaterial -->
      <p>
-     	<strong><span class="isadg">3.4.3: </span>Language of Material</strong><a href="http://www.archiveshub.ac.uk/arch/lang.shtml" title="Language of Material help - opens in new window" target="_new"><img class="whatsthis" src="/images/whatisthissmall.gif" alt="[What is this?]"/></a> [Must include <a href="http://www.loc.gov/standards/iso639-2/englangn.html" title="ISO 639-2 codes - opens new window" target="_new">ISO 639-2 3-letter code</a>]
+     	<strong><span class="isadg">3.4.3: </span>Language of Material</strong><a href="http://www.archiveshub.ac.uk/arch/lang.shtml" title="Language of Material help - opens in new window" target="_new"><img class="whatsthis" src="/ead/img/whatisthissmall.gif" alt="[What is this?]"/></a> [Must include <a href="http://www.loc.gov/standards/iso639-2/englangn.html" title="ISO 639-2 codes - opens new window" target="_new">ISO 639-2 3-letter code</a>]
      	<xsl:for-each select="did/langmaterial/@*">
      		<input type="hidden">
      			<xsl:attribute name="name">
@@ -1001,7 +1001,7 @@
 <!-- DIGITAL OBJECTS -->
 	<div id="digitalobjectssection" class="section">
 		<h3>Digital Objects<a id="daohelp" name="daohelp" target="_new" href="http://www.archiveshub.ac.uk/arch/images.shtml#dao-help">
-		<img class="whatsthis" src="/images/whatisthissmall.gif" alt="[What is this?]"/>
+		<img class="whatsthis" src="/ead/img/whatisthissmall.gif" alt="[What is this?]"/>
 		</a></h3>
 		<div id="daocontainer">
 			<!-- Digital Object not in did -->							
@@ -1192,13 +1192,13 @@
 <!--  -->
 	<div id="accesspointssection" class="section">
 		<h3>Access Points<a id="accesspoints" name="accesspoints" target="_new" href="http://www.archiveshub.ac.uk/arch/access.shtml">
-		<img class="whatsthis" src="/images/whatisthissmall.gif" alt="[What is this?]"/>
+		<img class="whatsthis" src="/ead/img/whatisthissmall.gif" alt="[What is this?]"/>
 		</a></h3>
 		
 <!-- subject -->
 		<div id="subject" class="apcontainer">
 			<p><strong>Subject</strong><a id="subjecthelp" name="subjecthelp" target="_new" href="http://www.archiveshub.ac.uk/arch/subject.shtml">
-		<img class="whatsthis" src="/images/whatisthissmall.gif" alt="[What is this?]"/>
+		<img class="whatsthis" src="/ead/img/whatisthissmall.gif" alt="[What is this?]"/>
 		</a><br /><a class="extSearch" onclick="window.open('http://databases.unesco.org/thesaurus/', 'new', 'width=800 height=600');">[Search UNESCO]</a><xsl:text>  </xsl:text><a class="extSearch" onclick="window.open('http://authorities.loc.gov/cgi-bin/Pwebrecon.cgi?DB=local&amp;PAGE=First', 'new', 'width=800 height=600');">[Search LCSH]</a></p>
 			<xsl:choose>
 				<xsl:when test="controlaccess/subject">
@@ -1234,7 +1234,7 @@
 <!--persname -->
         <div id="persname" class="apcontainer">				
 			<p><strong>Personal Name</strong><a id="persnamehelp" name="persnamehelp" target="_new" href="http://www.archiveshub.ac.uk/arch/persname.shtml">
-		<img class="whatsthis" src="/images/whatisthissmall.gif" alt="[What is this?]"/>
+		<img class="whatsthis" src="/ead/img/whatisthissmall.gif" alt="[What is this?]"/>
 		</a><br /><a class="extSearch" onclick="window.open('http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=P', 'new', 'width=800 height=600');">[Search NRA]</a></p>
 			
 			<xsl:choose>
@@ -1278,7 +1278,7 @@
 <!--famname -->
 		<div id="famname" class="apcontainer">
 			<p><strong>Family Name</strong><a id="famnamehelp" name="famnamehelp" target="_new" href="http://www.archiveshub.ac.uk/arch/famname.shtml">
-		<img class="whatsthis" src="/images/whatisthissmall.gif" alt="[What is this?]"/>
+		<img class="whatsthis" src="/ead/img/whatisthissmall.gif" alt="[What is this?]"/>
 		</a><br /><a class="extSearch" onclick="window.open('http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=F', 'new', 'width=800 height=600');">[Search NRA]</a></p>
 			<xsl:choose>
 				<xsl:when test="controlaccess/famname">
@@ -1321,7 +1321,7 @@
 <!-- corpname -->
 		<div id="corpname" class="apcontainer">
 			<p><strong>Corporate Name</strong><a id="corpnamehelp" name="corpnamehelp" target="_new" href="http://www.archiveshub.ac.uk/arch/corpname.shtml">
-		<img class="whatsthis" src="/images/whatisthissmall.gif" alt="[What is this?]"/>
+		<img class="whatsthis" src="/ead/img/whatisthissmall.gif" alt="[What is this?]"/>
 		</a><br /><a class="extSearch" onclick="window.open('http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=O', 'new', 'width=800 height=600');">[Search NRA]</a></p>
 			<xsl:choose>
 				<xsl:when test="controlaccess/corpname">
@@ -1362,7 +1362,7 @@
 <!-- placename -->
 		<div id="geogname" class="apcontainer">
 			<p><strong>Place Name</strong><a id="geognamehelp" name="geognamehelp" target="_new" href="http://www.archiveshub.ac.uk/arch/geogname.shtml">
-		<img class="whatsthis" src="/images/whatisthissmall.gif" alt="[What is this?]"/>
+		<img class="whatsthis" src="/ead/img/whatisthissmall.gif" alt="[What is this?]"/>
 		</a><br /><a class="extSearch" onclick="window.open('http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=PL', 'new', 'width=800 height=600');">[Search NRA]</a></p>
 			<xsl:choose>
 				<xsl:when test="controlaccess/geogname">
@@ -1402,7 +1402,7 @@
 <!--title -->
 		<div id="title" class="apcontainer">
 			<p><strong>Book Title</strong><a id="booktitlehelp" name="booktitlehelp" target="_new" href="http://www.archiveshub.ac.uk/arch/booktitle.shtml">
-		<img class="whatsthis" src="/images/whatisthissmall.gif" alt="[What is this?]"/>
+		<img class="whatsthis" src="/ead/img/whatisthissmall.gif" alt="[What is this?]"/>
 		</a></p>
 			<xsl:choose>
 				<xsl:when test="controlaccess/title">
@@ -1439,7 +1439,7 @@
 <!-- genreform -->
 		<div id="genreform" class="apcontainer">
 			<p><strong>Genre Form</strong><a id="genreformhelp" name="genreformhelp" target="_new" href="http://www.archiveshub.ac.uk/arch/genreform.shtml">
-		<img class="whatsthis" src="/images/whatisthissmall.gif" alt="[What is this?]"/>
+		<img class="whatsthis" src="/ead/img/whatisthissmall.gif" alt="[What is this?]"/>
 		</a><br/><a class="extSearch" onclick="window.open('http://www.getty.edu/research/conducting_research/vocabularies/aat/', 'new', 'width=800 height=600');">[Search AAT]</a><xsl:text> </xsl:text><a class="extSearch" onclick="window.open('http://www.loc.gov/rr/print/tgm2/', 'new', 'width=800 height=600');">[Search TGM]</a></p>
 			<xsl:choose>
 				<xsl:when test="controlaccess/genreform">
@@ -1468,7 +1468,7 @@
 <!-- function -->
 		<div id="function" class="apcontainer">
 			<p><strong>Function</strong><a id="functionhelp" name="functionhelp" target="_new" href="http://www.archiveshub.ac.uk/arch/function.shtml">
-		<img class="whatsthis" src="/images/whatisthissmall.gif" alt="[What is this?]"/>
+		<img class="whatsthis" src="/ead/img/whatisthissmall.gif" alt="[What is this?]"/>
 		</a><br/><a class="extSearch" onclick="window.open('http://www.getty.edu/research/conducting_research/vocabularies/aat/', 'new', 'width=800 height=600');">[Search AAT]</a><xsl:text> </xsl:text><a class="extSearch" onclick="window.open('http://www.naa.gov.au/records-management/create-capture-describe/describe/agift/index.aspx', 'new', 'width=800 height=600');">[Search AGIFT]</a></p>
 			<xsl:choose>
 				<xsl:when test="controlaccess/function">
@@ -1533,12 +1533,12 @@
 						<xsl:attribute name="title">
 							<xsl:text>delete entry</xsl:text>
 						</xsl:attribute>
-						<img src="/images/delete.png" class="deletelogo">
+						<img src="/ead/img/delete.png" class="deletelogo">
                             <xsl:attribute name="onmouseover">
-                                <xsl:text>this.src='/images/delete-hover.png';</xsl:text>
+                                <xsl:text>this.src='/ead/img/delete-hover.png';</xsl:text>
                             </xsl:attribute>
                             <xsl:attribute name="onmouseout">
-                                <xsl:text>this.src='/images/delete.png';</xsl:text>
+                                <xsl:text>this.src='/ead/img/delete.png';</xsl:text>
                             </xsl:attribute>
     						<xsl:attribute name="id">
     							<xsl:text>delete</xsl:text><xsl:number level="single" count="controlaccess/*[name() = $aptype]" format="1"/>
@@ -1728,7 +1728,7 @@
   
   <xsl:template match="/ead/eadheader/filedesc/titlestmt/sponsor">
   	<strong><span class="isadg"></span>Sponsor</strong><a id="sponsorhelp" name="sponsorhelp" target="_new" href="http://www.archiveshub.ac.uk/arch/sponsor.shtml ">
-		<img class="whatsthis" src="/images/whatisthissmall.gif" alt="[What is this?]"/>
+		<img class="whatsthis" src="/ead/img/whatisthissmall.gif" alt="[What is this?]"/>
 		</a><a class="smalllink" id="linkspo" title="add sponsor" onclick="addElement('filedesc/titlestmt/sponsor')">hide content</a> [optional]<br/>
   	<input class="menuField" type="text" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" name="filedesc/titlestmt/sponsor" id="filedesc/titlestmt/sponsor" size="80">
   		<xsl:attribute name="value">
@@ -1787,12 +1787,12 @@
 						<xsl:attribute name="title">
 							<xsl:text>delete entry</xsl:text>
 						</xsl:attribute>
-						<img src="/images/delete.png" class="deletelogo">
+						<img src="/ead/img/delete.png" class="deletelogo">
                         <xsl:attribute name="onmouseover">
-                            <xsl:text>this.src='/images/delete-hover.png';</xsl:text>
+                            <xsl:text>this.src='/ead/img/delete-hover.png';</xsl:text>
                         </xsl:attribute>
                         <xsl:attribute name="onmouseout">
-                            <xsl:text>this.src='/images/delete.png';</xsl:text>
+                            <xsl:text>this.src='/ead/img/delete.png';</xsl:text>
                         </xsl:attribute>
 						<xsl:attribute name="id">
 							<xsl:text>delete</xsl:text><xsl:number level="single" count="language" format="1"/>
@@ -1902,7 +1902,7 @@
 		<xsl:attribute name="target">
 			<xsl:text>_new</xsl:text>
 		</xsl:attribute>
-		<img class="whatsthis" src="/images/whatisthissmall.gif" alt="[What is this?]"/>
+		<img class="whatsthis" src="/ead/img/whatisthissmall.gif" alt="[What is this?]"/>
 		</a>
 	</xsl:if>
 
