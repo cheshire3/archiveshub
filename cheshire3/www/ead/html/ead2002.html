@@ -31,16 +31,16 @@
 	  	
 	<ul id="tagmenu" class="SimpleContextMenu">
 		<li onMouseOver="hideSubMenus(); this.style.cursor='pointer';" onclick="addTag('p')">paragraph</li>
-		<li onMouseOver="showSubMenu('link', 1, 'tagmenu')" class="tosubctxt"><img src="/images/right-mini.gif" alt="-&gt;"/>links</li>		
-		<li onMouseOver="showSubMenu('title', 2, 'tagmenu')"><img src="/images/right-mini.gif" alt="-&gt;"/>titles</li>
-		<li onMouseOver="showSubMenu('font', 3, 'tagmenu')"><img src="/images/right-mini.gif" alt="-&gt;"/>font</li>
-		<li onMouseOver="showSubMenu('list', 4, 'tagmenu')"><img src="/images/right-mini.gif" alt="-&gt;"/>list</li>
+		<li onMouseOver="showSubMenu('link', 1, 'tagmenu')" class="tosubctxt"><img src="/ead/img/right-mini.gif" alt="-&gt;"/>links</li>		
+		<li onMouseOver="showSubMenu('title', 2, 'tagmenu')"><img src="/ead/img/right-mini.gif" alt="-&gt;"/>titles</li>
+		<li onMouseOver="showSubMenu('font', 3, 'tagmenu')"><img src="/ead/img/right-mini.gif" alt="-&gt;"/>font</li>
+		<li onMouseOver="showSubMenu('list', 4, 'tagmenu')"><img src="/ead/img/right-mini.gif" alt="-&gt;"/>list</li>
 		<li onMouseOver="hideSubMenus(); this.style.cursor='pointer';" onclick="addTag('comment')">comment</li>
 		<li onMouseOver="hideSubMenus(); this.style.cursor='pointer';" onclick="toggleKeyboard()">keyboard on/off</li>		
     </ul>
 
     <ul id="linkmenu" class="SimpleContextMenu">
-		<li onMouseOver="showSubMenu('archival', 0, 'linkmenu')"><img src="/images/right-mini.gif" alt="-&gt;"/>archival</li>
+		<li onMouseOver="showSubMenu('archival', 0, 'linkmenu')"><img src="/ead/img/right-mini.gif" alt="-&gt;"/>archival</li>
 		<li onMouseOver="hideSubMenu('archival'); this.style.cursor='pointer';" onclick="addTag('extref href=&quot; &quot;')">www</li>
 		<li onMouseOver="hideSubMenu('archival'); this.style.cursor='pointer';" onclick="addTag('extref href=&quot;mailto: &quot;')">email</li>   
     </ul>
@@ -81,21 +81,21 @@
 <table title="operations" class="edit-ops">
     <tr>
         <td class=buttonlabel">File <a id="daohelp" name="daohelp" target="_new" href="http://localhost/ead/edit/help.html#file">
-		<img class="whatsthis" src="/images/whatisthissmall.gif" alt="[What is this?]"/>
+		<img class="whatsthis" src="/ead/img/whatisthissmall.gif" alt="[What is this?]"/>
 		</a></td>
         <td><input type="button" class="menubutton" id="save-button" onclick="javascript: save()" value="Save" title="Save the current changes to the Draft File Store"></input></td>
         <td><input type="button" class="menubutton" id="delete-button" onclick="javascript: var cont = confirmOp('This operation will delete the current record from the Draft File Store and any changes made since it was last submitted to the database will be lost. If the record is also in the database that record will remain unchanged and will not be deleted.\n\nAre you sure you want to delete this record?'); if (cont) {discardRec($('pui').value);}" value="Delete" title="Delete this record from the editing data store"></input></td>
     </tr>
     <tr>
         <td class=buttonlabel">Preview <a id="daohelp" name="daohelp" target="_new" href="http://localhost/ead/edit/help.html#preview">
-		<img class="whatsthis" src="/images/whatisthissmall.gif" alt="[What is this?]"/>
+		<img class="whatsthis" src="/ead/img/whatisthissmall.gif" alt="[What is this?]"/>
 		</a></td>
         <td><input type="button" class="menubutton" id="xml-button" onclick="javascript: viewXml();" value="XML" title="Preview the XML for this record (opens in new window/tab)"></input></td>
         <td><input type="button" class="menubutton" id="preview-button" onclick="javascript: previewRec();" value="On-line Version" title="Preview the on-line version of this record (opens in new window/tab)"></input></td>
     </tr>
     <tr>
         <td class=buttonlabel">Export <a id="daohelp" name="daohelp" target="_new" href="http://localhost/ead/edit/help.html#export">
-		<img class="whatsthis" src="/images/whatisthissmall.gif" alt="[What is this?]"/>
+		<img class="whatsthis" src="/ead/img/whatisthissmall.gif" alt="[What is this?]"/>
 		</a></td>
         <td><input type="button" class="menubutton" id="tofile-button" onclick="javascript: var cont = confirmOp('This operation will load this description into the database. If it is not a new record it will overwrite the existing version. This record will not be indexed immediately, the database will need to be rebuilt before the changes appear in the database.\n\nAre you sure you want to write this file to disk?'); if (cont) {submit(false);}"" value="To File only" title="Write this record to the data directory for indexing later"></input></td>
         <td><input type="button" class="menubutton" id="submit-button" onclick="javascript: var cont = confirmOp('This operation will submit this record to your database for immediate display. If this is not a new file it will overwrite the existing version.\n\nAre you sure you want to submit this file?'); if (cont) {submit();}"" value=" To File + Database" title="Write this file to the data directory and index in the live database"></input></td>
@@ -132,9 +132,9 @@
 	<div id="keyboardtitle">Character Keyboard</div>
 	
 	<div style="float:right; padding-right: 2px;">
-		<a id="hideicon" style="display:inline" href="javascript: hideCharTable()" ><img src="/images/winmin.png" alt="?" onmouseover="this.src='/images/winmin-active.png';" onmouseout="this.src='/images/winmin.png';"/></a>
-		<a id="showicon" style="display:none" href="javascript: showCharTable()" ><img src="/images/winmax.png" alt="?" onmouseover="this.src='/images/winmax-active.png';" onmouseout="this.src='/images/winmax.png';"/></a>	
-		<a href="javascript: toggleKeyboard()" ><img src="/images/winclose.png" alt="?" onmouseover="this.src='/images/winclose-active.png';" onmouseout="this.src='/images/winclose.png';"/></a>
+		<a id="hideicon" style="display:inline" href="javascript: hideCharTable()" ><img src="/ead/img/winmin.png" alt="?" onmouseover="this.src='/ead/img/winmin-active.png';" onmouseout="this.src='/ead/img/winmin.png';"/></a>
+		<a id="showicon" style="display:none" href="javascript: showCharTable()" ><img src="/ead/img/winmax.png" alt="?" onmouseover="this.src='/ead/img/winmax-active.png';" onmouseout="this.src='/ead/img/winmax.png';"/></a>	
+		<a href="javascript: toggleKeyboard()" ><img src="/ead/img/winclose.png" alt="?" onmouseover="this.src='/ead/img/winclose-active.png';" onmouseout="this.src='/ead/img/winclose.png';"/></a>
 	</div>
 	<br />
 </div>
@@ -245,7 +245,7 @@
     </div>
     
     <div id="chartableupper" style="display:none">
-	<button id="charlink" onClick="showCharTable('lower')">Caps Lock</button><img class="capslock" src="/images/CLon.gif"/><a id="keyboardlink" href="javascript:alert(theFieldName);">Which field?</a><br/>
+	<button id="charlink" onClick="showCharTable('lower')">Caps Lock</button><img class="capslock" src="/ead/img/CLon.gif"/><a id="keyboardlink" href="javascript:alert(theFieldName);">Which field?</a><br/>
     
     <table summary="Accented vowel character entity keyboard" class="keyboardSection">
       <tr>

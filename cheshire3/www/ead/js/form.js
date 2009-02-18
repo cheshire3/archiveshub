@@ -278,8 +278,7 @@ function save(){
 	saveForm(false);
 	body.className = 'none';
     alert('This form is now saved as ' + recid + ' and can be reloaded from the admin menu for further editing at a later date.');
-	
-	
+		
 }
 
 
