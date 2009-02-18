@@ -20,7 +20,7 @@ img.screenshot {
 }
 
 div#header {
-	background-image: url(/images/bg-gradient-t-10.png);
+	background-image: url(/ead/img/bg-gradient-t-10.png);
 	background-repeat: repeat-x;
 	background-position: top left;
 	background-color: #c4d6f8;
@@ -30,7 +30,7 @@ div#header {
 body,
 div#banner,
 div#navbar {
-	background-image: url(/images/bg-gradient-l-10.png);
+	background-image: url(/ead/img/bg-gradient-l-10.png);
 	background-repeat: repeat-y;
 	background-position: left;
 }

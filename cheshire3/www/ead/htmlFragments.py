@@ -33,12 +33,17 @@
 
 # img tags for icons used in results
 # - N.B. These will only be displayed if the result_graphics switch is set to 1
-full_tag = '<img src="/images/v3_full.gif" alt="Full"/>'
-email_tag = '<img src="/images/v3_email.gif" alt="e-mail"/>'
-similar_tag = '<img src="/images/v3_simlr.gif" alt="Similar"/>'
+full_tag = '<img src="/ead/img/v3_full.gif" alt="Full"/>'
+email_tag = '<img src="/ead/img/v3_email.gif" alt="e-mail"/>'
+similar_tag = '<img src="/ead/img/v3_simlr.gif" alt="Similar"/>'
 
-folder_closed_tag = '<img src="/images/folderClosed.gif" alt="[+]"/>'
-folder_open_tag = '<img src="/images/folderOpen.gif" alt="[-]"/>'
+folder_closed_tag = '<img src="/ead/img/folderClosed.gif" alt="[+]"/>'
+folder_open_tag = '<img src="/ead/img/folderOpen.gif" alt="[-]"/>'
+
+fback_tag = '<img src="/ead/img/fback.gif" alt="First"/>'
+back_tag = '<img src="/ead/img/back.gif" alt="Previous"/>'
+forward_tag = '<img src="/ead/img/forward.gif" alt="Next"/>'
+fforward_tag = '<img src="/ead/img/fforward.gif" alt="Final"/>'
 
 # Result rows
 browse_result_row = '''

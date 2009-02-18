@@ -85,16 +85,6 @@ div#rightcol {
 	overflow-y: scroll !important;
 }
 
-div#single,
-div#browseresult {
-	width: 99%;
-	padding: 5px 10px;
-}
-
-div#single div#about {
-	margin-right: 260px;
-}
-
 div#leftcol {
 	width: 39%;
 	padding-left: 10px;
@@ -110,12 +100,24 @@ div#rightcol {
 	overflow-x: hidden;
 }
 
+/*
 div#leftcol.editmenu,
 div#rightcol.editmenu {
 	width: 49%;
 }
 div#rightcol.editmenu {
 	margin-left: 50%;
+}
+*/
+
+div#single,
+div#browseresult {
+	width: 99%;
+	padding: 5px 10px;
+}
+
+div#single div#about {
+	margin-right: 260px;
 }
 
 div#footer {

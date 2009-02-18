@@ -71,7 +71,7 @@ function updateElementByUrl(id, url) {
 }
 
 function displayLoading(el) {
-	el.innerHTML = '<div class="loading"><img src="/images/ajax-loader.gif" alt=""/></div>';
+	el.innerHTML = '<div class="loading"><img src="/ead/img/ajax-loader.gif" alt=""/></div>';
 }
 
 function ajaxifyLinks(el){

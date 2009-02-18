@@ -338,13 +338,13 @@ class EadHandler:
                 if len(pages) > 1:
                     pagenav.extend(['<div class="pagenav">', '<div class="backlinks">'])
                     if (x > 0):
-                        pagenav.extend(['<a href="%s/%s-p1.shtml" title="First page" onclick="setCookie(\'%s-tocstate\', stateToString(\'someId\'))"><img src="/images/fback.gif" alt="First"/></a>' % (cache_url, recid, recid), 
-                                        '<a href="%s/%s-p%d.shtml" title="Previous page" onclick="setCookie(\'%s-tocstate\', stateToString(\'someId\'))"><img src="/images/back.gif" alt="Previous"/></a>' % (cache_url, recid, x, recid)
+                        pagenav.extend(['<a href="%s/%s-p1.shtml" title="First page" onclick="setCookie(\'%s-tocstate\', stateToString(\'someId\'))">%s</a>' % (cache_url, recid, recid, fback_tag), 
+                                        '<a href="%s/%s-p%d.shtml" title="Previous page" onclick="setCookie(\'%s-tocstate\', stateToString(\'someId\'))">%s</a>' % (cache_url, recid, x, recid, back_tag)
                                       ])
                     pagenav.extend(['</div>', '<div class="forwardlinks">'])
                     if (x < len(pages)-1):
-                        pagenav.extend(['<a href="%s/%s-p%d.shtml" title="Next page" onclick="setCookie(\'%s-tocstate\', stateToString(\'someId\'))"><img src="/images/forward.gif" alt="Next"/></a>' % (cache_url, recid, x+2, recid),
-                                        '<a href="%s/%s-p%d.shtml" title="Final page" onclick="setCookie(\'%s-tocstate\', stateToString(\'someId\'))"><img src="/images/fforward.gif" alt="Final"/></a>' % (cache_url, recid, len(pages), recid)
+                        pagenav.extend(['<a href="%s/%s-p%d.shtml" title="Next page" onclick="setCookie(\'%s-tocstate\', stateToString(\'someId\'))">%s</a>' % (cache_url, recid, x+2, recid, forward_tag),
+                                        '<a href="%s/%s-p%d.shtml" title="Final page" onclick="setCookie(\'%s-tocstate\', stateToString(\'someId\'))">%s</a>' % (cache_url, recid, len(pages), recid, fforward_tag)
                                       ])
                     pagenav.extend(['</div>', '<div class="numnav">'])
                     if pageNavType == 'form':

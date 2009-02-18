@@ -29,10 +29,6 @@ div#navbar {
 	background-image: url();
 }
 
-div#footer {
-	position: relative;	
-}
-
 div#content {
 	top: 0;
 	padding: 0 5px 0 5px;
@@ -46,12 +42,12 @@ div#rightcol
 	overflow: auto;
 }
 
-div#leftcol,
-div#leftcol.toc {
+div#leftcol {
 	float: left;
 	width: 39%;
 /*  content: block;*/
 }
+
 div#rightcol {
 	width: 100%;
 	margin-left: 40%;

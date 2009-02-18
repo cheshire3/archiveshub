@@ -1,15 +1,15 @@
 #
 # Script:   localConfig.py
-# Version:   0.18
+# Version:   0.19
 # Description:
 #            Customisable elements for Cheshire for Archives v3.x
 #
 # Language:  Python
 # Author:    John Harrison <john.harrison@liv.ac.uk>
 # Author:    Catherine Smith <catherine.smith@liv.ac.uk>
-# Date:      19 September 2008
+# Date:      18 February 2009
 #
-# Copyright: &copy; University of Liverpool 2005-2008
+# Copyright: &copy; University of Liverpool 2005-2009
 #
 # Version History:
 # 0.01 - 13/04/2005 - JH - Basic configurable elements coded by John
@@ -35,6 +35,7 @@
 # 0.16 - 03/06/2008 - JH - Configurable highlight delimiters 
 # 0.17 - 19/09/2008 - JH - Pop-up slash screens removed permanently
 # 0.18 - 01/12/2008 - JH - Changes to get install path from environment
+# 0.19 - 18/02/2009 - JH - Images now in Subversion (/ead/img/)
 #
 # Changes to original:
 # You should make a note of any changes that you make to the originally distributed file here.
@@ -55,13 +56,13 @@ cheshirePath = os.environ.get('C3HOME', '/home/cheshire/cheshire3/')
 # Institutionally specific configurables
 repository_name = "Cheshire for Archives v3.4 Development"
 repository_link = "http://www.archiveshub.ac.uk"                        # must begin http://
-repository_logo = "http://www.archiveshub.ac.uk/loopsmall2.gif"             # should begin http:// unless on this server
+repository_logo = "/ead/img/loopsmall2.gif"             # should begin http:// unless on this server
 
 title_separator = ' :: '
 navbar_separator = ' | '
 
 # URL of relevance graphic
-relevance_graphic = '/images/star.gif'
+relevance_graphic = '/ead/img/star.gif'
 
 # server and email settings - you should check these with your computing services people.
 localhost = '172.20.252.2'

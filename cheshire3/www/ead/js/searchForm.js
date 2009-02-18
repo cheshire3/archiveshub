@@ -1,15 +1,15 @@
 /*
 // Script:	searchForm.js
-// Version:	0.07
+// Version:	0.08
 // Description:
 //          JavaScript functions used in the Cheshire3 EAD search/retrieve and display interface 
 //          - part of Cheshire for Archives v3.x
 //
 // Language:  JavaScript
 // Author:    John Harrison <john.harrison@liv.ac.uk>
-// Date:      26 September 2007
+// Date:      17 February 2009
 //
-// Copyright: &copy; University of Liverpool 2005-2008
+// Copyright: &copy; University of Liverpool 2005-2009
 //
 // Version History:
 // 0.01 - 03/08/2006 - JH - Search form DOM manipulation functions pasted in from previous script for easier error tracking etc.
@@ -21,7 +21,7 @@
 // 0.05 - 25/01/2007 - JH - Muchos new stuff in anticipation of date searching
 // 0.06 - 19/12/2007 - JH - Multiple indexes specified in fieldidx
 // 0.07 - 26/09/2008 - JH - Bug fixed in createClause (title index not being assigned correct relations) ln 126
-//
+// 0.08 - 17/02/2009 - JH - Functions re-orders so not referenced before declared
 */
 
 var indexList = new Array('cql.anywhere||dc.description||dc.title|||Keywords', 'dc.title|||Titles', 'dc.date|||Dates', 'dc.creator|||Creators', 'dc.identifier|||Ref. Number', 'dc.subject|||Subjects', 'bath.name|||Names', 'bath.personalName|||&nbsp;&nbsp;Personal Names', 'bath.corporateName|||&nbsp;&nbsp;Corporate Names', 'bath.geographicName|||&nbsp;&nbsp;Geographical Names', 'bath.genreForm|||Genre');
@@ -106,6 +106,24 @@ function createBoolean(current, selIdx){
 	return pElem
 }
 
+function createSelect(name, optionList, selIdx){
+	// set 1st option as selected by default
+	if (!selIdx) {var selIdx = 0;}
+	var selectElem = document.createElement('select')
+	selectElem.id = name;
+  	selectElem.name = name;
+	for (var i=0; i < optionList.length; i++){
+		var optionData = optionList[i].split('|||')
+		var optionElem = document.createElement('option')
+		optionElem.value = optionData[0];
+		optionElem.innerHTML = optionData[1];
+		
+		if (i == selIdx) {optionElem.selected = 'selected'}
+		selectElem.appendChild(optionElem)
+	}
+	return selectElem
+}
+
 function createClause(current, clauseState){
 	if (!clauseState) {var clauseState = '0,0,';}
 	var parts = clauseState.split(',');
@@ -139,24 +157,6 @@ function createClause(current, clauseState){
 	inputElem.value = parts.join(',');
 	pElem.appendChild(inputElem);
 	return pElem;
-}
-
-function createSelect(name, optionList, selIdx){
-	// set 1st option as selected by default
-	if (!selIdx) {var selIdx = 0;}
-	var selectElem = document.createElement('select')
-	selectElem.id = name;
-  	selectElem.name = name;
-	for (var i=0; i < optionList.length; i++){
-		var optionData = optionList[i].split('|||')
-		var optionElem = document.createElement('option')
-		optionElem.value = optionData[0];
-		optionElem.innerHTML = optionData[1];
-		
-		if (i == selIdx) {optionElem.selected = 'selected'}
-		selectElem.appendChild(optionElem)
-	}
-	return selectElem
 }
 
 function removeClause(current) {
