@@ -16,7 +16,7 @@
 	<link rel="stylesheet" type="text/css" media="print" href="/ead/css/print.css"></link>
 		
 	<!-- favourite icon -->
-	<link rel="favourite icon" href="/ead/img/c3.ico"></link>
+	<link rel="favourite icon" href="/ead/img/c3_icon.png"></link>
 	
 	<script type="text/javascript" src="/ead/js/ead.js"></script>
     <script type="text/javascript" src="/ead/js/visuals.js"></script>
