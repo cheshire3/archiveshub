@@ -6,7 +6,7 @@ find /home/cheshire/cheshire3/install/htdocs/ead/tocs/ -name '*.inc' -print0 | x
 
 current=`pwd`
 
-cd /home/cheshire/cheshire3/cheshire3/dbs/ead
+cd /home/cheshire/cheshire3/dbs/ead
 
  
 FILE="indexing.lock"
