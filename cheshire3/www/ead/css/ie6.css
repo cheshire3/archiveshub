@@ -42,22 +42,37 @@ div#rightcol
 	overflow: auto;
 }
 
-div#leftcol {
+div#leftcol,
+div#leftcol.editmenu {
 	float: left;
 	width: 39%;
 /*  content: block;*/
 }
 
-div#rightcol {
+div#leftcol.editmenu {
+	width: 49%;
+}
+
+div#rightcol,
+div#rightcol.editmenu {
 	width: 100%;
 	margin-left: 40%;
 	border-top: 1px solid white; /* to stop collapsing margins in Moz */
 }
 
+div#rightcol.editmenu {
+	margin-left: 50%;
+}
+
+
 div#padder { 
 	width: 100%;
 	float: right; 
 	margin-left: -40%;
+}
+
+div#padder.editmenu {
+	margin-left: -50%;
 }
 
 div#footer { 

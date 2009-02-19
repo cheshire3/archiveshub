@@ -1,5 +1,5 @@
 /*
-  This file was produced, and released as part of Cheshire for Archives v3.0.x
+  This file was produced, and released as part of Cheshire for Archives v3.x
   Copyright &copy; 2005-2009 the University of Liverpool
 */
 
@@ -36,6 +36,7 @@ div#navbar {
 }
 
 div#navbar {
+	width: 99%;
 	background-color: #0b2265;
 }
 
@@ -44,23 +45,15 @@ div#leftcol.toc {
 }
 
 div.daos {
+	background-color: #f5f5f5;
+	border: 1px solid silver;
+	border-radius: 15px;
+	-moz-border-radius: 15px;
+	-webkit-border-radius: 15px;
 }
-
-div.daos span.rnd1,
-div.daos span.rnd2,
-div.daos span.rnd3,
-div.daos span.rnd4 {background-color: white; font-size:1px; overflow:hidden; display:block;}
-
-div.daos span.rnd1 {height:2px; background:#f5f5f5; margin:0 1px; border-right:1px solid silver; border-left:1px solid silver;}
-div.daos span.rnd2 {height:1px; background:#f5f5f5; margin:0 2px; border-right:1px solid silver; border-left:1px solid silver;}
-div.daos span.rnd3 {height:1px; background:#f5f5f5; margin:0 3px; border-right:2px solid silver; border-left:2px solid silver;}
-div.daos span.rnd4 {height:1px; background:silver; margin:0 5px; }
 
 div.daohead,
 div.daobody {
-	background-color: #f5f5f5;
-	border-left:1px solid silver;
-	border-right:1px solid silver; 
 	padding: 0 5px;
 }
 
@@ -87,10 +80,13 @@ table.rebuildtable {
 	font-size: 10pt;
 	border-collapse: collapse;
 	border-spacing: 0;
+	margin: 10px 0
 }
+
 table.rebuildtable tr,
 table.rebuildtable td {
-	border: 1px solid black;	
+	border: 1px solid black;
+	padding: 0 5px;	
 }
 
 tr.headrow {
@@ -103,7 +99,6 @@ tr.headrow {
 	color: #000000;
 	background-color: #c4d6f8;
 }
-
 
 tr.odd { 
   color: black;
@@ -153,7 +148,12 @@ h1 { font-size: 14pt; margin-top: 2px; margin-bottom: 2px;}
 h2 { font-size: 14pt; margin-top: 2px; margin-bottom: 2px;}
 h2.unittitle { text-align: center; margin-bottom: 1em;}
 h3 { color: #000000; font-size: 12pt; margin-top: 0.1em; margin-bottom: 0.5em;}
-.bar, h3.ead, h3.redheading, h3.greenheading{ background-color: #c4d6f8; padding: 2px; border: solid black 1px; margin: 1em 0 0.5em 0;}
+.bar, h3.ead, h3.redheading, h3.greenheading{
+	background-color: #c4d6f8;
+	padding: 2px;
+	border: solid black 1px;
+	margin: 1em 0 0.5em 0;
+	}
 h3.redheading { background-color: #ffaaaa; }
 h3.greenheading { background-color: #aaffaa; }
 h4 {font-size: 12pt; margin-top: 0.1em; margin-bottom: 0.1em;}
@@ -293,9 +293,9 @@ label.small {
 
 /* border and background colour for page navigation bar */
 div.pagenav { 
-  color: black;
-  background-color: #f5f5f5;
-  border: 1px solid #c0c0c0;
+	color: black;
+	background-color: #f5f5f5;
+	border: 1px solid #c0c0c0;
 }
 
 div.component {
