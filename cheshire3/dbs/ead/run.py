@@ -1,4 +1,4 @@
-#!/home/cheshire/cheshire3/install/bin/python
+#!/home/cheshire/install/bin/python
 #
 # Script:    run.py
 # Date:      18 August 2008
