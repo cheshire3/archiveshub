@@ -60,18 +60,10 @@
 		
         <xsl:if test="./dao|../dao|./daogrp|../daogrp">
             <div class="daos">
-                <span class="rnd4"/>
-                <span class="rnd3"/>
-                <span class="rnd2"/>
-                <span class="rnd1"/>
                 <div class="daohead">Digital Objects</div>
                 <div class="daobody">
                     <xsl:apply-templates select="./dao|../dao|./daogrp|../daogrp"/>
                 </div>
-                <span class="rnd1"/>
-                <span class="rnd2"/>
-                <span class="rnd3"/>
-                <span class="rnd4"/>
             </div>
         </xsl:if>
 
@@ -965,18 +957,10 @@
         
         <xsl:if test="./dao|./did/dao|./daogrp|./did/daogrp">
             <div class="daos">
-                <span class="rnd4"/>
-                <span class="rnd3"/>
-                <span class="rnd2"/>
-                <span class="rnd1"/>
                 <div class="daohead">Digital Objects</div>
                 <div class="daobody">
                     <xsl:apply-templates select="./dao|./did/dao|./daogrp|./did/daogrp"/>
                 </div>
-                <span class="rnd1"/>
-                <span class="rnd2"/>
-                <span class="rnd3"/>
-                <span class="rnd4"/>
             </div>
         </xsl:if>
         
@@ -1792,7 +1776,7 @@
 	  			<xsl:value-of select="$googlemaps_search_url"/>
 	  			<xsl:call-template name="cgiencode">
 		          <xsl:with-param name="text">
-		            <xsl:apply-templates select="."/>
+		            <xsl:value-of select="emph[@altrender='a' or @altrender='location']"/>
 		          </xsl:with-param>
 		        </xsl:call-template>
 			</xsl:attribute>
