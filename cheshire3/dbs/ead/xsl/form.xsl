@@ -51,7 +51,7 @@
     <div class="float"> <input type="button" class="formbutton" id="addC" onclick="javascript: addComponent()" value="Add Component" title="Add a component to this level of the record"></input></div>
  <!--   <div class="float"> <input type="button" class="formbutton" id="reset" onclick="javascript: resetForm()" value="Reset"></input> </div> -->  
     	<div class="pui">
-    		<strong><xsl:text>Persistent Unique Identifier: </xsl:text></strong>				
+    		<strong><xsl:text>Persistent Unique Identifier</xsl:text><a href="http://www.archiveshub.ac.uk/arch/glossary.shtml#identifier" title="PUI help - opens in new window" target="_new"><img class="whatsthis" src="/ead/img/whatisthissmall.gif" alt="[What is this?]"/></a></strong>				
     		%PUI%
     	</div>
     
@@ -118,7 +118,7 @@
 		</xsl:choose>		
     </p>
    <div class="float">
-    	<p><strong><span class="isadg">3.1.3: </span>Dates of Creation<a href="http://www.archiveshub.ac.uk/arch/dates1.shtml" title="Dates of Creation help - opens in new window" target="_new"><img class="whatsthis" src="/ead/img/whatisthissmall.gif" alt="[What is this?]"/></a></strong><br/>
+    	<p><strong><span class="isadg">3.1.3: </span>Dates of Creation<a href="http://www.archiveshub.ac.uk/arch/dates.shtml" title="Dates of Creation help - opens in new window" target="_new"><img class="whatsthis" src="/ead/img/whatisthissmall.gif" alt="[What is this?]"/></a></strong><br/>
 		<xsl:choose>
 			<xsl:when test="did/unitdate">
 				<xsl:apply-templates select="did/unitdate"/>
@@ -134,7 +134,7 @@
 	</div>
 	<div class="float">
 		<p>
-		<strong>Normalised Date<a href="http://www.archiveshub.ac.uk/arch/dates2.shtml" title="Normalised Date help - opens in new window" target="_new"><img class="whatsthis" src="/ead/img/whatisthissmall.gif" alt="[What is this?]"/></a></strong><br/>
+		<strong>Normalised Date<a href="http://www.archiveshub.ac.uk/arch/dates.shtml" title="Normalised Date help - opens in new window" target="_new"><img class="whatsthis" src="/ead/img/whatisthissmall.gif" alt="[What is this?]"/></a></strong><br/>
 	    	<xsl:choose>
 	    		<xsl:when test="did/unitdate/@normal">
 	    			<xsl:apply-templates select="did/unitdate/@normal"/>
@@ -1000,7 +1000,7 @@
 <!--  -->
 <!-- DIGITAL OBJECTS -->
 	<div id="digitalobjectssection" class="section">
-		<h3>Digital Objects<a id="daohelp" name="daohelp" target="_new" href="http://www.archiveshub.ac.uk/arch/images.shtml#dao-help">
+		<h3>Digital Objects<a id="daohelp" name="daohelp" target="_new" href="http://www.archiveshub.ac.uk/arch/dao.shtml">
 		<img class="whatsthis" src="/ead/img/whatisthissmall.gif" alt="[What is this?]"/>
 		</a></h3>
 		<div id="daocontainer">
