@@ -39,7 +39,6 @@
     </form>  
     <br/>
     <br/>
-<!--    <div style="float: left; padding-right:50px;">-->
     <div>
         <p><b>Import a file from the spoke database to begin editing</b></p>
         <form id="sourceDirForm" name="sourceDirForm" action="/ead/edit/" method="get">
@@ -55,8 +54,9 @@
         <input type="button" onclick="checkEditStoreConflicts('sourceDirForm');" value=" Edit Spoke File "  disabled="true"/>
         </form>
     </div>
-</div> 
-<div id="rightcol" class="editmenu">
+</div>
+<div id="padder" class="editmenu">
+    <div id="rightcol" class="editmenu">
     	<h3 class="bar">Draft Files</h4>
         <p><b>Open a file to continue editing</b></p>
         <form name="storeDirForm" id="storeDirForm" action="/ead/edit/" method="get">
@@ -75,4 +75,5 @@
         <input type="submit" value=" Edit File "  disabled="true"/>
         <input type="button" onclick="deleteFromStore()" value=" Delete "  disabled="true"/>
         </form>
+    </div>
 </div>
