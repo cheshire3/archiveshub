@@ -33,7 +33,7 @@
 			<div>
 				<a name="queries"></a>
 				<h4>Queries</h4>
-				<p>On the <a href="index.html">main search page</a> you will find a form allowing you to create a search.  
+				<p>On the <a href="index.html">main search page</a> you will find a form allowing you to specify your search.  
 					The 'Keywords' search looks for your search term(s) occuring anywhere in the record, however occurences within key areas of the record (e.g. titles, content description and subjects) will cause the record to appear higher in the list of results.
 					You can change this index using the drop-down list to a more specific one (e.g. 'Title' or 'Personal Name').
 					If you are entering more than one word as a search, you can use the second drop-down list to specify whether the system should search for 'All' or 'Any' of your terms, or whether they should be treated as a 'Phrase'.
@@ -41,7 +41,7 @@
 				</p>
 				<p>
 					<strong>Note</strong>: All searches are case-insensitive, so searching for "London" is the same as searching for "london".
-					All example queries on this page are intentionally presented in lowercase.
+					All search examples on this page are intentionally presented in lowercase.
 				</p>
                 <p><a href="#top" title="Back to top">[ top ]</a></p>
                 <div id="additionalclause">
@@ -75,7 +75,7 @@
                 <p><a href="#top" title="Back to top">[ top ]</a></p>
 				<h5>Using Wildcards</h5>
 				<p>
-					You may use wildcards within your search term. These are applicable when searching for words, phrases and exact terms.
+					You may use wildcards within your search term. These are applicable when searching for words, phrases and exact terms, but NOT dates.
 					If you wish to use any of these wildcard characters literally (i.e. meaning that character), you must escape it using the backslash (\) character.<br/>
 					<strong>N.B.</strong>: While it is possible to use a wildcard as the first character of a term, 
 					this is inadvisable as this drastically increases the search response time in the current implementation.<br/>
@@ -137,7 +137,7 @@
                 <p><a href="#top" title="Back to top">[ top ]</a></p>
                 <a name="refine"></a>
                 <h4>Refining your search</h4>
-                <p>When your search results are displayed, thie right hand column should look something like:</p>
+                <p>When your search results are displayed, the right hand column should look something like:</p>
                 <img src="/ead/img/v3.4_refine.png" alt="[screenshot unavailable]" class="screenshot" title="Screenshot of search refinement"/>
                 <p>This section allows you to refine your search results by a number of different attributes or facets.
                     Clicking on one of the terms will refine your results to just those which share that term.
@@ -156,23 +156,27 @@
 				<a name="summ"></a>
 				<h5>Summary</h5>
 				<p>
-					For each hit result there are a number of display options.
-					The first is to display a summary of the record with your search terms highlighted wherever they were matched.
-					This is activated by clicking on the title of the record.
-					The summary display contains information specific to the unit of description described by the record, and includes things like title, reference, creator, extent, scope and content, controlled access terms etc.
-					In the case of a component, you can view the complete finding aid for the whole archive by clicking on the title of the parent document (i.e. the top line in italics).
+					For each hit you can view a summary or full description.
+                    Clicking on the title displays the summary of the record with your search terms highlighted wherever they were matched.
+					The summary display includes the core information, such as title, reference and name of creator as well as the scope and content, administrative/biographical history and access terms.
+					In the case of a component, you can view the <a href="#full">full description</a> of the whole archive by clicking on the title of the containing archive (the top line in italics).
+                    You may also be able to view the context of the component within the archive by clicking the folder to the left of the containing archive's title.
+                    This will display all levels of description from which the current component descends, which may be navigated to directly by clicking on their title.
 				</p>
 				<p><strong>N.B.</strong>: if the system administrator has disabled graphical results, the links to the following functions will be in plain text.</p>  
 				<a name="full"></a>
 				<h5><img src="/ead/img/v3_full.gif" alt="Full-text" title="Full-text display" /></h5>
-				<p>This option will return a full-text version of the record, including any and all subordinate units of description.
-					In the case of collection-level records which contain subordinate levels of description, this will also include an interactive Table of Contents, which allows you to navigate the record in a hierarchical, rather than linear way.
+				<p>This option will return the full description, including any and all subordinate units of description.
+					In the case of collection-level records which contain subordinate levels of description, a Table of Contents is displayed on the left-side of the screen. 
+                    This allows you to navigate the record in a hierarchical, rather than linear way.
+                    In the case of a component, the context of the component within the archive be be displayed at the top.
+                    This will show all levels of description from which the current component descends, which may be navigated to directly by clicking on their title.
 					Larger records may have to be split into several pages in order for them to be dealt with efficiently during transport, and rendering by the browser. If this is the case, linear page navigation is also available at the top and bottom of each page.
-					Please note that it is not possible to achieve search term highlighting in full-text display, due to the potential variation in record size.
-				</p>
+                </p>
+				<p><strong>N.B.</strong>: Please note that it is not possible to achieve search term highlighting in full display, due to the potential variation in record size.</p>
 				<a name="email"></a>
 				<h5><img src="/ead/img/v3_email.gif" alt="E-mail" title="E-mail record" /></h5>
-				<p>This option allows you to send a text version of the full-text of the record to an email address that you provide.</p>
+                <p>This option will allow you to send the text of the description to an email address that you provide.</p>
 			</div>
 			<div>
 				<a name="similar"></a>
