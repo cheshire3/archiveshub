@@ -33,20 +33,22 @@
 
 # img tags for icons used in results
 # - N.B. These will only be displayed if the result_graphics switch is set to 1
-full_tag = '<img src="/ead/img/v3_full.gif" alt="Full"/>'
-email_tag = '<img src="/ead/img/v3_email.gif" alt="e-mail"/>'
-similar_tag = '<img src="/ead/img/v3_simlr.gif" alt="Similar"/>'
+full_tag = u'<img src="/ead/img/v3_full.gif" alt="Full"/>'
+email_tag = u'<img src="/ead/img/v3_email.gif" alt="e-mail"/>'
+similar_tag = u'<img src="/ead/img/v3_simlr.gif" alt="Similar"/>'
 
-folder_closed_tag = '<img src="/ead/img/folderClosed.gif" alt="[+]"/>'
-folder_open_tag = '<img src="/ead/img/folderOpen.gif" alt="[-]"/>'
+folder_closed_tag = u'<img src="/ead/img/folderClosed.gif" alt="[+]"/>'
+folder_open_tag = u'<img src="/ead/img/folderOpen.gif" alt="[-]"/>'
 
-fback_tag = '<img src="/ead/img/fback.gif" alt="First"/>'
-back_tag = '<img src="/ead/img/back.gif" alt="Previous"/>'
-forward_tag = '<img src="/ead/img/forward.gif" alt="Next"/>'
-fforward_tag = '<img src="/ead/img/fforward.gif" alt="Final"/>'
+fback_tag = u'<img src="/ead/img/fback.gif" alt="First"/>'
+back_tag = u'<img src="/ead/img/back.gif" alt="Previous"/>'
+forward_tag = u'<img src="/ead/img/forward.gif" alt="Next"/>'
+fforward_tag = u'<img src="/ead/img/fforward.gif" alt="Final"/>'
+
+no_hits_image = u'<img src="/ead/img/no_hits.png" alt=""/>'
 
 # Result rows
-browse_result_row = '''
+browse_result_row = u'''
     <tr class="%ROWCLASS%">
       <td class="term">
         <a href="SCRIPT?operation=search&amp;fieldidx1=%IDX%&amp;fieldrel1=%REL%&amp;fieldcont1=%CGITERM%#leftcol" title="Find matching records">%TERM%</a>
@@ -54,7 +56,18 @@ browse_result_row = '''
       <td class="hitcount">%COUNT%</td>
     </tr>'''
 
-subject_resolve_row = '''
+subject_resolve_no_hits = u'''
+    <div id="single" class="subjectresults">
+        <p class="error">No relevant terms were found.</p>
+        <div id="no-hits-img">%s</div>
+        <ul>
+            <li>Please check your spelling and try the <a href="/ead/subject.html" title="go back to the Subject Finder page">Subject Finder</a> again.</li>
+            <li>You can browse all subjects from the <a href="/ead/browse.html" title="go to the Browse Indexes page">Browse Indexes</a> page</li>
+            <li>Have a look at the <a href="/ead/help.html" title="go to the search help page">Search Help</a> page</li>
+        </ul>
+    </div>''' % (no_hits_image)
+
+subject_resolve_row = u'''
     <tr class="%ROWCLASS%">
       <td>
         <a href="SCRIPT?operation=search&amp;fieldidx1=dc.subject&amp;fieldrel1=exact&amp;fieldcont1=%CGISUBJ%#leftcol" title="Find records with matching subjects">%TITLE%</a>
@@ -62,8 +75,21 @@ subject_resolve_row = '''
       <td class="relv">%RELV%</td>
       <td class="hitcount">%COUNT%</td>
     </tr>'''
+    
+search_no_hits = u'''
+    <div id="single" class="searchresults">
+        <p class="error">Sorry, your search didn&apos;t match any records.</p>
+        <div id="no-hits-img">%s</div>
+        <ul>
+            <li>Please check your spelling and try your <a href="/ead/index.html" title="go back to the search page">Search</a> again.</li>
+            <li>You might find related subjects using the <a href="/ead/subject.html" title="go to the Subject Finder tool">Subject Finder</a> tool</li>
+            <li>You can browse our indexes from the <a href="/ead/browse.html" title="go to the Browse Indexes page">Browse Indexes</a> page</li>
+            <li>Have a look at the <a href="/ead/help.html" title="go to the search help page">Search Help</a> page</li>
+            <li>Try searching the <a href="http://www.archiveshub.ac.uk/" title="go to the Archives Hub">Archives Hub</a> for records located at other repositories around the UK.</li>
+        </ul>
+    </div>''' % (no_hits_image)
 
-search_result_row = '''
+search_result_row = u'''
     <tr>
       <td class="hit">
         <table width="100%">
@@ -89,7 +115,7 @@ search_result_row = '''
     </tr>'''
 
     
-search_component_row = '''
+search_component_row = u'''
     <tr>
       <td class="comphit">
         <a href="#comphier%HITPOSITION%" class="jstoggle-folders">''' + folder_open_tag + '''</a><em>%PARENT%</em>
@@ -118,7 +144,7 @@ search_component_row = '''
       </td>
     </tr>'''
     
-toc_scripts = '''
+toc_scripts = u'''
 <script type="text/javascript" src="/ead/js/collapsibleLists.js"></script>
 <script type="text/javascript" src="/ead/js/cookies.js"></script>
 <script type="text/javascript">
@@ -139,7 +165,7 @@ toc_scripts = '''
 </script>
 '''
 
-toc_scripts_printable = '''
+toc_scripts_printable = u'''
 <script type="text/javascript" src="/ead/js/collapsibleLists.js"></script>
 <script type="text/javascript" src="/ead/js/cookies.js"></script>
 <script type="text/javascript">
@@ -160,16 +186,13 @@ toc_scripts_printable = '''
 </script>
 '''
 
+full_record_link = u''
 
-full_record_link = ''
-
-
-
-user_form = '''
+user_form = u'''
 
 '''
 
-new_user_template = '''
+new_user_template = u'''
 <config type="user" id="%USERNAME%">
   <objectType>user.SimpleUser</objectType>
   <username>%USERNAME%</username>
@@ -197,7 +220,7 @@ new_user_template = '''
   </flags>
 </config>'''
 
-new_superuser_template = '''
+new_superuser_template = u'''
 <config type="user" id="%USERNAME%">
   <objectType>user.SimpleUser</objectType>
   <username>%USERNAME%</username>
@@ -210,7 +233,7 @@ new_superuser_template = '''
 </config>'''
 
 
-rename_notes = '''
+rename_notes = u'''
 <div id="notes">
   <strong>Notes</strong>: 
   <em>

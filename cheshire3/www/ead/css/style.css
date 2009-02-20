@@ -66,6 +66,15 @@ div.dao {
 	padding: 5px 0;
 }
 
+div#no-hits-img img {
+	background-color: #f5f5f5;
+	border: 1px solid silver;
+	border-radius: 15px;
+	-moz-border-radius: 15px;
+	-webkit-border-radius: 15px;
+	padding:5px;
+}
+
 /* TABLES */
 
 table.results {
@@ -263,8 +272,8 @@ a.buttonlink:visited:hover {
 
 /* text and spans */
 
-.error { color: #ff0000; }
-.ok { color: #009900;}
+.error { color: #cc0000; font-weight: bolder;}
+.ok { color: #009900; font-weight: bolder;}
 
 span.highlight { 
   color: black;

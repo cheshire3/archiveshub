@@ -441,7 +441,9 @@ class EadSearchHandler(EadHandler):
                         break
                     term = fac[0]
                     href = u'%s?operation=search&amp;query=%s' % (script, cgi_encode(cql + ' and c3.%s exact "%s"' % (idx.id, term)))
-                    facetRows.append('<li><a href="%s" title="Refine results">%s</a> <span class="facet-hitcount">(%d)</span></li>' % (href, term, fac[1][1]))
+                    # TODO: add in anti-facets i.e. results WITHOUT the facet term
+                    # anti_href = u'%s?operation=search&amp;query=%s' % (script, cgi_encode(cql + ' not c3.%s exact "%s"' % (idx.id, term)))
+                    facetRows.append('<li><a href="%s" title="Refine results">%s</a> <span class="facet-hitcount">(%d)</span></li>' % (href, self._cleverTitleCase(term), fac[1][1]))
     
                 facetRows.append('</ul>')
                 if (len(facets) > 5) and not truncate:
@@ -529,7 +531,7 @@ class EadSearchHandler(EadHandler):
                     rsid = rs.id = qString
             else:
                 self.htmlTitle.append('No Matches')
-                return '<div id="single" class="searchresults"><p>No records matched your search.</p></div>'
+                return search_no_hits
             
         self.set_cookieVal('resultSetId', rsid)
         resultString = self.format_resultSet(rs, firstrec, numreq, highlight) 
@@ -708,13 +710,13 @@ class EadSearchHandler(EadHandler):
         numreq = int(form.get('numreq', 25))
         session.database = 'db_ead_cluster'
         rs = clusDb.search(session, query)
-        if not (rs):
+        if not len(rs):
             self.htmlTitle.append('No Matches')        
-            content = '<span class="error">No relevant terms were found.</span>'
+            content = subject_resolve_no_hits
         else:
             self.htmlTitle.append('Results')        
             rs = rs[:min(len(rs), firstrec + numreq - 1)]
-            rows = ['<div id="single">'
+            rows = ['<div id="single" class="subjectresults">'
                    ,'<table cellspacing="0" summary="suggested relevant subject headings">'
                    ,'<tr class="headrow"><td>Subject</td><td class="relv">Relevance</td><td class="hitcount">Predicted Hits</td></tr>']
             rowCount = 0

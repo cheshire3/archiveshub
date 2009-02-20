@@ -143,6 +143,11 @@ div#footer {
 	}
 }
 
+div#no-hits-img {
+	float:left;
+	min-height: 200px;"
+}
+
 div#technologies { 
   min-width:240px;
   padding: 5px;
