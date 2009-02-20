@@ -1727,7 +1727,7 @@
   </xsl:template>
   
   <xsl:template match="/ead/eadheader/filedesc/titlestmt/sponsor">
-  	<strong><span class="isadg"></span>Sponsor</strong><a id="sponsorhelp" name="sponsorhelp" target="_new" href="http://www.archiveshub.ac.uk/arch/sponsor.shtml ">
+  	<strong>Sponsor</strong><a id="sponsorhelp" name="sponsorhelp" target="_new" href="http://www.archiveshub.ac.uk/arch/sponsor.shtml ">
 		<img class="whatsthis" src="/ead/img/whatisthissmall.gif" alt="[What is this?]"/>
 		</a><a class="smalllink" id="linkspo" title="add sponsor" onclick="addElement('filedesc/titlestmt/sponsor')">hide content</a> [optional]<br/>
   	<input class="menuField" type="text" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" name="filedesc/titlestmt/sponsor" id="filedesc/titlestmt/sponsor" size="80">

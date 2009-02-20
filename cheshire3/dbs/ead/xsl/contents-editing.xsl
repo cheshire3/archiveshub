@@ -111,7 +111,7 @@
 		  </xsl:when>
 	     <xsl:otherwise>
 	     	 <xsl:choose>
-	     	 	<xsl:when test="$node/did/unitid and $node/did/unittitle and $node/did/unitdate and $node/@level">
+	     	 	<xsl:when test="$node/did/unitid and $node/did/unittitle and $node/did/unitdate">
 			      	<xsl:attribute name="class"><xsl:text>valid</xsl:text></xsl:attribute>
 			      </xsl:when>
 			      <xsl:otherwise>
