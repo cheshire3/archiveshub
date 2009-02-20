@@ -58,7 +58,7 @@ browse_result_row = u'''
 
 subject_resolve_no_hits = u'''
     <div id="single" class="subjectresults">
-        <p>No relevant terms were found.</p>
+        <p><strong>No relevant terms were found.</strong></p>
         <div id="no-hits-img">%s</div>
         <ul>
             <li>Please check your spelling and try the <a href="/ead/subject.html" title="go back to the Subject Finder page">Subject Finder</a> again.</li>
@@ -78,7 +78,7 @@ subject_resolve_row = u'''
     
 search_no_hits = u'''
     <div id="single" class="searchresults">
-        <p>Sorry, your search didn&apos;t match any records.</p>
+        <p><strong>Sorry, your search didn&#0039;t match any records.</strong></p>
         <div id="no-hits-img">%s</div>
         <ul>
             <li>Please check your spelling and try your <a href="/ead/index.html" title="go back to the search page">Search</a> again.</li>
