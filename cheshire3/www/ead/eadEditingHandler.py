@@ -974,8 +974,8 @@ class EadEditingHandler(EadHandler):
                 target = self._create_path(header, 'filedesc/titlestmt/sponsor')
                 self._add_text(target, form.get('filedesc/titlestmt/sponsor', ''))
             else :
-                self._delete_path(node, 'filedesc/titlestmt/sponsor')
-                       
+                self._delete_path(header, 'filedesc/titlestmt/sponsor')
+                                      
             #cycle through the form and replace any node that need it
             deleteList = []
             daonames = {} 
@@ -1372,13 +1372,6 @@ class EadEditingHandler(EadHandler):
             filepath = os.path.join(sourceDir, filename)
             pre = ''
             if os.path.exists(filepath):
-                ws = re.compile('[\s]+')
-                xml = ws.sub(' ', read_file(filepath))
-                m = re.match('(.*?)<ead[>\s]', xml)
-                try :           
-                    pre = m.group(1)    
-                except:
-                    pass
                 os.remove(filepath)
             try :
                 file = open(filepath, 'w')
