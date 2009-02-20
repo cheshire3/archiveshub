@@ -920,15 +920,7 @@ function findRequiredFields(){
 		}
 	}
 	else {
-		var reqList = required_xpaths_components;
-		var level = document.getElementById('@level');
-		if(level.options[level.selectedIndex].value == ''){
-			level.style.borderColor = 'red';
-		}
-		else {
-			level.style.borderColor = 'white';
-		}
-		
+		var reqList = required_xpaths_components;		
 	}
 	for (var i=0; i<reqList.length; i++){
 		if (document.getElementById(reqList[i])){

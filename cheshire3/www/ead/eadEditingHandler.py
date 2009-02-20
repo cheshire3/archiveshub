@@ -44,7 +44,7 @@ class EadEditingHandler(EadHandler):
     htmlNav = None
     logger = None
     errorFields = []    
-    required_xpaths_components = ['did/unitid', 'did/unittitle', 'did/unitdate', '@level']
+    required_xpaths_components = ['did/unitid', 'did/unittitle', 'did/unitdate']
     required_xpaths = [
 'did/unitid',
 'did/unittitle',
