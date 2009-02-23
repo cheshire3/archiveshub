@@ -89,20 +89,24 @@ class EadHandler:
     globalReplacements = {}
     txrHash = {}
     
-    def __init__(self, lgr=None):
+    def __init__(self, lgr=None, myscript=None):
         global rebuild
         if (rebuild):
             build_architecture()
             
         self.logger = lgr
+        if myscript is not None:
+            self.script = myscript
+        else:
+            self.script = script
         self.htmlTitle = []
         self.htmlNav = []
         self.templatePath = os.path.join(htmlPath, 'template.ssi')
         self.globalReplacements = {'%REP_NAME%': repository_name
                                   ,'%REP_LINK%': repository_link
                                   ,'%REP_LOGO%': repository_logo
-                                  ,'SCRIPT': script
-                                  ,'%SCRIPT%': script
+                                  ,'SCRIPT': self.script
+                                  ,'%SCRIPT%': self.script
                                   ,'<br>': '<br/>'
                                   ,'<hr>': '<hr/>'
                               }
@@ -202,7 +206,6 @@ class EadHandler:
     # end _parse_upload()
 
     def view_file(self, form):
-        global script
         self.htmlTitle.append('File Management')
 
         self.htmlNav.append('<a href="files.html" title="File Management" class="navlink">Files</a>')
@@ -225,7 +228,6 @@ class EadHandler:
 
 
     def _walk_directory(self, d, type='checkbox', link=True):
-        global script
         # we want to keep all dirs at the top, followed by all files
         outD = []
         outF = []
@@ -349,7 +351,7 @@ class EadHandler:
                     pagenav.extend(['</div>', '<div class="numnav">'])
                     if pageNavType == 'form':
                         # form style - Page: x of X
-                        pagenav.extend(['<form action="%s">Page: ' % (script)
+                        pagenav.extend(['<form action="%s">Page: ' % (self.script)
                                        ,'<input type="hidden" name="operation" value="full" />'
                                        ,'<input type="hidden" name="recid" value="%s" />' % (recid)
                                        ,'<input type="text" name="page" size="2" maxlength="3" value="%d"/> of %d' % (x+1, len(pages))
@@ -391,7 +393,7 @@ class EadHandler:
                 pass
             
             # any remaining links were not anchored - encoders fault :( - hope they're on page 1
-            tocfile = multiReplace(tocfile, {'SCRIPT': script, 'PAGE#': '%s/%s-p1.shtml#' % (cache_url, recid)})
+            tocfile = multiReplace(tocfile, {'SCRIPT': self.script, 'PAGE#': '%s/%s-p1.shtml#' % (cache_url, recid)})
             tocfile = tocfile.encode('utf-8')
             write_file(os.path.join(toc_cache_path, recid +'.inc'), tocfile)
             os.chmod(os.path.join(toc_cache_path, recid + '.inc'), 0755)

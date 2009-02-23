@@ -260,8 +260,8 @@ class BuildHtmlThread(AdminThread):
 
 class EadAdminHandler(EadHandler):
     
-    def __init__(self, lgr):
-        EadHandler.__init__(self, lgr)
+    def __init__(self, lgr, myscript):
+        EadHandler.__init__(self, lgr, myscript)
         self.globalReplacements.update({'SCRIPT': script,
                                        '%SCRIPT%': script
                                        })
@@ -1823,7 +1823,7 @@ def handler(req):
         remote_host = req.get_remote_host(apache.REMOTE_NOLOOKUP)                   # get the remote host's IP for logging
         os.chdir(os.path.join(cheshirePath, 'cheshire3','www','ead','html'))        # cd to where html fragments are
         lgr = FileLogger(logfilepath, remote_host)                                  # initialise logger object
-        eadAdminHandler = EadAdminHandler(lgr)                                      # initialise handler - with logger for this request
+        eadAdminHandler = EadAdminHandler(lgr, script)                              # initialise handler - with logger for this request
         try:
             eadAdminHandler.handle(req)                                             # handle request
         finally:

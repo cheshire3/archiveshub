@@ -114,8 +114,8 @@ from eadHandler import *
 
 class EadSearchHandler(EadHandler):
     
-    def __init__(self, lgr):
-        EadHandler.__init__(self, lgr)
+    def __init__(self, lgr, myscript):
+        EadHandler.__init__(self, lgr, myscript)
         self.storeResultSetSizeLimit = 1000
         self.redirected = False
     
@@ -1049,7 +1049,7 @@ class EadSearchHandler(EadHandler):
                 try:
                     page = pages[pagenum-1]
                 except IndexError:
-                    return (False, '<p class="error">Specified page %d does not exist. This record has only %d pages.</p>' % (pagenum, len(pages)))
+                    return (False, '<div id="single"><p class="error">Specified page %d does not exist. This record has only %d pages.</p></div>' % (pagenum, len(pages)))
                 else:
                     del pages
             
@@ -1501,7 +1501,7 @@ def handler(req):
         os.chdir(os.path.join(cheshirePath, 'cheshire3','www','ead','html'))        # cd to where html fragments are
         remote_host = req.get_remote_host(apache.REMOTE_NOLOOKUP)                   # get the remote host's IP for logging
         lgr = FileLogger(logfilepath, remote_host)                                  # initialise logger object
-        eadSearchHandler = EadSearchHandler(lgr)                                    # initialise handler - with logger for this request
+        eadSearchHandler = EadSearchHandler(lgr, script)                                    # initialise handler - with logger for this request
         try:
             eadSearchHandler.handle(req)                                            # handle request
         finally:
