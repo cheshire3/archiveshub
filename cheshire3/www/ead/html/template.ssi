@@ -31,18 +31,16 @@
     			  <img src="%REP_LOGO%" alt="%REP_NAME%" class="rep-logo"/>
     			</a>
        		</div>
-       		<!--
-       		<div id="c3logo">
-       			<a href="http://www.cheshire3.org" title="To www.cheshire3.org">
-    			  <img src="/ead/img/c3_black.gif" alt="cheshire | 3"/>
-    			</a>
-       		</div>
-       		-->
+<!--       		<div id="c3logo">-->
+<!--       			<a href="http://www.cheshire3.org" title="To www.cheshire3.org">-->
+<!--    			  <img src="/ead/img/c3_black.gif" alt="cheshire | 3"/>-->
+<!--    			</a>-->
+<!--       		</div>-->
        		<div id="titles">
        			<h1>%REP_NAME%</h1>
                 <h2>%TITLE%</h2>
        		</div>
-        </div> <!-- end banner div -->
+        </div> <!-- /banner -->
     	<!-- site navigation links -->
     	<div id="navbar" class="navbar">
             <a href="/ead/index.html" title="Search for EAD Records" class="navlink"> Search </a> | 
@@ -51,12 +49,12 @@
             <a href="/ead/about.html" title="About Cheshire for Archives" class="navlink"> About </a> | 
             <a href="/ead/help.html" title="Search Help" class="navlink"> Help </a> | 
             %NAVBAR%
-    	</div>
-    </div>
+    	</div> <!-- /navbar -->
+    </div> <!-- /header -->
     <!-- content here may be 1 or 2 column - div classes/ids determined by handler -->
     <div id="content">
     %CONTENT%
-	</div> <!-- end content div -->
+	</div> <!-- /content -->
     <!-- generic footer --> 
 	<div id="footer">
         <div id="technologies">
@@ -84,6 +82,6 @@
         <div id="copyright">
 	    	Copyright &#169; the University of Liverpool 2005 - 2009
         </div>
-    </div> <!-- end footer div -->
+    </div> <!-- /footer -->
     </body>
 </html>
