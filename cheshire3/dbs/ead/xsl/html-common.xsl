@@ -296,12 +296,6 @@
 		</xsl:choose>
 	</xsl:template>
 	
-	<xsl:template match="physdesc" mode="component">
-		<p>
-			<xsl:apply-templates />
-		</p>
-	</xsl:template>
-
 	<xsl:template match="bioghist">
 		<xsl:if test="@id">
 			<a name="{@id}"><xsl:text> </xsl:text></a>
@@ -971,6 +965,11 @@
             </xsl:for-each>
         </xsl:if>
         
+        <xsl:if test="did/physdesc">
+            <strong>Physical Extent</strong><xsl:text>: </xsl:text>
+            <xsl:apply-templates select="did/physdesc"/><br/>
+        </xsl:if>
+        
         <xsl:if test="langmaterial|did/langmaterial">
             <strong>Language of Material</strong><xsl:text>: </xsl:text>
             <xsl:choose>
@@ -988,8 +987,6 @@
     	  <xsl:value-of select="did/physloc"/>
     	</xsl:if>
     			
-    	<xsl:apply-templates select="did/physdesc" mode="component"/>
-    		
     	<xsl:apply-templates select="did/note" mode="own-section"/>
     	<xsl:apply-templates select="scopecontent"/>
     	<xsl:apply-templates select="bioghist"/>
