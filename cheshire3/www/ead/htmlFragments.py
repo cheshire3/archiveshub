@@ -88,6 +88,22 @@ search_no_hits = u'''
             <li>Try searching the <a href="http://www.archiveshub.ac.uk/" title="go to the Archives Hub">Archives Hub</a> for records located at other repositories around the UK.</li>
         </ul>
     </div>''' % (no_hits_image)
+    
+search_fail_unpairedQuotes ='''
+            <div id="single" class="searchresults">
+                <p class="error">Search Failed. Your query contains unpaired/unescaped quotation marks.</p>
+                <p><strong>HINT</strong>: If you're searching for a phrase make sure quotation marks are used in pairs. See <a href="/ead/help.html#quotes">Help on Using Quotation Marks</a> for more details and examples.</p>
+                <p><strong>HINT</strong>: If you're searching the actual punctuation mark, you need to escape it using a backslash (\\) symbol. e.g. \\"</p>
+            </div>'''
+
+search_fail_unsupported = '''
+            <div id="single" class="searchresults">
+                <p class="error">Search Failed. Unsupported combination of relation and term.</p>
+                <p><strong>HINT</strong>: Did you provide too many, or too few search terms?<br/>
+                \'Between\' requires 2 terms expressing a range.<br/>
+                \'Before\' and \'After\' require 1 and only 1 term.
+                </p>
+            </div>'''
 
 search_result_row = u'''
     <tr>

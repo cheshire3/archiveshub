@@ -498,18 +498,17 @@ class EadSearchHandler(EadHandler):
                 query = queryFactory.get_query(session, qString, format="cql")
             except:
                 self.logger.log('*** Unparsable query: %s' % qString)
-                raise
+                if (qString.count('"') % 2):
+                    return search_fail_unpairedQuotes
+                else:
+                    raise
 
             try:
                 rs = db.search(session, query)
             except SRWDiagnostics.Diagnostic24:
                 if not self.redirected:
                     self.htmlTitle.append('Error')
-                return '''<p class="error">Search Failed. Unsupported combination of relation and term.</p>
-                    <p><strong>HINT</strong>: Did you provide too many, or too few search terms?<br/>
-                    \'Between\' requires 2 terms expressing a range.<br/>
-                    \'Before\' and \'After\' require 1 and only 1 term.
-                    </p>'''
+                return search_fail_unsupported
             
             if maxResultSetSize:
                 rs.fromList(rs[:maxResultSetSize])
@@ -711,7 +710,7 @@ class EadSearchHandler(EadHandler):
         session.database = 'db_ead_cluster'
         rs = clusDb.search(session, query)
         if not len(rs):
-            self.htmlTitle.append('No Matches')        
+            self.htmlTitle.append('No Matches')    
             content = subject_resolve_no_hits
         else:
             self.htmlTitle.append('Results')        
