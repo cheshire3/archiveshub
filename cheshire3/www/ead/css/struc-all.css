@@ -116,8 +116,12 @@ div#rightcol.editmenu {
 
 div#single,
 div#browseresult {
-	width: 99%;
-	padding: 5px 10px;
+	width: 98%;
+	padding: 5px 5px;
+}
+
+div#leftcol div#browseresult {
+	padding: 5px 0;
 }
 
 div#single div#about {
@@ -304,6 +308,10 @@ div.embed-img {
 table.results {
 	width:94%;
 	max-width: 600px;
+}
+
+table.browseresults {
+	width:94%;
 }
 
 td.term {

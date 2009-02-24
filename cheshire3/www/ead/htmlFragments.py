@@ -91,7 +91,7 @@ search_no_hits = u'''
     
 search_fail_unpairedQuotes ='''
             <div id="single" class="searchresults">
-                <p class="error">Search Failed. Your query contains unpaired/unescaped quotation marks.</p>
+                <p class="error">Search Failed. Your query contains unpaired or unescaped quotation marks.</p>
                 <p><strong>HINT</strong>: If you're searching for a phrase make sure quotation marks are used in pairs. See <a href="/ead/help.html#quotes">Help on Using Quotation Marks</a> for more details and examples.</p>
                 <p><strong>HINT</strong>: If you're searching the actual punctuation mark, you need to escape it using a backslash (\\) symbol. e.g. \\"</p>
             </div>'''

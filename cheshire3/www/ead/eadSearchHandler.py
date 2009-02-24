@@ -232,7 +232,7 @@ class EadSearchHandler(EadHandler):
                 self.logger.log('Unparsable query %s' % (id))
                 if not self.redirected:
                     self.htmlTitle.append('Error')
-                return '<p><span class="error">Could not recreate resultSet from CQL query: %s.</span><br/>Please <a href="../index.html">return to the search page</a>, and re-submit your original search</p>' % (id)
+                return '<p><span class="error">Could not recreate resultSet from query: %s.</span><br/>Please <a href="../index.html">return to the search page</a>, and re-submit your original search</p>' % (id)
             else:
                 rs = db.search(session, query)
                 self.logger.log('ResultSet recreated from CQL query: %s' % (id))
@@ -287,7 +287,7 @@ class EadSearchHandler(EadHandler):
             numlinks.extend(['<form action="%s" class="ajax-leftcol">' % (script)
                        ,'<input type="hidden" name="operation" value="search"/>'
                        ,'<input type="hidden" name="rsid" value="%s"/>' % (cgi_encode(rsid))
-                       ,'Page: <input type="text" name="page" size="3" value="%d"/> of %d' % ((firstrec / numreq)+1, (hits/numreq)+1)
+                       ,'Page: <input type="text" name="page" size="2" value="%d"/> of %d' % ((firstrec / numreq)+1, (hits/numreq)+1)
                        ,'<input type="submit" value="Go!"/>'
                        ,'</form>'
                        ])
@@ -494,9 +494,8 @@ class EadSearchHandler(EadHandler):
             
             self.logger.log('Searching CQL query: %s' % (qString))
             try:
-                #query = CQLParser.parse(qString)
                 query = queryFactory.get_query(session, qString, format="cql")
-            except:
+            except CQLDiagnostic:
                 self.logger.log('*** Unparsable query: %s' % qString)
                 if (qString.count('"') % 2):
                     return search_fail_unpairedQuotes
@@ -561,7 +560,7 @@ class EadSearchHandler(EadHandler):
             except:
                 self.logger.log('Unparsable query: %s' % qString)
                 self.htmlTitle.append('Error')
-                return '<div id="browseresult"><p class="error">Invalid CQL query:<br/>%s</p></div>' % (qString)
+                return '<div id="browseresult"><p class="error">Invalid query:<br/>%s</p></div>' % (qString)
         
         self.htmlTitle.append('Browse Indexes')
         self.logger.log('Browsing for "%s"' % (qString))
@@ -697,10 +696,17 @@ class EadSearchHandler(EadHandler):
 
     def subject_resolve(self, form):
         global display_relevance, graphical_relevance
+        qString = generate_cqlQuery(form) 
         try:
-            query = queryFactory.get_query(session, form, format='www')
+            query = queryFactory.get_query(session, qString, format='cql')
         except CQLDiagnostic:
-            content = read_file('subject.html').replace('SCRIPT', script)
+            content = unicode(read_file('subject.html'))
+            if (qString.count('"') % 2):
+                content = content.replace(u'<!-- MSG -->', u'<p class="error">Error. Query contained unpaired or unescaped quotation marks.<br/>Please try again.</p>')
+            else:
+                content = content.replace(u'<!-- MSG -->', u'<p class="error">Error. Invalid query.<br/>Please try again.</p>')
+                
+            content = content.replace(u'SCRIPT', script)
             return content
         
         self.htmlTitle.append('Find Subjects')
@@ -915,10 +921,9 @@ class EadSearchHandler(EadHandler):
         if (qString):
             qString = cgi_decode(rsid)
             try:
-                #q = CQLParser.parse(qString);
                 q = queryFactory.get_query(session, qString, format="cql")
             except:
-                return (False, '<p class="error">Invalid CQL query.</p>')
+                return (False, '<p class="error">Invalid query.</p>')
         elif (rsid):
             #self.htmlNav.append('<a href="%s?operation=search&amp;rsid=%s&amp;firstrec=%d&amp;numreq=%d" title="Back to search results">Back to results</a>' % (script, rsid, firstrec, numreq))
             rsid = cgi_decode(rsid)
@@ -927,7 +932,6 @@ class EadSearchHandler(EadHandler):
             except (c3errors.FileDoesNotExistException, c3errors.ObjectDoesNotExistException):
                 try:
                     qString = rsid
-                    #q = CQLParser.parse(qString)
                     q = queryFactory.get_query(session, qString, format="cql")
                 except:
                     self.logger.log('Unretrievable resultSet %s' % (rsid))
@@ -1106,11 +1110,8 @@ class EadSearchHandler(EadHandler):
             qString = form.get('query', form.get('cqlquery', ''))
             if len(qString) > 0:
                 qString = cgi_decode(qString)
-                #query = CQLParser.parse(qString);
                 query = queryFactory.get_query(session, qString, format="cql")
             else:
-                #qString = generate_cqlQuery(form)
-                #query = CQLParser.parse(qString);
                 query = queryFactory.get_query(session, form, format="www")
 
             self.logger.log('Searching CQL query: %s' % (qString))
@@ -1237,14 +1238,13 @@ In: %s
                 qString = generate_cqlQuery(form)
             except: 
                 self.htmlTitle.append('Error')
-                return '<p class="error">No rsid provided, could not generate CQL query from form.</p>'
+                return '<p class="error">No rsid provided, could not generate query from form.</p>'
 
             try: 
-                #query = CQLParser.parse(qString)
                 query = queryFactory.get_query(session, qString, format="cql")
             except: 
                 self.htmlTitle.append('Error')
-                return '<p class="error">No rsid provided, unparsable CQL query submitted</p>'
+                return '<p class="error">No rsid provided, invalid query submitted</p>'
 
             rs = db.search(session, query)
             if not (rs):
