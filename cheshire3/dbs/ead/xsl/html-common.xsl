@@ -126,7 +126,7 @@
 			<br/>
 			
 			<xsl:if test="physdesc">
-			  <strong>Physical Extent</strong><xsl:text>: </xsl:text>
+			  <strong>Physical Description</strong><xsl:text>: </xsl:text>
 			  <xsl:apply-templates select="physdesc"/><br/>
 			</xsl:if>
 	      
@@ -966,7 +966,7 @@
         </xsl:if>
         
         <xsl:if test="did/physdesc">
-            <strong>Physical Extent</strong><xsl:text>: </xsl:text>
+            <strong>Physical Description</strong><xsl:text>: </xsl:text>
             <xsl:apply-templates select="did/physdesc"/><br/>
         </xsl:if>
         
