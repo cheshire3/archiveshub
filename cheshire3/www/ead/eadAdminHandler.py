@@ -900,7 +900,7 @@ class EadAdminHandler(EadHandler):
                                 compStore.begin_storing(session)
                                 q = queryFactory.get_query(session, 'ead.parentid exact "%s/%s"' % (rec.recordStore, rec.id))
                                 rs = db.search(session, q)
-                                req.write('<script type="text/javascript" src="/javascript/counter.js"></script>')
+                                req.write('<script type="text/javascript" src="/ead/js/counter.js"></script>')
                                 req.write('Unindexing component <b><span id="comp-count">0</span></b> of %d.' % (len(rs)))
                                 dotcount = 0
                                 for r in rs:
