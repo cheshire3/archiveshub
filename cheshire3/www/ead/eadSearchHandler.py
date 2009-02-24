@@ -1464,7 +1464,6 @@ def build_architecture(data=None):
     recordStore = db.get_object(session, 'recordStore')
     dcRecordStore = db.get_object(session, 'eadDcStore')
     compStore = db.get_object(session, 'componentStore')
-    resultSetStore = db.get_object(session, 'eadResultSetStore'); resultSetStore.clean(session) # clean expires resultSets 
     # globals line 3: subject clusters
     session.database = 'db_ead_cluster'
     clusDb = serv.get_object(session, 'db_ead_cluster')
@@ -1483,7 +1482,7 @@ def build_architecture(data=None):
 logfilepath = searchlogfilepath
 
 def handler(req):
-    global script, rebuild
+    global script, rebuild, resultSetStore
     script = req.subprocess_env['SCRIPT_NAME']
     req.register_cleanup(build_architecture)
     try:
@@ -1497,7 +1496,8 @@ def handler(req):
                 # architecture not built
                 build_architecture()
 
-        
+        resultSetStore = db.get_object(session, 'eadResultSetStore')
+        resultSetStore.clean(session) # clean expires resultSets
         os.chdir(os.path.join(cheshirePath, 'cheshire3','www','ead','html'))        # cd to where html fragments are
         remote_host = req.get_remote_host(apache.REMOTE_NOLOOKUP)                   # get the remote host's IP for logging
         lgr = FileLogger(logfilepath, remote_host)                                  # initialise logger object
@@ -1508,6 +1508,7 @@ def handler(req):
             # clean-up
             try: lgr.flush()                                                        # flush all logged strings to disk
             except: pass
+            resultSetStore.commit_storing(session)
             del lgr, eadSearchHandler                                               # delete handler to ensure no state info is retained
             
     except:
