@@ -1773,7 +1773,15 @@
 	  			<xsl:value-of select="$googlemaps_search_url"/>
 	  			<xsl:call-template name="cgiencode">
 		          <xsl:with-param name="text">
-		            <xsl:value-of select="emph[@altrender='a' or @altrender='location']"/>
+                    <xsl:choose>
+                        <xsl:when test="emph">
+                            <xsl:value-of select="emph[@altrender='a' or @altrender='location']"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="."/>
+                        </xsl:otherwise>
+                    </xsl:choose>
+		            
 		          </xsl:with-param>
 		        </xsl:call-template>
 			</xsl:attribute>
