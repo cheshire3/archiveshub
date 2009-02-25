@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
     <title>%REP_NAME% :: %TITLE%</title>
-    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 	<!-- screen CSS -->
 	<link rel="stylesheet" type="text/css" media="screen" href="/ead/css/struc-all.css"></link>
 	<link rel="stylesheet" type="text/css" href="/ead/css/style.css"></link>
