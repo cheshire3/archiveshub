@@ -1158,7 +1158,7 @@ class EadEditingHandler(EadHandler):
         return 'done'          
 
     def preview_file(self, req):
-        global session, repository_name, repository_link, repository_logo, cache_path, cache_url, toc_cache_path, toc_cache_url, toc_scripts, script, fullTxr, fullSplitTxr
+        global session, xmlp, repository_name, repository_link, repository_logo, cache_path, cache_url, toc_cache_path, toc_cache_url, toc_scripts, script, fullTxr, fullSplitTxr
         form = FieldStorage(req)
         self.htmlTitle.append('Preview File')
         try :
@@ -1181,6 +1181,8 @@ class EadEditingHandler(EadHandler):
         fileOwner = form.get('owner', session.user.username)
         if recid != None and recid != 'null' :
             rec = editStore.fetch_record(session, '%s-%s' % (recid, fileOwner))
+            doc = db.get_object(session, 'orderingTxr').process_record(session, rec)
+            rec = xmlp.process_document(session, doc)
         if not isinstance(rec, LxmlRecord):
             return rec      
         # ensure restricted access directory exists
