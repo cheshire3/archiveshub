@@ -1199,7 +1199,7 @@
 		<div id="subject" class="apcontainer">
 			<p><strong>Subject</strong><a id="subjecthelp" name="subjecthelp" target="_new" href="http://www.archiveshub.ac.uk/arch/subject.shtml">
 		<img class="whatsthis" src="/ead/img/whatisthissmall.gif" alt="[What is this?]"/>
-		</a><br /><a class="extSearch" onclick="window.open('http://databases.unesco.org/thesaurus/', 'new', 'width=800 height=600');">[Search UNESCO]</a><xsl:text>  </xsl:text><a class="extSearch" onclick="window.open('http://authorities.loc.gov/cgi-bin/Pwebrecon.cgi?DB=local&amp;PAGE=First', 'new', 'width=800 height=600');">[Search LCSH]</a></p>
+		</a><br /><a class="extSearch" onclick="window.open('http://databases.unesco.org/thesaurus/', 'new');">[Search UNESCO]</a><xsl:text>  </xsl:text><a class="extSearch" onclick="window.open('http://authorities.loc.gov/cgi-bin/Pwebrecon.cgi?DB=local&amp;PAGE=First', 'new');">[Search LCSH]</a></p>
 			<xsl:choose>
 				<xsl:when test="controlaccess/subject">
 					<xsl:call-template name="accesspoint">
@@ -1235,7 +1235,7 @@
         <div id="persname" class="apcontainer">				
 			<p><strong>Personal Name</strong><a id="persnamehelp" name="persnamehelp" target="_new" href="http://www.archiveshub.ac.uk/arch/persname.shtml">
 		<img class="whatsthis" src="/ead/img/whatisthissmall.gif" alt="[What is this?]"/>
-		</a><br /><a class="extSearch" onclick="window.open('http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=P', 'new', 'width=800 height=600');">[Search NRA]</a></p>
+		</a><br /><a class="extSearch" onclick="window.open('http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=P', 'new');">[Search NRA]</a></p>
 			
 			<xsl:choose>
 				<xsl:when test="controlaccess/persname">
@@ -1279,7 +1279,7 @@
 		<div id="famname" class="apcontainer">
 			<p><strong>Family Name</strong><a id="famnamehelp" name="famnamehelp" target="_new" href="http://www.archiveshub.ac.uk/arch/famname.shtml">
 		<img class="whatsthis" src="/ead/img/whatisthissmall.gif" alt="[What is this?]"/>
-		</a><br /><a class="extSearch" onclick="window.open('http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=F', 'new', 'width=800 height=600');">[Search NRA]</a></p>
+		</a><br /><a class="extSearch" onclick="window.open('http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=F', 'new');">[Search NRA]</a></p>
 			<xsl:choose>
 				<xsl:when test="controlaccess/famname">
 					<xsl:call-template name="accesspoint">
@@ -1322,7 +1322,7 @@
 		<div id="corpname" class="apcontainer">
 			<p><strong>Corporate Name</strong><a id="corpnamehelp" name="corpnamehelp" target="_new" href="http://www.archiveshub.ac.uk/arch/corpname.shtml">
 		<img class="whatsthis" src="/ead/img/whatisthissmall.gif" alt="[What is this?]"/>
-		</a><br /><a class="extSearch" onclick="window.open('http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=O', 'new', 'width=800 height=600');">[Search NRA]</a></p>
+		</a><br /><a class="extSearch" onclick="window.open('http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=O', 'new');">[Search NRA]</a></p>
 			<xsl:choose>
 				<xsl:when test="controlaccess/corpname">
 					<xsl:call-template name="accesspoint">
@@ -1363,7 +1363,7 @@
 		<div id="geogname" class="apcontainer">
 			<p><strong>Place Name</strong><a id="geognamehelp" name="geognamehelp" target="_new" href="http://www.archiveshub.ac.uk/arch/geogname.shtml">
 		<img class="whatsthis" src="/ead/img/whatisthissmall.gif" alt="[What is this?]"/>
-		</a><br /><a class="extSearch" onclick="window.open('http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=PL', 'new', 'width=800 height=600');">[Search NRA]</a></p>
+		</a><br /><a class="extSearch" onclick="window.open('http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=PL', 'new');">[Search NRA]</a></p>
 			<xsl:choose>
 				<xsl:when test="controlaccess/geogname">
 					<xsl:call-template name="accesspoint">
@@ -1440,7 +1440,7 @@
 		<div id="genreform" class="apcontainer">
 			<p><strong>Genre Form</strong><a id="genreformhelp" name="genreformhelp" target="_new" href="http://www.archiveshub.ac.uk/arch/genreform.shtml">
 		<img class="whatsthis" src="/ead/img/whatisthissmall.gif" alt="[What is this?]"/>
-		</a><br/><a class="extSearch" onclick="window.open('http://www.getty.edu/research/conducting_research/vocabularies/aat/', 'new', 'width=800 height=600');">[Search AAT]</a><xsl:text> </xsl:text><a class="extSearch" onclick="window.open('http://www.loc.gov/rr/print/tgm2/', 'new', 'width=800 height=600');">[Search TGM]</a></p>
+		</a><br/><a class="extSearch" onclick="window.open('http://www.getty.edu/research/conducting_research/vocabularies/aat/', 'new');">[Search AAT]</a><xsl:text> </xsl:text><a class="extSearch" onclick="window.open('http://www.loc.gov/rr/print/tgm2/', 'new');">[Search TGM]</a></p>
 			<xsl:choose>
 				<xsl:when test="controlaccess/genreform">
 					<xsl:call-template name="accesspoint">
@@ -1469,7 +1469,7 @@
 		<div id="function" class="apcontainer">
 			<p><strong>Function</strong><a id="functionhelp" name="functionhelp" target="_new" href="http://www.archiveshub.ac.uk/arch/function.shtml">
 		<img class="whatsthis" src="/ead/img/whatisthissmall.gif" alt="[What is this?]"/>
-		</a><br/><a class="extSearch" onclick="window.open('http://www.getty.edu/research/conducting_research/vocabularies/aat/', 'new', 'width=800 height=600');">[Search AAT]</a><xsl:text> </xsl:text><a class="extSearch" onclick="window.open('http://www.naa.gov.au/records-management/create-capture-describe/describe/agift/index.aspx', 'new', 'width=800 height=600');">[Search AGIFT]</a></p>
+		</a><br/><a class="extSearch" onclick="window.open('http://www.getty.edu/research/conducting_research/vocabularies/aat/', 'new');">[Search AAT]</a><xsl:text> </xsl:text><a class="extSearch" onclick="window.open('http://www.naa.gov.au/records-management/create-capture-describe/describe/agift/index.aspx', 'new');">[Search AGIFT]</a></p>
 			<xsl:choose>
 				<xsl:when test="controlaccess/function">
 					<xsl:call-template name="accesspoint">
