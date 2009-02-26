@@ -54,7 +54,7 @@ class EadEditingHandler(EadHandler):
 'did/physdesc/extent',
 'did/langmaterial/language',
 'scopecontent',
-
+'accessrestrict'
 ]
 
 

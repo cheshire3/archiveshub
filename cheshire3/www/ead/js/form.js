@@ -37,7 +37,8 @@ var required_xpaths = new Array(
 'did/unitdate/@normal',
 'did/origination',
 'did/physdesc/extent',
-'scopecontent'
+'scopecontent',
+'accessrestrict'
 );
 
 function setCountryCode(code){
