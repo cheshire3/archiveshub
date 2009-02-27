@@ -3,7 +3,7 @@
 
 <!-- 
     This file was produced, and released as part of Cheshire for Archives v3.x.
-    Copyright &#169; 2005-2008 the University of Liverpool
+    Copyright &#169; 2005-2009 the University of Liverpool
 -->
 
 <xsl:stylesheet
@@ -171,9 +171,6 @@
             </xsl:attribute>
             <xsl:attribute name="title">
                 <xsl:text>Go to full record.</xsl:text>
-            </xsl:attribute>
-            <xsl:attribute name="onclick">
-                <xsl:text>SPLASH</xsl:text>
             </xsl:attribute>
             <img src="/images/v3_full.gif" alt="'Full text'"/>
         </xsl:element>

@@ -1,7 +1,7 @@
 #
 # Script:    eadSearchHandler.py
-# Version:   0.42
-# Date:      22 January 2009
+# Version:   0.43
+# Date:      27 February 2009
 # Copyright: &copy; University of Liverpool 2005-2009
 # Description:
 #            Web interface for searching a cheshire 3 database of EAD finding aids
@@ -108,6 +108,7 @@
 #                        - Inline JavaScript removed where possible for more graceful degradation when JS disabled
 #                        - 'ajax' parameter in form will cause handler to return the smallest portion of HTML that fulfils the request (i.e. the only bit that needs to be updated on screen)
 # 0.42 - 22/01/2009 - JH - Debugging of noComponents search
+# 0.43 - 25/02/2009 - JH - Debugging of highlighting
 #
 
 from eadHandler import * 
@@ -222,7 +223,7 @@ class EadSearchHandler(EadHandler):
                 self.logger.log('Unretrievable resultSet %s' % (id))
                 if not self.redirected:
                     self.htmlTitle.append('Error')
-                return '<p><span class="error">Could not retrieve resultSet from resultSetStore.</span><br/>Please <a href="../index.html">return to the search page</a>, and re-submit your original search</p>'
+                return '<p class="error">Could not retrieve resultSet from resultSetStore.</p><p>Please <a href="/ead/index.html">return to the search page</a>, and re-submit your original search</p>'
             else:
                 self.logger.log('Retrieved resultSet "%s"' % (id))
         else:
@@ -232,7 +233,7 @@ class EadSearchHandler(EadHandler):
                 self.logger.log('Unparsable query %s' % (id))
                 if not self.redirected:
                     self.htmlTitle.append('Error')
-                return '<p><span class="error">Could not recreate resultSet from query: %s.</span><br/>Please <a href="../index.html">return to the search page</a>, and re-submit your original search</p>' % (id)
+                return '<p class="error">Could not recreate resultSet from query: %s.</p><p>Please <a href="/ead/index.html">return to the search page</a>, and re-submit your original search</p>' % (id)
             else:
                 rs = db.search(session, query)
                 self.logger.log('ResultSet recreated from CQL query: %s' % (id))
@@ -532,6 +533,9 @@ class EadSearchHandler(EadHandler):
                 return search_no_hits
             
         self.set_cookieVal('resultSetId', rsid)
+        if isinstance(rs, basestring):
+            return u'<div id="single">%s</div>' %  rs
+        
         resultString = self.format_resultSet(rs, firstrec, numreq, highlight) 
         if form.has_key('ajax'):
             # should be from an ajax request for subsequent results page - just return formatted results
@@ -790,7 +794,7 @@ class EadSearchHandler(EadHandler):
         recid = rec.id
         self.logger.log('Summary requested for record: %s' % (recid))
         # highlight search terms in rec.dom
-        if (proxInfo) and highlight:
+        if (proxInfo) and (highlight):
             # flatten groups from phrases / multiple word terms into list of [nodeIdx, wordIdx, charOffset] triples
             proxInfo2 = []
             for x in proxInfo:
@@ -833,28 +837,32 @@ class EadSearchHandler(EadHandler):
                         text = c.text
                         if len(c.text) > offset:
                             start = offset
-                            end = highlightEndPointRe.search(text, start).end()
-                            if end == -1:
-                                end = len(text)
-                            located = 'text'
-                            if text[:start+len(sTag)].find(sTag) < 0:
-                                c.text = text[:start] + sTag + text[start:end] + eTag + text[end:]
-                            break
+                            try: end = highlightEndPointRe.search(text, start).end()
+                            except: pass # well I still haven't found, what I'm looking for!
+                            else:
+                                if end == -1:
+                                    end = len(text)
+                                located = 'text'
+                                if text[:start+len(sTag)].find(sTag) < 0:
+                                    c.text = text[:start] + sTag + text[start:end] + eTag + text[end:]
+                                break
                         else:
                             # check for highlight start / end strings adjust offset accordingly
                             offset -= len(text.replace(sTag, '').replace(eTag, ''))
                         
-                    if c.tail:
+                    if c != el and c.tail and located is None:
                         text = c.tail
                         if len(c.tail) > offset:
                             start = offset
-                            end = highlightEndPointRe.search(text, start).end()
-                            if end == -1:
-                                end = len(text)
-                            located = 'tail'
-                            if text[:start+len(sTag)].find(sTag) < 0:
-                                c.tail = text[:start] + sTag + text[start:end] + eTag + text[end:]
-                            break
+                            try: end = highlightEndPointRe.search(text, start).end()
+                            except: pass # well I still haven't found, what I'm looking for!
+                            else:
+                                if end == -1:
+                                    end = len(text)
+                                located = 'tail'
+                                if text[:start+len(sTag)].find(sTag) < 0:
+                                    c.tail = text[:start] + sTag + text[start:end] + eTag + text[end:]
+                                break
                         else:
                             # check for highlight start / end strings adjust offset accordingly
                             offset -= len(text.replace(sTag, '').replace(eTag, ''))
@@ -1033,12 +1041,14 @@ class EadSearchHandler(EadHandler):
         paramDict['RSID'] = rsidCgiString 
         
         if (operation == 'summary'):
-            paramDict[highlightStartTag] = '<span class="highlight">'
-            paramDict[highlightEndTag] = '</span>'
-            paramDict['LEFTSIDE'] = searchResults
+            paramDict.update({highlightStartTag: '<span class="highlight">'
+                             ,highlightEndTag: '</span>'
+                             ,'LEFTSIDE': searchResults
+                            })
             try:
                 page = self.display_summary(rec, paramDict, r.proxInfo, highlight)
             except AttributeError:
+                raise
                 page = self.display_summary(rec, paramDict)
         else:
             # full record

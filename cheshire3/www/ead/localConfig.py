@@ -90,7 +90,7 @@ baseHtmlPath = cheshirePath + '/install/htdocs/ead'
 cache_path = baseHtmlPath + '/html'
 toc_cache_path = baseHtmlPath + '/tocs'
 # URLs
-script = '/ead/search/'
+script = '/ead/search'
 cache_url = '/ead/html'
 toc_cache_url = '/ead/tocs'
 
