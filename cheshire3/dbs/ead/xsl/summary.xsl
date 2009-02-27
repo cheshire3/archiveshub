@@ -172,7 +172,7 @@
             <xsl:attribute name="title">
                 <xsl:text>Go to full record.</xsl:text>
             </xsl:attribute>
-            <img src="/images/v3_full.gif" alt="'Full text'"/>
+            <img src="/ead/img/v3_full.gif" alt="'Full text'"/>
         </xsl:element>
     </xsl:template>
     
