@@ -251,6 +251,11 @@ ul.hierarchy li {
 }
 
 ul.facetlist li {
+	list-style-position: outside;
+	margin-left: 2em;
+}
+
+ul.facetlist li.unmarked {
 	margin-left: 1em;
 }
 
