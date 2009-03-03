@@ -1186,51 +1186,59 @@
     
     <!-- ARCHREF  -->
     <xsl:template match="archref">
-        <xsl:element name="a">
-            <xsl:if test="./@title">
-                <xsl:attribute name="title">
-                  <xsl:value-of select="./@title"/>
-                </xsl:attribute>
-            </xsl:if>
-            <xsl:attribute name="target">
-                <xsl:choose>
-                    <xsl:when test="./@show = 'new'">
-                        <xsl:text>_new</xsl:text>
-                    </xsl:when>
-                    <xsl:when test="./@show = 'replace'">
-                        <xsl:text>_parent</xsl:text>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:text>_blank</xsl:text>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:attribute>
-            <xsl:attribute name="href">
-                <xsl:choose>
-                    <xsl:when test="@role = 'http://www.archiveshub.ac.uk/apps/linkroles/related' or
-                                    @role = 'http://www.archiveshub.ac.uk/apps/linkroles/extended' or
-                                    @role = 'http://www.archiveshub.ac.uk/apps/linkroles/child' or
-                                    @role = 'http://www.archiveshub.ac.uk/apps/linkroles/parent' or
-                                    @role = 'http://www.archiveshub.ac.uk/apps/linkroles/descendant' or
-                                    @role = 'http://www.archiveshub.ac.uk/apps/linkroles/ancestor'">
-                        <xsl:value-of select="$script"/>
-                        <xsl:text>?</xsl:text>
-                        <xsl:text>operation=full</xsl:text>
-                        <xsl:text>&amp;recid=</xsl:text>
-                        <xsl:call-template name="normalizeEadid">
-                            <xsl:with-param name="text">
-                                <xsl:value-of select="@href"/>        
-                            </xsl:with-param>
-                        </xsl:call-template>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="@href"/>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:attribute>
-            <!-- inner HTML -->
-            <xsl:value-of select="string(.)"/>
-        </xsl:element>
+        <xsl:choose>
+            <xsl:when test="./@href">
+                <xsl:element name="a">
+                    <xsl:if test="./@title">
+                        <xsl:attribute name="title">
+                          <xsl:value-of select="./@title"/>
+                        </xsl:attribute>
+                    </xsl:if>
+                    <xsl:attribute name="target">
+                        <xsl:choose>
+                            <xsl:when test="./@show = 'new'">
+                                <xsl:text>_new</xsl:text>
+                            </xsl:when>
+                            <xsl:when test="./@show = 'replace'">
+                                <xsl:text>_parent</xsl:text>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:text>_blank</xsl:text>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:attribute>
+                    <xsl:attribute name="href">
+                        <xsl:choose>
+                            <xsl:when test="@role = 'http://www.archiveshub.ac.uk/apps/linkroles/related' or
+                                            @role = 'http://www.archiveshub.ac.uk/apps/linkroles/extended' or
+                                            @role = 'http://www.archiveshub.ac.uk/apps/linkroles/child' or
+                                            @role = 'http://www.archiveshub.ac.uk/apps/linkroles/parent' or
+                                            @role = 'http://www.archiveshub.ac.uk/apps/linkroles/descendant' or
+                                            @role = 'http://www.archiveshub.ac.uk/apps/linkroles/ancestor'">
+                                <xsl:value-of select="$script"/>
+                                <xsl:text>?</xsl:text>
+                                <xsl:text>operation=full</xsl:text>
+                                <xsl:text>&amp;recid=</xsl:text>
+                                <xsl:call-template name="normalizeEadid">
+                                    <xsl:with-param name="text">
+                                        <xsl:value-of select="@href"/>        
+                                    </xsl:with-param>
+                                </xsl:call-template>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="@href"/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:attribute>
+                    <!-- inner HTML -->
+                    <xsl:value-of select="string(.)"/>
+                </xsl:element>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:apply-templates/>
+            </xsl:otherwise>
+        </xsl:choose>
+                
     </xsl:template>
     
     <!--EXTREFS-->
