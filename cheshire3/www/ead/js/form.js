@@ -594,9 +594,9 @@ function addComponent(){
     deleteLink.onclick = new Function("javascript: deleteComponent('" + linkId + "')");
 
     deleteImage = document.createElement('img');
-    deleteImage.setAttribute('src', '/images/delete.png');
-    deleteImage.setAttribute('onmouseover', 'this.src=\'/images/delete-hover.png\';')
-    deleteImage.setAttribute('onmouseout', 'this.src=\'/images/delete.png\';')
+    deleteImage.setAttribute('src', '/ead/img/delete.png');
+    deleteImage.setAttribute('onmouseover', 'this.src=\'/ead/img/delete-hover.png\';')
+    deleteImage.setAttribute('onmouseout', 'this.src=\'/ead/img/delete.png\';')
     deleteImage.className = 'deletelogo';
     
     deleteLink.appendChild(deleteImage);
@@ -658,9 +658,9 @@ function deleteComponent(id){
 			    deleteLink.onclick = new Function("javascript: deleteComponent('" + grandparentId + "')");
 			
 			    deleteImage = document.createElement('img');
-			    deleteImage.setAttribute('src', '/images/delete.png');
-			    deleteImage.setAttribute('onmouseover', 'this.src=\'/images/delete-hover.png\';')
-    			deleteImage.setAttribute('onmouseout', 'this.src=\'/images/delete.png\';')
+			    deleteImage.setAttribute('src', '/ead/img/delete.png');
+			    deleteImage.setAttribute('onmouseover', 'this.src=\'/ead/img/delete-hover.png\';')
+    			deleteImage.setAttribute('onmouseout', 'this.src=\'/ead/img/delete.png\';')
 			    deleteImage.className = 'deletelogo';
 			    
 			    deleteLink.appendChild(deleteImage);
