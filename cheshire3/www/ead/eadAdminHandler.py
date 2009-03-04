@@ -197,13 +197,13 @@ class BuildHtmlThread(AdminThread):
                     if len(pages) > 1:
                         pagenav = ['<div class="pagenav">', '<div class="backlinks">']
                         if (x > 0):
-                            pagenav.extend(['<a href="%s/%s-p1.shtml" title="First page" onclick="setCookie(\'%s-tocstate\', stateToString(\'someId\'))"><img src="/images/fback.gif" alt="First"/></a>' % (cache_url, recid, recid), 
-                                            '<a href="%s/%s-p%d.shtml" title="Previous page" onclick="setCookie(\'%s-tocstate\', stateToString(\'someId\'))"><img src="/images/back.gif" alt="Previous"/></a>' % (cache_url, recid, x, recid)
+                            pagenav.extend(['<a href="%s/%s-p1.shtml" title="First page" onclick="setCookie(\'%s-tocstate\', stateToString(\'someId\'))"><img src="/ead/img/fback.gif" alt="First"/></a>' % (cache_url, recid, recid), 
+                                            '<a href="%s/%s-p%d.shtml" title="Previous page" onclick="setCookie(\'%s-tocstate\', stateToString(\'someId\'))"><img src="/ead/img/back.gif" alt="Previous"/></a>' % (cache_url, recid, x, recid)
                                           ])
                         pagenav.extend(['</div>', '<div class="forwardlinks">'])
                         if (x < len(pages)-1):
-                            pagenav.extend(['<a href="%s/%s-p%d.shtml" title="Next page" onclick="setCookie(\'%s-tocstate\', stateToString(\'someId\'))"><img src="/images/forward.gif" alt="Next"/></a>' % (cache_url, recid, x+2, recid),
-                                            '<a href="%s/%s-p%d.shtml" title="Final page" onclick="setCookie(\'%s-tocstate\', stateToString(\'someId\'))"><img src="/images/fforward.gif" alt="Final"/></a>' % (cache_url, recid, len(pages), recid)
+                            pagenav.extend(['<a href="%s/%s-p%d.shtml" title="Next page" onclick="setCookie(\'%s-tocstate\', stateToString(\'someId\'))"><img src="/ead/img/forward.gif" alt="Next"/></a>' % (cache_url, recid, x+2, recid),
+                                            '<a href="%s/%s-p%d.shtml" title="Final page" onclick="setCookie(\'%s-tocstate\', stateToString(\'someId\'))"><img src="/ead//img/fforward.gif" alt="Final"/></a>' % (cache_url, recid, len(pages), recid)
                                           ])
                         pagenav.extend(['</div>', '<div class="numnav">'])
                         # individual number links
@@ -314,7 +314,7 @@ class EadAdminHandler(EadHandler):
             lines.append('<tr class="%s">%s</tr>' % (rowclass, cells))
         lines.append('</table><br/>')
         if (session.user.has_flag(session, 'info:srw/operation/1/create', 'eadAuthStore')):
-            lines.extend(['<h3 class="bar">Add New User <a href="/ead/admin/help.html#users" title="What is this?"><img src="/images/whatisthis.gif" alt="[What is this?]"/></a></h3>',
+            lines.extend(['<h3 class="bar">Add New User <a href="/ead/admin/help.html#users" title="What is this?"><img src="/ead/img/whatisthis.gif" alt="[What is this?]"/></a></h3>',
                           multiReplace(read_file('adduser.html'), values)
                         ])
         return '\n'.join(lines)
@@ -604,10 +604,10 @@ class EadAdminHandler(EadHandler):
                   }
                 -->
                 </script>''',
-               '<h3 class="bar">%s  <a href="/ead/admin/help.html#existing_files" title="What is this?"><img src="/images/whatisthis.gif" alt="[What is this?]"/></a></h3>' % (header), 
+               '<h3 class="bar">%s  <a href="/ead/admin/help.html#existing_files" title="What is this?"><img src="/ead/img/whatisthis.gif" alt="[What is this?]"/></a></h3>' % (header), 
                '<form action="files.html" name="fileops" method="post" onsubmit="return confirmOp();">',
                fileformsubmits,
-               '<ul class="unmarked"><li><img src="/images/folderOpen.jpg" alt=""/>' + sourceDir,
+               '<ul class="unmarked"><li><img src="/ead/img/folderOpen.jpg" alt=""/>' + sourceDir,
                '<ul id="sourceDirTree" class="unmarked">'
                ])
         out.extend(self._walk_directory(sourceDir))

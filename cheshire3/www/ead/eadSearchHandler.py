@@ -380,7 +380,7 @@ class EadSearchHandler(EadHandler):
                     <table width="100" style="border:0;" cellpadding="0" cellspacing="0">
                       <tr>
                         <td background="%s" width="%d"></td>
-                        <td><img src="/images/spacer1x20.gif" alt=""/></td>
+                        <td><img src="/ead/img/spacer1x20.gif" alt=""/></td>
                       </tr>
                     </table>''' % (relevance_graphic, relv)
                 else:
@@ -631,7 +631,7 @@ class EadSearchHandler(EadHandler):
                 prevlink = ['<a href="%s?operation=browse&amp;fieldidx1=%s&amp;fieldrel1=%s&amp;fieldcont1=%s&amp;responsePosition=%d&amp;numreq=%d#leftcol" title="Previous %d terms"' % (script, idx, rel, cgi_encode(scanData[0][0]), numreq+1, numreq, numreq)]
                 if ajax:
                     prevlink.append(' class="ajax"')
-                prevlink.append('><img src="/images/back.gif" alt="Previous %d terms"/>&nbsp;PREVIOUS</a>''' % (numreq))
+                prevlink.append('><img src="/ead/img/back.gif" alt="Previous %d terms"/>&nbsp;PREVIOUS</a>''' % (numreq))
                 prevlink = ''.join(prevlink)
                 rows.append('<tr class="odd"><td colspan="2">%s</td></tr>' % prevlink)
                 
@@ -681,7 +681,7 @@ class EadSearchHandler(EadHandler):
                 nextlink = ['<a href="%s?operation=browse&amp;fieldidx1=%s&amp;fieldrel1=%s&amp;fieldcont1=%s&amp;responsePosition=%d&amp;numreq=%d#leftcol" title="Next %d terms"' % (script, idx, rel, cgi_encode(scanData[-1][0]), 0, numreq, numreq)]
                 if ajax:
                     nextlink.append(' class="ajax"')
-                nextlink.append('>NEXT&nbsp;<img src="/images/forward.gif" alt="Next %d terms"/></a>' % (numreq))
+                nextlink.append('>NEXT&nbsp;<img src="/ead/img/forward.gif" alt="Next %d terms"/></a>' % (numreq))
                 nextlink = ''.join(nextlink)
                 rows.append('<tr class="odd"><td colspan="2">%s</td></tr>' % nextlink)
                 
@@ -756,7 +756,7 @@ class EadSearchHandler(EadHandler):
                         <table width="100" style="border:0;" cellpadding="0" cellspacing="0">
                           <tr>
                             <td background="%s" width="%d"></td>
-                            <td><img src="/images/spacer1x20.gif" alt=""/></td>
+                            <td><img src="/ead/img/spacer1x20.gif" alt=""/></td>
                           </tr>
                         </table>''' % (relevance_graphic, relv)
                     else:
