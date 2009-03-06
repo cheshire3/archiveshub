@@ -623,7 +623,7 @@
 	</p> 
 <!-- langmaterial -->
      <p>
-     	<strong><span class="isadg">3.4.3: </span>Language of Material</strong><a href="http://www.archiveshub.ac.uk/arch/lang.shtml" title="Language of Material help - opens in new window" target="_new"><img class="whatsthis" src="/ead/img/whatisthissmall.gif" alt="[What is this?]"/></a> [Must include <a href="http://www.loc.gov/standards/iso639-2/englangn.html" title="ISO 639-2 codes - opens new window" target="_new">ISO 639-2 3-letter code</a>]
+     	<strong><span class="isadg">3.4.3: </span>Language of Material</strong><a href="http://www.archiveshub.ac.uk/arch/lang.shtml" title="Language of Material help - opens in new window" target="_new"><img class="whatsthis" src="/ead/img/whatisthissmall.gif" alt="[What is this?]"/></a> [Must include <a href="http://www.loc.gov/standards/iso639-2/php/English_list.php" title="ISO 639-2 codes - opens new window" target="_new">ISO 639-2 3-letter code</a>]
      	<xsl:for-each select="did/langmaterial/@*">
      		<input type="hidden">
      			<xsl:attribute name="name">
