@@ -360,15 +360,21 @@
         <supports type="extension"
             c3:type="record"
             c3:function="recordMetadataHandler"
-            c3:sruName="archiveshub-2-record">http://www.archiveshub.ac.uk/srw/extension/2/record-1.1 rec
+            c3:sruName="cheshire3-2-record">http://www.cheshire3.org/sru/extension/2/record-1.1 rec
         </supports>
         
         <supports type="extension"
             c3:type="searchRetrieve"
             c3:function="resultSetSummaryHandler"
-            c3:sruName="archiveshub-2-resultSet">http://www.archiveshub.ac.uk/srw/extension/2/resultSet-1.1 rs
+            c3:sruName="cheshire3-2-resultSet">http://www.cheshire3.org/sru/extension/2/resultSet-1.1 rs
         </supports>
-
+        
+        <supports type="extension"
+            c3:type="searchRetrieve"
+            c3:function="resultSetFacetsHandler"
+            c3:sruName="cheshire3-2-facets">http://www.cheshire3.org/sru/extension/2/facets-1.0 fct
+        </supports>
+        
     </configInfo>
 
 </explain>
