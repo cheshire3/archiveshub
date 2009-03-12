@@ -4,7 +4,7 @@
 
 <!-- 
 	This file was produced, and released as part of Cheshire for Archives v3.x.
-	Copyright &#169; 2005-2008 the University of Liverpool
+	Copyright &#169; 2005-2009 the University of Liverpool
  -->
 
 	<serverInfo protocol="srw/u" version="1.1" transport="http">
@@ -21,7 +21,7 @@
 	</databaseInfo>
 
 	<metaInfo>
-		<dateModified>2007-06-28 15:00:00</dateModified>
+		<dateModified>2009-03-16 16:30:00</dateModified>
 	</metaInfo>
 
 	<indexInfo>
@@ -372,7 +372,7 @@
         <supports type="extension"
             c3:type="searchRetrieve"
             c3:function="resultSetFacetsHandler"
-            c3:sruName="cheshire3-2-facets">http:/srw.cheshire3.org/extension/2/facets-1.0 fct
+            c3:sruName="cheshire3-2-facets">http://srw.cheshire3.org/extension/2/facets-1.0 fct
         </supports>
         
     </configInfo>
