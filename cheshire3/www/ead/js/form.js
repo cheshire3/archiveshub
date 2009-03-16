@@ -1912,8 +1912,10 @@ function enableMenuButtons(){
 			inputs[i].removeAttribute('disabled');
 		}
 	}
-	var select = document.getElementById('userSelect');
-	select.removeAttribute('disabled');
+	if (document.getElementById('userSelect')){
+		var select = document.getElementById('userSelect');
+		select.removeAttribute('disabled');
+	}
 }
 
 
