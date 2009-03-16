@@ -250,7 +250,8 @@ function refreshSubTrees(listObj, level, rootListId, listTag){
 	      	var nextSubList = listItems[i].getElementsByTagName( listTag )[0];
 	      	if( nextSubList ) {    	      			
 	      		var image = listItems[i].getElementsByTagName('IMG')[0];
-				if (image.getAttribute('src') == expandedUrl || image.getAttribute('src') == collapsedUrl){
+	      		source = image.getAttribute('src');
+				if (source.substring(source.lastIndexOf('/')) == '/folderOpen.gif' || source.substring(source.lastIndexOf('/')) == '/folderClosed.gif'){
 					var span = listItems[i].getElementsByTagName('SPAN')[0];
 					span.firstChild.nodeValue = ' {' + nextSubList.getElementsByTagName('li').length + ' entries}';			
 				}
