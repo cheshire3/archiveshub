@@ -340,7 +340,15 @@ function addAccessPoint(s){
     	alert("You must give a " + reqfields[0].split('_', 2)[1] + " for this access point.");
   	} 
  	else if (document.getElementById(s + '_source') && document.getElementById(s + '_source').value == ""){
-  		alert("You must give a source or specify a rule set for this access point."); 
+ 		if (s == 'subject'){
+ 			alert("You must supply a thesaurus for this access point."); 
+ 		}
+ 		else if (s == 'genreform' || s == 'function'){
+ 			alert("You must supply a source for this access point."); 
+ 		}
+ 		else {
+  			alert("You must supply a source or specify a rule set for this access point."); 
+  		}
   	}
   	else {
     	buildAccessPoint(s);

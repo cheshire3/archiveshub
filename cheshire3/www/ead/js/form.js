@@ -1902,6 +1902,7 @@ function checkButtons(){
 		document.getElementById('submit-button').setAttribute('title', 'File must be saved before this operation can be performed');		
 		document.getElementById('addC').setAttribute('disabled', 'true');
 		document.getElementById('addC').setAttribute('title', 'File must be saved before this operation can be performed');			
+		document.getElementById('collectionLevel').onclick = null;
 	}
 }
 
