@@ -31,10 +31,17 @@
     -->
     
     <xsl:template match="*">
-            <xsl:choose>
-        <xsl:when test="./@audience='internal'"/>
+        <xsl:variable name="tagname" select="local-name(.)"/>
+        <xsl:choose>
+            <xsl:when test="$tagname='ead' or $tagname='eadheader' or $tagname='eadid'">
+                <xsl:copy>
+                    <xsl:copy-of select="@*"/>
+                    <xsl:apply-templates />
+                </xsl:copy>
+            </xsl:when>
+            <xsl:when test="./@audience='internal'"/>
                 <!-- namespacify cheshire3 component wrapper -->
-                <xsl:when test="name(.)='c3:component' or local-name(.)='c3component'">
+                <xsl:when test="name(.)='c3:component' or $tagname='c3component'">
                     <c3:component>
                         <xsl:if test="./@parent">
                             <xsl:attribute name="c3:parent">
@@ -53,14 +60,14 @@
                         </xsl:if>
                         <xsl:apply-templates />
                     </c3:component>
-                </xsl:when>
-        <xsl:otherwise>
-                    <xsl:copy>
-                        <xsl:copy-of select="@*"/>
-                        <xsl:apply-templates />
-                    </xsl:copy>
-        </xsl:otherwise>
-            </xsl:choose>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:copy>
+                    <xsl:copy-of select="@*"/>
+                    <xsl:apply-templates />
+                </xsl:copy>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
     
     <!-- ARCHREF  -->

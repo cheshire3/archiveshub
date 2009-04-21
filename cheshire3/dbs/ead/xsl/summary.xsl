@@ -41,13 +41,15 @@
         </div>
         <div class="archdesc">
             <!-- TEMPLATES FOR MAIN BODY -->
-            	    <xsl:apply-templates select="./archdesc/scopecontent"/>
-            	    <xsl:apply-templates select="./archdesc/bioghist"/>
-            <!--	    <xsl:apply-templates select="./archdesc/*/acqinfo"/>-->
-            	    <xsl:apply-templates select="./archdesc/*/accessrestrict"/>
-            <!--	    <xsl:apply-templates select="./archdesc/*/otherfindaid"/>-->
-            <!--	    <xsl:apply-templates select="./archdesc/*/relatedmaterial"/>-->
-            <xsl:apply-templates select="./archdesc/controlaccess"/>
+    	    <xsl:apply-templates select="./archdesc/scopecontent|./archdesc/descgrp/scopecontent"/>
+    	    <xsl:apply-templates select="./archdesc/bioghist|./archdesc/descgrp/bioghist"/>
+            <!--	    <xsl:apply-templates select="./archdesc/acqinfo|./archdesc/descgrp/acqinfo"/>-->
+    	    <xsl:apply-templates select="./archdesc/accessrestrict|./archdesc/descgrp/accessrestrict"/>
+            <xsl:apply-templates select="./archdesc/userestrict|./archdesc/descgrp/userestrict"/>
+            <!--	    <xsl:apply-templates select="./archdesc/otherfindaid|./archdesc/descgrp/otherfindaid"/>-->
+            <!--	    <xsl:apply-templates select="./archdesc/relatedmaterial|./archdesc/descgrp/relatedmaterial"/>-->
+            <xsl:apply-templates select="./archdesc/controlaccess|./archdesc/descgrp/controlaccess"/>
+            
         </div>
         <xsl:if test="$count_subordinates_in_summary">
             <xsl:variable name="sub_count" select="count(./archdesc/dsc/c|./archdesc/dsc/c01)"/>
@@ -81,15 +83,15 @@
 	</div>
 	<br/>
         <!-- TEMPLATES FOR MAIN BODY -->
-        <xsl:apply-templates select="./*/scopecontent"/>
-        <xsl:apply-templates select="./*/bioghist"/>
-        <xsl:apply-templates select="./*/acqinfo"/>
-        <xsl:apply-templates select="./*/accessrestrict"/>
-        <xsl:apply-templates select="./*/userestrict"/>
-        <xsl:apply-templates select="./*/otherfindaid"/>
-        <xsl:apply-templates select="./*/relatedmaterial"/>
-        <xsl:apply-templates select="./*/controlaccess"/>
-	
+        <xsl:apply-templates select="./*/scopecontent|./*/descgrp/scopecontent"/>
+        <xsl:apply-templates select="./*/bioghist|./*/descgrp/bioghist"/>
+<!--        <xsl:apply-templates select="./*/acqinfo|./*/descgrp/acqinfo"/>-->
+        <xsl:apply-templates select="./*/accessrestrict|./*/descgrp/accessrestrict"/>
+        <xsl:apply-templates select="./*/userestrict|./*/descgrp/userestrict"/>
+<!--        <xsl:apply-templates select="./*/otherfindaid|./*/descgrp/otherfindaid"/>-->
+<!--        <xsl:apply-templates select="./*/relatedmaterial|./*/descgrp/relatedmaterial"/>-->
+        <xsl:apply-templates select="./*/controlaccess|./*/descgrp/controlaccess"/>
+        
         <xsl:if test="$count_subordinates_in_summary">
             <xsl:variable name="sub_count" select="count(./c/c|./c01/c02|./c02/c03|./c03/c04|./c04/c05|./c05/c06|./c06/c07|./c07/c08|./c08/c09|./c09/c10|./c10/c11|./c11/c12)"/>
             <xsl:variable name="all_count" select="count(.//c|.//c01|.//c02|.//c03|.//c04|.//c05|.//c06|.//c07|.//c08|.//c09|.//c10|.//c11|.//c12)"/>	

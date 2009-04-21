@@ -233,14 +233,13 @@
 	<xsl:template match="archdesc">
 		<!--TEMPLATES FOR MAIN BODY-->
 		<xsl:apply-templates select="./did/abstract"/>
-		<xsl:apply-templates select="./scopecontent"/>
-		<xsl:apply-templates select="./bioghist"/>
-		<xsl:apply-templates select="./arrangement"/>
-		<xsl:apply-templates select="./descgrp" />
+		<xsl:apply-templates select="./scopecontent|./descgrp/scopecontent"/>
+		<xsl:apply-templates select="./bioghist|./descgrp/bioghist"/>
+		<xsl:apply-templates select="./arrangement|./descgrp/arrangement"/>
 	
 		<xsl:if test="./admininfo">
 			<div class="admininfo">
-		  	<xsl:apply-templates select="./admininfo" />
+		  	   <xsl:apply-templates select="./admininfo" />
 			</div>
 		</xsl:if>
 		
@@ -251,31 +250,31 @@
 		</xsl:if>
 		
 		<!-- ACCESS + USE RESTRICTIONS -->
-		<xsl:apply-templates select="./accessrestrict"/>
-		<xsl:apply-templates select="./userestrict"/>
-        <xsl:apply-templates select="./phystech"/>
+		<xsl:apply-templates select="./accessrestrict|./descgrp/accessrestrict"/>
+		<xsl:apply-templates select="./userestrict|./descgrp/userestrict"/>
+        <xsl:apply-templates select="./phystech|./descgrp/phystech"/>
         
 		<!-- ADMINISTRATIVE INFORMATION / ARCHIVAL HISTORY-->
-		<xsl:apply-templates select="./appraisal"/>
-		<xsl:apply-templates select="./acqinfo"/>
-		<xsl:apply-templates select="./custodhist"/>
-		<xsl:apply-templates select="./accruals"/>
-		<xsl:apply-templates select="./processinfo"/>
+		<xsl:apply-templates select="./appraisal|./descgrp/appraisal"/>
+		<xsl:apply-templates select="./acqinfo|./descgrp/acqinfo"/>
+		<xsl:apply-templates select="./custodhist|./descgrp/custodhist"/>
+		<xsl:apply-templates select="./accruals|./descgrp/accruals"/>
+		<xsl:apply-templates select="./processinfo|./descgrp/processinfo"/>
 		<!-- USER INFO -->
-		<xsl:apply-templates select="./otherfindaid"/>
-		<xsl:apply-templates select="./originalsloc"/>
-		<xsl:apply-templates select="./altformavail"/>
-		<xsl:apply-templates select="./relatedmaterial"/>
-		<xsl:apply-templates select="./separatedmaterial"/>
+		<xsl:apply-templates select="./otherfindaid|./descgrp/otherfindaid"/>
+		<xsl:apply-templates select="./originalsloc|./descgrp/originalsloc"/>
+		<xsl:apply-templates select="./altformavail|./descgrp/altformavail"/>
+		<xsl:apply-templates select="./relatedmaterial|./descgrp/relatedmaterial"/>
+		<xsl:apply-templates select="./separatedmaterial|./descgrp/separatedmaterial"/>
 		<!-- BIBLIOGRAPHY / CITATIONS -->
-		<xsl:apply-templates select="./bibliography"/>
-		<xsl:apply-templates select="./prefercite"/>
+		<xsl:apply-templates select="./bibliography|./descgrp/bibliography"/>
+		<xsl:apply-templates select="./prefercite|./descgrp/prefercite"/>
 		<!-- MISCELLANEOUS -->
 		<xsl:apply-templates select="./odd"/>
 		<xsl:apply-templates select="./note" mode="own-section"/>
 		
 		<!-- CONTROLACCESS -->
-		<xsl:apply-templates select="./controlaccess"/>
+		<xsl:apply-templates select="./controlaccess|./descgrp/controlaccess"/>
 		<xsl:text> </xsl:text> 
 	</xsl:template>
 
