@@ -68,31 +68,31 @@ class EadEditingHandler(EadHandler):
 
 # Dictionaries of punctuation  one string means that it goes after the values two strings are either side first before second after
     
-    persnamePunct = {'a': [', '],
-                     'forename': ['. '],
-                     'y': ['(', ') '],
-                     'epithet': [', ']
+    persnamePunct = {'a': [u',\u00A0'],
+                     'forename': [u'.\u00A0'],
+                     'y': [u'(', u')\u00A0'],
+                     'epithet': [u',\u00A0']
                      }
     
-    famnamePunct = {'a': [' family. '],
-                    'title':['. '],
-                    'y': ['(', ') '],
-                    'z':['. ']
+    famnamePunct = {'a': [u'\u00A0family.\u00A0'],
+                    'title':[u'.\u00A0'],
+                    'y': [u'(', u')\u00A0'],
+                    'z':[u'.\u00A0']
                     }
     
-    corpnamePunct = {'x': [' -- ', ' '],
-                     'y': ['(', ') '],
-                     'z': [' -- ', ' ']                            
+    corpnamePunct = {'x': [u'\u00A0--\u00A0', u'\u00A0'],
+                     'y': [u'(', u')\u00A0'],
+                     'z': [u'\u00A0--\u00A0', u'\u00A0']                            
                      }
     
-    subjectPunct = {'x': [' -- ', ' '],
-                     'y': [' -- ', ' '],
-                     'z': [' -- ', ' ']                            
+    subjectPunct = {'x': [u'\u00A0--\u00A0', u'\u00A0'],
+                     'y': [u'\u00A0--\u00A0', u'\u00A0'],
+                     'z': [u'\u00A0--\u00A0', u'\u00A0']                            
                      }
     
-    geognamePunct = {'x': [' -- ', ' '],
-                     'y': [' -- ', ' '],
-                     'z': [' -- ', ' ']
+    geognamePunct = {'x': [u'\u00A0--\u00A0', u'\u00A0'],
+                     'y': [u'\u00A0--\u00A0', u'\u00A0'],
+                     'z': [u'\u00A0--\u00A0', u'\u00A0']
                      }
 
     typeDict = {'persname': persnamePunct, 'famname': famnamePunct, 'corpname': corpnamePunct, 'subject': subjectPunct, 'geogname': geognamePunct}
@@ -309,8 +309,7 @@ class EadEditingHandler(EadHandler):
                     if 'desc' in keys:
                         descelem = etree.Element('daodesc')
                         self._add_text(descelem, dao['desc'])
-                        daoelem.append(descelem)
-                      
+                        daoelem.append(descelem)                     
             else:
                 hrefpresent = False
                 hrefs = []
@@ -333,11 +332,7 @@ class EadEditingHandler(EadHandler):
                         self._add_text(descelem, dao['desc'])
                         daoelem.append(descelem)
                       
-                        
-            
-            
-
-            
+        
     def _delete_path(self, startNode, nodePath):
         if not (startNode.xpath(nodePath)) :
             return 
@@ -536,7 +531,7 @@ class EadEditingHandler(EadHandler):
                                 type[-1].tail = '%s%s' % (type[-1].tail, punct[0])
                                 emph.tail = punct[1]
                         else:
-                            emph.tail = ' '
+                            emph.tail = u'\u00A0'
                     type.append(emph)    
         lastTail = type[-1].tail   
         if re.match('(\s+)?[,\.\-](\s+)?', lastTail):
@@ -712,28 +707,31 @@ class EadEditingHandler(EadHandler):
         # TODO: handle file not successfully parsed
         if not isinstance(rec, LxmlRecord):
             return rec 
-        #add necessary information to record and get id'
-        rec1 = self._add_revisionDesc(rec, f)
-        rec2 = assignDataIdFlow.process(session, rec1)
-        recid = rec2.id       
-        id = '%s-%s' % (recid, session.user.username.encode('ascii', 'ignore'))
-        rec2.id = id
-        self.log('record has id %s' % recid)
-        #if the file exists in the record store load from there (fixes problems with back button)
-        try:
-            rec2 = editStore.fetch_record(session, id)
-        except:
-        #otherwise store in editing store
-            editStore.store_record(session, rec2)
-#        editStore.commit_storing(session) 
-
-        structure = read_file('ead2002.html')
-        htmlform = formTxr.process_record(session, rec2).get_raw(session)
-        page = structure.replace('%FRM%', htmlform)
-        page = page.replace('%RECID%', '<input type="hidden" id="recid" value="%s"/>' % (recid.encode('ascii')))
-        page = page.replace('%PUI%', '<input type="text" onfocus="setCurrent(this);" name="pui" id="pui" size="30" disabled="true" value="%s"/><input type="hidden" id="filename" value="%s"/>' % (recid.encode('ascii'), f))
-        page = page.replace('%TOC%', tocTxr.process_record(session, rec2).get_raw(session))
-        return page    
+        if rec.process_xpath(session, '/ead/eadheader'):
+            #add necessary information to record and get id'
+            rec1 = self._add_revisionDesc(rec, f)
+            rec2 = assignDataIdFlow.process(session, rec1)
+            recid = rec2.id       
+            id = '%s-%s' % (recid, session.user.username.encode('ascii', 'ignore'))
+            rec2.id = id
+            self.log('record has id %s' % recid)
+            #if the file exists in the record store load from there (fixes problems with back button)
+            try:
+                rec2 = editStore.fetch_record(session, id)
+            except:
+            #otherwise store in editing store
+                editStore.store_record(session, rec2)
+    #        editStore.commit_storing(session) 
+    
+            structure = read_file('ead2002.html')
+            htmlform = formTxr.process_record(session, rec2).get_raw(session)
+            page = structure.replace('%FRM%', htmlform)
+            page = page.replace('%RECID%', '<input type="hidden" id="recid" value="%s"/>' % (recid.encode('ascii')))
+            page = page.replace('%PUI%', '<input type="text" onfocus="setCurrent(this);" name="pui" id="pui" size="30" disabled="true" value="%s"/><input type="hidden" id="filename" value="%s"/>' % (recid.encode('ascii'), f))
+            page = page.replace('%TOC%', tocTxr.process_record(session, rec2).get_raw(session))
+            return page    
+        else:
+            return '<p>Your file is not compatible with the editing interface - it requires an eadheader element</p>'
          
     def upload_local(self, form):
         f = form.get('filepath', None)
@@ -748,42 +746,45 @@ class EadEditingHandler(EadHandler):
         if not isinstance(rec, LxmlRecord):
             return rec
         rec = self._add_componentIds(rec)     
-        #add necessary information to record and get id'
-        rec = self._add_revisionDesc(rec, '', True)
-        rec1 = assignDataIdFlow.process(session, rec)
-        recid = rec1.id   
-        
-        idCheck = self.checkExistingId(rec1.id)
-        if idCheck[0] == True:
-            if idCheck[1] == 'recordStore':
-                 self.log('Already in database')
-                 return '<p>The file you have requested cannot be uplaoaded because a file with the same ID already exists in your spoke database. <br /><br />In order to edit this file you must import it from the spoke database rather than uploading from your local file store.</p><br /><a href="/ead/edit/editmenu.html">Back to Create/Edit Menu</a>'
-            else:
-                if idCheck[2] == True:
-                    self.log('Already in draft file store')
-                    return '<p>You already have this file open for editing as %s. <br /><br />To continue editing the version of the file in the Draft File Store click <a href="/ead/edit/?operation=load&user=null&recid=%s-%s">here</a>. (if you reached this page by using the back button from a preview of the record then this will take you back to the record you were editing)<br/><br/> To edit the version from your local file store please delete the file currently in the Draft File Store before reloading</p><br /><a href="/ead/edit/editmenu.html">Back to Create/Edit Menu</a>' % (rec1.id, rec1.id, session.user.username.encode('ascii', 'ignore'))
-                else :
-                    pass
-                
-
-        id = '%s-%s' % (recid, session.user.username.encode('ascii', 'ignore'))
-        rec1.id = id
-        self.log('record has id %s' % recid)
-        #if the file exists in the record store load from there (fixes problems with back button)
-        try:
-            rec1 = editStore.fetch_record(session, id)
-        except:
-        #otherwise store in editing store
-            editStore.store_record(session, rec1)
-#        editStore.commit_storing(session) 
-
-        structure = read_file('ead2002.html')
-        htmlform = formTxr.process_record(session, rec1).get_raw(session)
-        page = structure.replace('%FRM%', htmlform)
-        page = page.replace('%RECID%', '<input type="hidden" id="recid" value="%s"/>' % (recid.encode('ascii')))
-        page = page.replace('%PUI%', '<input type="text" onfocus="setCurrent(this);" name="pui" id="pui" size="30" disabled="true" value="%s"/>' % (recid.encode('ascii')))
-        page = page.replace('%TOC%', tocTxr.process_record(session, rec1).get_raw(session))
-        return page
+        if rec.process_xpath(session, '/ead/eadheader'):
+            #add necessary information to record and get id'
+            rec = self._add_revisionDesc(rec, '', True)
+            rec1 = assignDataIdFlow.process(session, rec)
+            recid = rec1.id   
+            
+            idCheck = self.checkExistingId(rec1.id)
+            if idCheck[0] == True:
+                if idCheck[1] == 'recordStore':
+                     self.log('Already in database')
+                     return '<p>The file you have requested cannot be uplaoaded because a file with the same ID already exists in your spoke database. <br /><br />In order to edit this file you must import it from the spoke database rather than uploading from your local file store.</p><br /><a href="/ead/edit/editmenu.html">Back to Create/Edit Menu</a>'
+                else:
+                    if idCheck[2] == True:
+                        self.log('Already in draft file store')
+                        return '<p>You already have this file open for editing as %s. <br /><br />To continue editing the version of the file in the Draft File Store click <a href="/ead/edit/?operation=load&user=null&recid=%s-%s">here</a>. (if you reached this page by using the back button from a preview of the record then this will take you back to the record you were editing)<br/><br/> To edit the version from your local file store please delete the file currently in the Draft File Store before reloading</p><br /><a href="/ead/edit/editmenu.html">Back to Create/Edit Menu</a>' % (rec1.id, rec1.id, session.user.username.encode('ascii', 'ignore'))
+                    else :
+                        pass
+                    
+    
+            id = '%s-%s' % (recid, session.user.username.encode('ascii', 'ignore'))
+            rec1.id = id
+            self.log('record has id %s' % recid)
+            #if the file exists in the record store load from there (fixes problems with back button)
+            try:
+                rec1 = editStore.fetch_record(session, id)
+            except:
+            #otherwise store in editing store
+                editStore.store_record(session, rec1)
+    #        editStore.commit_storing(session) 
+    
+            structure = read_file('ead2002.html')
+            htmlform = formTxr.process_record(session, rec1).get_raw(session)
+            page = structure.replace('%FRM%', htmlform)
+            page = page.replace('%RECID%', '<input type="hidden" id="recid" value="%s"/>' % (recid.encode('ascii')))
+            page = page.replace('%PUI%', '<input type="text" onfocus="setCurrent(this);" name="pui" id="pui" size="30" disabled="true" value="%s"/>' % (recid.encode('ascii')))
+            page = page.replace('%TOC%', tocTxr.process_record(session, rec1).get_raw(session))
+            return page
+        else:
+            return '<p>Your file is not compatible with the editing interface - it requires an eadheader element</p>'
         
     
     def _get_timeStamp(self):
@@ -1038,6 +1039,7 @@ class EadEditingHandler(EadHandler):
             rec.id = retrievedRec.id
             editStore.store_record(session, rec)
 #            editStore.commit_storing(session)
+            self.log(rec.get_xml(session))
             return (recid, valid)       
         #check if C exists, if not add it, if so replace it
         else :
@@ -1140,6 +1142,7 @@ class EadEditingHandler(EadHandler):
                 rec.id = retrievedRec.id
                 editStore.store_record(session, rec)
 #                editStore.commit_storing(session)
+            
             self.log('saving complete')
             return (recid, valid)
   
