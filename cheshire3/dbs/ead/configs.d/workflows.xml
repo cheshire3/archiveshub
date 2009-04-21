@@ -21,6 +21,25 @@
         </workflow>
     </subConfig>
     
+    <subConfig type="workflow" id="highlightSruFilterWorkflow">
+        <objectType>cheshire3.workflow.CachingWorkflow</objectType>
+        <workflow>
+            <!-- input type:  record -->
+            <object type="transformer" ref="highlightTxr"/>
+            <object type="parser" ref="LxmlParser"/>
+            <object type="transformer" ref="sruOutgoingTxr"/>
+        </workflow>
+    </subConfig>
+    
+    <subConfig type="workflow" id="highlightSummaryTxrWorkflow">
+        <objectType>cheshire3.workflow.CachingWorkflow</objectType>
+        <workflow>
+            <!-- input type:  record -->
+            <object type="transformer" ref="highlightTxr"/>
+            <object type="parser" ref="LxmlParser"/>
+            <object type="transformer" ref="htmlSummaryTxr"/>
+        </workflow>
+    </subConfig>
     
     <subConfig type="workflow" id="buildIndexWorkflow">
         <objectType>cheshire3.workflow.CachingWorkflow</objectType>
@@ -69,20 +88,21 @@
             <assign from="input.id" to="identifier"/>
             <object type="transformer" ref="eadDublinCoreTxr"/>
             <!-- type: document -->
+            <assign from="input" to="doc"/>
             <try>
                 <object type="parser" ref="LxmlParser"/>
+                <assign from="identifier" to="input.id"/>
+                <try>
+                    <object type="recordStore" ref="eadDcStore" function="store_record"/>
+                </try>
+                <except>
+                    <log level="warning">"*** duplicate DC record"</log>
+                </except>
             </try>
             <except>
             	<log level="warning">"" + str(err)</log>
-            	<log level="warning">"" + input.get_raw(session)</log>
-            	<log level="warning">"*** " + input.id + " DC record unparsable"</log>
-            </except>
-            <assign from="identifier" to="input.id"/>
-            <try>
-                <object type="recordStore" ref="eadDcStore" function="store_record"/>
-            </try>
-            <except>
-                <log level="warning">"*** duplicate DC record"</log>
+            	<log level="warning">"" + doc.get_raw(session)</log>
+            	<log level="warning">"*** " + identifier + " DC record unparsable"</log>
             </except>
         </workflow>
     </subConfig>

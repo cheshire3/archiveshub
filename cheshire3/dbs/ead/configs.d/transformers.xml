@@ -14,11 +14,27 @@
 	      </paths>
 	    </subConfig>
         
+        <subConfig type="transformer" id="sruHighlightingTxr">
+          <objectType>cheshire3.transformer.WorkflowTransformer</objectType>
+          <paths>
+             <object type="workflow" ref="highlightSruFilterWorkflow"/>
+          </paths>
+        </subConfig>
+        
         <subConfig type="transformer" id="oaiOutgoingTxr">
           <objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
           <paths>
              <path type="xsltPath">xsl/oaiOut.xsl</path>
           </paths>
+        </subConfig>
+
+        <subConfig type="transformer" id="highlightTxr">
+          <objectType>cheshire3.transformer.LxmlOffsetQueryTermHighlightingTransformer</objectType>
+          <options>
+            <setting type="highlightTag">emph</setting>
+            <setting type="tagAttrList">altrender="queryTerm"</setting>
+            <setting type="breakElementsList">dsc</setting>
+          </options>
         </subConfig>
 	    
 	    <subConfig type="transformer" id="htmlFullTxr">

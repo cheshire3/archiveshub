@@ -16,9 +16,9 @@
             <path type="defaultPath">indexes</path>
             <path type="tempPath">temp</path>
             <path type="recordStoreHash">recordStore componentStore</path>  
-        </paths> 
+        </paths>
     </subConfig>
-	
+    
 	<!-- Custom normalizers -->
 		
     <subConfig type="normalizer" id="StoplistNormalizer">
