@@ -1,33 +1,39 @@
-#!/home/cheshire/install/bin/python
+#!/home/cheshire/cheshire3/install/bin/python
 #
 # Script:    run.py
-# Date:      18 August 2008
-# Copyright: &copy; University of Liverpool 2005-2008
-# Description:
-#            script for maintaining a Cheshire3 database of EAD finding aid documents.
-#            - includes building, indexing and user creation/editing
-#            - part of Cheshire for Archives v3
-#
+# Date:      17 March 2009
+# Copyright: &copy; University of Liverpool 2005-2009
 # Author(s): JH - John Harrison <john.harrison@liv.ac.uk>
-#
 # Language:  Python
 #
+u"""Build and maintain a Cheshire3 database of EAD finding aid documents.
 
-import sys, os, re, getpass, time, traceback
+Includes building, indexing, and user creation and editing
+Part of Cheshire for Archives v3
+
+Usage: run.py [OPTIONS]
+
+Options:
+
+-h, -?, --help, --options        print help and exit
+-adduser                         add a new administrative user
+-load                            load and index full records
+-index                           index all records already loaded
+-load_cs, -load_components       extract components, load and index them
+-index_cs, -index_components     index all components already loaded
+-cluster                         complete cluster indexing (used by subject finder)
+-cache                           build HTML copies of larger records
+
+"""
+import sys
+
+# quick check if they asked for help
+if ('-h' in sys.argv) or ('-?' in sys.argv) or ('--help' in sys.argv) or ('--options' in sys.argv):
+    print __doc__
+    sys.exit()
+
+import os, re, getpass, time, traceback
 from crypt import crypt
-
-# quick check if they asked for options
-if ('-h' in sys.argv) or ('--help' in sys.argv) or ('--options' in sys.argv):
-    print '\n'.join([
-        '-adduser'.ljust(30) + 'add a new administrative user',
-        '-load'.ljust(30) + 'load and index full records',
-        '-index'.ljust(30) + 'index all records already loaded',
-        '-load_cs, -load_components'.ljust(30) + 'extract components, load and index them',
-        '-index_cs, -index_components'.ljust(30) + 'index all components already loaded',
-        '-cluster'.ljust(30) + 'complete cluster indexing (used by subject finder)',
-        '-cache'.ljust(30) + 'build HTML copies of larger records'
-        ])
-    sys.exit()    
     
 cheshirePath = os.environ.get('C3HOME', '/home/cheshire/')
 sys.path.insert(1, os.path.join(cheshirePath, 'cheshire3', 'code'))
@@ -56,7 +62,6 @@ clusDocFac = db.get_object(session, 'clusterDocumentFactory')
 
 clusDb = serv.get_object(session, 'db_ead_cluster')
 clusRecordStore = clusDb.get_object(session, 'eadClusterStore')
-
 
 xmlp = db.get_object(session, 'LxmlParser')
 
@@ -144,30 +149,7 @@ else :
             (hours, mins) = divmod(mins, 60)
             lgr.log_info(session, 'Indexing complete (%dh %dm %ds)' % (hours, mins, secs))
         
-        #if ('-cluster' in sys.argv):
-        #    start = time.time()
-        #    # set session.database to the cluster DB
-        #    session.database = clusDb.id
-        #    # build necessary objects
-        #    clusDb.clear_indexes(session)
-        #    clusFlow = clusDb.get_object(session, 'buildClusterWorkflow')
-        #    clusDocFac = clusDb.get_object(session, 'clusterDocumentFactory')
-        #    try:
-        #        clusDocFac.load(session)
-        #    except c3errors.FileDoesNotExistException:
-        #        # return session.database to the default (finding aid) DB
-        #        print '*** No cluster data present.'
-        #    else:
-        #        print 'Clustering subjects...'
-        #        clusFlow.process(session, clusDocFac)
-        #    
-        #    (mins, secs) = divmod(time.time() - start, 60)
-        #    (hours, mins) = divmod(mins, 60)
-        #    print 'Cluster Indexing complete (%dh %dm %ds)' % (hours, mins, secs)
-        #    # return session.database to the default (finding aid) DB
-        #    session.database = db.id
-            
-        
+
         if ('-load_components' in sys.argv) or ('-load_cs' in sys.argv):
             start = time.time()
             compFlow = db.get_object(session, 'buildAllComponentWorkflow')

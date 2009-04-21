@@ -337,6 +337,11 @@
                         c3:transformer="OAIDublinCoreTransformer">
 	           <title>OAI Unqualified Dublin Core</title>
 		</schema>
+        <schema identifier="http://cheshire3.org/ns/highlight/ead-2002"
+                sort="true" retrieve="true" name="ead-highlight"
+                c3:transformer="sruHighlightingTxr">
+                <title>Encoded Archival Description (EAD) DTD Version 2002 - with search term highlighting.</title>
+        </schema>
 	</schemaInfo>
 
     <configInfo>
