@@ -113,7 +113,7 @@
 				<xsl:apply-templates select="did/unittitle"/>
 			</xsl:when>
 			<xsl:otherwise>
-				<input class="menuField" type="text" onfocus="setCurrent(this);" name="did/unittitle" id="did/unittitle" size="80" onchange="updateTitle(this)" onkeypress="validateFieldDelay(this, 'true');"></input>
+				<input class="menuField" type="text" onfocus="setCurrent(this);" name="did/unittitle" id="did/unittitle" size="80" onchange="updateTitle(this)" onkeypress="validateFieldDelay(this, 'true');" onblur="validateField(this, 'true');"></input>
 			</xsl:otherwise>
 		</xsl:choose>		
     </p>
@@ -127,7 +127,7 @@
 				<xsl:apply-templates select="did/unittitle/unitdate"/>
 			</xsl:when>
 			<xsl:otherwise>
-				<input class="menuField" type="text" onfocus="setCurrent(this);" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" name="did/unitdate" id="did/unitdate" size="39"></input>
+				<input class="menuField" type="text" onfocus="setCurrent(this);" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onblur="validateField(this, 'true');" name="did/unitdate" id="did/unitdate" size="39"></input>
 			</xsl:otherwise>
 		</xsl:choose>      
 		</p>
@@ -208,7 +208,7 @@
 				<xsl:apply-templates select="did/physdesc/extent"/>
 			</xsl:when>
 			<xsl:otherwise>
-				<input class="menuField" type="text" onfocus="setCurrent(this);" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" name="did/physdesc/extent" id="did/physdesc/extent" size="80"></input>
+				<input class="menuField" type="text" onfocus="setCurrent(this);" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onblur="validateField(this, 'true');" name="did/physdesc/extent" id="did/physdesc/extent" size="80"></input>
 			</xsl:otherwise>
 		</xsl:choose>		
     </p>
@@ -222,7 +222,7 @@
 					<xsl:apply-templates select="did/repository"/>
 				</xsl:when>
 				<xsl:otherwise>
-					<input class="menuField" type="text" onfocus="setCurrent(this);" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" name="did/repository" id="did/repository" size="80"></input>
+					<input class="menuField" type="text" onfocus="setCurrent(this);" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onblur="validateField(this, 'true');" name="did/repository" id="did/repository" size="80"></input>
 				</xsl:otherwise>
 			</xsl:choose>
 	  	</p>
@@ -235,7 +235,7 @@
 					<strong>Sponsor</strong><a id="sponsorhelp" name="sponsorhelp" target="_new" href="http://www.archiveshub.ac.uk/arch/sponsor.shtml ">
 		<img class="whatsthis" src="/ead/img/whatisthissmall.gif" alt="[What is this?]"/>
 		</a><a class="smalllink" id="linkfiledesc/titlestmt/sponsor" title="add sponsor" onclick="addElement('filedesc/titlestmt/sponsor')">add content</a> [optional]<br/>
-					<input class="menuField" type="text" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" name="filedesc/titlestmt/sponsor" id="filedesc/titlestmt/sponsor" size="80" style="display:none"></input>
+					<input class="menuField" type="text" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onblur="validateField(this, 'true');" onfocus="setCurrent(this);" name="filedesc/titlestmt/sponsor" id="filedesc/titlestmt/sponsor" size="80" style="display:none"></input>
 				</xsl:otherwise>
 			</xsl:choose>
 	  	</p>  
@@ -253,7 +253,7 @@
 				<xsl:apply-templates select="did/origination"/>
 			</xsl:when>
 			<xsl:otherwise>
-				<input class="menuField" type="text" onfocus="setCurrent(this);" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" name="did/origination" id="did/origination" size="80"></input>
+				<input class="menuField" type="text" onfocus="setCurrent(this);" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onblur="validateField(this, 'true');" name="did/origination" id="did/origination" size="80"></input>
 			</xsl:otherwise>
 		</xsl:choose>		
     	</p>
@@ -698,7 +698,6 @@
 	</xsl:choose>
 	</p>
 <!-- otherfindaid -->	
-	<xsl:if test="$leveltype = 'collection'">
 	<p>
 	<xsl:variable name="content">
 		<xsl:choose>
@@ -736,8 +735,7 @@
 			</xsl:call-template>	
 		</xsl:otherwise>
 	</xsl:choose>
-	</p>	
-	</xsl:if>	     					
+	</p>	   					
 	</div>
 <!--  -->
 <!-- ALLIED MATERIALS -->
@@ -1250,9 +1248,9 @@
 			<div id="persnametable" class="tablecontainer">					
 				<table id="table_persname"><tbody>					
 				  	<tr NoDrop="true" NoDrag="true"><td class="label"> Surname:</td><td> <input type="text" onfocus="setCurrent(this);" id="persname_surname" size="40"></input></td></tr>
+				  	<tr NoDrop="true" NoDrag="true"><td class="label"> Forename:</td><td> <input type="text" onfocus="setCurrent(this);" id="persname_forename" size="40"></input></td></tr>
 				  	<tr NoDrop="true" NoDrag="true"><td class="label"> Source:</td><td> <input type="text" onfocus="setCurrent(this);" id="persname_source" size="40"></input></td></tr>
 				  	<tr NoDrop="true" NoDrag="true"><td><select onfocus="setCurrent(this);" id="persnamedropdown">
-				  		<option value="persname_forename">Forename</option>
 			    		<option value="persname_dates">Dates</option>
 			    		<option value="persname_title">Title</option>
 			    		<option value="persname_epithet">Epithet</option>
@@ -1469,7 +1467,7 @@
 		<div id="function" class="apcontainer">
 			<p><strong>Function</strong><a id="functionhelp" name="functionhelp" target="_new" href="http://www.archiveshub.ac.uk/arch/function.shtml">
 		<img class="whatsthis" src="/ead/img/whatisthissmall.gif" alt="[What is this?]"/>
-		</a><br/><a class="extSearch" onclick="window.open('http://www.getty.edu/research/conducting_research/vocabularies/aat/', 'new');">[Search AAT]</a><xsl:text> </xsl:text><a class="extSearch" onclick="window.open('http://www.naa.gov.au/records-management/create-capture-describe/describe/agift/index.aspx', 'new');">[Search AGIFT]</a></p>
+		</a><br/><a class="extSearch" onclick="window.open('http://www.jisc.ac.uk/publications/publications/recordssrlstructure/fama.aspx', 'new');">[Search JISC]</a><xsl:text> </xsl:text><a class="extSearch" onclick="window.open('http://www.getty.edu/research/conducting_research/vocabularies/aat/', 'new');">[Search AAT]</a><xsl:text> </xsl:text><a class="extSearch" onclick="window.open('http://www.naa.gov.au/records-management/create-capture-describe/describe/agift/index.aspx', 'new');">[Search AGIFT]</a></p>
 			<xsl:choose>
 				<xsl:when test="controlaccess/function">
 					<xsl:call-template name="accesspoint">
@@ -1695,7 +1693,7 @@
   </xsl:template>
   
   <xsl:template match="did/unittitle">
-  	<input class="menuField" type="text" onfocus="setCurrent(this);" name="did/unittitle" id="did/unittitle" size="80" onchange="updateTitle(this)" onkeypress="validateFieldDelay(this, 'true');">
+  	<input class="menuField" type="text" onfocus="setCurrent(this);" name="did/unittitle" id="did/unittitle" size="80" onchange="updateTitle(this)" onkeypress="validateFieldDelay(this, 'true');" onblur="validateField(this, 'true');">
   		<xsl:attribute name="value">
   			<xsl:apply-templates/>
   		</xsl:attribute>
@@ -1703,7 +1701,7 @@
   </xsl:template>
     
   <xsl:template match="unitdate">
-  	<input class="menuField" type="text" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" name="did/unitdate" id="did/unitdate" size="39">
+  	<input class="menuField" type="text" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onblur="validateField(this, 'true');" onfocus="setCurrent(this);" name="did/unitdate" id="did/unitdate" size="39">
   		<xsl:attribute name="value">
   		  <xsl:apply-templates/>
   		</xsl:attribute>	
@@ -1719,7 +1717,7 @@
   </xsl:template>
   
   <xsl:template match="did/repository">
-  	<input class="menuField" type="text" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" name="did/repository" id="did/repository" size="80">
+  	<input class="menuField" type="text" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onblur="validateField(this, 'true');" onfocus="setCurrent(this);" name="did/repository" id="did/repository" size="80">
   		<xsl:attribute name="value">
   			<xsl:apply-templates/>
   		</xsl:attribute>
@@ -1730,7 +1728,7 @@
   	<strong>Sponsor</strong><a id="sponsorhelp" name="sponsorhelp" target="_new" href="http://www.archiveshub.ac.uk/arch/sponsor.shtml ">
 		<img class="whatsthis" src="/ead/img/whatisthissmall.gif" alt="[What is this?]"/>
 		</a><a class="smalllink" id="linkspo" title="add sponsor" onclick="addElement('filedesc/titlestmt/sponsor')">hide content</a> [optional]<br/>
-  	<input class="menuField" type="text" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" name="filedesc/titlestmt/sponsor" id="filedesc/titlestmt/sponsor" size="80">
+  	<input class="menuField" type="text" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onblur="validateField(this, 'true');" onfocus="setCurrent(this);" name="filedesc/titlestmt/sponsor" id="filedesc/titlestmt/sponsor" size="80">
   		<xsl:attribute name="value">
   			<xsl:apply-templates/>
   		</xsl:attribute>
@@ -1739,7 +1737,7 @@
   
   
   <xsl:template match="did/physdesc/extent">
-  	<input class="menuField" type="text" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" name="did/physdesc/extent" id="did/physdesc/extent" size="80">
+  	<input class="menuField" type="text" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onblur="validateField(this, 'true');" onfocus="setCurrent(this);" name="did/physdesc/extent" id="did/physdesc/extent" size="80">
   		<xsl:attribute name="value">
   			<xsl:apply-templates/>
   		</xsl:attribute>
@@ -1747,7 +1745,7 @@
   </xsl:template>
 
   <xsl:template match="did/origination">
-  	<input class="menuField" type="text" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" name="did/origination" id="did/origination" size="80">
+  	<input class="menuField" type="text" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onblur="validateField(this, 'true');" onfocus="setCurrent(this);"  name="did/origination" id="did/origination" size="80">
   		<xsl:attribute name="value">
   			<xsl:apply-templates/>
   		</xsl:attribute>
@@ -1857,7 +1855,7 @@
   		<xsl:with-param name="help" select="$help"/>  	
   		<xsl:with-param name="additional" select="$additional"/>  		
   	</xsl:call-template>
-  	<textarea onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80">
+  	<textarea onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onblur="validateField(this, 'true');" onfocus="setCurrent(this);" rows="5" cols="80">
   		<xsl:attribute name="name"><xsl:value-of select="$name"/></xsl:attribute>
   		<xsl:attribute name="id"><xsl:value-of select="$name"/></xsl:attribute>
   		<xsl:attribute name="class"><xsl:value-of select="$class"/></xsl:attribute>
@@ -1978,7 +1976,7 @@
   		</tr>
   		<tr><td class="label">Description: </td>
   			<td>
-  				<input size="70" type="text" onfocus="setCurrent(this);" class="menuField" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');">
+  				<input size="70" type="text" onfocus="setCurrent(this);" class="menuField" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onblur="validateField(this, 'true');">
   					<xsl:attribute name="name">
   						<xsl:text>daox</xsl:text><xsl:value-of select="$path"/><text>dao</text><xsl:value-of select="$number"/><xsl:text>|desc</xsl:text>
   					</xsl:attribute>
@@ -2050,7 +2048,7 @@
   		</tr>
   		<tr><td class="label">Description: </td>
   			<td>
-  				<input size="70" type="text" onfocus="setCurrent(this);" class="menuField" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');">
+  				<input size="70" type="text" onfocus="setCurrent(this);" class="menuField" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onblur="validateField(this, 'true');">
   					<xsl:attribute name="name">
 						<xsl:text>daox</xsl:text><xsl:value-of select="$path"/><text>grp</text><xsl:value-of select="$number"/><xsl:text>|desc</xsl:text>
 					</xsl:attribute>
@@ -2159,7 +2157,7 @@
   		add another file</a></td></tr>
   		<tr><td class="label">Description of group: </td>
   			<td>
-  				<input size="70" type="text" onfocus="setCurrent(this);" class="menuField" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');">  					
+  				<input size="70" type="text" onfocus="setCurrent(this);" class="menuField" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onblur="validateField(this, 'true');">  					
   					<xsl:attribute name="name">
 						<xsl:text>daox</xsl:text><xsl:value-of select="$path"/><text>grp</text><xsl:value-of select="$number"/><xsl:text>|desc</xsl:text>
 					</xsl:attribute>
