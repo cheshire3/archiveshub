@@ -1220,7 +1220,7 @@ function validateField(field, asynch){
 
 function validateXML(field, asynch){
 	var url = '/ead/edit/';
-	var data = 'operation=validate&text=' + field.value.replace(/%/g, '%25').replace(/&/g, '%26').replace(/#/g, '%23');	
+	var data = 'operation=validate&text=' + field.value.replace(/%/g, '%25').replace(/&/g, '%26').replace(/#/g, '%23').replace(/;/g, '%3B');	
 	var ajax = new Ajax.Request(url, {method: 'post', asynchronous: asynch, postBody:data, onSuccess: function(transport) { 		
 		var response = transport.responseText;
 		var valid = response.substring(7,response.indexOf('</value>'));
