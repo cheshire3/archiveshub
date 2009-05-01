@@ -309,8 +309,9 @@ var nameCount = 0;
 /* adds personal name to the 'addedpersnames' div etc.*/
 function addAccessPoint(s){
 
+	/* These values in these arrays must have a value - if there are more than one at least one of them must be present not all of them*/
 	if (s == 'persname'){
-		var reqfields = new Array("persname_surname");
+		var reqfields = new Array("persname_surname", "persname_forename");
 	}
 	else if (s == 'famname'){
 	  var reqfields = new Array("famname_surname");
@@ -336,10 +337,33 @@ function addAccessPoint(s){
   
   	var fm = document.getElementById('eadForm');
   	//change this to for loop to allow multiple required fields to be set
-  	if (fm[reqfields[0]].value == "") {
-    	alert("You must give a " + reqfields[0].split('_', 2)[1] + " for this access point.");
-  	} 
- 	else if (document.getElementById(s + '_source') && document.getElementById(s + '_source').value == ""){
+  	if (reqfields.length > 1) {
+  		var reqValues = false;
+  		var string = '';
+		for (var i=0; i<reqfields.length; i++){
+			if (i == 0){
+				string += reqfields[i].split('_', 2)[1];
+			}
+			else {
+				string += ' or ';
+				string += reqfields[i].split('_', 2)[1];
+			}
+			if (fm[reqfields[i]].value == ""){
+				reqValues = true;
+			}
+		}
+		if (reqValues == false){
+			alert("You must give a " + string + " for this access point.");
+			return;
+		}
+  	}
+  	else {
+	  	if (fm[reqfields[0]].value == "") {
+	    	alert("You must give a " + reqfields[0].split('_', 2)[1] + " for this access point.");
+	    	return;
+	  	} 
+  	}
+ 	if (document.getElementById(s + '_source') && document.getElementById(s + '_source').value == ""){
  		if (s == 'subject'){
  			alert("You must supply a thesaurus for this access point."); 
  		}
@@ -457,6 +481,13 @@ function checkRules(s){
   	}	
 	var table = tableDiv.getElementsByTagName('tbody')[0];
 	var rows = table.getElementsByTagName('tr');
+	//get dropdown row so we can insert before that
+	try {
+		var dropdownrow = document.getElementById(s + 'dropdown').parentNode.parentNode;
+	}
+	catch (e){
+		
+	}
 	
 	if (rules == null){
 		if (s == 'subject'){
@@ -475,7 +506,7 @@ function checkRules(s){
 		newRow.setAttribute('NoDrag', 'True');
 		newRow.setAttribute('NoDrop', 'True');
 		try {
-			table.insertBefore(newRow, rows[1]);
+			table.insertBefore(newRow, dropdownrow);
 		}
 		catch (e){
 			table.appendChild(newRow);
@@ -491,11 +522,19 @@ function checkRules(s){
 		newRow.appendChild(cell2);
 		newRow.setAttribute('NoDrag', 'True');
 		newRow.setAttribute('NoDrop', 'True');
-		table.insertBefore(newRow, rows[1]);
-		
+		try {
+			table.insertBefore(newRow, dropdownrow);
+		}
+		catch (e){
+			table.appendChild(newRow);
+		}
 	}
-	else if (rows[1].getElementsByTagName('input')[0].id == s + '_source'){
-			table.removeChild(rows[1])		
+	else {
+		for (var r=0; r<rows.length; r++){
+			if (rows[r].getElementsByTagName('input')[0] && rows[r].getElementsByTagName('input')[0].id == s + '_source'){
+				table.removeChild(rows[r]);
+			}
+		}		
 	}	
 }
 

@@ -1220,8 +1220,7 @@ function validateField(field, asynch){
 
 function validateXML(field, asynch){
 	var url = '/ead/edit/';
-	var data = 'operation=validate&text=' + field.value.replace('%', '%25');
-	
+	var data = 'operation=validate&text=' + field.value.replace(/%/g, '%25').replace(/&/g, '%26').replace(/#/g, '%23');	
 	var ajax = new Ajax.Request(url, {method: 'get', asynchronous: asynch, parameters: data, onSuccess: function(transport) { 		
 		var response = transport.responseText;
 		var valid = response.substring(7,response.indexOf('</value>'));
@@ -1280,7 +1279,7 @@ function checkId(asynch){
 			if ($('archoncode').value != ''){
 				if ($('unitid').value != ''){
 					var id = $('countrycode').value.toLowerCase() + $('archoncode').value + $('unitid').value.replace(' ', '').replace('/', '-').replace('\\', '-').replace('\'', '').toLowerCase();
-					var url = '/ead/edit'
+					var url = '/ead/edit';
 					var data = 'operation=checkId&id=' + encodeURIComponent(id) + '&store=recordStore';
 					new Ajax.Request(url, {method: 'get', asynchronous: asynch, parameters: data, onSuccess: function(transport) { 	    				
 					    var response = transport.responseText;

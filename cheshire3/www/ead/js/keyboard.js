@@ -128,6 +128,7 @@ function cursorInsert(field, insert) {
 	/*
 	// Description: a function to insert text at the cursor position in a specified field (textarea, text)
 	*/
+
 	if (insert == 'quot'){
 		insert = '"';
 	}
@@ -148,8 +149,8 @@ function cursorInsert(field, insert) {
 			//for FF at least we can get the curser to stay after the entered letter instead of at end of field
 			//see http://www.scottklarr.com/topic/425/how-to-insert-text-into-a-textarea-where-the-cursor-is/ for possible improvements to IE version
 			field.focus(); 
-			field.selectionEnd = endPos + 1;
-			field.selectionStart = endPos + 1;
+			field.selectionEnd = endPos + insert.length;
+			field.selectionStart = endPos + insert.length;
 		}
 		else {
 			 if (document.selection) {

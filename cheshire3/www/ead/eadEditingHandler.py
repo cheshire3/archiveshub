@@ -74,7 +74,8 @@ class EadEditingHandler(EadHandler):
                      'epithet': [u',\u00A0']
                      }
     
-    famnamePunct = {'a': [u'\u00A0family.\u00A0'],
+    famnamePunct = {'a': [u'\u00A0'],
+                    'x': [u'.\u00A0'],
                     'title':[u'.\u00A0'],
                     'y': [u'(', u')\u00A0'],
                     'z':[u'.\u00A0']
@@ -508,7 +509,7 @@ class EadEditingHandler(EadHandler):
                 fieldlabel = field[0].split('_')[1]
                 if (fieldlabel == 'source' or fieldlabel == 'rules' or typelabel == 'att'):
                     if (field[1] != 'none') :
-                        type.set(fieldlabel, field[1])                         
+                        type.set(fieldlabel, field[1].lower())                         
                 else :
                     try:
                         punctList = self.typeDict[typeString]
@@ -908,6 +909,12 @@ class EadEditingHandler(EadHandler):
     def validateField(self, form):
         self.log('validating field via AJAX')
         text = form.get('text', None)
+        if not (text.find('&amp;') == -1):
+            text = text.replace('&amp;', '&#38;')
+        else : 
+            if not (text.find('&') == -1):
+                regex = re.compile('&(?!#[0-9]+;)')
+                text = regex.sub('&#38;', text)     
         if not text.find('<') == -1:
             try :
                 test = etree.fromstring('<foo>%s</foo>' % text)
