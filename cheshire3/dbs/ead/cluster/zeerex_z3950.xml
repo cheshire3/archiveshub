@@ -45,7 +45,7 @@
         </configInfo>
     </index>
      
-		<index c3:index="ead-cluster-idx-all">
+	<index c3:index="ead-cluster-idx-all">
       <title>Full-text Proximity Keywords</title>
       <map><name>any</name></map>
       <map><name>anywhere</name></map>
@@ -122,7 +122,23 @@
     <recordSyntax identifier="1.2.840.10003.5.105">
       <elementSet name="TPGRS" c3:transformer="tpgrsTxr"/>
     </recordSyntax>
+    <!-- XML -->
+    <recordSyntax identifier="1.2.840.10003.5.109.9">
+        <elementSet name="F"/>
+    </recordSyntax>
+    <recordSyntax identifier="1.2.840.10003.5.109.10">
+        <elementSet name="F"/>
+    </recordSyntax>
   </recordInfo>
+  
+  <configInfo>
+    <default type="attributeSet">BIB1</default>
+    <default type="attribute">
+        <map><attr type="5">100</attr></map>
+    </default>
+    <default type="numberOfRecords">5</default>
+    <setting type="maximumRecords">50</setting>
+  </configInfo>
   
 </explain>
 

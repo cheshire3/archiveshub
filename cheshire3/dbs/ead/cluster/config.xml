@@ -31,12 +31,12 @@
       </paths>
     </subConfig>
     
-<!--    <subConfig type="protocolMap" id="eadClusterZProtocolMap">-->
-<!--      <objectType>cheshire3.web.protocolMap.Z3950ProtocolMap</objectType>-->
-<!--      <paths>-->
-<!--        <path type="zeerexPath">zeerex_z3950.xml</path>-->
-<!--      </paths>-->
-<!--    </subConfig>-->
+    <subConfig type="protocolMap" id="eadClusterZProtocolMap">
+      <objectType>cheshire3.web.protocolMap.Z3950ProtocolMap</objectType>
+      <paths>
+        <path type="zeerexPath">zeerex_z3950.xml</path>
+      </paths>
+    </subConfig>
 
 <!--    <subConfig type="documentFactory" id="clusterDocumentFactory">-->
 <!--        <objectType>cheshire3.documentFactory.SimpleDocumentFactory</objectType>-->
