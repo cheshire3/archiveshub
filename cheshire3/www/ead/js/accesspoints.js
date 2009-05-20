@@ -145,12 +145,20 @@ function resetAccessPoint(s){
 	    		table.removeChild(rows[i]);
 	  		}
 		}
+		else if (s == 'persname') {
+			for (var i=rows.length-2; i>1; i--){
+	    		table.removeChild(rows[i]);
+	  		}			
+		}
 		else {
 			for (var i=rows.length-2; i>0; i--){
 	    		table.removeChild(rows[i]);
 	  		}
 	  	}
 	  	rows[0].getElementsByTagName('input')[0].value = '';
+	  	if (s == 'persname'){
+	  		rows[1].getElementsByTagName('input')[0].value = '';
+	  	}
 	  	var rules = document.getElementById(s + '_rules');
 	  	if (rules != null){
     		rules.options[0].selected=true;   	
@@ -220,12 +228,55 @@ function editAccessPoint(s, number){
   		if (type == 'language'){
   			inputs[i].value = value[1];
   		}
+  		else if (type == 'persname') {
+  			if (value[0].split('_', 2)[1] == 'surname'){
+  				inputs[0].value = value[1];
+  			}
+  			else if (value[0].split('_', 2)[1] == 'forename'){
+  				inputs[1].value = value[1];
+  			}	
+  			else {
+  				if (value[0].split('_', 2)[1] == 'rules'){
+	  				var rules = document.getElementById(type + '_rules');
+					for (var j=0; j<rules.length; j++){
+				  		if (rules.options[j].value == value[1]){
+				  	 		rules.options[j].selected = true;			  	 		
+				  		}
+					}
+					if (value[1] != 'none'){
+				  	 	table.removeChild(rows[2]);
+				  	}
+	  			}
+	  			else if (value[0].split('_', 2)[0] != 'att') { 			
+				  	var newRow = document.createElement('tr');
+				  	var cell1 = document.createElement('td');
+					var cell2 = document.createElement('td');
+					cell1.innerHTML = '<td class="label">' + labelMapping[value[0]] + ': </td>';
+					cell2.innerHTML = '<input type="text" onfocus="setCurrent(this);" id="' + value[0] + '" value="' + value[1] + '" size="40"></input>';
+					newRow.appendChild(cell1);
+					newRow.appendChild(cell2);
+					if (value[0].split('_', 2)[1] == 'source'){
+						newRow.setAttribute('NoDrag', 'True');
+						newRow.setAttribute('NoDrop', 'True');
+						table.replaceChild(newRow, rows[2]);
+					}
+					else {			
+						var cell3 = document.createElement('td');
+						cell3.innerHTML = '<img src="/ead/img/delete.png" class="deletelogo" onmouseover="this.src=\'/ead/img/delete-hover.png\';" onmouseout="this.src=\'/ead/img/delete.png\';" onclick="deleteRow(this.parentNode.parentNode);" />';
+						newRow.appendChild(cell3);		
+				  		table.insertBefore(newRow, dropdownRow);			  		
+				  	}
+			  	}
+  			
+  			}
+  		}
   		else {
   			//fill in the lead for the access point
 		  	if (i == 0){
 		  		inputs[i].value = value[1];
 		  	}
-	  		else {
+
+		  	else {
 	  			if (value[0].split('_', 2)[1] == 'rules'){
 	  				var rules = document.getElementById(type + '_rules');
 					for (var j=0; j<rules.length; j++){
@@ -258,7 +309,9 @@ function editAccessPoint(s, number){
 				  	}
 			  	}		  	
 	  		}
-	  	}
+	  		
+		}  
+	  	
   	}
   	//if the current access point does not have rules or source specified then add an empty source box in row 2
   	if (!hasSource && !hasRules && type != 'language'){
@@ -338,7 +391,7 @@ function addAccessPoint(s){
   	var fm = document.getElementById('eadForm');
   	//change this to for loop to allow multiple required fields to be set
   	if (reqfields.length > 1) {
-  		var reqValues = false;
+  		var hasReqValues = false;
   		var string = '';
 		for (var i=0; i<reqfields.length; i++){
 			if (i == 0){
@@ -348,11 +401,11 @@ function addAccessPoint(s){
 				string += ' or ';
 				string += reqfields[i].split('_', 2)[1];
 			}
-			if (fm[reqfields[i]].value == ""){
-				reqValues = true;
+			if (fm[reqfields[i]].value != ""){
+				hasReqValues = true;
 			}
 		}
-		if (reqValues == false){
+		if (hasReqValues == false){
 			alert("You must give a " + string + " for this access point.");
 			return;
 		}
