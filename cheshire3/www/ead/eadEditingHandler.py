@@ -1449,6 +1449,9 @@ class EadEditingHandler(EadHandler):
                 parent = tree.xpath('//*[@c3id=\'%s\']' % id[:id.rfind('-')])
             if len(parent) == 1:
                 parent[0].remove(comp[0])
+                dsc = tree.xpath('//dsc')[0]
+                if len(dsc) == 0:
+                    dsc.getparent().remove(dsc)
                 rec = LxmlRecord(tree)
                 rec.id = retrievedRec.id
                 editStore.store_record(session, rec)
