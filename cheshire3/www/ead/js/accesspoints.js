@@ -229,7 +229,7 @@ function editAccessPoint(s, number){
   			inputs[i].value = value[1];
   		}
   		else if (type == 'persname') {
-  			if (value[0].split('_', 2)[1] == 'surname'){
+  			if (value[0].split('_', 2)[1] == 'surname' || value[0].split('_', 2)[1] == 'a'){
   				inputs[0].value = value[1];
   			}
   			else if (value[0].split('_', 2)[1] == 'forename'){
