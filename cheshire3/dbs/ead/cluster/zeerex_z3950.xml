@@ -2,18 +2,23 @@
   xmlns="http://explain.z3950.org/dtd/2.0/"
   xmlns:c3="http://www.cheshire3.org/schemas/explain/">
   
- 	<serverInfo protocol="z3950" version="3">
+    <!-- 
+    This file was produced, and released as part of Cheshire for Archives v3.x.
+    Copyright &#169; 2005-2009 the University of Liverpool
+    --> 
+ 	
+    <serverInfo protocol="z3950" version="3">
 		<host>172.20.252.2</host>
-		<port>2100</port>
+		<port>210</port>
 		<database>ead/cluster</database>
 	</serverInfo>
 	
-  <databaseInfo>
-     <title lang="en" primary="true">EAD Finding Aid Subject Cluster Database</title>
-    <description lang="en" primary="true">
-	A database containing subject cluster records derived from Encoded Archival Data (EAD) records
-    </description>
-  </databaseInfo>
+    <databaseInfo>
+        <title lang="en" primary="true">EAD Finding Aid Subject Cluster Database</title>
+        <description lang="en" primary="true">
+            A database containing subject cluster records derived from Encoded Archival Data (EAD) records
+        </description>
+    </databaseInfo>
   
   <metaInfo>
   	<dateModified>2006-04-10 16:00:00</dateModified>

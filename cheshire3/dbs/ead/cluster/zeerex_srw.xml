@@ -2,6 +2,11 @@
   xmlns="http://explain.z3950.org/dtd/2.0/"
   xmlns:c3="http://www.cheshire3.org/schemas/explain/">
 
+<!-- 
+    This file was produced, and released as part of Cheshire for Archives v3.x.
+    Copyright &#169; 2005-2009 the University of Liverpool
+ -->
+ 
   <serverInfo protocol="srw/u" version="1.1" transport="http">
     <host>172.20.252.2</host>
     <port>80</port>
