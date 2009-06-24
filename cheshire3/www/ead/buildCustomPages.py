@@ -1,4 +1,4 @@
-#!/home/cheshire/install/bin/python
+#!/home/cheshire/cheshire3/install/bin/python
 
 import time, sys, os, re
 from crypt import crypt

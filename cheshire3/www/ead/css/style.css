@@ -131,13 +131,6 @@ td.hitcount {
 	text-align: right;
 }
 
-table.facets tr.headrow{
-}
-table.facets tr.subheadrow {
-	font-weight: bolder;
-}
-table.facets tr.even {
-}
 
 table.nassischneiderman {
 	border-collapse: collapse;
@@ -276,8 +269,11 @@ a.buttonlink:visited:hover {
 .ok { color: #009900; font-weight: bolder;}
 
 span.highlight { 
-  color: black;
-  background-color: #ffaaaa;
+	color: black;
+	padding-left: 1px;
+	padding-right: 1px;
+	border: 1px solid #ffc0c0;
+	background-color: #ffe0e0;
 }
 
 span.subcount {

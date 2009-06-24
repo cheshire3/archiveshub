@@ -1,7 +1,7 @@
 #
 # Script:    eadSearchHandler.py
-# Version:   0.43
-# Date:      27 February 2009
+# Version:   0.44
+# Date:      7 April 2009
 # Copyright: &copy; University of Liverpool 2005-2009
 # Description:
 #            Web interface for searching a cheshire 3 database of EAD finding aids
@@ -14,7 +14,7 @@
 #            cheshire3-base, cheshire3-sql, cheshire3-web
 #            Py: localConfig.py, htmlFragments.py
 #            HTML: about.html, browse.html, email.html, help.html, index.html, subject.html, template.ssi
-#            CSS: struc.css, style.css
+#            CSS: struc.css, struc-ie.css, style.css
 #            Javascript: collapsibleLists.js, cookies.js, ead.js, email.js, searchForm.js
 #            Images: c3_black.gif, v3_full.gif, v3_email.gif, v3_simlr.gif, 
 #                    folderClosed.gif, folderOpen.gif folderItem.gif
@@ -109,6 +109,7 @@
 #                        - 'ajax' parameter in form will cause handler to return the smallest portion of HTML that fulfils the request (i.e. the only bit that needs to be updated on screen)
 # 0.42 - 22/01/2009 - JH - Debugging of noComponents search
 # 0.43 - 25/02/2009 - JH - Debugging of highlighting
+# 0.44 - 07/02/2009 - JH - More efficient handling of proxInfo when highlighting
 #
 
 from eadHandler import * 
@@ -796,21 +797,34 @@ class EadSearchHandler(EadHandler):
         # highlight search terms in rec.dom
         if (proxInfo) and (highlight):
             # flatten groups from phrases / multiple word terms into list of [nodeIdx, wordIdx, charOffset] triples
-            proxInfo2 = []
-            for x in proxInfo:
-                proxInfo2.extend(x)
+#            proxInfo2 = []
+#            for x in proxInfo:
+#                proxInfo2.extend(x)
+#
+#            proxInfo3 = []
+#            for x in proxInfo2:
+#                if [x[0], x[2]] not in proxInfo3:                # filter out duplicates from multiple indexes
+#                    proxInfo3.append([x[0], x[2]])               # strip out wordIdx, this can vary due to stoplisting - nodeIdx, offsets are reliable
+#
+#            del proxInfo2
+#            proxInfo2 = proxInfo3
+#            proxInfo2.sort(reverse=True)                         # sort proxInfo so that nodeIdxs are sorted descending (so that offsets don't get upset when modifying text :)
+#            nodeIdxs = []
+#            wordOffsets = []
+#            for x in proxInfo2:
+#                nodeIdxs.append(x[0])
+#                wordOffsets.append(x[1])
 
-            proxInfo3 = []
-            for x in proxInfo2:
-                if [x[0], x[2]] not in proxInfo3:                # filter out duplicates from multiple indexes
-                    proxInfo3.append([x[0], x[2]])               # strip out wordIdx, this can vary due to stoplisting - nodeIdx, offsets are reliable
+            proxInfo2 = set()
+            for pig in proxInfo:                    # for each group of proxInfo (i.e. from each query clause)
+                for pi in pig:                                 # for each item of proxInfo: [nodeIdx, wordIdx, offset, termId(?)] NB termId from spoke indexes so useless to us :( 
+                    proxInfo2.add('%d %d' % (pi[0], pi[2]))    # values must be strings for sets to work
 
-            del proxInfo2
-            proxInfo2 = proxInfo3
-            proxInfo2.sort(reverse=True)                         # sort proxInfo so that nodeIdxs are sorted descending (so that offsets don't get upset when modifying text :)
+            
+            proxInfo = [map(int, pis.split(' ')) for pis in proxInfo2]
             nodeIdxs = []
             wordOffsets = []
-            for x in proxInfo2:
+            for x in sorted(proxInfo, reverse=True):            # sort proxInfo so that nodeIdxs are sorted descending (so that offsets don't get upset when modifying text)
                 nodeIdxs.append(x[0])
                 wordOffsets.append(x[1])
             
@@ -1362,7 +1376,7 @@ In: %s
                         numreq = form.get('numreq', 20)
                         if (truncate):
                             idxType = None
-                        content = '<div id="leftcol">%s</div><!-- end leftcol --><div id="rightcol">%s</div><!-- en rightcol -->' % (self.format_resultSet(rs), self.format_allFacets(rs, idxType)) 
+                        content = '<div id="leftcol">%s</div><!-- end leftcol --><div id="rightcol">%s</div><!-- en rightcol -->' % (self.format_resultSet(rs, firstrec, numreq), self.format_allFacets(rs, idxType)) 
                 elif (operation == 'browse'):
                     content = self.browse(form)
                 elif (operation == 'summary') or (operation == 'full'):

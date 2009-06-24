@@ -42,7 +42,7 @@ function createXMLHttpRequest() {
 
 function updateElementByUrl(id, url) {
 	if( !document.getElementById) {
-		window.alert("Your browser does not support functions essential for updating this page with AJAX!")
+		window.alert("Your browser does not support functions essential for updating this page with AJAX!\n\nYou should still be able to use all functions of this site by disabling JavaScript in your browser settings.")
 		return true;
 	}
 	var el = document.getElementById(id);

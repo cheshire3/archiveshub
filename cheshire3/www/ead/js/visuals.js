@@ -36,6 +36,7 @@ function fadeToWhite(element,red,green,blue) {
 linkHash = new Array();
 linkHash['text'] = new Array('[ show ]', '[ hide ]');
 linkHash['plusMinus'] = new Array('[+]', '[-]');
+linkHash['arrows'] = new Array('<img src="/icons/right.png" alt="&gt;"/>', '<img src="/icons/down.png" alt="V"/>');
 linkHash['folders'] = new Array('<img src="/ead/img/folderClosed.gif" alt="[+]"/>', '<img src="/ead/img/folderOpen.gif" alt="[-]"/>');
 
 function toggleShow(callLink, elementId, toggleStyle){
