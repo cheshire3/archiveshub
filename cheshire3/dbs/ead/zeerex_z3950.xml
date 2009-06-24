@@ -2,14 +2,14 @@
   xmlns="http://explain.z3950.org/dtd/2.0/"
   xmlns:c3="http://www.cheshire3.org/schemas/explain/">
   
-<!-- 
+    <!-- 
 	This file was produced, and released as part of Cheshire for Archives v3.x.
-	Copyright &#169; 2005-2008 the University of Liverpool
- --> 
+	Copyright &#169; 2005-2009 the University of Liverpool
+    --> 
  
 	<serverInfo protocol="z3950" version="3">
 		<host>172.20.252.2</host>
-		<port>2100</port>
+		<port>210</port>
 		<database>ead</database>
 	</serverInfo>
 

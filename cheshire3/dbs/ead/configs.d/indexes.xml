@@ -112,12 +112,12 @@
 	<subConfig type="workflow" id="Diacritic-Case-Possessive-EnglishStem-NormalizerWorkflow">
         <objectType>cheshire3.workflow.CachingWorkflow</objectType>
         <workflow>
-        	<object type="normalizer" ref="DiacriticNormalizer"/>
+            <object type="normalizer" ref="DiacriticNormalizer"/>
             <object type="normalizer" ref="CaseNormalizer"/>
             <object type="normalizer" ref="PossessiveNormalizer" />
-        	<object type="normalizer" ref="EnglishStemNormalizer" />
+            <object type="normalizer" ref="EnglishStemNormalizer" />
         </workflow>
-	</subConfig>
+    </subConfig>
 	
 	<subConfig type="workflow" id="Diacritic-Case-Possessive-Stoplist-EnglishStem-NormalizerWorkflow">
         <objectType>cheshire3.workflow.CachingWorkflow</objectType>
@@ -756,7 +756,7 @@
 		<source>
 			<xpath>geogname</xpath>
 			<!-- index subfields -->
-			<xpath>geogname/emph</xpath>
+			<xpath>geogname/emph[@altrender!='z']</xpath>
 			<xpath>controlaccess/*/emph[@altrender='z']</xpath>
 			<process>
 				<object type="extractor" ref="SimpleExtractor" />

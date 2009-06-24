@@ -1,10 +1,10 @@
 
 <config type="database" id="db_ead_cluster">
 
-<!-- 
+    <!-- 
 	This file was produced, and released as part of Cheshire for Archives v3.x.
-	Copyright &copy; 2005, 2006, 2007 the University of Liverpool
--->
+	Copyright &#169; 2005-2009 the University of Liverpool
+    -->
 	
     <objectType>cheshire3.database.SimpleDatabase</objectType>
 
