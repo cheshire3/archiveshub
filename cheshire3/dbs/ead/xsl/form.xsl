@@ -37,6 +37,9 @@
   		<xsl:when test="/*/@level">
   			<xsl:value-of select="/*/@level"/>
   		</xsl:when>
+  		<xsl:when test="//archdesc/@level">
+  			<xsl:value-of select="//archdesc/@level"/>
+  		</xsl:when>
   		<xsl:otherwise>
   			<xsl:text></xsl:text>
   		</xsl:otherwise>
@@ -150,7 +153,7 @@
 	</div> 
   	<br/>
   	<p>
-  		<xsl:if test="$leveltype = 'component'">
+  	<!-- 	<xsl:if test="$leveltype = 'component'">	 -->
   			<strong><span class="isadg">3.1.4: </span>Level of Description</strong><br/>
   			<select name="@level" id="@level">
 	  			<xsl:call-template name="option">
@@ -199,7 +202,7 @@
 	  				<xsl:with-param name="select" select="$level"/>
 	  			</xsl:call-template>
   			</select>
-		</xsl:if>
+		<!-- </xsl:if>	 -->
   	</p>
  	<p>
 		<strong><span class="isadg">3.1.5: </span>Extent of Unit of Description<a href="http://www.archiveshub.ac.uk/arch/extent.shtml" title="Extent help - opens in new window" target="_new"><img class="whatsthis" src="/ead/img/whatisthissmall.gif" alt="[What is this?]"/></a></strong><br/>
