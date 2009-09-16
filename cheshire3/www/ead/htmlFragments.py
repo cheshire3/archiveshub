@@ -242,8 +242,20 @@ new_superuser_template = u'''
   <username>%USERNAME%</username>
   <flags>
     <flag>
-      <object/>
+      <object>recordStore</object>
+      <value>c3r:administrator</value>     
+    </flag>
+    <flag>
+      <object>eadDCStore</object>
       <value>c3r:administrator</value>
+    </flag>
+    <flag>
+      <object>componentStore</object>
+      <value>c3r:administrator</value>      
+    </flag>
+    <flag>
+      <object>eadAuthStore</object>
+        <value>c3r:administrator</value>
     </flag>
   </flags>
 </config>'''

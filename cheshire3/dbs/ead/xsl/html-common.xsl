@@ -1766,7 +1766,7 @@
 			<xsl:attribute name="title">
 		        <xsl:text>Search Copac</xsl:text>
 		    </xsl:attribute>
-		    <img alt="Amazon">
+		    <img alt="Copac">
 		    	<xsl:attribute name="src">
 		    		<xsl:value-of select="$copac_search_icon"/>
 		    	</xsl:attribute>

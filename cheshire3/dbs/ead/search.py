@@ -1,4 +1,4 @@
-#!/home/cheshire/cheshire3/install/bin/python -i
+#!/home/cheshire/install/bin/python -i
 ## Script:    search.py
 # Date:      11 February 2008
 # Copyright: &copy; University of Liverpool 2005-2008

@@ -1,4 +1,4 @@
-#!/home/cheshire/cheshire3/install/bin/python
+#!/home/cheshire/install/bin/python
 #
 # Script:    run.py
 # Date:      17 March 2009
