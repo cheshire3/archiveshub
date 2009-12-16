@@ -35,6 +35,7 @@ var required_xpaths = new Array(
 'did/unittitle',
 'did/unitdate',
 'did/unitdate/@normal',
+'did/repository',
 'did/origination',
 'did/physdesc/extent',
 'scopecontent',
@@ -147,6 +148,11 @@ function submit(index){
     	alert('Please fix the errors in the xml before submitting. Errors will be marked with red shading in the text box.');
     	return;
     }
+    var errors = document.getElementsByClassName('dateError');
+    if (errors.length != 0){
+    	alert('Please fix the error in the normalised date before submitting. This field can only contain numbers and the character /.');
+    	return;
+    }
     //check the daoform details   
 	var daodetails = checkDao();
     if (daodetails[0] == true){
@@ -230,6 +236,12 @@ function save(){
 	var errors = document.getElementsByClassName('menuFieldError');
     if (errors.length != 0){
     	alert('Please fix the errors in the xml before saving. Errors will be marked with red shading in the text box.');
+    	body.className = 'none';
+    	return;
+    }
+    var errors = document.getElementsByClassName('dateError');
+    if (errors.length != 0){
+    	alert('Please fix the error in the normalised date before saving. This field can only contain numbers and the character /.');
     	body.className = 'none';
     	return;
     }
@@ -382,7 +394,12 @@ function displayForm(id, level, nosave){
 		    if (errors.length != 0){
 		    	alert('Please fix the errors in the xml before leaving this page. Errors will be marked with red shading in the text box.');
 		    	return;
-		    }	
+		    }
+		    var errors = document.getElementsByClassName('dateError');
+			if (errors.length != 0){
+			  	alert('Please fix the error in the normalised date before leaving this page. This field can only contain numbers and the character /.');
+			    return;
+			}	
 		    //check the daoform details   
 			var daodetails = checkDao();
 		    if (daodetails[0] == true){
@@ -451,6 +468,12 @@ function addComponent(){
     	body.className = 'none';
     	return;
     }  
+    var errors = document.getElementsByClassName('dateError');
+    if (errors.length != 0){
+    	alert('Please fix the error in the normalised date before adding a component. This field can only contain numbers and the character /.');
+    	body.className = 'none';
+    	return;
+    }
     else if (currentForm == 'collectionLevel' && recid == 'notSet'){
 		var url = '/ead/edit'
 		var data = 'operation=checkId&id=' + encodeURIComponent(($('pui')).value) + '&store=recordStore';
@@ -695,6 +718,11 @@ function viewXml(){
     	alert('Please fix the errors in the xml before viewing. Errors will be marked with red shading in the text box.');
     	return;
     } 
+    var errors = document.getElementsByClassName('dateError');
+    if (errors.length != 0){
+    	alert('Please fix the error in the normalised date before viewing. This field can only contain numbers and the character /.');
+    	return;
+    }
     //check the daoform details   
 	var daodetails = checkDao();
     if (daodetails[0] == true){
@@ -735,6 +763,11 @@ function previewRec(){
     	alert('Please fix the errors in the xml before viewing. Errors will be marked with red shading in the text box.');
     	return;
     } 
+    var errors = document.getElementsByClassName('dateError');
+    if (errors.length != 0){
+    	alert('Please fix the error in the normalised date before viewing. This field can only contain numbers and the character /.');
+    	return;
+    }
     //check the daoform details   
 	var daodetails = checkDao();
     if (daodetails[0] == true){
@@ -879,7 +912,7 @@ function updateId() {
 					match = false;
 				}
 			}
-			lowerCaseId = lowerCaseId.replace(' ', '').replace('/', '-').replace('\\', '-').replace('\'', '');
+			lowerCaseId = lowerCaseId.replace(/ /g, '').replace(/\//g, '-').replace(/\\/g, '-').replace(/'/g, '');
 			if (match == true){
 				for (var i=0; i < repositoryCode.length; i++){
 					if (repositoryCode.charAt(i) != lowerCaseId.charAt(i+2)){
@@ -919,6 +952,9 @@ function findRequiredFields(){
 			lang.style.borderColor = 'white';
 			langcode.style.borderColor = 'white';			
 		}
+	}
+	else if (currentForm == 'template'){
+		var reqList = required_xpaths_template;
 	}
 	else {
 		var reqList = required_xpaths_components;		
@@ -1918,4 +1954,28 @@ function enableMenuButtons(){
 	}
 }
 
+function validateNormdateDelay(field, asynch){
+	clearTimeout(timeout);
+	timeout = setTimeout(function() {validateDate(field, asynch)}, 2000);
+}
 
+function validateNormdate(field, asynch){
+	clearTimeout(timeout);
+	validateDate(field, asynch);
+}
+
+function validateDate(field, asynch){
+	var data = field.value;
+	var valid = true;
+	for (var i=0; i<data.strip().length; i++){
+		if (data.charAt(i) != '/' && data.charAt(i) != '-' && isNaN(parseInt(data.charAt(i)))){
+			valid = false;
+		}
+	}	
+	if (valid == false){
+		field.className = 'dateError';
+	}
+	else {
+		field.className = 'dateOK';
+	}
+}
