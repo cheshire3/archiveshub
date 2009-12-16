@@ -10,4 +10,5 @@ Contents
 
 1. Indexing Lock file
 
-The admin interface as well as the editing interface and all build scripts use lock files to prevent two people from indexing/unindexing at the same time the lock file path for a database will be at the default path for the data base and be called indexing.lock 
+The admin interface as well as the editing interface and all build scripts use lock files to prevent two people from indexing/unindexing at the same time 
+the lock file path for a database will be at the default path for the data base and be called indexing.lock 
