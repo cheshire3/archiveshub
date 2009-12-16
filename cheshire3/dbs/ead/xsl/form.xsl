@@ -21,6 +21,17 @@
   	<xsl:value-of select="/ead/eadheader/eadid/text()"/>
   </xsl:variable>
   
+  <xsl:variable name="formtype">
+  	<xsl:choose>
+  		<xsl:when test="/template">
+  			<xsl:text>template</xsl:text>
+  		</xsl:when>
+  		<xsl:otherwise>
+  			<xsl:text>ead</xsl:text>
+  		</xsl:otherwise>
+  	</xsl:choose>
+  </xsl:variable>
+  
   <xsl:variable name="leveltype">
   	<xsl:choose>
   		<xsl:when test="/ead/eadheader">
@@ -49,35 +60,68 @@
  
       
   <xsl:template match="/">
-  <div id="formDiv" name="form" class="formDiv">
-    <form id="eadForm" name="eadForm"  action="#" >
-    <div class="float"> <input type="button" class="formbutton" id="addC" onclick="javascript: addComponent()" value="Add Component" title="Add a component to this level of the record"></input></div>
- <!--   <div class="float"> <input type="button" class="formbutton" id="reset" onclick="javascript: resetForm()" value="Reset"></input> </div> -->  
-    	<div class="pui">
-    		<strong><xsl:text>Persistent Unique Identifier</xsl:text><a href="http://www.archiveshub.ac.uk/arch/glossary.shtml#identifier" title="PUI help - opens in new window" target="_new"><img class="whatsthis" src="/ead/img/whatisthissmall.gif" alt="[What is this?]"/></a></strong>				
-    		%PUI%
-    	</div>
-    
-    <br/>
-       <div class="section">
-    	<xsl:choose>
-    		<xsl:when test="/ead/eadheader">	
-    			<h3>Collection Level Description</h3>
-    			%RECID%   			
-    			<xsl:apply-templates select="/c|/c01|/c02|/c03|/c04|/c05|/c06|/c07|/c08|/c09|/c10|/c11|/c12|/ead/archdesc"/>
-    		</xsl:when>
-    		<xsl:otherwise>
-    			<h3>Component Level Description</h3>
-    			<xsl:apply-templates select="/c|/c01|/c02|/c03|/c04|/c05|/c06|/c07|/c08|/c09|/c10|/c11|/c12|/ead/archdesc"/>
-    		</xsl:otherwise>
-    	</xsl:choose>	
-     </div> 	  
-	</form>
-  </div>
+  <xsl:choose>
+  		<xsl:when test="$formtype = 'ead'">
+		  <div id="formDiv" name="form" class="formDiv">
+		    <form id="eadForm" name="eadForm"  action="#" >
+		    <div class="float"> <input type="button" class="formbutton" id="addC" onclick="javascript: addComponent()" value="Add Component" title="Add a component to this level of the record"></input></div>
+		 <!--   <div class="float"> <input type="button" class="formbutton" id="reset" onclick="javascript: resetForm()" value="Reset"></input> </div> -->  
+		    	<div class="pui">
+		    		<strong><xsl:text>Persistent Unique Identifier</xsl:text><a href="http://www.archiveshub.ac.uk/arch/glossary.shtml#identifier" title="PUI help - opens in new window" target="_new"><img class="whatsthis" src="/ead/img/whatisthissmall.gif" alt="[What is this?]"/></a></strong>				
+		    		%PUI%
+		    	</div>
+		    
+		    <br/>
+		       <div class="section">
+		    	<xsl:choose>
+		    		<xsl:when test="/ead/eadheader">	
+		    			<h3>Collection Level Description</h3>
+		    			%RECID%   			
+		    			<xsl:apply-templates select="/c|/c01|/c02|/c03|/c04|/c05|/c06|/c07|/c08|/c09|/c10|/c11|/c12|/ead/archdesc"/>
+		    		</xsl:when>
+		    		<xsl:otherwise>
+		    			<h3>Component Level Description</h3>
+		    			<xsl:apply-templates select="/c|/c01|/c02|/c03|/c04|/c05|/c06|/c07|/c08|/c09|/c10|/c11|/c12|/ead/archdesc"/>
+		    		</xsl:otherwise>
+		    	</xsl:choose>	
+		     </div> 	  
+			</form>
+		  </div>
+		</xsl:when>
+		<xsl:otherwise>
+			<div id="formDiv" name="form" class="formDiv">
+		    	<form id="eadForm" name="eadForm"  action="#" >
+					<h3>EAD Template Creation</h3>
+					%PUI%
+					
+					<b>Template Name: </b>
+					<xsl:choose>
+						<xsl:when test="/template/@name">
+							<input type="text" id="/template/@name" name="/template/@name">
+								<xsl:attribute name="value">
+									<xsl:value-of select="/template/@name"/>
+								</xsl:attribute>
+								<input type="hidden" id="tempid">
+									<xsl:attribute name="value">
+										<xsl:value-of select="/template/@name"/>
+									</xsl:attribute>
+								</input>
+							</input>
+						</xsl:when>
+						<xsl:otherwise>
+							<input type="text" id="/template/@name" name="/template/@name"></input>
+							<input type="hidden" id="tempid" value="notSet"/>
+						</xsl:otherwise>
+					</xsl:choose>
+					<xsl:apply-templates select="/template/ead/archdesc"/>
+				</form>
+			</div>					
+		</xsl:otherwise>
+	</xsl:choose>
   </xsl:template>
     
   
-  <xsl:template match="/c|/c01|/c02|/c03|/c04|/c05|/c06|/c07|/c08|/c09|/c10|/c11|/c12|/ead/archdesc">
+  <xsl:template match="/c|/c01|/c02|/c03|/c04|/c05|/c06|/c07|/c08|/c09|/c10|/c11|/c12|/ead/archdesc|/template/ead/archdesc">
   <xsl:if test="not(name() = 'archdesc')">
   	<p>
    		<input type="hidden" name="ctype" id="ctype" maxlength="3" size="4">
@@ -89,6 +133,7 @@
   </xsl:if>
   	<div id="sec-3-1" class="section">
       <span class="isadg"><h3>3.1: Identity Statement Area</h3></span>
+      <xsl:if test="$formtype = 'ead'">
       <p id="unitidparent">
 	  <strong><span class="isadg">3.1.1: </span>Reference Code<a href="http://www.archiveshub.ac.uk/arch/refcode.shtml" title="Reference Code help - opens in new window" target="_new"><img class="whatsthis" src="/ead/img/whatisthissmall.gif" alt="[What is this?]"/></a></strong> 
 	  Comprising <a href="http://www.iso.org/iso/en/prods-services/iso3166ma/02iso-3166-code-lists/list-en1.html" target="_new" title="Further information on ISO Country Codes">ISO Country Code</a>, 
@@ -109,6 +154,7 @@
 	  	</xsl:otherwise>
 	  </xsl:choose>  		
   	</p>
+  	</xsl:if>
    	<p>
 		<strong><span class="isadg">3.1.2: </span>Title<a href="http://www.archiveshub.ac.uk/arch/title.shtml" title="Title help - opens in new window" target="_new"><img class="whatsthis" src="/ead/img/whatisthissmall.gif" alt="[What is this?]"/></a></strong><br/>
 		<xsl:choose>
@@ -116,7 +162,14 @@
 				<xsl:apply-templates select="did/unittitle"/>
 			</xsl:when>
 			<xsl:otherwise>
-				<input class="menuField" type="text" onfocus="setCurrent(this);" name="did/unittitle" id="did/unittitle" size="80" onchange="updateTitle(this)" onkeypress="validateFieldDelay(this, 'true');" onblur="validateField(this, 'true');"></input>
+				<xsl:choose>
+					<xsl:when test="$formtype = 'ead'">
+						<input class="menuField" type="text" onfocus="setCurrent(this);" name="did/unittitle" id="did/unittitle" size="80" onchange="updateTitle(this)" onkeypress="validateFieldDelay(this, 'true');" onblur="validateField(this, 'true');"></input>
+					</xsl:when>
+					<xsl:otherwise>
+						<input class="menuField" type="text" onfocus="setCurrent(this);" name="did/unittitle" id="did/unittitle" size="80" onchange="validateField(this, 'true');" onkeypress="validateFieldDelay(this, 'true');" onblur="validateField(this, 'true');"></input>
+					</xsl:otherwise>
+				</xsl:choose>
 			</xsl:otherwise>
 		</xsl:choose>		
     </p>
@@ -137,7 +190,7 @@
 	</div>
 	<div class="float">
 		<p>
-		<strong>Normalised Date<a href="http://www.archiveshub.ac.uk/arch/dates.shtml" title="Normalised Date help - opens in new window" target="_new"><img class="whatsthis" src="/ead/img/whatisthissmall.gif" alt="[What is this?]"/></a></strong><br/>
+		<strong>Normalised Date<a href="http://www.archiveshub.ac.uk/arch/dates.shtml" title="Normalised Date help - opens in new window" target="_new"><img class="whatsthis" src="/ead/img/whatisthissmall.gif" alt="[What is this?]"/></a></strong>YYYY/YYYY or YYYYMMDD/YYYYMMDD<br/>
 	    	<xsl:choose>
 	    		<xsl:when test="did/unitdate/@normal">
 	    			<xsl:apply-templates select="did/unitdate/@normal"/>
@@ -146,7 +199,7 @@
 	    			<xsl:apply-templates select="did/unittitle/unitdate/@normal"/>
 	    		</xsl:when>
 	    		<xsl:otherwise>
-	    			<input type="text" onfocus="setCurrent(this);" name="did/unitdate/@normal" id="did/unitdate/@normal" size="39" maxlength="21"></input>
+	    			<input class="dateOK" type="text" onfocus="setCurrent(this);" onkeypress="validateNormdateDelay(this, 'true');" onchange="validateNormdate(this, 'true');" onblur="validateNormdate(this, 'true');" name="did/unitdate/@normal" id="did/unitdate/@normal" size="39" maxlength="21"></input>
 	    		</xsl:otherwise>
 	    	</xsl:choose>      	            
 		</p>
@@ -154,7 +207,11 @@
   	<br/>
   	<p>
   	<!-- 	<xsl:if test="$leveltype = 'component'">	 -->
-  			<strong><span class="isadg">3.1.4: </span>Level of Description</strong><br/>
+  			<strong><span class="isadg">3.1.4: </span>Level of Description<a href="http://www.archiveshub.ac.uk/arch/level.shtml" title="Level of Description help - opens in new window" target="_new"><img class="whatsthis" src="/hubedit/img/whatisthissmall.gif" alt="[What is this?]"/></a></strong>
+  			<xsl:if test="$leveltype = 'collection'">
+  				<xsl:text>[mandatory]</xsl:text>
+  			</xsl:if>
+  			<br/>
   			<select name="@level" id="@level">
 	  			<xsl:call-template name="option">
 	  				<xsl:with-param name="value" select="''"/>
@@ -164,6 +221,11 @@
 	  			<xsl:call-template name="option">
 	  				<xsl:with-param name="value" select="'fonds'"/>
 	  				<xsl:with-param name="label" select="'fonds'"/>
+	  				<xsl:with-param name="select" select="$level"/>
+	  			</xsl:call-template>
+	  			<xsl:call-template name="option">
+	  				<xsl:with-param name="value" select="'collection'"/>
+	  				<xsl:with-param name="label" select="'collection'"/>
 	  				<xsl:with-param name="select" select="$level"/>
 	  			</xsl:call-template>
 	  			<xsl:call-template name="option">
@@ -215,7 +277,7 @@
 			</xsl:otherwise>
 		</xsl:choose>		
     </p>
-    <xsl:if test="$leveltype = 'collection'">
+    <xsl:if test="$leveltype = 'collection' or $formtype = 'template'">
 	    <p>
 	  		<strong>Repository</strong><a id="repositoryhelp" name="repositoryhelp" target="_new" href="http://www.archiveshub.ac.uk/arch/repository.shtml">
 		<img class="whatsthis" src="/ead/img/whatisthissmall.gif" alt="[What is this?]"/>
@@ -1215,7 +1277,7 @@
 				<table id="table_subject">
 				<tbody>
 			    	<tr NoDrop="true" NoDrag="true"><td class="label">Subject:</td><td><input type="text" onfocus="setCurrent(this);" id="subject_subject" size="40"></input></td></tr>
-			    	<tr NoDrop="true" NoDrag="true"><td class="label">Thesaurus:</td><td><input type="text" onfocus="setCurrent(this);" id="subject_source" size="40"></input></td></tr>
+					<tr NoDrop="true" NoDrag="true"><td class="label">Thesauri:</td><td><select id="subject_source"><option value="">select...</option><option value="aat">aat</option><option value="lcsh">lcsh</option><option value="mesh">mesh</option><option value="ukat">ukat</option><option value="unesco">unesco</option><option value="ewt">ewt</option></select><!-- <input type="text" onfocus="setCurrent(this);" id="subject_source" size="40"></input> --></td></tr>
 			    	<tr NoDrop="true" NoDrag="true"><td><select onfocus="setCurrent(this);" id="subjectdropdown">
 			    		<option value="subject_dates">Dates</option>
 			    		<option value="subject_loc">Location</option>
@@ -1696,11 +1758,22 @@
   </xsl:template>
   
   <xsl:template match="did/unittitle">
-  	<input class="menuField" type="text" onfocus="setCurrent(this);" name="did/unittitle" id="did/unittitle" size="80" onchange="updateTitle(this)" onkeypress="validateFieldDelay(this, 'true');" onblur="validateField(this, 'true');">
-  		<xsl:attribute name="value">
-  			<xsl:apply-templates/>
-  		</xsl:attribute>
-  	</input>
+	  <xsl:choose>
+	  		<xsl:when test="$formtype = 'ead'">
+			  	<input class="menuField" type="text" onfocus="setCurrent(this);" name="did/unittitle" id="did/unittitle" size="80" onchange="updateTitle(this)" onkeypress="validateFieldDelay(this, 'true');" onblur="validateField(this, 'true');">
+			  		<xsl:attribute name="value">
+			  			<xsl:apply-templates/>
+			  		</xsl:attribute>
+			  	</input>
+  			</xsl:when>
+  			<xsl:otherwise>
+	  			<input class="menuField" type="text" onfocus="setCurrent(this);" name="did/unittitle" id="did/unittitle" size="80" onchange="validateField(this, 'true');"  onkeypress="validateFieldDelay(this, 'true');">
+			  		<xsl:attribute name="value">
+			  			<xsl:apply-templates/>
+			  		</xsl:attribute>
+			  	</input>
+	  		</xsl:otherwise>
+  	   </xsl:choose>
   </xsl:template>
     
   <xsl:template match="unitdate">
@@ -1712,7 +1785,7 @@
   </xsl:template>
   
   <xsl:template match="unitdate/@normal">
-  	<input type="text" onfocus="setCurrent(this);" name="did/unitdate/@normal" id="did/unitdate/@normal" size="39" maxlength="21">
+  	<input class="dateOK" type="text" onfocus="setCurrent(this);" onkeypress="validateNormdateDelay(this, 'true');" onchange="validateNormdate(this, 'true');" onblur="validateNormdate(this, 'true');" name="did/unitdate/@normal" id="did/unitdate/@normal" size="39" maxlength="21">
   		<xsl:attribute name="value">
   			<xsl:value-of select="."/>
   		</xsl:attribute>
