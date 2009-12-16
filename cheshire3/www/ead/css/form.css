@@ -27,6 +27,10 @@ span.isadg {
 .menuFieldError {
 		background-color: #ffaaaa;
 	}
+	
+.dateError {
+		background-color: #ffaaaa;
+	}
 
 textarea, input {
 		font-family: arial, helvetica, gill, sans-serif;
@@ -231,7 +235,7 @@ buttoncontainer p {
 	border-right: 2px solid gray;
 	}
 
-#keyboardlink {
+#keyboardlink, #extraslink {
 	font-size: 10pt;
 	float: right;
 	}
