@@ -50,6 +50,7 @@ class EadEditingHandler(EadHandler):
 'did/unittitle',
 'did/unitdate',
 'did/unitdate/@normal',
+'did/repository',
 'did/origination',
 'did/physdesc/extent',
 'did/langmaterial/language',
@@ -171,13 +172,134 @@ class EadEditingHandler(EadHandler):
             return None
     # end _validate_isadg() ---------------------------------------------------------
     
+#template creation/editing functions========================================================================
+
+    def create_template (self, form):
+        self.log('CREATING NEW TEMPLATE') 
+        self.htmlNav= ['<a href="menu.html" title="Edit/Create Menu">Edit/Create Menu</a>', '<a href="/ead/edit/help.html" target="_new"  title="Edit/Create Help">Edit/Create Help</a>',  '<a href="javascript: toggleKeyboard();" title="Show/Hide Character Keyboard">Character Keyboard</a>']
+        structure = read_file('eadtemplate.html')  
+        doc = StringDocument('<template><ead><eadheader></eadheader><archdesc></archdesc></ead></template>')      
+        rec = xmlp.process_document(session, doc)
+        htmlform = formTxr.process_record(session, rec).get_raw(session)
+        page = structure.replace('%FRM%', htmlform)
+        page = page.replace('%RECID%', '')
+        page = page.replace('%PUI%', '<input type="hidden" name="pui" id="pui"/>')
+        page = page.replace('%TOC%', '')  
+        page = page.replace('%MENUCODE%', read_file('contextMenu.html'))    
+        page = page.replace('%KYBDCODE%', read_file('keyboard.html'))
+        return page
     
+    def modify_template(self, form):
+        self.log('MODIFYING TEMPLATE')
+        templateName = form.get('templatesel2', None)
+        if templateName == None:
+            self.create_template(self, form)
+        else:
+            self.htmlNav= ['<a href="menu.html" title="Edit/Create Menu">Edit/Create Menu</a>', '<a href="/ead/edit/help.html" target="_new"  title="Edit/Create Help">Edit/Create Help</a>',  '<a href="javascript: toggleKeyboard();" title="Show/Hide Character Keyboard">Character Keyboard</a>']
+            structure = read_file('eadtemplate.html')
+            templateStore = db.get_object(session, 'templateStore')
+            rec = templateStore.fetch_record(session, templateName)
+            htmlform = formTxr.process_record(session, rec).get_raw(session)
+            page = structure.replace('%FRM%', htmlform)
+            page = page.replace('%RECID%', '')
+            page = page.replace('%PUI%', '<input type="hidden" name="pui" id="pui"/>')
+            page = page.replace('%TOC%', '')  
+            page = page.replace('%MENUCODE%', read_file('contextMenu.html'))
+            page = page.replace('%KYBDCODE%', read_file('keyboard.html'))   
+            return page
+    
+    
+    def save_template(self, form):
+        self.log('SAVING TEMPLATE')
+        templateStore = db.get_object(session, 'templateStore')
+        templateStore.begin_storing(session)
+        #build template xml
+        (templateXml, name) = self.build_ead(form, True)        
+        doc = StringDocument(etree.tostring(templateXml))
+        rec = xmlp.process_document(session, doc)
+        
+        rec.id = name.strip()
+        #otherwise store in template store and create institution link
+        templateStore.store_record(session, rec)
+        templateStore.commit_storing(session)
+        return '<name>%s</name>' % rec.id
+    
+    
+    def discard_template(self, form):
+        templateStore = db.get_object(session, 'templateStore')
+        templateStore.begin_storing(session)
+        recid = form.get('recid', None)
+
+        if not recid == None :
+            try:
+                templateStore.delete_record(session, recid)
+                templateStore.commit_storing(session)
+                return 'done'   
+            except:
+                return 'failed'
+           
+        else :
+            return 'failed'    
 
 
 # EAD Creation and Editing Functions ==========================================================================================
     
-    def build_ead(self, form):
+    def build_ead(self, form, template=False):
         self.log('building ead')
+        if template == True:
+            name = form.get('/template/@name', None)
+            tree = etree.fromstring('<template name="%s"><ead><eadheader></eadheader><archdesc></archdesc></ead></template>' % name)
+            header = tree.xpath('/template/ead/eadheader')[0]
+            target = self._create_path(header, 'filedesc/titlestmt/titleproper')
+            self._add_text(target, form.get('did/unittitle', ''))     
+            if form.get('filedesc/titlestmt/sponsor', '') != '': 
+                target = self._create_path(header, 'filedesc/titlestmt/sponsor')   
+                self._add_text(target, form.get('filedesc/titlestmt/sponsor', ''))
+            list = form.list  
+            daonames = {}              
+            node = tree.xpath('/template/ead/archdesc')[0]
+            for field in list :
+                if field.name not in ['ctype','location','operation','newForm','owner','recid', 'parent', 'pui', 'eadid', 'filedesc/titlestmt/sponsor', 'daoselect', 'tempid']:                        
+                    #do did level stuff
+                    
+                    if field.name.find('controlaccess') == 0 :
+                        self._create_controlaccess(node, field.name, field.value) 
+                        try:
+                            validList.remove('controlaccess')
+                        except:
+                            pass
+                    elif field.name.find('did/langmaterial') == 0 :
+                        did = self._create_path(node, 'did')
+                        self._create_langmaterial(did, field.value)
+                        try:
+                            validList.remove('did/langmaterial/language')
+                        except:
+                            pass
+                    elif field.name.find('dao') == 0 :
+                        daoname = field.name.split('|')
+                        try :
+                            daodict = daonames[daoname[0]]
+                        except:
+                            daodict = {}
+                        if (field.value.strip() != '' and field.value.strip() != ' ' and field.value.strip() != '<p></p>' and re.sub('[\s]+', ' ', field.value.strip()) != '<p> </p>'):
+                            daodict[daoname[1]] = field.value
+                        daonames[daoname[0]] = daodict                
+                        
+                    else :
+                        if (field.value.strip() != '' and field.value.strip() != ' ' and field.value.strip() != '<p></p>' and re.sub('[\s]+', ' ', field.value.strip()) != '<p> </p>'):
+                            target = self._create_path(node, field.name)
+                            self._add_text(target, field.value)
+                            try:
+                                validList.remove(field.name[:field.name.rfind('[')])
+                            except:
+                                try:
+                                    validList.remove(field.name)
+                                except:
+                                    pass
+            self._create_dao(daonames, node)
+            self.log('build complete')
+            return (tree, name)
+
         ctype = form.get('ctype', None)
         loc = form.get('location', None)
         collection = False
@@ -612,13 +734,27 @@ class EadEditingHandler(EadHandler):
     def generate_file(self, form):
         self.log('CREATING NEW FILE')
         structure = read_file('ead2002.html')
-        doc = StringDocument('<ead><eadheader></eadheader><archdesc></archdesc></ead>')      
-        rec = xmlp.process_document(session, doc)
+        templateStore = db.get_object(session, 'templateStore')
+        templateName = form.get('templatesel1', None)  
+        if templateName == None or templateName == 'blank':
+            doc = StringDocument('<ead><eadheader></eadheader><archdesc></archdesc></ead>')      
+            rec = xmlp.process_document(session, doc)
+        else:
+            try:
+                tree = templateStore.fetch_record(session, templateName).get_dom(session)
+                newtree = tree.xpath('/template/ead')[0]
+                rec = xmlp.process_document(session, StringDocument(etree.tostring(newtree)))
+            except:
+                doc = StringDocument('<ead><eadheader></eadheader><archdesc></archdesc></ead>')      
+                rec = xmlp.process_document(session, doc)
+
         htmlform = formTxr.process_record(session, rec).get_raw(session)
         page = structure.replace('%FRM%', htmlform) 
         page = page.replace('%RECID%', '<input type="hidden" id="recid" value="notSet"/>')
         page = page.replace('%PUI%', '<input type="text" onfocus="setCurrent(this);" name="pui" id="pui" size="30" readonly="true" class="readonly"/>')
         page = page.replace('%TOC%', '<b><a id="collectionLevel" name="link" class="valid" onclick="javascript: displayForm(this.id)" style="display:inline; background:yellow">Collection Level</a></b>')  
+        page = page.replace('%MENUCODE%', read_file('contextMenu.html'))    
+        page = page.replace('%KYBDCODE%', read_file('keyboard.html'))
         return page
   
     
@@ -694,6 +830,8 @@ class EadEditingHandler(EadHandler):
             else :
                 page = page.replace('%PUI%', '<input type="text" onfocus="setCurrent(this);" name="pui" id="pui" size="30" disabled="true" value="%s"/><input type="hidden" id="owner" value="%s"/>' % ('-'.join(splitId[:-1]), splitId[-1]))                             
             page = page.replace('%TOC%', tocTxr.process_record(session, rec).get_raw(session))
+            page = page.replace('%MENUCODE%', read_file('contextMenu.html'))
+            page = page.replace('%KYBDCODE%', read_file('keyboard.html'))
             return page
         
     #loads from file
@@ -730,6 +868,8 @@ class EadEditingHandler(EadHandler):
             page = page.replace('%RECID%', '<input type="hidden" id="recid" value="%s"/>' % (recid.encode('ascii')))
             page = page.replace('%PUI%', '<input type="text" onfocus="setCurrent(this);" name="pui" id="pui" size="30" disabled="true" value="%s"/><input type="hidden" id="filename" value="%s"/>' % (recid.encode('ascii'), f))
             page = page.replace('%TOC%', tocTxr.process_record(session, rec2).get_raw(session))
+            page = page.replace('%MENUCODE%', read_file('contextMenu.html'))
+            page = page.replace('%KYBDCODE%', read_file('keyboard.html'))
             return page    
         else:
             return '<p>Your file is not compatible with the editing interface - it requires an eadheader element</p>'
@@ -783,6 +923,8 @@ class EadEditingHandler(EadHandler):
             page = page.replace('%RECID%', '<input type="hidden" id="recid" value="%s"/>' % (recid.encode('ascii')))
             page = page.replace('%PUI%', '<input type="text" onfocus="setCurrent(this);" name="pui" id="pui" size="30" disabled="true" value="%s"/>' % (recid.encode('ascii')))
             page = page.replace('%TOC%', tocTxr.process_record(session, rec1).get_raw(session))
+            page = page.replace('%MENUCODE%', read_file('contextMenu.html'))
+            page = page.replace('%KYBDCODE%', read_file('keyboard.html'))
             return page
         else:
             return '<p>Your file is not compatible with the editing interface - it requires an eadheader element</p>'
@@ -1214,7 +1356,7 @@ class EadEditingHandler(EadHandler):
             page = self.display_full(rec, paramDict, pageNavType="links")[pagenum-1]
         except IndexError:
             return 'No page number %d' % pagenum
-        
+
         if not (os.path.exists('%s/%s.inc' % (toc_cache_path, recid))):
             page = page.replace('<!--#include virtual="%s/%s.inc"-->' % (toc_cache_url, recid), 'There is no Table of Contents for this file.')
         else:
@@ -1382,7 +1524,7 @@ class EadEditingHandler(EadHandler):
             self.log('writing to file system')
             req.write('writing to file system... ')
             filepath = os.path.join(sourceDir, filename)
-            pre = ''
+            pre = '<?xml version="1.0" encoding="UTF-8"?>'
             if os.path.exists(filepath):
                 os.remove(filepath)
             try :
@@ -1493,6 +1635,23 @@ class EadEditingHandler(EadHandler):
     def show_editMenu(self):
         global sourceDir
         page = read_file('editmenu.html')
+        #get template info
+        templateStore = db.get_object(session, 'templateStore')
+        options = []
+        for t in templateStore:
+            options.append('<option value="%s">%s</option>' % (t.id, t.id))
+            
+        if len(options) == 0:
+            templateSel = ''
+            templateMod = ''
+        else:
+            templateSel = '<select name="templatesel1"><option value="blank">No Template</option>%s</select><br/><br/>' % ''.join(options)
+            templateMod = ['<form name="templateform" action="edit.html" method="get">',
+                            '<input type="hidden" name="operation" value="modifytemplate"/>',
+                            '<p>Use this to modify an existing template used by your institution when creating EAD.</p>', 
+                            '<select name="templatesel2">%s</select><br/><br/><input type="submit" value=" Modify Template " disabled="true"/>' % ''.join(options),
+                            '</form>']
+          
         userStore = db.get_object(session, 'eadAuthStore')
         files = self._walk_directory(sourceDir, 'radio', False)
         recids = self._walk_store(editStore, 'radio', 'eadAuthStore')  
@@ -1503,7 +1662,7 @@ class EadEditingHandler(EadHandler):
             assignmentOptn = '<select id="userSelect" name="user" disabled="true"><option value="null">Reassign to...</option>%s</select><input type="button" onclick="reassignToUser()" value=" Confirm Reassignment " disabled="true"/>' % ''.join(users)
         else :
             assignmentOptn = ''
-        return multiReplace(page, {'%%%SOURCEDIR%%%': sourceDir, '%%%FILES%%%': ''.join(files), '%%%RECORDS%%%': ''.join(recids), '%%%USROPTNS%%%': assignmentOptn}) 
+        return multiReplace(page, {'%%%SOURCEDIR%%%': sourceDir, '%%%FILES%%%': ''.join(files), '%%%RECORDS%%%': ''.join(recids), '%%%USROPTNS%%%': assignmentOptn, '%%%TMPLTSEL%%%': templateSel, '%%%TMPLTMOD%%%': ''.join(templateMod)}) 
        
              
     def _walk_store(self, store, type='checkbox', userStore=None):
@@ -1632,6 +1791,17 @@ class EadEditingHandler(EadHandler):
             elif (operation == 'local'):
                 content = self.upload_local(form)
                 self.send_fullHtml(content, req) 
+            elif (operation == 'createtemplate'):
+                content = self.create_template(form)
+                self.send_fullHtml(content, req)
+            elif (operation == 'savetemplate'):
+                content = self.save_template(form)
+                self.send_xml(content, req)
+            elif (operation == 'modifytemplate'):
+                content = self.modify_template(form)
+                self.send_fullHtml(content, req)
+            elif (operation == 'discardtemplate'):
+                content = self.discard_template(form)
             editStore.commit_storing(session) 
         else :      
             path = req.uri
