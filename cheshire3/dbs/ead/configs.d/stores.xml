@@ -72,7 +72,17 @@
 	      </options>
 	    </subConfig>
 	    
-	    
+	   <subConfig type="recordStore" id="templateStore">
+	      <objectType>cheshire3.sql.postgres.PostgresRecordStore</objectType>
+	      <paths>
+			<path type="databaseName">db_ead</path>
+            <path type="tableName">templateStore</path>
+	        <object type="inTransformer" ref="XmlTransformer" />
+	        <object type="outParser" ref="LxmlParser" />
+	      </paths>
+	      <options>
+	      </options>
+		</subConfig>   
 
             
 
