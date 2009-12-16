@@ -15,7 +15,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 
   <!--Output without indenting because we're doing it ourselves-->
-  <xsl:output method="xml" omit-xml-declaration="no" version="1.0" indent="no" encoding="ascii"/>
+  <xsl:output method="xml" omit-xml-declaration="yes" version="1.0" indent="no" encoding="ascii"/>
 
   <!--Accept an external parameter specifying whether to delete comments-->
   <xsl:param name="delete_comments" select="false()"/>
