@@ -8,7 +8,7 @@
 	
 <xsl:stylesheet
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-  xmlns:rec="http://www.archiveshub.ac.uk/srw/extension/2/record-1.1"
+  xmlns:rec="http://www.cheshire3.org/srw/extension/2/record-1.1"
   xmlns:srw_dc="info:srw/schema/1/dc-v1.1"
   xmlns:dc="http://purl.org/dc/elements/1.0"
   version="1.0">

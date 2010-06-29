@@ -228,6 +228,14 @@
 			<xsl:apply-templates/><br/>
 		</xsl:if>
 	</xsl:template>
+	
+	<xsl:template match="unitid">
+       <xsl:value-of select="@countrycode"/>
+       <xsl:text> </xsl:text>
+       <xsl:value-of select="@repositorycode"/>
+       <xsl:text> </xsl:text>
+       <xsl:apply-templates/>
+    </xsl:template>
 
 	<!--  ARCHDESC -->
 	<xsl:template match="archdesc">
@@ -1589,6 +1597,9 @@
 			<xsl:when test="@altrender='italicdoublequote'">
 			 	<i><xsl:text>&quot;</xsl:text><xsl:value-of select="."/><xsl:text>&quot;</xsl:text></i>
 			</xsl:when>
+			<xsl:when test="@altrender='queryTerm'">
+                <span class="highlight" title="This word was a match for your search"><xsl:value-of select="."/></span>
+            </xsl:when>
 			<xsl:otherwise>
 				<xsl:choose>
 					<xsl:when test="local-name() = 'title'">
@@ -1689,7 +1700,7 @@
 			</xsl:choose>
 		</xsl:variable>
 		<xsl:value-of select="concat($first, $middle, $last)"/>
-  </xsl:template>
+    </xsl:template>
   
   
 	<!-- template for constructing browse links, given the name of the index to browse -->
