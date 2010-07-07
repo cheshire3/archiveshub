@@ -1,6 +1,6 @@
 /*
 	This file was produced, and released as part of Cheshire for Archives v3.x
-	Copyright &copy; 2005-2009 the University of Liverpool
+	Copyright &copy; 2005-2010 the University of Liverpool
 */
 
 * {margin:0;padding:0;}
@@ -184,6 +184,7 @@ div#supporters-side a {
 	padding: 10px 0 10px 0
 }
 
+
 #hitreport { 
   margin-top: 10px;
   margin-bottom: 10px;
@@ -192,6 +193,10 @@ div#supporters-side a {
 div.passwdconfirm {
 	margin-top: 0.5em;
 	margin-bottom: 0.5em;
+}
+
+div.row {
+    margin-bottom: 1em;
 }
 
 .hitnav {

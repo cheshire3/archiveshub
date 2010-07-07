@@ -1,13 +1,25 @@
 /*
   This file was produced, and released as part of Cheshire for Archives v3.x
-  Copyright &copy; 2005-2009 the University of Liverpool
+  Copyright &copy; 2005-2010 the University of Liverpool
+
+colours:
+
+blues (pale - dark):
+
+b7e8f5
+00afdb
+16145f
+
+orange: f8971d
+
 */
 
 body { 
   color: black;
+  color: #16145f;
   background-color: white;
-  font-family: Helvetica, Arial, sans-serif;
-  font-size: 10.5pt;
+  font-family: "Trebuchet MS", Helvetica, Arial, sans-serif;
+  font-size: 10pt;
 }
 
 img { 
@@ -20,36 +32,37 @@ img.screenshot {
 }
 
 div#header {
-	background-image: url(/ead/img/bg-gradient-t-10.png);
-	background-repeat: repeat-x;
-	background-position: top left;
-	background-color: #c4d6f8;
-  	color: #000000;
+    background-image: url(/ead/img/c4a_boxstack.png);
+    background-repeat: no-repeat;
+    background-position: top right;
+	/*background-color: #b7e8f5;*/
+  	color: #16145f;
 }
 
 body,
 div#banner,
 div#navbar {
-	background-image: url(/ead/img/bg-gradient-l-10.png);
 	background-repeat: repeat-y;
 	background-position: left;
 }
 
 div#navbar {
 	width: 99%;
-	background-color: #0b2265;
+	color: #f8971d;
+	font-weight: bold;
+	/*background-color: #0b2265;*/
+	background-color: #b7e8f5;
 }
 
 div#leftcol.toc {
-	font-size: 10.5pt;	
+	font-size: 10pt;	
 }
 
 div.daos {
-	background-color: #f5f5f5;
-	border: 1px solid silver;
-	border-radius: 15px;
-	-moz-border-radius: 15px;
-	-webkit-border-radius: 15px;
+	background-color: #b7e8f5;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
 }
 
 div.daohead,
@@ -79,7 +92,7 @@ div#no-hits-img img {
 
 table.results {
 	border-collapse: collapse;
-	font-size: 11pt;
+	font-size: 10pt;
 }
 
 table.adminmenu { 
@@ -105,8 +118,8 @@ tr.headrow {
 /*  color: #ffffff;*/
 /*  background-color: #0b2265;*/ /*dark blue*/
 /* like titlebar */
-	color: #000000;
-	background-color: #c4d6f8;
+	color: #16145f;
+	background-color: #b7e8f5;
 }
 
 tr.odd { 
@@ -146,31 +159,70 @@ table.nassischneiderman td {
 
 /* HEADINGS */
 
-h1 { font-size: 14pt; margin-top: 2px; margin-bottom: 2px;}
-h2 { font-size: 14pt; margin-top: 2px; margin-bottom: 2px;}
-h2.unittitle { text-align: center; margin-bottom: 1em;}
-h3 { color: #000000; font-size: 12pt; margin-top: 0.1em; margin-bottom: 0.5em;}
-.bar, h3.ead, h3.redheading, h3.greenheading{
-	background-color: #c4d6f8;
+h1 {
+    color: #16145f;
+    font-size: 12pt;
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+h2 { 
+    color: #16145f;
+    font-size: 12pt;
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+h2.unittitle {
+    text-align: center;
+    margin-bottom: 1em;
+}
+h3 {
+    font-size: 11pt;
+    margin-top: 0.1em;
+    margin-bottom: 0.5em;
+}
+.bar, 
+h3.ead, 
+h3.redheading, 
+h3.greenheading {
+	background-color: #b7e8f5;
 	padding: 2px;
-	border: solid black 1px;
 	margin: 1em 0 0.5em 0;
-	}
-h3.redheading { background-color: #ffaaaa; }
-h3.greenheading { background-color: #aaffaa; }
-h4 {font-size: 12pt; margin-top: 0.1em; margin-bottom: 0.1em;}
-h5 {font-size: 12pt; margin-top: 0.1em; margin-bottom: 0.1em;}
-h5.minor {font-size: 11pt; color: #0b2265; margin-left: 5px;}
-h6 {font-size: 11pt; margin-top: 0.1em; margin-bottom: 0.1em;}
+}
+h3.redheading {
+    background-color: #ffaaaa;
+}
+h3.greenheading {
+    background-color: #aaffaa;
+}
+h4 {
+    font-size: 11pt;
+    margin-top: 0.1em;
+    margin-bottom: 0.1em;
+}
+h5 {
+    font-size: 11pt;
+    margin-top: 0.1em;
+    margin-bottom: 0.1em;
+}
+h5.minor {
+    font-size: 10pt;
+    color: #0b2265;
+    margin-left: 5px;
+}
+h6 {
+    font-size: 10pt;
+    margin-top: 0.1em;
+    margin-bottom: 0.1em;
+}
 
 /* LISTS */
 
 ul.unmarked {
-  margin-bottom: 1em;
+    margin-bottom: 1em;
 }
 
 ul.hierarchy { 
-  border-left: 1px dotted #aaaaaa;
+    border-left: 1px dotted #aaaaaa;
 }
 
 /* Facets */
@@ -220,7 +272,7 @@ a.jscall {
 }
 
 .navbar { 
-	color: white;
+	color: #16145f;
 	font-size: 11pt;
 	padding-bottom: 0px;
 	/*font-variant: small-caps;*/
@@ -228,12 +280,12 @@ a.jscall {
 .navbar a:link,
 .navbar a:visited
 {
-  color: white;
+  color: #16145f;
   text-decoration: none;
 }
 .navbar a:hover,
 .navbar a:visited:hover {
-  color: white;
+  color: #16145f;
   text-decoration: underline;
 }
 
