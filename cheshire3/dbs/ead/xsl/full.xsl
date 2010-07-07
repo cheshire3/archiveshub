@@ -20,35 +20,35 @@
 <!--	<xsl:preserve-space elements="*"/>-->
         <xsl:output method="html"/>
 
-	<xsl:template match="/">
-	  <div id="padder">
-	    <div id="rightcol" class="ead">
-	      <xsl:apply-templates/>
-	    </div>
-	  </div>
-	  <div id="leftcol" class="toc">
-            <xsl:comment>
-                <xsl:text>#config errmsg="[ Table of Contents unavailable ]"</xsl:text>
-            </xsl:comment>
-	    <xsl:comment>
-	      <xsl:text>#include virtual="</xsl:text>
-	      <xsl:value-of select="$toc_cache_url"/>
-	     <xsl:text>/</xsl:text>
-	      <xsl:value-of select="$recid"/>
-	      <xsl:text>.inc"</xsl:text>
-	    </xsl:comment>
-	    <br/>
-	  </div>
-	  <xsl:if test="/ead/archdesc/dsc">
-	    <exsl:document
-	    	href="file:///home/cheshire/install/htdocs/ead/tocs/foo.bar"
-		method="xml"
-	      	omit-xml-declaration="yes"
-	      	indent="yes">
-	      <!-- content for this document should go here -->
-	      <xsl:call-template name="toc"/>
-	    </exsl:document>
-	  </xsl:if>
+    <xsl:template match="/">
+        <div id="padder">
+		    <div id="rightcol" class="ead">
+		      <xsl:apply-templates/>
+		    </div>
+			</div>
+			<div id="leftcol" class="toc">
+				<xsl:comment>
+				    <xsl:text>#config errmsg="[ Table of Contents unavailable ]"</xsl:text>
+				</xsl:comment>
+                <xsl:comment>
+					<xsl:text>#include virtual="</xsl:text>
+					<xsl:value-of select="$toc_cache_url"/>
+					<xsl:text>/</xsl:text>
+					<xsl:value-of select="$recid"/>
+					<xsl:text>.inc"</xsl:text>
+                </xsl:comment>
+                <br/>
+            </div>
+			<xsl:if test="/ead/archdesc/dsc">
+			   <exsl:document
+			   	href="file:///home/cheshire/install/htdocs/ead/tocs/foo.bar"
+			method="xml"
+			     	omit-xml-declaration="yes"
+			     	indent="yes">
+			     <!-- content for this document should go here -->
+			    <xsl:call-template name="toc"/>
+			  </exsl:document>
+			</xsl:if>
 	</xsl:template>
 
 
