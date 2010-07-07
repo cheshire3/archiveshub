@@ -43,7 +43,7 @@ class EadEditingHandler(EadHandler):
     htmlTitle = None
     htmlNav = None
     logger = None
-    errorFields = []    
+    errorFields = []
     required_xpaths_components = ['did/unitid', 'did/unittitle', 'did/unitdate']
     required_xpaths = [
 'did/unitid',
@@ -57,15 +57,13 @@ class EadEditingHandler(EadHandler):
 'scopecontent',
 'accessrestrict'
 ]
-
-
     
-    altrenderDict = { 'surname' : 'a',
-                      'organisation' : 'a',
-                      'dates' : 'y',
-                      'other' : 'x',
-                      'loc' : 'z'                    
-                     }
+    altrenderDict = {'surname' : 'a',
+                     'organisation' : 'a',
+                     'dates' : 'y',
+                     'other' : 'x',
+                     'loc' : 'z'                    
+                    }
 
 # Dictionaries of punctuation  one string means that it goes after the values two strings are either side first before second after
     
@@ -73,29 +71,29 @@ class EadEditingHandler(EadHandler):
                      'forename': [u'.\u00A0'],
                      'y': [u'(', u')\u00A0'],
                      'epithet': [u',\u00A0']
-                     }
+                    }
     
     famnamePunct = {'a': [u'\u00A0'],
                     'x': [u'.\u00A0'],
-                    'title':[u'.\u00A0'],
+                    'title': [u'.\u00A0'],
                     'y': [u'(', u')\u00A0'],
-                    'z':[u'.\u00A0']
-                    }
+                    'z': [u'.\u00A0']
+                   }
     
     corpnamePunct = {'x': [u'\u00A0--\u00A0', u'\u00A0'],
                      'y': [u'(', u')\u00A0'],
                      'z': [u'\u00A0--\u00A0', u'\u00A0']                            
-                     }
+                    }
     
     subjectPunct = {'x': [u'\u00A0--\u00A0', u'\u00A0'],
-                     'y': [u'\u00A0--\u00A0', u'\u00A0'],
-                     'z': [u'\u00A0--\u00A0', u'\u00A0']                            
-                     }
+                    'y': [u'\u00A0--\u00A0', u'\u00A0'],
+                    'z': [u'\u00A0--\u00A0', u'\u00A0']                            
+                   }
     
     geognamePunct = {'x': [u'\u00A0--\u00A0', u'\u00A0'],
                      'y': [u'\u00A0--\u00A0', u'\u00A0'],
                      'z': [u'\u00A0--\u00A0', u'\u00A0']
-                     }
+                    }
 
     typeDict = {'persname': persnamePunct, 'famname': famnamePunct, 'corpname': corpnamePunct, 'subject': subjectPunct, 'geogname': geognamePunct}
 
@@ -103,28 +101,19 @@ class EadEditingHandler(EadHandler):
         EadHandler.__init__(self, lgr)
         self.htmlTitle = ['Data Creation and Editing']
         self.htmlNav = ['<a href="menu.html" title="Edit/Create Menu">Edit/Create Menu</a>', '<a href="/ead/edit/help.html" title="Edit/Create Help">Edit/Create Help</a>', '<a href="javascript: toggleKeyboard();" title="Show/Hide Character Keyboard">Character Keyboard</a>']
-
     #- end __init__ ---------------------------------------------------------
 
-
     def send_html(self, data, req, code=200):
-        req.content_type = 'text/html'
         req.headers_out['Cache-Control'] = "no-cache, no-store"
-        req.content_length = len(data)
-        req.send_http_header()
-        if (type(data) == unicode):
-          data = data.encode('utf-8')
-        req.write(data)
-        req.flush()
+        super(EadEditingHandler, self).send_html(data, req, code)
         #- end send_html() ---------------------------------------------------------
-    
 
     def send_fullHtml(self, data, req, code=200):
         tmpl = read_file(self.templatePath)                                     # read the template in
         page = tmpl.replace("%CONTENT%", data)
         self.globalReplacements.update({
-            "%TITLE%": ' :: '.join(self.htmlTitle)
-            ,"%NAVBAR%": ' | '.join(self.htmlNav),
+            "%TITLE%": title_separator.join(self.htmlTitle)
+            ,"%NAVBAR%": navbar_separator.join(self.htmlNav),
         })
         page = multiReplace(page, self.globalReplacements)
         req.content_type = 'text/html'
@@ -137,18 +126,11 @@ class EadEditingHandler(EadHandler):
         req.flush()        
     #- end send_html() ---------------------------------------------------------
     
-    
     def send_xml(self, data, req, code=200):
-        req.content_type = 'text/xml'
-        req.content_length = len(data) 
-        req.send_http_header()
-        if (type(data) == unicode):
-            data = data.encode('utf-8')
-        req.write(data)
-        req.flush()       
-    #- end send_xml() ---------------------------------------------------------
+        req.headers_out['Cache-Control'] = "no-cache, no-store"
+        super(EadEditingHandler, self).send_xml(data, req, code)
+        #- end send_xml() ---------------------------------------------------------
     
-
     def _validate_isadg(self, rec):
         required_xpaths = ['/ead/eadheader/eadid']
         # check record for presence of mandatory XPaths
@@ -170,8 +152,7 @@ class EadEditingHandler(EadHandler):
     ''' % ('<br/>'.join(missing_xpaths), newlineRe.sub('\n\g<1>', html_encode(rec.get_xml(session))))
         else:
             return None
-    # end _validate_isadg() ---------------------------------------------------------
-    
+        # end _validate_isadg() ---------------------------------------------------------
 #template creation/editing functions========================================================================
 
     def create_template (self, form):
@@ -241,8 +222,7 @@ class EadEditingHandler(EadHandler):
         else :
             return 'failed'    
 
-
-# EAD Creation and Editing Functions ==========================================================================================
+    # EAD Creation and Editing Functions ==========================================================================================
     
     def build_ead(self, form, template=False):
         self.log('building ead')
@@ -387,7 +367,6 @@ class EadEditingHandler(EadHandler):
         return (tree, valid)    
     #- end build_ead    
         
-        
     def _create_dao(self, dict, node):
         if node.xpath('did'):
             startnode = node.xpath('did')[0]
@@ -455,7 +434,6 @@ class EadEditingHandler(EadHandler):
                         self._add_text(descelem, dao['desc'])
                         daoelem.append(descelem)
                       
-        
     def _delete_path(self, startNode, nodePath):
         if not (startNode.xpath(nodePath)) :
             return 
@@ -481,7 +459,6 @@ class EadEditingHandler(EadHandler):
                 return
             else :
                 return self._delete_path(startNode, nodePath[:nodePath.rfind('/')])
-            
 
     def _create_path(self, startNode, nodePath):              
         if (startNode.xpath(nodePath)):
@@ -514,17 +491,14 @@ class EadEditingHandler(EadHandler):
             else:
                 return self._add_attribute(self._create_path(startNode, newNodePath), nodeString[1:])  
             
-                        
     def _append_element(self, parentNode, childNode):    
         parentNode.append(childNode)
         return childNode
-
     
     def _add_attribute(self, parentNode, attribute):
         parentNode.attrib[attribute] = ""
         return [parentNode, attribute]
 
-       
     def _delete_currentControlaccess(self, startNode, list=['subject','persname', 'famname', 'corpname', 'geogname', 'title', 'genreform', 'function']):
         if (startNode.xpath('controlaccess')):
             parent = startNode.xpath('controlaccess')[0]        
@@ -536,7 +510,6 @@ class EadEditingHandler(EadHandler):
             if len(parent.getchildren()) == 0 :
                 startNode.remove(parent)
             
-                
     def _delete_currentLangmaterial(self, startNode):
         did = startNode.xpath('did')[0]
         if (did.xpath('langmaterial')):
@@ -546,7 +519,6 @@ class EadEditingHandler(EadHandler):
                 for c in child :
                     parent.remove(c)
             did.remove(parent)
- 
     
     def _delete_currentDao(self, startNode):
         #delete dao from outside did
@@ -559,7 +531,6 @@ class EadEditingHandler(EadHandler):
         if len(children) > 0:
             for c in children :
                 startNode.remove(c)        
-        
         did = startNode.xpath('did')[0]
         #delete dao from inside did
         children = did.xpath('dao')
@@ -571,7 +542,6 @@ class EadEditingHandler(EadHandler):
         if len(children) > 0:
             for c in children :
                 did.remove(c)   
-                       
       
     def _create_langmaterial(self, startNode, value, name=None):
         if not (startNode.xpath('langmaterial')):
@@ -584,7 +554,6 @@ class EadEditingHandler(EadHandler):
         language = etree.SubElement(lmNode, 'language', langcode='%s' % fields[0].split(' | ')[1])     
         text = fields[1].split(' | ')[1]
         self._add_text(language, text)
-
 
     def _add_text(self, parent, textValue):
         if not (textValue.find('&amp;') == -1):
@@ -610,7 +579,6 @@ class EadEditingHandler(EadHandler):
         else :
             parent[0].attrib[parent[1]] = textValue
        
-       
     def _create_controlaccess(self, startNode, name, value):
         #get the controlaccess node or create it 
         if not (startNode.xpath('controlaccess')):
@@ -621,7 +589,6 @@ class EadEditingHandler(EadHandler):
             caNode = startNode.xpath('controlaccess')[0]   
         typeString = name[name.find('/')+1:]    
         type = etree.Element(typeString)
-        
         caNode.append(type)
         fields = value.split(' ||| ')
         for i, f in enumerate(fields) :
@@ -660,12 +627,10 @@ class EadEditingHandler(EadHandler):
         if re.match('(\s+)?[,\.\-](\s+)?', lastTail):
             type[-1].tail = ''
          
-    #- end _create_controlacess    
+        #- end _create_controlacess    
  
- 
-# ========================================================================================
-
-# Navigation related functions ==================================================================
+    # ========================================================================================
+    # Navigation related functions ==================================================================
        
     def navigate(self, form): 
         recid = form.get('recid', None)
@@ -702,8 +667,7 @@ class EadEditingHandler(EadHandler):
         page = page.replace('%PUI%', '<input type="text" onfocus="setCurrent(this);" name="pui" id="pui" size="30" disabled="true" value="%s"/>' % recid)
         return page.replace('%RECID%', '')
 
-
-# loading in related functions =============================================================================
+    # loading in related functions =============================================================================
     
     def _add_componentIds (self, rec):
         tree = etree.fromstring(rec.get_xml(session))
@@ -730,7 +694,6 @@ class EadEditingHandler(EadHandler):
                     raise
         return LxmlRecord(tree)
                     
-                     
     def generate_file(self, form):
         self.log('CREATING NEW FILE')
         structure = read_file('ead2002.html')
@@ -757,7 +720,6 @@ class EadEditingHandler(EadHandler):
         page = page.replace('%KYBDCODE%', read_file('keyboard.html'))
         return page
   
-    
     def _add_revisionDesc(self, rec, fn, local=False):
         tree = rec.get_dom(session)
         filename = fn[fn.rfind('/data/')+6:]
@@ -765,14 +727,12 @@ class EadEditingHandler(EadHandler):
             userName = session.user.realName
         else :
             userName = session.user.username
-        
         if local:
             textString = 'Uploaded from a local file and edited by %s using the cheshire for archives ead creation and editing tool' % userName  
         else :
             textString = 'Loaded from %s and edited by %s using the cheshire for archives ead creation and editing tool' % (filename, userName)
         
         if tree.xpath('/ead/eadheader/revisiondesc'):
-           
             if tree.xpath('/ead/eadheader/revisiondesc/change'):
                 parent = tree.xpath('/ead/eadheader/revisiondesc')[0]
                 new = etree.Element('change')
@@ -800,8 +760,6 @@ class EadEditingHandler(EadHandler):
             self._add_text(target, textString)   
         return LxmlRecord(tree)
 
-
-            
     #loads from editStore
     def load_file(self, form, req):        
         recid = form.get('recid', None)
@@ -904,8 +862,6 @@ class EadEditingHandler(EadHandler):
                         return '<p>You already have this file open for editing as %s. <br /><br />To continue editing the version of the file in the Draft File Store click <a href="/ead/edit/?operation=load&user=null&recid=%s-%s">here</a>. (if you reached this page by using the back button from a preview of the record then this will take you back to the record you were editing)<br/><br/> To edit the version from your local file store please delete the file currently in the Draft File Store before reloading</p><br /><a href="/ead/edit/editmenu.html">Back to Create/Edit Menu</a>' % (rec1.id, rec1.id, session.user.username.encode('ascii', 'ignore'))
                     else :
                         pass
-                    
-    
             id = '%s-%s' % (recid, session.user.username.encode('ascii', 'ignore'))
             rec1.id = id
             self.log('record has id %s' % recid)
@@ -916,7 +872,6 @@ class EadEditingHandler(EadHandler):
             #otherwise store in editing store
                 editStore.store_record(session, rec1)
     #        editStore.commit_storing(session) 
-    
             structure = read_file('ead2002.html')
             htmlform = formTxr.process_record(session, rec1).get_raw(session)
             page = structure.replace('%FRM%', htmlform)
@@ -928,13 +883,8 @@ class EadEditingHandler(EadHandler):
             return page
         else:
             return '<p>Your file is not compatible with the editing interface - it requires an eadheader element</p>'
-        
     
-    def _get_timeStamp(self):
-        return time.strftime('%Y-%m-%dT%H%M%S')
-    
-    
-# Validation related functions   ================================================================================== 
+    # Validation related functions   ================================================================================== 
     
     def checkExistingId(self, id):
         exists = False
@@ -963,7 +913,6 @@ class EadEditingHandler(EadHandler):
                     else:    
                         users.append(n)    
         return [exists, store, overwrite, users]
-         
     
     def getAndCheckId(self, form):
         f = form.get('filepath', None)
@@ -998,7 +947,6 @@ class EadEditingHandler(EadHandler):
             else :
                 return '<wrap><value>true</value><overwrite>false</overwrite><users>%s</users></wrap>' % ' \n '.join(ns)
                 
-     
     def checkId(self, form):
         id = form.get('id', None)        
         store = form.get('store', None)
@@ -1016,7 +964,6 @@ class EadEditingHandler(EadHandler):
                     exists = 'true'
                     break;
             return '<value>%s</value>' % exists
-
 
     def checkEditId(self, form):
         id = form.get('id', None)
@@ -1038,15 +985,12 @@ class EadEditingHandler(EadHandler):
             else:
                 return '<wrapper><value>%s</value><owner>user</owner></wrapper>' % exists
                     
-    
-    
     def validate_record(self, xml):
         try :
             etree.fromstring(xml)
             return True
         except :
             return False
-        
         
     def validateField(self, form):
         self.log('validating field via AJAX')
@@ -1066,22 +1010,9 @@ class EadEditingHandler(EadHandler):
         else :
             return '<value>true</value>'
     
-    
-    def _get_genericHtml(self, fn):
-        global repository_name, repository_link, repository_logo
-        html = read_file(fn)
-        paramDict = self.globalReplacements
-        paramDict.update({'%TITLE%': ' :: '.join(self.htmlTitle)
-                         ,'%NAVBAR%': ' | '.join(self.htmlNav)
-                         })
-        return multiReplace(html, paramDict)
-    
-    
-# Basic User functions - submit preview etc. ================================================================================
-
+    # Basic User functions - submit preview etc. ================================================================================
 
     def save_form(self, form):
-        
         loc = form.get('location', None)
         recid = form.get('recid', None)
         parent = form.get('parent', None)
@@ -1149,7 +1080,6 @@ class EadEditingHandler(EadHandler):
                             validList.remove('did/langmaterial/language')
                         except:
                             pass
-                        
                     elif field.name.find('dao') == 0 :
                         daoname = field.name.split('|')
                         try :
@@ -1159,7 +1089,6 @@ class EadEditingHandler(EadHandler):
                         if (field.value.strip() != '' and field.value.strip() != ' ' and field.value.strip() != '<p></p>' and re.sub('[\s]+', ' ', field.value.strip()) != '<p> </p>'):
                             daodict[daoname[1]] = field.value
                         daonames[daoname[0]] = daodict                           
-                        
                     else :
                         if (field.value.strip() != '' and field.value.strip() != ' ' and field.value.strip() != '<p></p>' and re.sub('[\s]+', ' ', field.value.strip()) != '<p> </p>'):
                             target = self._create_path(node, field.name)
@@ -1197,14 +1126,11 @@ class EadEditingHandler(EadHandler):
             retrievedRec = editStore.fetch_record(session, '%s-%s' % (recid, fileOwner))
             retrievedXml= retrievedRec.get_xml(session)   
             tree = etree.fromstring(retrievedXml)
-           
             #first check there is a dsc element and if not add one (needed for next set of xpath tests)
-            
             if not (tree.xpath('/ead/archdesc/dsc')):
                 archdesc = tree.xpath('/ead/archdesc')[0]    
                 dsc = etree.Element('dsc')     
                 archdesc.append(dsc)    
-
             #if the component does not exist add it
             if not (tree.xpath('//*[@c3id=\'%s\']' % loc)):
                 self.log('new component')
@@ -1219,7 +1145,6 @@ class EadEditingHandler(EadHandler):
                 rec.id = retrievedRec.id
                 editStore.store_record(session, rec)
 #                editStore.commit_storing(session)   
-                                             
             #if the component does exist change it
             else :   
                 self.log('existing component')
@@ -1291,11 +1216,9 @@ class EadEditingHandler(EadHandler):
                 rec.id = retrievedRec.id
                 editStore.store_record(session, rec)
 #                editStore.commit_storing(session)
-            
             self.log('saving complete')
             return (recid, valid)
   
-
     def delete_record(self, form):
         recid = form.get('recid', None)
         if not recid == None :
@@ -1343,10 +1266,9 @@ class EadEditingHandler(EadHandler):
             os.makedirs(os.path.join(toc_cache_path, 'preview'))
         except OSError:
             pass # already exists
-
         recid = rec.id = 'preview/%s' % (session.user.username)    # assign rec.id so that html is stored in a restricted access directory
         paramDict = self.globalReplacements
-        paramDict.update({'%TITLE%': ' :: '.join(self.htmlTitle)
+        paramDict.update({'%TITLE%': title_separator.join(self.htmlTitle)
                           ,'%NAVBAR%' : ''
                          ,'LINKTOPARENT': ''
                          ,'TOC_CACHE_URL' : toc_cache_url
@@ -1356,7 +1278,6 @@ class EadEditingHandler(EadHandler):
             page = self.display_full(rec, paramDict, pageNavType="links")[pagenum-1]
         except IndexError:
             return 'No page number %d' % pagenum
-
         if not (os.path.exists('%s/%s.inc' % (toc_cache_path, recid))):
             page = page.replace('<!--#include virtual="%s/%s.inc"-->' % (toc_cache_url, recid), 'There is no Table of Contents for this file.')
         else:
@@ -1369,7 +1290,6 @@ class EadEditingHandler(EadHandler):
         return page
     #- end preview_file() ---------------------------------------------------------
 
-
     def preview_xml(self, req):
         self.log('XML requested')
         form = FieldStorage(req)
@@ -1381,15 +1301,11 @@ class EadEditingHandler(EadHandler):
         else :
             return '<p>Unable to display xml</p>'
     
-    
 #    def _write_file(self, filename, xml):
 #        global sourceDir
 #        
 #        # write to file
     
-
-                    
-                    
     def submit(self, req, form):
         global sourceDir, xmlp, lockfilepath
         self.log('File submitted')
@@ -1483,27 +1399,20 @@ class EadEditingHandler(EadHandler):
                                             db.unindex_record(session, compRec)
                                             db.remove_record(session, compRec)
                                             compStore.delete_record(session, compRec.id)
-                         
                                     compStore.commit_storing(session)
                                     req.write('<span class="ok">[OK]</span><br/>\n')
-                                    
                             #add and index new record
                             self.log('indexing new record')
                             req.write('indexing new record... ')
                             doc = ppFlow.process(session, StringDocument(xml))
                             rec = xmlp.process_document(session, doc)
                             assignDataIdFlow.process(session, rec)
-                            
                             db.begin_indexing(session)
                             recordStore.begin_storing(session)
                             dcRecordStore.begin_storing(session)
-                            
                             indexNewRecordFlow.process(session, rec)
-                            
                             recordStore.commit_storing(session)
                             dcRecordStore.commit_storing(session)
-                            
-                            
                             if len(rec.process_xpath(session, 'dsc')):
                                 compStore.begin_storing(session)
                                 # extract and index components
@@ -1516,11 +1425,9 @@ class EadEditingHandler(EadHandler):
                                 db.commit_indexing(session)
                                 db.commit_metadata(session)   
                                 req.write('<span class="ok">[OK]</span><br/>\n')                  
-    
                 finally:
                     if os.path.exists(lockfilepath):
                         os.remove(lockfilepath)
-                            
             self.log('writing to file system')
             req.write('writing to file system... ')
             filepath = os.path.join(sourceDir, filename)
@@ -1546,9 +1453,7 @@ class EadEditingHandler(EadHandler):
             req.write('</div>')        
             req.write(foot)
             self.log('file saved as %s' % filepath)
-            
             return None 
-      
       
     def _get_filename(self, rec):
         tree = rec.get_dom(session)
@@ -1564,7 +1469,6 @@ class EadEditingHandler(EadHandler):
         else :
             return None
       
-    
     def add_form(self, form):
         recid = form.get('recid', None)
         level = int(form.get('clevel', None))
@@ -1574,7 +1478,6 @@ class EadEditingHandler(EadHandler):
         htmlform = formTxr.process_record(session, rec).get_raw(session)
         htmlform = htmlform.replace('%PUI%', '<input type="text" onfocus="setCurrent(this);" name="pui" id="pui" size="30" disabled="true" value="%s"/>' % recid)
         return htmlform
-
 
     def delete_component(self, form):
         recid = form.get('recid', None)
@@ -1604,7 +1507,6 @@ class EadEditingHandler(EadHandler):
             value = 'notsaved'
         return '<value>%s</value>' % value
 
-            
     def reset(self, form):
         doc = StringDocument('<ead><eadheader></eadheader><archdesc></archdesc></ead>')         
         rec = xmlp.process_document(session, doc)
@@ -1613,10 +1515,7 @@ class EadEditingHandler(EadHandler):
         page = page.replace('%PUI%', '<input type="text" onfocus="setCurrent(this);" name="pui" id="pui" size="30" readonly="true" class="readonly"/>')        
         return page
 
-
-
-# Menu page functions ==============================================================================   
-    
+    # Menu page functions ==============================================================================   
     
     def reassign_record(self, form):
         newUser = form.get('user', None).value
@@ -1631,7 +1530,6 @@ class EadEditingHandler(EadHandler):
             #editStore.commit_storing(session)
             return rec.id
 
-         
     def show_editMenu(self):
         global sourceDir
         page = read_file('editmenu.html')
@@ -1664,7 +1562,6 @@ class EadEditingHandler(EadHandler):
             assignmentOptn = ''
         return multiReplace(page, {'%%%SOURCEDIR%%%': sourceDir, '%%%FILES%%%': ''.join(files), '%%%RECORDS%%%': ''.join(recids), '%%%USROPTNS%%%': assignmentOptn, '%%%TMPLTSEL%%%': templateSel, '%%%TMPLTMOD%%%': ''.join(templateMod)}) 
        
-             
     def _walk_store(self, store, type='checkbox', userStore=None):
         if not userStore:
             out = []
@@ -1718,16 +1615,14 @@ class EadEditingHandler(EadHandler):
                                                    ,'<span class="filename">%s</span>' % displayId
                                                    ,'</li>'])
             return out
-                
 
-#================================================================================================================    
+    #================================================================================================================    
                                      
     def handle (self, req):
         global script, editStore
         form = FieldStorage(req, True)  
         content = None      
         operation = form.get('operation', None)
-        
         if (operation):
             editStore.begin_storing(session)  
             if (operation == 'add'):  
@@ -1819,14 +1714,13 @@ class EadEditingHandler(EadHandler):
             page = multiReplace(read_file(templatePath), {'%REP_NAME%': repository_name,
                      '%REP_LINK%': repository_link,
                      '%REP_LOGO%': repository_logo,
-                     '%TITLE%': ' :: '.join(self.htmlTitle),
-                     '%NAVBAR%': ' | '.join(htmlNav),
+                     '%TITLE%': title_separator.join(self.htmlTitle),
+                     '%NAVBAR%': navbar_separator.join(htmlNav),
                      '%CONTENT%': content
                      })
             # send the display
             self.send_html(page, req)
            
-    
         #- end handle() ---------------------------------------------------
         
     #- end class EadEditingHandler ----------------------------------------
@@ -1865,18 +1759,16 @@ def build_architecture(data=None):
     editStore = db.get_object(session, 'editingStore')  
     authStore = db.get_object(session, 'eadAuthStore')
     assignDataIdFlow = db.get_object(session, 'assignDataIdentifierWorkflow')
-    
     # transformers
     xmlp = db.get_object(session, 'LxmlParser')
     formTxr = db.get_object(session, 'formCreationTxr')
     tocTxr = db.get_object(session, 'editingTocTxr')
     lockfilepath = db.get_path(session, 'defaultPath') + '/indexing.lock'
-    
     rebuild = False
-    
     
 
 eadEditingHandler = EadEditingHandler()                                      # initialise handler
+
 
 def handler(req):
     global rebuild, logfilepath, cheshirePath, eadEditingHandler
@@ -1902,8 +1794,8 @@ def handler(req):
         cgitb.Hook(file = req).handle()                                         # give error info
     else :
         return apache.OK
-
     #- end handler()
+
 
 def authenhandler(req):
     global session, authStore, rebuild

@@ -127,9 +127,9 @@ function createSelect(name, optionList, selIdx){
 function createClause(current, clauseState){
 	if (!clauseState) {var clauseState = '0,0,';}
 	var parts = clauseState.split(',');
-	var pElem = document.createElement('p')
+	var pElem = document.createElement('div')
 	pElem.setAttribute('id', 'searchClause' + current);
-	pElem.setAttribute('class', 'searchClause')
+	pElem.setAttribute('class', 'row searchClause')
 	// index select
 	var iSelIdx = parts.shift();
 	var idxSelect = createSelect('fieldidx' + current, indexList, iSelIdx)
@@ -152,7 +152,7 @@ function createClause(current, clauseState){
 	inputElem.name = 'fieldcont' + current;
 	inputElem.id = 'fieldcont' + current;
 	inputElem.type = 'text';
-	inputElem.size = 45;
+	inputElem.size = 35;
 	// last entered value
 	inputElem.value = parts.join(',');
 	pElem.appendChild(inputElem);

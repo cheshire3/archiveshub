@@ -43,11 +43,11 @@
         </div> <!-- /banner -->
     	<!-- site navigation links -->
     	<div id="navbar" class="navbar">
-            <a href="/ead/index.html" title="Search for EAD Records" class="navlink"> Search </a> | 
-            <a href="/ead/browse.html" title="Browse Indexes" class="navlink"> Browse Indexes </a> | 
-            <a href="/ead/subject.html" title="Find Subjects" class="navlink"> Find Subjects </a> | 
-            <a href="/ead/about.html" title="About Cheshire for Archives" class="navlink"> About </a> | 
-            <a href="/ead/help.html" title="Search Help" class="navlink"> Help </a> | 
+            <a href="/ead/index.html" title="Search for EAD Records" class="navlink">Search</a> &gt; 
+            <a href="/ead/browse.html" title="Browse Indexes" class="navlink">Browse</a> &gt; 
+            <a href="/ead/subject.html" title="Find Subjects" class="navlink">Subjects</a> &gt; 
+            <a href="/ead/about.html" title="About Cheshire for Archives" class="navlink">About</a> &gt; 
+            <a href="/ead/help.html" title="Search Help" class="navlink">Help</a> &gt; 
             %NAVBAR%
     	</div> <!-- /navbar -->
     </div> <!-- /header -->
@@ -77,10 +77,10 @@
             </a>
         </div>
         <div id="version">
-	  	    Cheshire for Archives v3.4.x ::	Ongoing Development
+	  	    Cheshire for Archives v3.5.x ::	Ongoing Development
         </div>
         <div id="copyright">
-	    	Copyright &#169; the University of Liverpool 2005 - 2009
+	    	Copyright &#169; the University of Liverpool 2005 - 2010
         </div>
     </div> <!-- /footer -->
     </body>

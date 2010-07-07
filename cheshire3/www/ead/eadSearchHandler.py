@@ -1,8 +1,8 @@
 #
 # Script:    eadSearchHandler.py
-# Version:   0.44
-# Date:      7 April 2009
-# Copyright: &copy; University of Liverpool 2005-2009
+# Version:   0.45
+# Date:      29 June 2010
+# Copyright: &copy; University of Liverpool 2005-present
 # Description:
 #            Web interface for searching a cheshire 3 database of EAD finding aids
 #            - part of Cheshire for Archives v3
@@ -19,7 +19,7 @@
 #            Images: c3_black.gif, v3_full.gif, v3_email.gif, v3_simlr.gif, 
 #                    folderClosed.gif, folderOpen.gif folderItem.gif
 #                    barPlus.gif, barMinus.gif, barT.gif, barLast.gif
-#                    fback.gif, back.gif, forward.gif fforward.gif
+#                    fback.png, back.png, forward.png fforward.png
 #
 # Version History:
 # 0.01 - 13/04/2005 - JH - Basic search, browse and display functions.
@@ -110,6 +110,7 @@
 # 0.42 - 22/01/2009 - JH - Debugging of noComponents search
 # 0.43 - 25/02/2009 - JH - Debugging of highlighting
 # 0.44 - 07/02/2009 - JH - More efficient handling of proxInfo when highlighting
+# 0.45 - 29/06/2010 - JH - Highlighting uses highlighting transformer instead of
 #
 
 from eadHandler import * 
@@ -121,10 +122,10 @@ class EadSearchHandler(EadHandler):
         self.storeResultSetSizeLimit = 1000
         self.redirected = False
     
-
     def _backwalkTitles(self, rec, xpath):
         global asciiFriendly
-        normIdFlow = db.get_object(session, 'normalizeDataIdentifierWorkflow'); normIdFlow.load_cache(session, db)
+        normIdFlow = db.get_object(session, 'normalizeDataIdentifierWorkflow')
+        normIdFlow.load_cache(session, db)
         def __processNode(node):
             t = node.xpath('string(./did/unittitle)')
             if not len(t): t = '(untitled)'
@@ -148,7 +149,6 @@ class EadSearchHandler(EadHandler):
         return titles
         # end _backwalkTitles() ----------------------------------------------------
 
-
     def _cleverTitleCase(self, txt):
         global stopwords
         words = txt.split()
@@ -164,11 +164,9 @@ class EadSearchHandler(EadHandler):
                     words[x] = w.capitalize()
             except IndexError:
                 continue
-            
         return ' '.join(words)
         #- end _cleverTitleCase() --------------------------------------------------
         
-
     def _parentTitle(self, id):
         try:
             rec = dcRecordStore.fetch_record(session, id)
@@ -198,20 +196,45 @@ class EadSearchHandler(EadHandler):
         return parentTitle
         #- end _parentTitle() -------------------------------------------------
         
-    def get_cookieVal(self, name):
-        if not self.cookies:
-            # get and parse any cookies
-            self.cookies = Cookie.get_cookies(self.req)
+    def _delete_cookie(self, req, name, secret=None, path='/ead/search'):
+        if secret is None:
+            c = Cookie.Cookie(name, "", path=path)
+        else:
+            c = Cookie.SignedCookie(name, "", secret, path=path)
+        c.expires = time.time()
+        Cookie.add_cookie(req, c)
+        #- end _delete_cookie
+    
+    def _get_cookie(self, req, name, secret=None):
+        if secret is not None:
+            cookies = Cookie.get_cookies(req, Cookie.SignedCookie, secret=secret)
+        else:
+            cookies = Cookie.get_cookies(req)
         try:
-            return self.cookies[name].value
+            return cookies[name]
         except KeyError:
             return None
-        #- end get_cookieVal --------------------------------------------------
+        #- end _get_cookie
 
-    def set_cookieVal(self, name, val):
-        Cookie.add_cookie(self.req, name, val)
-        #- end set_cookieVal --------------------------------------------------
-        
+    def _set_cookie(self, req, name, val, secret=None, expires=-1, path='/ead/search'):
+        self._delete_cookie(req, name, secret, path)
+        if secret is None:
+            c = Cookie.Cookie(name, val, path=path)
+        else:
+            c = Cookie.SignedCookie(name, val, secret, path=path)
+        if expires >= 0:
+            c.expires = time.time() + expires
+        Cookie.add_cookie(req, c)
+        #- end _set_cookie
+
+    def format_lastResultSet(self, req):
+        rsidCookie = self._get_cookie(req, 'resultSet')
+        crumbs = rsidCookie.value.split('-')
+        rsid = crumbs[0]
+        firstrec = int(crumbs[1])
+        numreq = int(crumbs[2]) 
+        rs = self.fetch_resultSet(rsid)
+        return self.format_resultSet(rs, firstrec, numreq)
     
     def fetch_resultSet(self, id):
         """ Fetch the resultSet with the specified id. If it's not a resultSetId, treat it as a query to regenerate the resultSet. """
@@ -242,7 +265,6 @@ class EadSearchHandler(EadHandler):
         
         return rs
         #- end fetch_resultSet ------------------------------------------------ 
-                    
 
     def format_resultSet(self, rs, firstrec=1, numreq=20, highlight=1):
         global search_result_row, search_component_row, display_relevance, graphical_relevance
@@ -465,7 +487,7 @@ class EadSearchHandler(EadHandler):
         return '\n'.join(facetRows)
         #- end format_allFacets --------------------------------------------------
         
-    def search(self, form, maxResultSetSize=None):
+    def search(self, req, form, maxResultSetSize=None):
         numreq = int(form.get('numreq', 20))
         firstrec = int(form.get('firstrec', 0))
         if not firstrec:
@@ -533,7 +555,7 @@ class EadSearchHandler(EadHandler):
                 self.htmlTitle.append('No Matches')
                 return search_no_hits
             
-        self.set_cookieVal('resultSetId', rsid)
+        self._set_cookie(req, 'resultSet', '{0}-{1}-{2}'.format(rsid, firstrec, numreq))
         if isinstance(rs, basestring):
             return u'<div id="single">%s</div>' %  rs
         
@@ -632,7 +654,7 @@ class EadSearchHandler(EadHandler):
                 prevlink = ['<a href="%s?operation=browse&amp;fieldidx1=%s&amp;fieldrel1=%s&amp;fieldcont1=%s&amp;responsePosition=%d&amp;numreq=%d#leftcol" title="Previous %d terms"' % (script, idx, rel, cgi_encode(scanData[0][0]), numreq+1, numreq, numreq)]
                 if ajax:
                     prevlink.append(' class="ajax"')
-                prevlink.append('><img src="/ead/img/back.gif" alt="Previous %d terms"/>&nbsp;PREVIOUS</a>''' % (numreq))
+                prevlink.append('>{0}&nbsp;PREVIOUS</a>'.format(back_tag))
                 prevlink = ''.join(prevlink)
                 rows.append('<tr class="odd"><td colspan="2">%s</td></tr>' % prevlink)
                 
@@ -682,7 +704,7 @@ class EadSearchHandler(EadHandler):
                 nextlink = ['<a href="%s?operation=browse&amp;fieldidx1=%s&amp;fieldrel1=%s&amp;fieldcont1=%s&amp;responsePosition=%d&amp;numreq=%d#leftcol" title="Next %d terms"' % (script, idx, rel, cgi_encode(scanData[-1][0]), 0, numreq, numreq)]
                 if ajax:
                     nextlink.append(' class="ajax"')
-                nextlink.append('>NEXT&nbsp;<img src="/ead/img/forward.gif" alt="Next %d terms"/></a>' % (numreq))
+                nextlink.append('>NEXT&nbsp;' + forward_tag)
                 nextlink = ''.join(nextlink)
                 rows.append('<tr class="odd"><td colspan="2">%s</td></tr>' % nextlink)
                 
@@ -796,90 +818,76 @@ class EadSearchHandler(EadHandler):
         self.logger.log('Summary requested for record: %s' % (recid))
         # highlight search terms in rec.dom
         if (proxInfo) and (highlight):
-            # flatten groups from phrases / multiple word terms into list of [nodeIdx, wordIdx, charOffset] triples
-#            proxInfo2 = []
-#            for x in proxInfo:
-#                proxInfo2.extend(x)
-#
-#            proxInfo3 = []
-#            for x in proxInfo2:
-#                if [x[0], x[2]] not in proxInfo3:                # filter out duplicates from multiple indexes
-#                    proxInfo3.append([x[0], x[2]])               # strip out wordIdx, this can vary due to stoplisting - nodeIdx, offsets are reliable
-#
-#            del proxInfo2
-#            proxInfo2 = proxInfo3
-#            proxInfo2.sort(reverse=True)                         # sort proxInfo so that nodeIdxs are sorted descending (so that offsets don't get upset when modifying text :)
+            # use fixed highlighting transformer, so that code only in one place
+            txr = db.get_object(session, 'sruHighlightingTxr')
+            doc = txr.process_record(session, rec)
+            xmlp = db.get_object(session, 'LxmlParser')
+            rec = xmlp.process_document(session, doc)
+            # old version left for posterity and reference value
+#            # flatten groups from phrases / multiple word terms into list of [nodeIdx, wordIdx, charOffset] triples
+#            proxInfo2 = set()
+#            for pig in proxInfo:                    # for each group of proxInfo (i.e. from each query clause)
+#                for pi in pig:                                 # for each item of proxInfo: [nodeIdx, wordIdx, offset, termId(?)] NB termId from spoke indexes so useless to us :( 
+#                    proxInfo2.add('%d %d' % (pi[0], pi[2]))    # values must be strings for sets to work
+#            
+#            proxInfo = [map(int, pis.split(' ')) for pis in proxInfo2]
 #            nodeIdxs = []
 #            wordOffsets = []
-#            for x in proxInfo2:
+#            for x in sorted(proxInfo, reverse=True):            # sort proxInfo so that nodeIdxs are sorted descending (so that offsets don't get upset when modifying text)
 #                nodeIdxs.append(x[0])
 #                wordOffsets.append(x[1])
-
-            proxInfo2 = set()
-            for pig in proxInfo:                    # for each group of proxInfo (i.e. from each query clause)
-                for pi in pig:                                 # for each item of proxInfo: [nodeIdx, wordIdx, offset, termId(?)] NB termId from spoke indexes so useless to us :( 
-                    proxInfo2.add('%d %d' % (pi[0], pi[2]))    # values must be strings for sets to work
-
-            
-            proxInfo = [map(int, pis.split(' ')) for pis in proxInfo2]
-            nodeIdxs = []
-            wordOffsets = []
-            for x in sorted(proxInfo, reverse=True):            # sort proxInfo so that nodeIdxs are sorted descending (so that offsets don't get upset when modifying text)
-                nodeIdxs.append(x[0])
-                wordOffsets.append(x[1])
-            
-            xps = {}
-            tree = rec.dom.getroottree()
-            walker = rec.dom.getiterator()
-            for x, n in enumerate(walker):
-                if n.tag == 'dsc':
-                    break # no point highlighting any further down - takes forever
-                if x in nodeIdxs:
-                    xps[x] = tree.getpath(n)
-            
-            for ni, offset in zip(nodeIdxs, wordOffsets):
-                wordCount = 0
-                try:
-                    xp = xps[ni]
-                except KeyError:
-                    continue # no XPath - must be below dsc
-                
-                el = rec.dom.xpath(xp)[0]
-                located = None
-                for c in el.getiterator():
-                    if c.text:
-                        text = c.text
-                        if len(c.text) > offset:
-                            start = offset
-                            try: end = highlightEndPointRe.search(text, start).end()
-                            except: pass # well I still haven't found, what I'm looking for!
-                            else:
-                                if end == -1:
-                                    end = len(text)
-                                located = 'text'
-                                if text[:start+len(sTag)].find(sTag) < 0:
-                                    c.text = text[:start] + sTag + text[start:end] + eTag + text[end:]
-                                break
-                        else:
-                            # check for highlight start / end strings adjust offset accordingly
-                            offset -= len(text.replace(sTag, '').replace(eTag, ''))
-                        
-                    if c != el and c.tail and located is None:
-                        text = c.tail
-                        if len(c.tail) > offset:
-                            start = offset
-                            try: end = highlightEndPointRe.search(text, start).end()
-                            except: pass # well I still haven't found, what I'm looking for!
-                            else:
-                                if end == -1:
-                                    end = len(text)
-                                located = 'tail'
-                                if text[:start+len(sTag)].find(sTag) < 0:
-                                    c.tail = text[:start] + sTag + text[start:end] + eTag + text[end:]
-                                break
-                        else:
-                            # check for highlight start / end strings adjust offset accordingly
-                            offset -= len(text.replace(sTag, '').replace(eTag, ''))
+#            
+#            xps = {}
+#            tree = rec.dom.getroottree()
+#            walker = rec.dom.getiterator()
+#            for x, n in enumerate(walker):
+#                if n.tag == 'dsc':
+#                    break # no point highlighting any further down - takes forever
+#                if x in nodeIdxs:
+#                    xps[x] = tree.getpath(n)
+#            
+#            for ni, offset in zip(nodeIdxs, wordOffsets):
+#                try:
+#                    xp = xps[ni]
+#                except KeyError:
+#                    continue # no XPath - must be below dsc
+#                
+#                el = rec.dom.xpath(xp)[0]
+#                located = None
+#                for c in el.getiterator():
+#                    if c.text:
+#                        text = c.text
+#                        if len(c.text) > offset:
+#                            start = offset
+#                            try: end = highlightEndPointRe.search(text, start).end()
+#                            except: pass # well I still... haven't found... what I'm looking for!
+#                            else:
+#                                if end == -1:
+#                                    end = len(text)
+#                                located = 'text'
+#                                if text[:start+len(sTag)].find(sTag) < 0:
+#                                    c.text = text[:start] + sTag + text[start:end] + eTag + text[end:]
+#                                break
+#                        else:
+#                            # check for highlight start / end strings adjust offset accordingly
+#                            offset -= len(text.replace(sTag, '').replace(eTag, ''))
+#                        
+#                    if c != el and c.tail and located is None:
+#                        text = c.tail
+#                        if len(c.tail) > offset:
+#                            start = offset
+#                            try: end = highlightEndPointRe.search(text, start).end()
+#                            except: pass # well I still haven't found, what I'm looking for!
+#                            else:
+#                                if end == -1:
+#                                    end = len(text)
+#                                located = 'tail'
+#                                if text[:start+len(sTag)].find(sTag) < 0:
+#                                    c.tail = text[:start] + sTag + text[start:end] + eTag + text[end:]
+#                                break
+#                        else:
+#                            # check for highlight start / end strings adjust offset accordingly
+#                            offset -= len(text.replace(sTag, '').replace(eTag, ''))
                         
             self.logger.log('Search terms highlighted')
         
@@ -926,7 +934,7 @@ class EadSearchHandler(EadHandler):
             return '<div id="single">%s\n%s</div>' % (toc_scripts_printable, page)
 
 
-    def display_record(self, form):
+    def display_record(self, req, form):
         global max_page_size_bytes, cache_path, cache_url, toc_cache_path, toc_cache_url, repository_name, repository_link, repository_logo, punctuationRe, wordRe, anchorRe, highlightInLinkRe, overescapedAmpRe, highlightStartTag, highlightEndTag
         isComponent = False
         operation = form.get('operation', 'full')
@@ -1040,7 +1048,10 @@ class EadSearchHandler(EadHandler):
         try:
             searchResults = self.format_resultSet(rs, firstrec, numreq, highlight)
         except:
-            searchResults = ''
+            try:
+                searchResults = self.format_lastResultSet(req)
+            except:
+                searchResults = ''
         
         paramDict = self.globalReplacements
         paramDict.update({'RECID': recid
@@ -1060,6 +1071,7 @@ class EadSearchHandler(EadHandler):
                              ,'LEFTSIDE': searchResults
                             })
             try:
+                rec.resultSetItem = r
                 page = self.display_summary(rec, paramDict, r.proxInfo, highlight)
             except AttributeError:
                 raise
@@ -1362,7 +1374,7 @@ In: %s
                 operation = form.get('operation', None)
                 if (operation == 'search'):
                     self.htmlTitle.append('Search')
-                    content = self.search(form)
+                    content = self.search(req, form)
                 elif (operation == 'facet'):
                     qString = form.get('query',  None)
                     idxType = form.get('fullFacet',  None)
@@ -1381,7 +1393,7 @@ In: %s
                     content = self.browse(form)
                 elif (operation == 'summary') or (operation == 'full'):
                     # this function sometimes returns complete HTML pages, check and if so just send it back to request
-                    send_direct, content = self.display_record(form)
+                    send_direct, content = self.display_record(req, form)
                     if send_direct:
                         self.send_html(content, req)
                         return 1
@@ -1394,6 +1406,8 @@ In: %s
                     content = self.similar_search(form)
                 elif (operation == 'toc'):
                     content = self.display_toc(form)
+                elif (operation == 'lastResultSet'):
+                    content = self.format_lastResultSet(req)
                 else:
                     #invalid operation selected
                     self.htmlTitle.append('Error')
@@ -1515,7 +1529,7 @@ def handler(req):
         else:
             try:
                 fp = recordStore.get_path(session, 'databasePath')    # attempt to find filepath for recordStore
-                assert (os.path.exists(fp) and time.time() - os.stat(fp).st_mtime > 60*60)
+                assert (os.path.exists(fp) and os.stat(fp).st_mtime < db.initTime)
             except:
                 # architecture not built
                 build_architecture()

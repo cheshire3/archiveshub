@@ -40,10 +40,10 @@ similar_tag = u'<img src="/ead/img/v3_simlr.gif" alt="Similar"/>'
 folder_closed_tag = u'<img src="/ead/img/folderClosed.gif" alt="[+]"/>'
 folder_open_tag = u'<img src="/ead/img/folderOpen.gif" alt="[-]"/>'
 
-fback_tag = u'<img src="/ead/img/fback.gif" alt="First"/>'
-back_tag = u'<img src="/ead/img/back.gif" alt="Previous"/>'
-forward_tag = u'<img src="/ead/img/forward.gif" alt="Next"/>'
-fforward_tag = u'<img src="/ead/img/fforward.gif" alt="Final"/>'
+fback_tag = u'<img src="/ead/img/fback.png" alt="First"/>'
+back_tag = u'<img src="/ead/img/back.png" alt="Previous"/>'
+forward_tag = u'<img src="/ead/img/forward.png" alt="Next"/>'
+fforward_tag = u'<img src="/ead/img/fforward.png" alt="Final"/>'
 
 no_hits_image = u'<img src="/ead/img/no_hits.png" alt=""/>'
 

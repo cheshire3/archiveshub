@@ -54,12 +54,12 @@ graphical_relevance = False
 cheshirePath = os.environ.get('C3HOME', '/home/cheshire/cheshire3/')
 
 # Institutionally specific configurables
-repository_name = "Cheshire for Archives v3.4 Development"
+repository_name = "Cheshire for Archives v3.5 Development"
 repository_link = "http://www.archiveshub.ac.uk"                        # must begin http://
-repository_logo = "/ead/img/loopsmall2.gif"             # should begin http:// unless on this server
+repository_logo = "/ead/img/c3_black.gif"             # should begin http:// unless on this server
 
-title_separator = ' :: '
-navbar_separator = ' | '
+title_separator = ' - '
+navbar_separator = ' &gt; '
 
 # URL of relevance graphic
 relevance_graphic = '/ead/img/star.gif'
@@ -127,19 +127,27 @@ similar_search_stopwords = '''
 '''
 
 # List of xpaths that are mandatory for Archives Hub Records
-required_xpaths = [
-'/ead/eadheader/eadid',
-'/ead/archdesc/did/unitid',
-'/ead/archdesc/did/unittitle',
-'/ead/archdesc/did/unitdate',
-'/ead/archdesc/did/origination',
-'/ead/archdesc/did/physdesc',
-'/ead/archdesc/did/langmaterial/language',
-'/ead/archdesc/bioghist',
-'/ead/archdesc/scopecontent',
-'/ead/archdesc//accessrestrict',
-'/ead/archdesc/controlaccess'
-]
+# intended new ones - under review...
+valid_coll_xpaths = ['/ead/eadheader/eadid'							# used for persistent UID
+                  ,'/ead/eadheader/filedesc/titlestmt/titleproper'	# only displayed in Cataloguing Info
+                  ,'/ead/archdesc/@level'
+                  ,'/ead/archdesc/did/unittitle'					# title in header
+                  ,'/ead/archdesc/did/unitid'                       # reference number in header
+                  ,'/ead/archdesc/did/unitdate'
+                  ,'/ead/archdesc/did/repository'
+                  ,'/ead/archdesc/did/physdesc/extent'
+                  ,'/ead/archdesc/did/origination'
+                  ,'/ead/archdesc/did/langmaterial/language'
+                  ,'/ead/archdesc/scopecontent'
+                  ,'/ead/archdesc//accessrestrict'
+                  ]
+
+valid_comp_xpaths = ['./did/unitid'
+                    ,'./did/unittitle'
+                    ,'./did/unitdate'
+                    ]
+
+required_xpaths = valid_coll_xpaths
 
 # HTML Fragments
 from htmlFragments import *

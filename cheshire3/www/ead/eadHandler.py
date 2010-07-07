@@ -78,7 +78,7 @@ recid_re['email'] = re.compile(': Record (.+?) emailed to (.+)$', re.MULTILINE)
 
 
 
-class EadHandler:
+class EadHandler(object):
     # Hierarchical class - must be subclassed to actually interact with database
     logger = None
     htmlTitle = []
@@ -141,11 +141,22 @@ class EadHandler:
         req.flush()
         #- end send_xml() ---------------------------------------------------------
     
+    def _get_genericHtml(self, fn):
+        global repository_name, repository_link, repository_logo
+        html = read_file(fn)
+        paramDict = self.globalReplacements
+        paramDict.update({'%TITLE%': title_separator.join(self.htmlTitle)
+                         ,'%NAVBAR%': navbar_separator.join(self.htmlNav)
+                         })
+        return multiReplace(html, paramDict)
+        #- end _get_genericHtml()
+        
+    def _get_timeStamp(self):
+        return time.strftime('%Y-%m-%dT%H%M%S')
     
     def _stripOffendingChar(self, exception):
         text = exception.object
         return text[:exception.start] + '<span class="error" title="This character could not be encoded for display">*</span>' + text[exception.end:]
-    
     
     def _parse_upload(self, data, interface='admin'):
         if (type(data) == unicode):
@@ -224,9 +235,6 @@ class EadHandler:
         return '\n'.join(out)
     #- end view_file()
 
-
-
-
     def _walk_directory(self, d, type='checkbox', link=True):
         # we want to keep all dirs at the top, followed by all files
         outD = []
@@ -258,8 +266,6 @@ class EadHandler:
         return outD + outF
         
         #- end walk_directory()
-    
-
     
     def display_full(self, rec, paramDict, pageNavType='form'):
         recid = rec.id

@@ -137,7 +137,6 @@ class BuildHtmlThread(AdminThread):
             else:
                 doc = fullSplitTxr.process_record(session, rec)
                 # Long record - have to do splitting, link resolving etc.
-            
             # open, read, and delete tocfile NOW to avoid overwriting screwups
             try:
                 tocfile = unicode(read_file(os.path.join(toc_cache_path, 'foo.bar')), 'utf-8')
@@ -148,12 +147,10 @@ class BuildHtmlThread(AdminThread):
                 tocfile = nonAsciiRe.sub(asciiFriendly, tocfile)
                 tocfile = tocfile.replace('RECID', recid)
                 #tocfile = overescapedAmpRe.sub(unescapeCharent, tocfile)
-            
             doc = unicode(doc.get_raw(session), 'utf-8')
             doc = nonAsciiRe.sub(asciiFriendly, doc)
             #doc = overescapedAmpRe.sub(unescapeCharent, doc)
             tmpl = read_file(templatePath)
-            
             if (l < max_page_size_bytes):
                 # resolve anchors to only page
                 #doc = nonAsciiRe.sub(asciiFriendly, doc)
@@ -169,7 +166,6 @@ class BuildHtmlThread(AdminThread):
                 pseudopages = doc.split('<p style="page-break-before: always"/>')
                 if len(pseudopages) == 1:
                     pseudopages = doc.split('<p style="page-break-before: always"></p>')
-                    
                 pages = []
                 while pseudopages:
                     pagebits = ['<div id="padder"><div id="rightcol" class="ead">', '%PAGENAV%']
@@ -177,11 +173,9 @@ class BuildHtmlThread(AdminThread):
                         pagebits.append(pseudopages.pop(0))
                         if not pseudopages:
                             break
-                    
                     # append: pagenav, end rightcol div, padder div, left div (containing toc)
                     pagebits.extend(['%PAGENAV%','</div><!-- end rightcol -->','</div><!-- end padder -->','<div id="leftcol" class="toc"><!--#config errmsg="[ Table of Contents unavailable ]" --><!--#include virtual="/ead/tocs/RECID.inc"--></div>'])
                     pages.append('\n'.join(pagebits))
-    
                 start = 0
                 anchorPageHash = {}
                 for a in anchors:
@@ -190,7 +184,6 @@ class BuildHtmlThread(AdminThread):
                             if (pages[x].find('name="%s"' % a) > -1):
                                 anchorPageHash[a] = x + 1
                                 start = x                                  # next anchor must be on this page or later
-    
                 for x in range(len(pages)):
                     doc = pages[x]
                     # now we know how many real pages there are, generate some page navigation links
@@ -228,25 +221,21 @@ class BuildHtmlThread(AdminThread):
                     #doc = nonAsciiRe.sub(asciiFriendly, doc)
                     pagex = tmpl.replace('%CONTENT%', toc_scripts + doc)
                     pagex = pagex.replace('%PAGENAV%', '\n'.join(pagenav))
-    
                     #resolve internal ref links
                     for k, v in anchorPageHash.iteritems():
                         pagex = pagex.replace('PAGE#%s"' % k, '%s/RECID-p%d.shtml#%s"' % (cache_url, v, k))
-    
                     # any remaining links were not anchored - encoders fault :( - hope they're on page 1
                     pagex = pagex.replace('PAGE#', '%s/RECID-p1.shtml#' % (cache_url))
                     pagex = multiReplace(pagex, paramDict)
                     pages[x] = pagex
                     pagex = pagex.encode('utf-8', 'xmlcharrefreplace')
                     write_file(os.path.join(cache_path, recid + '-p%d.shtml' % (x+1)), pagex)
-    
             if tocfile:
                 try:
                     for k, v in anchorPageHash.iteritems():
                         tocfile = tocfile.replace('PAGE#%s"' % k, '%s/%s-p%d.shtml#%s"' % (cache_url, recid, v, k))
                 except UnboundLocalError:
                     pass
-                
                 # any remaining links were not anchored - encoders fault :( - hope they're on page 1
                 tocfile = multiReplace(tocfile, {'SCRIPT': script
                                                 ,'PAGE#': '%s/%s-p1.shtml#' % (cache_url, recid)
@@ -254,8 +243,7 @@ class BuildHtmlThread(AdminThread):
                 tocfile = tocfile.encode('utf-8', 'xmlcharrefreplace')
                 write_file(os.path.join(toc_cache_path, recid +'.inc'), tocfile)
                 os.chmod(os.path.join(toc_cache_path, recid + '.inc'), 0755)
-            
-#- end BuildHtmlThread --------------------------------------------------------
+    #- end BuildHtmlThread --------------------------------------------------------
     
 
 class EadAdminHandler(EadHandler):
@@ -267,24 +255,8 @@ class EadAdminHandler(EadHandler):
                                        })
         self.htmlTitle.append('Administration')
         self.htmlNav.append('<a href="help.html" title="Administration Help" class="navlink">Admin Help</a>')
-
-    #- end __init__
+        #- end __init__
     
-    
-    def _get_genericHtml(self, fn):
-        global repository_name, repository_link, repository_logo
-        html = read_file(fn)
-        paramDict = self.globalReplacements
-        paramDict.update({'%TITLE%': title_separator.join(self.htmlTitle)
-                         ,'%NAVBAR%': navbar_separator.join(self.htmlNav)
-                         })
-        return multiReplace(html, paramDict)
-        
-        #- end _get_genericHtml()
-    
-    def _get_timeStamp(self):
-        return time.strftime('%Y-%m-%dT%H%M%S')
-
     def list_users(self):
         global authStore
         values = {'%USERNAME%' : '',
@@ -314,12 +286,74 @@ class EadAdminHandler(EadHandler):
             lines.append('<tr class="%s">%s</tr>' % (rowclass, cells))
         lines.append('</table><br/>')
         if (session.user.has_flag(session, 'info:srw/operation/1/create', 'eadAuthStore')):
-            lines.extend(['<h3 class="bar">Add New User <a href="/ead/admin/help.html#users" title="What is this?"><img src="/ead/img/whatisthis.gif" alt="[What is this?]"/></a></h3>',
+            lines.extend(['<h3 class="bar">Add New User <a href="/ead/admin/help.html#users" title="What is this?"><img src="/ead/img/whatisthis.png" alt="[What is this?]"/></a></h3>',
                           multiReplace(read_file('adduser.html'), values)
                         ])
         return '\n'.join(lines)
         #- end list_users()
  
+    def _validate_isadg(self, rec):
+        global valid_coll_xpaths, rvalid_comp_xpaths
+        
+        # subroutines for formatting here for ease of editing
+        def formatMissingCollXpath(missing_coll_xpaths):
+            returntxts = ['<p class="error">Your file does not contain the mandatory collection-level fields at the following XPath(s):</p>'
+                         ,'<ul class="error">'
+                         ]
+            returntxts.extend(['<li>{0}</li>'.format(x) for x in missing_coll_xpaths])
+            returntxts.append('</ul>')
+            return '\n'.join(returntxts)
+            
+        
+        def formatMissingCompXpaths(missing_comp_xpaths):
+            returntxts = ['<p class="error">Your file does not contain the mandatory fields for components at the following XPath(s):</p><ul class="error">']
+            for elxp, xps in missing_comp_xpaths.iteritems():
+                returntxts.append('<li>{0}<ul>'.format(elxp))
+                returntxts.extend(['<li>{0}</li>'.format(x) for x in xps])
+                returntxts.append('</ul></li>')
+            returntxts.append('</ul>')
+            return '\n'.join(returntxts)
+            
+        # check record for presence of mandatory XPaths
+        missing_coll_xpaths = []
+        for xp in valid_coll_xpaths:
+            try:
+                rec.process_xpath(session, xp)[0]
+            except IndexError:
+                missing_coll_xpaths.append(xp)
+        missing_comp_xpaths = {}
+        try:
+            selector = db.get_object(session, 'componentXPath')
+        except c3errors.ObjectDoesNotExistException:
+            pass
+        else:
+            tree = rec.get_dom(session).getroottree()
+            for xpr in selector.process_record(session, rec):
+                for element in xpr:
+                    elxp = tree.getpath(element)
+                    for xp in valid_comp_xpaths:
+                        els = element.xpath(xp)
+                        if not len(els):
+                            try:
+                                missing_comp_xpaths[elxp].append(xp)
+                            except KeyError:
+                                missing_comp_xpaths[elxp] = [xp]
+        returntxts = []
+        if len(missing_coll_xpaths):
+            self.htmlTitle.append('Error')
+            returntxts.append(formatMissingCollXpath(missing_coll_xpaths))
+        if len(missing_comp_xpaths):
+            returntxts.append(formatMissingCompXpaths(missing_comp_xpaths))
+        # return appropriate value 
+        if len(returntxts):
+            newlineRe = re.compile('(\s\s+)')
+            rawXml = rec.get_xml(session)
+            displayXml = newlineRe.sub('\n\g<1>', html_encode(rawXml))
+            returntxts.append('<pre>{0}</pre>'.format(displayXml))
+            return '\n'.join(returntxts)
+        else:
+            return None
+        # end _validate_isadg()
            
     def _error(self, msg, page=""):
         if (page == 'users.html'):
@@ -337,7 +371,6 @@ class EadAdminHandler(EadHandler):
         self.htmlTitle.append('Error')
         return '<span class="error">%s</span><br/>\n<br/>%s' % (msg, link)
         #- end _error()
-        
     
     def _modify_userLxml(self, userNode, updateHash):
         for c in userNode.iterchildren(tag=etree.Element):
@@ -405,12 +438,10 @@ class EadAdminHandler(EadHandler):
                     adduser = multiReplace(adduser, {'%USER%' : '', '%SUPERUSER%' : 'checked="true"'})
                 output.append(adduser)
                 return ''.join(output)
-            
             try:
                 user = authStore.fetch_object(session, userid)
             except c3errors.ObjectDoesNotExistException:
                 user = None
-                
             if user is not None:
                 return self._error('User with username/id "%s" already exists! Please try again with a different username.' % (userid), 'users.html') + multiReplace(read_file('adduser.html'), values)
             else:
@@ -454,7 +485,6 @@ class EadAdminHandler(EadHandler):
                 self._submit_userLxml(userid, userNode)                    
                 user = authStore.fetch_object(session, userid)
                 return '<p class="ok">User successfully added.</p>' + self.list_users()
-                
         return multiReplace(read_file('adduser.html'), values)
         #- end add_user()
     
@@ -545,7 +575,6 @@ class EadAdminHandler(EadHandler):
                        ])
         return out
 
-
     def _walk_directory(self, d, type='checkbox'):
         global script
         # we want to keep all dirs at the top, followed by all files
@@ -570,7 +599,6 @@ class EadAdminHandler(EadHandler):
 
         return outD + outF
     #- end walk_directory()
-
 
     def review_records(self, version='full'):
         global sourceDir
@@ -604,7 +632,7 @@ class EadAdminHandler(EadHandler):
                   }
                 -->
                 </script>''',
-               '<h3 class="bar">%s  <a href="/ead/admin/help.html#existing_files" title="What is this?"><img src="/ead/img/whatisthis.gif" alt="[What is this?]"/></a></h3>' % (header), 
+               '<h3 class="bar">%s  <a href="/ead/admin/help.html#existing_files" title="What is this?"><img src="/ead/img/whatisthis.png" alt="[What is this?]"/></a></h3>' % (header), 
                '<form action="files.html" name="fileops" method="post" onsubmit="return confirmOp();">',
                fileformsubmits,
                '<ul class="unmarked"><li><img src="/ead/img/folderOpen.jpg" alt=""/>' + sourceDir,
@@ -616,7 +644,6 @@ class EadAdminHandler(EadHandler):
         return '\n'.join(out)
     #- end review_records()
     
-    
     def show_editMenu(self):
         global sourceDir
         self.htmlTitle.append('Edit/Create')
@@ -625,7 +652,6 @@ class EadAdminHandler(EadHandler):
         files = self._walk_directory(sourceDir, 'radio')
         recids = self._walk_store('editingStore', 'radio')
         return multiReplace(page, {'%%%SOURCEDIR%%%': sourceDir, '%%%FILES%%%': ''.join(files), '%%%RECORDS%%%': ''.join(recids)})
-        
     
     def _run_thread(self, t, req):
         start = time.time()
@@ -648,30 +674,6 @@ class EadAdminHandler(EadHandler):
 
         return t.error
     # end _run_thread()
-    
-    def _validate_isadg(self, rec):
-        global required_xpaths
-        # check record for presence of mandatory XPaths
-        missing_xpaths = []
-        for xp in required_xpaths:
-            try: rec.process_xpath(session, xp)[0];
-            except IndexError:
-                missing_xpaths.append(xp)
-        if len(missing_xpaths):
-            self.htmlTitle.append('Error')
-            newlineRe = re.compile('(\s\s+)')
-            return '''
-    <p class="error">Your file does not contain the following mandatory XPath(s):<br/>
-    %s
-    </p>
-    <pre>
-%s
-    </pre>
-    ''' % ('<br/>'.join(missing_xpaths), newlineRe.sub('\n\g<1>', html_encode(rec.get_xml(session))))
-        else:
-            return None
-
-    # end _validate_isadg()
     
     def preview_file(self, form):
         global session, repository_name, repository_link, repository_logo, cache_path, cache_url, toc_cache_path, toc_cache_url, toc_scripts, script, fullTxr, fullSplitTxr
@@ -725,8 +727,6 @@ class EadAdminHandler(EadHandler):
         return (True, page)
     #- end preview_file()
 
-
-
     def upload_file(self, req, form):
         global lockfilepath
         self.htmlTitle.append('File Management')
@@ -764,7 +764,6 @@ class EadAdminHandler(EadHandler):
         if (op == 'insert'):
             if os.path.exists(lockfilepath):
                 req.write('<p><span class="error">[ERROR]</span> - Another user is already indexing this database. Your file has been uploaded but has not been indexed. Please try again in 10 minutes or reindex the full database using the database menu.</p>')
-
             else :  
                 lock = open(lockfilepath, 'w')
                 lock.close() 
@@ -821,8 +820,6 @@ class EadAdminHandler(EadHandler):
         rebuild = True                    # flag for rebuild architecture
         return None 
     #- end upload_file()
-    
-    
     
     def delete_file(self, req, form):
         self.htmlTitle.append('File Management')
@@ -956,8 +953,6 @@ class EadAdminHandler(EadHandler):
         return None
     #- end delete_file()
             
-
-    
     def rename_file(self, form):
         global script, rename_notes        
         fileNames = form.getlist('filepath')
@@ -1091,7 +1086,6 @@ class EadAdminHandler(EadHandler):
         hours, mins = divmod(mins, 60)
         return (hours, mins, secs)
         
-
     def rebuild_database(self, req):
         global dbPath, db, sourceDir, baseDocFac, recordStore, dcRecordStore, buildFlow, buildSingleFlow
         global clusDb, clusStore, clusFlow
@@ -1107,7 +1101,6 @@ class EadAdminHandler(EadHandler):
         head = self._get_genericHtml('header.html')
         req.write(head)
         req.write('<div id="single">')
-        
         if os.path.exists(lockfilepath):
             req.write('<p><span class="error">[ERROR]</span> - Another user is already indexing this database. Please try again in 10 minutes.</p>\n<p><a href="database.html" title="Database Management" class="navlink">Back to \'Database Management\' Page</a></p>')
         else :
@@ -1223,15 +1216,12 @@ class EadAdminHandler(EadHandler):
             finally:
                 if os.path.exists(lockfilepath):
                     os.remove(lockfilepath)                    
-
         # finish HTML, log
         foot = self._get_genericHtml('footer.html')
         req.write('</div>')
         req.write(foot)
         rebuild = True
-        
         #- end rebuild_database() --------------------------------------------------
-
 
     def reindex_database(self, req):
         global dbPath, db, recordStore, compStore, clusDb, clusStore, clusFlow, rebuild
@@ -1308,21 +1298,17 @@ class EadAdminHandler(EadHandler):
                             req.write('<td class="ok" style="text-align: center;">OK</td><td>Record Identifier: %s</td></tr>' % (rec.id))
                         
                         clusDocFac.load(session, rec) # extract subject clusters to use later
-                
                 if style == 2:
                     req.write('</table>Indexing Complete ')
                 else:    
                     req.write('[<span class="ok"> OK </span>]')
-                    
                 mins, secs = divmod(time.time() - start, 60)
                 hours, mins = divmod(mins, 60)
                 req.write('%dh %dm %ds<br/>' % (hours, mins, secs))
-                 
                 if len(problems):
                     req.write('<span class="error">The following record(s) were omitted due to errors that occured while indexing: </span><br/>\n')
                     req.write('<br/>\n'.join(['%s - %r:%r' % (p[0], p[1][0], p[1][1]) for p in problems]))
                     req.write('<br/>\n')
-                              
                 # reindex components
                 start = time.time()
                 # refresh compStore - seems to be busted :?
@@ -1336,12 +1322,12 @@ class EadAdminHandler(EadHandler):
                     except:
                         continue
                     else:
-                        if ((x+1) % 10 == 0): req.write('<noscript>.</noscript>')
-                        if ((x+1) % (200 * 10) == 0): req.write('<noscript><br/></noscript>')
-                
+                        if ((x+1) % 10 == 0):
+                            req.write('<noscript>.</noscript>')
+                        if ((x+1) % (200 * 10) == 0):
+                            req.write('<noscript><br/></noscript>')
                 # make sure final report represents totalItems
                 req.write('<script type="text/javascript">e = document.getElementById("comp-count");e.innerHTML = "%d"</script>\n' % (compStore.totalItems))
-                
                 mins, secs = divmod(time.time() - start, 60)
                 hours, mins = divmod(mins, 60)
                 req.write('[<span class="ok"> OK </span>] %dh %dm %ds<br/>' % (hours, mins, secs))    
@@ -1370,7 +1356,6 @@ class EadAdminHandler(EadHandler):
         rebuild = True
         #- end reindex_databases() -------------------------------------------------
         
-    
     def delete_html(self):
         global cache_path, toc_cache_path
         self.htmlTitle.append('Delete Cached HTML')
@@ -1386,7 +1371,6 @@ class EadAdminHandler(EadHandler):
                         <a href="database.html" title="Database Management" class="navlink">Back to \'Database Management\' Page</a>
                   </div>'''
         #- end delete_html()
-    
     
     def rebuild_html(self, req):
         global cache_path, toc_cache_path
@@ -1416,7 +1400,6 @@ class EadAdminHandler(EadHandler):
     
         #- end rebuild_html()
         
-        
     def view_statistics(self, file='searchHandler.log'):
         # parse the relevant search logfile and present stats nicely
         global searchlogfilepath, firstlog_re, loginstance_re, timeTaken_re, recid_re, emailRe, logpath
@@ -1435,7 +1418,6 @@ class EadAdminHandler(EadHandler):
         except: 
             #return 'No requests logged in current logfile.'
             filestarted = None
-        
         #create list of options for select menu
         files = os.listdir(logpath)
         files.sort(reverse=True)
@@ -1455,11 +1437,9 @@ class EadAdminHandler(EadHandler):
             dateString = time.strftime("%Y-%m-%d %H:%M:%S")
         else :
             dateString = '%s %s:%s:%s' % (date[0][0], date[0][4], date[0][5], date[0][6])
-            
         #create the html
         rows = ['<div id="leftcol">', 
                 '<h3>Statistics for period ending: <select id="fileNameSelect" value="1" onChange="window.location.href=\'statistics.html?fileName=\' + this.value">%s</select></h3>' % ''.join(options)]
-        
         if (filestarted != None):
             rows.append('<h3>Period covered: %s to %s</h3>' % (filestarted, dateString))
         else :
@@ -1467,7 +1447,6 @@ class EadAdminHandler(EadHandler):
         
         rows.extend(['<table class="stats" width="95%%">',
                '<tr class="headrow"><th>Operation</th><th>Requests</th><th>Avg Time (secs)</th></tr>'])
-               
         singlelogs = loginstance_re.findall(allstring)
         ops = {}
         # ops[type] = [log_file_search_string, stats_page_display_name, occurences, total_seconds_taken]
@@ -1495,7 +1474,6 @@ class EadAdminHandler(EadHandler):
                         addy = emailRe.search(s)
                         if addy and addy.group(0) not in addy_list:
                             addy_list.append(addy.group(0))
-              
         # write HTML for stats
         allAvgTime = []
         for op in ops.keys():
@@ -1512,20 +1490,16 @@ class EadAdminHandler(EadHandler):
         rows.extend([
         '<tr><td>Total</td><td>%d</td><td>%s</td></tr>' % (len(singlelogs), 'n/a'),
         '</table>'])
-        
         if (file == 'searchHandler.log'):
             rows.extend(['<form action="statistics.html?operation=reset" method="post" onsubmit="return confirm(\'This operation will reset all statistics. The existing logfile will be moved and will be accessible from the drop down menu on the statistics page. Are you sure you want to continue?\');">',
                             '<p><input type="submit" name="resetstats" value=" Reset Statistics "/></p>',
                         '</form>'])
-
         rows.append('</div>')     
-        
         # League tables
         rows.extend([
         '<div id="rightcol">',
         '<h3>Most Requested</h3>',
         '<table width="100%%" summary="Most requested league table">'])
-        
         for type, dict in [('Summaries', recs['summary']), ('Full-texts', recs['full']), ('E-mails', recs['email'])]:
             rows.append('<tr class="headrow"><td>%s</td><td>Record Id</td></tr>' % (type))
             sortlist = [((v,k)) for k,v in dict.iteritems()]
@@ -1534,12 +1508,9 @@ class EadAdminHandler(EadHandler):
             tops = sortlist[:min(5, len(sortlist))]
             for reqs, id in tops:
                 rows.append('<tr><td>%d</td><td>%s</td></tr>' % (reqs, id))
-                 
         rows.extend(['</table>','</div>'])
-
         return '\n'.join(rows)
         #- end view_statistics() 
-    
     
     def reset_statistics(self):
         global logpath, searchlogfilepath
@@ -1556,7 +1527,6 @@ class EadAdminHandler(EadHandler):
         return 'Statistics reset. New logfile started. \n<br />\nOld logfiles can still be viewed by selecting them from the drop down box on the statistics page.\n<br />\n<br />\n<a href="/ead/admin/index.html" class="navlink">Back to \'Administration Menu\'</a>'
         #- end reset_statistics()
 
-
     def handle(self, req):
         global script
         # read the template in
@@ -1572,7 +1542,6 @@ class EadAdminHandler(EadHandler):
                       ,'help.html': 'adminhelp.html'
                       ,'login.html': 'login.html'
                       }
-                
         try:
             if (directFiles.has_key(path)):
                 content = read_file(directFiles[path])
@@ -1595,7 +1564,6 @@ class EadAdminHandler(EadHandler):
                 else:
                     content = self.list_users()
                 content = '<div id="single">%s</div>' % (content)
-                
             elif (path == 'files.html'):
                 # file type operations
                 if (operation):
@@ -1622,7 +1590,6 @@ class EadAdminHandler(EadHandler):
                         content = 'An invalid operation was attempted. Valid operations are:<br/>view, upload, insert, unidex + delete, delete, rename'
                 else:
                     content = self.review_records()
-                    
             elif (path == 'database.html'):
                 # database operations
                 if (operation):
@@ -1639,7 +1606,6 @@ class EadAdminHandler(EadHandler):
                         content = 'An invalid operation was attempted. Valid operations are:<br/>rebuild, reindex, deletehtml, buildhtml'
                 else:
                     content = read_file('database.html')
-                    
             elif (path == 'statistics.html'):
                 # statistics reporting
                 if (operation):
@@ -1649,18 +1615,13 @@ class EadAdminHandler(EadHandler):
                         self.htmlTitle.append('Error')
                         content = 'An invalid operation was attempted. Valid operations are:<br/>reset'
                 else:    
-                    
-                    
                     content = self.view_statistics(form.get('fileName', 'searchHandler.log'))     
-                    
             elif (path == 'edit.html') :                
                 content = self.show_editMenu()
-                
             elif (len(path)):
                 # 404
                 self.htmlTitle.append('Page Not Found')
                 content = '<p>Could not find your requested page: "%s"</p>' % path            
-            
         except Exception:
             self.htmlTitle.append('Error')
             cla, exc, trbk = sys.exc_info()
@@ -1669,7 +1630,6 @@ class EadAdminHandler(EadHandler):
                 excArgs = exc.__dict__["args"]
             except KeyError:
                 excArgs = str(exc)
-                
             self.logger.log('*** %s: %s' % (excName, excArgs))
             excTb = traceback.format_tb(trbk, 100)
             content = '''\
@@ -1680,12 +1640,10 @@ class EadAdminHandler(EadHandler):
             <p>Debugging Traceback: <a class="jscall" onclick="toggleShow(this, 'traceback');">[ show ]</a></p>
             <div id="traceback">%s</div>
             ''' % (excName, excArgs, '<br/>\n'.join(excTb))
-            
         if not content:
             # return the home/quick search page
             content = read_file('adminmenu.html')
             self.logger.log('Administration options')
-            
         page = multiReplace(tmpl, {'%REP_NAME%': repository_name,
                      '%REP_LINK%': repository_link,
                      '%REP_LOGO%': repository_logo,
@@ -1693,7 +1651,6 @@ class EadAdminHandler(EadHandler):
                      '%NAVBAR%': navbar_separator.join(self.htmlNav),
                      '%CONTENT%': content
                      })
-
         # send the display
         self.send_html(page, req)
         #- end handle()
@@ -1739,7 +1696,6 @@ compRecordFlow = None
 extractor = None
 diacriticNormalizer = None
 lockfilepath = None
-
 rebuild = True
 
 
@@ -1796,10 +1752,9 @@ def build_architecture(data=None):
     # globals line 6: other
     extractor = db.get_object(session, 'SimpleExtractor')
     diacriticNormalizer = db.get_object(session, 'DiacriticNormalizer')
-    
     lockfilepath = db.get_path(session, 'defaultPath') + '/indexing.lock'
-    
     rebuild = False
+
 
 logfilepath = adminlogfilepath
 
