@@ -8,7 +8,7 @@
  -->
 
 	<serverInfo protocol="srw/u" version="1.1" transport="http">
-        <host>172.20.252.2</host>
+        <host>138.253.x.x</host>
         <port>80</port>
         <database>services/ead</database>
 	</serverInfo>
@@ -252,7 +252,7 @@
         </index>
 	  
         <index c3:index="ead-idx-date">
-            <title>Date Index</title>
+            <title>Material Date</title>
             <map>
               <name set="dc">date</name>
             </map>
@@ -272,7 +272,7 @@
         </index>
 	  
 		<index c3:index="ead-idx-creationDate">
-			<title>Creation Date</title>
+			<title>Record Creation Date</title>
 			<map>
 				<name set="rec">creationDate</name>
 			</map>
@@ -288,7 +288,7 @@
 		</index>
 		
 		<index c3:index="ead-idx-modificationDate">
-			<title>Last Modification Date</title>
+			<title>Record Last Modification Date</title>
 			<map>
 				<name set="rec">lastModificationDate</name>
 			</map>
