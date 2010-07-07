@@ -8,7 +8,7 @@
  -->
 
   <subConfigs>
-        
+  
     <!-- indexStore -->
     <subConfig type="indexStore" id="indexStore">
         <objectType>cheshire3.indexStore.BdbIndexStore</objectType>
@@ -18,7 +18,17 @@
             <path type="recordStoreHash">recordStore componentStore</path>  
         </paths>
     </subConfig>
+
+    <!-- Custom tokenizers -->
     
+    <subConfig type="tokenizer" id="FuzzyDateTokenizer">
+      <objectType>cheshire3.tokenizer.DateTokenizer</objectType>
+      <options>
+        <setting type="dayfirst">1</setting>
+        <setting type="fuzzy">1</setting>
+      </options>
+    </subConfig>
+        
 	<!-- Custom normalizers -->
 		
     <subConfig type="normalizer" id="StoplistNormalizer">
@@ -348,14 +358,21 @@
 	    <paths>
 	        <object type="indexStore" ref="indexStore" />
 	    </paths>
-	    <source mode="data">
-	        <xpath>/*/*/did/unitdate</xpath>
+	    <source mode="data|exactly|&lt;|&gt;|within|encloses">
 	        <xpath>/*/*/did/unitdate/@normal</xpath>
 	        <process>
 	            <object type="extractor" ref="SimpleExtractor" />
 	            <object type="tokenizer" ref="DateTokenizer" />
 	            <object type="tokenMerger" ref="SimpleTokenMerger" />
 	        </process>
+	    </source>
+	    <source mode="data">
+            <xpath>/*/*/did/unitdate</xpath>
+            <process>
+				<object type="extractor" ref="SimpleExtractor" />
+				<object type="tokenizer" ref="FuzzyDateTokenizer" />
+				<object type="tokenMerger" ref="SimpleTokenMerger" />
+            </process>
 	    </source>
 	    <options>
 	        <setting type="recordStoreSizes">1</setting>
@@ -367,12 +384,20 @@
         <paths>
             <object type="indexStore" ref="indexStore" />
         </paths>
-        <source mode="data">
-            <xpath>/*/*/did/unitdate</xpath>
+        <source mode="data|exactly|&lt;|&gt;|within|encloses">
             <xpath>/*/*/did/unitdate/@normal</xpath>
             <process>
                 <object type="extractor" ref="SimpleExtractor" />
                 <object type="tokenizer" ref="DateTokenizer" />
+                <object type="normalizer" ref="DateYearNormalizer"/>
+                <object type="tokenMerger" ref="SimpleTokenMerger" />
+            </process>
+        </source>
+        <source mode="data">
+            <xpath>/*/*/did/unitdate</xpath>
+            <process>
+                <object type="extractor" ref="SimpleExtractor" />
+                <object type="tokenizer" ref="FuzzyDateTokenizer" />
                 <object type="normalizer" ref="DateYearNormalizer"/>
                 <object type="tokenMerger" ref="SimpleTokenMerger" />
             </process>
@@ -388,8 +413,7 @@
 	    <paths>
 	        <object type="indexStore" ref="indexStore" />
 	    </paths>
-	    <source mode="data">
-	        <xpath>/*/*/did/unitdate</xpath>
+	    <source mode="data|exactly|&lt;|&gt;|within|encloses">
 	        <xpath>/*/*/did/unitdate/@normal</xpath>
 	        <process>
 	            <object type="extractor" ref="SimpleExtractor" />
@@ -397,6 +421,14 @@
 	            <object type="tokenMerger" ref="SequenceRangeTokenMerger"/>
 	        </process>
 	    </source>
+	    <source mode="data">
+            <xpath>/*/*/did/unitdate</xpath>
+            <process>
+                <object type="extractor" ref="SimpleExtractor" />
+                <object type="tokenizer" ref="FuzzyDateTokenizer" />
+                <object type="tokenMerger" ref="SequenceRangeTokenMerger"/>
+            </process>
+        </source>
 	    <options>
 	        <setting type="recordStoreSizes">1</setting>
 	    </options>
