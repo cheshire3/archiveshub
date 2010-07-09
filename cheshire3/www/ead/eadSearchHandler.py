@@ -1,7 +1,7 @@
 #
 # Script:    eadSearchHandler.py
-# Version:   0.45
-# Date:      29 June 2010
+# Version:   0.46
+# Date:      9 July 2010
 # Copyright: &copy; University of Liverpool 2005-present
 # Description:
 #            Web interface for searching a cheshire 3 database of EAD finding aids
@@ -110,8 +110,8 @@
 # 0.42 - 22/01/2009 - JH - Debugging of noComponents search
 # 0.43 - 25/02/2009 - JH - Debugging of highlighting
 # 0.44 - 07/02/2009 - JH - More efficient handling of proxInfo when highlighting
-# 0.45 - 29/06/2010 - JH - Highlighting uses highlighting transformer instead of
-#
+# 0.45 - 29/06/2010 - JH - Highlighting uses highlighting transformer instead of local code
+# 0.46 - 09/07/2010 - JH - Bug fix to highlighting for components
 
 from eadHandler import * 
 
@@ -819,8 +819,10 @@ class EadSearchHandler(EadHandler):
         # highlight search terms in rec.dom
         if (proxInfo) and (highlight):
             # use fixed highlighting transformer, so that code only in one place
-            txr = db.get_object(session, 'sruHighlightingTxr')
+            txr = db.get_object(session, 'highlightTxr')
+            self.logger.log(rec.get_xml(session))
             doc = txr.process_record(session, rec)
+            self.logger.log(doc.get_raw(session))
             xmlp = db.get_object(session, 'LxmlParser')
             rec = xmlp.process_document(session, doc)
             # old version left for posterity and reference value

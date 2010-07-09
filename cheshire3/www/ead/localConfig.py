@@ -55,7 +55,7 @@ cheshirePath = os.environ.get('C3HOME', '/home/cheshire/cheshire3/')
 
 # Institutionally specific configurables
 repository_name = "Cheshire for Archives v3.5 Development"
-repository_link = "http://www.archiveshub.ac.uk"                        # must begin http://
+repository_link = "http://www.cheshire3.org"                        # must begin http://
 repository_logo = "/ead/img/c3_black.gif"             # should begin http:// unless on this server
 
 title_separator = ' - '
