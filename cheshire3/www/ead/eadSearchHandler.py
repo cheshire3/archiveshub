@@ -1,7 +1,7 @@
 #
 # Script:    eadSearchHandler.py
-# Version:   0.46
-# Date:      9 July 2010
+# Version:   0.47
+# Date:      4 August 2010
 # Copyright: &copy; University of Liverpool 2005-present
 # Description:
 #            Web interface for searching a cheshire 3 database of EAD finding aids
@@ -112,6 +112,8 @@
 # 0.44 - 07/02/2009 - JH - More efficient handling of proxInfo when highlighting
 # 0.45 - 29/06/2010 - JH - Highlighting uses highlighting transformer instead of local code
 # 0.46 - 09/07/2010 - JH - Bug fix to highlighting for components
+# 0.47 - 04/08/2010 - JH - Bug fix to similar_search
+
 
 from eadHandler import * 
 
@@ -1262,7 +1264,7 @@ In: %s
         #- end email_record() ------------------------------------------------------
     
     
-    def similar_search(self, form):
+    def similar_search(self, req, form):
         rsid = form.getfirst('rsid', None)
         hitposition = int(form.getfirst('hitposition', 0))
         highlight = form.getfirst('highlight', 0)
@@ -1355,7 +1357,7 @@ In: %s
         form = {'query': cql, 'firstrec': 1, 'numreq': 20, 'highlight': highlight}
         try:
             #return self.search(form, 100)            # limit similar search results to 100 - noone will look through more than that anyway!
-            return self.search(form)
+            return self.search(req, form)
         except ZeroDivisionError:
             self.htmlTitle.append('Error')
             self.logger.log('*** unable to locate similar records')
@@ -1405,7 +1407,7 @@ In: %s
                     self.redirected = True
                     content = self.email(form)
                 elif (operation == 'similar'):
-                    content = self.similar_search(form)
+                    content = self.similar_search(req, form)
                 elif (operation == 'toc'):
                     content = self.display_toc(form)
                 elif (operation == 'lastResultSet'):
