@@ -67,7 +67,7 @@
 		    <div class="float"> <input type="button" class="formbutton" id="addC" onclick="javascript: addComponent()" value="Add Component" title="Add a component to this level of the record"></input></div>
 		 <!--   <div class="float"> <input type="button" class="formbutton" id="reset" onclick="javascript: resetForm()" value="Reset"></input> </div> -->  
 		    	<div class="pui">
-		    		<strong><xsl:text>Persistent Unique Identifier</xsl:text><a href="http://www.archiveshub.ac.uk/arch/glossary.shtml#identifier" title="PUI help - opens in new window" target="_new"><img class="whatsthis" src="/ead/img/whatisthis.png" alt="[What is this?]"/></a></strong>				
+		    		<strong><xsl:text>Persistent Unique Identifier</xsl:text><a href="http://archiveshub.ac.uk/help/glossary/#identifier" title="PUI help - opens in new window" target="_new"><img class="whatsthis" src="/ead/img/whatisthis.png" alt="[What is this?]"/></a></strong>				
 		    		%PUI%
 		    	</div>
 		    
@@ -135,7 +135,7 @@
       <span class="isadg"><h3>3.1: Identity Statement Area</h3></span>
       <xsl:if test="$formtype = 'ead'">
       <p id="unitidparent">
-	  <strong><span class="isadg">3.1.1: </span>Reference Code<a href="http://www.archiveshub.ac.uk/arch/refcode.shtml" title="Reference Code help - opens in new window" target="_new"><img class="whatsthis" src="/ead/img/whatisthis.png" alt="[What is this?]"/></a></strong> 
+	  <strong><span class="isadg">3.1.1: </span>Reference Code<a href="http://archiveshub.ac.uk/help/refcode/" title="Reference Code help - opens in new window" target="_new"><img class="whatsthis" src="/ead/img/whatisthis.png" alt="[What is this?]"/></a></strong> 
 	  Comprising <a href="http://www.iso.org/iso/en/prods-services/iso3166ma/02iso-3166-code-lists/list-en1.html" target="_new" title="Further information on ISO Country Codes">ISO Country Code</a>, 
 	  <a href="http://www.nationalarchives.gov.uk/archon/" target="_new" title="ARCHON Service">Archon Code</a>,
 	  and a unique identifier for this record or component.
@@ -156,7 +156,7 @@
   	</p>
   	</xsl:if>
    	<p>
-		<strong><span class="isadg">3.1.2: </span>Title<a href="http://www.archiveshub.ac.uk/arch/title.shtml" title="Title help - opens in new window" target="_new"><img class="whatsthis" src="/ead/img/whatisthis.png" alt="[What is this?]"/></a></strong><br/>
+		<strong><span class="isadg">3.1.2: </span>Title<a href="http://archiveshub.ac.uk/help/title" title="Title help - opens in new window" target="_new"><img class="whatsthis" src="/ead/img/whatisthis.png" alt="[What is this?]"/></a></strong><br/>
 		<xsl:choose>
 			<xsl:when test="did/unittitle">
 				<xsl:apply-templates select="did/unittitle"/>
@@ -174,7 +174,7 @@
 		</xsl:choose>		
     </p>
    <div class="float">
-    	<p><strong><span class="isadg">3.1.3: </span>Dates of Creation<a href="http://www.archiveshub.ac.uk/arch/dates.shtml" title="Dates of Creation help - opens in new window" target="_new"><img class="whatsthis" src="/ead/img/whatisthis.png" alt="[What is this?]"/></a></strong><br/>
+    	<p><strong><span class="isadg">3.1.3: </span>Dates of Creation<a href="http://archiveshub.ac.uk/help/dates" title="Dates of Creation help - opens in new window" target="_new"><img class="whatsthis" src="/ead/img/whatisthis.png" alt="[What is this?]"/></a></strong><br/>
 		<xsl:choose>
 			<xsl:when test="did/unitdate">
 				<xsl:apply-templates select="did/unitdate"/>
@@ -190,7 +190,7 @@
 	</div>
 	<div class="float">
 		<p>
-		<strong>Normalised Date<a href="http://www.archiveshub.ac.uk/arch/dates.shtml" title="Normalised Date help - opens in new window" target="_new"><img class="whatsthis" src="/ead/img/whatisthis.png" alt="[What is this?]"/></a></strong>YYYY/YYYY or YYYYMMDD/YYYYMMDD<br/>
+		<strong>Normalised Date<a href="http://archiveshub.ac.uk/help/dates" title="Normalised Date help - opens in new window" target="_new"><img class="whatsthis" src="/ead/img/whatisthis.png" alt="[What is this?]"/></a></strong>YYYY/YYYY or YYYYMMDD/YYYYMMDD<br/>
 	    	<xsl:choose>
 	    		<xsl:when test="did/unitdate/@normal">
 	    			<xsl:apply-templates select="did/unitdate/@normal"/>
@@ -207,7 +207,7 @@
   	<br/>
   	<p>
   	<!-- 	<xsl:if test="$leveltype = 'component'">	 -->
-  			<strong><span class="isadg">3.1.4: </span>Level of Description<a href="http://www.archiveshub.ac.uk/arch/level.shtml" title="Level of Description help - opens in new window" target="_new"><img class="whatsthis" src="/hubedit/img/whatisthis.png" alt="[What is this?]"/></a></strong>
+  			<strong><span class="isadg">3.1.4: </span>Level of Description<a href="http://archiveshub.ac.uk/help/level" title="Level of Description help - opens in new window" target="_new"><img class="whatsthis" src="/ead/img/whatisthis.png" alt="[What is this?]"/></a></strong>
   			<xsl:if test="$leveltype = 'collection'">
   				<xsl:text>[mandatory]</xsl:text>
   			</xsl:if>
@@ -267,7 +267,7 @@
 		<!-- </xsl:if>	 -->
   	</p>
  	<p>
-		<strong><span class="isadg">3.1.5: </span>Extent of Unit of Description<a href="http://www.archiveshub.ac.uk/arch/extent.shtml" title="Extent help - opens in new window" target="_new"><img class="whatsthis" src="/ead/img/whatisthis.png" alt="[What is this?]"/></a></strong><br/>
+		<strong><span class="isadg">3.1.5: </span>Extent of Unit of Description<a href="http://archiveshub.ac.uk/help/extent" title="Extent help - opens in new window" target="_new"><img class="whatsthis" src="/ead/img/whatisthis.png" alt="[What is this?]"/></a></strong><br/>
 		<xsl:choose>
 			<xsl:when test="did/physdesc/extent">
 				<xsl:apply-templates select="did/physdesc/extent"/>
@@ -279,7 +279,7 @@
     </p>
     <xsl:if test="$leveltype = 'collection' or $formtype = 'template'">
 	    <p>
-	  		<strong>Repository</strong><a id="repositoryhelp" name="repositoryhelp" target="_new" href="http://www.archiveshub.ac.uk/arch/repository.shtml">
+	  		<strong>Repository</strong><a id="repositoryhelp" name="repositoryhelp" target="_new" href="http://archiveshub.ac.uk/help/repository">
 		<img class="whatsthis" src="/ead/img/whatisthis.png" alt="[What is this?]"/>
 		</a><br/>
 	  		<xsl:choose>
@@ -297,7 +297,7 @@
 					<xsl:apply-templates select="../eadheader/filedesc/titlestmt/sponsor"/>
 				</xsl:when> 
 				<xsl:otherwise>
-					<strong>Sponsor</strong><a id="sponsorhelp" name="sponsorhelp" target="_new" href="http://www.archiveshub.ac.uk/arch/sponsor.shtml ">
+					<strong>Sponsor</strong><a id="sponsorhelp" name="sponsorhelp" target="_new" href="http://archiveshub.ac.uk/help/sponsor">
 		<img class="whatsthis" src="/ead/img/whatisthis.png" alt="[What is this?]"/>
 		</a><a class="smalllink" id="linkfiledesc/titlestmt/sponsor" title="add sponsor" onclick="addElement('filedesc/titlestmt/sponsor')">add content</a> [optional]<br/>
 					<input class="menuField" type="text" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onblur="validateField(this, 'true');" onfocus="setCurrent(this);" name="filedesc/titlestmt/sponsor" id="filedesc/titlestmt/sponsor" size="80" style="display:none"></input>
@@ -312,7 +312,7 @@
    <div class="section">
 		<span class="isadg"><h3>3.2: Context Area</h3></span> 
 		<p>
-		<strong><span class="isadg">3.2.1: </span>Name of Creator<a href="http://www.archiveshub.ac.uk/arch/name.shtml" title="Name of Creator help - opens in new window" target="_new"><img class="whatsthis" src="/ead/img/whatisthis.png" alt="[What is this?]"/></a></strong>  [<strong>also add manually as <a href="#accesspoints" title="Add Access Point manually">Access Point</a></strong>]<br/>
+		<strong><span class="isadg">3.2.1: </span>Name of Creator<a href="http://archiveshub.ac.uk/help/name" title="Name of Creator help - opens in new window" target="_new"><img class="whatsthis" src="/ead/img/whatisthis.png" alt="[What is this?]"/></a></strong>  [<strong>also add manually as <a href="#accesspoints" title="Add Access Point manually">Access Point</a></strong>]<br/>
 		<xsl:choose>
 			<xsl:when test="did/origination">
 				<xsl:apply-templates select="did/origination"/>
@@ -344,7 +344,7 @@
 						<xsl:with-param name="content" select="$content"/>
 						<xsl:with-param name="isadg" select="'3.2.2: '"/>
 						<xsl:with-param name="title" select="'Administrative/Biographical History'"/>
-						<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/bioghist.shtml'"/>
+						<xsl:with-param name="help" select="'http://archiveshub.ac.uk/help/bioghist'"/>
 					</xsl:call-template>
 			   </xsl:for-each>
 			</xsl:when>
@@ -356,7 +356,7 @@
 					<xsl:with-param name="content" select="$content"/>
 					<xsl:with-param name="isadg" select="'3.2.2: '"/>
 					<xsl:with-param name="title" select="'Administrative/Biographical History'"/>
-					<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/bioghist.shtml'"/>
+					<xsl:with-param name="help" select="'http://archiveshub.ac.uk/help/bioghist'"/>
 				</xsl:call-template>
 			</xsl:otherwise>
 		</xsl:choose>
@@ -384,7 +384,7 @@
 						<xsl:with-param name="content" select="$content"/>
 						<xsl:with-param name="isadg" select="'3.2.3: '"/>
 						<xsl:with-param name="title" select="'Archival History'"/>
-						<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/custodhist.html'"/>
+						<xsl:with-param name="help" select="'http://archiveshub.ac.uk/help/custodhist '"/>
 					</xsl:call-template>
 				</xsl:for-each>
 			</xsl:when>
@@ -396,7 +396,7 @@
 					<xsl:with-param name="content" select="$content"/>
 					<xsl:with-param name="isadg" select="'3.2.3: '"/>
 					<xsl:with-param name="title" select="'Archival History'"/>
-					<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/custodhist.html'"/>
+					<xsl:with-param name="help" select="'http://archiveshub.ac.uk/help/custodhist'"/>
 				</xsl:call-template>
 			</xsl:otherwise>
 		</xsl:choose>
@@ -423,7 +423,7 @@
 						<xsl:with-param name="content" select="$content"/>
 						<xsl:with-param name="isadg" select="'3.2.4: '"/>
 						<xsl:with-param name="title" select="'Immediate Source of Acquisition'"/>
-						<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/acqinfo.html'"/>
+						<xsl:with-param name="help" select="'http://archiveshub.ac.uk/help/acqinfo'"/>
 					</xsl:call-template>	
 				</xsl:for-each>	
 			</xsl:when>
@@ -435,7 +435,7 @@
 					<xsl:with-param name="content" select="$content"/>
 					<xsl:with-param name="isadg" select="'3.2.4: '"/>
 					<xsl:with-param name="title" select="'Immediate Source of Acquisition'"/>
-					<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/acqinfo.html'"/>
+					<xsl:with-param name="help" select="'http://archiveshub.ac.uk/help/acqinfo'"/>
 				</xsl:call-template>	
 			</xsl:otherwise>
 		</xsl:choose>
@@ -468,7 +468,7 @@
 						<xsl:with-param name="content" select="$content"/>
 						<xsl:with-param name="isadg" select="'3.3.1: '"/>
 						<xsl:with-param name="title" select="'Scope and Content'"/>
-						<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/scope.shtml'"/>
+						<xsl:with-param name="help" select="'http://archiveshub.ac.uk/help/scope'"/>
 					</xsl:call-template>
 				</xsl:for-each>
 			</xsl:when>
@@ -480,7 +480,7 @@
 					<xsl:with-param name="content" select="$content"/>
 					<xsl:with-param name="isadg" select="'3.3.1: '"/>
 					<xsl:with-param name="title" select="'Scope and Content'"/>
-					<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/scope.shtml'"/>
+					<xsl:with-param name="help" select="'http://archiveshub.ac.uk/help/scope'"/>
 				</xsl:call-template>
 			</xsl:otherwise>
 		</xsl:choose>
@@ -507,7 +507,7 @@
 						<xsl:with-param name="content" select="$content"/>
 						<xsl:with-param name="isadg" select="'3.3.2: '"/>
 						<xsl:with-param name="title" select="'Appraisal'"/>
-						<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/appraisal.html'"/>
+						<xsl:with-param name="help" select="'http://archiveshub.ac.uk/help/appraisal'"/>
 					</xsl:call-template>	
 				</xsl:for-each>
 			</xsl:when>
@@ -519,7 +519,7 @@
 					<xsl:with-param name="content" select="$content"/>
 					<xsl:with-param name="isadg" select="'3.3.2: '"/>
 					<xsl:with-param name="title" select="'Appraisal'"/>
-					<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/appraisal.html'"/>
+					<xsl:with-param name="help" select="'http://archiveshub.ac.uk/help/appraisal'"/>
 				</xsl:call-template>
 			</xsl:otherwise>
 		</xsl:choose>
@@ -546,7 +546,7 @@
 						<xsl:with-param name="content" select="$content"/>
 						<xsl:with-param name="isadg" select="'3.3.3: '"/>
 						<xsl:with-param name="title" select="'Accruals'"/>
-						<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/accruals.html'"/>
+						<xsl:with-param name="help" select="'http://archiveshub.ac.uk/help/accruals'"/>
 					</xsl:call-template>
 				</xsl:for-each>	
 			</xsl:when>
@@ -558,7 +558,7 @@
 					<xsl:with-param name="content" select="$content"/>
 					<xsl:with-param name="isadg" select="'3.3.3: '"/>
 					<xsl:with-param name="title" select="'Accruals'"/>
-					<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/accruals.html'"/>
+					<xsl:with-param name="help" select="'http://archiveshub.ac.uk/help/accruals'"/>
 				</xsl:call-template>
 			</xsl:otherwise>
 		</xsl:choose>
@@ -585,7 +585,7 @@
 						<xsl:with-param name="content" select="$content"/>
 						<xsl:with-param name="isadg" select="'3.3.4: '"/>
 						<xsl:with-param name="title" select="'System of Arrangement'"/>
-						<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/arrangement.html'"/>
+						<xsl:with-param name="help" select="'http://archiveshub.ac.uk/help/arrangement'"/>
 					</xsl:call-template>	
 				</xsl:for-each>
 			</xsl:when>
@@ -597,7 +597,7 @@
 					<xsl:with-param name="content" select="$content"/>
 					<xsl:with-param name="isadg" select="'3.3.4: '"/>
 					<xsl:with-param name="title" select="'System of Arrangement'"/>
-					<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/arrangement.html'"/>
+					<xsl:with-param name="help" select="'http://archiveshub.ac.uk/help/arrangement'"/>
 				</xsl:call-template>
 			</xsl:otherwise>
 		</xsl:choose>
@@ -630,7 +630,7 @@
 					<xsl:with-param name="content" select="$content"/>
 					<xsl:with-param name="isadg" select="'3.4.1: '"/>
 					<xsl:with-param name="title" select="'Conditions Governing Access'"/>
-					<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/restrict.shtml'"/>
+					<xsl:with-param name="help" select="'http://archiveshub.ac.uk/help/restrict'"/>
 				</xsl:call-template>
 			</xsl:for-each>
 		</xsl:when>
@@ -642,7 +642,7 @@
 				<xsl:with-param name="content" select="$content"/>
 				<xsl:with-param name="isadg" select="'3.4.1: '"/>
 				<xsl:with-param name="title" select="'Conditions Governing Access'"/>
-				<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/restrict.shtml'"/>
+				<xsl:with-param name="help" select="'http://archiveshub.ac.uk/help/restrict'"/>
 			</xsl:call-template>
 		</xsl:otherwise>
 	</xsl:choose>
@@ -669,7 +669,7 @@
 					<xsl:with-param name="content" select="$content"/>
 					<xsl:with-param name="isadg" select="'3.4.2: '"/>
 					<xsl:with-param name="title" select="'Conditions Governing Reproduction'"/>
-					<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/userestrict.html'"/>
+					<xsl:with-param name="help" select="'http://archiveshub.ac.uk/help/userestrict'"/>
 				</xsl:call-template>
 			</xsl:for-each>
 		</xsl:when>
@@ -681,14 +681,14 @@
 				<xsl:with-param name="content" select="$content"/>
 				<xsl:with-param name="isadg" select="'3.4.2: '"/>
 				<xsl:with-param name="title" select="'Conditions Governing Reproduction'"/>
-				<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/userestrict.html'"/>
+				<xsl:with-param name="help" select="'http://archiveshub.ac.uk/help/userestrict'"/>
 			</xsl:call-template>
 		</xsl:otherwise>
 	</xsl:choose>
 	</p> 
 <!-- langmaterial -->
      <p>
-     	<strong><span class="isadg">3.4.3: </span>Language of Material</strong><a href="http://www.archiveshub.ac.uk/arch/lang.shtml" title="Language of Material help - opens in new window" target="_new"><img class="whatsthis" src="/ead/img/whatisthis.png" alt="[What is this?]"/></a> [Must include <a href="http://www.loc.gov/standards/iso639-2/php/English_list.php" title="ISO 639-2 codes - opens new window" target="_new">ISO 639-2 3-letter code</a>]
+     	<strong><span class="isadg">3.4.3: </span>Language of Material</strong><a href="http://archiveshub.ac.uk/help/lang" title="Language of Material help - opens in new window" target="_new"><img class="whatsthis" src="/ead/img/whatisthis.png" alt="[What is this?]"/></a> [Must include <a href="http://www.loc.gov/standards/iso639-2/php/English_list.php" title="ISO 639-2 codes - opens new window" target="_new">ISO 639-2 3-letter code</a>]
      	<xsl:for-each select="did/langmaterial/@*">
      		<input type="hidden">
      			<xsl:attribute name="name">
@@ -745,7 +745,7 @@
 					<xsl:with-param name="content" select="$content"/>
 					<xsl:with-param name="isadg" select="'3.4.4: '"/>
 					<xsl:with-param name="title" select="'Physical Characteristics'"/>
-					<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/phystech.html'"/>
+					<xsl:with-param name="help" select="'http://archiveshub.ac.uk/help/phystech'"/>
 				</xsl:call-template>
 			</xsl:for-each>
 		</xsl:when>
@@ -757,7 +757,7 @@
 					<xsl:with-param name="content" select="$content"/>
 					<xsl:with-param name="isadg" select="'3.4.4: '"/>
 					<xsl:with-param name="title" select="'Physical Characteristics'"/>
-					<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/phystech.html'"/>
+					<xsl:with-param name="help" select="'http://archiveshub.ac.uk/help/phystech'"/>
 				</xsl:call-template>
 		</xsl:otherwise>
 	</xsl:choose>
@@ -784,7 +784,7 @@
 					<xsl:with-param name="content" select="$content"/>
 					<xsl:with-param name="isadg" select="'3.4.5: '"/>
 					<xsl:with-param name="title" select="'Finding Aids'"/>
-					<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/other.shtml'"/>					
+					<xsl:with-param name="help" select="'http://archiveshub.ac.uk/help/other'"/>					
 				</xsl:call-template>	
 			</xsl:for-each>		
 		</xsl:when>
@@ -796,7 +796,7 @@
 				<xsl:with-param name="content" select="$content"/>
 				<xsl:with-param name="isadg" select="'3.4.5: '"/>
 				<xsl:with-param name="title" select="'Finding Aids'"/>
-				<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/other.shtml'"/>
+				<xsl:with-param name="help" select="'http://archiveshub.ac.uk/help/other'"/>
 			</xsl:call-template>	
 		</xsl:otherwise>
 	</xsl:choose>
@@ -829,7 +829,7 @@
 					<xsl:with-param name="content" select="$content"/>
 					<xsl:with-param name="isadg" select="'3.5.1: '"/>
 					<xsl:with-param name="title" select="'Existence/Location of Originals'"/>
-					<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/originalsloc.html'"/>
+					<xsl:with-param name="help" select="'http://archiveshub.ac.uk/help/originalsloc'"/>
 				</xsl:call-template>
 			</xsl:for-each>
 		</xsl:when>
@@ -841,7 +841,7 @@
 				<xsl:with-param name="content" select="$content"/>
 				<xsl:with-param name="isadg" select="'3.5.1: '"/>
 				<xsl:with-param name="title" select="'Existence/Location of Originals'"/>
-				<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/originalsloc.html'"/>
+				<xsl:with-param name="help" select="'http://archiveshub.ac.uk/help/originalsloc'"/>
 			</xsl:call-template>
 		</xsl:otherwise>
 	</xsl:choose>
@@ -868,7 +868,7 @@
 					<xsl:with-param name="content" select="$content"/>
 					<xsl:with-param name="isadg" select="'3.5.2: '"/>
 					<xsl:with-param name="title" select="'Existence/Location of Copies'"/>
-					<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/altformavail.html'"/>
+					<xsl:with-param name="help" select="'http://archiveshub.ac.uk/help/altformavail'"/>
 				</xsl:call-template>
 			</xsl:for-each>
 		</xsl:when>
@@ -880,7 +880,7 @@
 				<xsl:with-param name="content" select="$content"/>
 				<xsl:with-param name="isadg" select="'3.5.2: '"/>
 				<xsl:with-param name="title" select="'Existence/Location of Copies'"/>
-				<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/altformavail.html'"/>
+				<xsl:with-param name="help" select="'http://archiveshub.ac.uk/help/altformavail'"/>
 			</xsl:call-template>
 		</xsl:otherwise>
 	</xsl:choose>
@@ -907,7 +907,7 @@
 					<xsl:with-param name="content" select="$content"/>
 					<xsl:with-param name="isadg" select="'3.5.3: '"/>
 					<xsl:with-param name="title" select="'Related Units of Description'"/>
-					<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/relatedmaterial.html'"/>
+					<xsl:with-param name="help" select="'http://archiveshub.ac.uk/help/relatedmaterial'"/>
 				</xsl:call-template>
 			</xsl:for-each>		
 		</xsl:when>
@@ -919,7 +919,7 @@
 				<xsl:with-param name="content" select="$content"/>
 				<xsl:with-param name="isadg" select="'3.5.3: '"/>
 				<xsl:with-param name="title" select="'Related Units of Description'"/>
-				<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/relatedmaterial.html'"/>
+				<xsl:with-param name="help" select="'http://archiveshub.ac.uk/help/relatedmaterial'"/>
 			</xsl:call-template>
 		</xsl:otherwise>
 	</xsl:choose>
@@ -946,7 +946,7 @@
 					<xsl:with-param name="content" select="$content"/>
 					<xsl:with-param name="isadg" select="'3.5.4: '"/>
 					<xsl:with-param name="title" select="'Publication Note'"/>
-					<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/bibliography.html'"/>
+					<xsl:with-param name="help" select="'http://archiveshub.ac.uk/help/bibliography'"/>
 					<xsl:with-param name="additional" select="'[Works based on or about the collection]'"/>
 				</xsl:call-template>
 			</xsl:for-each>
@@ -959,7 +959,7 @@
 				<xsl:with-param name="content" select="$content"/>
 				<xsl:with-param name="isadg" select="'3.5.4: '"/>
 				<xsl:with-param name="title" select="'Publication Note'"/>
-				<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/bibliography.html'"/>
+				<xsl:with-param name="help" select="'http://archiveshub.ac.uk/help/bibliography'"/>
 				<xsl:with-param name="additional" select="'[Works based on or about the collection]'"/>
 			</xsl:call-template>
 		</xsl:otherwise>
@@ -993,7 +993,7 @@
 					<xsl:with-param name="content" select="$content"/>
 					<xsl:with-param name="isadg" select="'3.6.1: '"/>
 					<xsl:with-param name="title" select="'Note'"/>
-					<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/note.html'"/>
+					<xsl:with-param name="help" select="'http://archiveshub.ac.uk/help/note'"/>
 				</xsl:call-template>
 			</xsl:for-each>
 		</xsl:when>
@@ -1005,7 +1005,7 @@
 					<xsl:with-param name="content" select="$content"/>
 					<xsl:with-param name="isadg" select="'3.6.1: '"/>
 					<xsl:with-param name="title" select="'Note'"/>
-					<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/note.html'"/>
+					<xsl:with-param name="help" select="'http://archiveshub.ac.uk/help/note'"/>
 				</xsl:call-template>
 		</xsl:otherwise>
 	</xsl:choose>
@@ -1039,7 +1039,7 @@
 					<xsl:with-param name="content" select="$content"/>
 					<xsl:with-param name="isadg" select="'3.7.1: '"/>
 					<xsl:with-param name="title" select='"Archivist&apos;s Note"'/>
-					<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/archnote.shtml'"/>
+					<xsl:with-param name="help" select="'http://archiveshub.ac.uk/help/archnote'"/>
 				</xsl:call-template>
 			</xsl:for-each>
 		</xsl:when>
@@ -1051,7 +1051,7 @@
 				<xsl:with-param name="content" select="$content"/>
 				<xsl:with-param name="isadg" select="'3.7.1: '"/>
 				<xsl:with-param name="title" select='"Archivist&apos;s Note"'/>
-				<xsl:with-param name="help" select="'http://www.archiveshub.ac.uk/arch/archnote.shtml'"/>
+				<xsl:with-param name="help" select="'http://archiveshub.ac.uk/help/archnote'"/>
 			</xsl:call-template>
 		</xsl:otherwise>
 	</xsl:choose>
@@ -1063,7 +1063,7 @@
 <!--  -->
 <!-- DIGITAL OBJECTS -->
 	<div id="digitalobjectssection" class="section">
-		<h3>Digital Objects<a id="daohelp" name="daohelp" target="_new" href="http://www.archiveshub.ac.uk/arch/dao.shtml">
+		<h3>Digital Objects<a id="daohelp" name="daohelp" target="_new" href="http://archiveshub.ac.uk/help/dao">
 		<img class="whatsthis" src="/ead/img/whatisthis.png" alt="[What is this?]"/>
 		</a></h3>
 		<div id="daocontainer">
@@ -1254,15 +1254,24 @@
 <!-- ACCESSPOINTS -->
 <!--  -->
 	<div id="accesspointssection" class="section">
-		<h3>Access Points<a id="accesspoints" name="accesspoints" target="_new" href="http://www.archiveshub.ac.uk/arch/access.shtml">
+		<h3>Access Points<a id="accesspoints" name="accesspoints" target="_new" href="http://archiveshub.ac.uk/help/access">
 		<img class="whatsthis" src="/ead/img/whatisthis.png" alt="[What is this?]"/>
 		</a></h3>
 		
 <!-- subject -->
 		<div id="subject" class="apcontainer">
-			<p><strong>Subject</strong><a id="subjecthelp" name="subjecthelp" target="_new" href="http://www.archiveshub.ac.uk/arch/subject.shtml">
-		<img class="whatsthis" src="/ead/img/whatisthis.png" alt="[What is this?]"/>
-		</a><br /><a class="extSearch" onclick="window.open('http://databases.unesco.org/thesaurus/', 'new');">[Search UNESCO]</a><xsl:text>  </xsl:text><a class="extSearch" onclick="window.open('http://authorities.loc.gov/cgi-bin/Pwebrecon.cgi?DB=local&amp;PAGE=First', 'new');">[Search LCSH]</a></p>
+		<p>
+			<strong>Subject</strong>
+			<a id="subjecthelp" name="subjecthelp" target="_new" href="http://archiveshub.ac.uk/help/subject">
+            <img class="whatsthis" src="/ead/img/whatisthis.png" alt="[What is this?]"/>
+            </a>
+            <br/>
+<!--		<a class="extSearch" onclick="window.open('http://databases.unesco.org/thesaurus/', 'new');">[Search UNESCO]</a>-->
+	        <a class="extSearch" target="_new" href="http://databases.unesco.org/thesaurus/">[Search UNESCO]</a>
+			<xsl:text>  </xsl:text>
+<!--		<a class="extSearch" onclick="window.open('http://authorities.loc.gov/cgi-bin/Pwebrecon.cgi?DB=local&amp;PAGE=First', 'new');">[Search LCSH]</a></p>-->
+            <a class="extSearch" target="_new" href="http://authorities.loc.gov/cgi-bin/Pwebrecon.cgi?DB=local&amp;PAGE=First">[Search LCSH]</a>
+        </p>
 			<xsl:choose>
 				<xsl:when test="controlaccess/subject">
 					<xsl:call-template name="accesspoint">
@@ -1296,9 +1305,15 @@
 		<br/>	
 <!--persname -->
         <div id="persname" class="apcontainer">				
-			<p><strong>Personal Name</strong><a id="persnamehelp" name="persnamehelp" target="_new" href="http://www.archiveshub.ac.uk/arch/persname.shtml">
-		<img class="whatsthis" src="/ead/img/whatisthis.png" alt="[What is this?]"/>
-		</a><br /><a class="extSearch" onclick="window.open('http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=P', 'new');">[Search NRA]</a></p>
+		<p>
+			<strong>Personal Name</strong>
+			<a id="persnamehelp" name="persnamehelp" target="_new" href="http://archiveshub.ac.uk/help/persname">
+                <img class="whatsthis" src="/ead/img/whatisthis.png" alt="[What is this?]"/>
+            </a>
+            <br />
+<!--            <a class="extSearch" onclick="window.open('http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=P', 'new');">[Search NRA]</a>-->
+            <a class="extSearch" target="_new" href="http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=P">[Search NRA]</a>
+        </p>
 			
 			<xsl:choose>
 				<xsl:when test="controlaccess/persname">
@@ -1340,9 +1355,15 @@
 		<br/>
 <!--famname -->
 		<div id="famname" class="apcontainer">
-			<p><strong>Family Name</strong><a id="famnamehelp" name="famnamehelp" target="_new" href="http://www.archiveshub.ac.uk/arch/famname.shtml">
-		<img class="whatsthis" src="/ead/img/whatisthis.png" alt="[What is this?]"/>
-		</a><br /><a class="extSearch" onclick="window.open('http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=F', 'new');">[Search NRA]</a></p>
+        <p>
+			<strong>Family Name</strong>
+			<a id="famnamehelp" name="famnamehelp" target="_new" href="http://archiveshub.ac.uk/help/famname">
+                <img class="whatsthis" src="/ead/img/whatisthis.png" alt="[What is this?]"/>
+            </a>
+            <br/>
+<!--            <a class="extSearch" onclick="window.open('http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=F', 'new');">[Search NRA]</a>-->
+            <a class="extSearch" target="_new" href="http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=F">[Search NRA]</a>
+        </p>
 			<xsl:choose>
 				<xsl:when test="controlaccess/famname">
 					<xsl:call-template name="accesspoint">
@@ -1383,9 +1404,15 @@
 		<br/>		
 <!-- corpname -->
 		<div id="corpname" class="apcontainer">
-			<p><strong>Corporate Name</strong><a id="corpnamehelp" name="corpnamehelp" target="_new" href="http://www.archiveshub.ac.uk/arch/corpname.shtml">
-		<img class="whatsthis" src="/ead/img/whatisthis.png" alt="[What is this?]"/>
-		</a><br /><a class="extSearch" onclick="window.open('http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=O', 'new');">[Search NRA]</a></p>
+	        <p>
+				<strong>Corporate Name</strong>
+				<a id="corpnamehelp" name="corpnamehelp" target="_new" href="http://archiveshub.ac.uk/help/corpname">
+	                <img class="whatsthis" src="/ead/img/whatisthis.png" alt="[What is this?]"/>
+	            </a>
+	            <br/>
+	<!--            <a class="extSearch" onclick="window.open('http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=O', 'new');">[Search NRA]</a>-->
+	            <a class="extSearch" target="_new" href="http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=O">[Search NRA]</a>
+	        </p>
 			<xsl:choose>
 				<xsl:when test="controlaccess/corpname">
 					<xsl:call-template name="accesspoint">
@@ -1424,9 +1451,15 @@
 		<br/>	
 <!-- placename -->
 		<div id="geogname" class="apcontainer">
-			<p><strong>Place Name</strong><a id="geognamehelp" name="geognamehelp" target="_new" href="http://www.archiveshub.ac.uk/arch/geogname.shtml">
-		<img class="whatsthis" src="/ead/img/whatisthis.png" alt="[What is this?]"/>
-		</a><br /><a class="extSearch" onclick="window.open('http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=PL', 'new');">[Search NRA]</a></p>
+            <p>
+                <strong>Place Name</strong>
+                <a id="geognamehelp" name="geognamehelp" target="_new" href="http://archiveshub.ac.uk/help/geogname">
+                    <img class="whatsthis" src="/ead/img/whatisthis.png" alt="[What is this?]"/>
+                </a>
+                <br/>
+<!--                <a class="extSearch" onclick="window.open('http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=PL', 'new');">[Search NRA]</a>-->
+                <a class="extSearch" target="_new" href="http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=PL">[Search NRA]</a>
+            </p>
 			<xsl:choose>
 				<xsl:when test="controlaccess/geogname">
 					<xsl:call-template name="accesspoint">
@@ -1464,7 +1497,7 @@
 		<br/>
 <!--title -->
 		<div id="title" class="apcontainer">
-			<p><strong>Book Title</strong><a id="booktitlehelp" name="booktitlehelp" target="_new" href="http://www.archiveshub.ac.uk/arch/booktitle.shtml">
+			<p><strong>Book Title</strong><a id="booktitlehelp" name="booktitlehelp" target="_new" href="http://archiveshub.ac.uk/help/booktitle">
 		<img class="whatsthis" src="/ead/img/whatisthis.png" alt="[What is this?]"/>
 		</a></p>
 			<xsl:choose>
@@ -1501,9 +1534,16 @@
 			<br/>	
 <!-- genreform -->
 		<div id="genreform" class="apcontainer">
-			<p><strong>Genre Form</strong><a id="genreformhelp" name="genreformhelp" target="_new" href="http://www.archiveshub.ac.uk/arch/genreform.shtml">
-		<img class="whatsthis" src="/ead/img/whatisthis.png" alt="[What is this?]"/>
-		</a><br/><a class="extSearch" onclick="window.open('http://www.getty.edu/research/conducting_research/vocabularies/aat/', 'new');">[Search AAT]</a><xsl:text> </xsl:text><a class="extSearch" onclick="window.open('http://www.loc.gov/rr/print/tgm2/', 'new');">[Search TGM]</a></p>
+            <p>
+                <strong>Genre Form</strong>
+                <a id="genreformhelp" name="genreformhelp" target="_new" href="http://archiveshub.ac.uk/help/genreform">
+                    <img class="whatsthis" src="/ead/img/whatisthis.png" alt="[What is this?]"/>
+                </a>
+                <br/>
+                <a class="extSearch" target="_new" href="http://www.getty.edu/research/conducting_research/vocabularies/aat/">[Search AAT]</a>
+                <xsl:text> </xsl:text>
+                <a class="extSearch" target="_new" href="http://www.loc.gov/rr/print/tgm2/">[Search TGM]</a>
+            </p>
 			<xsl:choose>
 				<xsl:when test="controlaccess/genreform">
 					<xsl:call-template name="accesspoint">
@@ -1530,9 +1570,22 @@
 			
 <!-- function -->
 		<div id="function" class="apcontainer">
-			<p><strong>Function</strong><a id="functionhelp" name="functionhelp" target="_new" href="http://www.archiveshub.ac.uk/arch/function.shtml">
-		<img class="whatsthis" src="/ead/img/whatisthis.png" alt="[What is this?]"/>
-		</a><br/><a class="extSearch" onclick="window.open('http://www.jisc.ac.uk/publications/publications/recordssrlstructure/fama.aspx', 'new');">[Search JISC]</a><xsl:text> </xsl:text><a class="extSearch" onclick="window.open('http://www.getty.edu/research/conducting_research/vocabularies/aat/', 'new');">[Search AAT]</a><xsl:text> </xsl:text><a class="extSearch" onclick="window.open('http://www.naa.gov.au/records-management/create-capture-describe/describe/agift/index.aspx', 'new');">[Search AGIFT]</a></p>
+          <p>
+            <strong>Function</strong>
+            <a id="functionhelp" name="functionhelp" target="_new" href="http://archiveshub.ac.uk/help/function">
+                <img class="whatsthis" src="/ead/img/whatisthis.png" alt="[What is this?]"/>
+            </a>
+            <br/>
+<!--		<a class="extSearch" onclick="window.open('http://www.jisc.ac.uk/publications/publications/recordssrlstructure/fama.aspx', 'new');">[Search JISC]</a>-->
+<!--        <a class="extSearch" onclick="window.open('http://www.jisc.ac.uk/en/publications/generalpublications/2002/recordssrlstructure/fama.aspx', 'new');">[Search JISC]</a>-->
+            <a class="extSearch" target="_new" href="http://vle.causeway.ac.uk/jisc_he/">[Search JISC]</a>
+            <xsl:text> </xsl:text>
+<!--        <a class="extSearch" onclick="window.open('http://www.getty.edu/research/conducting_research/vocabularies/aat/', 'new');">[Search AAT]</a>-->
+            <a class="extSearch" target="_new" href="http://www.getty.edu/research/conducting_research/vocabularies/aat/">[Search AAT]</a>
+    		<xsl:text> </xsl:text>
+<!--		<a class="extSearch" onclick="window.open('http://www.naa.gov.au/records-management/create-capture-describe/describe/agift/index.aspx', 'new');">[Search AGIFT]</a>-->
+            <a class="extSearch" target="_new" href="http://www.naa.gov.au/records-management/create-capture-describe/describe/agift/index.aspx">[Search AGIFT]</a>
+		</p>
 			<xsl:choose>
 				<xsl:when test="controlaccess/function">
 					<xsl:call-template name="accesspoint">
@@ -1801,7 +1854,7 @@
   </xsl:template>
   
   <xsl:template match="/ead/eadheader/filedesc/titlestmt/sponsor">
-  	<strong>Sponsor</strong><a id="sponsorhelp" name="sponsorhelp" target="_new" href="http://www.archiveshub.ac.uk/arch/sponsor.shtml ">
+  	<strong>Sponsor</strong><a id="sponsorhelp" name="sponsorhelp" target="_new" href="http://archiveshub.ac.uk/help/sponsor">
 		<img class="whatsthis" src="/ead/img/whatisthis.png" alt="[What is this?]"/>
 		</a><a class="smalllink" id="linkspo" title="add sponsor" onclick="addElement('filedesc/titlestmt/sponsor')">hide content</a> [optional]<br/>
   	<input class="menuField" type="text" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onblur="validateField(this, 'true');" onfocus="setCurrent(this);" name="filedesc/titlestmt/sponsor" id="filedesc/titlestmt/sponsor" size="80">
