@@ -940,7 +940,7 @@
         </a>
         <h3>
             <xsl:apply-templates select ="did/unittitle"/>
-            <xsl:text>(</xsl:text>
+            <xsl:text> (</xsl:text>
             <xsl:choose>
                 <xsl:when test="did//unitdate">
                     <xsl:value-of select="did//unitdate"/>
