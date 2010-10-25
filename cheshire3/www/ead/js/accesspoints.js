@@ -109,7 +109,7 @@ function addField(s){
 	else {
 		cell2.innerHTML = '<input type="text" onfocus="parent.setCurrent(this);" name="' + value + '" id="' + value + '" size="40"></input>';
 	}
-	cell3.innerHTML = '<img src="/hubedit/img/delete.png" class="deletelogo" onmouseover="this.src=\'/hubedit/img/delete-hover.png\';" onmouseout="this.src=\'/hubedit/img/delete.png\';" onclick="deleteRow(this.parentNode.parentNode);" />';
+	cell3.innerHTML = '<img src="/ead/img/delete.png" class="deletelogo" onmouseover="this.src=\'/ead/img/delete-hover.png\';" onmouseout="this.src=\'/ead/img/delete.png\';" onclick="deleteRow(this.parentNode.parentNode);" />';
 	newRow.appendChild(cell1);
 	newRow.appendChild(cell2);
 	newRow.appendChild(cell3);
@@ -230,7 +230,7 @@ function editSubject(s, type, number){
 			newRow.appendChild(cell2);
 						
 			var cell3 = document.createElement('td');
-			cell3.innerHTML = '<img src="/hubedit/img/delete.png" class="deletelogo" onmouseover="this.src=\'/hubedit/img/delete-hover.png\';" onmouseout="this.src=\'/hubedit/img/delete.png\';" onclick="deleteRow(this.parentNode.parentNode);" />';
+			cell3.innerHTML = '<img src="/ead/img/delete.png" class="deletelogo" onmouseover="this.src=\'/ead/img/delete-hover.png\';" onmouseout="this.src=\'/ead/img/delete.png\';" onclick="deleteRow(this.parentNode.parentNode);" />';
 			newRow.appendChild(cell3);		
 	  		table.insertBefore(newRow, dropdownRow);			  		
 		  	
@@ -319,7 +319,7 @@ function editAccessPoint(s, number){
 						}
 						else {			
 							var cell3 = document.createElement('td');
-							cell3.innerHTML = '<img src="/hubedit/img/delete.png" class="deletelogo" onmouseover="this.src=\'/hubedit/img/delete-hover.png\';" onmouseout="this.src=\'/hubedit/img/delete.png\';" onclick="deleteRow(this.parentNode.parentNode);" />';
+							cell3.innerHTML = '<img src="/ead/img/delete.png" class="deletelogo" onmouseover="this.src=\'/ead/img/delete-hover.png\';" onmouseout="this.src=\'/ead/img/delete.png\';" onclick="deleteRow(this.parentNode.parentNode);" />';
 							newRow.appendChild(cell3);		
 					  		table.insertBefore(newRow, dropdownRow);			  		
 					  	}
@@ -360,7 +360,7 @@ function editAccessPoint(s, number){
 						}
 						else {			
 							var cell3 = document.createElement('td');
-							cell3.innerHTML = '<img src="/hubedit/img/delete.png" class="deletelogo" onmouseover="this.src=\'/hubedit/img/delete-hover.png\';" onmouseout="this.src=\'/hubedit/img/delete.png\';" onclick="deleteRow(this.parentNode.parentNode);" />';
+							cell3.innerHTML = '<img src="/ead/img/delete.png" class="deletelogo" onmouseover="this.src=\'/ead/img/delete-hover.png\';" onmouseout="this.src=\'/ead/img/delete.png\';" onclick="deleteRow(this.parentNode.parentNode);" />';
 							newRow.appendChild(cell3);		
 					  		table.insertBefore(newRow, dropdownRow);			  		
 					  	}
@@ -618,7 +618,7 @@ function buildAccessPoint(s){
 	    br.setAttribute('id', s + nameCount + 'br');
 	    div.appendChild(br);
 	    var hidden = document.createElement('input');
-	    hidden.setAttribute('type', 'text');
+	    hidden.setAttribute('type', 'hidden');
 	    hidden.setAttribute('id', s + nameCount + 'xml'); 
 	    if (s == 'language'){
 	    	hidden.setAttribute('name', 'did/langmaterial/' + s);
@@ -643,7 +643,7 @@ function createIcons(s){
    /* the delete icon */
    var d = "'" + s + nameCount + "'";
    var s = "'" + s + "'";
-   innerHTMLString = '<a onclick ="deleteAccessPoint(' + d + ');" title="delete entry"><img src="/hubedit/img/delete.png" class="deletelogo" onmouseover="this.src=\'/hubedit/img/delete-hover.png\';" onmouseout="this.src=\'/hubedit/img/delete.png\';" id="delete' + nameCount + '"/></a>'; 
+   innerHTMLString = '<a onclick ="deleteAccessPoint(' + d + ');" title="delete entry"><img src="/ead/img/delete.png" class="deletelogo" onmouseover="this.src=\'/ead/img/delete-hover.png\';" onmouseout="this.src=\'/ead/img/delete.png\';" id="delete' + nameCount + '"/></a>'; 
 
    icondiv.innerHTML = innerHTMLString;
    return icondiv
