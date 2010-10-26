@@ -73,7 +73,6 @@
 # 0.32 - 28/10/2008 - JH - User editing migrated to Lxml
 # 0.33 - 28/01/2009 - JH - Minor tweaks for v3.4 release
 #
-#
 
 
 from eadHandler import *
@@ -90,9 +89,12 @@ class AdminThread(Thread):
         self.finished = None
         
     def run(self):
-        try: self.run2()
-        except Exception, e: self.error = e
-        except: self.error = 'Undeterminable Error'
+        try:
+            self.run2()
+        except Exception, e:
+            self.error = e
+        except:
+            self.error = 'Undeterminable Error'
 
 
 class WorkflowThread(AdminThread):
@@ -119,13 +121,12 @@ class BuildHtmlThread(AdminThread):
         paramDict = {'%REP_NAME%': repository_name
                     ,'%REP_LINK%': repository_link
                     ,'%REP_LOGO%': repository_logo
-                    ,'SCRIPT': script
-                    ,'%SCRIPT%': script
+                    ,'SCRIPT': '/ead/search'
+                    ,'%SCRIPT%': '/ead/search'
                     ,'%TITLE%': 'Display in Full'
                     ,'%NAVBAR%': ''
                     }
 
-        # TODO ensure ToC being created properly
         for rec in recordStore:
             recid = rec.id
             paramDict['RECID'] = recid
@@ -1654,8 +1655,8 @@ class EadAdminHandler(EadHandler):
         # send the display
         self.send_html(page, req)
         #- end handle()
-
     #- end class EadAdminHandler
+
 
 #- Some stuff to do on initialisation
 session = None
