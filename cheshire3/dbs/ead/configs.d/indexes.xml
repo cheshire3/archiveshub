@@ -28,6 +28,29 @@
         <setting type="fuzzy">1</setting>
       </options>
     </subConfig>
+    
+    <subConfig type="tokenizer" id="DateRangeTokenizer">
+      <objectType>cheshire3.tokenizer.DateRangeTokenizer</objectType>
+      <options>
+        <setting type="dayfirst">1</setting>
+      </options>
+    </subConfig>
+    
+    <subConfig type="tokenizer" id="FuzzyDateRangeTokenizer">
+      <objectType>cheshire3.tokenizer.DateRangeTokenizer</objectType>
+      <options>
+        <setting type="dayfirst">1</setting>
+        <setting type="fuzzy">1</setting>
+      </options>
+    </subConfig>
+
+    <subConfig type="tokenizer" id="PreserveMaskingTokenizer" version="1.0.1">
+      <objectType>cheshire3.tokenizer.RegexpSubTokenizer</objectType>
+      <docs>A keyword tokenizer which doesn't split at CQL masking characters (^*?). Especially useful when tokenizing incoming queries.</docs>
+      <options>
+            <setting type="regexp">([-.,'\")}\]]+((?=\s)|$)|(^|(?&lt;=\s))[-.,']+|[`~!@+=\#\&amp;\()\[\]{}\\\|\":;&lt;&gt;/]|\.\.\.)</setting>
+      </options>                
+    </subConfig>
         
 	<!-- Custom normalizers -->
 		
@@ -39,6 +62,7 @@
     </subConfig>
 		
     <!-- mini-workflows for processing chains -->
+    
     <subConfig type="workflow" id="PreserveMaskingKeywordExtractorWorkflow">
         <objectType>cheshire3.workflow.CachingWorkflow</objectType>
         <workflow>
@@ -380,6 +404,7 @@
 	</subConfig>
     
     <subConfig type="index" id="ead-idx-dateYear">
+        <name>Year</name>
         <objectType>cheshire3.index.SimpleIndex</objectType>
         <paths>
             <object type="indexStore" ref="indexStore" />
@@ -417,15 +442,21 @@
 	        <xpath>/*/*/did/unitdate/@normal</xpath>
 	        <process>
 	            <object type="extractor" ref="SimpleExtractor" />
-	            <object type="tokenizer" ref="DateTokenizer" />
+	            <object type="tokenizer" ref="DateRangeTokenizer" />
 	            <object type="tokenMerger" ref="SequenceRangeTokenMerger"/>
 	        </process>
 	    </source>
 	    <source mode="data">
+	    <!-- ideally would be:
+	    <xpath>/*/*/did/unitdate[not (@normal)]</xpath>
+	    
+	    however some normalized dates violate ISO 8601 and would cause false negatives.
+	    IMO false positives are less bad than false negatives.
+	     -->
             <xpath>/*/*/did/unitdate</xpath>
             <process>
                 <object type="extractor" ref="SimpleExtractor" />
-                <object type="tokenizer" ref="FuzzyDateTokenizer" />
+                <object type="tokenizer" ref="FuzzyDateRangeTokenizer" />
                 <object type="tokenMerger" ref="SequenceRangeTokenMerger"/>
             </process>
         </source>
