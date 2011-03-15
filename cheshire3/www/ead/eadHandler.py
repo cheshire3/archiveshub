@@ -1,8 +1,8 @@
 #
 # Script:    eadHandler.py
-# Version:   0.06
-# Date:      12 January 2008
-# Copyright: &copy; University of Liverpool 2005-2008
+# Version:   0.09
+# Date:      15 December 2011
+# Copyright: &copy; University of Liverpool 2005-present
 # Description:
 #            Globals and parent class web interfaces to a Cheshire3 database of EAD finding aids.
 #            - part of Cheshire for Archives v3
@@ -23,15 +23,30 @@
 # 0.05 - 03/01/2008 - CS - _parse_upload function moved here from adminHandler as also used in editing handler
 # 0.06 - 12/02/2008 - CS - _walk_directory function moved here from adminHandler as also used in editing handler
 # 0.07 - 09/01/2008 - JH - _parse_upload bug fix
+# 0.08 - 22/11/2010 - JH - Provision for exception logging / reporting
+# 0.09 - 15/03/2011 - JH - Bug fixe for ToC character encoding fixed - coerce to unicode when read in
+#
+
+
+import sys
+import os
+import urllib
+import time
+import smtplib
+import re
+import traceback
+import cgitb
+
+from crypt import crypt
+from email import Message, MIMEMultipart, MIMEText # email modules
+# Lxml tree manipulation
+from lxml import etree 
+from lxml.builder import E
 
 # import mod_python stuffs
 from mod_python import apache, Cookie
 from mod_python.util import FieldStorage, redirect
 # import generally useful modules
-import sys, traceback, os, urllib, time, smtplib, re, cgitb 
-from crypt import crypt
-from email import Message, MIMEMultipart, MIMEText # email modules
-from lxml import etree # Lxml tree manipulation
 
 # import customisable variables
 from localConfig import *
@@ -62,6 +77,7 @@ overescapedAmpRe = re.compile('&amp;([^\s]*?);')
 def unescapeCharent(mo):
     return '&%s;' % mo.group(1)
 
+
 nonAsciiRe = re.compile('([\x7b-\xff])')
 def asciiFriendly(mo):
     return "&#%s;" % ord(mo.group(1))
@@ -77,10 +93,10 @@ recid_re['summary'] = re.compile(': Summary requested.+: (.+)$', re.MULTILINE)
 recid_re['email'] = re.compile(': Record (.+?) emailed to (.+)$', re.MULTILINE)
 
 
-
 class EadHandler(object):
     # Hierarchical class - must be subclassed to actually interact with database
     logger = None
+    excLogger = None
     htmlTitle = []
     htmlNav = []
     templatePath = None
@@ -95,6 +111,10 @@ class EadHandler(object):
             build_architecture()
             
         self.logger = lgr
+        try:
+            self.excLogger = db.get_object(session, 'webExceptionLogger')
+        except:
+            pass
         if myscript is not None:
             self.script = myscript
         else:
@@ -110,7 +130,6 @@ class EadHandler(object):
                                   ,'<br>': '<br/>'
                                   ,'<hr>': '<hr/>'
                               }
-
         #- end __init__() ----------------------------------------------------------
         
     def log(self, txt):
@@ -119,8 +138,14 @@ class EadHandler(object):
         except AttributeError:
             pass
         
-    def send_html(self, data, req, code=200):
-        req.content_type = 'text/html'
+    def logExc(self, txt):
+        try:
+            self.excLogger.log_error(session, txt)
+        except AttributeError:
+            pass
+        
+    def send_data(self, data, req, code=200, content_type='text/html'):
+        req.content_type = content_type
         req.content_length = len(data)
         req.send_http_header()
         if (type(data) == unicode):
@@ -128,18 +153,48 @@ class EadHandler(object):
         req.write(data)
         del data
         req.flush()
-        #- end send_html() ---------------------------------------------------------
-    
+        
+    def send_html(self, data, req, code=200):
+        self.send_data(data, req, code, 'text/html')
+        #- end send_html() ---------------------------------------------------
+        
     def send_xml(self, data, req, code=200):
-        req.content_type = 'text/xml'
-        req.content_length = len(data)
-        req.send_http_header()
-        if (type(data) == unicode):
-            data = data.encode('utf-8')
-        req.write(data)
-        del data
-        req.flush()
-        #- end send_xml() ---------------------------------------------------------
+        self.send_data(data, req, code, 'application/xml')
+        #- end send_xml() ----------------------------------------------------
+    
+    def _handle_error(self):
+        self.htmlTitle.append('Error')
+        cla, exc, trbk = sys.exc_info()
+        excName = cla.__name__
+        try:
+            excArgs = exc.__dict__["args"]
+        except KeyError:
+            excArgs = str(exc)
+        excTb = traceback.format_tb(trbk, 100)
+        self.log('*** {0}: {1}'.format(excName, excArgs))
+        self.logExc('{0}: {1}\n{2}'.format(excName, excArgs, '\n'.join(excTb)))
+        excName = html_encode(excName)
+        excArgs = html_encode(excArgs)
+        excTb = '<br/>\n'.join(excTb)
+        return '''\
+        <div id="single">
+          <p class="error">An error occurred while processing your request.
+            <br/>The message returned was as follows:
+          </p>
+          <code>{0}: {1}</code>
+          <p>
+            <strong>
+              Please try again, or contact the system administrator if this 
+              problem persists.
+            </strong>
+          </p>
+          <p>Debugging Traceback: 
+            <a href="#traceback" class="jstoggle-text">[ hide ]</a>
+          </p>
+          <div id="traceback" class="jshide">{2}</div>
+        </div> <!-- /single -->
+        '''.format(excName, excArgs, excTb)
+        #- / _handle_error() ------------------------------------------------
     
     def _get_genericHtml(self, fn):
         global repository_name, repository_link, repository_logo
@@ -264,13 +319,14 @@ class EadHandler(object):
                                 ])                   
 
         return outD + outF
-        
         #- end walk_directory()
     
     def display_full(self, rec, paramDict, pageNavType='form'):
         recid = rec.id
-        try: l = rec.byteCount
-        except: l = len(rec.get_xml(session))
+        try:
+            l = rec.byteCount
+        except:
+            l = len(rec.get_xml(session))
         if (l < max_page_size_bytes):
             # Nice and short record/component - do it the easy way
             self.logger.log('HTML generated by non-splitting XSLT')
@@ -434,8 +490,10 @@ def build_architecture(data=None):
     rebuild
     
     # globals line 1: re-establish session; maintain user if possible
-    if (session): u = session.user
-    else: u = None
+    if (session):
+        u = session.user
+    else:
+        u = None
     session = Session()
     session.database = 'db_ead'
     session.environment = 'apache'

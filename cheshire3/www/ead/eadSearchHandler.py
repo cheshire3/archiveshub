@@ -1,7 +1,7 @@
 #
 # Script:    eadSearchHandler.py
-# Version:   0.47
-# Date:      4 August 2010
+# Version:   0.50
+# Date:      15 March 2011
 # Copyright: &copy; University of Liverpool 2005-present
 # Description:
 #            Web interface for searching a cheshire 3 database of EAD finding aids
@@ -84,12 +84,12 @@
 #                        - Accented characters normalised for emailing record.
 # 0.28 - 28/09/2007 - JH - Compatible with Cheshire3 v0.9.9 API
 #                        - Account for refactoring of wwwSearch --> www_utils
-#                        - Accomodate switch from SaxRecord to LxmlRecord
+#                        - Accommodate switch from SaxRecord to LxmlRecord
 #                        - Implement reverse hierarchy walk for parent links
 #                        - Rearrangement of display_record
 # 0.29 - 23/10/2007 - JH - Term highlighting for LxmlRecords implemented + optimised for summary display
 # 0.30 - 31/10/2007 - JH - Minor precautionary change as result of Leeds' multiple interfaces on same machine problems
-#                        - script name now taken form request object
+#                        - script name now taken from request object
 # 0.31 - 06/11/2007 - JH - Migrated to new architecture: extracter --> tokenizer -- tokenMerge
 #                        - Highlighting upgrade - now uses character offset info from proximity index
 # 0.32 - 15/11/2007 - JH - Marginally improved display handling
@@ -113,14 +113,26 @@
 # 0.45 - 29/06/2010 - JH - Highlighting uses highlighting transformer instead of local code
 # 0.46 - 09/07/2010 - JH - Bug fix to highlighting for components
 # 0.47 - 04/08/2010 - JH - Bug fix to similar_search
+# 0.48 - 10/01/2011 - JH - _cleverTitleCase more sophisticated
+# 0.49 - 25/01/2011 - JH - Bug fixes to browse response - well-formed XHTML for PREV/NEXT links
+# 0.50 - 15/03/2011 - JH - Bug fixes
+#                            - ToC character encoding fixed - coerce to unicode when read in
+#                            - Browse terms ULR unescape/unquoted
+# 
 
 
 from eadHandler import * 
+
 
 class EadSearchHandler(EadHandler):
     
     def __init__(self, lgr, myscript):
         EadHandler.__init__(self, lgr, myscript)
+        pm = db.get_path(session, 'protocolMap')
+        if not pm:
+            db._cacheProtocolMaps(session)
+            pm = db.protocolMaps.get('http://www.loc.gov/zing/srw/')
+        self.protocolMap = pm
         self.storeResultSetSizeLimit = 1000
         self.redirected = False
     
@@ -149,25 +161,39 @@ class EadSearchHandler(EadHandler):
         titles.reverse()
         titles[0][0] = rec.id # top level id doesn't conform to pattern - is simply the top level record id
         return titles
-        # end _backwalkTitles() ----------------------------------------------------
-
+        # / _backwalkTitles() ------------------------------------------------
+        
     def _cleverTitleCase(self, txt):
-        global stopwords
-        words = txt.split()
-        for x,w in enumerate(words):
+        global always_lower, always_upper, romanNumeralRe
+        words = []
+        for word in txt.split():
             try:
-                if w[0].isdigit():
-                    continue
-                elif (not w[0].isalpha()) and w[1].isdigit():
-                    continue
-                elif (w[-2:] == "'s"):
-                    words[x] = w[:-2].capitalize() + "'s"
-                elif (x == 0) or (w not in stopwords):
-                    words[x] = w.capitalize()
+                if word in always_upper or \
+                        romanNumeralRe.match(word):
+                    # word in always_upper (i.e. abbreviation) or a roman numeral
+                    word = word.upper()
+                elif word.endswith("'s"):
+                    # Possessive - don't capitalize trailing s
+                    word = word[:-2].title() + "'s"
+                elif (len(words) == 0 and not word[0].isdigit()):
+                    # 1st word always capitalized, unless it starts with a number
+                    word = word.title()
+                elif word not in always_lower and \
+                        word[0].isalpha():
+                    # word not always_lower, and starts with alphabetical char
+                    word = word.title()
+                elif word.strip('\'"()') not in always_lower and \
+                        word.strip('\'"()')[0].isalpha():
+                    # word is always_lower, but is in brackets/quotes
+                    word = word.title()
+                elif len(words) and words[-1][-1] in ":;":
+                    # word following this punctuation always title-cased
+                    word = word.title()
             except IndexError:
-                continue
+                pass
+            words.append(word)
         return ' '.join(words)
-        #- end _cleverTitleCase() --------------------------------------------------
+        #- / _cleverTitleCase() ----------------------------------------------
         
     def _parentTitle(self, id):
         try:
@@ -228,6 +254,11 @@ class EadSearchHandler(EadHandler):
             c.expires = time.time() + expires
         Cookie.add_cookie(req, c)
         #- end _set_cookie
+        
+    def _html(self, tag, content='', attribs={}):
+        el = etree.XML('<{0}>{1}</{0}>'.format(tag, content))
+        el.attrib.update(attribs)
+        return etree.tostring(el, pretty_print=True, encoding="utf-8")
 
     def format_lastResultSet(self, req):
         rsidCookie = self._get_cookie(req, 'resultSet')
@@ -283,10 +314,19 @@ class EadSearchHandler(EadHandler):
             topWeight = rs[0].weight # get relevance of best record
         
         if (firstrec-1 >= hits):
-            return '<div class="hitreport">Your search resulted in <strong>%d</strong> hits, however you requested to begin displaying at result <strong>%d</strong>.</div>' % (hits, firstrec)
+            return '''<div class="searchresults">
+        <p class="hitreport">
+        Your search resulted in <strong>{0}</strong> hits, 
+        however you requested to begin displaying at result <strong>{1}</strong>.
+        </p>
+      </div>'''.format(hits, firstrec)
         
-        rows = ['<div id="hitreport">Your search resulted in <strong>%d</strong> hits. Results <strong>%d</strong> - <strong>%d</strong> displayed. <a href="/ead/help.html#results">[Result display explained]</a></div>' % (hits, firstrec, min(firstrec + numreq-1, len(rs))),
-                '\n<table id="results" class="results">']
+        rows = ['''<p class="hitreport">
+        Your search resulted in <strong>{0}</strong> hits.
+        Results <strong>{1}</strong> - <strong>{2}</strong> displayed.
+        <a href="/ead/help.html#results">[Result display explained]</a>
+       </p>'''.format(hits, firstrec, min(firstrec + numreq-1, len(rs))),
+    '<table id="results" class="results">']
 
         parentTitles = {}
         parentRecs = {}
@@ -296,16 +336,16 @@ class EadSearchHandler(EadHandler):
         if (hits > numreq):
             if (firstrec > 1):
                 hitlinks = ['<div class="backlinks">'
-                           ,'<a href="%s?operation=search&amp;%s&amp;page=1&amp;numreq=%d&amp;highlight=%d#leftcol">First</a>' % (script, rsidCgiString, numreq, highlight) 
-                           ,'<a href="%s?operation=search&amp;%s&amp;firstrec=%d&amp;numreq=%d&amp;highlight=%d#leftcol">Previous</a>' % (script, rsidCgiString, max(firstrec-numreq, 1), numreq, highlight)
+                           ,'<a href="{0}?operation=search&amp;{1}&amp;page=1&amp;numreq={2}&amp;highlight={3}#leftcol" class="ajax">{4}</a>'.format(script, rsidCgiString, numreq, highlight, fback_tag) 
+                           ,'<a href="{0}?operation=search&amp;{1}&amp;firstrec={2}&amp;numreq={3}&amp;highlight={4}#leftcol" class="ajax">{5}</a>'.format(script, rsidCgiString, max(firstrec-numreq, 1), numreq, highlight, back_tag)
                            ,'</div>']
             else:
                 hitlinks = []
 
             if (hits > firstrec+numreq-1):
                 hitlinks.extend(['<div class="forwardlinks">'
-                                ,'<a href="%s?operation=search&amp;%s&amp;firstrec=%d&amp;numreq=%d&amp;highlight=%d#leftcol">Next</a>' % (script, rsidCgiString, firstrec+numreq, numreq, highlight)
-                                ,'<a href="%s?operation=search&amp;%s&amp;page=%d&amp;numreq=%d&amp;highlight=%d#leftcol">Last</a>' % (script, rsidCgiString, (hits/numreq)+1, numreq, highlight)
+                                ,'<a href="{0}?operation=search&amp;{1}&amp;firstrec={2}&amp;numreq={3}&amp;highlight={4}#leftcol" class="ajax">{5}</a>'.format(script, rsidCgiString, firstrec+numreq, numreq, highlight, forward_tag)
+                                ,'<a href="{0}?operation=search&amp;{1}&amp;page={2}&amp;numreq={3}&amp;highlight={4}#leftcol" class="ajax">{5}</a>'.format(script, rsidCgiString, (hits/numreq)+1, numreq, highlight, fforward_tag)
                                 ,'</div>'])
 
             numlinks = ['<div class="numnav">']
@@ -314,7 +354,7 @@ class EadSearchHandler(EadHandler):
                        ,'<input type="hidden" name="operation" value="search"/>'
                        ,'<input type="hidden" name="rsid" value="%s"/>' % (cgi_encode(rsid))
                        ,'Page: <input type="text" name="page" size="2" value="%d"/> of %d' % ((firstrec / numreq)+1, (hits/numreq)+1)
-                       ,'<input type="submit" value="Go!"/>'
+                       ,'<input type="submit" name="submit" value="Go!"/>'
                        ,'</form>'
                        ])
 #            for x in range(1, hits+1, numreq):
@@ -388,7 +428,7 @@ class EadSearchHandler(EadHandler):
                     else:
                         html = t[1]
                         
-                    hierarchy.append(('&nbsp;&nbsp;&nbsp;' * (level+1)) + folder_open_tag + html)
+                    hierarchy.append(('&#160;&#160;&#160;' * (level+1)) + folder_open_tag + html)
                 
                 hierarchyLinks = '<br/>'.join(hierarchy)
                     
@@ -435,8 +475,8 @@ class EadSearchHandler(EadHandler):
             del hitlinks
         #- end hit navigation
         rows.append('</table>')
-        return '\n'.join(rows)
-        #- end format_resultSet() ---------------------------------------------------------
+        return '<div class="searchresults">{0}</div>'.format('\n'.join(rows))
+        #- end format_resultSet() --------------------------------------------
         
     def format_facet(self, rs, type, truncate=True):
         facetRows = []
@@ -504,6 +544,7 @@ class EadSearchHandler(EadHandler):
         if (rsid):
             rsid = cgi_decode(rsid)
             rs = self.fetch_resultSet(rsid)
+            hits = len(rs)
         else:
             if not qString:
                 qString = generate_cqlQuery(form)
@@ -527,7 +568,6 @@ class EadSearchHandler(EadHandler):
                     return search_fail_unpairedQuotes
                 else:
                     raise
-
             try:
                 rs = db.search(session, query)
             except SRWDiagnostics.Diagnostic24:
@@ -566,21 +606,32 @@ class EadSearchHandler(EadHandler):
             # should be from an ajax request for subsequent results page - just return formatted results
             return resultString
         else:
-            return '<div id="leftcol" class="searchresults">%s</div><div id="padder"><div id="rightcol" class="facets">%s</div></div>' % (resultString, self.format_allFacets(rs, form.get('fullFacet', None)))
+            if hits == 1:
+                form = {'operation': 'summary',
+                        'rsid': rsid,
+                        'firstrec': firstrec,
+                        'numreq': numreq,
+                        'highlight': highlight,
+                        'hitposition': 0,
+                        'ajax': 1
+                        }
+                foo, rightSide = self.display_record(req, form)
+            else:
+                rightSide = self.format_allFacets(rs, form.get('fullFacet', None))
+            return '<div id="leftcol">%s</div><div id="padder"><div id="rightcol" class="facets">%s</div></div>' % (resultString, rightSide)
                                                                                   
         #- end search() ------------------------------------------------------------
     
-    
     def browse(self, form):
+        formcodec = form.getfirst('_charset_', 'utf-8')
         idx = form.get('fieldidx1', None)
         rel = form.get('fieldrel1', 'exact')
-        scanTerm = form.get('fieldcont1', '')
+        scanTerm = urllib.unquote(form.get('fieldcont1', ''))
         firstrec = int(form.get('firstrec', 1))
-        numreq = int(form.get('numreq', 25))
-        rp = int(form.get('responsePosition', numreq/2))
-        if form.has_key('ajax'): ajax = True
-        else: ajax = False
-        qString = '%s %s "%s"' % (idx, rel, scanTerm)
+        numreq = int(form.get('numreq', form.get('maximumTerms', 25)))
+        rp = int(form.get('responsePosition', (numreq + 1) / 2))
+        ajax = True if form.has_key('ajax') else False
+        qString = u'%s %s "%s"' % (idx, rel, scanTerm)
         try:
             scanClause = queryFactory.get_query(session, qString, format="cql")
         except:
@@ -590,16 +641,14 @@ class EadSearchHandler(EadHandler):
                 self.logger.log('Unparsable query: %s' % qString)
                 self.htmlTitle.append('Error')
                 return '<div id="browseresult"><p class="error">Invalid query:<br/>%s</p></div>' % (qString)
-        
         self.htmlTitle.append('Browse Indexes')
         self.logger.log('Browsing for "%s"' % (qString))
-
         hitstart = False
         hitend = False
-        
         if (scanTerm == ''):
             hitstart = True
             rp = 0
+        scanTermNorm = scanTerm
         if (rp == 0):
             scanData = db.scan(session, scanClause, numreq, direction=">")
             if (len(scanData) < numreq): hitend = True
@@ -621,107 +670,121 @@ class EadSearchHandler(EadHandler):
                 scanData = db.scan(session, scanClause, rp+1, direction="<=")
             except:
                 scanData = []
+            if (len(scanData) < rp+1):
+                hitstart = True
+            else:
+                scanData.pop(-1)
             # ... then down
             try:
                 scanData1 = db.scan(session, scanClause, (numreq-rp+1)+1, direction=">=")
             except:
                 scanData1 = []
             
-            if (len(scanData1) < (numreq-rp+1)+1): hitend = True
-            else: scanData1.pop(-1)
-            
-            if (len(scanData) < rp+1): hitstart = True
-            else: scanData.pop(-1)
+            if (len(scanData1) < (numreq-rp+1)+1):
+                hitend = True
+            else:
+                scanData1.pop(-1)
             # try to stick them together
             try:
                 if scanData1[0][0] == scanData[0][0]:
-                    scanData.pop(0)
+                    scanTermNorm = scanData.pop(0)[0]
+                else:
+                    scanData.insert(0, None)
+                    scanData.pop(-1)
+                    scanData1.pop(-1)
             except:
                 pass
-
             scanData.reverse()
             scanData.extend(scanData1)
             del scanData1
-            
-        totalTerms = len(scanData)
-        if (totalTerms > 0):
-            self.htmlTitle.append('Results')
-            rows = ['<div id="browseresult">'
-                   ,'<table cellspacing="0" class="browseresults" summary="list of terms in this index">']
-
-            if (hitstart):
-                #rows.append('<tr class="even"><td colspan="2">-- start of index --</td></tr>')
-                prevlink = ''
-            else:
-                prevlink = ['<a href="%s?operation=browse&amp;fieldidx1=%s&amp;fieldrel1=%s&amp;fieldcont1=%s&amp;responsePosition=%d&amp;numreq=%d#leftcol" title="Previous %d terms"' % (script, idx, rel, cgi_encode(scanData[0][0]), numreq+1, numreq, numreq)]
-                if ajax:
-                    prevlink.append(' class="ajax"')
-                prevlink.append('>{0}&nbsp;PREVIOUS</a>'.format(back_tag))
-                prevlink = ''.join(prevlink)
-                rows.append('<tr class="odd"><td colspan="2">%s</td></tr>' % prevlink)
-                
-            idxName = idx[idx.find('.')+1:]
-            idxName = idxName[0].upper() + idxName[1:]
-            rows.append('<tr class="headrow"><td>%s</td><td>Records</td></tr>' % (idxName))
-            dodgyTerms = []
-            for i in range(len(scanData)):
-                item = scanData[i]
-                term = item[0]
-                if not term:
-                    continue
-
-                # TODO: ideally get original, un-normalised version from index
-                # until then do a clever version of term.title()
-                if (idx not in ['dc.identifier']):
-                    displayTerm = self._cleverTitleCase(term)
-                else:
-                    displayTerm = term
-
-                if (term.lower() == scanTerm.lower()):
-                    displayTerm = '<strong>%s</strong>' % displayTerm
-                    
-                if ((i+1) % 2): rowclass = 'odd';
-                else: rowclass = 'even';
-                row = browse_result_row
-                paramDict =  {
-                    '%ROWCLASS%': rowclass,
-                    '%IDX%': idx, 
-                    '%REL%': rel, 
-                    '%CGITERM%': cgi_encode(term), 
-                    '%TERM%': displayTerm, 
-                    '%COUNT%': str(item[1][1]),
-                    'SCRIPT': script
-                }
-                for key, val in paramDict.iteritems():
-                    row = row.replace(key, val)
-
-                rows.append(row)
-
-            #- end for each item in scanData
-                
-            if (hitend):
-                rows.append('<tr class="odd"><td colspan="2">-- end of index --</td></tr>')
-                nextlink = ''
-            else:
-                nextlink = ['<a href="%s?operation=browse&amp;fieldidx1=%s&amp;fieldrel1=%s&amp;fieldcont1=%s&amp;responsePosition=%d&amp;numreq=%d#leftcol" title="Next %d terms"' % (script, idx, rel, cgi_encode(scanData[-1][0]), 0, numreq, numreq)]
-                if ajax:
-                    nextlink.append(' class="ajax"')
-                nextlink.append('>NEXT&nbsp;' + forward_tag)
-                nextlink = ''.join(nextlink)
-                rows.append('<tr class="odd"><td colspan="2">%s</td></tr>' % nextlink)
-                
-            del scanData
-            rows.append('</table>')           
-            # rows.append('<div class="scannav"><p>%s</p></div>' % (' | '.join([prevlink, nextlink])))
-            rows.append('</div><!-- end browseresult div -->')
-            #- end hit navigation
-            return '\n'.join(rows)
-
-        else:
+        
+        if not len(scanData):
             self.htmlTitle.append('Error')
             return '<p class="error">No terms retrieved from index. You may be browsing outside the range of terms within the index.</p>'
-        #- end browse() ------------------------------------------------------------
+    
+        self.htmlTitle.append('Results')
+        args = {'operation': 'browse',
+                'fieldidx1': idx,
+                'fieldrel1': rel,
+                'fieldcont1': cgi_encode(scanData[0][0]),
+                'responsePosition': numreq + 1,
+                'numreq': numreq}
+        href = '{0}?{1}#leftcol'.format(script, html_encode(urllib.urlencode(args)))
+        if (hitstart):
+            #rows.append('<tr class="even"><td colspan="2">-- start of index --</td></tr>')
+            prevlink = ''
+        elif ajax:
+            prevlink = '<a href="{0}" title="Previous {1} terms" class="ajax">{2}&#160;PREVIOUS</a>'.format(href, numreq, back_tag)
+        else:
+            prevlink = '<a href="{0}" title="Previous {1} terms">{2}&#160;PREVIOUS</a>'.format(href, numreq, back_tag)
+        del href
+        rows = ['<div id="browseresult">',
+                prevlink,
+                '<table cellspacing="0" class="browseresults" summary="list of terms in this index">']
+        idxObj = self.protocolMap.resolveIndex(session, scanClause)
+        try:
+            idxName = idxObj.name
+            if not len(idxName):
+                raise AttributeError
+        except AttributeError:
+            if idx.startswith('c3.'):
+                idxName = idx.split('-')[-1]
+            else:
+                idxName = idx[idx.find('.')+1:]
+            idxName = idxName[0].upper() + idxName[1:]
+        rows.append('<tr class="headrow"><td>%s</td><td>Records</td></tr>' % (idxName))
+        dodgyTerms = []
+        for i, item in enumerate(scanData):
+            rowclass = 'odd' if ((i+1) % 2) else 'even'
+            if item is None:
+                rows.append('<tr class="{0}"><td>"{1}" would have been here</td><td class="hitcount">0</td></tr>'.format(rowclass, scanTermNorm))
+                continue
+            term = item[0]
+            if not term:
+                continue
 
+            # TODO: ideally get original, un-normalised version from index
+            # until then do a clever version of term.title()
+            if (idx not in ['dc.identifier']):
+                displayTerm = html_encode(self._cleverTitleCase(term))
+            else:
+                displayTerm = html_encode(term)
+            if (term.lower() == scanTermNorm.lower()):
+                    displayTerm = u'<b>%s</b>' % displayTerm
+                
+            row = browse_result_row
+            paramDict =  {
+                '%ROWCLASS%': rowclass,
+                '%IDX%': idx, 
+                '%REL%': rel, 
+                '%CGITERM%': cgi_encode(term), 
+                '%TERM%': displayTerm, 
+                '%COUNT%': str(item[1][1]),
+                'SCRIPT': script
+            }
+            row = multiReplace(row, paramDict)
+            rows.append(row)
+        #- end for each item in scanData
+        args.update({'operation': 'browse',
+                'fieldcont1': cgi_encode(scanData[-1][0]),
+                'responsePosition': 0,
+                })
+        href = '{0}?{1}#leftcol'.format(script, html_encode(urllib.urlencode(args)))
+        if (hitend):
+            rows.append('<tr class="odd"><td colspan="2">-- end of index --</td></tr>')
+            nextlink = ''
+        elif ajax:
+            nextlink = '<a href="{0}" title="Next {1} terms" class="ajax">NEXT&#160;{2}</a>'.format(href, numreq, forward_tag)
+        else:
+            nextlink = '<a href="{0}" title="Next {1} terms">NEXT&#160;{2}</a>'.format(href, numreq, forward_tag)
+        del href, scanData
+        rows.append('</table>')
+        rows.append(nextlink)           
+        # rows.append('<div class="scannav"><p>%s</p></div>' % (' | '.join([prevlink, nextlink])))
+        rows.append('</div><!-- /browseresult -->')
+        #- end hit navigation
+        return '\n'.join(rows)
+        #- end browse() ------------------------------------------------------------
 
     def subject_resolve(self, form):
         global display_relevance, graphical_relevance
@@ -811,8 +874,7 @@ class EadSearchHandler(EadHandler):
         return content
         #- end subject_resolve() ---------------------------------------------------
 
-
-    def display_summary(self, rec, paramDict, proxInfo=None, highlight=1):
+    def display_summary(self, rec, paramDict, proxInfo=None, highlight=1, ajax=False):
         global nonAsciiRe, asciiFriendly, overescapedAmpRe, unescapeCharent, highlightStartTag, highlightEndTag
         sTag = highlightStartTag
         eTag = highlightEndTag
@@ -822,9 +884,7 @@ class EadSearchHandler(EadHandler):
         if (proxInfo) and (highlight):
             # use fixed highlighting transformer, so that code only in one place
             txr = db.get_object(session, 'highlightTxr')
-            self.logger.log(rec.get_xml(session))
             doc = txr.process_record(session, rec)
-            self.logger.log(doc.get_raw(session))
             xmlp = db.get_object(session, 'LxmlParser')
             rec = xmlp.process_document(session, doc)
             # old version left for posterity and reference value
@@ -905,6 +965,8 @@ class EadSearchHandler(EadHandler):
         summ = overescapedAmpRe.sub(unescapeCharent, summ)
         self.logger.log('Record transformed to HTML')
         summ = summ.replace('LINKTOPARENT', paramDict['LINKTOPARENT'])
+        if ajax:
+            return summ
         summ = '<div id="padder"><div id="rightcol">%s</div></div>' % (summ)
         # get template, insert info and return
         tmpl = read_file(self.templatePath)
@@ -912,10 +974,12 @@ class EadSearchHandler(EadHandler):
         return multiReplace(page, paramDict)
         #- end display_summary()
         
-    
     def display_toc(self, form):
         global toc_cache_path, toc_scripts_printable
-        recid = form.getfirst('recid', None)
+        try:
+            recid = form.getfirst('recid', None)
+        except AttributeError:
+            recid = form.get('recid', None)
         #self.htmlTitle.append('Display Contents for %s' % recid)
         try:
             path = os.path.join(toc_cache_path, recid.replace('/', '-') + '.inc')
@@ -923,8 +987,8 @@ class EadSearchHandler(EadHandler):
             return ('<p class="error">You didn\'t specify a record.</p>')
         else:
             try:
-                page = read_file(path)
-            except:
+                page = unicode(read_file(path), 'utf-8')
+            except IOError:
                 # oh dear, not generated yet...
                 try: 
                     rec = recordStore.fetch_record(session, recid)
@@ -937,17 +1001,23 @@ class EadSearchHandler(EadHandler):
                     
             return '<div id="single">%s\n%s</div>' % (toc_scripts_printable, page)
 
-
     def display_record(self, req, form):
         global max_page_size_bytes, cache_path, cache_url, toc_cache_path, toc_cache_url, repository_name, repository_link, repository_logo, punctuationRe, wordRe, anchorRe, highlightInLinkRe, overescapedAmpRe, highlightStartTag, highlightEndTag
         isComponent = False
         operation = form.get('operation', 'full')
-        recid = form.getfirst('recid', None)
-        pagenum = int(form.getfirst('page', 1))
-        rsid = form.getfirst('rsid', None)
+        try:
+            # FieldStorage
+            recid = form.getfirst('recid', None)
+            pagenum = int(form.getfirst('page', 1))
+            rsid = form.getfirst('rsid', None)
+        except AttributeError:
+            # dict
+            recid = form.get('recid', None)
+            pagenum = int(form.get('page', 1))
+            rsid = form.get('rsid', None)
         qString = form.get('query', form.get('cqlquery', None))
         firstrec = int(form.get('firstrec', 1))
-        hitposition = int(form.getfirst('hitposition', 0))
+        hitposition = int(form.get('hitposition', 0))
         numreq = int(form.get('numreq', 20))
         highlight = int(form.get('highlight', 1))
         rs = None
@@ -979,11 +1049,9 @@ class EadSearchHandler(EadHandler):
                 rs = db.search(session, q)
             except SRWDiagnostics.Diagnostic16:
                 return (False, '<p class="error">Could not retrieve resultSet. Please re-submit your search via the <a href="/ead/index.html">search page</a></p>')
-            
             rsid = rs.id = qString
         elif rs:
             self.logger.log('Retrieved resultSet "%s"' % (rsid))
-
         if (recid):
             try: 
                 rec = recordStore.fetch_record(session, recid)
@@ -993,7 +1061,6 @@ class EadSearchHandler(EadHandler):
                 except (c3errors.FileDoesNotExistException, c3errors.ObjectDoesNotExistException):
                     self.htmlTitle.append('Error')
                     return (False, '<p class="error">The record you requested is not available.</p>')
-
         else:
             try:
                 try:
@@ -1001,22 +1068,19 @@ class EadSearchHandler(EadHandler):
                 except IndexError:
                     self.logger.log('Index %d not in range %d' % (hitposition, len(rs)))
                     raise
-
                 try:
                     rec = r.fetch_record(session)
                 except (c3errors.FileDoesNotExistException, c3errors.ObjectDoesNotExistException):
                     self.logger.log('*** Unable to retrieve record: %s' % (r))
                     raise
-                
                 recid = str(rec.id)
-            
             except:
                 self.htmlTitle.append('Error')
                 return (False, '<p class="error">Could not retrieve requested record.</p>')
-           
-        if (rsid): rsidCgiString = 'rsid=%s&amp;firstrec=%d&amp;numreq=%d&amp;hitposition=%s&amp;highlight=%d' % (cgi_encode(rsid), firstrec, numreq, hitposition, highlight)
-        else: rsidCgiString = 'recid=%s' % (recid)
-             
+        if (rsid):
+            rsidCgiString = 'rsid=%s&amp;firstrec=%d&amp;numreq=%d&amp;hitposition=%s&amp;highlight=%d' % (cgi_encode(rsid), firstrec, numreq, hitposition, highlight)
+        else:
+            rsidCgiString = 'recid=%s' % (recid)
         # Resolve link to parent if a component
         try:
             parentId = rec.process_xpath(session, '/c3component/@parent')[0]
@@ -1041,7 +1105,7 @@ class EadSearchHandler(EadHandler):
                 else:
                     html = t[1]
                     
-                hierarchy.append(('&nbsp;&nbsp;&nbsp;&nbsp;' * x) + folder_open_tag + html)
+                hierarchy.append(('&#160;&#160;&#160;&#160;' * x) + folder_open_tag + html)
             
             parentLink = '<br/>'.join(hierarchy)
                 
@@ -1056,7 +1120,6 @@ class EadSearchHandler(EadHandler):
                 searchResults = self.format_lastResultSet(req)
             except:
                 searchResults = ''
-        
         paramDict = self.globalReplacements
         paramDict.update({'RECID': recid
                          ,'PARENTID': parentId
@@ -1065,10 +1128,8 @@ class EadSearchHandler(EadHandler):
                          ,'%TITLE%': title_separator.join(self.htmlTitle)
                          ,'%NAVBAR%': navbar_separator.join(self.htmlNav)
                          })
-        
         parentLink = parentLink.replace('RSID', rsidCgiString)
         paramDict['RSID'] = rsidCgiString 
-        
         if (operation == 'summary'):
             paramDict.update({highlightStartTag: '<span class="highlight">'
                              ,highlightEndTag: '</span>'
@@ -1076,16 +1137,15 @@ class EadSearchHandler(EadHandler):
                             })
             try:
                 rec.resultSetItem = r
-                page = self.display_summary(rec, paramDict, r.proxInfo, highlight)
+                page = self.display_summary(rec, paramDict, r.proxInfo, highlight, form.has_key('ajax'))
             except AttributeError:
-                raise
-                page = self.display_summary(rec, paramDict)
+                page = self.display_summary(rec, paramDict, form.has_key('ajax'))
         else:
             # full record
             path = os.path.join(cache_path, recid.replace('/', '-') + '-p%d.shtml' % (pagenum))
             self.logger.log('Full-text requested for %s: %s' % (['record', 'component'][int(isComponent)], recid))
             try:
-                page = read_file(path)
+                page = unicode(read_file(path), 'utf-8')
                 self.logger.log('Retrieved from cache')
             except:
                 paramDict['TOC_CACHE_URL'] = toc_cache_url
@@ -1096,30 +1156,41 @@ class EadSearchHandler(EadHandler):
                     return (False, '<div id="single"><p class="error">Specified page %d does not exist. This record has only %d pages.</p></div>' % (pagenum, len(pages)))
                 else:
                     del pages
-            
             if (isComponent) or not (os.path.exists('%s/%s.inc' % (toc_cache_path, recid))):
                 page = page.replace('<!--#include virtual="%s/%s.inc"-->' % (toc_cache_url, recid), searchResults)
             else:
                 # cannot use Server-Side Includes in script generated pages - insert ToC manually
+                tocpath = '{0}/{1}.inc'.format(toc_cache_path, recid)
+                tochtml = unicode(read_file(tocpath), 'utf-8')
                 try:
-                    page = page.replace('<!--#include virtual="%s/%s.inc"-->' % (toc_cache_url, recid), read_file('%s/%s.inc' % (toc_cache_path, recid)))
+                    page = page.replace('<!--#include virtual="%s/%s.inc"-->' % (toc_cache_url, recid), tochtml)
                 except:
+                    raise
                     page = page.replace('<!--#include virtual="%s/%s.inc"-->' % (toc_cache_url, recid), '<span class="error">There was a problem whilst generating the Table of Contents</span>')
-        
-            
+        if form.has_key('ajax'):
+            return (False, page)
         return (True, page)
         #- end display_record() ----------------------------------------------------
 
-
     def email(self, form):
         self.htmlTitle.append('e-mail Record')
-        rsid = form.getfirst('rsid', None)
-        if rsid:
+        try:
+            # FieldStorage
+            rsid = form.getfirst('rsid', None)
+            hitposition = int(form.getfirst('hitposition', 0))
+            firstrec = int(form.getfirst('firstrec', 1))
+            numreq = int(form.getfirst('numreq', 20))
+            address = form.getfirst('address', None)
+        except AttributeError:
+            # dict
+            rsid = form.get('rsid', None)
+            hitposition = int(form.get('hitposition', 0))
+            firstrec = int(form.get('firstrec', 1))
+            numreq = int(form.get('numreq', 20))
+            address = form.get('address', None)
+        if rsid is not None:
             rsid = cgi_decode(rsid)
-        hitposition = int(form.getfirst('hitposition', 0))
-        firstrec = int(form.getfirst('firstrec', 1))
-        numreq = int(form.getfirst('numreq', 20))
-        address = form.get('address', None)
+        
         if (rsid):
             rsInputs = ['<input type="hidden" name="rsid" value="%s"/>' % (cgi_encode(rsid))]
             backToResultsLink = '<a href="%s?operation=search&amp;rsid=%s&amp;firstrec=%d&amp;numreq=%d" title="Back to search results">Back to results</a>' % (script, cgi_encode(rsid), firstrec, numreq)
@@ -1133,17 +1204,14 @@ class EadSearchHandler(EadHandler):
             
             rsInputs = ['<input type="hidden" name="query" value="%s"/>' % (cgi_encode(qString))]
             backToResultsLink = '<a href="%s?operation=search&amp;query=%s&amp;firstrec=%d&amp;numreq=%d" title="Back to search results">Back to results</a>' % (script, cgi_encode(qString), firstrec, numreq)
-
         rsInputs.extend(['<input type="hidden" name="firstrec" value="%d"/>' % (firstrec)
                          ,'<input type="hidden" name="numreq" value="%d"/>' % (numreq)
                        ])
-
         self.htmlNav.append(backToResultsLink)
         self.globalReplacements.update({
              '%RSID%': '\n    '.join(rsInputs)
             ,'%HITPOSITION%': str(hitposition)
             })
-        
         if (rsid):
             rs = self.fetch_resultSet(rsid)
         else:
@@ -1153,7 +1221,6 @@ class EadSearchHandler(EadHandler):
                 query = queryFactory.get_query(session, qString, format="cql")
             else:
                 query = queryFactory.get_query(session, form, format="www")
-
             self.logger.log('Searching CQL query: %s' % (qString))
             rs = db.search(session, query)
             rsid = rs.id = qString
@@ -1168,7 +1235,6 @@ class EadSearchHandler(EadHandler):
             <div id="leftcol">%s</div>
             <div id="padder"><div id="rightcol"><div id="email">%s</div></div></div>''' % (self.format_resultSet(rs, firstrec, numreq), self.email_record(rs, hitposition, address))
         #- end email ----------------------------------------------------------
-        
 
     def email_record(self, rs, hitposition, address):
         global outgoing_email_username, localhost, outgoing_email_host, outgoing_email_port, cache_path, emailRe
@@ -1178,19 +1244,16 @@ class EadSearchHandler(EadHandler):
             self.htmlTitle.append('Enter Address')
             f = read_file('email.html')
             return f
-        
         elif not emailRe.match(address):
             self.htmlTitle.append('Re-enter Address')
             f = read_file('email.html')
             self.globalReplacements['%ERROR%'] = '<p><span class="error">Your address did not match the expected form: name@company.domain</span></p>'
             return f
-        
         try:
             r = rs[hitposition]
         except IndexError:
             self.htmlTitle.append('Error')
             return '<p class="error">Could not retrieve requested record</p>'
-        
         rec = r.fetch_record(session)
         recid = rec.id
         # Resolve link to parent if a component
@@ -1221,7 +1284,8 @@ class EadSearchHandler(EadHandler):
         diacriticNormalizer = db.get_object(session, 'DiacriticNormalizer')
         docString = diacriticNormalizer.process_string(session, docString)
         del diacriticNormalizer
-        try: docString = docString.encode('utf-8', 'latin-1')
+        try:
+            docString = docString.encode('utf-8', 'latin-1')
         except:
             try: docString = docString.encode('utf-16')
             except: pass # hope for the best!
@@ -1263,11 +1327,17 @@ In: %s
             return '<p class="error">The record with id %s could not be sent to %s. We apologise for the inconvenience and ask that you try again later.</p>' % (recid, address)
         #- end email_record() ------------------------------------------------------
     
-    
     def similar_search(self, req, form):
-        rsid = form.getfirst('rsid', None)
-        hitposition = int(form.getfirst('hitposition', 0))
-        highlight = form.getfirst('highlight', 0)
+        try:
+            # FieldStorage
+            rsid = form.getfirst('rsid', None)
+            hitposition = int(form.getfirst('hitposition', 0))
+            highlight = form.getfirst('highlight', 0)
+        except AttributeError:
+            # dict
+            rsid = form.get('rsid', None)
+            hitposition = int(form.get('hitposition', 0))
+            highlight = form.get('highlight', 0)
         self.htmlTitle.append('Similar Search')
         self.logger.log('Similar Search')
         if (rsid):
@@ -1297,7 +1367,6 @@ In: %s
         except AttributeError:
             # API change
             recid = str(r.id)
-            
         paramDict = {
             'RECID': recid, 
             '%REP_NAME%': repository_name, 
@@ -1307,18 +1376,15 @@ In: %s
             '%NAVBAR%': ' | '.join(self.htmlNav),
             'SCRIPT':script
         }
-
         rec = r.fetch_record(session)
         controlaccess = {}
         for cah in ['subject', 'persname', 'famname', 'geogname']:
             controlaccess[cah] = rec.process_xpath(session, '//controlaccess[1]/%s' % (cah)) # we only want top level stuff to feed into similar search
-        
         cqlClauses = []
         for cah, cal in controlaccess.iteritems():
             aps = [flattenTexts(cNode) for cNode in cal]
             for key in aps:
                 cqlClauses.append('c3.ead-idx-%s exact "%s"' % (cah, key))
-
         if len(cqlClauses):
             if highlight: cqlBool = ' or/proxinfo '
             else: cqlBool = ' or '
@@ -1363,7 +1429,6 @@ In: %s
             self.logger.log('*** unable to locate similar records')
             return '<p>Unable to locate similar records.</p>'
         #- end similar_search() ----------------------------------------------------
-        
         
     def handle(self, req):
         self.req = req
@@ -1417,27 +1482,7 @@ In: %s
                     self.htmlTitle.append('Error')
                     content = '<p class="error">An invalid operation was attempted. Valid operations are:<br/>search, browse, resolve, summary, full, toc, email</p>'
         except Exception:
-            self.htmlTitle.append('Error')
-            cla, exc, trbk = sys.exc_info()
-            excName = cla.__name__
-            try:
-                excArgs = exc.__dict__["args"]
-            except KeyError:
-                excArgs = str(exc)
-                
-            self.logger.log('*** %s: %s' % (excName, excArgs))
-            excTb = traceback.format_tb(trbk, 100)
-            content = '''\
-            <div id="single">
-            <p class="error">An error occured while processing your request.<br/>
-            The message returned was as follows:</p>
-            <code>%s: %s</code>
-            <p><strong>Please try again, or contact the system administrator if this problem persists.</strong></p>
-            <p>Debugging Traceback: <a href="#traceback" class="jstoggle-text">[ hide ]</a></p>
-            <div id="traceback" class="jshide">%s</div>
-            </div> <!-- end single div -->
-            ''' % (excName, excArgs, '<br/>\n'.join(excTb))
-            
+            content = self._handle_error()
         
         if not content:
             # return the home/quick search page
@@ -1446,20 +1491,21 @@ In: %s
 
         if (ajax):
             # enable AJAX type requests
-            self.send_xml(content, req)
+            self.send_xml(multiReplace(content, self.globalReplacements), req)
         else:
-            tmpl = read_file(self.templatePath)                                        # read the template in
+            # read the template in
+            tmpl = read_file(self.templatePath)
             page = tmpl.replace("%CONTENT%", content)
             self.globalReplacements.update({
                 "%TITLE%": ' :: '.join(self.htmlTitle)
                ,"%NAVBAR%": ' | '.join(self.htmlNav),
                })
-    
             page = multiReplace(page, self.globalReplacements)
-            self.send_html(page, req)                                            # send the page
-        #- end handle() ------------------------------------------------------------
+            # send the page
+            self.send_html(page, req)
+        #- end handle() ------------------------------------------------------
         
-    #- end class EadSearchHandler --------------------------------------------------
+    #- end class EadSearchHandler --------------------------------------------
 
 #- Some stuff to do on initialisation
 session = None
@@ -1522,6 +1568,7 @@ def build_architecture(data=None):
     rebuild = False
 
 logfilepath = searchlogfilepath
+romanNumeralRe = re.compile("^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$", re.IGNORECASE)
 
 def handler(req):
     global script, rebuild, resultSetStore
@@ -1543,7 +1590,7 @@ def handler(req):
         os.chdir(os.path.join(cheshirePath, 'cheshire3','www','ead','html'))        # cd to where html fragments are
         remote_host = req.get_remote_host(apache.REMOTE_NOLOOKUP)                   # get the remote host's IP for logging
         lgr = FileLogger(logfilepath, remote_host)                                  # initialise logger object
-        eadSearchHandler = EadSearchHandler(lgr, script)                                    # initialise handler - with logger for this request
+        eadSearchHandler = EadSearchHandler(lgr, script)                            # initialise handler - with logger for this request
         try:
             eadSearchHandler.handle(req)                                            # handle request
         finally:
