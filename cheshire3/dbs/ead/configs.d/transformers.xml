@@ -8,20 +8,31 @@
 	<subConfigs>
 	
 		<subConfig type="transformer" id="sruOutgoingTxr">
-	      <objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
-	      <paths>
-	         <path type="xsltPath">xsl/sruOut.xsl</path>
-	      </paths>
+            <docs>Transformer for EAD sent via SRU</docs>
+			<objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
+			<paths>
+			   <path type="xsltPath">xsl/sruOut.xsl</path>
+			</paths>
 	    </subConfig>
         
         <subConfig type="transformer" id="sruHighlightingTxr">
-          <objectType>cheshire3.transformer.WorkflowTransformer</objectType>
-          <paths>
-             <object type="workflow" ref="highlightSruFilterWorkflow"/>
-          </paths>
+            <docs>Transformer for EAD sent via SRU with search terms highlighted</docs>
+            <objectType>cheshire3.transformer.WorkflowTransformer</objectType>
+			<paths>
+			   <object type="workflow" ref="highlightSruFilterWorkflow"/>
+			</paths>
+        </subConfig>
+        
+        <subConfig type="transformer" id="sruOutgoingHubTxr">
+            <docs>Transformer for EAD sent via SRU to the Archives Hub</docs>
+            <objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
+			<paths>
+			   <path type="xsltPath">xsl/sruOutHub.xsl</path>
+			</paths>
         </subConfig>
         
         <subConfig type="transformer" id="oaiOutgoingTxr">
+            <docs>Transformer for EAD sent over OAI-PMH</docs>
           <objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
           <paths>
              <path type="xsltPath">xsl/oaiOut.xsl</path>

@@ -27,7 +27,7 @@
             <!-- input type:  record -->
             <object type="transformer" ref="highlightTxr"/>
             <object type="parser" ref="LxmlParser"/>
-            <object type="transformer" ref="sruOutgoingTxr"/>
+            <object type="transformer" ref="sruOutgoingHubTxr"/>
         </workflow>
     </subConfig>
     
@@ -163,7 +163,6 @@
                 		"\n" + ''.join(traceback.format_exception(sys.exc_type,sys.exc_value,sys.exc_traceback))
                 	</log>
                 	<log level="critical">"" + input.get_xml(session)</log>
-                    <raise/>
                 	<continue />
                 </except>
 <!--                <log level="debug">"adding"</log>-->
