@@ -1,4 +1,4 @@
-<explain id="172.20.252.2/services/ead" authoritative="true"
+<explain id="138.253.50.191/services/ead" authoritative="true"
   xmlns="http://explain.z3950.org/dtd/2.0/"
   xmlns:c3="http://www.cheshire3.org/schemas/explain/">
 
@@ -8,7 +8,7 @@
  -->
 
 	<serverInfo protocol="srw/u" version="1.1" transport="http">
-        <host>138.253.x.x</host>
+        <host>138.253.50.191</host>
         <port>80</port>
         <database>services/ead</database>
 	</serverInfo>
@@ -21,7 +21,7 @@
 	</databaseInfo>
 
 	<metaInfo>
-		<dateModified>2009-03-16 16:30:00</dateModified>
+		<dateModified>2011-01-12T17:00:00</dateModified>
 	</metaInfo>
 
 	<indexInfo>
@@ -33,6 +33,7 @@
         <set identifier="info:srw/cql-context-set/1/ead-v2002" name="ead"/>
         <set identifier="info:srw/cql-context-set/2/relevance-1.0" name="rel"/>
         <set identifier="info:srw/cql-context-set/2/rec-1.1" name="rec"/>
+        <set indetifier="info:srw/cql-context-set/2/range-1.0" name="range"/>
 	
         <index c3:index="ead-idx-istoplevel">
             <title>Is a top level EAD record</title>
@@ -265,9 +266,12 @@
               <supports type="relation" c3:index="ead-idx-date">any</supports>
               <supports type="relation" c3:index="ead-idx-date">all</supports>
               <supports type="relation" c3:index="ead-idx-date">exact</supports>
+              <supports type="relationModifier" c3:index="ead-idx-dateYear">year</supports>
               <supports type="relation" c3:index="ead-idx-dateRange">within</supports>
               <supports type="relation" c3:index="ead-idx-dateRange">encloses</supports>
-              <supports type="relationModifier" c3:index="ead-idx-dateYear">year</supports>
+              <!-- overlaps from the range context set -->
+              <supports type="relation" c3:index="ead-idx-dateRange">overlaps</supports>
+              <supports type="relation" c3:index="ead-idx-dateRange">&gt;=&lt;</supports>
             </configInfo>
         </index>
 	  
@@ -324,27 +328,33 @@
 
 	<schemaInfo>
 		<schema identifier="info:srw/schema/1/ead-2002"
-                        sort="true" retrieve="true" name="ead"
-                        c3:transformer="sruOutgoingTxr">
-                    <title>Encoded Archival Description (EAD) DTD Version 2002</title>
+                sort="true" retrieve="true" name="ead"
+                c3:transformer="sruOutgoingTxr">
+            <title>Encoded Archival Description (EAD) DTD Version 2002</title>
 		</schema>
 		<schema identifier="info:srw/schema/1/dc-v1.1"
-                        location="http://www.loc.gov/zing/srw/dc.xsd"
-                        sort="false" retrieve="true" name="dc"
-                        c3:transformer="eadDublinCoreTxr">
-                    <title>Dublin Core</title>
+                location="http://www.loc.gov/zing/srw/dc.xsd"
+                sort="false" retrieve="true" name="dc"
+                c3:transformer="eadDublinCoreTxr">
+            <title>Unqualified Dublin Core</title>
 		</schema>
 		<schema identifier="http://www.openarchives.org/OAI/2.0/oai_dc/"
                         location="http://www.openarchives.org/OAI/2.0/oai_dc.xsd"
                         sort="false" retrieve="true" name="oai_dc"
                         c3:transformer="OAIDublinCoreTransformer">
-	           <title>OAI Unqualified Dublin Core</title>
+            <title>OAI Unqualified Dublin Core</title>
 		</schema>
         <schema identifier="http://cheshire3.org/ns/highlight/ead-2002"
                 sort="true" retrieve="true" name="ead-highlight"
                 c3:transformer="sruHighlightingTxr">
-                <title>Encoded Archival Description (EAD) DTD Version 2002 - with search term highlighting.</title>
+            <title>Encoded Archival Description (EAD) DTD Version 2002, with search term highlighting. If you want interoperable EAD, use default ead info:srw/schema/1/ead-2002</title>
         </schema>
+        <schema identifier="info:srw/schema/2/raw/ead-2002"
+                sort="true" retrieve="true" name="ead-hub"
+                c3:transformer="sruOutgoingHubTxr">
+            <title>Encoded Archival Description (EAD) DTD Version 2002, without inter-relational record links resolved.  If you want interoperable EAD, use default ead info:srw/schema/1/ead-2002</title>
+        </schema>
+        
 	</schemaInfo>
 
     <configInfo>
