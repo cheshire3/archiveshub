@@ -169,7 +169,7 @@
     <xsl:value-of select="$newline"/>
     <xsl:value-of select="$newline"/>
 
-    <xsl:text>Reference Number: </xsl:text>
+    <xsl:text>Reference: </xsl:text>
       <xsl:choose>
         <xsl:when test="unitid">
           <xsl:apply-templates select="unitid[1]"/>

@@ -21,8 +21,9 @@
     <xsl:template match="dsc|c|c01|c02|c03|c04|c05|c06|c07|c08|c09|c10|c11|c12" priority="99"/>
     
     <xsl:template match="/">
-    	<xsl:apply-templates/>
-    	<br/>
+        <div class="summary">
+        	<xsl:apply-templates/>
+    	</div>
     </xsl:template>
 
     <!-- for complete EAD instances -->
