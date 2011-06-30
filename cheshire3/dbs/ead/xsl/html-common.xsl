@@ -58,11 +58,11 @@
             </xsl:choose>
         </h2>
 		
-        <xsl:if test="./dao|../dao|./daogrp|../daogrp">
+        <xsl:if test="./dao|../dao|../odd/dao|../scopecontent/dao|./daogrp|../daogrp|../odd/daogrp|../scopecontent/daogrp">
             <div class="daos">
                 <div class="daohead">Digital Objects</div>
                 <div class="daobody">
-                    <xsl:apply-templates select="./dao|../dao|./daogrp|../daogrp"/>
+                    <xsl:apply-templates select="./dao|../dao|../odd/dao|../scopecontent/dao|./daogrp|../daogrp|../odd/daogrp|../scopecontent/daogrp"/>
                 </div>
             </div>
         </xsl:if>
@@ -70,17 +70,19 @@
 	    <div class="did">
             <table summary="Descriptive Information - core information about the described material">
                 <tr>
-                    <td><strong>Reference</strong></td>
-                    <td>
+                    <td class="field-name">Reference Number(s)</td>
+                    <td class="field-value">
                         <xsl:choose>
-		                  <xsl:when test="unitid">
-		                    <xsl:apply-templates select="unitid[1]"/>
-		                  </xsl:when>
-		                  <xsl:otherwise>
-		                    <xsl:text>(none)</xsl:text>
-		                  </xsl:otherwise>
-		                </xsl:choose>
-	                </td>
+                          <xsl:when test="unitid">
+                            <xsl:for-each select="unitid">
+                                <xsl:apply-templates select="."/><br/>
+                            </xsl:for-each>
+                          </xsl:when>
+                          <xsl:otherwise>
+                            <xsl:text>(none)</xsl:text>
+                          </xsl:otherwise>
+                        </xsl:choose>
+                    </td>
                 </tr>
 		
 				<xsl:if test="repository">
@@ -96,40 +98,37 @@
                     </xsl:variable>
                     
 				    <tr>
-				        <td>
-				            <strong>Held at</strong>
+				        <td class="field-name">
+				            Held at
 				        </td>
-				        <td>
-				            <xsl:choose>
-                                <xsl:when test="$link_to_archon and string-length($repcode)">
+				        <td class="field-value">
+				            <xsl:value-of select="repository[1]"/>
+                                <xsl:if test="$link_to_archon and string-length($repcode)">
+                                    <xsl:text> </xsl:text>
                                     <a>
                                         <xsl:attribute name="href">
                                             <xsl:value-of select="$archon_url"/>
                                             <xsl:value-of select="$repcode" />
                                         </xsl:attribute>
                                         <xsl:attribute name="title">
-                                            <xsl:text>Search Archon for Repository Contact Details [opens new window]</xsl:text>
+                                            <xsl:text>Look up repository contact details in ARCHON [opens new window]</xsl:text>
                                         </xsl:attribute>
                                         <xsl:attribute name="target">
                                             <xsl:text>_blank</xsl:text>
                                         </xsl:attribute>
-                                        <xsl:value-of select="repository[1]"/>
+                                        <xsl:text>Contact Details</xsl:text>
                                     </a>
-                                </xsl:when>
-                                <xsl:otherwise>
-                                    <xsl:value-of select="repository[1]"/>
-                                </xsl:otherwise>    
-                            </xsl:choose>
+                                </xsl:if>
 				        </td>
 				    </tr>
 			   		
 				</xsl:if>
 				
 				<tr>
-				    <td>
-				        <strong>Dates of Creation</strong>
+				    <td class="field-name">
+				        Dates of Creation
 			        </td>
-			        <td>
+			        <td class="field-value">
                         <xsl:choose>
                           <xsl:when test=".//unitdate">
                             <xsl:apply-templates select=".//unitdate"/>
@@ -138,54 +137,54 @@
                             <xsl:text>[undated]</xsl:text>
                           </xsl:otherwise>
                         </xsl:choose>
-			        </td>
-				</tr>
+                    </td>
+                </tr>
 
-				<xsl:if test="physdesc">
-				    <tr>
-				        <td>
-				            <strong>Physical Description</strong>      
-				        </td>
-				        <td>
-				            <xsl:apply-templates select="physdesc"/>
-				        </td>
-				    </tr>
-				</xsl:if>
-		      
-				<xsl:if test="origination">
-				    <tr>
-				        <td>
-				            <strong>Name of Creator</strong>
-				        </td>
-				        <td>
+                <xsl:if test="physdesc">
+                    <tr>
+                        <td class="field-name">
+                            Physical Description      
+                        </td>
+                        <td class="field-value">
+                            <xsl:apply-templates select="physdesc"/>
+                        </td>
+                    </tr>
+                </xsl:if>
+              
+                <xsl:if test="origination">
+                    <tr>
+                        <td class="field-name">
+                            Name of Creator
+                        </td>
+                        <td class="field-value">
                             <xsl:for-each select="origination">
-								<xsl:apply-templates/>
-								   <xsl:if test="position() &lt; count(../origination)">
-								    <xsl:text>,</xsl:text>
-								</xsl:if>
+                                <xsl:apply-templates/>
+                                   <xsl:if test="position() &lt; count(../origination)">
+                                    <xsl:text>,</xsl:text>
+                                </xsl:if>
                             </xsl:for-each>
-				        </td>
-				    </tr>
-				</xsl:if>
-				
-				<xsl:if test="langmaterial">
-				    <tr>
-				        <td>
-				            <strong>Language of Material</strong>
-				        </td>
-				        <td>
-				            <xsl:apply-templates select="langmaterial"/>    
-				        </td>  
-				    </tr>
-				</xsl:if>
-				
-			</table>
-				
-			<xsl:if test="processinfo">
-	            <xsl:apply-templates select="processinfo"/>      
-			</xsl:if>
+                        </td>
+                    </tr>
+                </xsl:if>
+                
+                <xsl:if test="langmaterial">
+                    <tr>
+                        <td class="field-name">
+                            Language of Material
+                        </td>
+                        <td class="field-value">
+                            <xsl:apply-templates select="langmaterial"/>    
+                        </td>  
+                    </tr>
+                </xsl:if>
+                
+            </table>
+                
+            <xsl:if test="processinfo">
+                <xsl:apply-templates select="processinfo"/>      
+            </xsl:if>
             
-		</div>
+        </div>
 	</xsl:template>
 
 	<!-- EADHEADER -->
@@ -196,107 +195,119 @@
 		<div id="eadheader" class="jshide">
             <table summary="Cataloguing Information - core information about this record">
                 <xsl:apply-templates select="filedesc"/>
-	            <xsl:apply-templates select="profiledesc"/>
-	            <xsl:apply-templates select="revisiondesc"/>
+                <xsl:apply-templates select="profiledesc"/>
+                <xsl:apply-templates select="revisiondesc"/>
             </table>
 		</div>
 	</xsl:template>
 
 	<xsl:template match="filedesc">
-		<xsl:if test="titlestmt">
-			<xsl:apply-templates select="titlestmt"/>
-		</xsl:if>
- 		<xsl:if test="publicationstmt">
+        <xsl:if test="titlestmt">
+            <xsl:apply-templates select="titlestmt"/>
+        </xsl:if>
+        <xsl:if test="publicationstmt">
             <tr>
-                <td><strong>Publication</strong></td>
-                <td><xsl:apply-templates select="publicationstmt"/></td>
+                <td class="field-name">Publication</td>
+                <td class="field-value"><xsl:apply-templates select="publicationstmt"/></td>
             </tr>
-		</xsl:if>
- 		<xsl:if test="editionstmt">
+        </xsl:if>
+        <xsl:if test="editionstmt">
             <tr>
-                <td><strong>Edition</strong></td>
-                <td><xsl:apply-templates select="editionstmt"/></td>
+                <td class="field-name">Edition</td>
+                <td class="field-value"><xsl:apply-templates select="editionstmt"/></td>
             </tr>
-		</xsl:if>
-	 	<xsl:if test="seriesstmt">
+        </xsl:if>
+        <xsl:if test="seriesstmt">
             <tr>
-                <td><strong>Series</strong></td>
-                <td><xsl:apply-templates select="seriesstmt"/></td>
+                <td class="field-name">Series</td>
+                <td class="field-value"><xsl:apply-templates select="seriesstmt"/></td>
             </tr>
-		</xsl:if>
-		<xsl:if test="notesstmt">
+        </xsl:if>
+        <xsl:if test="notesstmt">
             <tr>
-                <td><strong>Notes</strong></td>
-                <td><xsl:apply-templates select="notesstmt"/></td>
+                <td class="field-name">Notes</td>
+                <td class="field-value"><xsl:apply-templates select="notesstmt"/></td>
             </tr>
-		</xsl:if>
-	</xsl:template>
- 
+        </xsl:if>
+    </xsl:template>
+    
 	<xsl:template match="titlestmt">
-		<!-- ignore titleproper, usually the same as title of material (unittitle) -->
-		<xsl:if test="titleproper">
+        <!-- ignore titleproper, usually the same as title of material (unittitle) -->
+        <xsl:if test="titleproper">
             <tr>
-                <td><strong>Title</strong></td>
-                <td><xsl:apply-templates select="titleproper"/></td>    
+                <td class="field-name">Title</td>
+                <td class="field-value"><xsl:apply-templates select="titleproper"/></td>    
             </tr>
-		</xsl:if>
-		<xsl:if test="subtitle">
-			<tr>
-			    <td><strong>Sub-title</strong></td>
-			    <td><xsl:apply-templates select="subtitle"/></td>    
-			</tr>
-		</xsl:if>
-		<xsl:for-each select="author">
+        </xsl:if>
+        <xsl:if test="subtitle">
             <tr>
-                <td><strong>Author</strong></td>
-                <td><xsl:apply-templates select="."/></td>    
+                <td class="field-name">Sub-title</td>
+                <td class="field-value"><xsl:apply-templates select="subtitle"/></td>    
             </tr>
-		</xsl:for-each>
-		<xsl:if test="sponsor">
+        </xsl:if>
+        <xsl:for-each select="author">
             <tr>
-                <td><strong>Sponsor</strong></td>
-                <td><xsl:apply-templates select="sponsor"/></td>    
+                <td class="field-name">Author</td>
+                <td class="field-value"><xsl:apply-templates select="."/></td>    
             </tr>
-		</xsl:if>
-	</xsl:template>
+        </xsl:for-each>
+        <xsl:if test="sponsor">
+            <tr>
+                <td class="field-name">Sponsor</td>
+                <td class="field-value"><xsl:apply-templates select="sponsor"/></td>    
+            </tr>
+        </xsl:if>
+    </xsl:template>
  
 	<xsl:template match="profiledesc">
-		<xsl:if test="creation">
+        <xsl:if test="creation">
             <tr>
-                <td><strong>Creation</strong></td>
-                <td><xsl:apply-templates select="./creation"/></td>    
+                <td class="field-name">Creation</td>
+                <td class="field-value"><xsl:apply-templates select="./creation"/></td>    
             </tr>
-		</xsl:if>
-		<xsl:if test="descrules">
+        </xsl:if>
+        <xsl:if test="descrules">
             <tr>
-                <td><strong>Descriptive Rules</strong></td>
-                <td><xsl:apply-templates select="./descrules"/></td>    
+                <td class="field-name">Descriptive Rules</td>
+                <td class="field-value"><xsl:apply-templates select="./descrules"/></td>    
             </tr>
-		</xsl:if>
-		<xsl:if test="langusage">
+        </xsl:if>
+        <xsl:if test="langusage">
             <tr>
-                <td><strong>Language Usage</strong></td>
-                <td><xsl:apply-templates select="./langusage"/></td>
+                <td class="field-name">Language Usage</td>
+                <td class="field-value"><xsl:apply-templates select="./langusage"/></td>
             </tr>
-		</xsl:if>
-	</xsl:template>
+        </xsl:if>
+    </xsl:template>
 
 	<xsl:template match="revisiondesc">      
-		<xsl:if test="./text()">
+        <xsl:if test="./text()">
             <tr>
-                <td><strong>Revisions</strong></td>
-                <td><xsl:apply-templates/></td>
+                <td class="field-name">Revisions</td>
+                <td class="field-value"><xsl:apply-templates/></td>
             </tr>
-		</xsl:if>
-	</xsl:template>
+        </xsl:if>
+    </xsl:template>
 	
 	<xsl:template match="unitid">
-       <xsl:value-of select="@countrycode"/>
-       <xsl:text> </xsl:text>
-       <xsl:value-of select="@repositorycode"/>
-       <xsl:text> </xsl:text>
-       <xsl:apply-templates/>
-    </xsl:template>
+	   <!-- check if content starts with country code -->
+	   <xsl:param name="uc" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ'"/>
+       <xsl:param name="lc" select="'abcdefghijklmnopqrstuvwxyz'"/>
+	   <xsl:if test="not(starts-with(translate(./text(), $uc, $lc), translate(./@countrycode, $uc, $lc)))">
+	       <xsl:value-of select="@countrycode"/>
+	       <xsl:text> </xsl:text>
+	       <xsl:value-of select="@repositorycode"/>
+	       <xsl:text> </xsl:text>
+	   </xsl:if>
+	   <span>
+	       <xsl:if test="./@label">
+	           <xsl:attribute name="title">
+	               <xsl:value-of select="./@label"/>
+	           </xsl:attribute>
+	       </xsl:if>
+	       <xsl:apply-templates/>
+	   </span>
+	</xsl:template>
 
 	<!--  ARCHDESC -->
 	<xsl:template match="archdesc">
@@ -366,6 +377,12 @@
 		</xsl:choose>
 	</xsl:template>
 	
+	<xsl:template match="physdesc" mode="component">
+		<p>
+			<xsl:apply-templates />
+		</p>
+	</xsl:template>
+
 	<xsl:template match="bioghist">
 		<xsl:if test="@id">
 			<a name="{@id}"><xsl:text> </xsl:text></a>
@@ -388,7 +405,6 @@
 	  	<xsl:if test="@id">
 	  		<a name="{@id}"><xsl:text> </xsl:text></a>
 	  	</xsl:if>
-        
 	    <xsl:if test="not(head/text())">
             <xsl:variable name="headstring"><xsl:text>Scope and Content</xsl:text></xsl:variable>
 	    	<xsl:choose>
@@ -788,10 +804,10 @@
         <table>
 		
             <!-- Subjects -->
-            <xsl:if test="subject">
+            <xsl:if test=".//subject">
                 <xsl:variable name="indexName"><xsl:text>Subjects</xsl:text></xsl:variable>
                 <tr><td colspan="2"><strong><xsl:value-of select="$indexName"/></strong></td></tr>
-                    <xsl:for-each select="subject">
+                    <xsl:for-each select=".//subject">
                     <tr>
                         <td>
                             <xsl:call-template name="browselink">
@@ -811,10 +827,10 @@
             </xsl:if>
             	
             <!-- Personal Names -->
-            <xsl:if test="persname">
+            <xsl:if test=".//persname">
                 <xsl:variable name="indexName"><xsl:text>Personal Names</xsl:text></xsl:variable>
                 <tr><td colspan="2"><strong><xsl:value-of select="$indexName"/></strong></td></tr>
-                <xsl:for-each select="persname">
+                <xsl:for-each select=".//persname">
                     <tr>
                         <td>
                             <xsl:call-template name="browselink">
@@ -836,10 +852,10 @@
             </xsl:if>
 		
             <!-- Family Names -->
-            <xsl:if test="famname">
+            <xsl:if test=".//famname">
                 <xsl:variable name="indexName"><xsl:text>Family Names</xsl:text></xsl:variable>
                 <tr><td colspan="2"><strong><xsl:value-of select="$indexName"/></strong></td></tr>
-                <xsl:for-each select="famname">
+                <xsl:for-each select=".//famname">
                     <tr>
                         <td>
                             <xsl:call-template name="browselink">
@@ -861,10 +877,10 @@
             </xsl:if>
 		
             <!-- Corporate Names -->
-            <xsl:if test="corpname">
+            <xsl:if test=".//corpname">
                 <xsl:variable name="indexName"><xsl:text>Corporate Names</xsl:text></xsl:variable>
                 <tr><td colspan="2"><strong><xsl:value-of select="$indexName"/></strong></td></tr>
-                <xsl:for-each select="corpname">
+                <xsl:for-each select=".//corpname">
                     <tr>
                 	  	<td>
                 		    <xsl:call-template name="browselink">
@@ -886,11 +902,11 @@
             </xsl:if>
 		
             <!-- Geographical Names -->
-            <xsl:if test="geogname">
+            <xsl:if test=".//geogname">
                 <xsl:variable name="indexName"><xsl:text>Geographical Names</xsl:text></xsl:variable>
                 <tr><td colspan="2"><strong><xsl:value-of select="$indexName"/></strong></td></tr>
-                <xsl:for-each select="geogname">
-    	  	        <tr>
+                <xsl:for-each select=".//geogname">
+	  	            <tr>
                         <td>
                             <xsl:call-template name="browselink">
                                 <xsl:with-param name="index">
@@ -911,7 +927,7 @@
                 </xsl:for-each>
             </xsl:if>
 		
-            <xsl:if test="title">
+            <xsl:if test=".//title">
                 <xsl:variable name="indexName"><xsl:text>Titles</xsl:text></xsl:variable>
                 <tr><td colspan="2"><strong><xsl:value-of select="$indexName"/></strong></td></tr>
                 <xsl:for-each select="title">
@@ -932,20 +948,20 @@
                 </xsl:for-each>
             </xsl:if>
             
-            <xsl:if test="function">
+            <xsl:if test=".//function">
                 <xsl:variable name="indexName"><xsl:text>Functions</xsl:text></xsl:variable>
                 <tr><td colspan="2"><strong><xsl:value-of select="$indexName"/></strong></td></tr>
-                <xsl:for-each select="function">
+                <xsl:for-each select=".//function">
                     <tr>
                         <td><xsl:value-of select = "."/></td>
                     </tr>
                 </xsl:for-each>
             </xsl:if> 
             
-            <xsl:if test="genreform">
+            <xsl:if test=".//genreform">
                 <xsl:variable name="indexName"><xsl:text>Genre/Form</xsl:text></xsl:variable>
                 <tr><td colspan="2"><strong><xsl:value-of select="$indexName"/></strong></td></tr>
-                <xsl:for-each select="genreform">
+                <xsl:for-each select=".//genreform">
                     <tr>
                   		<td>
                             <xsl:call-template name="browselink">
@@ -961,7 +977,7 @@
             	</xsl:for-each>
             </xsl:if>
             
-            <xsl:if test="occupation">
+            <xsl:if test="../occupation">
                 <xsl:variable name="indexName"><xsl:text>Occupation</xsl:text></xsl:variable>
             	<tr><td colspan="2"><strong><xsl:value-of select="$indexName"/></strong></td></tr>
             	<xsl:for-each select="occupation">
@@ -1011,7 +1027,7 @@
                 <xsl:otherwise>
                     <xsl:text>undated</xsl:text>
                 </xsl:otherwise>
-	    </xsl:choose>
+            </xsl:choose>
             <xsl:text>)</xsl:text>
             <xsl:if test="did/origination">
                 <xsl:text> - </xsl:text>
@@ -1019,11 +1035,11 @@
     	   </xsl:if>
         </h3>
         
-        <xsl:if test="./dao|./did/dao|./daogrp|./did/daogrp">
+        <xsl:if test="./dao|./did/dao|./odd/dao|./scopecontent/dao|./daogrp|./did/daogrp|./odd/daogrp|./scopecontent/daogrp">
             <div class="daos">
                 <div class="daohead">Digital Objects</div>
                 <div class="daobody">
-                    <xsl:apply-templates select="./dao|./did/dao|./daogrp|./did/daogrp"/>
+                    <xsl:apply-templates select="./dao|./did/dao|./odd/dao|./scopecontent/dao|./daogrp|./did/daogrp|./odd/daogrp|./scopecontent/daogrp"/>
                 </div>
             </div>
         </xsl:if>
@@ -1031,8 +1047,8 @@
         <!-- did for this component -->
         <table summary="Descriptive Information - core information about this box, folder or item">
             <tr>
-                <td><strong>Reference</strong></td>
-                <td>
+                <td class="field-name">Reference</td>
+                <td class="field-value">
                     <xsl:for-each select="did/unitid">
                         <xsl:apply-templates select="."/><br/>
                     </xsl:for-each>
@@ -1041,17 +1057,15 @@
             
             <xsl:if test="did/physdesc">
                 <tr>
-                    <td><strong>Physical Description</strong></td>
-                    <td><xsl:apply-templates select="did/physdesc"/></td>
+                    <td class="field-name">Physical Description</td>
+                    <td class="field-value"><xsl:apply-templates select="did/physdesc"/></td>
                 </tr>
             </xsl:if>
                         
             <xsl:if test="langmaterial|did/langmaterial">
                 <tr>
-                    <td>
-                        <strong>Language of Material</strong>
-                    </td>
-                    <td>
+                    <td class="field-name">Language of Material</td>
+                    <td class="field-value">
                         <xsl:choose>
                             <xsl:when test="langmaterial">
                                 <xsl:apply-templates select="langmaterial"/>
@@ -1066,8 +1080,8 @@
             
             <xsl:if test = "did/physloc">
                 <tr>
-                    <td>Location</td>
-                    <td><xsl:value-of select="did/physloc"/></td>
+                    <td class="field-name">Location</td>
+                    <td class="field-value"><xsl:value-of select="did/physloc"/></td>
                 </tr>
             </xsl:if>           
 
@@ -1103,7 +1117,7 @@
     	<xsl:apply-templates select="prefercite|descgrp/prefercite"/>
     	<!-- MISCELLANEOUS -->
     	<xsl:apply-templates select="odd"/>
-        <xsl:apply-templates select="note" mode="own-section"/>
+    	<xsl:apply-templates select="note" mode="own-section"/>
     	
     	<!-- CONTROLACCESS -->
     	<xsl:apply-templates select="controlaccess|descgrp/controlaccess"/>
