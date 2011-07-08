@@ -1078,7 +1078,7 @@
                 </tr>
             </xsl:if>
             
-            <xsl:if test = "did/physloc">
+            <xsl:if test = "physloc|did/physloc">
                 <tr>
                     <td class="field-name">Location</td>
                     <td class="field-value"><xsl:value-of select="did/physloc"/></td>
