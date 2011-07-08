@@ -117,7 +117,7 @@
 # 0.49 - 25/01/2011 - JH - Bug fixes to browse response - well-formed XHTML for PREV/NEXT links
 # 0.50 - 15/03/2011 - JH - Bug fixes
 #                            - ToC character encoding fixed - coerce to unicode when read in
-#                            - Browse terms ULR unescape/unquoted
+#                            - Browse terms URL unescape/unquoted
 # 
 
 
@@ -175,7 +175,7 @@ class EadSearchHandler(EadHandler):
                 elif word.endswith("'s"):
                     # Possessive - don't capitalize trailing s
                     word = word[:-2].title() + "'s"
-                elif (len(words) == 0 and not word[0].isdigit()):
+                elif len(words) == 0 and not (word[0].isdigit() or word.strip('\'"(')[0].isdigit()):
                     # 1st word always capitalized, unless it starts with a number
                     word = word.title()
                 elif word not in always_lower and \
@@ -192,7 +192,7 @@ class EadSearchHandler(EadHandler):
             except IndexError:
                 pass
             words.append(word)
-        return ' '.join(words)
+        return u' '.join(words)
         #- / _cleverTitleCase() ----------------------------------------------
         
     def _parentTitle(self, id):
@@ -270,32 +270,34 @@ class EadSearchHandler(EadHandler):
         return self.format_resultSet(rs, firstrec, numreq)
     
     def fetch_resultSet(self, id):
-        """ Fetch the resultSet with the specified id. If it's not a resultSetId, treat it as a query to regenerate the resultSet. """
+        """ Fetch and return the resultSet with the specified id.
+        
+        If it's not a resultSetId, treat it as a query to regenerate the resultSet.
+        """
         global queryFactory
         rs = None
         if id.isdigit():
             try:
                 rs = resultSetStore.fetch_resultSet(session, id)
             except:
-                self.logger.log('Unretrievable resultSet %s' % (id))
+                self.logger.log(u'Unretrievable resultSet %s' % (id))
                 if not self.redirected:
                     self.htmlTitle.append('Error')
-                return '<p class="error">Could not retrieve resultSet from resultSetStore.</p><p>Please <a href="/ead/index.html">return to the search page</a>, and re-submit your original search</p>'
+                return search_fail_noResultSet
             else:
-                self.logger.log('Retrieved resultSet "%s"' % (id))
+                self.logger.log(u'Retrieved resultSet "%s"' % (id))
         else:
             try:
                 query = queryFactory.get_query(session, id, format='cql')
             except:
-                self.logger.log('Unparsable query %s' % (id))
+                self.logger.log(u'Unparsable query {0}'.format(id))
                 if not self.redirected:
                     self.htmlTitle.append('Error')
-                return '<p class="error">Could not recreate resultSet from query: %s.</p><p>Please <a href="/ead/index.html">return to the search page</a>, and re-submit your original search</p>' % (id)
+                return search_fail_badResultSet.format(id)
             else:
                 rs = db.search(session, query)
-                self.logger.log('ResultSet recreated from CQL query: %s' % (id))
+                self.logger.log(u'ResultSet recreated from CQL query: {0}'.format(id))
                 rs.id = id
-        
         return rs
         #- end fetch_resultSet ------------------------------------------------ 
 
@@ -313,26 +315,11 @@ class EadSearchHandler(EadHandler):
             useScaledWeights = False
             topWeight = rs[0].weight # get relevance of best record
         
-        if (firstrec-1 >= hits):
-            return '''<div class="searchresults">
-        <p class="hitreport">
-        Your search resulted in <strong>{0}</strong> hits, 
-        however you requested to begin displaying at result <strong>{1}</strong>.
-        </p>
-      </div>'''.format(hits, firstrec)
-        
-        rows = ['''<p class="hitreport">
-        Your search resulted in <strong>{0}</strong> hits.
-        Results <strong>{1}</strong> - <strong>{2}</strong> displayed.
-        <a href="/ead/help.html#results">[Result display explained]</a>
-       </p>'''.format(hits, firstrec, min(firstrec + numreq-1, len(rs))),
-    '<table id="results" class="results">']
-
+        rows = ['''<p class="hitreport">Your search resulted in <strong>{0}</strong> hits.'''.format(hits)]
         parentTitles = {}
         parentRecs = {}
         rsidCgiString = 'rsid=%s' % cgi_encode(rsid)
-
-        # some hit navigation
+        # generate some hit navigation
         if (hits > numreq):
             if (firstrec > 1):
                 hitlinks = ['<div class="backlinks">'
@@ -371,6 +358,17 @@ class EadSearchHandler(EadHandler):
             hitlinks.append('\n'.join(numlinks))
             del numlinks
             hitlinks = ' '.join(hitlinks)
+        if (firstrec-1 >= hits):
+            rows.extend(['Please click the back button to return to results, or choose a valid page number below.<p>',
+                         '<p>{0}</p>'.format(hitlinks)])
+            return ''.join(rows)
+        
+        rows.extend(['''Results <strong>{1}</strong> - <strong>{2}</strong> displayed.
+        <a href="/ead/help.html#results">[Result display explained]</a>
+       </p>'''.format(hits, firstrec, min(firstrec + numreq-1, len(rs))),
+    '<table id="results" class="results">'])
+
+        if (hits > numreq):
             rows.append('<tr class="hitnav"><td>%s</td></tr>' % (hitlinks))
             
         #- end hit navigation
@@ -387,36 +385,38 @@ class EadSearchHandler(EadHandler):
                     self.logger.log('Unable to retrieve record: %s' % (r.id))
                     continue
                 else:
-                    try: titleEl = rec.process_xpath(session, '/*/*/did/unittitle')[0]
+                    try:
+                        titleEl = rec.process_xpath(session, '/*/*/did/unittitle')[0]
                     except IndexError:
-                        try: titleEl = rec.process_xpath(session, '/ead/eadheader/filedesc/titlestmt/titleproper')[0]
-                        except IndexError: titleEl = '(untitled)'
-                    
-
+                        try:
+                            titleEl = rec.process_xpath(session, '/ead/eadheader/filedesc/titlestmt/titleproper')[0]
+                        except IndexError:
+                            titleEl = '(untitled)'
             else:
-                try: titleEl = rec.process_xpath(session, '/srw_dc:dc/dc:title', namespaceUriHash)[0]
-                except IndexError: titleEl = '(untitled)'
-                
-            try: title = flattenTexts(titleEl)
-            except AttributeError: title = titleEl
+                try:
+                    titleEl = rec.process_xpath(session, '/srw_dc:dc/dc:title', namespaceUriHash)[0]
+                except IndexError:
+                    titleEl = '(untitled)'
+            try:
+                title = flattenTexts(titleEl)
+            except AttributeError:
+                title = titleEl
             del titleEl
-                
             try:
                 parentId = rec.process_xpath(session, '/c3component/@parent')[0]
             except IndexError:
                 # full record
                 row = search_result_row
                 parentLink = hierarchyLinks = ''
-                
             else:
                 # OK, must be a component record
                 row = search_component_row
                 parentId = parentId.split('/')[-1]
-                try: parentRec = parentRecs[parentId]
+                try:
+                    parentRec = parentRecs[parentId]
                 except KeyError: 
                     parentRec = recordStore.fetch_record(session, parentId)
                     parentRecs[parentId] = parentRec
-                    
                 parentPath = rec.process_xpath(session, '/c3component/@xpath')[0]
                 titles = self._backwalkTitles(parentRec, parentPath)
                 t = titles.pop(0)
@@ -427,18 +427,14 @@ class EadSearchHandler(EadHandler):
                         html = '<a href="%s?operation=full&amp;%%RSID%%&amp;recid=%s">%s</a>' % (script, cgi_encode(t[0]) , t[1])
                     else:
                         html = t[1]
-                        
                     hierarchy.append(('&#160;&#160;&#160;' * (level+1)) + folder_open_tag + html)
-                
                 hierarchyLinks = '<br/>'.join(hierarchy)
-                    
             if ( display_relevance ) and (rs[0].weight > rs[-1].weight):
                 # format relevance measure for display
                 if (useScaledWeights):
                     relv = float(r.scaledWeight)
                 else:
                     relv = r.weight / topWeight
-                    
                 relv = int(relv * 100)
                 if ( graphical_relevance ):
                     relv = '''
@@ -449,8 +445,7 @@ class EadSearchHandler(EadHandler):
                       </tr>
                     </table>''' % (relevance_graphic, relv)
                 else:
-                    if relv == 0: relv = '&lt; 1%'
-                    else: relv = str(relv) + '%'
+                    relv = str(relv) + '%' if relv > 0 else '&lt; 1%'
             else:
                 relv = ''
             
@@ -475,7 +470,7 @@ class EadSearchHandler(EadHandler):
             del hitlinks
         #- end hit navigation
         rows.append('</table>')
-        return '<div class="searchresults">{0}</div>'.format('\n'.join(rows))
+        return u'<div class="searchresults">{0}</div>'.format('\n'.join(rows))
         #- end format_resultSet() --------------------------------------------
         
     def format_facet(self, rs, type, truncate=True):
@@ -526,7 +521,7 @@ class EadSearchHandler(EadHandler):
             facetRows.append(self.format_facet(rs, type, type != fullFacet))
             facetRows.append('</div>')
             
-        return '\n'.join(facetRows)
+        return u'\n'.join(facetRows)
         #- end format_allFacets --------------------------------------------------
         
     def search(self, req, form, maxResultSetSize=None):
@@ -1021,9 +1016,8 @@ class EadSearchHandler(EadHandler):
         numreq = int(form.get('numreq', 20))
         highlight = int(form.get('highlight', 1))
         rs = None
-        
         if (qString):
-            qString = cgi_decode(rsid)
+            qString = cgi_decode(qString)
             try:
                 q = queryFactory.get_query(session, qString, format="cql")
             except:
@@ -1343,23 +1337,24 @@ In: %s
         if (rsid):
             rsid = cgi_decode(rsid)
             rs = self.fetch_resultSet(rsid)
+            if isinstance(rs, basestring):
+                return rs
         else:
+            errStr = None
             try:
                 qString = generate_cqlQuery(form)
-            except: 
-                self.htmlTitle.append('Error')
-                return '<p class="error">No rsid provided, could not generate query from form.</p>'
-
+            except:
+                errStr = "No rsid provided, could not generate query from form."
             try: 
                 query = queryFactory.get_query(session, qString, format="cql")
             except: 
-                self.htmlTitle.append('Error')
-                return '<p class="error">No rsid provided, invalid query submitted</p>'
-
+                errStr = "No rsid provided, invalid query submitted"
             rs = db.search(session, query)
             if not (rs):
+                errStr = "Could not retrieve requested record, query returns no hits"
+            if errStr is not None:
                 self.htmlTitle.append('Error')
-                return '<p class="error">Could not retrieve requested record, query returns no hits</p>'
+                return self._html('p', errStr, {'class': "error"})
         
         r = rs[hitposition]
         try:
@@ -1367,6 +1362,7 @@ In: %s
         except AttributeError:
             # API change
             recid = str(r.id)
+        
         paramDict = {
             'RECID': recid, 
             '%REP_NAME%': repository_name, 
@@ -1379,55 +1375,52 @@ In: %s
         rec = r.fetch_record(session)
         controlaccess = {}
         for cah in ['subject', 'persname', 'famname', 'geogname']:
-            controlaccess[cah] = rec.process_xpath(session, '//controlaccess[1]/%s' % (cah)) # we only want top level stuff to feed into similar search
+            # we only want top level stuff to feed into similar search
+            controlaccess[cah] = rec.process_xpath(session, '/*/*/controlaccess[1]/{0}'.format(cah))
         cqlClauses = []
         for cah, cal in controlaccess.iteritems():
             aps = [flattenTexts(cNode) for cNode in cal]
             for key in aps:
                 cqlClauses.append('c3.ead-idx-%s exact "%s"' % (cah, key))
         if len(cqlClauses):
-            if highlight: cqlBool = ' or/proxinfo '
-            else: cqlBool = ' or '
+            cqlBool = ' or/proxinfo ' if highlight else ' or '
         else:
             # hrm there's no control access - try something a bit more vague...
             # take words from important fields and feed back into quick search
             # TODO: this is too slow - optimise similar search query
             #cql = 'dc.description any/rel.algorithm=tfidf/rel.combine=sum "%s"' % (' '.join(allWords))
             #cql = 'dc.description any/relevant "%s"' % (' '.join(allWords))
+            # we only want top level stuff to feed into similar search
             fields = [('dc.title', 'did[1]/unittitle'),
                       #('dc.description', 'scopecontent[1]'),
                       ('dc.creator', 'did[1]/origination')]
-
-            if highlight: cqlMods = 'relevant/proxinfo'
-            else: cqlMods = 'relevant'
+            cqlMods = 'relevant/proxinfo' if highlight else 'relevant'
+            wf = db.get_object(session, 'KeywordExtractorWorkflow')
             for (idx, xp) in fields:
                 terms = []
-                data = rec.process_xpath(session, xp) # we only want top level stuff to feed into similar search
-                wf = db.get_object(session, 'KeywordExtractorWorkflow')
+                data = rec.process_xpath(session, xp)
                 terms = wf.process(session, data).keys()
 #                for d in data:
 #                    key = flattenTexts(d)
 #                    if (type(key) == unicode):
 #                        key = key.encode('utf-8')
 #                    terms.append(key)
-                
                 if len(terms):
-                    cqlClauses.append('%s any/%s "%s"' % (idx, cqlMods, ' '.join(terms)))
-            
-            cqlBool = ' or/%s ' % (cqlMods)
-
+                    cqlClauses.append('{0} any/{1} "{2}"'.format(idx, cqlMods, ' '.join(terms)))
+            cqlBool = ' or/{0} '.format(cqlMods)
         if not cqlClauses:
-            return '<p>Unable to locate similar records.</p>'
-        
+            return self._html('p', "Unable to locate similar records.")
         cql = cqlBool.join(cqlClauses)
         form = {'query': cql, 'firstrec': 1, 'numreq': 20, 'highlight': highlight}
         try:
-            #return self.search(form, 100)            # limit similar search results to 100 - noone will look through more than that anyway!
             return self.search(req, form)
         except ZeroDivisionError:
             self.htmlTitle.append('Error')
-            self.logger.log('*** unable to locate similar records')
-            return '<p>Unable to locate similar records.</p>'
+            msg = "Unable to locate similar records"
+            self.logger.log('*** {0}'.format(msg))
+            return self._html('p', msg)
+        except RuntimeError:
+            return form['query']
         #- end similar_search() ----------------------------------------------------
         
     def handle(self, req):
