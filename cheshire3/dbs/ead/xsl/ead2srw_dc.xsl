@@ -82,6 +82,7 @@
     </xsl:template>
 
 	<xsl:template match="did">
+	    <xsl:apply-templates select="./unitid"/>
 		<dc:title>
 			<xsl:choose>
 				<xsl:when test="./unittitle">
@@ -98,11 +99,20 @@
 				</xsl:otherwise>
 			</xsl:choose>
 		</dc:title>
-		<xsl:apply-templates select="./did/origination"/>
+		<xsl:apply-templates select="./unitdate"/>
+		<xsl:apply-templates select="./origination"/>
 	</xsl:template>
 
 	<!-- strip head tags - they're meaningless in Dublin Core -->
 	<xsl:template match="head"/>
+
+    <xsl:template match="unitid">
+        <dc:identifier><xsl:apply-templates/></dc:identifier>
+    </xsl:template>
+
+    <xsl:template match="unitdate">
+        <dc:date><xsl:apply-templates/></dc:date>
+    </xsl:template>
 
 	<xsl:template match="origination">
 		<dc:creator><xsl:apply-templates/></dc:creator>
