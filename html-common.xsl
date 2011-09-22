@@ -20,6 +20,7 @@
 	<xsl:include href="./configuration.xsl"/>
     
     <xsl:variable name="script" select="'SCRIPT'"/>
+    <xsl:variable name="data_script" select="'DATAURL'"/>
     <xsl:variable name="recid" select="'RECID'"/>
     <xsl:variable name="toc_cache_url" select="'TOC_CACHE_URL'"/>
 
@@ -1364,10 +1365,8 @@
                                     @role = 'http://www.archiveshub.ac.uk/apps/linkroles/parent' or
                                     @role = 'http://www.archiveshub.ac.uk/apps/linkroles/descendant' or
                                     @role = 'http://www.archiveshub.ac.uk/apps/linkroles/ancestor'">
-                        <xsl:value-of select="$script"/>
-                        <xsl:text>?</xsl:text>
-                        <xsl:text>operation=full</xsl:text>
-                        <xsl:text>&amp;recid=</xsl:text>
+                        <xsl:value-of select="$data_script"/>
+                        <xsl:text>/</xsl:text>
                         <xsl:value-of select="@href"/>
                     </xsl:when>
                     <xsl:otherwise>
