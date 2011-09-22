@@ -1064,8 +1064,8 @@
 	
         <h3>
 			<xsl:choose>
-			    <xsl:when test="did/unitdate">
-			        <xsl:apply-templates select ="did/unittitle"/>   
+			    <xsl:when test="did/unittitle">
+			        <xsl:apply-templates select="did/unittitle"/>   
 			    </xsl:when>
 			    <xsl:otherwise>
 			        <xsl:text>Untitled</xsl:text>
