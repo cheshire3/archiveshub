@@ -184,17 +184,6 @@
                     </td>
                 </tr>
 
-                <xsl:if test="physdesc">
-                    <tr>
-                        <td>
-                            <span class="fieldname">Physical Description</span>      
-                        </td>
-                        <td>
-                            <xsl:apply-templates select="physdesc"/>
-                        </td>
-                    </tr>
-                </xsl:if>
-              
                 <xsl:if test="origination">
                     <tr>
                         <td>
@@ -210,7 +199,18 @@
                         </td>
                     </tr>
                 </xsl:if>
-                
+
+                <xsl:if test="physdesc">
+                    <tr>
+                        <td>
+                            <span class="fieldname">Physical Description</span>      
+                        </td>
+                        <td>
+                            <xsl:apply-templates select="physdesc"/>
+                        </td>
+                    </tr>
+                </xsl:if>
+              
                 <xsl:if test="langmaterial">
                     <tr>
                         <td>
@@ -1071,21 +1071,6 @@
 			        <xsl:text>Untitled</xsl:text>
 			    </xsl:otherwise>
 			</xsl:choose>
-            
-			<xsl:text> (</xsl:text>
-            <xsl:choose>
-                <xsl:when test="did//unitdate">
-                    <xsl:value-of select="did//unitdate"/>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:text>undated</xsl:text>
-                </xsl:otherwise>
-            </xsl:choose>
-            <xsl:text>)</xsl:text>
-            <xsl:if test="did/origination">
-                <xsl:text> - </xsl:text>
-      		<xsl:apply-templates select="did/origination"/>
-    	   </xsl:if>
         </h3>
         
         <xsl:if test="./dao|./did/dao|./odd/dao|./scopecontent/dao|./daogrp|./did/daogrp|./odd/daogrp|./scopecontent/daogrp">
@@ -1098,17 +1083,68 @@
         <!-- did for this component -->
         <table summary="Descriptive Information - core information about this box, folder or item">
             <tr>
-                <td><strong>Reference</strong></td>
+                <td>
+                    <span class="fieldname">Dates of Creation</span>
+                </td>
+                <td>
+                    <xsl:choose>
+		                <xsl:when test="did//unitdate">
+		                    <xsl:for-each select="did//unitdate">
+		                        <xsl:if test="position() &gt; 1">
+		                            <br/>
+		                        </xsl:if>
+		                        <strong>
+		                            <xsl:apply-templates select="."/>
+		                        </strong>
+		                    </xsl:for-each>
+		                </xsl:when>
+		                <xsl:otherwise>
+                            <strong>
+                                <xsl:text>[undated]</xsl:text>
+                            </strong>
+		                </xsl:otherwise>
+                    </xsl:choose>
+                    
+                </td>
+            </tr>
+        
+            <tr>
+                <td>
+                    <span class="fieldname">Reference Number(s)</span>
+                </td>
                 <td>
                     <xsl:for-each select="did/unitid">
-                        <xsl:apply-templates select="."/><br/>
+                        <xsl:if test="position() &gt; 1">
+                            <br/>
+                        </xsl:if>
+                        <strong>
+                            <xsl:apply-templates select="."/>
+                        </strong>
                     </xsl:for-each>
                 </td>
             </tr>
             
+            <xsl:if test="did/origination">
+                    <tr>
+                        <td>
+                            <span class="fieldname">Name of Creator</span>
+                        </td>
+                        <td>
+                            <xsl:for-each select="did/origination">
+                                <xsl:if test="position() &gt; 1">
+                                    <xsl:text>,</xsl:text>
+                                </xsl:if>
+                                <xsl:apply-templates/>
+                            </xsl:for-each>
+                        </td>
+                    </tr>
+                </xsl:if>
+            
             <xsl:if test="did/physdesc">
                 <tr>
-                    <td><strong>Physical Description</strong></td>
+                    <td>
+                        <span class="fieldname">Physical Description</span>
+                    </td>
                     <td><xsl:apply-templates select="did/physdesc"/></td>
                 </tr>
             </xsl:if>
@@ -1116,7 +1152,7 @@
             <xsl:if test="langmaterial|did/langmaterial">
                 <tr>
                     <td>
-                        <strong>Language of Material</strong>
+                        <span class="fieldname">Language of Material</span>
                     </td>
                     <td>
                         <xsl:choose>
@@ -1133,7 +1169,9 @@
             
             <xsl:if test = "did/physloc">
                 <tr>
-                    <td>Location</td>
+                    <td>
+                        <span class="fieldname">Location</span>
+                    </td>
                     <td><xsl:value-of select="did/physloc"/></td>
                 </tr>
             </xsl:if>           
