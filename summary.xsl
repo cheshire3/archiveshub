@@ -40,9 +40,6 @@
             <!-- Core information about described material from <did> -->
             <xsl:apply-templates select="./archdesc/did"/>
             <!-- finding aid metadata from <eadheader> - creator, revisions etc -->
-            <xsl:if test="$finding_aid_metadata">
-                <xsl:apply-templates select="./eadheader"/>
-            </xsl:if>
         </div>
         <div class="archdesc">
             <!-- TEMPLATES FOR MAIN BODY -->
@@ -69,6 +66,9 @@
                     </xsl:call-template>
                 </xsl:if>
             </div>
+        </xsl:if>
+        <xsl:if test="$finding_aid_metadata">
+            <xsl:apply-templates select="./eadheader"/>
         </xsl:if>
     </xsl:template>
     
@@ -180,7 +180,7 @@
                 <xsl:text>_top</xsl:text>
             </xsl:attribute>
             <xsl:attribute name="title">
-                <xsl:text>Go to referenced section in the full version of the record [some sections unavailable in 'Summary' view.]</xsl:text>
+                <xsl:text>Go to referenced section in the Detailed Description [some sections unavailable in 'Summary' view.]</xsl:text>
             </xsl:attribute>
             <xsl:apply-templates/>
         </xsl:element>
@@ -196,9 +196,9 @@
                 <xsl:text>_top</xsl:text>
             </xsl:attribute>
             <xsl:attribute name="title">
-                <xsl:text>Go to full record.</xsl:text>
+                <xsl:text>Go to Detailed Description.</xsl:text>
             </xsl:attribute>
-            <img src="/img/v3_full.png" alt="'Full record'"/>
+            <img src="/img/v3_full.png" alt="'Detailed Description'"/>
         </xsl:element>
     </xsl:template>
 
