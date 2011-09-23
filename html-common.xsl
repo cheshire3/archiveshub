@@ -88,7 +88,7 @@
                     
                     <tr>
                         <td>
-                            <span class="fieldname">Held at</span>
+                            <span class="fieldname">This material is held at</span>
                         </td>
                         <td>
                             <strong><xsl:value-of select="repository[1]"/></strong>
