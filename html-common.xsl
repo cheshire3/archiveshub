@@ -105,14 +105,7 @@
                                     <xsl:attribute name="target">
                                         <xsl:text>_blank</xsl:text>
                                     </xsl:attribute>
-                                    <xsl:element name="img">
-                                        <xsl:attribute name="src">
-                                            <xsl:value-of select="archon_icon"/>
-                                        </xsl:attribute>
-                                        <xsl:attribute name="alt">
-                                            <xsl:text>Contact Details</xsl:text>
-                                        </xsl:attribute>
-                                    </xsl:element>
+                                    <xsl:text>Contact Details</xsl:text>
                                 </a>
                             </xsl:if>
                             <xsl:if test="$link_to_hubmap and string-length($repcode)">
@@ -131,14 +124,7 @@
                                     <xsl:attribute name="target">
                                         <xsl:text>_blank</xsl:text>
                                     </xsl:attribute>
-                                    <img>
-                                        <xsl:attribute name="src">
-                                            <xsl:value-of select="hubmap_icon"/>
-                                        </xsl:attribute>
-                                        <xsl:attribute name="alt">
-                                            <xsl:text>Location</xsl:text>
-                                        </xsl:attribute>
-                                    </img>
+                                    <xsl:text>Location</xsl:text>
                                 </a>
                             </xsl:if>
                         </td>
