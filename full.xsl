@@ -39,21 +39,22 @@
     </xsl:template>
 
     <xsl:template match="/ead">
-    	<div id="record-head">
-                <!-- Core information about described material from <did> -->
-                <xsl:apply-templates select="./archdesc/did"/>
-                <!-- finding aid metadata from <eadheader> - creator, revisions etc -->
-                <xsl:if test="$finding_aid_metadata">
-                  <xsl:apply-templates select="./eadheader"/>
-                </xsl:if>
-    	</div>
-    	<div class="archdesc">
-                <xsl:apply-templates select="./archdesc" />
-    	</div>
-    	<!-- DSC -->
-    	<div class="dsc">
-                <xsl:apply-templates select="./archdesc/dsc"/>
-    	</div>
+        <div id="record-head">
+            <!-- Core information about described material from <did> -->
+            <xsl:apply-templates select="./archdesc/did"/>
+        </div>
+        <div class="archdesc">
+            <xsl:apply-templates select="./archdesc" />
+        </div>
+        <!-- finding aid metadata from <eadheader> - creator, revisions etc -->
+        <!-- must go before dsc, otherwise would end up on final page, of maybe many! -->
+        <xsl:if test="$finding_aid_metadata">
+            <xsl:apply-templates select="./eadheader"/>
+        </xsl:if>
+        <!-- DSC -->
+        <div class="dsc">
+            <xsl:apply-templates select="./archdesc/dsc"/>
+        </div>
     </xsl:template>
 
 

@@ -43,14 +43,14 @@
         <div id="record-head">
             <!-- Core information about described material from <did> -->
             <xsl:apply-templates select="./archdesc/did"/>
-            <!-- finding aid metadata from <eadheader> - creator, revisions etc -->
-            <xsl:if test="$finding_aid_metadata">
-               <xsl:apply-templates select="./eadheader"/>
-            </xsl:if>
         </div>
         <div class="archdesc">
             <xsl:apply-templates select="./archdesc" />
         </div>
+        <!-- finding aid metadata from <eadheader> - creator, revisions etc -->
+        <xsl:if test="$finding_aid_metadata">
+           <xsl:apply-templates select="./eadheader"/>
+        </xsl:if>
         <p style="page-break-before: always" />
         <!-- DSC -->
         <xsl:apply-templates select="./archdesc/dsc"/>

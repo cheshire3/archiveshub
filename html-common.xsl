@@ -231,19 +231,21 @@
         </div>
 	</xsl:template>
 
-	<!-- EADHEADER -->
-	<xsl:template match="eadheader">
-		<strong>Cataloguing Info</strong>
-		<xsl:text> </xsl:text>
-		<a href="#eadheader" class="jstoggle-text"></a>
-		<div id="eadheader" class="jshide">
-            <table summary="Cataloguing Information - core information about this record">
-                <xsl:apply-templates select="filedesc"/>
-                <xsl:apply-templates select="profiledesc"/>
-                <xsl:apply-templates select="revisiondesc"/>
-            </table>
-		</div>
-	</xsl:template>
+    <!-- EADHEADER -->
+    <xsl:template match="eadheader">
+        <div class="cataloguinginfo">
+            <strong>Cataloguing Info</strong>
+            <xsl:text> </xsl:text>
+            <a href="#eadheader" class="jstoggle-text"></a>
+            <div id="eadheader" class="jshide">
+                <table summary="Cataloguing Information - core information about this record">
+                    <xsl:apply-templates select="filedesc"/>
+                    <xsl:apply-templates select="profiledesc"/>
+                    <xsl:apply-templates select="revisiondesc"/>
+                </table>
+            </div>
+        </div>
+    </xsl:template>
 
 	<xsl:template match="filedesc">
         <xsl:if test="titlestmt">
