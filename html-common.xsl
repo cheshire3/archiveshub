@@ -29,6 +29,21 @@
 
   	<!-- DID -->
 	<xsl:template match="did">
+        <!-- determine repository code -->
+        <xsl:variable name="repcode">
+            <xsl:choose>
+                <xsl:when test="string-length(unitid/@repositorycode)">
+                    <xsl:value-of select="unitid/@repositorycode"/>
+                </xsl:when>
+                <xsl:when test="string-length(/ead/eadheader/eadid/@mainagencycode)">
+                    <xsl:value-of select="/ead/eadheader/eadid/@mainagencycode"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:text>REPOSITORYCODE</xsl:text>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+	   
         <a>
         	<xsl:attribute name="name">
                 <xsl:choose>
@@ -46,7 +61,7 @@
         	<xsl:text> </xsl:text>
         </a>
         
-        <h2 class="unittitle">
+        <xsl:variable name="unittitle">
             <xsl:choose>
                 <xsl:when test="unittitle">
                     <xsl:apply-templates select="unittitle[1]"/>
@@ -61,9 +76,134 @@
                     <xsl:text>(untitled)</xsl:text>
                 </xsl:otherwise>
             </xsl:choose>
+        </xsl:variable>
+        
+        <h2 class="unittitle">
+            <xsl:value-of select="normalize-space($unittitle)"/>
         </h2>
 		
-		<!-- utility bar will go here -->
+		<!-- utility bar -->
+		<div id="utilitybar" class="bar utility">
+            <!-- Information -->
+            <ul class="info">
+                <li>
+                    <a  class="bgimg access">
+                        <xsl:attribute name="href">
+                            <xsl:text>http://archiveshub.ac.uk/help/access_to_materials</xsl:text>
+                        </xsl:attribute>
+                        <xsl:attribute name="title">
+                            <xsl:text>Help on how to access these materials</xsl:text>
+                        </xsl:attribute>
+                        <xsl:text>Access These Materials</xsl:text>
+                    </a>
+                </li>
+                <li>
+                    <a class="bgimg contact">
+                        <xsl:attribute name="href">
+                            <xsl:value-of select="$archon_url"/>
+                            <xsl:value-of select="$repcode" />
+                        </xsl:attribute>
+                        <xsl:attribute name="title">
+                            <xsl:text>Find contact details for the repository to arrange to see these materials [opens new window]</xsl:text>
+                        </xsl:attribute>
+                        <xsl:attribute name="target">
+                            <xsl:text>_blank</xsl:text>
+                        </xsl:attribute>
+                        <xsl:text>Contact the Repository</xsl:text>
+                    </a>
+                </li>
+                <li>
+                    <a class="bgimg location">
+					    <xsl:attribute name="href">
+					        <xsl:value-of select="$hubmap_url"/>
+					        <xsl:value-of select="$repcode" />
+					    </xsl:attribute>
+					    <xsl:attribute name="title">
+					        <xsl:text>View repository location in Archives Hub contributors map [opens new window]</xsl:text>
+					    </xsl:attribute>
+					    <xsl:attribute name="target">
+					        <xsl:text>_blank</xsl:text>
+					    </xsl:attribute>
+					    <xsl:text>Location of Repository</xsl:text>
+					</a>
+                </li>
+                <xsl:if test="..//dao|..//daogrp">
+                    <li>
+                        <span class="bgimg digital" title="This description contains links to digital material">
+                            <xsl:text>Digital material</xsl:text>
+                        </span>
+                        <xsl:text> </xsl:text>
+                        <a href="http://archiveshub.ac.uk/help/digitalmaterial" title="" class="helplink">
+                            <img src="http://archiveshub.ac.uk/img/structure/form_tip.png" alt="[?]"/>
+                        </a>
+                    </li>
+                </xsl:if>
+            </ul>
+            
+            <!-- Actions -->
+            <ul class="actions">
+                <li>
+                    <xsl:call-template name="switch-view-link"/>
+                </li>
+                <li>
+                    <a class="bgimg email">
+                        <xsl:attribute name="href">
+                            <xsl:value-of select="$script"/>
+                            <xsl:text>/email.html?recid=</xsl:text>
+                            <xsl:value-of select="$recid"/>
+                            <xsl:text>#rightcol</xsl:text>
+                        </xsl:attribute>
+                        <xsl:attribute name="title">
+                            <xsl:text>Send record as text in an e-mail</xsl:text>
+                        </xsl:attribute>
+                        <xsl:text>email</xsl:text>
+                    </a>
+                </li>
+            </ul>
+            
+            <!-- Share -->
+            <ul class="share">
+                <li>
+                    <iframe allowtransparency="true"
+                            frameborder="0" 
+                            scrolling="no" 
+                            style="width:130px; height:20px;">
+                        <xsl:attribute name="src">
+                            <xsl:text>//platform.twitter.com/widgets/tweet_button.html?</xsl:text>
+                            <!-- URL to share -->
+                            <xsl:text>url=http://archiveshub.ac.uk/data/</xsl:text>
+                            <xsl:value-of select="$recid"/>
+                            <!-- via me -->
+                            <xsl:text>&amp;via=archiveshub</xsl:text>
+                            <!-- Tweet text -->
+                            <xsl:if test="$unittitle != '(untitled)'">
+	                           <xsl:text>&amp;text=</xsl:text>    
+                               <xsl:value-of select="normalize-space($unittitle)"/>
+	                        </xsl:if>
+	                        <!-- Count position -->
+	                        <xsl:text>&amp;count=horizontal</xsl:text>
+                        </xsl:attribute>
+                    </iframe>
+                    
+<!--                    <a href="https://twitter.com/share" -->
+<!--                        class="twitter-share-button"-->
+<!--                        data-count="horizontal"-->
+<!--                        data-via="archiveshub">-->
+<!--                        <xsl:attribute name="data-url">-->
+<!--                            <xsl:text>http://archiveshub.ac.uk/data/</xsl:text>-->
+<!--                            <xsl:value-of select="$recid"/>-->
+<!--                        </xsl:attribute>-->
+<!--                        <xsl:if test="$unittitle != '(untitled)'">-->
+<!--                            <xsl:attribute name="data-text">-->
+<!--                                <xsl:value-of select="normalize-space($unittitle)"/>-->
+<!--                            </xsl:attribute>-->
+<!--                        </xsl:if>-->
+<!--                        <xsl:text>Tweet</xsl:text>-->
+<!--                    </a>-->
+<!--                    <script type="text/javascript" src="//platform.twitter.com/widgets.js"></script>-->
+                </li>
+            </ul>
+		</div>
 		
         <xsl:if test="./dao|../dao|../odd/dao|../scopecontent/dao|./daogrp|../daogrp|../odd/daogrp|../scopecontent/daogrp">
             <div class="daos">

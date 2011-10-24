@@ -32,10 +32,6 @@
     
     <!-- for complete EAD instances -->
     <xsl:template match="/ead">
-        <div id="full-link">
-            <xsl:text>See the </xsl:text>
-            <xsl:call-template name="full-record-link"/>
-        </div>
         <div id="record-head">
             <!-- Core information about described material from <did> -->
             <xsl:apply-templates select="./archdesc/did"/>
@@ -77,15 +73,10 @@
     <xsl:template match="/c3:component">
     	<!-- links to higher levels -->
     	<xsl:text>LINKTOPARENT</xsl:text>
-    	<div id="full-link">
-            <xsl:text>See the </xsl:text>
-            <xsl:call-template name="full-record-link"/>
-	</div>
-	<div id="record-head">
-		<!-- Core information about described material from <did> -->
-		<xsl:apply-templates select="./*/did[1]"/>
-	</div>
-	<br/>
+		<div id="record-head">
+			<!-- Core information about described material from <did> -->
+			<xsl:apply-templates select="./*/did[1]"/>
+		</div>
         <!-- TEMPLATES FOR MAIN BODY -->
         <xsl:apply-templates select="./*/scopecontent"/>
         <xsl:apply-templates select="./*/bioghist"/>
@@ -136,7 +127,7 @@
         </p>
         <p>
             <xsl:text>See the </xsl:text>
-            <xsl:call-template name="full-record-link"/>
+            <xsl:call-template name="switch-view-link"/>
             <xsl:choose>
                 <xsl:when test="$sub_count &gt; 1">
                     <xsl:text> to view them.</xsl:text>
@@ -186,11 +177,15 @@
         </xsl:element>
     </xsl:template>
     
-    
-    <xsl:template name="full-record-link">
+    <xsl:template name="switch-view-link">
         <xsl:element name="a">
+            <xsl:attribute name="class">
+                <xsl:text>bgimg detailed</xsl:text>
+            </xsl:attribute>
             <xsl:attribute name="href">
-                <xsl:text>DATAURL/RECID</xsl:text>
+                <xsl:value-of select="$data_script"/>
+                <xsl:text>/</xsl:text>
+                <xsl:value-of select="$recid"/>
             </xsl:attribute>
             <xsl:attribute name="target">
                 <xsl:text>_top</xsl:text>
@@ -198,7 +193,7 @@
             <xsl:attribute name="title">
                 <xsl:text>Go to Detailed Description.</xsl:text>
             </xsl:attribute>
-            <img src="/img/v3_full.png" alt="'Detailed Description'"/>
+            <xsl:text>Detailed Description</xsl:text>
         </xsl:element>
     </xsl:template>
 

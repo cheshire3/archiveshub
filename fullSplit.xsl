@@ -66,5 +66,25 @@
             <xsl:call-template name="single-component" />
         </xsl:if>
     </xsl:template>
+    
+    <xsl:template name="switch-view-link">
+        <xsl:element name="a">
+            <xsl:attribute name="class">
+                <xsl:text>bgimg brief</xsl:text>
+            </xsl:attribute>
+            <xsl:attribute name="href">
+                <xsl:value-of select="$script"/>
+                <xsl:text>/summary.html?recid=</xsl:text>
+                <xsl:value-of select="$recid"/>
+            </xsl:attribute>
+            <xsl:attribute name="target">
+                <xsl:text>_top</xsl:text>
+            </xsl:attribute>
+            <xsl:attribute name="title">
+                <xsl:text>Go to Brief Description.</xsl:text>
+            </xsl:attribute>
+            <xsl:text>Brief Description</xsl:text>
+        </xsl:element>
+    </xsl:template>
 
 </xsl:stylesheet>
