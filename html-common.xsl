@@ -355,6 +355,7 @@
                                 <xsl:text>,</xsl:text>
                             </xsl:if>
                         </xsl:for-each>
+
                     </td>
                 </tr>
             </xsl:if>
