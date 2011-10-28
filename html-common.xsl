@@ -1246,7 +1246,7 @@
             <xsl:text> </xsl:text>
         </a>
 	
-        <h3>
+        <h3 class="unittitle">
 			<xsl:choose>
 			    <xsl:when test="did/unittitle">
 			        <xsl:apply-templates select="did/unittitle"/>   
