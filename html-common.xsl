@@ -89,7 +89,7 @@
                 <li>
                     <a  class="bgimg access">
                         <xsl:attribute name="href">
-                            <xsl:text>http://archiveshub.ac.uk/help/access_to_materials</xsl:text>
+                            <xsl:text>http://archiveshub.ac.uk/accesstomaterials</xsl:text>
                         </xsl:attribute>
                         <xsl:attribute name="title">
                             <xsl:text>Help on how to access these materials</xsl:text>
@@ -133,7 +133,7 @@
                             <xsl:text>Digital material</xsl:text>
                         </span>
                         <xsl:text> </xsl:text>
-                        <a href="http://archiveshub.ac.uk/help/digitalmaterial" title="" class="helplink">
+                        <a href="http://archiveshub.ac.uk/displayhelp/#digitalmaterial" title="Find out about Digital Material" class="helplink tip">
                             <img src="http://archiveshub.ac.uk/img/structure/form_tip.png" alt="[?]"/>
                         </a>
                     </li>
@@ -146,7 +146,7 @@
                     <xsl:call-template name="switch-view-link"/>
                 </li>
                 <li>
-                    <a class="bgimg email">
+                    <a class="bgimg tip email">
                         <xsl:attribute name="href">
                             <xsl:value-of select="$script"/>
                             <xsl:text>/email.html?recid=</xsl:text>
