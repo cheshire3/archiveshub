@@ -154,9 +154,37 @@
                             <xsl:text>#rightcol</xsl:text>
                         </xsl:attribute>
                         <xsl:attribute name="title">
-                            <xsl:text>Send record as text in an e-mail</xsl:text>
+                            <xsl:text>Send detailed description as text in an e-mail</xsl:text>
                         </xsl:attribute>
-                        <xsl:text>email</xsl:text>
+                        <xsl:text>Email</xsl:text>
+                    </a>
+                </li>
+                <li>
+                    <a class="bgimg tip xml">
+                        <xsl:attribute name="href">
+                            <xsl:value-of select="$data_script"/>
+                            <xsl:text>/</xsl:text>
+                            <xsl:value-of select="$recid"/>
+                            <xsl:text>.xml</xsl:text>
+                        </xsl:attribute>
+                        <xsl:attribute name="title">
+                            <xsl:text>View this description as EAD (XML)</xsl:text>
+                        </xsl:attribute>
+                        <xsl:text>EAD (XML)</xsl:text>
+                    </a>
+                </li>
+                <li>
+                    <a class="bgimg tip text">
+                        <xsl:attribute name="href">
+                            <xsl:value-of select="$data_script"/>
+                            <xsl:text>/</xsl:text>
+                            <xsl:value-of select="$recid"/>
+                            <xsl:text>.txt</xsl:text>
+                        </xsl:attribute>
+                        <xsl:attribute name="title">
+                            <xsl:text>View this description as Plain Text</xsl:text>
+                        </xsl:attribute>
+                        <xsl:text>Text</xsl:text>
                     </a>
                 </li>
             </ul>
@@ -185,22 +213,6 @@
                         </xsl:attribute>
                     </iframe>
                     
-<!--                    <a href="https://twitter.com/share" -->
-<!--                        class="twitter-share-button"-->
-<!--                        data-count="horizontal"-->
-<!--                        data-via="archiveshub">-->
-<!--                        <xsl:attribute name="data-url">-->
-<!--                            <xsl:text>http://archiveshub.ac.uk/data/</xsl:text>-->
-<!--                            <xsl:value-of select="$recid"/>-->
-<!--                        </xsl:attribute>-->
-<!--                        <xsl:if test="$unittitle != '(untitled)'">-->
-<!--                            <xsl:attribute name="data-text">-->
-<!--                                <xsl:value-of select="normalize-space($unittitle)"/>-->
-<!--                            </xsl:attribute>-->
-<!--                        </xsl:if>-->
-<!--                        <xsl:text>Tweet</xsl:text>-->
-<!--                    </a>-->
-<!--                    <script type="text/javascript" src="//platform.twitter.com/widgets.js"></script>-->
                 </li>
             </ul>
 		</div>
