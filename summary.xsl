@@ -11,7 +11,7 @@
   xmlns:c3="http://www.cheshire3.org"
   xmlns="http://www.w3.org/1999/xhtml"
   xmlns:xhtml="http://www.w3.org/1999/xhtml"
-  exclude-result-prefixes="#default xhtml c3"
+  exclude-result-prefixes="#all #default xhtml c3"
   version="1.0">
   
     <!-- import common HTML templates -->
@@ -51,7 +51,7 @@
             <xsl:variable name="sub_count" select="count(./archdesc/dsc/c|./archdesc/dsc/c01)"/>
             <xsl:variable name="all_count" select="count(//c|//c01|//c02|//c03|//c04|//c05|//c06|//c07|//c08|//c09|//c10|//c11|//c12)"/>	
             <div class="dsc">
-	       <xsl:if test="$sub_count &gt; 0">
+                <xsl:if test="$sub_count &gt; 0">
                     <xsl:call-template name="count-subcomponents">
                         <xsl:with-param name="sub_count">
                             <xsl:value-of select="$sub_count"/>
@@ -109,7 +109,7 @@
     <xsl:template name="count-subcomponents">
         <xsl:param name="sub_count"/>
         <xsl:param name="all_count"/>
-        <h4 class="redheading">Additional Described Material</h4>
+        <h2 class="redheading">Additional Described Material</h2>
         <p>
             <xsl:text>This record has </xsl:text>
             <b><xsl:value-of select="$sub_count"/></b>
@@ -180,7 +180,7 @@
     <xsl:template name="switch-view-link">
         <xsl:element name="a">
             <xsl:attribute name="class">
-                <xsl:text>bgimg detailed</xsl:text>
+                <xsl:text>bgimg tip detailed</xsl:text>
             </xsl:attribute>
             <xsl:attribute name="href">
                 <xsl:value-of select="$data_script"/>
