@@ -78,9 +78,9 @@
             </xsl:choose>
         </xsl:variable>
         
-        <h2 class="unittitle">
+        <h1 class="unittitle">
             <xsl:value-of select="normalize-space($unittitle)"/>
-        </h2>
+        </h1>
 		
 		<!-- utility bar -->
 		<div id="utilitybar" class="bar utility">
@@ -219,7 +219,7 @@
 		
         <xsl:if test="./dao|../dao|../odd/dao|../scopecontent/dao|./daogrp|../daogrp|../odd/daogrp|../scopecontent/daogrp">
             <div class="daos">
-                <h4 class="daohead">Digital Objects</h4>
+                <h2 class="daohead">Digital Objects</h2>
                 <xsl:apply-templates select="./dao|../dao|../odd/dao|../scopecontent/dao|./daogrp|../daogrp|../odd/daogrp|../scopecontent/daogrp"/>
             </div>
         </xsl:if>
@@ -416,9 +416,11 @@
     <!-- EADHEADER -->
     <xsl:template match="eadheader">
         <div class="cataloguinginfo">
-            <strong>Cataloguing Info</strong>
-            <xsl:text> </xsl:text>
-            <a href="#eadheader" class="jstoggle-text"></a>
+            <h2 class="fieldhead-auto">
+                <xsl:text>Cataloguing Info</xsl:text>
+                <xsl:text> </xsl:text>
+                <a href="#eadheader" class="jstoggle-text"></a>
+            </h2>
             <div id="eadheader" class="jshide">
                 <table summary="Cataloguing Information - core information about this record">
                     <xsl:apply-templates select="filedesc"/>
@@ -619,10 +621,10 @@
             <xsl:variable name="headstring"><xsl:text>Administrative / Biographical History</xsl:text></xsl:variable>
 		 	<xsl:choose>
 		 		<xsl:when test="../../archdesc or ../../../c3:component">
-		 			<h3 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h3>
+		 			<h2 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h2>
 		 		</xsl:when>
 				<xsl:otherwise>
-					<h4 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h4>
+					<h3 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h3>
 				</xsl:otherwise>
 			</xsl:choose>
 		</xsl:if>
@@ -637,10 +639,10 @@
             <xsl:variable name="headstring"><xsl:text>Scope and Content</xsl:text></xsl:variable>
 	    	<xsl:choose>
 		  		<xsl:when test="../../archdesc or ../../../c3:component">
-		  			<h3 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h3>
+		  			<h2 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h2>
 		  		</xsl:when>
 				<xsl:otherwise>
-					<h4 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h4>
+					<h3 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h3>
 				</xsl:otherwise>
 	    	</xsl:choose>
 	    </xsl:if>
@@ -655,10 +657,10 @@
             <xsl:variable name="headstring"><xsl:text>Arrangement</xsl:text></xsl:variable>
 	    	<xsl:choose>
 		  		<xsl:when test="../../archdesc  or ../../../c3:component">
-		  			<h3 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h3>
+		  			<h2 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h2>
 		  		</xsl:when>
 		      	<xsl:otherwise>
-		      		<h4 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h4>
+		      		<h3 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h3>
 		      	</xsl:otherwise>
 		    </xsl:choose>
     	</xsl:if>
@@ -674,10 +676,10 @@
         <xsl:variable name="headstring"><xsl:text>Conditions Governing Access</xsl:text></xsl:variable>
     	<xsl:choose>
 	  		<xsl:when test="../../archdesc or ../../../c3:component">
-	  			<h3 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h3>
+	  			<h2 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h2>
 	  		</xsl:when>
       	<xsl:otherwise>
-      		<h4 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h4>
+      		<h3 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h3>
       	</xsl:otherwise>
       </xsl:choose>
     </xsl:if>
@@ -692,11 +694,11 @@
         <xsl:variable name="headstring"><xsl:text>Conditions Governing Use</xsl:text></xsl:variable>
     	<xsl:choose>
 	  		<xsl:when test="../../archdesc or ../../../c3:component">
-	  			<h3 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h3>
+	  			<h2 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h2>
 	  		</xsl:when>
-      	<xsl:otherwise>
-      		<h4 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h4>
-      	</xsl:otherwise>
+	      	<xsl:otherwise>
+	      		<h3 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h3>
+	      	</xsl:otherwise>
       </xsl:choose>
     </xsl:if>
     <xsl:apply-templates/>
@@ -710,11 +712,11 @@
         <xsl:variable name="headstring"><xsl:text>Physical Characteristics and/or Technical Requirements</xsl:text></xsl:variable>
         <xsl:choose>
             <xsl:when test="../../archdesc or ../../../c3:component">
-                <h3 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h3>
+                <h2 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h2>
             </xsl:when>
-        <xsl:otherwise>
-            <h4 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h4>
-        </xsl:otherwise>
+	        <xsl:otherwise>
+	            <h3 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h3>
+	        </xsl:otherwise>
       </xsl:choose>
     </xsl:if>
     <xsl:apply-templates/>
@@ -730,13 +732,13 @@
         <xsl:variable name="headstring"><xsl:text>Administrative Information</xsl:text></xsl:variable>
         <xsl:choose>
             <xsl:when test="../../archdesc or ../../../c3:component">
-                <h3 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h3>
+                <h2 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h2>
             </xsl:when>
-        <xsl:otherwise>
-            <h4 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h4>
-        </xsl:otherwise>
-      </xsl:choose>
-    </xsl:if>
+			<xsl:otherwise>
+			    <h3 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h3>
+			</xsl:otherwise>
+        </xsl:choose>
+	</xsl:if>
     <xsl:apply-templates/>
   </xsl:template>
   
@@ -749,10 +751,10 @@
         <xsl:variable name="headstring"><xsl:text>Appraisal Information</xsl:text></xsl:variable>
         <xsl:choose>
             <xsl:when test="../../archdesc or ../../../c3:component">
-                <h3 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h3>
+                <h2 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h2>
             </xsl:when>
         <xsl:otherwise>
-            <h4 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h4>
+            <h3 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h3>
         </xsl:otherwise>
       </xsl:choose>
     </xsl:if>
@@ -767,10 +769,10 @@
         <xsl:variable name="headstring"><xsl:text>Acquisition Information</xsl:text></xsl:variable>
         <xsl:choose>
             <xsl:when test="../../archdesc or ../../../c3:component">
-                <h3 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h3>
+                <h2 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h2>
             </xsl:when>
         <xsl:otherwise>
-            <h4 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h4>
+            <h3 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h3>
         </xsl:otherwise>
       </xsl:choose>
     </xsl:if>
@@ -785,11 +787,11 @@
         <xsl:variable name="headstring"><xsl:text>Custodial History</xsl:text></xsl:variable>
         <xsl:choose>
             <xsl:when test="../../archdesc or ../../../c3:component">
-                <h3 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h3>
+                <h2 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h2>
             </xsl:when>
-        <xsl:otherwise>
-            <h4 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h4>
-        </xsl:otherwise>
+	        <xsl:otherwise>
+	            <h3 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h3>
+	        </xsl:otherwise>
       </xsl:choose>
     </xsl:if>
     <xsl:apply-templates/>
@@ -803,11 +805,11 @@
         <xsl:variable name="headstring"><xsl:text>Accruals</xsl:text></xsl:variable>
         <xsl:choose>
             <xsl:when test="../../archdesc or ../../../c3:component">
-                <h3 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h3>
+                <h2 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h2>
             </xsl:when>
-        <xsl:otherwise>
-            <h4 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h4>
-        </xsl:otherwise>
+	        <xsl:otherwise>
+	            <h3 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h3>
+	        </xsl:otherwise>
       </xsl:choose>
     </xsl:if>
     <xsl:apply-templates/>
@@ -821,11 +823,11 @@
         <xsl:variable name="headstring"><xsl:text>Archivist's Note</xsl:text></xsl:variable>
         <xsl:choose>
             <xsl:when test="../../archdesc or ../../../c3:component">
-                <h3 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h3>
+                <h2 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h2>
             </xsl:when>
-        <xsl:otherwise>
-            <h4 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h4>
-        </xsl:otherwise>
+	        <xsl:otherwise>
+	            <h3 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h3>
+	        </xsl:otherwise>
       </xsl:choose>
     </xsl:if>
     <xsl:apply-templates/>
@@ -842,11 +844,11 @@
         <xsl:variable name="headstring"><xsl:text>Other Finding Aid</xsl:text></xsl:variable>
         <xsl:choose>
             <xsl:when test="../../archdesc or ../../../c3:component">
-                <h3 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h3>
+                <h2 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h2>
             </xsl:when>
-        <xsl:otherwise>
-            <h4 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h4>
-        </xsl:otherwise>
+	        <xsl:otherwise>
+	            <h3 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h3>
+	        </xsl:otherwise>
       </xsl:choose>
     </xsl:if>
     <xsl:apply-templates/>
@@ -861,11 +863,11 @@
         <xsl:variable name="headstring"><xsl:text>Location of Originals</xsl:text></xsl:variable>
         <xsl:choose>
             <xsl:when test="../../archdesc or ../../../c3:component">
-                <h3 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h3>
+                <h2 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h2>
             </xsl:when>
-        <xsl:otherwise>
-            <h4 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h4>
-        </xsl:otherwise>
+	        <xsl:otherwise>
+	            <h3 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h3>
+	        </xsl:otherwise>
       </xsl:choose>
     </xsl:if>
     <xsl:apply-templates/>
@@ -879,10 +881,10 @@
         <xsl:variable name="headstring"><xsl:text>Alternative Form Available</xsl:text></xsl:variable>
         <xsl:choose>
             <xsl:when test="../../archdesc or ../../../c3:component">
-                <h3 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h3>
+                <h2 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h2>
             </xsl:when>
             <xsl:otherwise>
-                <h4 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h4>
+                <h3 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h3>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:if>
@@ -898,10 +900,10 @@
         <xsl:variable name="headstring"><xsl:text>Related Material</xsl:text></xsl:variable>
     	<xsl:choose>
             <xsl:when test="../../archdesc or ../../../c3:component">
-                <h3 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h3>
+                <h2 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h2>
             </xsl:when>
             <xsl:otherwise>
-                <h4 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h4>
+                <h3 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h3>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:if>
@@ -917,10 +919,10 @@
         <xsl:variable name="headstring"><xsl:text>Separated Material</xsl:text></xsl:variable>
     	<xsl:choose>
             <xsl:when test="../../archdesc or ../../../c3:component">
-                <h3 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h3>
+                <h2 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h2>
             </xsl:when>
             <xsl:otherwise>
-                <h4 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h4>
+                <h3 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h3>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:if>
@@ -939,10 +941,10 @@
 				<xsl:apply-templates select="head" />
 			</xsl:when>
 			<xsl:when test="../../archdesc or ../../../c3:component">
-                <h3 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h3>
+                <h2 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h2>
             </xsl:when>
             <xsl:otherwise>
-                <h4 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h4>
+                <h3 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h3>
             </xsl:otherwise>
 		</xsl:choose>
 		<xsl:choose>
@@ -967,10 +969,10 @@
             <xsl:variable name="headstring"><xsl:text>Preferred Citation</xsl:text></xsl:variable>
 			<xsl:choose>
 		  		<xsl:when test="../../archdesc or ../../../c3:component">
-                    <h3 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h3>
+                    <h2 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h2>
                 </xsl:when>
                 <xsl:otherwise>
-                    <h4 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h4>
+                    <h3 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h3>
                 </xsl:otherwise>
       		</xsl:choose>
 	  	</xsl:if>
@@ -999,10 +1001,10 @@
             <xsl:variable name="headstring"><xsl:text>Other Descriptive Data</xsl:text></xsl:variable>
 			<xsl:choose>
                 <xsl:when test="../../archdesc or ../../../c3:component">
-                    <h3 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h3>
+                    <h2 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h2>
                 </xsl:when>
                 <xsl:otherwise>
-                    <h4 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h4>
+                    <h3 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h3>
                 </xsl:otherwise>
 			</xsl:choose>	
 	  	</xsl:if>
@@ -1022,10 +1024,10 @@
                 <xsl:apply-templates select="head"/>
             </xsl:when>
             <xsl:when test="../../archdesc or ../../../c3:component">
-                <h3 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h3>
+                <h2 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h2>
             </xsl:when>
             <xsl:otherwise>
-                <h4 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h4>
+                <h3 class="fieldhead-auto"><xsl:value-of select="$headstring"/></h3>
             </xsl:otherwise>
         </xsl:choose>
 		
@@ -1246,7 +1248,7 @@
             <xsl:text> </xsl:text>
         </a>
 	
-        <h3 class="unittitle">
+        <h2 class="unittitle">
 			<xsl:choose>
 			    <xsl:when test="did/unittitle">
 			        <xsl:apply-templates select="did/unittitle"/>   
@@ -1255,11 +1257,11 @@
 			        <xsl:text>Untitled</xsl:text>
 			    </xsl:otherwise>
 			</xsl:choose>
-        </h3>
+        </h2>
         
         <xsl:if test="./dao|./did/dao|./odd/dao|./scopecontent/dao|./daogrp|./did/daogrp|./odd/daogrp|./scopecontent/daogrp">
             <div class="daos">
-                <h4 class="daohead">Digital Objects:</h4>
+                <h3 class="daohead">Digital Objects:</h3>
                 <xsl:apply-templates select="./dao|./did/dao|./odd/dao|./scopecontent/dao|./daogrp|./did/daogrp|./odd/daogrp|./scopecontent/daogrp"/>
             </div>
         </xsl:if>
@@ -1310,10 +1312,10 @@
 	<xsl:template match="head">
 		<xsl:choose>
 			<xsl:when test="../../head or not(../../../archdesc or ../../../../c3:component)">
-				<h4 class="fieldhead-ead"><xsl:apply-templates /></h4>
+				<h3 class="fieldhead-ead"><xsl:apply-templates /></h3>
 			</xsl:when>
 			<xsl:otherwise>
-				<h3 class="fieldhead-ead"><xsl:apply-templates /></h3>				
+				<h2 class="fieldhead-ead"><xsl:apply-templates /></h2>				
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
@@ -1362,10 +1364,10 @@
             <xsl:variable name="headstring"><xsl:text>Note</xsl:text></xsl:variable>
             <xsl:choose>
                 <xsl:when test="../../archdesc or ../../../c3:component">
-                    <h3 class="ead"><xsl:value-of select="$headstring"/></h3>
+                    <h2 class="ead"><xsl:value-of select="$headstring"/></h2>
                 </xsl:when>
                 <xsl:otherwise>
-                    <h4 class="ead"><xsl:value-of select="$headstring"/></h4>
+                    <h3 class="ead"><xsl:value-of select="$headstring"/></h3>
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:if>
