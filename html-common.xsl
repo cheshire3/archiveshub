@@ -191,29 +191,6 @@
             
             <!-- Share -->
             <ul class="share">
-                <li>
-                    <iframe allowtransparency="true"
-                            frameborder="0" 
-                            scrolling="no" 
-                            style="width:130px; height:20px;">
-                        <xsl:attribute name="src">
-                            <xsl:text>//platform.twitter.com/widgets/tweet_button.html?</xsl:text>
-                            <!-- URL to share -->
-                            <xsl:text>url=http://archiveshub.ac.uk/data/</xsl:text>
-                            <xsl:value-of select="$recid"/>
-                            <!-- via me -->
-                            <xsl:text>&amp;via=archiveshub</xsl:text>
-                            <!-- Tweet text -->
-                            <xsl:if test="$unittitle != '(untitled)'">
-	                           <xsl:text>&amp;text=</xsl:text>    
-                               <xsl:value-of select="normalize-space($unittitle)"/>
-	                        </xsl:if>
-	                        <!-- Count position -->
-	                        <xsl:text>&amp;count=horizontal</xsl:text>
-                        </xsl:attribute>
-                    </iframe>
-                    
-                </li>
             </ul>
 		</div>
 		
