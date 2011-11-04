@@ -84,6 +84,13 @@
 		
 		<!-- utility bar -->
 		<div id="utilitybar" class="bar utility">
+		    <!-- Switch Version (Level of detail) -->
+		    <ul class="detail">
+				<li>
+				      <xsl:call-template name="switch-view-link"/>
+				</li>
+		    </ul>
+
             <!-- Information -->
             <ul class="info">
                 <li>
@@ -129,7 +136,7 @@
                 </li>
                 <xsl:if test="..//dao|..//daogrp">
                     <li>
-                        <span class="bgimg digital" title="This description contains links to digital material">
+                        <span class="bgimg digital" title="This description contains links to digital material. This may be further down in the Detailed Description.">
                             <xsl:text>Digital material</xsl:text>
                         </span>
                         <xsl:text> </xsl:text>
@@ -142,9 +149,6 @@
             
             <!-- Actions -->
             <ul class="actions">
-                <li>
-                    <xsl:call-template name="switch-view-link"/>
-                </li>
                 <li>
                     <a class="bgimg tip email">
                         <xsl:attribute name="href">
@@ -168,9 +172,9 @@
                             <xsl:text>.xml</xsl:text>
                         </xsl:attribute>
                         <xsl:attribute name="title">
-                            <xsl:text>View this description as EAD (XML)</xsl:text>
+                            <xsl:text>View this description as XML (In EAD Schema)</xsl:text>
                         </xsl:attribute>
-                        <xsl:text>EAD (XML)</xsl:text>
+                        <xsl:text>View XML</xsl:text>
                     </a>
                 </li>
                 <li>
@@ -182,16 +186,14 @@
                             <xsl:text>.txt</xsl:text>
                         </xsl:attribute>
                         <xsl:attribute name="title">
-                            <xsl:text>View this description as Plain Text</xsl:text>
+                            <xsl:text>View this description as Plain-Text</xsl:text>
                         </xsl:attribute>
-                        <xsl:text>Text</xsl:text>
+                        <xsl:text>View Text</xsl:text>
                     </a>
                 </li>
+                <li>Share</li>
             </ul>
             
-            <!-- Share -->
-            <ul class="share">
-            </ul>
 		</div>
 		
         <xsl:if test="./dao|../dao|../odd/dao|../scopecontent/dao|./daogrp|../daogrp|../odd/daogrp|../scopecontent/daogrp">
