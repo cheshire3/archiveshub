@@ -83,6 +83,13 @@
         </h1>
 		
 		<!-- utility bar -->
+		<xsl:variable name="data_uri_base">
+            <xsl:text>http://archiveshub.ac.uk</xsl:text>
+            <xsl:value-of select="$data_script"/>
+            <xsl:text>/</xsl:text>
+            <xsl:value-of select="$recid"/>
+		</xsl:variable>
+		
 		<div id="utilitybar" class="bar utility">
 		    <!-- Switch Version (Level of detail) -->
 		    <ul class="detail">
@@ -166,9 +173,7 @@
                 <li>
                     <a class="bgimg tip xml">
                         <xsl:attribute name="href">
-                            <xsl:value-of select="$data_script"/>
-                            <xsl:text>/</xsl:text>
-                            <xsl:value-of select="$recid"/>
+                            <xsl:value-of select="$data_uri_base"/>
                             <xsl:text>.xml</xsl:text>
                         </xsl:attribute>
                         <xsl:attribute name="title">
@@ -180,9 +185,7 @@
                 <li>
                     <a class="bgimg tip text">
                         <xsl:attribute name="href">
-                            <xsl:value-of select="$data_script"/>
-                            <xsl:text>/</xsl:text>
-                            <xsl:value-of select="$recid"/>
+                            <xsl:value-of select="$data_uri_base"/>
                             <xsl:text>.txt</xsl:text>
                         </xsl:attribute>
                         <xsl:attribute name="title">
