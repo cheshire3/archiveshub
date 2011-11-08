@@ -73,149 +73,192 @@
         </xsl:if>
 
 	    <div class="did">
-            <table summary="Descriptive Information - core information about the described material">
-                <xsl:if test="repository">
-                    <xsl:variable name="repcode">
-                        <xsl:choose>
-                            <xsl:when test="unitid/@repositorycode">
-                                <xsl:value-of select="unitid/@repositorycode"/>
-                            </xsl:when>
-                            <xsl:when test="/ead/eadheader/eadid/@mainagencycode">
-                                <xsl:value-of select="/ead/eadheader/eadid/@mainagencycode"/>
-                            </xsl:when>
-                        </xsl:choose>
-                    </xsl:variable>
-                    
-                    <tr>
-                        <td>
-                            <span class="fieldname">This material is held at</span>
-                        </td>
-                        <td>
-                            <strong><xsl:value-of select="repository[1]"/></strong>
-                            <xsl:if test="$link_to_archon and string-length($repcode)">
-                                <xsl:text>&#160;&#160;&#160;</xsl:text>
-                                <a>
-                                    <xsl:attribute name="href">
-                                        <xsl:value-of select="$archon_url"/>
-                                        <xsl:value-of select="$repcode" />
-                                    </xsl:attribute>
-                                    <xsl:attribute name="title">
-                                        <xsl:text>Look up repository contact details in ARCHON [opens new window]</xsl:text>
-                                    </xsl:attribute>
-                                    <xsl:attribute name="target">
-                                        <xsl:text>_blank</xsl:text>
-                                    </xsl:attribute>
-                                    <xsl:text>Contact Details</xsl:text>
-                                </a>
-                            </xsl:if>
-                            <xsl:if test="$link_to_hubmap and string-length($repcode)">
-                                <xsl:if test="$link_to_archon">
-                                    <xsl:text>&#160;&#160;&#160;|</xsl:text>
-                                </xsl:if>
-                                <xsl:text>&#160;&#160;&#160;</xsl:text>
-                                <a>
-                                    <xsl:attribute name="href">
-                                        <xsl:value-of select="$hubmap_url"/>
-                                        <xsl:value-of select="$repcode" />
-                                    </xsl:attribute>
-                                    <xsl:attribute name="title">
-                                        <xsl:text>View repository location in Archives Hub contributors map [opens new window]</xsl:text>
-                                    </xsl:attribute>
-                                    <xsl:attribute name="target">
-                                        <xsl:text>_blank</xsl:text>
-                                    </xsl:attribute>
-                                    <xsl:text>Location</xsl:text>
-                                </a>
-                            </xsl:if>
-                        </td>
-                    </tr>
-                </xsl:if>
-                
-                <tr>
-                    <td><span class="fieldname">Reference Number(s)</span></td>
-                    <td>
-                        <span style="font-weight: bolder" title="Please quote this when contacting the repository about this record">
-                        <xsl:choose>
-                          <xsl:when test="unitid">
-                            <xsl:for-each select="unitid">
-                                <xsl:if test="position() > 1">
-                                    <br/>
-                                </xsl:if>
-                                <xsl:apply-templates select="."/>
-                            </xsl:for-each>
-                          </xsl:when>
-                          <xsl:otherwise>
-                            <xsl:text>(none)</xsl:text>
-                          </xsl:otherwise>
-                        </xsl:choose>
-                        </span>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td>
-                        <span class="fieldname">Dates of Creation</span>
-                    </td>
-                    <td>
-                        <strong>
-                        <xsl:choose>
-                          <xsl:when test=".//unitdate">
-                            <xsl:apply-templates select=".//unitdate"/>
-                          </xsl:when>
-                          <xsl:otherwise>
-                            <xsl:text>[undated]</xsl:text>
-                          </xsl:otherwise>
-                        </xsl:choose>
-                        </strong>
-                    </td>
-                </tr>
-
-                <xsl:if test="origination">
-                    <tr>
-                        <td>
-                            <span class="fieldname">Name of Creator</span>
-                        </td>
-                        <td>
-                            <xsl:for-each select="origination">
-                                <xsl:apply-templates/>
-                                   <xsl:if test="position() &lt; count(../origination)">
-                                    <xsl:text>,</xsl:text>
-                                </xsl:if>
-                            </xsl:for-each>
-                        </td>
-                    </tr>
-                </xsl:if>
-
-                <xsl:if test="physdesc">
-                    <tr>
-                        <td>
-                            <span class="fieldname">Physical Description</span>      
-                        </td>
-                        <td>
-                            <xsl:apply-templates select="physdesc"/>
-                        </td>
-                    </tr>
-                </xsl:if>
-              
-                <xsl:if test="langmaterial">
-                    <tr>
-                        <td>
-                            <span class="fieldname">Language of Material</span>
-                        </td>
-                        <td>
-                            <xsl:apply-templates select="langmaterial"/>    
-                        </td>  
-                    </tr>
-                </xsl:if>
-                
-            </table>
-                
+            <xsl:apply-templates select="." mode="didtable"/>
             <xsl:if test="processinfo">
                 <xsl:apply-templates select="processinfo"/>      
             </xsl:if>
-            
         </div>
-	</xsl:template>
+        
+    </xsl:template>
+
+    <xsl:template match="did" mode="didtable">
+        <table summary="Descriptive Information - core information about the described material">
+            <xsl:if test="repository">
+                <xsl:variable name="repcode">
+                    <xsl:choose>
+                        <xsl:when test="unitid/@repositorycode">
+                            <xsl:value-of select="unitid/@repositorycode"/>
+                        </xsl:when>
+                        <xsl:when test="/ead/eadheader/eadid/@mainagencycode">
+                            <xsl:value-of select="/ead/eadheader/eadid/@mainagencycode"/>
+                        </xsl:when>
+                    </xsl:choose>
+                </xsl:variable>
+                
+                <tr>
+                    <td>
+                        <span class="fieldname">This material is held at</span>
+                    </td>
+                    <td>
+                        <strong><xsl:value-of select="repository[1]"/></strong>
+                        <xsl:if test="$link_to_archon and string-length($repcode)">
+                            <xsl:text>&#160;&#160;&#160;</xsl:text>
+                            <a>
+                                <xsl:attribute name="href">
+                                    <xsl:value-of select="$archon_url"/>
+                                    <xsl:value-of select="$repcode" />
+                                </xsl:attribute>
+                                <xsl:attribute name="title">
+                                    <xsl:text>Look up repository contact details in ARCHON [opens new window]</xsl:text>
+                                </xsl:attribute>
+                                <xsl:attribute name="target">
+                                    <xsl:text>_blank</xsl:text>
+                                </xsl:attribute>
+                                <xsl:text>Contact Details</xsl:text>
+                            </a>
+                        </xsl:if>
+                        <xsl:if test="$link_to_hubmap and string-length($repcode)">
+                            <xsl:if test="$link_to_archon">
+                                <xsl:text>&#160;&#160;&#160;|</xsl:text>
+                            </xsl:if>
+                            <xsl:text>&#160;&#160;&#160;</xsl:text>
+                            <a>
+                                <xsl:attribute name="href">
+                                    <xsl:value-of select="$hubmap_url"/>
+                                    <xsl:value-of select="$repcode" />
+                                </xsl:attribute>
+                                <xsl:attribute name="title">
+                                    <xsl:text>View repository location in Archives Hub contributors map [opens new window]</xsl:text>
+                                </xsl:attribute>
+                                <xsl:attribute name="target">
+                                    <xsl:text>_blank</xsl:text>
+                                </xsl:attribute>
+                                <xsl:text>Location</xsl:text>
+                            </a>
+                        </xsl:if>
+                    </td>
+                </tr>
+            </xsl:if>
+            
+            <tr class="tip" title="Please quote this when contacting the repository about this record">
+                <td><span class="fieldname">Reference Number(s)</span></td>
+                <td>
+                  <xsl:choose>
+                    <xsl:when test="unitid">
+                      <xsl:for-each select="unitid">
+                        <xsl:choose>
+                          <xsl:when test="@label = 'Former Reference'">
+                             <!-- deal with these separately -->
+                          </xsl:when> 
+                          <xsl:otherwise>
+                            <xsl:if test="position() &gt; 1">
+                              <br/>
+                            </xsl:if>
+                            <span style="font-weight: bolder">
+                              <xsl:apply-templates select="."/>
+                            </span>
+                          </xsl:otherwise>      
+                        </xsl:choose>
+                      </xsl:for-each>
+                    </xsl:when>
+                    <xsl:otherwise>
+                      <xsl:text>(none)</xsl:text>
+                    </xsl:otherwise>
+                  </xsl:choose>
+                </td>
+            </tr>
+            
+            <xsl:if test="unitid[@label='Former Reference']">
+              <tr>
+                <td><span class="fieldname">Alternative Reference Number(s)</span></td>
+                <td>
+                    <xsl:apply-templates select="unitid[@label='Former Reference']"/>
+                </td>
+              </tr>
+            </xsl:if>
+            
+            <tr>
+                <td>
+                    <span class="fieldname">Dates of Creation</span>
+                </td>
+                <td>
+                    <xsl:choose>
+                        <xsl:when test=".//unitdate">
+                            <xsl:for-each select=".//unitdate">
+                                <xsl:if test="position() &gt; 1">
+                                    <br/>
+                                </xsl:if>
+                                <strong>
+                                    <xsl:apply-templates select="."/>
+                                </strong>
+                            </xsl:for-each>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <strong>
+                                <xsl:text>[undated]</xsl:text>
+                            </strong>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                    
+                </td>
+            </tr>
+            
+            <xsl:if test="origination">
+                <tr>
+                    <td>
+                        <span class="fieldname">Name of Creator</span>
+                    </td>
+                    <td>
+                        <xsl:for-each select="origination">
+                            <xsl:apply-templates/>
+                            <xsl:if test="position() &lt; last()">
+                                <xsl:text>,</xsl:text>
+                            </xsl:if>
+                        </xsl:for-each>
+                    </td>
+                </tr>
+            </xsl:if>
+            
+            <xsl:if test="langmaterial|../langmaterial">
+                <tr>
+                    <td>
+                        <span class="fieldname">Language of Material</span>
+                    </td>
+                    <td>
+                        <xsl:choose>
+                            <xsl:when test="langmaterial">
+                                <xsl:apply-templates select="langmaterial"/>
+                            </xsl:when>
+                            <xsl:when test="../langmaterial">
+                                <xsl:apply-templates select="../langmaterial"/>
+                            </xsl:when>
+                        </xsl:choose>    
+                    </td>  
+                </tr>
+            </xsl:if>
+            
+            <xsl:if test="physdesc">
+                <tr>
+                    <td>
+                        <span class="fieldname">Physical Description</span>      
+                    </td>
+                    <td>
+                        <xsl:apply-templates select="physdesc"/>
+                    </td>
+                </tr>
+            </xsl:if>
+            
+            <xsl:if test = "physloc">
+                <tr>
+                    <td>
+                        <span class="fieldname">Location</span>
+                    </td>
+                    <td><xsl:value-of select="physloc"/></td>
+                </tr>
+            </xsl:if>
+            
+        </table>
+    </xsl:template>
 
     <!-- EADHEADER -->
     <xsl:template match="eadheader">
@@ -637,7 +680,7 @@
   
   
   <!-- USER INFO -->
-	<!--  OTHER FINDING AIDS -->
+  <!-- OTHER FINDING AIDS -->
   <xsl:template match="otherfindaid">
   	<xsl:if test="@id">
   		<a name="{@id}"><xsl:text> </xsl:text></a>
@@ -1069,103 +1112,8 @@
         </xsl:if>
         
         <!-- did for this component -->
-        <table summary="Descriptive Information - core information about this box, folder or item">
-            <tr>
-                <td>
-                    <span class="fieldname">Dates of Creation</span>
-                </td>
-                <td>
-                    <xsl:choose>
-		                <xsl:when test="did//unitdate">
-		                    <xsl:for-each select="did//unitdate">
-		                        <xsl:if test="position() &gt; 1">
-		                            <br/>
-		                        </xsl:if>
-		                        <strong>
-		                            <xsl:apply-templates select="."/>
-		                        </strong>
-		                    </xsl:for-each>
-		                </xsl:when>
-		                <xsl:otherwise>
-                            <strong>
-                                <xsl:text>[undated]</xsl:text>
-                            </strong>
-		                </xsl:otherwise>
-                    </xsl:choose>
-                    
-                </td>
-            </tr>
+        <xsl:apply-templates select="did" mode="didtable"/>
         
-            <tr>
-                <td>
-                    <span class="fieldname">Reference Number(s)</span>
-                </td>
-                <td>
-                    <xsl:for-each select="did/unitid">
-                        <xsl:if test="position() &gt; 1">
-                            <br/>
-                        </xsl:if>
-                        <strong>
-                            <xsl:apply-templates select="."/>
-                        </strong>
-                    </xsl:for-each>
-                </td>
-            </tr>
-            
-            <xsl:if test="did/origination">
-                    <tr>
-                        <td>
-                            <span class="fieldname">Name of Creator</span>
-                        </td>
-                        <td>
-                            <xsl:for-each select="did/origination">
-                                <xsl:if test="position() &gt; 1">
-                                    <xsl:text>,</xsl:text>
-                                </xsl:if>
-                                <xsl:apply-templates/>
-                            </xsl:for-each>
-                        </td>
-                    </tr>
-                </xsl:if>
-            
-            <xsl:if test="did/physdesc">
-                <tr>
-                    <td>
-                        <span class="fieldname">Physical Description</span>
-                    </td>
-                    <td><xsl:apply-templates select="did/physdesc"/></td>
-                </tr>
-            </xsl:if>
-                        
-            <xsl:if test="langmaterial|did/langmaterial">
-                <tr>
-                    <td>
-                        <span class="fieldname">Language of Material</span>
-                    </td>
-                    <td>
-                        <xsl:choose>
-                            <xsl:when test="langmaterial">
-                                <xsl:apply-templates select="langmaterial"/>
-                            </xsl:when>
-                            <xsl:when test="did/langmaterial">
-                                <xsl:apply-templates select="did/langmaterial"/>
-                            </xsl:when>
-                        </xsl:choose>
-                    </td>
-                </tr>
-            </xsl:if>
-            
-            <xsl:if test = "did/physloc">
-                <tr>
-                    <td>
-                        <span class="fieldname">Location</span>
-                    </td>
-                    <td><xsl:value-of select="did/physloc"/></td>
-                </tr>
-            </xsl:if>           
-
-        </table>
-
     	<xsl:apply-templates select="did/note" mode="own-section"/>
     	<xsl:apply-templates select="scopecontent"/>
     	<xsl:apply-templates select="bioghist"/>
