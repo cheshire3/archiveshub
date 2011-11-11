@@ -33,6 +33,10 @@
     <xsl:template match='*[@audience="internal"]' priority="100" />
     -->
     
+    <xsl:template match="c3:component">
+        <xsl:apply-templates/>
+    </xsl:template>
+    
     <xsl:template match="*">
         <xsl:variable name="tagname" select="local-name(.)"/>
         <xsl:choose>
