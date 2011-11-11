@@ -30,20 +30,6 @@
 
   	<!-- DID -->
 	<xsl:template match="did">
-        <!-- determine repository code -->
-        <xsl:variable name="repcode">
-            <xsl:choose>
-                <xsl:when test="string-length(unitid/@repositorycode)">
-                    <xsl:value-of select="unitid/@repositorycode"/>
-                </xsl:when>
-                <xsl:when test="string-length(/ead/eadheader/eadid/@mainagencycode)">
-                    <xsl:value-of select="/ead/eadheader/eadid/@mainagencycode"/>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:text>REPOSITORYCODE</xsl:text>
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:variable>
 	   
         <a>
         	<xsl:attribute name="name">
@@ -82,158 +68,26 @@
         <h1 class="unittitle">
             <xsl:value-of select="normalize-space($unittitle)"/>
         </h1>
-		
+
 		<!-- utility bar -->
-		<xsl:variable name="data_uri_base">
-            <xsl:text>http://archiveshub.ac.uk</xsl:text>
-            <xsl:value-of select="$data_script"/>
-            <xsl:text>/</xsl:text>
-            <xsl:value-of select="$recid"/>
-		</xsl:variable>
-		
-		<div id="utilitybar" class="bar utility">
-		    <!-- Switch Version (Level of detail) -->
-		    <ul class="detail">
-				<li>
-				      <xsl:call-template name="switch-view-link"/>
-				</li>
-		    </ul>
-
-            <!-- Information -->
-            <ul class="info">
-                <li>
-                    <a  class="bgimg access">
-                        <xsl:attribute name="href">
-                            <xsl:text>http://archiveshub.ac.uk/accesstomaterials</xsl:text>
-                        </xsl:attribute>
-                        <xsl:attribute name="title">
-                            <xsl:text>Help on how to access these materials</xsl:text>
-                        </xsl:attribute>
-                        <xsl:text>Access These Materials</xsl:text>
-                    </a>
-                </li>
-                <li>
-                    <a class="bgimg contact">
-                        <xsl:attribute name="href">
-                            <xsl:value-of select="$archon_url"/>
-                            <xsl:value-of select="$repcode" />
-                        </xsl:attribute>
-                        <xsl:attribute name="title">
-                            <xsl:text>Find contact details for the repository to arrange to see these materials [opens new window]</xsl:text>
-                        </xsl:attribute>
-                        <xsl:attribute name="target">
-                            <xsl:text>_blank</xsl:text>
-                        </xsl:attribute>
-                        <xsl:text>Contact the Repository</xsl:text>
-                    </a>
-                </li>
-                <li>
-                    <a class="bgimg location">
-					    <xsl:attribute name="href">
-					        <xsl:value-of select="$hubmap_url"/>
-					        <xsl:value-of select="$repcode" />
-					    </xsl:attribute>
-					    <xsl:attribute name="title">
-					        <xsl:text>View repository location in Archives Hub contributors map [opens new window]</xsl:text>
-					    </xsl:attribute>
-					    <xsl:attribute name="target">
-					        <xsl:text>_blank</xsl:text>
-					    </xsl:attribute>
-					    <xsl:text>Location of Repository</xsl:text>
-					</a>
-                </li>
-                <xsl:if test="..//dao|..//daogrp">
-                    <li>
-                        <span class="bgimg digital" title="This description contains links to digital material. This may be further down in the Detailed Description.">
-                            <xsl:text>Digital material</xsl:text>
-                        </span>
-                        <xsl:text> </xsl:text>
-                        <a href="http://archiveshub.ac.uk/displayhelp/#digitalmaterial" title="Find out about Digital Material" class="helplink tip">
-                            <img src="http://archiveshub.ac.uk/img/structure/form_tip.png" alt="[?]"/>
-                        </a>
-                    </li>
-                </xsl:if>
-            </ul>
-            
-            <!-- Actions -->
-            <ul class="actions">
-                <li>
-                    <a class="bgimg tip email">
-                        <xsl:attribute name="href">
-                            <xsl:value-of select="$script"/>
-                            <xsl:text>/email.html?recid=</xsl:text>
-                            <xsl:value-of select="$recid"/>
-                            <xsl:text>#rightcol</xsl:text>
-                        </xsl:attribute>
-                        <xsl:attribute name="title">
-                            <xsl:text>Send detailed description as text in an e-mail</xsl:text>
-                        </xsl:attribute>
-                        <xsl:text>Email</xsl:text>
-                    </a>
-                </li>
-                <li>
-                    <a class="bgimg tip xml">
-                        <xsl:attribute name="href">
-                            <xsl:value-of select="$data_uri_base"/>
-                            <xsl:text>.xml</xsl:text>
-                        </xsl:attribute>
-                        <xsl:attribute name="title">
-                            <xsl:text>View this description as XML (In EAD Schema)</xsl:text>
-                        </xsl:attribute>
-                        <xsl:text>View XML</xsl:text>
-                    </a>
-                </li>
-                <li>
-                    <a class="bgimg tip text">
-                        <xsl:attribute name="href">
-                            <xsl:value-of select="$data_uri_base"/>
-                            <xsl:text>.txt</xsl:text>
-                        </xsl:attribute>
-                        <xsl:attribute name="title">
-                            <xsl:text>View this description as Plain-Text</xsl:text>
-                        </xsl:attribute>
-                        <xsl:text>View Text</xsl:text>
-                    </a>
-                </li>
-                <li>
-                    <!-- AddThis Button BEGIN -->
-					<div class="addthis_toolbox addthis_default_style ">
-					   <xsl:attribute name="addthis:url">
-					       <xsl:value-of select="$data_uri_base"/>
-					   </xsl:attribute>
-					   <xsl:if test="$unittitle != '(untitled)'">
-					       <xsl:attribute name="addthis:title">
-                                <xsl:value-of select="normalize-space($unittitle)"/>
-                            </xsl:attribute>
-                        </xsl:if>
-						<a class="addthis_button_twitter"/>
-						<a class="addthis_button_facebook"/>
-						<a class="addthis_button_email"/>
-                        <a class="addthis_button_favorites"/>
-						<a class="addthis_button_compact"/>
-						<a class="addthis_counter addthis_bubble_style"/>
-					</div>
-					<script>
-var addthis_config = {
-    ui_cobrand: 'archiveshub.ac.uk',
-    ui_header_color: '#24205c',
-    ui_header_background: '#b7e8f5',
-    services_exclude: 'print'
-}
-
-var addthis_share = 
-{ 
-    templates: {
-        twitter: '{{title}} {{lurl}} via @archiveshub'
-    }
-}
-					</script>
-					<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=ra-4eb3f45910f0a240"/>
-					<!-- AddThis Button END -->
-                </li>
-            </ul>
-            
-		</div>
+        <xsl:call-template name="utilitybar">
+            <xsl:with-param name="unittitle" select="normalize-space($unittitle)"/>
+            <xsl:with-param name="digital" select="boolean(./dao|..//dao)"/>
+            <xsl:with-param name="repcode">
+                <!-- determine repository code -->
+	            <xsl:choose>
+	                <xsl:when test="string-length(unitid/@repositorycode)">
+	                    <xsl:value-of select="unitid/@repositorycode"/>
+	                </xsl:when>
+	                <xsl:when test="string-length(/ead/eadheader/eadid/@mainagencycode)">
+	                    <xsl:value-of select="/ead/eadheader/eadid/@mainagencycode"/>
+	                </xsl:when>
+	                <xsl:otherwise>
+	                    <xsl:text>REPOSITORYCODE</xsl:text>
+	                </xsl:otherwise>
+	            </xsl:choose>
+            </xsl:with-param>
+        </xsl:call-template>
 		
         <xsl:if test="./dao|../dao|../odd/dao|../scopecontent/dao|./daogrp|../daogrp|../odd/daogrp|../scopecontent/daogrp">
             <div class="daos">
@@ -1867,6 +1721,166 @@ var addthis_share =
 				</xsl:choose>
 			</xsl:otherwise>
 	    </xsl:choose>
+	</xsl:template>
+	
+	
+	<!-- Template for creating utility bar -->
+	<xsl:template name="utilitybar">
+
+        <xsl:param name="unittitle"/>
+        <xsl:param name="digital"/>
+        <xsl:param name="repcode"/>
+
+        <xsl:variable name="data_uri_base">
+            <xsl:text>http://archiveshub.ac.uk</xsl:text>
+            <xsl:value-of select="$data_script"/>
+            <xsl:text>/</xsl:text>
+            <xsl:value-of select="$recid"/>
+        </xsl:variable>
+        
+        <div id="utilitybar" class="bar utility">
+            <!-- Switch Version (Level of detail) -->
+            <ul class="detail">
+                <li>
+                      <xsl:call-template name="switch-view-link"/>
+                </li>
+            </ul>
+
+            <!-- Information -->
+            <ul class="info">
+                <li>
+                    <a  class="bgimg access">
+                        <xsl:attribute name="href">
+                            <xsl:text>http://archiveshub.ac.uk/accesstomaterials</xsl:text>
+                        </xsl:attribute>
+                        <xsl:attribute name="title">
+                            <xsl:text>Help on how to access these materials</xsl:text>
+                        </xsl:attribute>
+                        <xsl:text>Access These Materials</xsl:text>
+                    </a>
+                </li>
+                <li>
+                    <a class="bgimg contact">
+                        <xsl:attribute name="href">
+                            <xsl:value-of select="$archon_url"/>
+                            <xsl:value-of select="$repcode" />
+                        </xsl:attribute>
+                        <xsl:attribute name="title">
+                            <xsl:text>Find contact details for the repository to arrange to see these materials [opens new window]</xsl:text>
+                        </xsl:attribute>
+                        <xsl:attribute name="target">
+                            <xsl:text>_blank</xsl:text>
+                        </xsl:attribute>
+                        <xsl:text>Contact the Repository</xsl:text>
+                    </a>
+                </li>
+                <li>
+                    <a class="bgimg location">
+                        <xsl:attribute name="href">
+                            <xsl:value-of select="$hubmap_url"/>
+                            <xsl:value-of select="$repcode" />
+                        </xsl:attribute>
+                        <xsl:attribute name="title">
+                            <xsl:text>View repository location in Archives Hub contributors map [opens new window]</xsl:text>
+                        </xsl:attribute>
+                        <xsl:attribute name="target">
+                            <xsl:text>_blank</xsl:text>
+                        </xsl:attribute>
+                        <xsl:text>Location of Repository</xsl:text>
+                    </a>
+                </li>
+                <xsl:if test="$digital">
+                    <li>
+                        <span class="bgimg digital" title="This description contains links to digital material. This may be further down in the Detailed Description.">
+                            <xsl:text>Digital material</xsl:text>
+                        </span>
+                        <xsl:text> </xsl:text>
+                        <a href="http://archiveshub.ac.uk/displayhelp/#digitalmaterial" title="Find out about Digital Material" class="helplink tip">
+                            <img src="http://archiveshub.ac.uk/img/structure/form_tip.png" alt="[?]"/>
+                        </a>
+                    </li>
+                </xsl:if>
+            </ul>
+            
+            <!-- Actions -->
+            <ul class="actions">
+                <li>
+                    <a class="bgimg tip email">
+                        <xsl:attribute name="href">
+                            <xsl:value-of select="$script"/>
+                            <xsl:text>/email.html?recid=</xsl:text>
+                            <xsl:value-of select="$recid"/>
+                            <xsl:text>#rightcol</xsl:text>
+                        </xsl:attribute>
+                        <xsl:attribute name="title">
+                            <xsl:text>Send detailed description as text in an e-mail</xsl:text>
+                        </xsl:attribute>
+                        <xsl:text>Email</xsl:text>
+                    </a>
+                </li>
+                <li>
+                    <a class="bgimg tip xml">
+                        <xsl:attribute name="href">
+                            <xsl:value-of select="$data_uri_base"/>
+                            <xsl:text>.xml</xsl:text>
+                        </xsl:attribute>
+                        <xsl:attribute name="title">
+                            <xsl:text>View this description as XML (In EAD Schema)</xsl:text>
+                        </xsl:attribute>
+                        <xsl:text>View XML</xsl:text>
+                    </a>
+                </li>
+                <li>
+                    <a class="bgimg tip text">
+                        <xsl:attribute name="href">
+                            <xsl:value-of select="$data_uri_base"/>
+                            <xsl:text>.txt</xsl:text>
+                        </xsl:attribute>
+                        <xsl:attribute name="title">
+                            <xsl:text>View this description as Plain-Text</xsl:text>
+                        </xsl:attribute>
+                        <xsl:text>View Text</xsl:text>
+                    </a>
+                </li>
+                <li>
+                    <!-- AddThis Button BEGIN -->
+                    <div class="addthis_toolbox addthis_default_style ">
+                       <xsl:attribute name="addthis:url">
+                           <xsl:value-of select="$data_uri_base"/>
+                       </xsl:attribute>
+                       <xsl:if test="$unittitle != '(untitled)'">
+                           <xsl:attribute name="addthis:title">
+                                <xsl:value-of select="normalize-space($unittitle)"/>
+                            </xsl:attribute>
+                        </xsl:if>
+                        <a class="addthis_button_twitter"/>
+                        <a class="addthis_button_facebook"/>
+                        <a class="addthis_button_email"/>
+                        <a class="addthis_button_favorites"/>
+                        <a class="addthis_button_compact"/>
+                        <a class="addthis_counter addthis_bubble_style"/>
+                    </div>
+                    <script>
+var addthis_config = {
+    ui_cobrand: 'archiveshub.ac.uk',
+    ui_header_color: '#24205c',
+    ui_header_background: '#b7e8f5',
+    services_exclude: 'print'
+}
+
+var addthis_share = 
+{ 
+    templates: {
+        twitter: '{{title}} {{lurl}} via @archiveshub'
+    }
+}
+                    </script>
+                    <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=ra-4eb3f45910f0a240"/>
+                    <!-- AddThis Button END -->
+                </li>
+            </ul>
+            
+        </div>
 	</xsl:template>
 	
 	
