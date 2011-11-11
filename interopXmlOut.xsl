@@ -10,9 +10,14 @@
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns:c3="http://www.cheshire3.org"
-  xmlns="http://www.loc.gov/ead"
-  xsi:schemaLocation="http://www.loc.gov/ead/ead.xsd"
+  exclude-result-prefixes="#all"
   version="1.0">
+  
+  <!-- 
+  namespaces to be added when needed:
+  xmlns="urn:isbn:1-931666-22-9"
+  xsi:schemaLocation="urn:isbn:1-931666-22-9 http://www.loc.gov/ead/ead.xsd"
+   -->
 
     <xsl:output method="xml" omit-xml-declaration="yes"/>
     
@@ -32,7 +37,7 @@
         <xsl:variable name="tagname" select="local-name(.)"/>
         <xsl:choose>
             <xsl:when test="$tagname='ead' or $tagname='eadheader' or $tagname='eadid'">
-                <xsl:element namespace="http://www.loc.gov/ead" name="{$tagname}">
+                <xsl:element name="{$tagname}">
                     <xsl:copy-of select="@*"/>
                     <xsl:apply-templates />
                 </xsl:element>
@@ -65,15 +70,13 @@
                             $tagname = 'geogname' or
                             $tagname = 'subject' or 
                             $tagname = 'title'">
-                <!-- namespacify EAD elements -->
-                <xsl:element namespace="http://www.loc.gov/ead" name="{$tagname}">
+                <xsl:element name="{$tagname}">
                     <xsl:copy-of select="@*"/>
                     <xsl:value-of select="normalize-space(.)"/>
                 </xsl:element>
             </xsl:when>
             <xsl:otherwise>
-                <!-- namespacify EAD elements -->
-                <xsl:element namespace="http://www.loc.gov/ead" name="{$tagname}">
+                <xsl:element name="{$tagname}">
                     <xsl:copy-of select="@*"/>
                     <xsl:apply-templates />
                 </xsl:element>

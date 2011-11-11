@@ -10,8 +10,14 @@
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns:c3="http://www.cheshire3.org"
-  xsi:schemaLocation="http://www.loc.gov/ead/ead.xsd"
+  exclude-result-prefixes="#all"
   version="1.0">
+  
+  <!-- 
+  namespaces to be added when needed:
+  xmlns="urn:isbn:1-931666-22-9"
+  xsi:schemaLocation="urn:isbn:1-931666-22-9 http://www.loc.gov/ead/ead.xsd"
+   -->
   
     <!-- import common HTML templates and ToC templates -->
     <xsl:import href="interopXmlOut.xsl"/>
