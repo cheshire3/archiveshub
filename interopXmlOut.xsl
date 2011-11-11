@@ -3,7 +3,7 @@
     
 <!-- 
     This file was produced, and released as part of Cheshire for Archives v3.x.
-    Copyright &#169; 2005-2008 the University of Liverpool, all rights reserved.
+    Copyright &#169; 2005-2011 the University of Liverpool, all rights reserved.
 -->
 
 <xsl:stylesheet
