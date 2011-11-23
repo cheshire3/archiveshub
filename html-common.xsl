@@ -108,58 +108,12 @@
     <xsl:template match="did" mode="didtable">
         <table summary="Descriptive Information - core information about the described material">
             <xsl:if test="repository">
-                <xsl:variable name="repcode">
-                    <xsl:choose>
-                        <xsl:when test="unitid/@repositorycode">
-                            <xsl:value-of select="unitid/@repositorycode"/>
-                        </xsl:when>
-                        <xsl:when test="/ead/eadheader/eadid/@mainagencycode">
-                            <xsl:value-of select="/ead/eadheader/eadid/@mainagencycode"/>
-                        </xsl:when>
-                    </xsl:choose>
-                </xsl:variable>
-                
                 <tr>
                     <td>
                         <span class="fieldname">This material is held at</span>
                     </td>
                     <td>
                         <strong><xsl:value-of select="repository[1]"/></strong>
-                        <xsl:if test="$link_to_archon and string-length($repcode)">
-                            <xsl:text>&#160;&#160;&#160;</xsl:text>
-                            <a>
-                                <xsl:attribute name="href">
-                                    <xsl:value-of select="$archon_url"/>
-                                    <xsl:value-of select="$repcode" />
-                                </xsl:attribute>
-                                <xsl:attribute name="title">
-                                    <xsl:text>Look up repository contact details in ARCHON [opens new window]</xsl:text>
-                                </xsl:attribute>
-                                <xsl:attribute name="target">
-                                    <xsl:text>_blank</xsl:text>
-                                </xsl:attribute>
-                                <xsl:text>Contact Details</xsl:text>
-                            </a>
-                        </xsl:if>
-                        <xsl:if test="$link_to_hubmap and string-length($repcode)">
-                            <xsl:if test="$link_to_archon">
-                                <xsl:text>&#160;&#160;&#160;|</xsl:text>
-                            </xsl:if>
-                            <xsl:text>&#160;&#160;&#160;</xsl:text>
-                            <a>
-                                <xsl:attribute name="href">
-                                    <xsl:value-of select="$hubmap_url"/>
-                                    <xsl:value-of select="$repcode" />
-                                </xsl:attribute>
-                                <xsl:attribute name="title">
-                                    <xsl:text>View repository location in Archives Hub contributors map [opens new window]</xsl:text>
-                                </xsl:attribute>
-                                <xsl:attribute name="target">
-                                    <xsl:text>_blank</xsl:text>
-                                </xsl:attribute>
-                                <xsl:text>Location</xsl:text>
-                            </a>
-                        </xsl:if>
                     </td>
                 </tr>
             </xsl:if>
