@@ -1686,7 +1686,6 @@
         <xsl:param name="repcode"/>
 
         <xsl:variable name="data_uri_base">
-            <xsl:text>http://archiveshub.ac.uk</xsl:text>
             <xsl:value-of select="$data_script"/>
             <xsl:text>/</xsl:text>
             <xsl:value-of select="$recid"/>
