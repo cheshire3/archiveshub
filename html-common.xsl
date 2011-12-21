@@ -118,7 +118,7 @@
                 </tr>
             </xsl:if>
             
-            <tr class="tip" title="Please quote this when contacting the repository about this record">
+            <tr>
                 <td><span class="fieldname">Reference Number(s)</span></td>
                 <td>
                   <xsl:choose>
