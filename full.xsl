@@ -93,7 +93,7 @@
 			<xsl:apply-templates select="./*/prefercite"/>
 			<!-- MISCELLANEOUS -->
 			<xsl:apply-templates select="./*/odd"/>
-			<xsl:apply-templates select="./*/note"/>
+			<xsl:apply-templates select="./*/note" mode="own-section"/>
 			
 			<!-- CONTROLACCESS -->
 			<xsl:apply-templates select="./*/controlaccess"/> 

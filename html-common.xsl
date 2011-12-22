@@ -101,6 +101,7 @@
             <xsl:if test="processinfo">
                 <xsl:apply-templates select="processinfo"/>      
             </xsl:if>
+            <xsl:apply-templates select="note" mode="own-section"/>
         </div>
         
     </xsl:template>
@@ -369,7 +370,6 @@
 	<xsl:template match="archdesc">
 		<!--TEMPLATES FOR MAIN BODY-->
 		<xsl:apply-templates select="./did/abstract"/>
-		<xsl:apply-templates select="./did/note" mode="own-section"/>
 		
 		<xsl:apply-templates select="./scopecontent|./descgrp/scopecontent"/>
 		<xsl:apply-templates select="./bioghist|./descgrp/bioghist"/>
@@ -1095,7 +1095,6 @@
         <!-- did for this component -->
         <xsl:apply-templates select="did" mode="didtable"/>
         
-    	<xsl:apply-templates select="did/note" mode="own-section"/>
     	<xsl:apply-templates select="scopecontent"/>
     	<xsl:apply-templates select="bioghist"/>
     	<xsl:apply-templates select="arrangement"/>
