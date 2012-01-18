@@ -1661,7 +1661,18 @@
 			 	<i><xsl:text>"</xsl:text><xsl:value-of select="."/><xsl:text>"</xsl:text></i>
 			</xsl:when>
             <xsl:when test="@altrender='queryTerm'">
-                <span class="highlight" title="This word was a match for your search"><xsl:value-of select="."/></span>
+                <xsl:element name="span">
+                    <xsl:attribute name="class">
+                        <xsl:text>highlight</xsl:text>
+                    </xsl:attribute>
+                    <xsl:attribute name="title">
+                        <xsl:text>This word was a match for your search</xsl:text>
+                    </xsl:attribute>
+                    <xsl:attribute name="id">
+                        <xsl:value-of select="generate-id(.)"/>
+                    </xsl:attribute>
+                    <xsl:value-of select="."/>
+                </xsl:element>
             </xsl:when>
 			<xsl:otherwise>
 				<xsl:choose>
