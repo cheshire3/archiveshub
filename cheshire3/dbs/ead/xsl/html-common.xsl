@@ -178,6 +178,15 @@
                     </tr>
                 </xsl:if>
                 
+                <xsl:if test="physloc|did/physloc">
+                <tr>
+                    <td class="field-name">Location</td>
+                    <td class="field-value">
+                        <xsl:apply-templates select="physloc|did/physloc"/>
+                    </td>
+                </tr>
+            </xsl:if>
+                
             </table>
                 
             <xsl:if test="processinfo">
@@ -1078,10 +1087,12 @@
                 </tr>
             </xsl:if>
             
-            <xsl:if test = "physloc|did/physloc">
+            <xsl:if test="physloc|did/physloc">
                 <tr>
                     <td class="field-name">Location</td>
-                    <td class="field-value"><xsl:value-of select="did/physloc"/></td>
+                    <td class="field-value">
+                        <xsl:apply-templates select="physloc|did/physloc"/>
+                    </td>
                 </tr>
             </xsl:if>           
 
