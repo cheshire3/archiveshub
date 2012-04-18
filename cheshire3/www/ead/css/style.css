@@ -37,6 +37,11 @@ div#header {
     background-position: top right;
 	/*background-color: #b7e8f5;*/
   	color: #16145f;
+  	
+  	/* give it a funky shadow */
+    -moz-box-shadow: 0px 2px 5px #555;
+    -webkit-box-shadow: 0px 2px 5px #555;
+    box-shadow: 0px 2px 5px #555;
 }
 
 body,
@@ -56,6 +61,13 @@ div#navbar {
 
 div#leftcol.toc {
 	font-size: 10pt;	
+}
+
+div#footer {
+    /* give it a funky shadow */
+    -moz-box-shadow: 0px -1px 5px #555;
+    -webkit-box-shadow: 0px -1px 5px #555;
+    box-shadow: 0px -1px 5px #555;
 }
 
 div.daos {
@@ -86,6 +98,7 @@ div#no-hits-img img {
 	-moz-border-radius: 15px;
 	-webkit-border-radius: 15px;
 	padding:5px;
+
 }
 
 /* TABLES */
@@ -254,6 +267,7 @@ ul.facetlist li.unmarked {
 a:link,
 a:visited
 {
+  cursor:pointer;cursor:hand
   color: #0000dd;
   text-decoration: none;
 }
@@ -361,7 +375,8 @@ div.component {
 }
 
 div.passwdconfirm {
-	background-color: #c4d6f8;
+	/*background-color: #c4d6f8;*/
+	background-color: #b7e8f5;
 	padding: 5px;
 	border: solid black 1px;	
 }

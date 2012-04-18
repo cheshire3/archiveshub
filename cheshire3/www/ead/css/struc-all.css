@@ -1,6 +1,6 @@
 /*
 	This file was produced, and released as part of Cheshire for Archives v3.x
-	Copyright &copy; 2005-2010 the University of Liverpool
+	Copyright &copy; 2005-2011 the University of Liverpool
 */
 
 * {margin:0;padding:0;}
@@ -135,7 +135,6 @@ div#footer {
 	max-height: 50px;
 	height: 50px;
 	background: inherit;
-	border-top: 2px solid silver;
 	vertical-align: top;
 }
 
@@ -149,7 +148,8 @@ div#footer {
 }
 
 div#no-hits-img {
-	float:left;
+    float:left;
+    margin-right: 5px;
 	min-height: 200px;
 }
 
@@ -228,10 +228,10 @@ div.row {
   text-align: right;
 }
 
-ul { 
+ul {
+  list-style-position: inside;
   padding-bottom: 2px;
 }
-
 
 ul li, ol li {
 	margin-left: 30px;	
