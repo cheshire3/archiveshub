@@ -3,13 +3,13 @@
 // Version:   0.10
 // Description:
 //            JavaScript functions used in the Cheshire3 EAD search/retrieve and display interface 
-//            - part of Cheshire for Archives v3.0
+//            - part of Cheshire for Archives v3.x
 //
 // Language:  JavaScript
 // Author:    John Harrison <john.harrison@liv.ac.uk>
 // Date:      17/02/2009
 //
-// Copyright: &copy; University of Liverpool 2005-2009
+// Copyright: &copy; University of Liverpool 2005-2011
 //
 // Version History:
 // 0.01 - 25/05/2005 - JH - Nested list ToC manipulation functions scripted

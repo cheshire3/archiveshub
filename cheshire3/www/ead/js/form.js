@@ -2,17 +2,16 @@
 // Program:		form.js
 // Version:   	0.01
 // Description:
-//            	JavaScript functions for the editing form in the Archives Hub editing interface.  
-//            	- produced for the Archives Hub v3.x. 
+//            	JavaScript functions for the Cheshire for Archives EAD Editor.  
+//            	- part of Cheshire for Archives v3.x
 // Language:  	JavaScript
 // Author(s):   Catherine Smith <catherine.smith@liv.ac.uk>	
 // Date:      	12/01/2009
 // Copyright: 	&copy; University of Liverpool 2009
 //
 // Version History:
-// 0.01 - 09/01/2009 - CS- functions completed for first release of Archives Hub editing interface
+// 0.01 - 12/01/2009 - CS - functions completed for first release of Cheshire for Archives EAD Editor
 */
-
 
 var recid = 'notSet';
 var idExists = null;
@@ -217,6 +216,21 @@ function resetForm(){
     }
 }
 
+var warn = false;
+
+window.onbeforeunload = function (evt) {
+    if (warn) {
+        var message = "Any changes made since your last save will be lost unless you save them."
+        if (typeof evt == 'undefined') {//IE
+            evt = window.event;
+        }
+        if (evt) {
+            evt.returnValue = message;
+        }
+        return message;
+    }
+} 
+
 
 function save(){
 	var body = document.getElementsByTagName('body')[0];
@@ -297,6 +311,7 @@ function save(){
 
 function saveForm(asynch){
 	var relocate = false;
+	warn = false;
 	resetAllAccessPoints()
 	//collect the basic id information
 	if (currentForm == 'collectionLevel'){

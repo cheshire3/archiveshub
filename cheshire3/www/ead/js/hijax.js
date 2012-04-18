@@ -15,7 +15,7 @@
 // 0.01 - 28/07/2008 - JH - functions scripted
 // 0.02 - 28/01/2009 - JH - useability tweaks
 // 0.03 - 05/10/2010 - JH - Provision for search/browse preview on form page
-//
+// 0.04 - 25/01/2011 - JH - Bug fix for browse preview
 */
 
 function createXMLHttpRequest() {
@@ -147,10 +147,6 @@ function liveUpdater(uriFunc, resultid, preFunc, postFunc) {
                 ajaxifyForms(el);
                 try {
                     hideStuff(el);
-                } catch(e) {
-                }
-                try {
-                    Cufon.replace('h1, h2, h3');
                 } catch(e) {
                 }
             }
