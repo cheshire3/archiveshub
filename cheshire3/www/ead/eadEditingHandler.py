@@ -1,8 +1,8 @@
 #
 # Script:    eadEditingHandler.py
-# Version:   0.01
-# Date:      20 January 2009
-# Copyright: &copy; University of Liverpool 2009
+# Version:   0.02
+# Date:      25 October 2010
+# Copyright: &copy; University of Liverpool 2010
 # Description:
 #            Data creation and editing interface for EAD finding aids
 #            - part of Cheshire for Archives v3
@@ -13,7 +13,7 @@
 # Required externals:
 #            cheshire3-base, cheshire3-sql, cheshire3-web
 #            Py: localConfig.py, eadHandler.py
-#            HTML: ead2002.html, edithelp.html, editmenu.html, header.html, footer.html, template.ssi
+#            HTML: ead2002.html, edithelp.html, editmenu.html, header.html, footer.html, ead-template.ssi
 #            XSL: form.xsl, contents-editing.xsl, ead_order.xsl, reindent.xsl, full.xsl, fullSplit.xsl
 #            CSS: charkeyboard.css, contextmenu.css, form.css, form-ie.css, struc-all.css, struc-ie.css,
 #                        style.css, localStyles.css
@@ -26,15 +26,19 @@
 #                            
 # Version History: # left as example
 # 0.01 - 20/01/2009 - CS - All functions for first release
+# 0.02 - 25/10/2010 - JH - Bug fixes for v3.5.0
+# 0.03 - 02/06/2011 - JH - Prevent reassign of builtin function 'list'
 
 
+import datetime
+import glob
+import codecs
 
+from copy import deepcopy
 
 from eadHandler import *
+
 from cheshire3.record import LxmlRecord
-from copy import deepcopy
-import datetime, glob
-import codecs
 
 
 class EadEditingHandler(EadHandler):
@@ -235,20 +239,20 @@ class EadEditingHandler(EadHandler):
             if form.get('filedesc/titlestmt/sponsor', '') != '': 
                 target = self._create_path(header, 'filedesc/titlestmt/sponsor')   
                 self._add_text(target, form.get('filedesc/titlestmt/sponsor', ''))
-            list = form.list  
-            daonames = {}              
+            mylist = form.list  
+            daonames = {}
             node = tree.xpath('/template/ead/archdesc')[0]
-            for field in list :
+            for field in mylist :
                 if field.name not in ['ctype','location','operation','newForm','owner','recid', 'parent', 'pui', 'eadid', 'filedesc/titlestmt/sponsor', 'daoselect', 'tempid']:                        
                     #do did level stuff
                     
-                    if field.name.find('controlaccess') == 0 :
+                    if field.name.find('controlaccess') == 0:
                         self._create_controlaccess(node, field.name, field.value) 
                         try:
                             validList.remove('controlaccess')
                         except:
                             pass
-                    elif field.name.find('did/langmaterial') == 0 :
+                    elif field.name.find('did/langmaterial') == 0:
                         did = self._create_path(node, 'did')
                         self._create_langmaterial(did, field.value)
                         try:
@@ -257,14 +261,14 @@ class EadEditingHandler(EadHandler):
                             pass
                     elif field.name.find('dao') == 0 :
                         daoname = field.name.split('|')
-                        try :
-                            daodict = daonames[daoname[0]]
-                        except:
-                            daodict = {}
-                        if (field.value.strip() != '' and field.value.strip() != ' ' and field.value.strip() != '<p></p>' and re.sub('[\s]+', ' ', field.value.strip()) != '<p> </p>'):
-                            daodict[daoname[1]] = field.value
+                        daodict = daonames.get(daoname[0], {})
+                        val = field.value
+                        if (val.strip() != '' and 
+                            val.strip() != ' ' and 
+                            va.strip() != '<p></p>' and 
+                            re.sub('[\s]+', ' ', val.strip()) != '<p> </p>'):
+                            daodict[daoname[1]] = val
                         daonames[daoname[0]] = daodict                
-                        
                     else :
                         if (field.value.strip() != '' and field.value.strip() != ' ' and field.value.strip() != '<p></p>' and re.sub('[\s]+', ' ', field.value.strip()) != '<p> </p>'):
                             target = self._create_path(node, field.name)
@@ -305,20 +309,22 @@ class EadEditingHandler(EadHandler):
                 userName = session.user.realName
             else :
                 userName = session.user.username
-            self._add_text(target, 'Created by %s using the cheshire for archives ead creation tool ' % userName)
+            self._add_text(target, 'Created by {0} using the Cheshire for Archives EAD Editor.'.format(userName))
             target = self._create_path(header, 'profiledesc/creation/date')
-            self._add_text(target, '%s' % datetime.date.today())
+            today = datetime.date.today()
+            target.attrib.update({'normal': today.isoformat()})
+            self._add_text(target, today.strftime('%d %B %Y'))
         else :
             validList = [l for l in self.required_xpaths_components]
             tree = etree.fromstring('<%s c3id="%s"></%s>' % (ctype, loc, ctype))   
         #build the rest of the ead        
-        list = form.list  
+        mylist = form.list  
         daonames = {}   
         if (collection):
             node = tree.xpath('/ead/archdesc')[0]
         else :
             node = tree.xpath('/*[not(name() = "ead")]')[0]
-        for field in list :
+        for field in mylist :
             if field.name not in ['ctype','location','operation','newForm','owner','recid', 'parent', 'pui', 'eadid', 'filedesc/titlestmt/sponsor', 'daoselect']:                        
                 #do did level stuff
                 
@@ -335,18 +341,21 @@ class EadEditingHandler(EadHandler):
                         validList.remove('did/langmaterial/language')
                     except:
                         pass
-                elif field.name.find('dao') == 0 :
+                elif field.name.startswith('dao'):
                     daoname = field.name.split('|')
-                    try :
-                        daodict = daonames[daoname[0]]
-                    except:
-                        daodict = {}
-                    if (field.value.strip() != '' and field.value.strip() != ' ' and field.value.strip() != '<p></p>' and re.sub('[\s]+', ' ', field.value.strip()) != '<p> </p>'):
-                        daodict[daoname[1]] = field.value
+                    daodict = daonames.get(daoname[0], {})
+                    val = field.value
+                    if (val.strip() != '' and \
+                        val.strip() != ' ' and \
+                        val.strip() != '<p></p>' and \
+                        re.sub('[\s]+', ' ', val.strip()) != '<p> </p>'):
+                        daodict[daoname[1]] = val
                     daonames[daoname[0]] = daodict                
-                    
                 else :
-                    if (field.value.strip() != '' and field.value.strip() != ' ' and field.value.strip() != '<p></p>' and re.sub('[\s]+', ' ', field.value.strip()) != '<p> </p>'):
+                    if (field.value.strip() != '' and \
+                        field.value.strip() != ' ' and \
+                        field.value.strip() != '<p></p>' and \
+                        re.sub('[\s]+', ' ', field.value.strip()) != '<p> </p>'):
                         target = self._create_path(node, field.name)
                         self._add_text(target, field.value)
                         try:
@@ -358,7 +367,6 @@ class EadEditingHandler(EadHandler):
                                 pass
         self.log(daonames)   
         self._create_dao(daonames, node)
-
         if (len(validList)):
             valid = False
         else:
@@ -367,39 +375,35 @@ class EadEditingHandler(EadHandler):
         return (tree, valid)    
     #- end build_ead    
         
-    def _create_dao(self, dict, node):
+    def _create_dao(self, dao_dict, node):
         if node.xpath('did'):
             startnode = node.xpath('did')[0]
         else :
             startnode = self._create_path(node, 'did')
-        for k in dict.keys():
-            dao = dict[k]
+        for k in sorted(dao_dict):
+            dao = dao_dict[k]
             keys = dao.keys()
-            if 'new' in keys:
+            if 'new' in keys or 'embed' in keys:
+                # simple <dao>
                 if 'href' in keys:
                     daoelem = etree.Element('dao')
                     daoelem.attrib['href'] = dao['href']
-                    daoelem.attrib['show'] = dao['new']
+                    try:
+                        # embedded image
+                        daoelem.attrib['show'] = dao['embed']
+                    except KeyError:
+                        # link
+                        daoelem.attrib['show'] = dao['new']
                     if 'desc' in keys:
                         descelem = etree.Element('daodesc')
                         self._add_text(descelem, dao['desc'])
                         daoelem.append(descelem)
-                    startnode.append(daoelem)                 
-            elif 'embed' in keys:
-                if 'href' in keys:
-                    daoelem = etree.Element('dao')
-                    daoelem.attrib['href'] = dao['href']
-                    daoelem.attrib['show'] = dao['embed']
-                    if 'desc' in keys:
-                        descelem = etree.Element('daodesc')
-                        self._add_text(descelem, dao['desc'])
-                        daoelem.append(descelem)
-                    startnode.append(daoelem)     
+                    startnode.append(daoelem)
             elif 'thumb' in keys:
+                # thumbnail daogrp
                 if 'href1' in keys and 'href2' in keys:
                     daoelem = etree.Element('daogrp')
                     startnode.append(daoelem)
-                    
                     daoloc = etree.Element('daoloc')
                     daoloc.attrib['href'] = dao['href1']
                     daoloc.attrib['role'] = dao['thumb']
@@ -413,10 +417,11 @@ class EadEditingHandler(EadHandler):
                         self._add_text(descelem, dao['desc'])
                         daoelem.append(descelem)                     
             else:
+                # regular daogrp
                 hrefpresent = False
                 hrefs = []
                 for key in keys:                   
-                    if key.find('href') == 0:
+                    if key.startswith('href'):
                         hrefs.append(key)
                 self.log(hrefs)
                 if len(hrefs) > 0:
@@ -499,10 +504,10 @@ class EadEditingHandler(EadHandler):
         parentNode.attrib[attribute] = ""
         return [parentNode, attribute]
 
-    def _delete_currentControlaccess(self, startNode, list=['subject','persname', 'famname', 'corpname', 'geogname', 'title', 'genreform', 'function']):
+    def _delete_currentControlaccess(self, startNode, mylist=['subject','persname', 'famname', 'corpname', 'geogname', 'title', 'genreform', 'function']):
         if (startNode.xpath('controlaccess')):
             parent = startNode.xpath('controlaccess')[0]        
-            for s in list :
+            for s in mylist :
                 if (parent.xpath('%s' % s)) :
                     child = parent.xpath('%s' % s)
                     for c in child :
@@ -728,16 +733,18 @@ class EadEditingHandler(EadHandler):
         else :
             userName = session.user.username
         if local:
-            textString = 'Uploaded from a local file and edited by %s using the cheshire for archives ead creation and editing tool' % userName  
+            textString = 'Uploaded from a local file and edited by {0} using the Cheshire for Archives EAD Editor.'.format(userName)  
         else :
-            textString = 'Loaded from %s and edited by %s using the cheshire for archives ead creation and editing tool' % (filename, userName)
+            textString = 'Loaded from {0} and edited by {1} using the Cheshire for Archives EAD Editor.'.format(filename, userName)
         
+        today = datetime.date.today()
         if tree.xpath('/ead/eadheader/revisiondesc'):
             if tree.xpath('/ead/eadheader/revisiondesc/change'):
                 parent = tree.xpath('/ead/eadheader/revisiondesc')[0]
                 new = etree.Element('change')
                 date = etree.Element('date')
-                date.text = '%s' % datetime.date.today()
+                date.set('normal', today.isoformat())
+                date.text = today.strftime('%d %B %Y')
                 new.append(date)
                 item = etree.Element('item')
                 item.text = textString
@@ -748,14 +755,15 @@ class EadEditingHandler(EadHandler):
                 parent = tree.xpath('/ead/eadheader/revisiondesc/list')[0]
                 item = etree.Element('item')
                 item.set('audience', 'internal')
-                item.text = '%s on %s'  % (textString, datetime.date.today())
+                item.text = '{0} on {1}'.format(textString, today.strftime('%d %B %Y'))
                 parent.append(item)
         else :
             header = tree.xpath('/ead/eadheader')[0]
             target = self._create_path(header, '/ead/eadheader/revisiondesc/change')
             target.set('audience', 'internal')
             target = self._create_path(header, '/ead/eadheader/revisiondesc/change/date')
-            self._add_text(target, '%s' % datetime.date.today())
+            target.set('normal', today.isoformat())
+            self._add_text(target, today.strftime('%d %B %Y'))
             target = self._create_path(header, '/ead/eadheader/revisiondesc/change/item')          
             self._add_text(target, textString)   
         return LxmlRecord(tree)
@@ -1035,7 +1043,7 @@ class EadEditingHandler(EadHandler):
         elif (loc == 'collectionLevel'):
             self.log('existing collection level')
             validList = [l for l in self.required_xpaths]
-            list = form.list  
+            mylist = form.list  
             #pull existing xml and make into a tree
             retrievedRec = editStore.fetch_record(session, '%s-%s' % (recid, fileOwner))
             retrievedXml = retrievedRec.get_xml(session)
@@ -1060,7 +1068,7 @@ class EadEditingHandler(EadHandler):
             #cycle through the form and replace any node that need it
             deleteList = []
             daonames = {} 
-            for field in list :                
+            for field in mylist :                
                 if field.name not in ['ctype','location','operation','newForm','owner','recid', 'parent', 'pui', 'filedesc/titlestmt/sponsor', 'daoselect']:               
                     #do archdesc stuff
                     if field.name.find('controlaccess') == 0 :                        
@@ -1149,7 +1157,7 @@ class EadEditingHandler(EadHandler):
             else :   
                 self.log('existing component')
                 validList = [l for l in self.required_xpaths_components]
-                list = form.list
+                mylist = form.list
                 node = tree.xpath('//*[@c3id=\'%s\']' % loc)[0]
                 #first delete current accesspoints, lang material and dao
                 self._delete_currentControlaccess(node)
@@ -1157,7 +1165,7 @@ class EadEditingHandler(EadHandler):
                 self._delete_currentDao(node)
                 deleteList = []
                 daonames = {} 
-                for field in list :
+                for field in mylist :
                     if field.name not in ['ctype','location','operation','newForm','owner','recid', 'parent', 'daoselect']:  
                         if field.name.find('controlaccess') == 0 :                        
                             self._create_controlaccess(node, field.name, field.value) 
@@ -1290,10 +1298,9 @@ class EadEditingHandler(EadHandler):
         return page
     #- end preview_file() ---------------------------------------------------------
 
-    def preview_xml(self, req):
+    def preview_xml(self, req, form):
         self.log('XML requested')
-        form = FieldStorage(req)
-        recid=form.get('recid', None)
+        recid = form.get('recid', None)
         fileOwner = form.get('owner', session.user.username)
         if recid != None and recid != 'null' :
             retrievedRec = editStore.fetch_record(session, '%s-%s' % (recid, fileOwner))
@@ -1646,7 +1653,7 @@ class EadEditingHandler(EadHandler):
                 content = self.navigate(form)
                 self.send_html(content, req)
             elif (operation == 'xml'):
-                content = self.preview_xml(req)
+                content = self.preview_xml(req, form)
                 self.send_xml(content, req)
             elif (operation == 'preview'):
                 content = self.preview_file(req)
@@ -1803,9 +1810,11 @@ def authenhandler(req):
         build_architecture()                                                    # build the architecture
     pw = req.get_basic_auth_pw()
     un = req.user
-    try: session.user = authStore.fetch_object(session, un)
-    except: return apache.HTTP_UNAUTHORIZED    
-    if (session.user and session.user.password == crypt(pw, pw[:2])):
+    try:
+        session.user = authStore.fetch_object(session, un)
+    except:
+        return apache.HTTP_UNAUTHORIZED    
+    if (session.user and session.user.password == crypt(pw, session.user.password)):
         return apache.OK
     else:
         return apache.HTTP_UNAUTHORIZED
