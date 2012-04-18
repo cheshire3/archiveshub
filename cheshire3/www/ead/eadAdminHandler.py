@@ -80,6 +80,7 @@ from cheshire3.baseObjects import Record
 from cheshire3.record import LxmlRecord
 
 from threading import Thread
+from datetime import datetime
 
 class AdminThread(Thread):
     
@@ -130,8 +131,10 @@ class BuildHtmlThread(AdminThread):
         for rec in recordStore:
             recid = rec.id
             paramDict['RECID'] = recid
-            try: l = rec.byteCount
-            except: l = len(rec.get_xml(session))
+            try:
+                l = rec.byteCount
+            except:
+                l = len(rec.get_xml(session))
             if (l < max_page_size_bytes):
                 # Nice and short record/component - do it the easy way
                 doc = fullTxr.process_record(session, rec)
@@ -1401,97 +1404,120 @@ class EadAdminHandler(EadHandler):
     
         #- end rebuild_html()
         
-    def view_statistics(self, file='searchHandler.log'):
+    def view_statistics(self, filename='searchHandler.log'):
         # parse the relevant search logfile and present stats nicely
         global searchlogfilepath, firstlog_re, loginstance_re, timeTaken_re, recid_re, emailRe, logpath
         regex = re.compile('searchHandler\S')
-        dateRegex = re.compile('[\S]*-(([\d]*)-([\d]*)-([\d]*))T([\d]{2})([\d]{2})([\d]{2}).log')
+        dateRegex = re.compile('[\S]*-(\d{4}-\d{2}-\d{2}T\d{2}\d{2}\d{2}).log')
         self.logger.log('View Search Statistics')
         self.htmlTitle.append('Search Statistics')
         try: 
-            allstring = read_file(logpath + '/' +  file)
+            allstring = read_file(logpath + '/' +  filename)
         except: 
             self.htmlTitle.append('Error')
-            self.logger.log('No logfile present at %s' % (logpath + '/' +  file))
-            return '<div id="single">No logfile present at specified location <code>%s</code></div>' % (logpath + '/' +  file)
+            self.logger.log('No logfile present at %s' % (logpath + '/' +  filename))
+            return '<div id="single">No logfile present at specified location <code>%s</code></div>' % (logpath + '/' +  filename)
         try: 
             filestarted = firstlog_re.search(allstring).group(1)
         except: 
             #return 'No requests logged in current logfile.'
-            filestarted = None
+            start_datetime = None
+        else:
+            try:
+                start_datetime = datetime.strptime(filestarted, "%Y-%m-%dT%H:%M:%S")
+            except ValueError:
+                start_datetime = datetime.strptime(filestarted, "%Y-%m-%d %H:%M:%S")
+            
         #create list of options for select menu
         files = os.listdir(logpath)
         files.sort(reverse=True)
         options= []
         for f in files :
-            if(regex.match(f)):       
-                date = re.findall(dateRegex, f)
-                if (f == 'searchHandler.log' and f == file):
-                    options.append('<option value="%s" selected="true">%s</option>' % (f, 'current'))
-                elif (f == 'searchHandler.log'):
-                    options.append('<option value="%s">%s</option>' % (f, 'current'))                                    
-                elif (f == file):
-                    options.append('<option value="%s" selected="true">%s-%s-%s</option>' % (f, date[0][1], date[0][2], date[0][3]))
-                else :
-                    options.append('<option value="%s">%s-%s-%s</option>' % (f, date[0][1], date[0][2], date[0][3]))
-        if (file == 'searchHandler.log'):
-            dateString = time.strftime("%Y-%m-%d %H:%M:%S")
-        else :
-            dateString = '%s %s:%s:%s' % (date[0][0], date[0][4], date[0][5], date[0][6])
+            if(regex.match(f)):
+                # if it's a search handler log  
+                date = dateRegex.match(f)
+                if date:
+                    file_end_datetime = datetime.strptime(date.group(1), "%Y-%m-%dT%H%M%S")
+                    period_name = file_end_datetime.strftime("%d %b %Y")
+                else:
+                    file_end_datetime = datetime.now()
+                    period_name = "Current Period"
+                
+                if f == filename:
+                    options.append('<option value="{0}" selected="selected">{1}</option>'.format(f, period_name))
+                    end_datetime = file_end_datetime
+                else:
+                    options.append('<option value="{0}">{1}</option>'.format(f, period_name))
         #create the html
         rows = ['<div id="leftcol">', 
                 '<h3>Statistics for period ending: <select id="fileNameSelect" value="1" onChange="window.location.href=\'statistics.html?fileName=\' + this.value">%s</select></h3>' % ''.join(options)]
-        if (filestarted != None):
-            rows.append('<h3>Period covered: %s to %s</h3>' % (filestarted, dateString))
+        if (start_datetime != None):
+            rows.append('<h3>Period covered: {0} to {1}</h3>'.format(start_datetime.strftime("%H:%M:%S on %d %B %Y"), 
+                                                                     end_datetime.strftime("%H:%M:%S on %d %B %Y")))
         else :
-            rows.append('<h3>Period covered: None</h3>')
+            rows.append('<h3>Period covered: No activity in current period</h3>')
         
         rows.extend(['<table class="stats" width="95%%">',
                '<tr class="headrow"><th>Operation</th><th>Requests</th><th>Avg Time (secs)</th></tr>'])
         singlelogs = loginstance_re.findall(allstring)
-        ops = {}
-        # ops[type] = [log_file_search_string, stats_page_display_name, occurences, total_seconds_taken]
-        ops['similar'] = [': Similar Search', 'Similar Search', 0, 0.0]
-        ops['search'] = [': Searching CQL query', 'Search', 0, 0.0]
-        ops['browse'] = [': Browsing for', 'Browse', 0, 0.0]
-        ops['resolve'] = [': Resolving subject', 'Find Subjects', 0, 0.]
-        ops['summary'] = [': Summary requested', 'Summary', 0, 0.0]
-        ops['full'] = [': Full-text requested', 'Full-text', 0, 0.0]
-        ops['email'] = ['emailed to', 'E-mail', 0, 0.0]
+        nLogs = len(singlelogs)
+        # consistent display order
+        ops = [
+               # [type, log_file_search_string, stats_page_display_name, occurrences, total_seconds_taken]
+               ['search', ': Searching CQL query', 'New Search', 0, 0.0],
+               ['similar', ': Similar Search', 'Similar Search', 0, 0.0],
+               ['browse', ': Browsing for', 'Browse', 0, 0.0],
+               ['resolve', ': Resolving subject', 'Find Subjects', 0, 0.],
+               ['summary', ': Summary requested', 'Summary', 0, 0.0],
+               ['full', ': Full-text requested', 'Full-text', 0, 0.0],
+               ['email', 'emailed to', 'E-mail', 0, 0.0],
+               ['retrieved', ': Retrieved resultSet', 'View Previous Search Results', 0, 0.0],
+              ]
         recs = {'full': {}, 'summary': {}, 'email': {}}
         addy_list = []
+        
         # process each log to collate stats
+        unmatched = []
         for s in singlelogs:
-            for k in ops.keys():
-                if s.find(ops[k][0]) > -1:
-                    ops[k][2] += 1
-                    ops[k][3] += float(timeTaken_re.search(s).group(1))
-                    if k in recs.keys():
-                        regex = recid_re[k]
+            matched = False
+            for op in ops:
+                if s.find(op[1]) > -1:
+                    matched = True
+                    op[3] += 1
+                    op[4] += float(timeTaken_re.search(s).group(1))
+                    if op[0] in recs.keys():
+                        regex = recid_re[op[0]]
                         recid = regex.search(s).group(1)
-                        try: recs[k][recid] += 1
-                        except KeyError: recs[k][recid] = 1
-                    if k == 'email':
+                        try:
+                            recs[op[0]][recid] += 1
+                        except KeyError:
+                            recs[op[0]][recid] = 1
+                    if op[0] == 'email':
                         addy = emailRe.search(s)
                         if addy and addy.group(0) not in addy_list:
                             addy_list.append(addy.group(0))
+                    # break out of inner loop (prevent counting some rows twice
+                    break
+            if not matched:
+                unmatched.append(s)
+#        return '<div id="single">{0}</div>'.format('<br/>'.join(unmatched))
         # write HTML for stats
         allAvgTime = []
-        for op in ops.keys():
+        for op in ops:
             try:
-                avgTime = str(round(ops[op][3] / ops[op][2], 3))
+                avgTime = str(round(op[4] / op[3], 3))
                 allAvgTime.append(avgTime)
             except ZeroDivisionError:
                 avgTime = 'n/a'
                 
-            rows.append('<tr><td>%s</td><td>%d</td><td>%s</td></tr>' % (ops[op][1], ops[op][2], str(avgTime)))
-            if op == 'email':
-                rows.append('<tr><td/><td colspan="2"><em>(%d different recipients)</em></td></tr>' % (len(addy_list)))
-
+            rows.append('<tr><td>{op[2]}</td><td>{op[3]}</td><td>{time}</td></tr>'.format(op=op, time=avgTime))
+            if op[0] == 'email':
+                rows.append('<tr><td/><td colspan="2"><em>({0} unique recipients)</em></td></tr>'.format(len(addy_list)))
+        rows.append('<tr><td>Errors or aborted by user</td><td>{0}</td><td>n/a</td></tr>'.format(len(unmatched)))
         rows.extend([
-        '<tr><td>Total</td><td>%d</td><td>%s</td></tr>' % (len(singlelogs), 'n/a'),
+        '<tr><td><strong>Total</strong></td><td><strong>{0}</strong></td><td>n/a</td></tr>'.format(nLogs),
         '</table>'])
-        if (file == 'searchHandler.log'):
+        if (filename == 'searchHandler.log'):
             rows.extend(['<form action="statistics.html?operation=reset" method="post" onsubmit="return confirm(\'This operation will reset all statistics. The existing logfile will be moved and will be accessible from the drop down menu on the statistics page. Are you sure you want to continue?\');">',
                             '<p><input type="submit" name="resetstats" value=" Reset Statistics "/></p>',
                         '</form>'])
@@ -1511,7 +1537,7 @@ class EadAdminHandler(EadHandler):
                 rows.append('<tr><td>%d</td><td>%s</td></tr>' % (reqs, id))
         rows.extend(['</table>','</div>'])
         return '\n'.join(rows)
-        #- end view_statistics() 
+        #- end view_statistics()
     
     def reset_statistics(self):
         global logpath, searchlogfilepath
