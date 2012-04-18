@@ -1,0 +1,6 @@
+<config>
+	<subConfigs>
+		<path type="database" id="db_ead">dbs/ead/config.xml</path>
+		<path type="database" id="db_ead_cluster">dbs/ead/cluster/config.xml</path>
+	</subConfigs>
+</config>
