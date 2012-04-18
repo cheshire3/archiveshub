@@ -1,15 +1,15 @@
 /*
 // Script:	searchForm.js
-// Version:	0.08
+// Version:	0.09
 // Description:
 //          JavaScript functions used in the Cheshire3 EAD search/retrieve and display interface 
 //          - part of Cheshire for Archives v3.x
 //
 // Language:  JavaScript
 // Author:    John Harrison <john.harrison@liv.ac.uk>
-// Date:      17 February 2009
+// Date:      11 January 2011
 //
-// Copyright: &copy; University of Liverpool 2005-2009
+// Copyright: &copy; University of Liverpool 2005-2011
 //
 // Version History:
 // 0.01 - 03/08/2006 - JH - Search form DOM manipulation functions pasted in from previous script for easier error tracking etc.
@@ -22,13 +22,40 @@
 // 0.06 - 19/12/2007 - JH - Multiple indexes specified in fieldidx
 // 0.07 - 26/09/2008 - JH - Bug fixed in createClause (title index not being assigned correct relations) ln 126
 // 0.08 - 17/02/2009 - JH - Functions re-orders so not referenced before declared
+// 0.09 - 11/01/2011 - JH - Date searching options simplified
+//
 */
 
-var indexList = new Array('cql.anywhere||dc.description||dc.title|||Keywords', 'dc.title|||Titles', 'dc.date|||Dates', 'dc.creator|||Creators', 'dc.identifier|||Ref. Number', 'dc.subject|||Subjects', 'bath.name|||Names', 'bath.personalName|||&nbsp;&nbsp;Personal Names', 'bath.corporateName|||&nbsp;&nbsp;Corporate Names', 'bath.geographicName|||&nbsp;&nbsp;Geographical Names', 'bath.genreForm|||Genre');
-var kwRelationList = new Array('all/relevant/proxinfo|||All', 'any/relevant/proxinfo|||Any');
-var exactRelationList = new Array('exact/relevant/proxinfo|||Exactly');
-var proxRelationList = new Array('=/relevant/proxinfo|||Phrase');
-var dateRelationList = new Array('%3C|||Before', '%3E|||After', 'within/relevant/proxinfo|||Between', 'encloses/relevant/proxinfo|||Spans...');
+var indexList = new Array(
+                        'cql.anywhere||dc.description||dc.title|||Keywords', 
+                        'dc.title|||Titles', 
+                        'dc.creator|||Creators', 
+                        'dc.date|||Dates', 
+                        'dc.identifier|||Ref. Number', 
+                        'dc.subject|||Subjects', 
+                        'bath.name|||Names', 
+                        'bath.personalName|||&nbsp;&nbsp;Personal Names', 
+                        'bath.corporateName|||&nbsp;&nbsp;Corporate Names', 
+                        'bath.geographicName|||&nbsp;&nbsp;Geographical Names', 
+                        'bath.genreForm|||Genre'
+                    );
+var kwRelationList = new Array(
+                        'all/relevant/proxinfo|||All', 
+                        'any/relevant/proxinfo|||Any'
+                    );
+var exactRelationList = new Array(
+                        'exact/relevant/proxinfo|||Exactly'
+                    );
+var proxRelationList = new Array(
+                        '=/relevant/proxinfo|||Phrase'
+                    );
+//var dateRelationList = new Array('%3C|||Before', '%3E|||After', 'within/relevant/proxinfo|||Between', 'encloses/relevant/proxinfo|||Spans...');
+var dateRelationList = new Array(
+						'range.overlaps/relevant/proxinfo|||Contains', 
+						'%3C|||Before', 
+						'%3E|||After', 
+						'within/relevant/proxinfo|||Between'
+				    );
 
 //var relSelectPhraseElement = document.createElement('option');
 //relSelectPhraseElement.value = '=/relevant/proxinfo';
@@ -50,12 +77,12 @@ function updateSelects(current){
 	}
 	// complex conditional to decide available relations
 	var relationList = new Array()
-	if (iSelIdx != 2) { var relationList = kwRelationList; }
+	if (iSelIdx != 3) { var relationList = kwRelationList; }
 	if (iSelIdx > 0) { var relationList = relationList.concat(exactRelationList); }
 	if (iSelIdx < 2) { var relationList = relationList.concat(proxRelationList); }
-	if (iSelIdx == 2) {
-		var rSelIdx = 4;
-		var relationList = relationList.concat(dateRelationList); 
+	if (iSelIdx == 3) {
+		//var rSelIdx = 4;
+		var relationList = dateRelationList; 
 	}
 	// now replace existing relation select element
 	relSelect.parentNode.insertBefore(createSelect('fieldrel' + current, relationList, rSelIdx), relSelect);
@@ -140,11 +167,11 @@ function createClause(current, clauseState){
 	var rSelIdx = parts.shift();
 	// complex conditional to decide available relations
 	var relationList = new Array()
-	if (iSelIdx != 2) { var relationList = kwRelationList; }
+	if (iSelIdx != 3) { var relationList = kwRelationList; }
 	if (iSelIdx > 0) { var relationList = relationList.concat(exactRelationList); }
 	if (iSelIdx < 2) { var relationList = relationList.concat(proxRelationList); }
-	if (iSelIdx == 2) {
-		var relationList = relationList.concat(dateRelationList); 
+	if (iSelIdx == 3) {
+		var relationList = dateRelationList; 
 	}
 	pElem.appendChild(createSelect('fieldrel' + current, relationList, rSelIdx));
 	// text input
