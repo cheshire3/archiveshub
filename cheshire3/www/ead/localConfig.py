@@ -1,15 +1,16 @@
 #
 # Script:   localConfig.py
-# Version:   0.19
+# Version:   0.21
 # Description:
 #            Customisable elements for Cheshire for Archives v3.x
 #
 # Language:  Python
 # Author:    John Harrison <john.harrison@liv.ac.uk>
 # Author:    Catherine Smith <catherine.smith@liv.ac.uk>
-# Date:      18 February 2009
 #
-# Copyright: &copy; University of Liverpool 2005-2009
+# Date:      10 January 2011
+#
+# Copyright: &copy; University of Liverpool 2005-2011
 #
 # Version History:
 # 0.01 - 13/04/2005 - JH - Basic configurable elements coded by John
@@ -36,13 +37,16 @@
 # 0.17 - 19/09/2008 - JH - Pop-up slash screens removed permanently
 # 0.18 - 01/12/2008 - JH - Changes to get install path from environment
 # 0.19 - 18/02/2009 - JH - Images now in Subversion (/ead/img/)
+# 0.20 - 06/09/2010 - JH - Updates to mandatory fields (XPaths)
+# 0.21 - 10/01/2011 - JH - Stoplists for more sophisticated title capitalization
 #
 # Changes to original:
 # You should make a note of any changes that you make to the originally distributed file here.
-# This will make it easier to remeber which fields need to be modified next time you update the software.
+# This will make it easier to remember which fields need to be modified next time you update the software.
 #
 #
 #
+
 import os
 
 # Preference switches - True => ON, False => OFF
@@ -65,7 +69,7 @@ navbar_separator = ' &gt; '
 relevance_graphic = '/ead/img/star.gif'
 
 # server and email settings - you should check these with your computing services people.
-localhost = '172.20.252.2'
+localhost = '138.253.50.194'
 outgoing_email_username = 'cheshire'
 outgoing_email_host = "mail1.liv.ac.uk"
 outgoing_email_port = 25                           # 25 is the default for most mail servers
@@ -104,9 +108,9 @@ namespaceUriHash = {
 # 0: dots, 1: counter, 2: table
 admin_reload_display_type = 2
 
-# Stopwords - New words should be added inside the triple inverted commas, each on a new line
+# lc_stopwords - New words should be added inside the triple inverted commas, each on a new line
 # for clever titlecase i.e. don't titlecase these
-stopwords = '''
+lc_stopwords = '''
 a
 and
 by
@@ -116,14 +120,27 @@ in
 is
 of
 on
+or
 s
 th
+that
 the
 to
 '''
 
 # List of words in addition to above which should not be used when conducting similar searches
 similar_search_stopwords = '''
+'''
+
+# uc_stopwords - New words should be added inside the triple inverted commas, each on a new line
+# for clever titlecase i.e. uppercase these
+uc_stopwords = '''
+BBC
+BT
+CNN
+UK
+US
+USA
 '''
 
 # List of xpaths that are mandatory for Archives Hub Records
@@ -162,8 +179,9 @@ else:
 
 # Some bits to ensure that objects are of the correct python object type - DO NOT EDIT THESE
 # split similar search stoplist at whitespace
-stopwords = stopwords.split()
-similar_search_stoplist = stopwords[:]
+always_lower = lc_stopwords.split()
+always_upper = [x.lower() for x in uc_stopwords.split()]
+similar_search_stoplist = always_lower[:]
 similar_search_stoplist.extend(similar_search_stopwords.split())
 
 # calculation for approx max page size in bytes - DO NOT edit
