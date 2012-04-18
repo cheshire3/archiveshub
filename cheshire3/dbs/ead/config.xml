@@ -49,6 +49,13 @@
         </paths>
     </subConfig>
     
+    <subConfig type="logger" id="webExceptionLogger">
+        <objectType>cheshire3.logger.SimpleLogger</objectType>
+        <paths>
+            <path type="filePath">../../www/ead/logs/webExceptions.log</path>
+        </paths>
+    </subConfig>
+    
     <!-- postgreSQL  -->
     <subConfig type="resultSetStore" id="eadResultSetStore">
         <objectType>cheshire3.sql.postgres.PostgresResultSetStore</objectType>
