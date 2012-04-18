@@ -79,7 +79,7 @@ subject_resolve_row = u'''
 search_no_hits = u'''
     <div id="single" class="searchresults">
         <p><strong>Sorry, your search didn&#0039;t match any records.</strong></p>
-        <div id="no-hits-img">%s</div>
+        <div id="no-hits-img">{0}</div>
         <ul>
             <li>Please check your spelling and try your <a href="/ead/index.html" title="go back to the search page">Search</a> again.</li>
             <li>You might find related subjects using the <a href="/ead/subject.html" title="go to the Subject Finder tool">Subject Finder</a> tool</li>
@@ -87,16 +87,16 @@ search_no_hits = u'''
             <li>Have a look at the <a href="/ead/help.html" title="go to the search help page">Search Help</a> page</li>
             <li>Try searching the <a href="http://www.archiveshub.ac.uk/" title="go to the Archives Hub">Archives Hub</a> for records located at other repositories around the UK.</li>
         </ul>
-    </div>''' % (no_hits_image)
+    </div>'''.format(no_hits_image)
     
-search_fail_unpairedQuotes ='''
+search_fail_unpairedQuotes = u'''
             <div id="single" class="searchresults">
                 <p class="error">Search Failed. Your query contains unpaired or unescaped quotation marks.</p>
                 <p><strong>HINT</strong>: If you're searching for a phrase make sure quotation marks are used in pairs. See <a href="/ead/help.html#quotes">Help on Using Quotation Marks</a> for more details and examples.</p>
                 <p><strong>HINT</strong>: If you're searching the actual punctuation mark, you need to escape it using a backslash (\\) symbol. e.g. \\"</p>
             </div>'''
 
-search_fail_unsupported = '''
+search_fail_unsupported = u'''
             <div id="single" class="searchresults">
                 <p class="error">Search Failed. Unsupported combination of relation and term.</p>
                 <p><strong>HINT</strong>: Did you provide too many, or too few search terms?<br/>
@@ -105,13 +105,22 @@ search_fail_unsupported = '''
                 </p>
             </div>'''
 
+search_fail_noResultSet = u'''\
+                <p class="error">Could not retrieve resultSet from resultSetStore.</p>
+                <p>Please <a href="/ead/index.html">return to the search page</a>, and re-submit your original search</p>
+                '''
+            
+search_fail_badResultSet = u'''\
+                <p class="error">Search Failed. Could not recreate resultSet from query: {0}.</p>
+                <p>Please <a href="/ead/index.html">return to the search page</a>, and re-submit your original search</p>'''
+
 search_result_row = u'''
     <tr>
       <td class="hit">
         <table width="100%">
           <tr>
             <td colspan="4">
-              <a href="SCRIPT?operation=summary&amp;%RSID%&amp;hitposition=%HITPOSITION%#rightcol" title="Display record summary"><strong>%TITLE%</strong></a>
+              <a href="SCRIPT?operation=summary&amp;%RSID%&amp;hitposition=%HITPOSITION%#rightcol" title="Display record summary" class="ajax"><strong>%TITLE%</strong></a>
             </td>
           </tr>
           <tr>
@@ -119,7 +128,7 @@ search_result_row = u'''
               <a href="SCRIPT?operation=full&amp;%RSID%&amp;hitposition=%HITPOSITION%#rightcol" title="Display Full-text">%FULL%</a>
             </td>
             <td width="100">
-              <a href="SCRIPT?operation=email&amp;%RSID%&amp;hitposition=%HITPOSITION%#rightcol" title="Send record by e-mail">%EMAIL%</a>
+              <a href="SCRIPT?operation=email&amp;%RSID%&amp;hitposition=%HITPOSITION%#rightcol" title="Send record by e-mail" class="ajax">%EMAIL%</a>
             </td>
             <td width="100">
               <a href="SCRIPT?operation=similar&amp;%RSID%&amp;hitposition=%HITPOSITION%#leftcol" title="Find similar records">%SIMILAR%</a>
@@ -141,7 +150,7 @@ search_component_row = u'''
         <table width="100%">
           <tr>
             <td colspan="4">
-              <a href="SCRIPT?operation=summary&amp;%RSID%&amp;hitposition=%HITPOSITION%#rightcol" title="Display record summary"><strong>%TITLE%</strong></a>
+              <a href="SCRIPT?operation=summary&amp;%RSID%&amp;hitposition=%HITPOSITION%#rightcol" title="Display record summary" class="ajax"><strong>%TITLE%</strong></a>
             </td>
           </tr>
           <tr>
@@ -149,7 +158,7 @@ search_component_row = u'''
             <a href="SCRIPT?operation=full&amp;%RSID%&amp;hitposition=%HITPOSITION%#rightcol" title="Display Full-text">%FULL%</a>
             </td>
             <td width="100">
-            <a href="SCRIPT?operation=email&amp;%RSID%&amp;hitposition=%HITPOSITION%#rightcol" title="Send record by e-mail">%EMAIL%</a>
+            <a href="SCRIPT?operation=email&amp;%RSID%&amp;hitposition=%HITPOSITION%#rightcol" title="Send record by e-mail" class="ajax">%EMAIL%</a>
             </td>
             <td width="100">
             <a href="SCRIPT?operation=similar&amp;%RSID%&amp;hitposition=%HITPOSITION%#leftcol" title="Find similar records">%SIMILAR%</a>
