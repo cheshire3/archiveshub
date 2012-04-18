@@ -1,5 +1,5 @@
 <div id="single">
-	<p>Select an index to browse alphabetically from the drop-down list, and then enter a term to browse for, and then click 'Browse' or hit the enter key.<br/>
+	<p>Select an index to browse alphabetically from the drop-down list, and then enter a term to browse for, and then click 'Go' or hit the enter key.<br/>
 	See the <a href="help.html#browse" title="Help on browsing">help page section on browsing indexes</a> for further details.
 	</p>
     <form name="browseform" action="SCRIPT" method="post">
@@ -7,7 +7,7 @@
         <input type="hidden" name="operation" value="browse"/>
         <input type="hidden" name="numreq" value="25"/>
         <p>	
-          <select name="fieldidx1">
+          <select id="fieldidx1" name="fieldidx1">
             <option value="dc.title" selected="selected">Title</option>
             <option value="dc.creator">Creator</option>
             <option value="dc.subject">Subject</option>
@@ -23,8 +23,14 @@
           </select>  
           for
           <input type="hidden" name="fieldrel1" value="exact"/>
-          <input name="fieldcont1" type="text" size="45"></input>
+          <input id="fieldcont1" name="fieldcont1" type="text" size="40"></input>
+          <input type="submit" value=" Go "/>
         </p>
-        <input type="submit" value=" Browse "/>
+        
     </form>
+    <div id="browse-preview"></div>
+    <script>
+liveSearch('fieldidx1', 'browse-preview', 'CHANGE');
+liveSearch('fieldcont1', 'browse-preview');
+    </script>
 </div> <!-- end single div -->
