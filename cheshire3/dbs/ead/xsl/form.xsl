@@ -885,7 +885,47 @@
 		</xsl:otherwise>
 	</xsl:choose>
 	</p>
-<!-- relatedmaterial -->
+	<span class="isadg"><h4>3.5.3: Related Units of Description</h4></span>
+	<!-- separatedmaterial -->
+    <p>
+    <xsl:variable name="content">
+        <xsl:choose>
+            <xsl:when test="separatedmaterial">
+                <xsl:text>true</xsl:text>               
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:text>false</xsl:text>
+            </xsl:otherwise>            
+        </xsl:choose>
+    </xsl:variable>  
+    <xsl:choose>
+        <xsl:when test="$content = 'true'">
+            <xsl:for-each select="separatedmaterial">
+                <xsl:call-template name="textarea">
+                    <xsl:with-param name="name" select="concat('separatedmaterial[', position(), ']')"/>
+                    <xsl:with-param name="class" select="'menuField'"/>
+                    <xsl:with-param name="optional" select="'true'"/>
+                    <xsl:with-param name="content" select="$content"/>
+                    <xsl:with-param name="isadg" select="'3.5.3.0: '"/>
+                    <xsl:with-param name="title" select="'Separated Material'"/>
+                    <xsl:with-param name="help" select="'http://archiveshub.ac.uk/help/separatedmaterial'"/>
+                </xsl:call-template>
+            </xsl:for-each>     
+        </xsl:when>
+        <xsl:otherwise>
+            <xsl:call-template name="textarea">
+                <xsl:with-param name="name" select="concat('separatedmaterial[', position(), ']')"/>
+                <xsl:with-param name="class" select="'menuField'"/>
+                <xsl:with-param name="optional" select="'true'"/>
+                <xsl:with-param name="content" select="$content"/>
+                <xsl:with-param name="isadg" select="'3.5.3.0: '"/>
+                <xsl:with-param name="title" select="'Separated Material'"/>
+                <xsl:with-param name="help" select="'http://archiveshub.ac.uk/help/separatedmaterial'"/>
+            </xsl:call-template>
+        </xsl:otherwise>
+    </xsl:choose>
+    </p>
+    <!-- relatedmaterial -->
 	<p>
 	<xsl:variable name="content">
 		<xsl:choose>
@@ -905,8 +945,8 @@
 					<xsl:with-param name="class" select="'menuField'"/>
 					<xsl:with-param name="optional" select="'true'"/>
 					<xsl:with-param name="content" select="$content"/>
-					<xsl:with-param name="isadg" select="'3.5.3: '"/>
-					<xsl:with-param name="title" select="'Related Units of Description'"/>
+					<xsl:with-param name="isadg" select="'3.5.3.1: '"/>
+					<xsl:with-param name="title" select="'Related Material'"/>
 					<xsl:with-param name="help" select="'http://archiveshub.ac.uk/help/relatedmaterial'"/>
 				</xsl:call-template>
 			</xsl:for-each>		
@@ -917,14 +957,14 @@
 				<xsl:with-param name="class" select="'menuField'"/>
 				<xsl:with-param name="optional" select="'true'"/>
 				<xsl:with-param name="content" select="$content"/>
-				<xsl:with-param name="isadg" select="'3.5.3: '"/>
-				<xsl:with-param name="title" select="'Related Units of Description'"/>
+				<xsl:with-param name="isadg" select="'3.5.3.1: '"/>
+				<xsl:with-param name="title" select="'Related Material'"/>
 				<xsl:with-param name="help" select="'http://archiveshub.ac.uk/help/relatedmaterial'"/>
 			</xsl:call-template>
 		</xsl:otherwise>
 	</xsl:choose>
     </p>
-<!-- bibliography -->
+    <!-- bibliography -->
 	<p>
 	<xsl:variable name="content">
 		<xsl:choose>
