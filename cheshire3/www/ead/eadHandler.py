@@ -175,7 +175,8 @@ class EadHandler(object):
         self.logExc('{0}: {1}\n{2}'.format(excName, excArgs, '\n'.join(excTb)))
         excName = html_encode(excName)
         excArgs = html_encode(excArgs)
-        excTb = '<br/>\n'.join(excTb)
+        
+        excTb = '<br/>\n'.join([html_encode(line) for line in excTb])
         return '''\
         <div id="single">
           <p class="error">An error occurred while processing your request.
