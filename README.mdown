@@ -86,16 +86,23 @@ outlined on the download page:
 http://cheshire3.org/download/ead/index.html#docs
 
 When installing from a clone of the git repository:
+
 1. Run ```python setup.py develop```
 2. Change directory to (Cheshire3-base-directory)/cheshire3/www/ead
 3. Open localConfig.py in a text editor.
 4. Modify preference switches as desired.
-5. Replace the values for repository_name, repository_link, repository_logo, 
-   localhost, outgoing_email_host.
+5. Insert appropriate values for:
+    * `repository_name`
+    * `repository_link`
+    * `repository_logo` 
+    * `localhost`
+    * `outgoing_email_username`
+    * `outgoing_email_host`
 6. Save and close.
-7. Generate customized search pages with the command: ./buildCustomPages.py
+7. Generate customized search pages with the command: 
+    `python buildCustomPages.py`
 8. Restart Apache. This is necessary to load some special configurations for 
-   the search interface
+    the search interface
 
 OK, you're done! You can now start using the system to index, search, browse, 
 and display your EAD finding aids.
@@ -163,7 +170,7 @@ Use
 1. Change directory to (Cheshire3-base-directory)/cheshire3/dbs/ead
 2. Copy EAD data files into the data directory.
 3. Build the database and indexes with the command: 
-    '''python run.py -load -load_components -cluster'''
+    `python run.py -load -load_components -cluster`
 
 
 #### Using the Admin Console ####
