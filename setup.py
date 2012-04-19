@@ -10,8 +10,25 @@ import inspect
 
 from os.path import abspath, dirname, join
 from setuptools import setup
+from setuptools import Command
 from setuptools.command import develop as _develop
 from setuptools.command import install as _install
+
+class unavailable_command(Command):
+    """Sub-class commands that we don't want to make available."""
+
+    description = "Command is not appropriate for this package"
+    user_options = []
+    boolean_options = []
+
+    def initialize_options(self):
+        raise NotImplementedError(self.description)
+
+    def finalize_options(self):
+        raise NotImplementedError(self.description)
+
+    def run(self):
+        raise NotImplementedError(self.description)
 
 
 class develop(_develop.develop):
@@ -99,5 +116,11 @@ setup(
         "Topic :: Text Processing :: Linguistic",
         "Topic :: Text Processing :: Markup"
     ],
-    cmdclass = {'develop': develop, 'install': install},
+    cmdclass = {
+                'bdist_egg': unavailable_command,
+                'bdist_rpm': unavailable_command,
+                'bdist_wininst': unavailable_command,
+                'develop': develop,
+                'install': install
+                },
 )
