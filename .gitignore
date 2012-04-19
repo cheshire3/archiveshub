@@ -1,0 +1,28 @@
+# Cheshire3 BerkeleyDB based *Store files, metadata and indexes
+*Store.bdb
+*Store_*.bdb
+
+# Python compiled/optimized files
+*.py[co]
+
+# Python packaging/distribution
+*.egg
+*.egg-info
+dist
+build
+eggs
+parts
+bin
+var
+sdist
+develop-eggs
+.installed.cfg
+
+# Eclipse
+*.pydevproject
+.project
+.metadata
+.settings
+
+# O/S file buffers
+*~
