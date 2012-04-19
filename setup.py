@@ -14,6 +14,12 @@ from setuptools import Command
 from setuptools.command import develop as _develop
 from setuptools.command import install as _install
 
+
+_name = 'cheshire3-ead'
+_version = '3.6.0'
+
+
+# Sub-class setuptools command classes
 class unavailable_command(Command):
     """Sub-class commands that we don't want to make available."""
 
@@ -32,6 +38,7 @@ class unavailable_command(Command):
 
 
 class develop(_develop.develop):
+    
     def initialize_options(self):
         _develop.develop.initialize_options(self)
 
@@ -93,8 +100,8 @@ class install(_install.install):
         raise NotImplementedError("Install command is not yet available - coming soon!")
 
 setup(
-    name = 'cheshire3-ead',
-    version = '3.6.0',
+    name = _name,
+    version = _version,
     description = 'Cheshire3 for Archives',
     packages=[],
     requires=['cheshire3'],
