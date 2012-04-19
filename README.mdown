@@ -321,9 +321,9 @@ It is possible to disable the SRU Interface:
 1. Change directory to (Cheshire3-base-directory)/cheshire3/dbs/ead
 2. Open the file config.xml
 3. Change the line that reads:
-    '''<setting type="srw">1</setting>'''
+    '<setting type="srw">1</setting>'
     to
-    '''<setting type="srw">0</setting>'''
+    '<setting type="srw">0</setting>'
 
 
 #### Harvesting Using OAI-PMH ####
@@ -370,7 +370,7 @@ It is possible to disable the OAI-PMH Interface:
 1. Change directory to (Cheshire3-base-directory)/cheshire3/dbs/ead
 2. Open the file config.xml
 3. Change the line that reads:
-    '''<setting type="oai-pmh">1</setting>'''
+    '<setting type="oai-pmh">1</setting>'
     to
-    '''<setting type="oai-pmh">0</setting>'''
+    '<setting type="oai-pmh">0</setting>'
 
