@@ -1,5 +1,6 @@
 """Utilities for installing configs, web-pages etc. into Apache HTTPD."""
 
+import os
 import inspect
 
 from os.path import abspath, dirname, join, exists
@@ -45,15 +46,28 @@ class ApacheModifier(object):
         # Write to dest
         with open(destination, 'w') as fh:
             fh.write(tmpl)
-    
+            
     def install_apache_config(self):
         """Create an Apache HTTPD configuration stub file.
         
         This tells the web server how to run the  web apps.
         """
+        # We've already established that self.apache_base_path exists at __init__
+        # just need to create conf.d if it doesn't exist
+        confdir = join(self.apache_base_path, 'conf.d')
         # Read in Apache configuration stub template
+        if not exists(confdir):
+            os.mkdir(confdir)
+            # If the dir wasn't there, we also need to tell the default httpd
+            # config to include this directory
+            default_httpd_conf_path = join(self.apache_base_path, 
+                                           'conf', 
+                                           'httpd.conf') 
+            with open(default_httpd_conf_path, 'a') as fh:
+                fh.write("Include conf.d/*.conf")
+                
         self._unpackcp(join(distropath, 'install', 'conf.d', 'ead.conf'), 
-                       join(self.apache_base_path, 'conf.d', 'ead.conf')
+                       join(confdir, 'ead.conf')
                        )
         
     def create_web_dir(self):
