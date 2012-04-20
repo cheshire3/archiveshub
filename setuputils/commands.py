@@ -8,6 +8,8 @@ from setuptools import Command
 from setuptools.command import develop as _develop
 from setuptools.command import install as _install
 
+from apache import ApacheModifier
+
 class unavailable_command(Command):
     """Sub-class commands that we don't want to make available."""
 
