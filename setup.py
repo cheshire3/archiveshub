@@ -6,98 +6,16 @@ of using setup.py as the setup file are followed.
 """
 
 import os
-import inspect
 
 from os.path import abspath, dirname, join
 from setuptools import setup
-from setuptools import Command
-from setuptools.command import develop as _develop
-from setuptools.command import install as _install
+
+from setuputils.commands import develop, install, unavailable_command 
 
 
 _name = 'cheshire3-ead'
 _version = '3.6.0'
 
-
-# Sub-class setuptools command classes
-class unavailable_command(Command):
-    """Sub-class commands that we don't want to make available."""
-
-    description = "Command is not appropriate for this package"
-    user_options = []
-    boolean_options = []
-
-    def initialize_options(self):
-        raise NotImplementedError(self.description)
-
-    def finalize_options(self):
-        raise NotImplementedError(self.description)
-
-    def run(self):
-        raise NotImplementedError(self.description)
-
-
-class develop(_develop.develop):
-    
-    def initialize_options(self):
-        _develop.develop.initialize_options(self)
-
-    def finalize_options(self):
-        _develop.develop.finalize_options(self)
-
-    def run(self):
-        # Carry out normal procedure
-        _develop.develop.run(self)
-        # Create symbolic links
-        from cheshire3.internal import cheshire3Home
-        # Inspect to find current path
-        setuppath = inspect.getfile(inspect.currentframe())
-        setupdir = abspath(dirname(setuppath))
-        # link to Cheshire3 database config stub
-        os.symlink(join(setupdir,
-                                'cheshire3', 
-                                'dbs', 
-                                'configs.d', 
-                                'db_ead.xml'), 
-                   join(cheshire3Home, 
-                                'cheshire3', 
-                                'dbs', 
-                                'configs.d', 
-                                'db_ead.xml')
-                   )
-        # link to database directory
-        os.symlink(join(setupdir,
-                        'cheshire3', 
-                        'dbs', 
-                        'ead'), 
-                   join(cheshire3Home, 
-                        'cheshire3', 
-                        'dbs', 
-                        'ead')
-                   )
-        # link to web app directory
-        os.symlink(join(setupdir,
-                        'cheshire3', 
-                        'www', 
-                        'ead'), 
-                   join(cheshire3Home, 
-                        'cheshire3', 
-                        'www', 
-                        'ead')
-                   )
-        
-
-class install(_install.install):
-    def initialize_options(self):
-        _install.install.initialize_options(self)
-
-    def finalize_options(self):
-        _install.install.finalize_options(self)
-
-    def run(self):
-        # Carry out normal procedure
-        _install.install.run(self)
-        raise NotImplementedError("Install command is not yet available - coming soon!")
 
 setup(
     name = _name,
