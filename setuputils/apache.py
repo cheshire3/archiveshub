@@ -67,5 +67,5 @@ class ApacheModifier(object):
     
 
 # Inspect to find current path
-setuppath = inspect.getfile(inspect.currentframe())
-distropath = abspath(dirname(setuppath))
+modpath = inspect.getfile(inspect.currentframe())
+distropath = abspath(join(dirname(modpath), '..'))
