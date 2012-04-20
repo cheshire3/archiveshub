@@ -7,7 +7,7 @@ of using setup.py as the setup file are followed.
 
 import os
 
-from os.path import abspath, dirname, join, exists
+from os.path import abspath, dirname, join, exists, expanduser
 from setuptools import setup
 
 from setuputils.commands import develop, install, unavailable_command 
@@ -36,11 +36,9 @@ option.'''.format(apache_base_path)
 class ApacheModifier(object):
     """A class to modify an Apache HTTPD installation."""
     
-    def __init__(self, apache_base_path=None):
+    def __init__(self, apache_base_path):
         from cheshire3.internal import cheshire3Home
         self.cheshire3Home = cheshire3Home
-        if apache_base_path is None:
-            apache_base_path = join(cheshire3Home, 'install')
         # Find directory for online content
         if exists(join(apache_base_path, 'htdocs')):
             self.apache_htdocs_path = join(apache_base_path, 'htdocs')

@@ -43,6 +43,12 @@ class develop(_develop.develop):
         global distropath
         # Carry out normal procedure
         _develop.develop.run(self)
+        # Install Apache HTTPD configuration stub file
+        am = ApacheModifier(expanduser(self.with_httpd))
+        am.install_apache_config()
+        # Create web directory for static search pages
+        # and install default landing page there
+        am.install_web_landing_page()
         # Create symbolic links
         from cheshire3.internal import cheshire3Home
         # Link to Cheshire3 database config stub
