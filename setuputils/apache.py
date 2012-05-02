@@ -70,13 +70,12 @@ class ApacheModifier(object):
                        join(confdir, 'ead.conf')
                        )
         
-    def create_web_dir(self):
-        """Create a web directory."""
-        os.mkdir(join(self.apache_htdocs_path, 'ead'))
-
     def install_web_landing_page(self):
+        destpath = join(self.apache_htdocs_path, 'ead')
+        if not exists(destpath):
+            os.mkdir(destpath)
         self._unpackcp(join(distropath, 'install', 'htdocs', 'ead', 'index.html'),
-                       join(self.apache_htdocs_path, 'ead', 'index.html')
+                       join(destpath, 'index.html')
                        )
     
 

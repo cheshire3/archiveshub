@@ -1,5 +1,6 @@
 """Setuptools command sub-classes."""
 
+import os
 import inspect
 
 from os.path import abspath, dirname, join, exists, expanduser
