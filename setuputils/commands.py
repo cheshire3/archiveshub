@@ -3,7 +3,8 @@
 import os
 import inspect
 
-from os.path import abspath, dirname, join, exists, expanduser
+from os.path import abspath, dirname, join, exists
+from pkg_resources import normalize_path
 
 from setuptools import Command
 from setuptools.command import develop as _develop
@@ -41,13 +42,14 @@ class develop(_develop.develop):
 
     def finalize_options(self):
         _develop.develop.finalize_options(self)
+        self.with_httpd = normalize_path(self.with_httpd)
 
-    def run(self):
+    def install_for_development(self):
         global distropath
         # Carry out normal procedure
-        _develop.develop.run(self)
+        _develop.develop.install_for_development(self)
         # Install Apache HTTPD configuration stub file
-        am = ApacheModifier(expanduser(self.with_httpd))
+        am = ApacheModifier(self.with_httpd)
         am.install_apache_config()
         # Create web directory for static search pages
         # and install default landing page there
@@ -87,6 +89,36 @@ class develop(_develop.develop):
                         'ead')
                    )
         
+    def uninstall_link(self):
+        # Carry out normal procedure
+        _develop.develop.uninstall_link(self)
+        # Install Apache HTTPD configuration stub file
+        am = ApacheModifier(self.with_httpd)
+        am.uninstall_apache_config()
+        # Remove web directory for static search pages
+        am.uninstall_web_dir()
+        # Remove symbolic links
+        from cheshire3.internal import cheshire3Home
+        # Link to Cheshire3 database config stub
+        os.remove(join(cheshire3Home, 
+                       'cheshire3', 
+                       'dbs', 
+                       'configs.d', 
+                       'db_ead.xml')
+                   )
+        # Link to database directory
+        os.remove(join(cheshire3Home, 
+                       'cheshire3', 
+                       'dbs', 
+                       'ead')
+                   )
+        # Link to web app directory
+        os.remove(join(cheshire3Home, 
+                       'cheshire3', 
+                       'www', 
+                       'ead')
+                   )
+
 
 class install(_install.install):
     def initialize_options(self):

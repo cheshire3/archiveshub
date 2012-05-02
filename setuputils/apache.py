@@ -48,7 +48,7 @@ class ApacheModifier(object):
             fh.write(tmpl)
             
     def install_apache_config(self):
-        """Create an Apache HTTPD configuration stub file.
+        """Create and install an Apache HTTPD configuration stub file.
         
         This tells the web server how to run the  web apps.
         """
@@ -70,6 +70,19 @@ class ApacheModifier(object):
                        join(confdir, 'ead.conf')
                        )
         
+    def uninstall_apache_config(self):
+        """Uninstall an Apache HTTPD configuration stub file.
+        
+        This stub file tells the web server how to run the  web apps, but we 
+        want it to stop doing that.
+        """
+        # We've already established that self.apache_base_path exists at __init__
+        # just need to create conf.d if it doesn't exist
+        confdir = join(self.apache_base_path, 'conf.d')
+        # Read in Apache configuration stub template
+        if exists(confdir):
+             os.remove(join(confdir, 'ead.conf'))
+        
     def install_web_landing_page(self):
         destpath = join(self.apache_htdocs_path, 'ead')
         if not exists(destpath):
@@ -78,6 +91,15 @@ class ApacheModifier(object):
                        join(destpath, 'index.html')
                        )
     
+    def uninstall_web_dir(self):
+        web_dir = join(self.apache_htdocs_path, 'ead')
+        for root, dirs, files in os.walk(web_dir, topdown=False):
+            for name in files:
+                os.remove(os.path.join(root, name))
+            for name in dirs:
+                os.rmdir(os.path.join(root, name))
+        os.rmdir(web_dir)
+
 
 # Inspect to find current path
 modpath = inspect.getfile(inspect.currentframe())
