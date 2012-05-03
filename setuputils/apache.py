@@ -12,7 +12,7 @@ class NoApacheException(EnvironmentError):
     def __init__(self, apache_base_path):
         self.reason = '''
 Apache HTTPD is not installed in the expected location: {0}
-You can specify the Apache HTTPD installation directory using the --with-httpd 
+You can specify the Apache HTTPD installation directory using the --with-httpd
 option.'''.format(apache_base_path)
 
     def __str__(self):
@@ -52,7 +52,7 @@ class ApacheModifier(object):
         
         This tells the web server how to run the  web apps.
         """
-        # We've already established that self.apache_base_path exists at __init__
+        # We already established that self.apache_base_path exists at __init__
         # just need to create conf.d if it doesn't exist
         confdir = join(self.apache_base_path, 'conf.d')
         # Read in Apache configuration stub template
@@ -76,10 +76,9 @@ class ApacheModifier(object):
         This stub file tells the web server how to run the  web apps, but we 
         want it to stop doing that.
         """
-        # We've already established that self.apache_base_path exists at __init__
-        # just need to create conf.d if it doesn't exist
+        # We already established that self.apache_base_path exists at __init__
         confdir = join(self.apache_base_path, 'conf.d')
-        # Read in Apache configuration stub template
+        # Remove Apache configuration stub template
         if exists(confdir):
              os.remove(join(confdir, 'ead.conf'))
         
@@ -87,11 +86,16 @@ class ApacheModifier(object):
         destpath = join(self.apache_htdocs_path, 'ead')
         if not exists(destpath):
             os.mkdir(destpath)
-        self._unpackcp(join(distropath, 'install', 'htdocs', 'ead', 'index.html'),
-                       join(destpath, 'index.html')
-                       )
+        self._unpackcp(join(distropath, 
+                            'install', 
+                            'htdocs', 
+                            'ead', 
+                            'index.html'),
+                       join(destpath, 'index.html'))
     
     def uninstall_web_dir(self):
+        # Recursively remove the Cheshire3 for Archives directory from
+        # Apache HTTPDs htdocs directory 
         web_dir = join(self.apache_htdocs_path, 'ead')
         for root, dirs, files in os.walk(web_dir, topdown=False):
             for name in files:
