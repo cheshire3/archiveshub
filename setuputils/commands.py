@@ -180,6 +180,41 @@ class install(_install.install, c3_command):
                         )
 
 
+class uninstall(c3_command):
+
+    description = "Uninstall Cheshire3 for Archives"
+    
+    def run(self):
+        # Uninstall Apache HTTPD mods
+        self.uninstall_apache_mods()
+        from cheshire3.internal import cheshire3Home
+        # Uninstall Cheshire3 database config stub
+        os.remove(join(cheshire3Home, 
+                       'cheshire3', 
+                       'dbs', 
+                       'configs.d', 
+                       'db_ead.xml'))
+        # Uninstall database directory
+        subpath = join('cheshire3', 
+                       'dbs', 
+                       'ead')
+        recursive_remove_dir(join(cheshire3Home, subpath))
+        # Uninstall to web app directory
+        subpath = join('cheshire3', 
+                       'www', 
+                       'ead')
+        recursive_remove_dir(join(cheshire3Home, subpath))
+
+
+def recursive_remove_dir(path):
+    for root, dirs, files in os.walk(path, topdown=False):
+        for name in files:
+            os.remove(os.path.join(root, name))
+        for name in dirs:
+            os.rmdir(os.path.join(root, name))
+    os.rmdir(path)
+
+
 # Inspect to find current path
 modpath = inspect.getfile(inspect.currentframe())
 distropath = abspath(join(dirname(modpath), '..'))

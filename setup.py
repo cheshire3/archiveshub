@@ -10,7 +10,7 @@ import os
 from os.path import abspath, dirname, join, exists, expanduser
 from setuptools import setup
 
-from setuputils.commands import develop, install, unavailable_command 
+from setuputils.commands import develop, install, uninstall, unavailable_command 
 
 
 _name = 'cheshire3-ead'
@@ -46,6 +46,7 @@ setup(
                 'bdist_rpm': unavailable_command,
                 'bdist_wininst': unavailable_command,
                 'develop': develop,
-                'install': install
+                'install': install,
+                'uninstall': uninstall
                 },
 )
