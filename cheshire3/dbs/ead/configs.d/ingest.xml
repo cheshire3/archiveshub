@@ -12,7 +12,7 @@
         <subConfig type="documentFactory" id="baseDocumentFactory">
             <objectType>cheshire3.documentFactory.SimpleDocumentFactory</objectType>
             <options>
-                <default type="data">/home/cheshire/cheshire3/cheshire3/dbs/ead/data</default>
+                <default type="data">data</default>
                 <default type="format">dir</default>
                 <default type="tagName">ead</default>
                 <default type="cache">0</default>
