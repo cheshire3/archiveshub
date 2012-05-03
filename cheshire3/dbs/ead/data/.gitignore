@@ -1,4 +1,4 @@
-# data files
-*.xml
-*.sgm
-*.sgml
+# Don't track data files or sub-directories
+*
+# but include .gitignore for this dir
+!.gitignore
