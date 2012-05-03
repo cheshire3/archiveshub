@@ -4,7 +4,7 @@ import os
 import shutil
 import inspect
 
-from os.path import abspath, dirname, join, exists
+from os.path import abspath, dirname, join, exists, islink
 from pkg_resources import normalize_path
 
 from setuptools import Command
@@ -12,6 +12,8 @@ from setuptools.command import develop as _develop
 from setuptools.command import install as _install
 
 from apache import ApacheModifier
+from exceptions import *
+
 
 class unavailable_command(Command):
     """Sub-class commands that we don't want to make available."""
@@ -77,17 +79,26 @@ class develop(_develop.develop, c3_command):
         global distropath
         # Carry out normal procedure
         _develop.develop.install_for_development(self)
-        # Install Apache HTTPD mods
-        self.install_apache_mods()
-        # Create symbolic links
+        # Check for existing install / development install
+        # by checking for Cheshire3 config stub file
         from cheshire3.internal import cheshire3Home
-        # Link to Cheshire3 database config stub
-        subpath = join('cheshire3',
+        c3_stub_path = join('cheshire3',
                        'dbs', 
                        'configs.d', 
                        'db_ead.xml')
-        os.symlink(join(distropath, subpath), 
-                   join(cheshire3Home, subpath))
+        if exists(join(cheshire3Home, c3_stub_path)):
+            if islink(join(cheshire3Home, c3_stub_path)):
+                raise DevelopException("Already installed in 'develop' mode")
+            else:
+                raise DevelopException("""\
+Package is already installed. To install in 'develop' mode you must first \
+run the 'uninstall' command.""")
+        # Install Apache HTTPD mods
+        self.install_apache_mods()
+        # Create symbolic links
+        # Link to Cheshire3 database config stub
+        os.symlink(join(distropath, c3_stub_path), 
+                   join(cheshire3Home, c3_stub_path))
         # Link to database directory
         subpath = join('cheshire3', 
                        'dbs', 
@@ -141,16 +152,26 @@ class install(_install.install, c3_command):
     def run(self):
         # Carry out normal procedure
         _install.install.run(self)
+        # Check for existing install / development install
+        # by checking for Cheshire3 config stub file
+        from cheshire3.internal import cheshire3Home
+        c3_stub_path = join('cheshire3',
+                       'dbs', 
+                       'configs.d', 
+                       'db_ead.xml')
+        if exists(join(cheshire3Home, c3_stub_path)):
+            if islink(join(cheshire3Home, c3_stub_path)):
+                raise InstallException("""\
+Package is already installed in 'develop' mode. To install it you must first \
+run the `develop` command again with the `--uninstall` option.""")
+            else:
+                raise InstallException("Already installed.")
         # Install Apache HTTPD mods
         self.install_apache_mods()
         from cheshire3.internal import cheshire3Home
         # Install Cheshire3 database config stub
-        subpath = join('cheshire3',
-                       'dbs', 
-                       'configs.d', 
-                       'db_ead.xml')
-        shutil.copy(join(distropath, subpath), 
-                   join(cheshire3Home, subpath))
+        shutil.copy(join(distropath, c3_stub_path), 
+                   join(cheshire3Home, c3_stub_path))
         # Install database directory
         subpath = join('cheshire3', 
                        'dbs', 
@@ -185,15 +206,25 @@ class uninstall(c3_command):
     description = "Uninstall Cheshire3 for Archives"
     
     def run(self):
-        # Uninstall Apache HTTPD mods
-        self.uninstall_apache_mods()
+        # Check for existing install / development install
+        # by checking for Cheshire3 config stub file
         from cheshire3.internal import cheshire3Home
-        # Uninstall Cheshire3 database config stub
-        os.remove(join(cheshire3Home, 
-                       'cheshire3', 
+        c3_stub_path = join('cheshire3',
                        'dbs', 
                        'configs.d', 
-                       'db_ead.xml'))
+                       'db_ead.xml')
+        if not exists(join(cheshire3Home, c3_stub_path)):
+            raise UninstallException("Package is not installed.")
+        elif islink(join(cheshire3Home, c3_stub_path)):
+            raise UninstallException("""\
+Package was installed in 'develop' mode. To uninstall, you should run the \
+`develop` command with the `--uninstall` option.""")
+                
+        # Uninstall Apache HTTPD mods
+        self.uninstall_apache_mods()
+        # Uninstall Cheshire3 database config stub
+        os.remove(join(cheshire3Home, 
+                       c3_stub_path))
         # Uninstall database directory
         subpath = join('cheshire3', 
                        'dbs', 
