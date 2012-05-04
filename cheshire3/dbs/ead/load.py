@@ -218,8 +218,8 @@ def _conditional_load(options, args):
         # if exclusive --all option
         # sum return values - should all return 0
         retval = sum([load(options, args),
-                      clusters(options, args),
-                      components(options, args)
+                      components(options, args),
+                      clusters(options, args)
                      ])
         return retval
     
