@@ -99,7 +99,7 @@ def load(options, args):
     (mins, secs) = divmod(time.time() - start, 60)
     (hours, mins) = divmod(mins, 60)
     lgr.log_info(session, 
-                 'Loading, Indexing complete ({0}h {1}m {2}s)'.format(hours, 
+                 'Loading, Indexing complete ({0:.0f}h {1:.0f}m {2:.0f}s)'.format(hours, 
                                                                    mins, 
                                                                    secs)
                  )
@@ -133,7 +133,7 @@ def index(options, args):
     (mins, secs) = divmod(time.time() - start, 60)
     (hours, mins) = divmod(mins, 60)
     lgr.log_info(session, 
-                 'Indexing complete ({0}h {1}m {2}s)'.format(hours, 
+                 'Indexing complete ({0:.0f}h {1:.0f}m {2:.0f}s)'.format(hours, 
                                                              mins, 
                                                              secs)
                  )
@@ -151,7 +151,7 @@ def components(options, args):
     (mins, secs) = divmod(time.time() - start, 60)
     (hours, mins) = divmod(mins, 60)
     lgr.log_info(session, 
-                 'Components loaded and indexed ({0}h {1}m {2}s)'.format(hours, 
+                 'Components loaded and indexed ({0:.0f}h {1:.0f}m {2:.0f}s)'.format(hours, 
                                                                          mins, 
                                                                          secs)
                  )
@@ -181,7 +181,7 @@ def index_components(options, args):
     (mins, secs) = divmod(time.time() - start, 60)
     (hours, mins) = divmod(mins, 60)
     lgr.log_info(session, 
-                 'Component Indexing complete ({0}h {1}m {2}s)'.format(hours, 
+                 'Component Indexing complete ({0:.0f}h {1:.0f}m {2:.0f}s)'.format(hours, 
                                                                        mins, 
                                                                        secs)
                  )
@@ -203,7 +203,7 @@ def clusters(options, args):
     (mins, secs) = divmod(time.time() - start, 60)
     (hours, mins) = divmod(mins, 60)
     lgr.log_info(session, 
-                 'Subject Clustering complete ({0}h {1}m {2}s)'.format(hours, 
+                 'Subject Clustering complete ({0:.0f}h {1:.0f}m {2:.0f}s)'.format(hours, 
                                                                        mins, 
                                                                        secs)
                  )
