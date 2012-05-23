@@ -33,7 +33,7 @@
         <set identifier="info:srw/cql-context-set/1/ead-v2002" name="ead"/>
         <set identifier="info:srw/cql-context-set/2/relevance-1.0" name="rel"/>
         <set identifier="info:srw/cql-context-set/2/rec-1.1" name="rec"/>
-        <set indetifier="info:srw/cql-context-set/2/range-1.0" name="range"/>
+        <set identifier="info:srw/cql-context-set/2/range-1.0" name="range"/>
 	
         <index c3:index="ead-idx-istoplevel">
             <title>Is a top level EAD record</title>
