@@ -14,11 +14,14 @@ import time
 
 from lxml import etree
 
-from cheshire3.baseObjects import Session
-from cheshire3.server import SimpleServer
 from cheshire3.document import StringDocument
 from cheshire3.utils import flattenTexts
 from cheshire3 import exceptions as c3errors
+
+# Local imports
+from run import UsageException
+from run import session, serv, db, recordStore, clusDb
+
 
 def _backwalkTitles(rec, xpath):
     titles = []
@@ -95,11 +98,6 @@ def doSearch(qString):
     return rs
 
 # Build environment...
-session = Session()
-serv = SimpleServer(session, "../../configs/serverConfig.xml")
-session.database = 'db_ead'
-db = serv.get_object(session, 'db_ead')
-recordStore = db.get_object(session, 'recordStore')
 rss = db.get_object(session, 'eadResultSetStore')
 qf = db.get_object(session, 'defaultQueryFactory')
 
