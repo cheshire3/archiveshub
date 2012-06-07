@@ -1216,10 +1216,10 @@
                         <xsl:text>_new</xsl:text>
                     </xsl:when>
                     <xsl:when test="./@show = 'replace'">
-                        <xsl:text>_parent</xsl:text>
+                        <xsl:text>_self</xsl:text>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:text>_blank</xsl:text>
+                        <xsl:text>_top</xsl:text>
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:attribute>
@@ -1304,10 +1304,10 @@
                         <xsl:text>_new</xsl:text>
                     </xsl:when>
                     <xsl:when test="./@show = 'replace'">
-                        <xsl:text>_parent</xsl:text>
+                        <xsl:text>_self</xsl:text>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:text>_blank</xsl:text>
+                        <xsl:text>_top</xsl:text>
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:attribute>
@@ -1409,7 +1409,7 @@
                         <xsl:text>_new</xsl:text>
                     </xsl:when>
                     <xsl:when test="./@show='replace'">
-                        <xsl:text>_parent</xsl:text>
+                        <xsl:text>_self</xsl:text>
                     </xsl:when>
                     <xsl:otherwise>
                         <xsl:text>_blank</xsl:text>
@@ -1473,7 +1473,7 @@
                                                 <xsl:text>_new</xsl:text>
                                             </xsl:when>
                                             <xsl:when test="../@show='replace'">
-                                                <xsl:text>_parent</xsl:text>
+                                                <xsl:text>_self</xsl:text>
                                             </xsl:when>
                                             <xsl:otherwise>
                                                 <xsl:text>_blank</xsl:text>
