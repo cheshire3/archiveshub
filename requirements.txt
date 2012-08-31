@@ -1,0 +1,3 @@
+cheshire3-ead
+cheshire3 >= 1.0.0
+cheshire3 [web, sql]

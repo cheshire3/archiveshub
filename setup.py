@@ -1,20 +1,33 @@
 """Setup Cheshire3 for Archives.
 
-Although Cheshire3 for Archives is not a pure Python package, the convention 
-of using setup.py as the setup file are followed.
-
+Although Cheshire3 for Archives is not a pure Python package, the
+convention of using setup.py as the setup file are followed.
 """
 
+from __future__ import with_statement
+
 import os
-
 from os.path import abspath, dirname, join, exists, expanduser
-from setuptools import setup
+import inspect
 
+# Import Distribute / Setuptools
+import distribute_setup
+distribute_setup.use_setuptools()
+
+from setuptools import setup
 from setuputils.commands import develop, install, uninstall, unavailable_command 
 
 
 _name = 'cheshire3-ead'
 _version = '3.6.0'
+
+# Inspect to find current path
+setuppath = inspect.getfile(inspect.currentframe())
+setupdir = os.path.dirname(setuppath)
+
+# Requirements
+with open(os.path.join(setupdir, 'requirements.txt'), 'r') as fh:
+    _install_requires = fh.readlines()
 
 
 setup(
@@ -23,7 +36,7 @@ setup(
     description = 'Cheshire3 for Archives',
     packages=[],
     requires=['cheshire3'],
-    install_requires=['cheshire3 >= 1.0.0b37'],
+    install_requires=_install_requires,
     author = 'John Harrison, et al.',
     author_email = u'john.harrison@liv.ac.uk',
     maintainer = 'John Harrison',
