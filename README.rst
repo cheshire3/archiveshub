@@ -7,29 +7,36 @@ Cheshire3 for Archives
 Contents
 --------
 
- - `Description`_
- - `Authors`_
- - `Latest Version`_
- - `Installation`_
- - `Requirements / Dependencies`_
- - `Documentation`_
- - `Roadmap`_
- - `Bugs, Feature requests etc.`_
- - `Licensing`_
- - `Use`_
-    - `Loading Data`_
-        - `Batch Loading`_
-        - `Using the Admin Console`_
-    - `Searching`_
-        - `Using the Web App`_
-        - `Using the SRU API`_
-            - `Available Indexes`_
-            - `Available Record Schemas`_
-            - `Disabling SRU`_
-        - `Harvesting Using OAI-PMH`_
-            - `Available Record Schemas (Metadata Prefixes)`_
-            - `Available Sets`_
-            - `Disabling OAI-PMH`_
+-  `Description`_
+-  `Authors`_
+-  `Latest Version`_
+-  `Installation`_
+-  `Requirements / Dependencies`_
+-  `Documentation`_
+-  `Roadmap`_
+-  `Bugs, Feature requests etc.`_
+-  `Licensing`_
+-  `Use`_
+
+   -  `Loading Data`_
+   
+      -  `Batch Loading`_
+      -  `Using the Admin Console`_
+      
+   -  `Searching`_
+   
+      -  `Using the Web App`_
+      -  `Using the SRU API`_
+      
+         -  `Available Indexes`_
+         -  `Available Record Schemas`_
+         -  `Disabling SRU`_
+         
+      -  `Harvesting Using OAI-PMH`_
+      
+         -  `Available Record Schemas (Metadata Prefixes)`_
+         -  `Available Sets`_
+         -  `Disabling OAI-PMH`_
 
 
 Description
