@@ -13,6 +13,7 @@ Contents
  - `Installation`_
  - `Requirements / Dependencies`_
  - `Documentation`_
+ - `Roadmap`_
  - `Bugs, Feature requests etc.`_
  - `Licensing`_
  - `Use`_
@@ -148,6 +149,32 @@ Further documentation for developers can be found in the docs/ folder of the
 distribution. Before starting work on any of the sub-systems (search, display,
 admin, editor etc.) developers should read any relevant documentation in the 
 docs/ directory.
+
+
+Roadmap
+-------
+
+**Version 3.6 – September 2012**
+
+* Improved Unique Identifier derivation
+* Consolidate recent `Archives Hub`_ display enhancements (Record Resolver,
+  Utility Bar)
+* Consolidate recent `EAD Editor`_ enhancements (Support for improved Unique
+  Identifiers, Multiple field addition and editing)
+
+
+**Version 3.7 – January 2013**
+
+* Migrate existing `mod_python`_ handlers to WSGI_ Applications
+* Search within descriptions
+* Convert user editable configurations to a more user friendly format
+  (probably YAML_)
+
+
+**Version 3.8 – July 2013**
+
+* Support for `EAD Schema`_
+* Support for `EAC-CPF`_
 
 
 Bugs, Feature requests etc.
