@@ -1,34 +1,34 @@
 Cheshire3 for Archives
 ======================
 
-19th April 2012 (2012-04-19)
+3rd September 2012 (2012-09-03)
 
 
 Contents
 --------
 
- - Description
- - Authors
- - Latest Version
- - Installation
- - Requirements / Dependencies
- - Documentation
- - Bugs, Feature requests etc.
- - Licensing
- - Use
-    - Loading Data
-        - Batch Loading
-        - Using the Admin Console
-    - Searching
-        - Using the Web App
-        - Using the SRU API
-            - Available Indexes
-            - Available Record Schemas
-            - Disabling SRU
-        - Harvesting Using OAI-PMH
-            - Available Record Schemas
-            - Available Sets
-            - Disabling OAI-PMH
+ - `Description`_
+ - `Authors`_
+ - `Latest Version`_
+ - `Installation`_
+ - `Requirements / Dependencies`_
+ - `Documentation`_
+ - `Bugs, Feature requests etc.`_
+ - `Licensing`_
+ - `Use`_
+    - `Loading Data`_
+        - `Batch Loading`_
+        - `Using the Admin Console`_
+    - `Searching`_
+        - `Using the Web App`_
+        - `Using the SRU API`_
+            - `Available Indexes`_
+            - `Available Record Schemas`_
+            - `Disabling SRU`_
+        - `Harvesting Using OAI-PMH`_
+            - `Available Record Schemas (Metadata Prefixes)`_
+            - `Available Sets`_
+            - `Disabling OAI-PMH`_
 
 
 Description
@@ -55,7 +55,7 @@ documents via the web. It features:
 Authors
 -------
 
-Cheshire3 Team at the University of Liverpool <http://www.liv.ac.uk>:
+Cheshire3 Team at the `University of Liverpool`_:
 
 * **John Harrison** john.harrison@liv.ac.uk
 * Catherine Smith
@@ -67,14 +67,17 @@ Latest Version
 --------------
 
 The latest stable version will be available from our website:
-http://www.cheshire3.org/download/ead/
+
+http://download.cheshire3.org/download/ead/
 
 Source code is under version control and available from:
+
 http://github.com/cheshire3/cheshire3-ead
 
 Development in the GitHub repository will follow (at least to begin with) 
 Vincent Driessen's branching model, and use git-flow to facilitate this. For 
 details of the model, see:
+
 http://nvie.com/posts/a-successful-git-branching-model/
 
 
@@ -127,12 +130,15 @@ Documentation
 
 You can find out more about the application, including capabilities, APIs and 
 features added in this release on the about page:
+
 http://(your-host)/ead/about.html
 
 Documentation on using the search and display web app can be found at:
+
 http://(your-host)/ead/help.html
 
 Documentation on using the Admin Console can be found at:
+
 http://(your-host)/ead/admin/help.html
 
 All scripts intended for use by administrative users should return help when 
@@ -155,7 +161,7 @@ https://github.com/cheshire3/cheshire3-ead/issues
 Licensing
 ---------
 
-Copyright &copy; 2005-2012, the University of Liverpool.
+Copyright &copy; 2005-2012, the `University of Liverpool`_.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without 
@@ -166,7 +172,7 @@ modification, are permitted provided that the following conditions are met:
  * Redistributions in binary form must reproduce the above copyright notice, 
    this list of conditions and the following disclaimer in the documentation 
    and/or other materials provided with the distribution.
- * Neither the name of the University of Liverpool nor the names of its 
+ * Neither the name of the `University of Liverpool`_ nor the names of its 
    contributors may be used to endorse or promote products derived from this 
    software without specific prior written permission.
  
@@ -185,48 +191,67 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 Use
 ---
 
-### Loading Data ###
+Loading Data
+~~~~~~~~~~~~
 
-#### Batch Loading ####
+Batch Loading
+'''''''''''''
 
 1. Change directory to (Cheshire3-base-directory)/cheshire3/dbs/ead
 2. Copy EAD data files into the data directory.
-3. Build the database and indexes with the command: 
-    `python run.py -load -load_components -cluster`
+3. Build the database and indexes with the command: ::
+ 
+    python run.py -load -load_components -cluster
 
 
-#### Using the Admin Console ####
+Using the Admin Console
+'''''''''''''''''''''''
 
 1. Create an administration account
+
    1. Change directory to (Cheshire3-base-directory)/cheshire3/dbs/ead
-   2. Run the command:
-       '''python run.py -adduser'''
-   3. Follow the prompts for provide the required info 
-2. See the admin console help page at
+   
+   2. Run the command: ::
+   
+       python run.py -adduser
+       
+   3. Follow the prompts for provide the required info
+    
+2. See the admin console help page at:
+
    http://(your-host)/ead/admin/help.html#files_upload
 
 
-### Searching ###
+Searching
+~~~~~~~~~
 
-#### Using the Web App ####
+Using the Web App
+'''''''''''''''''
 
 Navigate to the following address in the web-browser:
+
 http://(your-host)/ead/
 
 A help page is available at:
+
 http://(your-host)/ead/help.html#search
 
 
-#### Using SRU ####
+Using the SRU API
+'''''''''''''''''
 
 A complete guide to using the SRU interface is beyond the scope of this 
 document. For details about the SRU protocol see:
+
 http://www.loc.gov/standards/sru/
 
 The base URI for the SRU interface will be:
+
 http://(your-host)/services/ead
 
-##### Available Indexes #####
+
+Available Indexes
+`````````````````
 
 *   rec.identifier
 
@@ -321,7 +346,8 @@ http://(your-host)/services/ead
     discriminate collections from the items contained within them.
     
     
-##### Available Record Schemas #####
+Available Record Schemas
+````````````````````````
 
 *   ead
 
@@ -343,12 +369,15 @@ http://(your-host)/services/ead
     
     
     
-##### Disabling SRU #####
+Disabling SRU
+`````````````
 
 It is possible to disable the SRU Interface:
 
 1. Change directory to (Cheshire3-base-directory)/cheshire3/dbs/ead
+
 2. Open the file config.xml
+
 3. Change the line that reads:
 
     `<setting type="srw">1</setting>`
@@ -358,17 +387,21 @@ It is possible to disable the SRU Interface:
     `<setting type="srw">0</setting>`
 
 
-#### Harvesting Using OAI-PMH ####
+Harvesting Using OAI-PMH
+''''''''''''''''''''''''
 
 A complete guide to using the OAI-PMH interface is beyond the scope of this 
 document. For details about the OAI-PMH protocol see:
+
 http://www.openarchives.org/
 
 The base URI for the SRU interface will be:
+
 http://(your-host)/OAI/2.0/ead
 
 
-##### Available Record Schemas #####
+Available Record Schemas (Metadata Prefixes)
+````````````````````````````````````````````
 
 *   oai_dc
 
@@ -389,18 +422,22 @@ http://(your-host)/OAI/2.0/ead
     EAD 2002 – DTD Version
 
 
-##### Available Sets #####
+Available Sets
+``````````````
 
 There is no set hierarchy defined - this OAI-PMH interface does not support 
 selective harvesting by sets.
 
 
-##### Disabling OAI-PMH #####
+Disabling OAI-PMH
+`````````````````
 
 It is possible to disable the OAI-PMH Interface:
 
 1. Change directory to (Cheshire3-base-directory)/cheshire3/dbs/ead
+
 2. Open the file config.xml
+
 3. Change the line that reads:
 
     `<setting type="oai-pmh">1</setting>`
@@ -409,3 +446,16 @@ It is possible to disable the OAI-PMH Interface:
 
     `<setting type="oai-pmh">0</setting>`
 
+
+.. Links
+.. _Python: http://www.python.org/
+.. _Apache: http://httpd.apache.org 
+.. _`University of Liverpool`: http://www.liv.ac.uk
+.. _`Cheshire3 Information Framework`: http://cheshire3.org
+.. _`Archives Hub`: http://archiveshub.ac.uk
+.. _`EAD Editor`: http://archiveshub.ac.uk/eadeditor/
+.. _WSGI: http://wsgi.org
+.. _`EAD Schema`: http://www.loc.gov/ead/eadschema.html
+.. _`EAC-CPF`: http://eac.staatsbibliothek-berlin.de/
+.. _YAML: http://www.yaml.org/
+.. _`mod_python`: http://modpython.org
