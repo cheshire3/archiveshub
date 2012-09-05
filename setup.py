@@ -18,7 +18,7 @@ from setuptools import setup
 from setuputils.commands import develop, install, uninstall, unavailable_command 
 
 
-_name = 'cheshire3-ead'
+_name = 'cheshire3ead'
 _version = '3.6.0'
 
 # Inspect to find current path
