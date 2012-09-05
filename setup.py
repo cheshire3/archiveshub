@@ -1,7 +1,8 @@
 """Setup Cheshire3 for Archives.
 
-Although Cheshire3 for Archives is not a pure Python package, the
-convention of using setup.py as the setup file are followed.
+Although Cheshire3 for Archives is not a pure Python package,
+needing to be unpacked and used in situ, the convention of using setup.py
+as the installation method is followed.
 """
 
 from __future__ import with_statement
@@ -15,11 +16,11 @@ import distribute_setup
 distribute_setup.use_setuptools()
 
 from setuptools import setup
-from setuputils.commands import develop, install, uninstall, unavailable_command 
-
+from cheshire3ead.setuptools.commands import (develop, install, uninstall,
+                                              unavailable_command) 
 
 _name = 'cheshire3ead'
-_version = '3.6.0'
+_version = '3.6'
 
 # Inspect to find current path
 setuppath = inspect.getfile(inspect.currentframe())
