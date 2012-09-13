@@ -45,20 +45,20 @@ Description
 Cheshire3 for Archives is a complete system for searching and delivering EAD 
 documents via the web. It features:
 
-* Full document and component indexing to item level
-* Customisable search and display web-interface
-* Faceted result browsing
-* Subject clustering / Entry Level Vocabulary
-* SRU, OAI-PMH and Z39.50 APIs
-* Online administration interface
-    * add, delete records
-    * rebuild, reindex database
-    * manage users allowed to perform administrative tasks
-* Online Cataloguing
-    * Create new files
-    * Import existing EAD files for editing
-    * Export created/edited records for immediate inclusion in the database
-   
+*  Full document and component indexing to item level
+*  Customisable search and display web-interface
+*  Faceted result browsing
+*  Subject clustering / Entry Level Vocabulary
+*  SRU, OAI-PMH and Z39.50 APIs
+*  Online administration interface
+   * add, delete records
+   * rebuild, reindex database
+   * manage users allowed to perform administrative tasks
+*  Online Cataloguing
+   * Create new files
+   * Import existing EAD files for editing
+   * Export created/edited records for immediate inclusion in the database
+
 
 Authors
 -------
