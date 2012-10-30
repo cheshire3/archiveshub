@@ -109,13 +109,13 @@ run the 'uninstall' command.""")
         subpath = join('cheshire3', 
                        'dbs', 
                        'ead')
-        os.symlink(join(distropath, subpath), 
+        os.symlink(join(distropath, 'dbs', 'ead'), 
                    join(cheshire3Home, subpath))
         # Link to web app directory
         subpath = join('cheshire3', 
                        'www', 
                        'ead')
-        os.symlink(join(distropath, subpath), 
+        os.symlink(join(distropath, 'www'), 
                    join(cheshire3Home, subpath))
         
     def uninstall_link(self):
@@ -174,7 +174,7 @@ run the `develop` command again with the `--uninstall` option.""")
         subpath = join('cheshire3', 
                        'dbs', 
                        'ead')
-        shutil.copytree(join(distropath, subpath), 
+        shutil.copytree(join(distropath, 'dbs', 'ead'), 
                         join(cheshire3Home, subpath),
                         symlinks=False,
                         ignore=shutil.ignore_patterns(".git*", 
@@ -188,7 +188,7 @@ run the `develop` command again with the `--uninstall` option.""")
         subpath = join('cheshire3', 
                        'www', 
                        'ead')
-        shutil.copytree(join(distropath, subpath), 
+        shutil.copytree(join(distropath, 'www'), 
                         join(cheshire3Home, subpath),
                         symlinks=False,
                         ignore=shutil.ignore_patterns(".git*", 
