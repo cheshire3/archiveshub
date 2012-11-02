@@ -240,7 +240,8 @@ class uninstall(c3_command):
 
 # Inspect to find current path
 modpath = inspect.getfile(inspect.currentframe())
-distropath = abspath(join(dirname(modpath), '..'))
+moddir = dirname(modpath)
+distropath = abspath(join(moddir, '..', '..'))
 serverConfig = os.path.join(cheshire3Root,
                             'configs',
                             'serverConfig.xml')
