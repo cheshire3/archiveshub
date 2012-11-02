@@ -16,8 +16,8 @@ from cheshire3.internal import cheshire3Home, cheshire3Root
 from cheshire3.server import SimpleServer
 from cheshire3.session import Session
 
-from apache import ApacheModifier
-from exceptions import *
+from cheshire3archives.setuptools.apache import ApacheModifier
+from cheshire3archives.setuptools.exceptions import *
 
 
 class unavailable_command(Command):

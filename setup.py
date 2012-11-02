@@ -16,10 +16,11 @@ import distribute_setup
 distribute_setup.use_setuptools()
 
 from setuptools import setup
-from cheshire3ead.setuptools.commands import (develop, install, upgrade,
-                                              uninstall, unavailable_command) 
+from cheshire3archives.setuptools.commands import (develop, install, upgrade,
+                                                   uninstall,
+                                                   unavailable_command) 
 
-_name = 'cheshire3ead'
+_name = 'cheshire3-archives'
 _version = '3.6'
 
 # Inspect to find current path
