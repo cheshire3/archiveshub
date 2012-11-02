@@ -85,6 +85,8 @@ class develop(_develop.develop, c3_command):
         global distropath, server, session
         # Carry out normal procedure
         _develop.develop.install_for_development(self)
+        # Install Apache HTTPD mods
+        self.install_apache_mods()
         # Tell the server to register the config file
         try:
             server.register_databaseConfigFile(session, join(distropath,
@@ -104,8 +106,6 @@ class develop(_develop.develop, c3_command):
                                                              'ead',
                                                              'cluster',
                                                              'config.xml'))
-        # Install Apache HTTPD mods
-        self.install_apache_mods()
         # New version runs from unpacked / checked out directory
         # No need to install database or web app
         
