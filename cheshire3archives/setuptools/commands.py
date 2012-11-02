@@ -47,7 +47,7 @@ class c3_command(Command):
     ]
 
     def initialize_options(self):
-        self.with_httpd = join(cheshire3Home, 'install')
+        self.with_httpd = '/etc/httpd'
 
     def finalize_options(self):
         self.with_httpd = normalize_path(self.with_httpd)
