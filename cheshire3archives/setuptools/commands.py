@@ -1,6 +1,7 @@
 """Setuptools command sub-classes."""
 
 import os
+import sys
 import shutil
 import inspect
 
@@ -56,17 +57,69 @@ class c3_command(Command):
         """Install Apache HTTPD modifications."""
         # Install Apache HTTPD configuration plugin file
         am = ApacheModifier(self.with_httpd)
-        am.install_apache_config()
-        # Create web directory for static search pages
-        # and install default landing page there
-        am.install_web_landing_page()
+        try:
+            am.install_apache_config()
+        except IOError as e:
+            if e.strerror == "Permission denied":
+                # Permission to modify Apache denied
+                raise IOError(e.errno,
+                              "Permission denied\n\n"
+                              "The following error occurred while trying to "
+                              "add or remove files in the installation "
+                              "directory:\n\n    " +
+                              str(e) +
+                              "\n\nThe Apache installation directory you "
+                              "specified (via --with-httpd or the default "
+                              "setting) was:\n\n    " +
+                              self.with_httpd +
+                              "\n\nPerhaps your account does not have write "
+                              "access to this directory?  If the installation "
+                              "directory is a system-owned directory, you may "
+                              "need to sign in as the administrator or \"root\" "
+                              "account.\n\n"
+                              "HINT: you could try running\n\n    "
+                              "su -c \"python setup.py %s\""
+                              "" % self.__class__.__name__,
+                              e.filename)
+            else:
+                raise e
+        else:
+            # Create web directory for static search pages
+            # and install default landing page there
+            am.install_web_landing_page()
         
     def uninstall_apache_mods(self):
-        # Install Apache HTTPD configuration plugin file
+        # Uninstall Apache HTTPD configuration plugin file
         am = ApacheModifier(self.with_httpd)
-        am.uninstall_apache_config()
-        # Remove web directory for static search pages
-        am.uninstall_web_dir()
+        try:
+            am.uninstall_apache_config()
+        except IOError as e:
+            if e.strerror == "Permission denied":
+                # Permission to modify Apache denied
+                raise IOError(e.errno,
+                              "Permission denied\n\n"
+                              "The following error occurred while trying to "
+                              "add or remove files in the installation "
+                              "directory:\n\n    " +
+                              str(e) +
+                              "\n\nThe Apache installation directory you "
+                              "specified (via --with-httpd or the default "
+                              "setting) was:\n\n    " +
+                              self.with_httpd +
+                              "\n\nPerhaps your account does not have write "
+                              "access to this directory?  If the installation "
+                              "directory is a system-owned directory, you may "
+                              "need to sign in as the administrator or \"root\" "
+                              "account.\n\n"
+                              "HINT: you could try running\n\n    "
+                              "su -c \"python setup.py %s\""
+                              "" % self.__class__.__name__,
+                              e.filename)
+            else:
+                raise e
+        else:
+            # Remove web directory for static search pages
+            am.uninstall_web_dir()
     
 
 class develop(_develop.develop, c3_command):
