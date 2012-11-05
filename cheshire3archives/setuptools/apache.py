@@ -33,6 +33,12 @@ class ApacheModifier(object):
             self.apache_htdocs_path = join(apache_base_path, 'htdocs')
         elif exists(join(apache_base_path, 'www')):
             self.apache_htdocs_path = join(apache_base_path, 'www')
+        elif exists(abspath(join(apache_base_path,
+                                 '..', '..',
+                                 'var', 'www', 'html'))):
+            self.apache_htdocs_path = abspath(join(apache_base_path,
+                                                   '..', '..',
+                                                   'var', 'www', 'html'))
         else:
             raise NoApacheException(apache_base_path)
         self.apache_base_path = apache_base_path
@@ -107,4 +113,5 @@ class ApacheModifier(object):
 
 # Inspect to find current path
 modpath = inspect.getfile(inspect.currentframe())
-distropath = abspath(join(dirname(modpath), '..'))
+moddir = dirname(modpath)
+distropath = abspath(join(moddir, '..', '..'))
