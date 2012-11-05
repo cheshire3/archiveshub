@@ -50,7 +50,7 @@ class c3_command(Command):
         self.with_httpd = '/etc/httpd'
 
     def finalize_options(self):
-        self.with_httpd = normalize_path(self.with_httpd)
+        self.with_httpd = normalize_path(expanduser(self.with_httpd))
 
     def install_apache_mods(self):
         """Install Apache HTTPD modifications."""
@@ -124,8 +124,16 @@ class develop(_develop.develop, c3_command):
         pluginPath = os.path.join('configs', 'databases', 'db_ead.xml')
         if exists(join(serverDefaultPath, pluginPath)):
             os.remove(join(serverDefaultPath, pluginPath))
+            os.remove(join(serverDefaultPath,
+                           'configs',
+                           'databases',
+                           'db_ead_cluster.xml'))
         elif exists(os.path.join(userSpecificPath, pluginPath)):
             os.remove(os.path.join(userSpecificPath, pluginPath))
+            os.remove(join(userSpecificPath,
+                           'configs',
+                           'databases',
+                           'db_ead_cluster.xml'))
         else:
             server.log_error(session, "No database plugin file")
 
@@ -232,8 +240,16 @@ class uninstall(c3_command):
         pluginPath = os.path.join('configs', 'databases', 'db_ead.xml')
         if exists(join(serverDefaultPath, pluginPath)):
             os.remove(join(serverDefaultPath, pluginPath))
+            os.remove(join(serverDefaultPath,
+                           'configs',
+                           'databases',
+                           'db_ead_cluster.xml'))
         elif exists(os.path.join(userSpecificPath, pluginPath)):
             os.remove(os.path.join(userSpecificPath, pluginPath))
+            os.remove(join(userSpecificPath,
+                           'configs',
+                           'databases',
+                           'db_ead_cluster.xml'))
         else:
             server.log_error(session, "No database plugin file")
 
