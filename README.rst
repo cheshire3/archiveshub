@@ -1,7 +1,7 @@
 Cheshire3 for Archives
 ======================
 
-3rd September 2012 (2012-09-03)
+5th November 2012 (2012-11-05)
 
 
 Contents
@@ -80,13 +80,17 @@ http://download.cheshire3.org/download/ead/
 
 Source code is under version control and available from:
 
-http://github.com/cheshire3/cheshire3-ead
+http://github.com/cheshire3/cheshire3-archives
 
 Development in the GitHub repository will follow (at least to begin with) 
-Vincent Driessen's branching model, and use git-flow to facilitate this. For 
-details of the model, see:
+Vincent Driessen's branching model, and use `git-flow`_ to facilitate this.
+For details of the model, see:
 
 http://nvie.com/posts/a-successful-git-branching-model/
+
+Accordingly, the ``master`` branch is stable and contains the most recent
+release of the software; development should take place in (or by creating a
+new ``feature/...`` branch from) the ``develop`` branch.
 
 
 Installation
@@ -189,7 +193,7 @@ Bugs, Feature requests etc.
 
 Bug reports, feature requests etc. should be made using the GitHub issue 
 tracker:
-https://github.com/cheshire3/cheshire3-ead/issues
+https://github.com/cheshire3/cheshire3-archives/issues
 
 
 Licensing
@@ -493,3 +497,4 @@ It is possible to disable the OAI-PMH Interface:
 .. _`EAC-CPF`: http://eac.staatsbibliothek-berlin.de/
 .. _YAML: http://www.yaml.org/
 .. _`mod_python`: http://modpython.org
+.. _`git-flow`: https://github.com/nvie/gitflow
