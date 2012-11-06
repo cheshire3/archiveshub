@@ -16,8 +16,8 @@ import distribute_setup
 distribute_setup.use_setuptools()
 
 from setuptools import setup
-from cheshire3ead.setuptools.commands import (develop, install, uninstall,
-                                              unavailable_command) 
+from cheshire3ead.setuptools.commands import (develop, install, upgrade,
+                                              uninstall, unavailable_command) 
 
 _name = 'cheshire3ead'
 _version = '3.6'
@@ -61,6 +61,7 @@ setup(
                 'bdist_wininst': unavailable_command,
                 'develop': develop,
                 'install': install,
+                'upgrade': upgrade,
                 'uninstall': uninstall
                 },
 )
