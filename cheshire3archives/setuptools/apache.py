@@ -72,7 +72,7 @@ class ApacheModifier(object):
             with open(default_httpd_conf_path, 'a') as fh:
                 fh.write("Include conf.d/*.conf")
                 
-        self._unpackcp(join(distropath, 'install', 'conf.d', 'ead.conf'), 
+        self._unpackcp(join(distropath, 'www', 'conf.d', 'ead.conf'), 
                        join(confdir, 'ead.conf')
                        )
         
@@ -93,7 +93,7 @@ class ApacheModifier(object):
         if not exists(destpath):
             os.mkdir(destpath)
         self._unpackcp(join(distropath, 
-                            'install', 
+                            'www', 
                             'htdocs', 
                             'ead', 
                             'index.html'),
