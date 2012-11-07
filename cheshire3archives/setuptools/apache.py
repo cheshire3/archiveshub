@@ -4,7 +4,7 @@ import os
 import inspect
 
 from os.path import abspath, dirname, join, exists
-
+from string import Template
 
 class NoApacheException(EnvironmentError):
     """Exception raised when Apache HTTPD cannot be located."""
@@ -47,12 +47,14 @@ class ApacheModifier(object):
     def _unpackcp(self, source, destination):
         # Read in src
         with open(source, 'r') as fh:
-            tmpl = fh.read()
+            tmpl = Template(fh.read())
         # Make common modifications
-        tmpl = tmpl.replace('%%%C3HOME%%%', distropath)
+        repl = {'C3ARCHIVESHOME': distropath}
+        repl.update(os.environ)
+        out = tmpl.safe_substitute(repl)
         # Write to dest
         with open(destination, 'w') as fh:
-            fh.write(tmpl)
+            fh.write(out)
             
     def install_apache_config(self):
         """Create and install an Apache HTTPD configuration stub file.
@@ -74,17 +76,20 @@ class ApacheModifier(object):
                 fh.write("Include conf.d/*.conf")
         if self.develop:
             # Mod the file then create a sym-link to it
-            self._unpackcp(join(distropath, 'www', 'conf.d', 'ead.conf'),
-                           join(distropath, 'www', 'conf.d', 'ead.conf')
-                           )
-            os.symlink(join(distropath, 'www', 'conf.d', 'ead.conf'),
-                    join(confdir, 'ead.conf')
-                    )
+            self._unpackcp(
+                join(distropath, 'www', 'conf.d', 'ead.conf.tmpl'),
+                join(distropath, 'www', 'conf.d', 'ead.conf')
+            )
+            os.symlink(
+                join(distropath, 'www', 'conf.d', 'ead.conf'),
+                join(confdir, 'ead.conf')
+            )
         else:
             # Copy the file with mods
-            self._unpackcp(join(distropath, 'www', 'conf.d', 'ead.conf'),
-                           join(confdir, 'ead.conf')
-                           )
+            self._unpackcp(
+                join(distropath, 'www', 'conf.d', 'ead.conf.tmpl'),
+                join(confdir, 'ead.conf')
+            )
         
     def uninstall_apache_config(self):
         """Uninstall an Apache HTTPD configuration stub file.
