@@ -25,7 +25,7 @@ option.'''.format(apache_base_path)
 class ApacheModifier(object):
     """A class to modify an Apache HTTPD installation."""
     
-    def __init__(self, apache_base_path):
+    def __init__(self, apache_base_path, develop=False):
         from cheshire3.internal import cheshire3Home
         self.cheshire3Home = cheshire3Home
         # Find directory for online content
@@ -42,13 +42,14 @@ class ApacheModifier(object):
         else:
             raise NoApacheException(apache_base_path)
         self.apache_base_path = apache_base_path
+        self.develop = develop
         
     def _unpackcp(self, source, destination):
         # Read in src
         with open(source, 'r') as fh:
             tmpl = fh.read()
         # Make common modifications
-        tmpl = tmpl.replace('%%%C3HOME%%%', self.cheshire3Home)
+        tmpl = tmpl.replace('%%%C3HOME%%%', distropath)
         # Write to dest
         with open(destination, 'w') as fh:
             fh.write(tmpl)
@@ -71,10 +72,19 @@ class ApacheModifier(object):
                                            'httpd.conf') 
             with open(default_httpd_conf_path, 'a') as fh:
                 fh.write("Include conf.d/*.conf")
-                
-        self._unpackcp(join(distropath, 'www', 'conf.d', 'ead.conf'), 
-                       join(confdir, 'ead.conf')
-                       )
+        if self.develop:
+            # Mod the file then create a sym-link to it
+            self._unpackcp(join(distropath, 'www', 'conf.d', 'ead.conf'),
+                           join(distropath, 'www', 'conf.d', 'ead.conf')
+                           )
+            os.symlink(join(distropath, 'www', 'conf.d', 'ead.conf'),
+                    join(confdir, 'ead.conf')
+                    )
+        else:
+            # Copy the file with mods
+            self._unpackcp(join(distropath, 'www', 'conf.d', 'ead.conf'),
+                           join(confdir, 'ead.conf')
+                           )
         
     def uninstall_apache_config(self):
         """Uninstall an Apache HTTPD configuration stub file.
@@ -92,12 +102,21 @@ class ApacheModifier(object):
         destpath = join(self.apache_htdocs_path, 'ead')
         if not exists(destpath):
             os.mkdir(destpath)
-        self._unpackcp(join(distropath, 
-                            'www', 
-                            'htdocs', 
-                            'ead', 
+        if self.develop:
+            # Create a sym-link to the file
+            os.symlink(join(distropath,
+                            'www',
+                            'htdocs',
+                            'ead',
                             'index.html'),
                        join(destpath, 'index.html'))
+        else:
+            self._unpackcp(join(distropath,
+                                'www',
+                                'htdocs',
+                                'ead',
+                                'index.html'),
+                           join(destpath, 'index.html'))
     
     def uninstall_web_dir(self):
         # Recursively remove the Cheshire3 for Archives directory from

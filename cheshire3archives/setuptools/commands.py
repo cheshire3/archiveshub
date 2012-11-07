@@ -53,10 +53,10 @@ class c3_command(Command):
     def finalize_options(self):
         self.with_httpd = normalize_path(expanduser(self.with_httpd))
 
-    def install_apache_mods(self):
+    def install_apache_mods(self, develop=False):
         """Install Apache HTTPD modifications."""
         # Install Apache HTTPD configuration plugin file
-        am = ApacheModifier(self.with_httpd)
+        am = ApacheModifier(self.with_httpd, develop)
         try:
             am.install_apache_config()
         except IOError as e:
@@ -139,7 +139,7 @@ class develop(_develop.develop, c3_command):
         # Carry out normal procedure
         _develop.develop.install_for_development(self)
         # Install Apache HTTPD mods
-        self.install_apache_mods()
+        self.install_apache_mods(develop=True)
         # Tell the server to register the config file
         try:
             server.register_databaseConfigFile(session, join(distropath,
