@@ -1,1 +1,1 @@
-cheshire3 [web, sql]
+cheshire3 [web, sql] >= 1.0.4
