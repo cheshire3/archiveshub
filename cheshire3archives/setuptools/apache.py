@@ -102,37 +102,6 @@ class ApacheModifier(object):
         # Remove Apache configuration stub template
         if exists(confdir):
              os.remove(join(confdir, 'ead.conf'))
-        
-    def install_web_landing_page(self):
-        destpath = join(self.apache_htdocs_path, 'ead')
-        if not exists(destpath):
-            os.mkdir(destpath)
-        if self.develop:
-            # Create a sym-link to the file
-            os.symlink(join(distropath,
-                            'www',
-                            'htdocs',
-                            'ead',
-                            'index.html'),
-                       join(destpath, 'index.html'))
-        else:
-            self._unpackcp(join(distropath,
-                                'www',
-                                'htdocs',
-                                'ead',
-                                'index.html'),
-                           join(destpath, 'index.html'))
-    
-    def uninstall_web_dir(self):
-        # Recursively remove the Cheshire3 for Archives directory from
-        # Apache HTTPDs htdocs directory 
-        web_dir = join(self.apache_htdocs_path, 'ead')
-        for root, dirs, files in os.walk(web_dir, topdown=False):
-            for name in files:
-                os.remove(os.path.join(root, name))
-            for name in dirs:
-                os.rmdir(os.path.join(root, name))
-        os.rmdir(web_dir)
 
 
 # Inspect to find current path

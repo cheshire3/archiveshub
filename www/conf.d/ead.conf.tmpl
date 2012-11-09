@@ -1,25 +1,3 @@
-# Static web content
-
-# CSS
-Alias /ead/css ${C3ARCHIVESHOME}/www/htdocs/ead/css
-<Directory ${C3ARCHIVESHOME}/www/htdocs/ead/css>
-  Order allow,deny
-  Allow from all
-</Directory>
-
-# images
-Alias /ead/img ${C3ARCHIVESHOME}/www/htdocs/ead/img
-<Directory ${C3ARCHIVESHOME}/www/htdocs/ead/img>
-  Order allow,deny
-  Allow from all
-</Directory>
-
-# JavaScript
-Alias /ead/js ${C3ARCHIVESHOME}/www/htdocs/ead/js
-<Directory ${C3ARCHIVESHOME}/www/htdocs/ead/js>
-  Order allow,deny
-  Allow from all
-</Directory>
 
 # EAD Search Interface
 <Location /ead/search>
@@ -65,8 +43,17 @@ Alias /ead/js ${C3ARCHIVESHOME}/www/htdocs/ead/js
   PythonAuthenHandler eadEditingHandler
 </Location>
 
+# Static web content
+
+Alias /ead ${C3ARCHIVESHOME}/www/htdocs/ead
+<Directory ${C3ARCHIVESHOME}/www/htdocs/ead>
+  Order allow,deny
+  Allow from all
+</Directory>
+
+
 # EAD preview sub-directory
-<Directory ${DOCUMENT_ROOT}/ead/html/preview>
+<Directory ${C3ARCHIVESHOME}/www/htdocs/ead/html/preview>
   Options Includes Indexes
   AddType text/html .shtml
   AddHandler server-parsed .shtml
@@ -81,7 +68,7 @@ Alias /ead/js ${C3ARCHIVESHOME}/www/htdocs/ead/js
 </Directory>
 
 # Server Side Includes (SSI)
-<Directory ${DOCUMENT_ROOT}/ead/html>
+<Directory ${C3ARCHIVESHOME}/www/htdocs/ead/html>
   Options Includes Indexes
   AddType text/html .shtml
   AddHandler server-parsed .shtml

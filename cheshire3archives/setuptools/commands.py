@@ -83,10 +83,6 @@ class c3_command(Command):
                               e.filename)
             else:
                 raise e
-        else:
-            # Create web directory for static search pages
-            # and install default landing page there
-            am.install_web_landing_page()
         
     def uninstall_apache_mods(self):
         # Uninstall Apache HTTPD configuration plugin file
@@ -117,9 +113,6 @@ class c3_command(Command):
                               e.filename)
             else:
                 raise e
-        else:
-            # Remove web directory for static search pages
-            am.uninstall_web_dir()
     
 
 class develop(_develop.develop, c3_command):
