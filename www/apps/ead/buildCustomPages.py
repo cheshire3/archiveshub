@@ -1,13 +1,17 @@
 #!/home/cheshire/cheshire3/install/bin/python
 
 import time, sys, os, re
+
 from crypt import crypt
 
-c3path = os.environ.get('C3HOME', '/home/cheshire')
-sys.path.insert(1, os.path.join(c3path, 'cheshire3', 'code'))
-
 from cheshire3.web.www_utils import *
-# import customisable variables
+
+# Add distro path to Python search path
+c3archives_path = os.environ.get('C3ARCHIVESHOME',
+                                 os.path.expanduser('~/cheshire3-archives'))
+sys.path.insert(1, os.path.join(c3archives_path, 'www', 'apps', 'ead'))
+
+# Import customisable variables
 from localConfig import *
 
 pageMaps = {

@@ -1,6 +1,6 @@
 #
 # Script:   localConfig.py
-# Version:   0.21
+# Version:   0.22
 # Description:
 #            Customisable elements for Cheshire for Archives v3.x
 #
@@ -8,9 +8,9 @@
 # Author:    John Harrison <john.harrison@liv.ac.uk>
 # Author:    Catherine Smith <catherine.smith@liv.ac.uk>
 #
-# Date:      10 January 2011
+# Date:      9 November 2012
 #
-# Copyright: &copy; University of Liverpool 2005-2011
+# Copyright: &copy; University of Liverpool 2005-2012
 #
 # Version History:
 # 0.01 - 13/04/2005 - JH - Basic configurable elements coded by John
@@ -39,6 +39,9 @@
 # 0.19 - 18/02/2009 - JH - Images now in Subversion (/ead/img/)
 # 0.20 - 06/09/2010 - JH - Updates to mandatory fields (XPaths)
 # 0.21 - 10/01/2011 - JH - Stoplists for more sophisticated title capitalization
+# 0.22 - 09/11/2012 - JH - cheshirePath now user agnostic
+#                        - python import path no longer modified
+#                          (Cheshire3 should be installed)
 #
 # Changes to original:
 # You should make a note of any changes that you make to the originally distributed file here.
@@ -55,7 +58,8 @@ display_relevance = True
 graphical_relevance = False
 
 # Path to Cheshire Root - i.e. where Cheshire3 was installed
-cheshirePath = os.environ.get('C3HOME', '/home/cheshire/cheshire3/')
+cheshirePath = os.environ.get('C3HOME',
+                              os.path.expanduser('~/cheshire3/'))
 
 # Institutionally specific configurables
 repository_name = "Cheshire for Archives v3.5 Development"

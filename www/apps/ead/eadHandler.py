@@ -1,7 +1,7 @@
 #
 # Script:    eadHandler.py
-# Version:   0.09
-# Date:      15 December 2011
+# Version:   0.10
+# Date:      9 November 2012
 # Copyright: &copy; University of Liverpool 2005-present
 # Description:
 #            Globals and parent class web interfaces to a Cheshire3 database of EAD finding aids.
@@ -25,7 +25,8 @@
 # 0.07 - 09/01/2008 - JH - _parse_upload bug fix
 # 0.08 - 22/11/2010 - JH - Provision for exception logging / reporting
 # 0.09 - 15/03/2011 - JH - Bug fixe for ToC character encoding fixed - coerce to unicode when read in
-#
+# 0.10 - 09/11/2012 - JH - python import path no longer modified
+#                          (Cheshire3 should be installed)
 
 
 import sys
@@ -46,13 +47,6 @@ from lxml.builder import E
 # import mod_python stuffs
 from mod_python import apache, Cookie
 from mod_python.util import FieldStorage, redirect
-# import generally useful modules
-
-# import customisable variables
-from localConfig import *
-
-# set sys paths
-sys.path.insert(1, os.path.join(cheshirePath, 'cheshire3', 'code'))
 
 # Cheshire3 stuff
 from cheshire3.baseObjects import Session, Record, ResultSet
@@ -65,6 +59,12 @@ from cheshire3.web.www_utils import *
 # PyZ39.50 stuff
 from PyZ3950 import SRWDiagnostics
 from cheshire3.cqlParser import Diagnostic as CQLDiagnostic
+
+# Add distro path to Python search path
+c3archives_path = os.environ.get('C3ARCHIVESHOME',
+                                 os.path.expanduser('~/cheshire3-archives'))
+# import customisable variables
+from localConfig import *
 
 # regexs
 # Deprecated in favour of ProximityIndex offsets
