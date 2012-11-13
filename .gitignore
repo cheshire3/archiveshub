@@ -1,3 +1,6 @@
+# Apache config file, created from teplate by install process
+www/conf.d/ead.conf
+
 # Cheshire3 BerkeleyDB based *Store files, metadata and indexes
 *Store.bdb
 *Store_*.bdb
