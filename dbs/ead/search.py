@@ -1,8 +1,8 @@
-#!/home/cheshire/install/bin/python -i
+#!/bin/env python
 #
 # Script:    search.py
-# Date:      11 February 2008
-# Copyright: &copy; University of Liverpool 2005-2008
+# Date:      13 November 2012
+# Copyright: &copy; University of Liverpool 2005-present
 # Author(s): JH - John Harrison <john.harrison@liv.ac.uk>
 # Language:  Python
 #
