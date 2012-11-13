@@ -42,6 +42,7 @@
 # 0.22 - 09/11/2012 - JH - cheshirePath now user agnostic
 #                        - python import path no longer modified
 #                          (Cheshire3 should be installed)
+# 0.23 - 13/11/2012 - JH - 
 #
 # Changes to original:
 # You should make a note of any changes that you make to the originally distributed file here.
@@ -52,19 +53,22 @@
 
 import os
 
+from os.path import join as pathjoin
+
 # Preference switches - True => ON, False => OFF
 result_graphics = True
 display_relevance = True
 graphical_relevance = False
 
-# Path to Cheshire Root - i.e. where Cheshire3 was installed
-cheshirePath = os.environ.get('C3HOME',
-                              os.path.expanduser('~/cheshire3/'))
+# Path to Cheshire3 for Archives
+c3archives_path = os.environ.get('C3ARCHIVESHOME',
+                                 os.path.expanduser('~/cheshire3-archives'))
+app_path = pathjoin(c3archives_path, 'www', 'apps', 'ead')
 
 # Institutionally specific configurables
-repository_name = "Cheshire for Archives v3.5 Development"
-repository_link = "http://www.cheshire3.org"                        # must begin http://
-repository_logo = "/ead/img/c3_black.gif"             # should begin http:// unless on this server
+repository_name = "Cheshire for Archives v3.6 Development"
+repository_link = "http://www.cheshire3.org"  # Must begin http://
+repository_logo = "/ead/img/c3_black.gif"     # Should begin http:// unless on this server
 
 title_separator = ' - '
 navbar_separator = ' &gt; '
@@ -72,31 +76,33 @@ navbar_separator = ' &gt; '
 # URL of relevance graphic
 relevance_graphic = '/ead/img/star.gif'
 
-# server and email settings - you should check these with your computing services people.
-localhost = '138.253.50.194'
+# Server and email settings
+# You should check these with your computing services people.
+localhost = '138.253.80.174'
 outgoing_email_username = 'cheshire'
 outgoing_email_host = "mail1.liv.ac.uk"
-outgoing_email_port = 25                           # 25 is the default for most mail servers
+outgoing_email_port = 25            # 25 is the default for most mail servers
 
 # Logfile paths
-logpath = cheshirePath + '/cheshire3/www/ead/logs'
-searchlogfilepath = logpath + '/searchHandler.log'
-adminlogfilepath = logpath + '/adminHandler.log'
-editinglogfilepath = logpath + '/editingHandler.log'
+logpath = pathjoin(app_path, 'logs')
+searchlogfilepath = pathjoin(logpath, 'searchHandler.log')
+adminlogfilepath = pathjoin(logpath, 'adminHandler.log')
+editinglogfilepath = pathjoin(logpath, 'editingHandler.log')
 
 # Path where HTML fragments (browse.html, email.html, resolve.html, search.html)
 # and template.ssi are located
-htmlPath = cheshirePath + '/cheshire3/www/ead/html'
-templatePath = htmlPath + '/template.ssi'
+htmlPath = pathjoin(app_path, 'html')
+templatePath = pathjoin(htmlPath, 'template.ssi')
 
 # The approximate maximum desired page size when displaying full records (in kB)
 maximum_page_size = 50
 
 # The filepath where the HTML for finding aids and contents should be cached 
 # N.B. This must be accessible by apache, so should be a sub-directory of htdocs
-baseHtmlPath = cheshirePath + '/install/htdocs/ead'
-cache_path = baseHtmlPath + '/html'
-toc_cache_path = baseHtmlPath + '/tocs'
+baseHtmlPath = pathjoin(c3archives_path, 'www', 'htdocs', 'ead')
+cache_path = pathjoin(baseHtmlPath, 'html')
+toc_cache_path = pathjoin(baseHtmlPath, 'tocs')
+
 # URLs
 script = '/ead/search'
 cache_url = '/ead/html'
@@ -104,9 +110,9 @@ toc_cache_url = '/ead/tocs'
 
 # useful URIs
 namespaceUriHash = {
-    'dc': 'http://purl.org/dc/elements/1.0'
-    ,'srw_dc': 'info:srw/schema/1/dc-v1.1'
-    }
+    'dc': 'http://purl.org/dc/elements/1.0',
+    'srw_dc': 'info:srw/schema/1/dc-v1.1'
+}
 
 # Type of display to use when reloading / reindexing database within the admin interface. Options are:
 # 0: dots, 1: counter, 2: table
@@ -149,24 +155,24 @@ USA
 
 # List of xpaths that are mandatory for Archives Hub Records
 # intended new ones - under review...
-valid_coll_xpaths = ['/ead/eadheader/eadid'							# used for persistent UID
-                  ,'/ead/eadheader/filedesc/titlestmt/titleproper'	# only displayed in Cataloguing Info
-                  ,'/ead/archdesc/@level'
-                  ,'/ead/archdesc/did/unittitle'					# title in header
-                  ,'/ead/archdesc/did/unitid'                       # reference number in header
-                  ,'/ead/archdesc/did/unitdate'
-                  ,'/ead/archdesc/did/repository'
-                  ,'/ead/archdesc/did/physdesc/extent'
-                  ,'/ead/archdesc/did/origination'
-                  ,'/ead/archdesc/did/langmaterial/language'
-                  ,'/ead/archdesc/scopecontent'
-                  ,'/ead/archdesc//accessrestrict'
-                  ]
+valid_coll_xpaths = ['/ead/eadheader/eadid',							# used for persistent UID
+                     '/ead/eadheader/filedesc/titlestmt/titleproper',	# only displayed in Cataloguing Info
+                     '/ead/archdesc/@level',
+                     '/ead/archdesc/did/unittitle',					# title in header
+                     '/ead/archdesc/did/unitid',                       # reference number in header
+                     '/ead/archdesc/did/unitdate',
+                     '/ead/archdesc/did/repository',
+                     '/ead/archdesc/did/physdesc/extent',
+                     '/ead/archdesc/did/origination',
+                     '/ead/archdesc/did/langmaterial/language',
+                     '/ead/archdesc/scopecontent',
+                     '/ead/archdesc//accessrestrict',
+]
 
-valid_comp_xpaths = ['./did/unitid'
-                    ,'./did/unittitle'
-                    ,'./did/unitdate'
-                    ]
+valid_comp_xpaths = ['./did/unitid',
+                     './did/unittitle',
+                     './did/unitdate'
+]
 
 required_xpaths = valid_coll_xpaths
 
