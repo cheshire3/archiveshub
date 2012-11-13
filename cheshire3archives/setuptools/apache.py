@@ -4,7 +4,7 @@ import os
 import inspect
 
 from os.path import abspath, dirname, join, exists
-
+from string import Template
 
 class NoApacheException(EnvironmentError):
     """Exception raised when Apache HTTPD cannot be located."""
@@ -25,7 +25,7 @@ option.'''.format(apache_base_path)
 class ApacheModifier(object):
     """A class to modify an Apache HTTPD installation."""
     
-    def __init__(self, apache_base_path):
+    def __init__(self, apache_base_path, develop=False):
         from cheshire3.internal import cheshire3Home
         self.cheshire3Home = cheshire3Home
         # Find directory for online content
@@ -33,19 +33,28 @@ class ApacheModifier(object):
             self.apache_htdocs_path = join(apache_base_path, 'htdocs')
         elif exists(join(apache_base_path, 'www')):
             self.apache_htdocs_path = join(apache_base_path, 'www')
+        elif exists(abspath(join(apache_base_path,
+                                 '..', '..',
+                                 'var', 'www', 'html'))):
+            self.apache_htdocs_path = abspath(join(apache_base_path,
+                                                   '..', '..',
+                                                   'var', 'www', 'html'))
         else:
             raise NoApacheException(apache_base_path)
         self.apache_base_path = apache_base_path
+        self.develop = develop
         
     def _unpackcp(self, source, destination):
         # Read in src
         with open(source, 'r') as fh:
-            tmpl = fh.read()
+            tmpl = Template(fh.read())
         # Make common modifications
-        tmpl = tmpl.replace('%%%C3HOME%%%', self.cheshire3Home)
+        repl = {'C3ARCHIVESHOME': distropath}
+        repl.update(os.environ)
+        out = tmpl.safe_substitute(repl)
         # Write to dest
         with open(destination, 'w') as fh:
-            fh.write(tmpl)
+            fh.write(out)
             
     def install_apache_config(self):
         """Create and install an Apache HTTPD configuration stub file.
@@ -65,10 +74,22 @@ class ApacheModifier(object):
                                            'httpd.conf') 
             with open(default_httpd_conf_path, 'a') as fh:
                 fh.write("Include conf.d/*.conf")
-                
-        self._unpackcp(join(distropath, 'install', 'conf.d', 'ead.conf'), 
-                       join(confdir, 'ead.conf')
-                       )
+        if self.develop:
+            # Mod the file then create a sym-link to it
+            self._unpackcp(
+                join(distropath, 'www', 'conf.d', 'ead.conf.tmpl'),
+                join(distropath, 'www', 'conf.d', 'ead.conf')
+            )
+            os.symlink(
+                join(distropath, 'www', 'conf.d', 'ead.conf'),
+                join(confdir, 'ead.conf')
+            )
+        else:
+            # Copy the file with mods
+            self._unpackcp(
+                join(distropath, 'www', 'conf.d', 'ead.conf.tmpl'),
+                join(confdir, 'ead.conf')
+            )
         
     def uninstall_apache_config(self):
         """Uninstall an Apache HTTPD configuration stub file.
@@ -81,30 +102,9 @@ class ApacheModifier(object):
         # Remove Apache configuration stub template
         if exists(confdir):
              os.remove(join(confdir, 'ead.conf'))
-        
-    def install_web_landing_page(self):
-        destpath = join(self.apache_htdocs_path, 'ead')
-        if not exists(destpath):
-            os.mkdir(destpath)
-        self._unpackcp(join(distropath, 
-                            'install', 
-                            'htdocs', 
-                            'ead', 
-                            'index.html'),
-                       join(destpath, 'index.html'))
-    
-    def uninstall_web_dir(self):
-        # Recursively remove the Cheshire3 for Archives directory from
-        # Apache HTTPDs htdocs directory 
-        web_dir = join(self.apache_htdocs_path, 'ead')
-        for root, dirs, files in os.walk(web_dir, topdown=False):
-            for name in files:
-                os.remove(os.path.join(root, name))
-            for name in dirs:
-                os.rmdir(os.path.join(root, name))
-        os.rmdir(web_dir)
 
 
 # Inspect to find current path
 modpath = inspect.getfile(inspect.currentframe())
-distropath = abspath(join(dirname(modpath), '..'))
+moddir = dirname(modpath)
+distropath = abspath(join(moddir, '..', '..'))

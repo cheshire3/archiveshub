@@ -1,8 +1,8 @@
-#!/home/cheshire/install/bin/python
+#!/bin/env python
 #
 # Script:    run.py
-# Date:      17 March 2009
-# Copyright: &copy; University of Liverpool 2005-2009
+# Date:      13 November 2012
+# Copyright: &copy; University of Liverpool 2005-present
 # Author(s): JH - John Harrison <john.harrison@liv.ac.uk>
 # Language:  Python
 #
@@ -26,9 +26,14 @@ Options:
 
 """
 import sys
+import os
+import re
+import getpass
+import time
+import traceback
 
-import os, re, getpass, time, traceback
 from crypt import crypt
+
 
 class UsageException(Exception):
     """UI Script usage exception."""
@@ -56,14 +61,11 @@ class InputError(Exception):
 #    sys.exit()
 
 
-    
-cheshirePath = os.environ.get('C3HOME', '/home/cheshire/')
-sys.path.insert(1, os.path.join(cheshirePath, 'cheshire3', 'code'))
-
 from cheshire3.baseObjects import Session
 from cheshire3.server import SimpleServer
 from cheshire3.document import StringDocument
 from cheshire3 import exceptions as c3errors
+from cheshire3.internal import cheshire3Root
 
 from cheshire3.web.www_utils import read_file
 
@@ -72,7 +74,8 @@ from cheshire3.web.www_utils import read_file
 
 # Build environment...
 session = Session()
-serv = SimpleServer(session, os.path.join(cheshirePath, 'cheshire3', 'configs', 'serverConfig.xml'))
+serverConfig = os.path.join(cheshire3Root, 'configs', 'serverConfig.xml')
+serv = SimpleServer(session, serverConfig)
 session.database = 'db_ead'
 
 db = serv.get_object(session, 'db_ead')

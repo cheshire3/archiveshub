@@ -1,9 +1,9 @@
+
 # EAD Search Interface
 <Location /ead/search>
   SetHandler mod_python
-  #PythonInterpreter main-interpreter
   PythonDebug Off
-  PythonPath "['', '%%%C3HOME%%%/cheshire3/www/ead']+sys.path"
+  PythonPath "['', '${C3ARCHIVESHOME}/www/apps/ead']+sys.path"
   PythonHandler eadSearchHandler
   PythonAutoReload On
 </Location>
@@ -12,16 +12,13 @@
 # EAD Administration Interface
 <Location /ead/admin>
   SetHandler mod_python
-  #PythonInterpreter main-interpreter
   PythonDebug Off
-  PythonPath "['%%%C3HOME%%%/cheshire3/www/ead']+sys.path"
+  PythonPath "['', '${C3ARCHIVESHOME}/www/apps/ead']+sys.path"
   PythonHandler eadAdminHandler
   PythonAutoReload On
 
   # Authentication
   AuthType Basic
-  #AuthBasicProvider file
-  #AuthUserFile %%%C3HOME%%%/passwds/ead.passwds
   AuthUserFile /dev/null
   AuthBasicAuthoritative Off
   AuthName "Cheshire3 EAD Database Administration"
@@ -33,9 +30,8 @@
 # EAD Editing Interface
 <Location /ead/edit>
   SetHandler mod_python
-  #PythonInterpreter main-interpreter
   PythonDebug Off
-  PythonPath "['%%%C3HOME%%%/cheshire3/www/ead']+sys.path"
+  PythonPath "['', '${C3ARCHIVESHOME}/www/apps/ead']+sys.path"
   PythonHandler eadEditingHandler
   PythonAutoReload On
   # Authentication
@@ -47,13 +43,22 @@
   PythonAuthenHandler eadEditingHandler
 </Location>
 
+# Static web content
+
+Alias /ead ${C3ARCHIVESHOME}/www/htdocs/ead
+<Directory ${C3ARCHIVESHOME}/www/htdocs/ead>
+  DirectoryIndex index.html welcome.html
+  Order allow,deny
+  Allow from all
+</Directory>
+
+
 # EAD preview sub-directory
-<Directory %%%C3HOME%%%/install/htdocs/ead/html/preview>
+<Directory ${C3ARCHIVESHOME}/www/htdocs/ead/html/preview>
   Options Includes Indexes
   AddType text/html .shtml
   AddHandler server-parsed .shtml
-  PythonPath "['%%%C3HOME%%%/cheshire3/www/ead']+sys.path"
-  #PythonInterpreter main-interpreter
+  PythonPath "['', '${C3ARCHIVESHOME}/www/apps/ead']+sys.path"
   # Authentication
   AuthType Basic
   AuthUserFile /dev/null
@@ -64,7 +69,7 @@
 </Directory>
 
 # Server Side Includes (SSI)
-<Directory %%%C3HOME%%%/install/htdocs/ead/html>
+<Directory ${C3ARCHIVESHOME}/www/htdocs/ead/html>
   Options Includes Indexes
   AddType text/html .shtml
   AddHandler server-parsed .shtml

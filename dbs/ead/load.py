@@ -1,8 +1,8 @@
 #!/bin/env python
 #
 # Script:    run.py
-# Date:      4 May 2012
-# Copyright: &copy; University of Liverpool 2005-2012
+# Date:      13 November 2012
+# Copyright: &copy; University of Liverpool 2005-present
 # Author(s): JH - John Harrison <john.harrison@liv.ac.uk>
 # Language:  Python
 #

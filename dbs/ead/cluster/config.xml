@@ -14,7 +14,7 @@
     </options>
 
     <paths>
-        <path type="defaultPath">dbs/ead/cluster</path>
+        <path type="defaultPath">~/cheshire3-archives/dbs/ead/cluster</path>
         <path type="metadataPath">stores/metadata.bdb</path>
         <path type="indexStoreList">eadClusterIndexStore</path>
         <object type="recordStore" ref="eadClusterStore"/>
