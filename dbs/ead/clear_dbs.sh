@@ -1,12 +1,12 @@
 #!/bin/sh
 
 # clever work-around to avoid "Argument list too long" error
-find $C3HOME/install/htdocs/ead/html/ -name '*.shtml' -print0 | xargs --null rm -f
-find $C3HOME/install/htdocs/ead/tocs/ -name '*.inc' -print0 | xargs --null rm -f
+find $C3ARCHIVESHOME/www/htdocs/ead/html/ -name '*.shtml' -print0 | xargs --null rm -f
+find $C3ARCHIVESHOME/www/htdocs/ead/tocs/ -name '*.inc' -print0 | xargs --null rm -f
 
 current=`pwd`
 
-cd $C3HOME/cheshire3/dbs/ead
+cd $C3ARCHIVESHOME/dbs/ead
 
  
 FILE="indexing.lock"
