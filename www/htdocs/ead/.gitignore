@@ -1,0 +1,4 @@
+# ignore generated custom HTML
+*.html
+# but not welcome.html to be included in distro
+!welcome.html
