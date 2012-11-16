@@ -73,14 +73,18 @@
 # 0.32 - 28/10/2008 - JH - User editing migrated to Lxml
 # 0.33 - 28/01/2009 - JH - Minor tweaks for v3.4 release
 #
+# --- Version History Truncated ---
+# Version number will henceforth correspond to Cheshire3 for Archives release.
+# Version history is delegated to source code repository.
+#
 
+from threading import Thread
+from datetime import datetime
 
 from eadHandler import *
 from cheshire3.baseObjects import Record
 from cheshire3.record import LxmlRecord
 
-from threading import Thread
-from datetime import datetime
 
 class AdminThread(Thread):
     

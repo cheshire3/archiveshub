@@ -28,7 +28,11 @@
 # 0.01 - 20/01/2009 - CS - All functions for first release
 # 0.02 - 25/10/2010 - JH - Bug fixes for v3.5.0
 # 0.03 - 02/06/2011 - JH - Prevent reassign of builtin function 'list'
-
+#
+# --- Version History Truncated ---
+# Version number will henceforth correspond to Cheshire3 for Archives release.
+# Version history is delegated to source code repository.
+#
 
 import datetime
 import glob

@@ -119,6 +119,10 @@
 #                            - ToC character encoding fixed - coerce to unicode when read in
 #                            - Browse terms URL unescape/unquoted
 # 
+# --- Version History Truncated ---
+# Version number will henceforth correspond to Cheshire3 for Archives release.
+# Version history is delegated to source code repository.
+#
 
 
 from eadHandler import * 

@@ -27,7 +27,11 @@
 # 0.09 - 15/03/2011 - JH - Bug fixe for ToC character encoding fixed - coerce to unicode when read in
 # 0.10 - 09/11/2012 - JH - python import path no longer modified
 #                          (Cheshire3 should be installed)
-
+# 
+# --- Version History Truncated ---
+# Version number will henceforth correspond to Cheshire3 for Archives release.
+# Version history is delegated to source code repository.
+#
 
 import sys
 import os
