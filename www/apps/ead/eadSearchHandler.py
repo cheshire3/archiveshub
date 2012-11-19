@@ -1523,25 +1523,25 @@ exactIndexHash = {}
 # other
 highlightEndPointRe = None
 rebuild = True
+lgr = None
 
 
 def build_architecture(data=None):
     # data argument provided for when function run as clean-up - always None
-    global session, serv, db, dbPath, queryFactory, \
-    recordStore, dcRecordStore, compStore, resultSetStore, \
-    clusDb, \
-    exactIndexHash, \
-    highlightEndPointRe, \
-    rebuild
+    global session, serv, db, dbPath, queryFactory
+    global recordStore, dcRecordStore, compStore, resultSetStore
+    global clusDb, exactIndexHash, highlightEndPointRe, rebuild, lgr
     
     # globals line 1: re-establish session; maintain user if possible
-    if (session): u = session.user
-    else: u = None
+    u = session.user if (session) else None
     session = Session()
     session.database = 'db_ead'
     session.environment = 'apache'
     session.user = u
-    serv = SimpleServer(session, os.path.join(cheshirePath, 'cheshire3', 'configs', 'serverConfig.xml'))
+    serv = SimpleServer(session, os.path.join(cheshirePath,
+                                              'cheshire3',
+                                              'configs',
+                                              'serverConfig.xml'))
     db = serv.get_object(session, 'db_ead')
     dbPath = db.get_path(session, 'defaultPath')
     queryFactory = db.get_object(session, 'defaultQueryFactory')
@@ -1576,31 +1576,44 @@ def handler(req):
             build_architecture()
         else:
             try:
-                fp = recordStore.get_path(session, 'databasePath')    # attempt to find filepath for recordStore
-                assert (os.path.exists(fp) and os.stat(fp).st_mtime < db.initTime)
+                # Attempt to find filepath for recordStore
+                fp = recordStore.get_path(session, 'databasePath')
+                assert (os.path.exists(fp) and
+                        os.stat(fp).st_mtime < db.initTime)
             except:
                 # architecture not built
                 build_architecture()
 
         resultSetStore = db.get_object(session, 'eadResultSetStore')
-        resultSetStore.clean(session) # clean expires resultSets
-        os.chdir(os.path.join(cheshirePath, 'cheshire3','www','ead','html'))        # cd to where html fragments are
-        remote_host = req.get_remote_host(apache.REMOTE_NOLOOKUP)                   # get the remote host's IP for logging
-        lgr = FileLogger(logfilepath, remote_host)                                  # initialise logger object
-        eadSearchHandler = EadSearchHandler(lgr, script)                            # initialise handler - with logger for this request
+        # Clean expires resultSets
+        resultSetStore.clean(session)
+        # Change directory to where html fragments are
+        os.chdir(os.path.join(app_path, 'html'))
+        # Get the remote host's IP for logging
+        remote_host = req.get_remote_host(apache.REMOTE_NOLOOKUP)
+        # Initialise logger object
+        lgr = FileLogger(logfilepath, remote_host)
+        # Initialise handler - with logger for this request
+        eadSearchHandler = EadSearchHandler(lgr, script)
         try:
-            eadSearchHandler.handle(req)                                            # handle request
+            # Handle request
+            eadSearchHandler.handle(req)
         finally:
-            # clean-up
-            try: lgr.flush()                                                        # flush all logged strings to disk
-            except: pass
+            # Clean-up
+            try:
+                # Flush all logged strings to disk
+                lgr.flush()
+            except:
+                pass
             resultSetStore.commit_storing(session)
-            del lgr, eadSearchHandler                                               # delete handler to ensure no state info is retained
+            # Delete handler to ensure no state info is retained
+            del eadSearchHandler
             
     except:
+        # Give error info
         req.content_type = "text/html"
-        cgitb.Hook(file = req).handle()                                            # give error info
+        cgitb.Hook(file = req).handle()
     else:
         return apache.OK
-    
+
 #- end handler()

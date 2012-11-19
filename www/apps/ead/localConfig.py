@@ -55,11 +55,15 @@ import os
 
 from os.path import join as pathjoin
 
+from cheshire3.internal import cheshire3Home
+
 # Preference switches - True => ON, False => OFF
 result_graphics = True
 display_relevance = True
 graphical_relevance = False
 
+# Path to Cheshire3
+cheshirePath = os.environ.get('C3HOME', cheshire3Home)
 # Path to Cheshire3 for Archives
 c3archives_path = os.environ.get('C3ARCHIVESHOME',
                                  os.path.expanduser('~/cheshire3-archives'))

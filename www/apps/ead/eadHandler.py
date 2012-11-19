@@ -67,6 +67,8 @@ from cheshire3.cqlParser import Diagnostic as CQLDiagnostic
 # Add distro path to Python search path
 c3archives_path = os.environ.get('C3ARCHIVESHOME',
                                  os.path.expanduser('~/cheshire3-archives'))
+app_path = os.path.join(c3archives_path, 'www', 'apps', 'ead')
+sys.path.insert(1, app_path)
 # import customisable variables
 from localConfig import *
 
@@ -111,9 +113,6 @@ class EadHandler(object):
     
     def __init__(self, lgr=None, myscript=None):
         global rebuild
-        if (rebuild):
-            build_architecture()
-            
         self.logger = lgr
         try:
             self.excLogger = db.get_object(session, 'webExceptionLogger')
@@ -503,7 +502,10 @@ def build_architecture(data=None):
     session.database = 'db_ead'
     session.environment = 'apache'
     session.user = u
-    serv = SimpleServer(session, os.path.join(cheshirePath, 'cheshire3', 'configs', 'serverConfig.xml'))
+    serv = SimpleServer(session, os.path.join(cheshirePath,
+                                              'cheshire3',
+                                              'configs',
+                                              'serverConfig.xml'))
     db = serv.get_object(session, 'db_ead')
     dbPath = db.get_path(session, 'defaultPath')
     docParser = db.get_object(session, 'LxmlParser')
