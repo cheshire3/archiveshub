@@ -348,15 +348,6 @@ class EadSearchHandler(EadHandler):
                        ,'<input type="submit" name="submit" value="Go!"/>'
                        ,'</form>'
                        ])
-#            for x in range(1, hits+1, numreq):
-#                if (x == firstrec):
-#                    numlinks.append('<strong>%d-%d</strong>' % (x, min(x+numreq-1, hits)))
-#                elif (x == hits):
-#                    numlinks.append('<a href="%s?operation=search%s&amp;firstrec=%d&amp;numreq=%d&amp;highlight=%d">%d</a>'
-#                                    % (script, rsidCgiString, x, numreq, highlight, x))
-#                else:
-#                    numlinks.append('<a href="%s?operation=search%s&amp;firstrec=%d&amp;numreq=%d&amp;highlight=%d">%d-%d</a>'
-#                                    % (script, rsidCgiString, x, numreq, highlight, x, min(x+numreq-1, hits)))
 
             numlinks.append('</div>')
             hitlinks.append('\n'.join(numlinks))
@@ -886,74 +877,7 @@ class EadSearchHandler(EadHandler):
             doc = txr.process_record(session, rec)
             xmlp = db.get_object(session, 'LxmlParser')
             rec = xmlp.process_document(session, doc)
-            # old version left for posterity and reference value
-#            # flatten groups from phrases / multiple word terms into list of [nodeIdx, wordIdx, charOffset] triples
-#            proxInfo2 = set()
-#            for pig in proxInfo:                    # for each group of proxInfo (i.e. from each query clause)
-#                for pi in pig:                                 # for each item of proxInfo: [nodeIdx, wordIdx, offset, termId(?)] NB termId from spoke indexes so useless to us :( 
-#                    proxInfo2.add('%d %d' % (pi[0], pi[2]))    # values must be strings for sets to work
-#            
-#            proxInfo = [map(int, pis.split(' ')) for pis in proxInfo2]
-#            nodeIdxs = []
-#            wordOffsets = []
-#            for x in sorted(proxInfo, reverse=True):            # sort proxInfo so that nodeIdxs are sorted descending (so that offsets don't get upset when modifying text)
-#                nodeIdxs.append(x[0])
-#                wordOffsets.append(x[1])
-#            
-#            xps = {}
-#            tree = rec.dom.getroottree()
-#            walker = rec.dom.getiterator()
-#            for x, n in enumerate(walker):
-#                if n.tag == 'dsc':
-#                    break # no point highlighting any further down - takes forever
-#                if x in nodeIdxs:
-#                    xps[x] = tree.getpath(n)
-#            
-#            for ni, offset in zip(nodeIdxs, wordOffsets):
-#                try:
-#                    xp = xps[ni]
-#                except KeyError:
-#                    continue # no XPath - must be below dsc
-#                
-#                el = rec.dom.xpath(xp)[0]
-#                located = None
-#                for c in el.getiterator():
-#                    if c.text:
-#                        text = c.text
-#                        if len(c.text) > offset:
-#                            start = offset
-#                            try: end = highlightEndPointRe.search(text, start).end()
-#                            except: pass # well I still... haven't found... what I'm looking for!
-#                            else:
-#                                if end == -1:
-#                                    end = len(text)
-#                                located = 'text'
-#                                if text[:start+len(sTag)].find(sTag) < 0:
-#                                    c.text = text[:start] + sTag + text[start:end] + eTag + text[end:]
-#                                break
-#                        else:
-#                            # check for highlight start / end strings adjust offset accordingly
-#                            offset -= len(text.replace(sTag, '').replace(eTag, ''))
-#                        
-#                    if c != el and c.tail and located is None:
-#                        text = c.tail
-#                        if len(c.tail) > offset:
-#                            start = offset
-#                            try: end = highlightEndPointRe.search(text, start).end()
-#                            except: pass # well I still haven't found, what I'm looking for!
-#                            else:
-#                                if end == -1:
-#                                    end = len(text)
-#                                located = 'tail'
-#                                if text[:start+len(sTag)].find(sTag) < 0:
-#                                    c.tail = text[:start] + sTag + text[start:end] + eTag + text[end:]
-#                                break
-#                        else:
-#                            # check for highlight start / end strings adjust offset accordingly
-#                            offset -= len(text.replace(sTag, '').replace(eTag, ''))
-                        
             self.logger.log('Search terms highlighted')
-        
         # NEVER cache summaries - always generate on the fly - as we highlight search terms         
         # send record to transformer
         summaryTxr = db.get_object(session, 'htmlSummaryTxr')
