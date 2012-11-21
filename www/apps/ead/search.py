@@ -51,7 +51,10 @@ class EADSearchWsgiApplication(EADWsgiApplication):
                            )
             else:
                 # Simple method of self
-                content = fn(form)
+                try:
+                    content = fn(form)
+                except:
+                    content = self._handle_error()
         response_headers = [('Content-Type',
                              'text/html'),
                             ('Content-Length',
