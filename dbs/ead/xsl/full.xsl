@@ -40,12 +40,12 @@
                 <br/>
             </div>
 			<xsl:if test="/ead/archdesc/dsc">
-			   <exsl:document
-			   	href="file:///home/cheshire/install/htdocs/ead/tocs/foo.bar"
-			method="xml"
-			     	omit-xml-declaration="yes"
-			     	indent="yes">
-			     <!-- content for this document should go here -->
+			    <exsl:document
+					href="file:///home/cheshire/cheshire3-archives/www/htdocs/ead/tocs/foo.bar"
+					method="xml"
+					omit-xml-declaration="yes"
+					indent="yes">
+			    <!-- content for this document should go here -->
 			    <xsl:call-template name="toc"/>
 			  </exsl:document>
 			</xsl:if>
