@@ -91,7 +91,7 @@
 		
         <xsl:if test="./dao|../dao|../odd/dao|../scopecontent/dao|./daogrp|../daogrp|../odd/daogrp|../scopecontent/daogrp">
             <div class="daos">
-                <h2 class="daohead">Digital Objects</h2>
+                <h2 class="daohead">Digital Materials</h2>
                 <xsl:apply-templates select="./dao|../dao|../odd/dao|../scopecontent/dao|./daogrp|../daogrp|../odd/daogrp|../scopecontent/daogrp"/>
             </div>
         </xsl:if>
@@ -1087,7 +1087,7 @@
         
         <xsl:if test="./dao|./did/dao|./odd/dao|./scopecontent/dao|./daogrp|./did/daogrp|./odd/daogrp|./scopecontent/daogrp">
             <div class="daos">
-                <h3 class="daohead">Digital Objects:</h3>
+                <h3 class="daohead">Digital Materials</h3>
                 <xsl:apply-templates select="./dao|./did/dao|./odd/dao|./scopecontent/dao|./daogrp|./did/daogrp|./odd/daogrp|./scopecontent/daogrp"/>
             </div>
         </xsl:if>
