@@ -843,7 +843,7 @@
         <xsl:if test="@id">
     	   <a name="{@id}"><xsl:text> </xsl:text></a>
         </xsl:if>
-        <xsl:variable name="headstring"><xsl:text>Access Points</xsl:text></xsl:variable>
+        <xsl:variable name="headstring"><xsl:text></xsl:text></xsl:variable>
         <xsl:choose>
             <xsl:when test="local-name(..) = 'controlaccess'" />
             <xsl:when test="head/text()">
@@ -862,7 +862,7 @@
             <!-- Subjects -->
             <xsl:if test=".//subject">
                 <xsl:variable name="indexName"><xsl:text>Subjects</xsl:text></xsl:variable>
-                <tr><td colspan="2"><strong><xsl:value-of select="$indexName"/></strong></td></tr>
+                <tr><td colspan="2"><h3 class="fieldhead-auto"><xsl:value-of select="$indexName"/></h3></td></tr>
                     <xsl:for-each select=".//subject">
                     <tr>
                         <td>
@@ -885,7 +885,7 @@
             <!-- Personal Names -->
             <xsl:if test=".//persname">
                 <xsl:variable name="indexName"><xsl:text>Personal Names</xsl:text></xsl:variable>
-                <tr><td colspan="2"><strong><xsl:value-of select="$indexName"/></strong></td></tr>
+               <tr><td colspan="2"><h3 class="fieldhead-auto"><xsl:value-of select="$indexName"/></h3></td></tr>
                 <xsl:for-each select=".//persname">
                     <tr>
                         <td>
@@ -935,7 +935,7 @@
             <!-- Corporate Names -->
             <xsl:if test=".//corpname">
                 <xsl:variable name="indexName"><xsl:text>Corporate Names</xsl:text></xsl:variable>
-                <tr><td colspan="2"><strong><xsl:value-of select="$indexName"/></strong></td></tr>
+             	  <tr><td colspan="2"><h3 class="fieldhead-auto"><xsl:value-of select="$indexName"/></h3></td></tr>
                 <xsl:for-each select=".//corpname">
                     <tr>
                 	  	<td>
@@ -960,7 +960,7 @@
             <!-- Geographical Names -->
             <xsl:if test=".//geogname">
                 <xsl:variable name="indexName"><xsl:text>Geographical Names</xsl:text></xsl:variable>
-                <tr><td colspan="2"><strong><xsl:value-of select="$indexName"/></strong></td></tr>
+                <tr><td colspan="2"><h3 class="fieldhead-auto"><xsl:value-of select="$indexName"/></h3></td></tr>
                 <xsl:for-each select=".//geogname">
 	  	            <tr>
                         <td>
@@ -1704,14 +1704,15 @@
         <div id="utilitybar" class="bar utility">
             <!-- Switch Version (Level of detail) -->
             <ul class="detail">
-                <li>
-                      <xsl:call-template name="switch-view-link"/>
+                <li>See the:
+                      <xsl:call-template name="switch-view-link"/> of this material              
                 </li>
+ 			 <br/>
             </ul>
 
             <!-- Information -->
             <ul class="info">
-                <li>
+                <li>How to:&#160;
                     <a  class="bgimg access">
                         <xsl:attribute name="href">
                             <xsl:text>http://archiveshub.ac.uk/accesstomaterials</xsl:text>
@@ -1722,7 +1723,7 @@
                         <xsl:text>Access These Materials</xsl:text>
                     </a>
                 </li>
-                <li>
+                <li>See the:
                     <a class="bgimg contact">
                         <xsl:attribute name="href">
                             <xsl:value-of select="$archon_url"/>
@@ -1734,10 +1735,10 @@
                         <xsl:attribute name="target">
                             <xsl:text>_blank</xsl:text>
                         </xsl:attribute>
-                        <xsl:text>Contact the Repository</xsl:text>
-                    </a>
+                        <xsl:text>Contact details</xsl:text>
+                    </a> for the Repository
                 </li>
-                <li>
+                <li>See the:
                     <a class="bgimg location">
                         <xsl:attribute name="href">
                             <xsl:value-of select="$hubmap_url"/>
@@ -1749,8 +1750,8 @@
                         <xsl:attribute name="target">
                             <xsl:text>_blank</xsl:text>
                         </xsl:attribute>
-                        <xsl:text>Location of Repository</xsl:text>
-                    </a>
+                        <xsl:text>Location details</xsl:text>
+                    </a> for the Repository
                 </li>
                 <xsl:if test="$digital">
                     <li>
@@ -1766,7 +1767,8 @@
             </ul>
             
             <!-- Actions -->
-            <ul class="actions">
+            <ul class="actions" id="addright">
+
                 <li>
                     <a class="bgimg tip email">
                         <xsl:attribute name="href">
@@ -1779,7 +1781,7 @@
                             <xsl:text>Send detailed description as text in an e-mail</xsl:text>
                         </xsl:attribute>
                         <xsl:text>Email</xsl:text>
-                    </a>
+                    </a> this Description
                 </li>
                 <li>
                     <a class="bgimg tip xml">
@@ -1792,9 +1794,9 @@
                         </xsl:attribute>
                         <xsl:text>View XML</xsl:text>
                     </a>
-                </li>
-                <li>
-                    <a class="bgimg tip text">
+			<xsl:text>   |   </xsl:text>
+
+			<a class="bgimg tip text">
                         <xsl:attribute name="href">
                             <xsl:value-of select="$data_uri_base"/>
                             <xsl:text>.txt</xsl:text>
@@ -1805,6 +1807,7 @@
                         <xsl:text>View Text</xsl:text>
                     </a>
                 </li>
+                
                 <li>
                     <!-- AddThis Button BEGIN -->
                     <div class="addthis_toolbox addthis_default_style ">
@@ -1841,6 +1844,7 @@ var addthis_share =
                     <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=ra-4eb3f45910f0a240"/>
                     <!-- AddThis Button END -->
                 </li>
+
             </ul>
             
         </div>
