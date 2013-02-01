@@ -2457,13 +2457,13 @@
 			<xsl:attribute name="title">
 		        <xsl:value-of select="$copac_search_link_title"/>
 		    </xsl:attribute>
-		    <xsl:element name="img">
+		    <!--<xsl:element name="img">
 		      <xsl:attribute name="alt"><xsl:text></xsl:text></xsl:attribute>
 		      <xsl:attribute name="src">
 		          <xsl:value-of select="$copac_search_icon"/>
 		      </xsl:attribute>
-		    </xsl:element>
-		    <xsl:text>Copac</xsl:text>
+		    </xsl:element>-->
+		  <xsl:text>Search for this book on Copac</xsl:text>
 	  	</a>
 	</xsl:template>
 	
