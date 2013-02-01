@@ -1178,9 +1178,9 @@
                 </xsl:variable>
                 <tr>
                     <td colspan="2">
-                        <strong>
+                        <h3 class="fieldhead-auto">
                             <xsl:value-of select="$indexName" />
-                        </strong>
+                        </h3>
                     </td>
                 </tr>
                 <xsl:for-each select=".//famname">
@@ -1277,9 +1277,9 @@
                 </xsl:variable>
                 <tr>
                     <td colspan="2">
-                        <strong>
+                        <h3 class="fieldhead-auto">
                             <xsl:value-of select="$indexName" />
-                        </strong>
+                        </h3>
                     </td>
                 </tr>
                 <xsl:for-each select=".//title">
@@ -1308,9 +1308,7 @@
                 </xsl:variable>
                 <tr>
                     <td colspan="2">
-                        <strong>
-                            <xsl:value-of select="$indexName" />
-                        </strong>
+                        <xsl:value-of select="$indexName" />
                     </td>
                 </tr>
                 <xsl:for-each select=".//function">
@@ -1328,9 +1326,7 @@
                 </xsl:variable>
                 <tr>
                     <td colspan="2">
-                        <strong>
-                            <xsl:value-of select="$indexName" />
-                        </strong>
+                        <xsl:value-of select="$indexName" />
                     </td>
                 </tr>
                 <xsl:for-each select=".//genreform">
@@ -1355,9 +1351,7 @@
                 </xsl:variable>
                 <tr>
                     <td colspan="2">
-                        <strong>
-                            <xsl:value-of select="$indexName" />
-                        </strong>
+                        <xsl:value-of select="$indexName" />
                     </td>
                 </tr>
                 <xsl:for-each select="../occupation">
