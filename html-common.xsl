@@ -946,7 +946,7 @@
             </xsl:choose>
         </xsl:if>
         <xsl:apply-templates />
-        <br />
+
     </xsl:template>
 
     <xsl:template match="separatedmaterial">
@@ -2135,6 +2135,13 @@
                     See the:
                     <xsl:call-template name="switch-view-link" />
                     of this material
+                    <xsl:text> </xsl:text>
+                    <a href="http://archiveshub.ac.uk/archivedescriptions/#content"
+                        title="Find out about Description" class="helplink tip">
+                        <img
+                            src="http://archiveshub.ac.uk/img/structure/form_tip.png"
+                            alt="[?]" />
+                    </a>
                 </li>
                 <br />
             </ul>
