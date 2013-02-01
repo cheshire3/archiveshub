@@ -151,15 +151,33 @@
                 </td>
             </tr>
 
-            <xsl:if test="unitid[@label='Former Reference']">
+            <xsl:if test="unitid[@label='Former Reference'] or 
+                          unitid[@label='alternative'] or
+                          unitid[@label='altrefno']">
                 <tr>
                     <td>
-                        <span class="fieldname">Alternative Reference Number(s)
-                        </span>
+                        <span class="fieldname">Alt. Ref. Number</span>
                     </td>
                     <td>
                         <xsl:apply-templates
                             select="unitid[@label='Former Reference']" />
+                        <xsl:apply-templates
+                            select="unitid[@label='alternative']" />
+                        <xsl:apply-templates
+                            select="unitid[@label='altrefno']" />
+                    </td>
+                </tr>
+            </xsl:if>
+
+            <xsl:if test="unitid[@type='previous'] or
+                          unitid[@label='former']">
+                <tr>
+                    <td>
+                        <span class="fieldname">Previous Ref. Number</span>
+                    </td>
+                    <td>
+                        <xsl:apply-templates select="unitid[@type='previous']" />
+                        <xsl:apply-templates select="unitid[@label='former']" />
                     </td>
                 </tr>
             </xsl:if>
