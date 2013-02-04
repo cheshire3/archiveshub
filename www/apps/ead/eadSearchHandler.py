@@ -734,7 +734,7 @@ class EadSearchHandler(EadHandler):
                     return '<p class="error">Invalid query submitted.</p>'
                 
             if (withinCollection and withinCollection != 'allcollections'):
-                qString = ('(c3.ead-idx-docid exact "%s" or '
+                qString = ('(c3.idx-docid exact "%s" or '
                            'ead.parentid exact "%s/%s") and/relevant/proxinfo '
                            '(%s)'
                            '' % (withinCollection,
@@ -1710,7 +1710,7 @@ In: %s
         for cah, cal in controlaccess.iteritems():
             aps = [flattenTexts(cNode) for cNode in cal]
             for key in aps:
-                cqlClauses.append('c3.ead-idx-%s exact "%s"' % (cah, key))
+                cqlClauses.append('c3.idx-%s exact "%s"' % (cah, key))
         if len(cqlClauses):
             cqlBool = ' or/proxinfo ' if highlight else ' or '
         else:
@@ -1897,11 +1897,11 @@ def build_architecture(data=None):
     clusDb = serv.get_object(session, 'db_ead_cluster')
     session.database = 'db_ead'
     # globals line 6: indexes
-    exactIndexHash['subject'] = db.get_object(session, 'ead-idx-subject')
-    exactIndexHash['creator'] = db.get_object(session, 'ead-idx-creator')
-    exactIndexHash['genre'] = db.get_object(session, 'ead-idx-genreform')
-    exactIndexHash['date'] = db.get_object(session, 'ead-idx-dateYear')
-    #exactIndexHash['persname'] = db.get_object(session, 'ead-idx-persname')
+    exactIndexHash['subject'] = db.get_object(session, 'idx-subject')
+    exactIndexHash['creator'] = db.get_object(session, 'idx-creator')
+    exactIndexHash['genre'] = db.get_object(session, 'idx-genreform')
+    exactIndexHash['date'] = db.get_object(session, 'idx-dateYear')
+    #exactIndexHash['persname'] = db.get_object(session, 'idx-persname')
     regexpFindOffsetTokenizer = db.get_object(session,
                                               'RegexpFindOffsetTokenizer')
     highlightEndPointRe = regexpFindOffsetTokenizer.regexp

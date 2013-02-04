@@ -32,7 +32,7 @@
      <set name="BIB2" identifier="1.2.840.10003.3.18"/>
      <set name="ZRX1" identifier="1.2.840.10003.3.19"/>
 
-		<index c3:index="ead-idx-docid">
+		<index c3:index="idx-docid">
 			<title>Record/Document ID Index</title>
 			<map><attr type="1">docid</attr></map>
 			<map><attr type="1">1032</attr></map>
@@ -50,7 +50,7 @@
 			</configInfo>
 		</index>
 		
-		<index c3:index="ead-idx-componentid">
+		<index c3:index="idx-componentid">
 			<title>Component ID Index</title>
 			<map><attr type="1">componentid</attr></map>
 			<map><attr type="1">5400</attr></map>
@@ -69,7 +69,7 @@
       </configInfo>
 		</index>
 
-		<index c3:index="ead-idx-istoplevel">
+		<index c3:index="idx-istoplevel">
 			<title>Is a top level EAD record</title>
 			<map><attr type="1">istoplevel</attr></map>
 			<configInfo>
@@ -85,7 +85,7 @@
      	</configInfo>
 		</index>
 
-		<index c3:index="ead-idx-unitid">
+		<index c3:index="idx-unitid">
 			<title>Unit Identifier / Reference Number</title>
 			<map><attr type="1">eadid</attr></map>
 			<map><attr type="1">unitid</attr></map>
@@ -103,7 +103,7 @@
 			</configInfo>
 		</index>
 
-		<index c3:index="ead-idx-unitidword">
+		<index c3:index="idx-unitidword">
 			<title>Unit Identifier / Reference Number keyword</title>
 			<map><attr type="1">eadidWord</attr></map>
 			<map><attr type="1">unitidWord</attr></map>
@@ -121,7 +121,7 @@
 			</configInfo>
 		</index>
 
-		<index c3:index="ead-idx-title">
+		<index c3:index="idx-title">
 			<title>Unit Title</title>
 			<map><attr type="1">title</attr></map>
 			<map><attr type="1">4</attr></map>
@@ -138,7 +138,7 @@
 			</configInfo>
 		</index>
 
-		<index c3:index="ead-idx-titleword">
+		<index c3:index="idx-titleword">
     		<title>Unit Title Keywords</title>
     		<map><attr type="1">titleWord</attr></map>
     		<map><attr type="1">4</attr></map>
@@ -155,7 +155,7 @@
 			</configInfo>
 		</index>
 		
-		<index c3:index="ead-idx-creator">
+		<index c3:index="idx-creator">
 			<title>Creator</title>
       		<map><attr type="1">creator</attr></map>
       		<map><attr type="1">1003</attr></map>
@@ -172,7 +172,7 @@
 	      </configInfo>
     	</index>
     
-		<index c3:index="ead-idx-creatorword">
+		<index c3:index="idx-creatorword">
 			<title>Creator Keywords</title>
       		<map><attr type="1">creatorWord</attr></map>
       		<map><attr type="1">1003</attr></map>
@@ -189,7 +189,7 @@
 			</configInfo>
 		</index>
 
-		<index c3:index="ead-idx-description">
+		<index c3:index="idx-description">
 			<title>Description Proximity Keywords</title>
 			<map><attr type="1">descriptionWord</attr></map>
 			<map><attr type="1">1100</attr></map>
@@ -207,7 +207,7 @@
 			</configInfo>
 		</index>
 
-		<index c3:index="ead-idx-all">
+		<index c3:index="idx-all">
 			<title>Full-text Proximity Keywords</title>
 			<map><attr type="1">anyWord</attr></map>
 			<map><attr type="1">1016</attr></map>
@@ -228,7 +228,7 @@
 			</configInfo>
 		</index>
     
-		<index c3:index="ead-idx-subject">
+		<index c3:index="idx-subject">
 			<title>Subject</title>
 			<map><attr type="1">subject</attr></map>
 			<map><attr type="1">21</attr></map>
@@ -248,7 +248,7 @@
 			</configInfo>
 		</index>
     
-		<index c3:index="ead-idx-subjectword">
+		<index c3:index="idx-subjectword">
 			<title>Subject Keywords</title>
 			<map><attr type="1">subjectWord</attr></map>
 			<map><attr type="1">21</attr></map>
@@ -267,7 +267,7 @@
 			</configInfo>
 		</index>
     
-		<index c3:index="ead-idx-name">
+		<index c3:index="idx-name">
 			<title>Name</title>
 			<map><attr type="1">name</attr></map>
 			<map><attr type="1">1002</attr></map>
@@ -284,7 +284,7 @@
 			</configInfo>
 		</index>
 
-		<index c3:index="ead-idx-nameword">
+		<index c3:index="idx-nameword">
 			<title>Name Keywords</title>
 			<map><attr type="1">nameWord</attr></map>
 			<map><attr type="1">1002</attr></map>
@@ -302,7 +302,7 @@
 		</index>
 
 
-		<index c3:index="ead-idx-persname">
+		<index c3:index="idx-persname">
 			<title>Personal Name</title>
 			<map><attr type="1">persname</attr></map>
 			<map><attr type="1">1</attr></map>
@@ -321,7 +321,7 @@
 			</configInfo>
 		</index>
 
-		<index c3:index="ead-idx-persnameword">
+		<index c3:index="idx-persnameword">
 			<title>Personal Name Keywords</title>
 			<map><attr type="1">persnameWord</attr></map>
 			<map><attr type="1">1</attr></map>
@@ -341,7 +341,7 @@
 		</index>
 
 
-		<index c3:index="ead-idx-corpname">
+		<index c3:index="idx-corpname">
 			<title>Corporate Name</title>
 			<map><attr type="1">corpname</attr></map>
 			<map><attr type="1">2</attr></map>
@@ -359,7 +359,7 @@
 			</configInfo>
 		</index>
 
-		<index c3:index="ead-idx-corpnameword">
+		<index c3:index="idx-corpnameword">
 			<title>Corporate Name Keywords</title>
 			<map><attr type="1">corpnameWord</attr></map>
 			<map><attr type="1">2</attr></map>
@@ -378,7 +378,7 @@
 		</index>
 
 
-		<index c3:index="ead-idx-geogname">
+		<index c3:index="idx-geogname">
 			<title>Geographical Name</title>
 			<map><attr type="1">geogname</attr></map>
 			<map><attr type="1">58</attr></map>
@@ -396,7 +396,7 @@
 			</configInfo>
 		</index>
 
-		<index c3:index="ead-idx-geognameword">
+		<index c3:index="idx-geognameword">
 			<title>Geographical Name Keyword</title>
 			<map><attr type="1">geognameWord</attr></map>
 			<map><attr type="1">58</attr></map>
@@ -414,7 +414,7 @@
 			</configInfo>
 		</index>
 
-		<index c3:index="ead-idx-genreformword">
+		<index c3:index="idx-genreformword">
 			<title>Genreform (e.g. Photograph) Keywords</title>
 			<map><attr type="1">genreform</attr></map>
 			<map><attr type="1">1075</attr></map>
@@ -431,7 +431,7 @@
 			</configInfo>
 		</index>
 
-		<index c3:index="ead-idx-date">
+		<index c3:index="idx-date">
 			<title>Single Date Index</title>
 			<map><attr type="1">date</attr></map>
 			<map><attr type="1">30</attr></map>

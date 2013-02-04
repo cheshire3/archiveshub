@@ -1,4 +1,4 @@
-<config>
+<config xmlns="http://www.cheshire3.org/schemas/config/">
 
 <!-- 
     Configuration for Indexes.
@@ -167,7 +167,7 @@
 	<!-- Indexes -->
 	
 	<!-- record identifier index -->
-	<subConfig type="index" id="ead-idx-recid">
+	<subConfig type="index" id="idx-recid">
             <objectType>cheshire3.index.SimpleIndex</objectType>
             <paths>
             	<object type="indexStore" ref="indexStore" />
@@ -181,7 +181,7 @@
 	</subConfig>
 	
 	<!-- docid index - for Z39.50 access -->
-	<subConfig type="index" id="ead-idx-docid">
+	<subConfig type="index" id="idx-docid">
             <objectType>cheshire3.index.RecordIdentifierIndex</objectType>
             <paths>
                 <object type="recordStore" ref="recordStore" />
@@ -189,7 +189,7 @@
 	</subConfig>
 	
 	<!-- componentid index - for Z39.50 access -->
-	<subConfig type="index" id="ead-idx-componentid">
+	<subConfig type="index" id="idx-componentid">
             <objectType>cheshire3.index.RecordIdentifierIndex</objectType>
             <paths>
                 <object type="recordStore" ref="componentStore" />
@@ -197,7 +197,7 @@
 	</subConfig>
 	
 	<!-- is a component index -->
-	<subConfig type="index" id="ead-idx-istoplevel">
+	<subConfig type="index" id="idx-istoplevel">
             <objectType>cheshire3.index.SimpleIndex</objectType>
             <paths>
             	<object type="indexStore" ref="indexStore" />
@@ -212,7 +212,7 @@
 	</subConfig>
 	
 	<!-- parentid index -->
-	<subConfig type="index" id="ead-idx-parentid">
+	<subConfig type="index" id="idx-parentid">
             <objectType>cheshire3.index.SimpleIndex</objectType>
             <paths>
             	<object type="indexStore" ref="indexStore" />
@@ -226,7 +226,7 @@
 	</subConfig>
 
 	<!-- reference numbers -->
-	<subConfig type="index" id="ead-idx-unitid">
+	<subConfig type="index" id="idx-unitid">
         <objectType>cheshire3.index.SimpleIndex</objectType>
         <paths>
         	<object type="indexStore" ref="indexStore" />
@@ -244,7 +244,7 @@
         </options>
 	</subConfig>
 
-	<subConfig type="index" id="ead-idx-unitidword">
+	<subConfig type="index" id="idx-unitidword">
         <objectType>cheshire3.index.SimpleIndex</objectType>
         <paths>
         	<object type="indexStore" ref="indexStore" />
@@ -275,7 +275,7 @@
 	</subConfig>
 
 	<!-- titles -->
-	<subConfig type="index" id="ead-idx-title">
+	<subConfig type="index" id="idx-title">
         <objectType>cheshire3.index.SimpleIndex</objectType>
         <paths>
         	<object type="indexStore" ref="indexStore" />
@@ -294,7 +294,7 @@
         </options>
 	</subConfig>
 
-	<subConfig type="index" id="ead-idx-titleword">
+	<subConfig type="index" id="idx-titleword">
         <objectType>cheshire3.index.ProximityIndex</objectType>
         <paths>
         	<object type="indexStore" ref="indexStore" />
@@ -324,7 +324,7 @@
 	</subConfig>
 
 	<!-- creators -->
-	<subConfig type="index" id="ead-idx-creator">
+	<subConfig type="index" id="idx-creator">
         <objectType>cheshire3.index.SimpleIndex</objectType>
         <paths>
         	<object type="indexStore" ref="indexStore" />
@@ -343,7 +343,7 @@
         </options>
 	</subConfig>
 
-	<subConfig type="index" id="ead-idx-creatorword">
+	<subConfig type="index" id="idx-creatorword">
         <objectType>cheshire3.index.SimpleIndex</objectType>
         <paths>
         	<object type="indexStore" ref="indexStore" />
@@ -377,7 +377,7 @@
 	</subConfig>
 
 	<!-- date -->
-	<subConfig type="index" id="ead-idx-date">
+	<subConfig type="index" id="idx-date">
 	    <objectType>cheshire3.index.SimpleIndex</objectType>
 	    <paths>
 	        <object type="indexStore" ref="indexStore" />
@@ -403,7 +403,7 @@
 	    </options>
 	</subConfig>
     
-    <subConfig type="index" id="ead-idx-dateYear">
+    <subConfig type="index" id="idx-dateYear">
         <name>Year</name>
         <objectType>cheshire3.index.SimpleIndex</objectType>
         <paths>
@@ -433,7 +433,7 @@
         </options>
     </subConfig>
 
-	<subConfig type="index" id="ead-idx-dateRange">
+	<subConfig type="index" id="idx-dateRange">
 	    <objectType>cheshire3.index.RangeIndex</objectType>
 	    <paths>
 	        <object type="indexStore" ref="indexStore" />
@@ -466,7 +466,7 @@
 	</subConfig>
 
 	<!-- description/topic/quick search index -->
-	<subConfig type="index" id="ead-idx-description">
+	<subConfig type="index" id="idx-description">
 	    <objectType>cheshire3.index.ProximityIndex</objectType>
 	    <paths>
 	        <object type="indexStore" ref="indexStore" />
@@ -496,7 +496,7 @@
 	</subConfig>
 
 	<!-- full text index -->
-	<subConfig type="index" id="ead-idx-all">
+	<subConfig type="index" id="idx-all">
 		<objectType>cheshire3.index.ProximityIndex</objectType>
 		<paths>
 			<object type="indexStore" ref="indexStore" />
@@ -525,7 +525,7 @@
 	</subConfig>
 
 	<!-- subjects -->
-	<subConfig type="index" id="ead-idx-subject">
+	<subConfig type="index" id="idx-subject">
 		<objectType>cheshire3.index.SimpleIndex</objectType>
 		<paths>
 			<object type="indexStore" ref="indexStore" />
@@ -545,7 +545,7 @@
 		</options>
 	</subConfig>
 
-	<subConfig type="index" id="ead-idx-subjectword">
+	<subConfig type="index" id="idx-subjectword">
 		<objectType>cheshire3.index.SimpleIndex</objectType>
 		<paths>
 			<object type="indexStore" ref="indexStore" />
@@ -574,7 +574,7 @@
 		</options>
 	</subConfig>
 
-    <subConfig type="index" id="ead-idx-name">
+    <subConfig type="index" id="idx-name">
         <objectType>cheshire3.index.SimpleIndex</objectType>
         <paths>
         	<object type="indexStore" ref="indexStore" />
@@ -606,7 +606,7 @@
         </options>
     </subConfig>
 
-	<subConfig type="index" id="ead-idx-nameword">
+	<subConfig type="index" id="idx-nameword">
 		<objectType>cheshire3.index.SimpleIndex</objectType>
 		<paths>
 			<object type="indexStore" ref="indexStore" />
@@ -640,7 +640,7 @@
 	</subConfig>
 
 	<!-- personal names -->
-	<subConfig type="index" id="ead-idx-persname">
+	<subConfig type="index" id="idx-persname">
 		<objectType>cheshire3.index.SimpleIndex</objectType>
 		<paths>
 			<object type="indexStore" ref="indexStore" />
@@ -659,7 +659,7 @@
 		</options>
 	</subConfig>
 
-	<subConfig type="index" id="ead-idx-persnameword">
+	<subConfig type="index" id="idx-persnameword">
 		<objectType>cheshire3.index.SimpleIndex</objectType>
 		<paths>
 			<object type="indexStore" ref="indexStore" />
@@ -689,7 +689,7 @@
 	</subConfig>
 	
 	<!-- epithets -->
-	<subConfig type="index" id="ead-idx-persnameepithet">
+	<subConfig type="index" id="idx-persnameepithet">
 		<objectType>cheshire3.index.SimpleIndex</objectType>
 		<paths>
 			<object type="indexStore" ref="indexStore" />
@@ -706,7 +706,7 @@
 		</options>
 	</subConfig>
 	
-	<subConfig type="index" id="ead-idx-persnameepithetword">
+	<subConfig type="index" id="idx-persnameepithetword">
 		<objectType>cheshire3.index.SimpleIndex</objectType>
 		<paths>
 			<object type="indexStore" ref="indexStore" />
@@ -736,7 +736,7 @@
 	</subConfig>
 
 	<!-- family names - assume single word or hyphenated -->
-	<subConfig type="index" id="ead-idx-famname">
+	<subConfig type="index" id="idx-famname">
 		<objectType>cheshire3.index.SimpleIndex</objectType>
 		<paths>
 			<object type="indexStore" ref="indexStore" />
@@ -755,7 +755,7 @@
 	</subConfig>
 
 	<!-- corporate names -->
-	<subConfig type="index" id="ead-idx-corpname">
+	<subConfig type="index" id="idx-corpname">
 		<objectType>cheshire3.index.SimpleIndex</objectType>
 		<paths>
 			<object type="indexStore" ref="indexStore" />
@@ -776,7 +776,7 @@
 		</options>
 	</subConfig>
 
-	<subConfig type="index" id="ead-idx-corpnameword">
+	<subConfig type="index" id="idx-corpnameword">
 		<objectType>cheshire3.index.SimpleIndex</objectType>
 		<paths>
 			<object type="indexStore" ref="indexStore" />
@@ -806,12 +806,9 @@
 	</subConfig>
 	
 	<!-- Geographic locations (Lat Long coordinates) -->
-<!--		<subConfig type="index" id="ead-idx-gps">-->
-<!--			-->
-<!--		</subConfig>-->
 
 	<!-- geographic names -->
-	<subConfig type="index" id="ead-idx-geogname">
+	<subConfig type="index" id="idx-geogname">
 		<objectType>cheshire3.index.SimpleIndex</objectType>
 		<paths>
 			<object type="indexStore" ref="indexStore" />
@@ -831,7 +828,7 @@
 		</options>
 	</subConfig>
 
-	<subConfig type="index" id="ead-idx-geognameword">
+	<subConfig type="index" id="idx-geognameword">
         <objectType>cheshire3.index.SimpleIndex</objectType>
         <paths>
             <object type="indexStore" ref="indexStore" />
@@ -862,7 +859,7 @@
 	</subConfig>
 	
 	<!-- genreform -->
-	<subConfig type="index" id="ead-idx-genreform">
+	<subConfig type="index" id="idx-genreform">
         <objectType>cheshire3.index.SimpleIndex</objectType>
         <paths>
         	<object type="indexStore" ref="indexStore" />
@@ -881,7 +878,7 @@
 	</subConfig>
 
 	<!-- genreform -->
-	<subConfig type="index" id="ead-idx-genreformword">
+	<subConfig type="index" id="idx-genreformword">
         <objectType>cheshire3.index.SimpleIndex</objectType>
         <paths>
         	<object type="indexStore" ref="indexStore" />
@@ -911,7 +908,7 @@
 	</subConfig>
 		
     <!-- metadata indexes for OAI -->
-    <subConfig type="index" id="ead-idx-creationDate">
+    <subConfig type="index" id="idx-creationDate">
         <objectType>cheshire3.index.SimpleIndex</objectType>
         <paths>
             <object type="indexStore" ref="indexStore" />
@@ -933,7 +930,7 @@
         </options>
     </subConfig>
 
-    <subConfig type="index" id="ead-idx-modificationDate">
+    <subConfig type="index" id="idx-modificationDate">
         <objectType>cheshire3.index.SimpleIndex</objectType>
         <paths>
             <object type="indexStore" ref="indexStore" />
