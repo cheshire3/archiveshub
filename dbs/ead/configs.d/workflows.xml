@@ -1,245 +1,253 @@
-<config>
+<config xmlns="http://www.cheshire3.org/schemas/config/">
 
-<!-- 
-    Configuration for Workflows.
-    
-    This file was produced, and released as part of Cheshire for Archives v3.x.
-    Copyright &#169; 2005-2008 the University of Liverpool
- -->
- 
-    <subConfigs>
+	<!--
+	Configuration for Workflows.
+	This file was produced, and released as part of Cheshire for Archives v3.x.
+	Copyright &#169; 2005-2013 the University of Liverpool 
+	-->
 
-    <subConfig type="workflow" id="preParserWorkflow">
-        <objectType>cheshire3.workflow.CachingWorkflow</objectType>
-        <workflow>
-            <!-- input type:  document -->
-            <object type="preParser" ref="PrintableOnlyPreParser"/>
-            <object type="preParser" ref="CharacterEntityPreParser"/>
-            <object type="preParser" ref="eadSgmlPreParser"/>
-            <object type="preParser" ref="emptyEmphTagStripPreParser"/>
-            <object type="preParser" ref="AmpPreParser"/>
-        </workflow>
-    </subConfig>
-    
-    <subConfig type="workflow" id="highlightSruFilterWorkflow">
-        <objectType>cheshire3.workflow.CachingWorkflow</objectType>
-        <workflow>
-            <!-- input type:  record -->
-            <object type="transformer" ref="highlightTxr"/>
-            <object type="parser" ref="LxmlParser"/>
-            <object type="transformer" ref="sruOutgoingHubTxr"/>
-        </workflow>
-    </subConfig>
-    
-    <subConfig type="workflow" id="highlightSummaryTxrWorkflow">
-        <objectType>cheshire3.workflow.CachingWorkflow</objectType>
-        <workflow>
-            <!-- input type:  record -->
-            <object type="transformer" ref="highlightTxr"/>
-            <object type="parser" ref="LxmlParser"/>
-            <object type="transformer" ref="htmlSummaryTxr"/>
-        </workflow>
-    </subConfig>
-    
-    <subConfig type="workflow" id="buildIndexWorkflow">
-        <objectType>cheshire3.workflow.CachingWorkflow</objectType>
-        <workflow>
-            <!-- input type:  documentFactory -->
-            <object type="recordStore" ref="recordStore" function="begin_storing"/>
-            <object type="recordStore" ref="eadDcStore" function="begin_storing"/>
-            <object type="database" function="begin_indexing"/>
-            <for-each>
-              <!-- input type: document -->
-              <log level="info">"  " + input.filename</log>
-              <object type="workflow" ref="buildIndexSingleWorkflow"/>
-            </for-each>
-            <object type="recordStore" ref="recordStore" function="commit_storing"/>
-            <object type="recordStore" ref="eadDcStore" function="commit_storing"/>
-            <object type="database" function="commit_indexing"/>
-            <object type="database" function="commit_metadata"/>
-        </workflow>
-    </subConfig>
+	<subConfigs>
+
+		<subConfig type="workflow" id="preParserWorkflow">
+			<objectType>cheshire3.workflow.CachingWorkflow</objectType>
+			<workflow>
+				<!-- input type: document -->
+				<object type="preParser" ref="PrintableOnlyPreParser" />
+				<object type="preParser" ref="CharacterEntityPreParser" />
+				<object type="preParser" ref="eadSgmlPreParser" />
+				<object type="preParser" ref="emptyEmphTagStripPreParser" />
+				<object type="preParser" ref="AmpPreParser" />
+			</workflow>
+		</subConfig>
+
+		<subConfig type="workflow" id="highlightSruFilterWorkflow">
+			<objectType>cheshire3.workflow.CachingWorkflow</objectType>
+			<workflow>
+				<!-- input type: record -->
+				<object type="transformer" ref="highlightTxr" />
+				<object type="parser" ref="LxmlParser" />
+				<object type="transformer" ref="sruOutgoingHubTxr" />
+			</workflow>
+		</subConfig>
+
+		<subConfig type="workflow" id="highlightSummaryTxrWorkflow">
+			<objectType>cheshire3.workflow.CachingWorkflow</objectType>
+			<workflow>
+				<!-- input type: record -->
+				<object type="transformer" ref="highlightTxr" />
+				<object type="parser" ref="LxmlParser" />
+				<object type="transformer" ref="htmlSummaryTxr" />
+			</workflow>
+		</subConfig>
+
+		<subConfig type="workflow" id="buildIndexWorkflow">
+			<objectType>cheshire3.workflow.CachingWorkflow</objectType>
+			<workflow>
+				<!-- input type: documentFactory -->
+				<object type="recordStore" ref="recordStore" function="begin_storing" />
+				<object type="recordStore" ref="eadDcStore" function="begin_storing" />
+				<object type="database" function="begin_indexing" />
+				<for-each>
+					<!-- input type: document -->
+					<log level="info">" " + input.filename</log>
+					<object type="workflow" ref="buildIndexSingleWorkflow" />
+				</for-each>
+				<object type="recordStore" ref="recordStore" function="commit_storing" />
+				<object type="recordStore" ref="eadDcStore" function="commit_storing" />
+				<object type="database" function="commit_indexing" />
+				<object type="database" function="commit_metadata" />
+			</workflow>
+		</subConfig>
 
 
-    <subConfig type="workflow" id="buildIndexSingleWorkflow">
-        <objectType>cheshire3.workflow.CachingWorkflow</objectType>
-            <workflow>
-                <!-- input type:  document -->
-                <object type="workflow" ref="preParserWorkflow"/>
-                <try>
-                  <object type="parser" ref="LxmlParser"/>
-                </try>
-                <except>
-                    <assign from="'unparsable: ' + str(err)" to="input"/>
-                    <log level="warning">"*** " + input</log>
-                    <return/>
-                </except>
-                <!-- type: record -->
-                <object type="workflow" ref="assignDataIdentifierWorkflow"/>
-                <object type="workflow" ref="indexNewRecordWorkflow"/>
-            </workflow>
-    </subConfig>
- 
+		<subConfig type="workflow" id="buildIndexSingleWorkflow">
+			<objectType>cheshire3.workflow.CachingWorkflow</objectType>
+			<workflow>
+				<!-- input type: document -->
+				<object type="workflow" ref="preParserWorkflow" />
+				<try>
+					<object type="parser" ref="LxmlParser" />
+				</try>
+				<except>
+					<assign from="'unparsable: ' + str(err)" to="input" />
+					<log level="warning">"*** " + input</log>
+					<return />
+				</except>
+				<!-- type: record -->
+				<object type="workflow" ref="assignDataIdentifierWorkflow" />
+				<object type="workflow" ref="indexNewRecordWorkflow" />
+			</workflow>
+		</subConfig>
 
-    <subConfig type="workflow" id="buildDcRecordWorkflow">
-        <objectType>cheshire3.workflow.CachingWorkflow</objectType>
-        <workflow>
-            <!-- input type: record -->
-            <assign from="input.id" to="identifier"/>
-            <object type="transformer" ref="eadDublinCoreTxr"/>
-            <!-- type: document -->
-            <assign from="input" to="doc"/>
-            <try>
-                <object type="parser" ref="LxmlParser"/>
-                <assign from="identifier" to="input.id"/>
-                <try>
-                    <object type="recordStore" ref="eadDcStore" function="store_record"/>
-                </try>
-                <except>
-                    <log level="warning">"*** duplicate DC record"</log>
-                </except>
-            </try>
-            <except>
-            	<log level="warning">"" + str(err)</log>
-            	<log level="warning">"" + doc.get_raw(session)</log>
-            	<log level="warning">"*** " + identifier + " DC record unparsable"</log>
-            </except>
-        </workflow>
-    </subConfig>
-    
-    <subConfig type="workflow" id="buildAllComponentWorkflow">
-        <objectType>cheshire3.workflow.CachingWorkflow</objectType>
-        <workflow>
-            <!-- input type: recordStore -->
-            <object type="recordStore" ref="componentStore" function="begin_storing"/>
-            <object type="database" function="begin_indexing"/>
-            <for-each>
-                <object type="workflow" ref="buildComponentWorkflow"/>
-            </for-each>
-            <object type="recordStore" ref="componentStore" function="commit_storing"/>
-            <object type="database" function="commit_indexing"/>
-            <object type="database" function="commit_metadata"/>
-        </workflow>
-    </subConfig>
 
-    <subConfig type="workflow" id="buildComponentWorkflow">
-        <objectType>cheshire3.workflow.CachingWorkflow</objectType>
-        <workflow>
-    		<!-- input type: record -->
-    		<assign from="input.id" to="recid" />
-    		<object type="documentFactory" ref="componentDocumentFactory" function="load" />
-    		<!-- type: documentFactory -->
-    		<log level="info">"Loading components from record " + recid</log>
-    		<assign to="VAR_ctr" from="0" />
-    		<for-each>
-                <!-- type: document -->
-<!--                <log level="debug">"preParsing"</log>-->
-                <object type="workflow" ref="preParserWorkflow"/>
-<!--                <log level="debug">"parsing"</log>-->
-                <try>
-                	<object type="parser" ref="LxmlParser" />
-                </try>
-                <except>
-                	<log level="warning">"*** Unparsable Components"</log>
-                	<log level="warning">"" + str(err)</log>
-                	<continue/>
-                </except>
-                <!-- type: record -->
-<!--                <log level="debug">"assigning id"</log>-->
-                <try>
-                	<object type="workflow" ref="assignDataIdentifierWorkflow"/>
-                </try>
-                <except>
-                	<assign from="recid + '-' + str(VAR_ctr)" to="input.id" />
-                </except>
-                <assign from="VAR_ctr + 1" to="VAR_ctr" />
-<!--                <log level="debug">"storing"</log>-->
-                <try>
-                	<object type="recordStore" ref="componentStore" function="store_record" />
-                </try>
-                <except>
-                	<log level="critical">"*** Component unstorable"</log>
-                	<log level="critical">
-                		"\n" + ''.join(traceback.format_exception(sys.exc_type,sys.exc_value,sys.exc_traceback))
-                	</log>
-                	<log level="critical">"" + input.get_xml(session)</log>
-                	<continue />
-                </except>
-<!--                <log level="debug">"adding"</log>-->
-                <object type="database" function="add_record" />
-<!--                <log level="debug">"indexing"</log>-->
-                <try>
-                    <object type="database" function="index_record" />
-                </try>
-                <except>
-                    <log level="warning">"*** Some indexes incomplete"</log>
-                    <!--						<log>"\n" + ''.join(traceback.format_exception(sys.exc_type,sys.exc_value,sys.exc_traceback))</log>-->
-                </except>
-    		</for-each>
-        </workflow>
-    </subConfig>
+		<subConfig type="workflow" id="buildDcRecordWorkflow">
+			<objectType>cheshire3.workflow.CachingWorkflow</objectType>
+			<workflow>
+				<!-- input type: record -->
+				<assign from="input.id" to="identifier" />
+				<object type="transformer" ref="eadDublinCoreTxr" />
+				<!-- type: document -->
+				<assign from="input" to="doc" />
+				<try>
+					<object type="parser" ref="LxmlParser" />
+					<assign from="identifier" to="input.id" />
+					<try>
+						<object type="recordStore" ref="eadDcStore" function="store_record" />
+					</try>
+					<except>
+						<log level="warning">"*** duplicate DC record"</log>
+					</except>
+				</try>
+				<except>
+					<log level="warning">"" + str(err)</log>
+					<log level="warning">"" + doc.get_raw(session)</log>
+					<log level="warning">"*** " + identifier + " DC record unparsable"</log>
+				</except>
+			</workflow>
+		</subConfig>
 
-	<subConfig type="workflow" id="assignDataIdentifierWorkflow">
-        <objectType>cheshire3.workflow.CachingWorkflow</objectType>
-        <workflow>
-    		<!-- input type: record -->
-    		<!-- first put record aside so we can re-assign it later -->
-    		<assign from="input" to="myRecord"/>
-    		<try>
-                <assign from="input.process_xpath(session, '/ead/eadheader/eadid[1]/text()')[0]" to="input"/>
-    		</try>
-    		<except>
-                <!-- component record -->
-                <assign from="input.process_xpath(session, '/c3component/@parent')[0]" to="parentid"/>
-                <assign from="parentid.split('/', 1)[-1]" to="parentid"/>
-                <assign from="input.process_xpath(session, '/*/*/did/unitid')[0]" to="input"/>
-                <object type="extractor" ref="SimpleExtractor" function="process_node"/>
-                <assign from="input.keys()[0]" to="input"/>
-                <assign from="parentid + '-' + input" to="input"/>
-            </except>
-            <object type="workflow" ref="normalizeDataIdentifierWorkflow" />
-    		<assign from="input" to="myRecord.id"/>
-    		<assign from="myRecord" to="input"/>
-        </workflow>
-	</subConfig>
-	
-	<subConfig type="workflow" id="normalizeDataIdentifierWorkflow">
-        <objectType>cheshire3.workflow.CachingWorkflow</objectType>
-        <workflow>
-    		<!-- input type: String -->
-    		<object type="normalizer" ref="DiacriticNormalizer" function="process_string"/>
-    		<object type="normalizer" ref="CaseNormalizer" function="process_string"/>
-    		<object type="normalizer" ref="SpaceNormalizer" function="process_string"/>
-    		<assign from="input.replace(' ', '').replace('/', '-').replace('\\', '-').replace('\'', '')" to="input" />
-        </workflow>
-	</subConfig>
-    
-    <subConfig type="workflow" id="indexNewRecordWorkflow">
-        <objectType>cheshire3.workflow.CachingWorkflow</objectType>
-        <workflow>
-            <object type="recordStore" ref="recordStore" function="store_record"/>
-            <object type="database" function="add_record"/>
-            <object type="index" ref="ead-idx-creationDate" function="index_record" />
-            <object type="workflow" ref="indexRecordWorkflow"/>
-        </workflow>
-    </subConfig>
+		<subConfig type="workflow" id="buildAllComponentWorkflow">
+			<objectType>cheshire3.workflow.CachingWorkflow</objectType>
+			<workflow>
+				<!-- input type: recordStore -->
+				<object type="recordStore" ref="componentStore" function="begin_storing" />
+				<object type="database" function="begin_indexing" />
+				<for-each>
+					<object type="workflow" ref="buildComponentWorkflow" />
+				</for-each>
+				<object type="recordStore" ref="componentStore" function="commit_storing" />
+				<object type="database" function="commit_indexing" />
+				<object type="database" function="commit_metadata" />
+			</workflow>
+		</subConfig>
 
-    <subConfig type="workflow" id="indexRecordWorkflow">
-        <objectType>cheshire3.workflow.CachingWorkflow</objectType>
-        <workflow>
-            <!-- input type:  record -->
-            <!-- assign identifier -->
-    		<try>
-                <object type="database" function="index_record"/>
-                <log level="info">"... Identifier: " + input.id + " - loaded, indexed"</log>	
-            </try>
-            <except>
-                <log level="warning">"*** Identifier: " + input.id + " - Some indexes incomplete"</log>
-            </except>
-            <object type="workflow" ref="buildDcRecordWorkflow"/>
-        </workflow>
-    </subConfig>
+		<subConfig type="workflow" id="buildComponentWorkflow">
+			<objectType>cheshire3.workflow.CachingWorkflow</objectType>
+			<workflow>
+				<!-- input type: record -->
+				<assign from="input.id" to="recid" />
+				<object type="documentFactory" ref="componentDocumentFactory"
+					function="load" />
+				<!-- type: documentFactory -->
+				<log level="info">"Loading components from record " + recid</log>
+				<assign to="VAR_ctr" from="0" />
+				<for-each>
+					<!-- type: document -->
+					<!-- <log level="debug">"preParsing"</log> -->
+					<object type="workflow" ref="preParserWorkflow" />
+					<!-- <log level="debug">"parsing"</log> -->
+					<try>
+						<object type="parser" ref="LxmlParser" />
+					</try>
+					<except>
+						<log level="warning">"*** Unparsable Components"</log>
+						<log level="warning">"" + str(err)</log>
+						<continue />
+					</except>
+					<!-- type: record -->
+					<!-- <log level="debug">"assigning id"</log> -->
+					<try>
+						<object type="workflow" ref="assignDataIdentifierWorkflow" />
+					</try>
+					<except>
+						<assign from="recid + '-' + str(VAR_ctr)" to="input.id" />
+					</except>
+					<assign from="VAR_ctr + 1" to="VAR_ctr" />
+					<!-- <log level="debug">"storing"</log> -->
+					<try>
+						<object type="recordStore" ref="componentStore" function="store_record" />
+					</try>
+					<except>
+						<log level="critical">"*** Component unstorable"</log>
+						<log level="critical">
+							"\n" +
+							''.join(traceback.format_exception(sys.exc_type,sys.exc_value,sys.exc_traceback))
+						</log>
+						<log level="critical">"" + input.get_xml(session)</log>
+						<continue />
+					</except>
+					<!-- <log level="debug">"adding"</log> -->
+					<object type="database" function="add_record" />
+					<!-- <log level="debug">"indexing"</log> -->
+					<try>
+						<object type="database" function="index_record" />
+					</try>
+					<except>
+						<log level="warning">"*** Some indexes incomplete"</log>
+						<!-- <log>"\n" + ''.join(traceback.format_exception(sys.exc_type,sys.exc_value,sys.exc_traceback))</log> -->
+					</except>
+				</for-each>
+			</workflow>
+		</subConfig>
 
-  </subConfigs>
+		<subConfig type="workflow" id="assignDataIdentifierWorkflow">
+			<objectType>cheshire3.workflow.CachingWorkflow</objectType>
+			<workflow>
+				<!-- input type: record -->
+				<!-- first put record aside so we can re-assign it later -->
+				<assign from="input" to="myRecord" />
+				<try>
+					<assign
+						from="input.process_xpath(session, '/ead/eadheader/eadid[1]/text()')[0]"
+						to="input" />
+				</try>
+				<except>
+					<!-- component record -->
+					<assign from="input.process_xpath(session, '/c3component/@parent')[0]"
+						to="parentid" />
+					<assign from="parentid.split('/', 1)[-1]" to="parentid" />
+					<assign from="input.process_xpath(session, '/*/*/did/unitid')[0]"
+						to="input" />
+					<object type="extractor" ref="SimpleExtractor" function="process_node" />
+					<assign from="input.keys()[0]" to="input" />
+					<assign from="parentid + '-' + input" to="input" />
+				</except>
+				<object type="workflow" ref="normalizeDataIdentifierWorkflow" />
+				<assign from="input" to="myRecord.id" />
+				<assign from="myRecord" to="input" />
+			</workflow>
+		</subConfig>
+
+		<subConfig type="workflow" id="normalizeDataIdentifierWorkflow">
+			<objectType>cheshire3.workflow.CachingWorkflow</objectType>
+			<workflow>
+				<!-- input type: String -->
+				<object type="normalizer" ref="DiacriticNormalizer" function="process_string" />
+				<object type="normalizer" ref="CaseNormalizer" function="process_string" />
+				<object type="normalizer" ref="SpaceNormalizer" function="process_string" />
+				<assign
+					from="input.replace(' ', '').replace('/', '-').replace('\\', '-').replace('\'', '')"
+					to="input" />
+			</workflow>
+		</subConfig>
+
+		<subConfig type="workflow" id="indexNewRecordWorkflow">
+			<objectType>cheshire3.workflow.CachingWorkflow</objectType>
+			<workflow>
+				<object type="recordStore" ref="recordStore" function="store_record" />
+				<object type="database" function="add_record" />
+				<object type="index" ref="ead-idx-creationDate" function="index_record" />
+				<object type="workflow" ref="indexRecordWorkflow" />
+			</workflow>
+		</subConfig>
+
+		<subConfig type="workflow" id="indexRecordWorkflow">
+			<objectType>cheshire3.workflow.CachingWorkflow</objectType>
+			<workflow>
+				<!-- input type: record -->
+				<!-- assign identifier -->
+				<try>
+					<object type="database" function="index_record" />
+					<log level="info">"... Identifier: " + input.id + " - loaded, indexed"</log>
+				</try>
+				<except>
+					<log level="warning">"*** Identifier: " + input.id + " - Some indexes
+						incomplete"</log>
+				</except>
+				<object type="workflow" ref="buildDcRecordWorkflow" />
+			</workflow>
+		</subConfig>
+
+	</subConfigs>
 
 </config>

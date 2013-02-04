@@ -1,14 +1,13 @@
-<config>
+<config xmlns="http://www.cheshire3.org/schemas/config/">
 
-<!-- 
-    Configuration for XPaths.
-    
-    This file was produced, and released as part of Cheshire for Archives v3.x.
-    Copyright &#169; 2005-2008 the University of Liverpool
- -->
+	<!--
+	Configuration for XPaths.
+	This file was produced, and released as part of Cheshire for Archives v3.x.
+	Copyright &#169; 2005-2013 the University of Liverpool 
+	-->
 
 	<subConfigs>
-	
+
 		<subConfig type="xpathProcessor" id="identifierXPath">
 			<objectType>cheshire3.xpathProcessor.MetadataXPath</objectType>
 			<source>
@@ -22,7 +21,7 @@
 				<xpath>now</xpath>
 			</source>
 		</subConfig>
-		
+
 		<subConfig type="xpathProcessor" id="descriptionXPath">
 			<objectType>cheshire3.xpathProcessor.SimpleXPathProcessor</objectType>
 			<source>
@@ -36,7 +35,7 @@
 				<xpath>/c3component/*/controlaccess</xpath>
 			</source>
 		</subConfig>
-		
+
 		<subConfig type="xpathProcessor" id="anywhereXPath">
 			<objectType>cheshire3.xpathProcessor.SimpleXPathProcessor</objectType>
 			<source>
@@ -45,7 +44,7 @@
 				<xpath>/c3component</xpath>
 			</source>
 		</subConfig>
-		
+
 		<subConfig type="xpathProcessor" id="componentXPath">
 			<objectType>cheshire3.xpathProcessor.SimpleXPathProcessor</objectType>
 			<source>
@@ -61,10 +60,10 @@
 				<xpath>c09</xpath>
 				<xpath>c10</xpath>
 				<xpath>c11</xpath>
-				<xpath>c12</xpath>				
+				<xpath>c12</xpath>
 			</source>
 		</subConfig>
-	
+
 	</subConfigs>
-	
+
 </config>

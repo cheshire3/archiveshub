@@ -1,123 +1,124 @@
-<config>
+<config xmlns="http://www.cheshire3.org/schemas/config/">
 
-<!-- 
+	<!--
+	Configuration for Transformers.
 	This file was produced, and released as part of Cheshire for Archives v3.x.
-	Copyright &#169; 2005-2008 the University of Liverpool
- -->
+	Copyright &#169; 2005-2013 the University of Liverpool 
+	-->
 
 	<subConfigs>
-	
+
 		<subConfig type="transformer" id="sruOutgoingTxr">
-            <docs>Transformer for EAD sent via SRU</docs>
+			<docs>Transformer for EAD sent via SRU</docs>
 			<objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
 			<paths>
-			   <path type="xsltPath">xsl/sruOut.xsl</path>
+				<path type="xsltPath">xsl/sruOut.xsl</path>
 			</paths>
-	    </subConfig>
-        
-        <subConfig type="transformer" id="sruHighlightingTxr">
-            <docs>Transformer for EAD sent via SRU with search terms highlighted</docs>
-            <objectType>cheshire3.transformer.WorkflowTransformer</objectType>
-			<paths>
-			   <object type="workflow" ref="highlightSruFilterWorkflow"/>
-			</paths>
-        </subConfig>
-        
-        <subConfig type="transformer" id="sruOutgoingHubTxr">
-            <docs>Transformer for EAD sent via SRU to the Archives Hub</docs>
-            <objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
-			<paths>
-			   <path type="xsltPath">xsl/sruOutHub.xsl</path>
-			</paths>
-        </subConfig>
-        
-        <subConfig type="transformer" id="oaiOutgoingTxr">
-            <docs>Transformer for EAD sent over OAI-PMH</docs>
-          <objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
-          <paths>
-             <path type="xsltPath">xsl/oaiOut.xsl</path>
-          </paths>
-        </subConfig>
+		</subConfig>
 
-        <subConfig type="transformer" id="highlightTxr">
-          <objectType>cheshire3.transformer.LxmlOffsetQueryTermHighlightingTransformer</objectType>
-          <options>
-            <setting type="highlightTag">emph</setting>
-            <setting type="tagAttrList">altrender="queryTerm"</setting>
-            <setting type="breakElementsList">dsc</setting>
-          </options>
-        </subConfig>
-	    
-	    <subConfig type="transformer" id="htmlFullTxr">
-	      <objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
-	      <paths>
-	         <path type="xsltPath">xsl/full.xsl</path>
-	      </paths>
-	    </subConfig>
-	
-	    <subConfig type="transformer" id="htmlFullSplitTxr">
-	      <objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
-	      <paths>
-	         <path type="xsltPath">xsl/fullSplit.xsl</path>
-	      </paths>
-	    </subConfig>
-	
-	    <subConfig type="transformer" id="htmlSummaryTxr">
-	      <objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
-	      <paths>
-	         <path type="xsltPath">xsl/summary.xsl</path>
-	      </paths>
-	    </subConfig>
-	
-	    <subConfig type="transformer" id="textTxr">
-	      <objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
-	      <paths>
-	         <path type="xsltPath">xsl/text.xsl</path>
-	      </paths>
-	    </subConfig>
-	    
-	    <subConfig type="transformer" id="formCreationTxr">
-	      <objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
-	      <paths>
-	         <path type="xsltPath">xsl/form.xsl</path>
-	      </paths>
-	    </subConfig>
-	    
-	    <subConfig type="transformer" id="orderingTxr">
-	    	<objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
-	      <paths>
-	         <path type="xsltPath">xsl/ead_order.xsl</path>
-	      </paths>
-	    </subConfig>
-	    
-	    <subConfig type="transformer" id="indentingTxr">
-	    	<objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
-	      <paths>
-	         <path type="xsltPath">xsl/reindent.xsl</path>
-	      </paths>
-	    </subConfig>
-	    
-	    <subConfig type="transformer" id="editingTocTxr">
-	    	<objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
-	      <paths>
-	         <path type="xsltPath">xsl/contents-editing.xsl</path>
-	      </paths>
-	    </subConfig>
-	
-	    <subConfig type="transformer" id="eadDublinCoreTxr">
-	      <objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
-	      <paths>
-	         <path type="xsltPath">xsl/ead2srw_dc.xsl</path>
-	      </paths>
-	    </subConfig>
-	    
-	    <subConfig type="transformer" id="OAIDublinCoreTransformer">
-	      <objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
-	      <paths>
-	         <path type="xsltPath">xsl/ead2oai_dc.xsl</path>
-	      </paths>
-	    </subConfig>
-    
+		<subConfig type="transformer" id="sruHighlightingTxr">
+			<docs>Transformer for EAD sent via SRU with search terms highlighted</docs>
+			<objectType>cheshire3.transformer.WorkflowTransformer</objectType>
+			<paths>
+				<object type="workflow" ref="highlightSruFilterWorkflow" />
+			</paths>
+		</subConfig>
+
+		<subConfig type="transformer" id="sruOutgoingHubTxr">
+			<docs>Transformer for EAD sent via SRU to the Archives Hub</docs>
+			<objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
+			<paths>
+				<path type="xsltPath">xsl/sruOutHub.xsl</path>
+			</paths>
+		</subConfig>
+
+		<subConfig type="transformer" id="oaiOutgoingTxr">
+			<docs>Transformer for EAD sent over OAI-PMH</docs>
+			<objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
+			<paths>
+				<path type="xsltPath">xsl/oaiOut.xsl</path>
+			</paths>
+		</subConfig>
+
+		<subConfig type="transformer" id="highlightTxr">
+			<objectType>cheshire3.transformer.LxmlOffsetQueryTermHighlightingTransformer</objectType>
+			<options>
+				<setting type="highlightTag">emph</setting>
+				<setting type="tagAttrList">altrender="queryTerm"</setting>
+				<setting type="breakElementsList">dsc</setting>
+			</options>
+		</subConfig>
+
+		<subConfig type="transformer" id="htmlFullTxr">
+			<objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
+			<paths>
+				<path type="xsltPath">xsl/full.xsl</path>
+			</paths>
+		</subConfig>
+
+		<subConfig type="transformer" id="htmlFullSplitTxr">
+			<objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
+			<paths>
+				<path type="xsltPath">xsl/fullSplit.xsl</path>
+			</paths>
+		</subConfig>
+
+		<subConfig type="transformer" id="htmlSummaryTxr">
+			<objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
+			<paths>
+				<path type="xsltPath">xsl/summary.xsl</path>
+			</paths>
+		</subConfig>
+
+		<subConfig type="transformer" id="textTxr">
+			<objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
+			<paths>
+				<path type="xsltPath">xsl/text.xsl</path>
+			</paths>
+		</subConfig>
+
+		<subConfig type="transformer" id="formCreationTxr">
+			<objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
+			<paths>
+				<path type="xsltPath">xsl/form.xsl</path>
+			</paths>
+		</subConfig>
+
+		<subConfig type="transformer" id="orderingTxr">
+			<objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
+			<paths>
+				<path type="xsltPath">xsl/ead_order.xsl</path>
+			</paths>
+		</subConfig>
+
+		<subConfig type="transformer" id="indentingTxr">
+			<objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
+			<paths>
+				<path type="xsltPath">xsl/reindent.xsl</path>
+			</paths>
+		</subConfig>
+
+		<subConfig type="transformer" id="editingTocTxr">
+			<objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
+			<paths>
+				<path type="xsltPath">xsl/contents-editing.xsl</path>
+			</paths>
+		</subConfig>
+
+		<subConfig type="transformer" id="eadDublinCoreTxr">
+			<objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
+			<paths>
+				<path type="xsltPath">xsl/ead2srw_dc.xsl</path>
+			</paths>
+		</subConfig>
+
+		<subConfig type="transformer" id="OAIDublinCoreTransformer">
+			<objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
+			<paths>
+				<path type="xsltPath">xsl/ead2oai_dc.xsl</path>
+			</paths>
+		</subConfig>
+
 		<subConfig type="transformer" id="tpgrsTxr">
 			<objectType>cheshire3.web.transformer.GrsMapTransformer</objectType>
 			<transform>
@@ -140,10 +141,10 @@
 				<map>
 					<xpath>count(/ead/archdesc/dsc)</xpath>
 					<xpath>17</xpath>
-				</map>					
+				</map>
 			</transform>
 		</subConfig>
-		
+
 		<subConfig type="transformer" id="cTpgrsTxr">
 			<objectType>cheshire3.web.transformer.GrsMapTransformer</objectType>
 			<transform>
@@ -172,10 +173,10 @@
 					<!-- this needs to be the title of the parent document -->
 					<xpath>#PARENT#/unittitle[1]//text()</xpath>
 					<xpath>1</xpath>
-				</map>		
+				</map>
 			</transform>
 		</subConfig>
-	
+
 	</subConfigs>
-	
+
 </config>

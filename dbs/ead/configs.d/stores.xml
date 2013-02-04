@@ -1,90 +1,89 @@
-<config>
+<config xmlns="http://www.cheshire3.org/schemas/config/">
 
-<!-- 
-    Configuration for data stores.
-    
-    This file was produced, and released as part of Cheshire for Archives v3.x.
-    Copyright &#169; 2005-2008 the University of Liverpool
- -->
+	<!--
+	Configuration for data stores.
+	This file was produced, and released as part of Cheshire for Archives v3.x.
+	Copyright &#169; 2005-2013 the University of Liverpool 
+	-->
 
 	<subConfigs>
-        
+
 		<subConfig type="objectStore" id="eadAuthStore">
-		  <objectType>cheshire3.objectStore.BdbObjectStore</objectType>
-		  <paths>
-		    <path type="databasePath">eadAuthStore.bdb</path>
-            <object type="inTransformer" ref="XmlTransformer" />
-            <object type="outParser" ref="LxmlParser" />
-		  </paths>
+			<objectType>cheshire3.objectStore.BdbObjectStore</objectType>
+			<paths>
+				<path type="databasePath">eadAuthStore.bdb</path>
+				<object type="inTransformer" ref="XmlTransformer" />
+				<object type="outParser" ref="LxmlParser" />
+			</paths>
 		</subConfig>
-	
+
 		<subConfig type="recordStore" id="recordStore">
-	      <objectType>cheshire3.recordStore.BdbRecordStore</objectType>
-	      <paths>
-	      	<path type="defaultPath">stores</path>
-	        <path type="databasePath">recordStore.bdb</path>
-	        <path type="metadataPath">recordStoreMetadata.bdb</path>
-	        <object type="inTransformer" ref="XmlTransformer" />
-	        <object type="outParser" ref="LxmlParser" />
-	      </paths>
-	      <options>
-	        <setting type="digest">sha</setting>
-	      </options>
-	    </subConfig>
+			<objectType>cheshire3.recordStore.BdbRecordStore</objectType>
+			<paths>
+				<path type="defaultPath">stores</path>
+				<path type="databasePath">recordStore.bdb</path>
+				<path type="metadataPath">recordStoreMetadata.bdb</path>
+				<object type="inTransformer" ref="XmlTransformer" />
+				<object type="outParser" ref="LxmlParser" />
+			</paths>
+			<options>
+				<setting type="digest">sha</setting>
+			</options>
+		</subConfig>
 
-	    <subConfig type="recordStore" id="eadDcStore">
-	      <objectType>cheshire3.recordStore.BdbRecordStore</objectType>
-	      <paths>
-	      	<path type="defaultPath">stores</path>
-	        <path type="databasePath">dcStore.bdb</path>
-	        <path type="metadataPath">dcStoreMetadata.bdb</path>
-	        <object type="inTransformer" ref="XmlTransformer" />
-	        <object type="outParser" ref="LxmlParser" />
-	      </paths>
-	      <options>
-	        <setting type="digest">sha</setting>
-	      </options>
-	    </subConfig>
+		<subConfig type="recordStore" id="eadDcStore">
+			<objectType>cheshire3.recordStore.BdbRecordStore</objectType>
+			<paths>
+				<path type="defaultPath">stores</path>
+				<path type="databasePath">dcStore.bdb</path>
+				<path type="metadataPath">dcStoreMetadata.bdb</path>
+				<object type="inTransformer" ref="XmlTransformer" />
+				<object type="outParser" ref="LxmlParser" />
+			</paths>
+			<options>
+				<setting type="digest">sha</setting>
+			</options>
+		</subConfig>
 
-	    <subConfig type="recordStore" id="componentStore">
-	      <objectType>cheshire3.recordStore.BdbRecordStore</objectType>
-	      <paths>
-			<path type="defaultPath">stores</path>
-	        <path type="databasePath">compStore.bdb</path>
-	        <path type="metadataPath">compStoreMetadata.bdb</path>
-	        <object type="inTransformer" ref="XmlTransformer" />
-	        <object type="outParser" ref="LxmlParser" />
-	      </paths>
-	      <options>
-	        <setting type="digest">sha</setting>
-	      </options>
-	    </subConfig>
-	    
- 	    <subConfig type="recordStore" id="editingStore">
-	      <objectType>cheshire3.sql.postgres.PostgresRecordStore</objectType>
-	      <paths>
-			<path type="databaseName">db_ead</path>
-            <path type="tableName">editingStore</path>
-	        <object type="inTransformer" ref="XmlTransformer" />
-	        <object type="outParser" ref="LxmlParser" />
-	      </paths>
-	      <options>
-	      </options>
-	    </subConfig>
-	    
-	   <subConfig type="recordStore" id="templateStore">
-	      <objectType>cheshire3.sql.postgres.PostgresRecordStore</objectType>
-	      <paths>
-			<path type="databaseName">db_ead</path>
-            <path type="tableName">templateStore</path>
-	        <object type="inTransformer" ref="XmlTransformer" />
-	        <object type="outParser" ref="LxmlParser" />
-	      </paths>
-	      <options>
-	      </options>
-		</subConfig>   
+		<subConfig type="recordStore" id="componentStore">
+			<objectType>cheshire3.recordStore.BdbRecordStore</objectType>
+			<paths>
+				<path type="defaultPath">stores</path>
+				<path type="databasePath">compStore.bdb</path>
+				<path type="metadataPath">compStoreMetadata.bdb</path>
+				<object type="inTransformer" ref="XmlTransformer" />
+				<object type="outParser" ref="LxmlParser" />
+			</paths>
+			<options>
+				<setting type="digest">sha</setting>
+			</options>
+		</subConfig>
 
-            
+		<subConfig type="recordStore" id="editingStore">
+			<objectType>cheshire3.sql.postgres.PostgresRecordStore</objectType>
+			<paths>
+				<path type="databaseName">db_ead</path>
+				<path type="tableName">editingStore</path>
+				<object type="inTransformer" ref="XmlTransformer" />
+				<object type="outParser" ref="LxmlParser" />
+			</paths>
+			<options>
+			</options>
+		</subConfig>
+
+		<subConfig type="recordStore" id="templateStore">
+			<objectType>cheshire3.sql.postgres.PostgresRecordStore</objectType>
+			<paths>
+				<path type="databaseName">db_ead</path>
+				<path type="tableName">templateStore</path>
+				<object type="inTransformer" ref="XmlTransformer" />
+				<object type="outParser" ref="LxmlParser" />
+			</paths>
+			<options>
+			</options>
+		</subConfig>
+
+
 
 	</subConfigs>
 </config>
