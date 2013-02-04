@@ -129,12 +129,16 @@
                         <xsl:when test="unitid">
                             <xsl:for-each select="unitid">
                                 <xsl:choose>
-                                    <xsl:when test="@label = 'Former Reference'">
+                                    <xsl:when test="@label = 'Former Reference'' or
+                                                    @label = 'alternative' or
+                                                    @label = 'altrefno' or
+                                                    @type = 'previous' or
+                                                    @label = 'former'"">
                                         <!-- deal with these separately -->
                                     </xsl:when>
                                     <xsl:otherwise>
                                         <xsl:if test="position() &gt; 1">
-                                            <br />
+                                            <xsl:text>; </xsl:text>
                                         </xsl:if>
                                         <span style="font-weight: bolder">
                                             <xsl:apply-templates
@@ -218,7 +222,7 @@
                         <xsl:for-each select="origination">
                             <xsl:apply-templates />
                             <xsl:if test="position() &lt; last()">
-                                <xsl:text>,</xsl:text>
+                                <xsl:text>; </xsl:text>
                             </xsl:if>
                         </xsl:for-each>
 
