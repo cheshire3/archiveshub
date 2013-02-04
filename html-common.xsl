@@ -129,11 +129,11 @@
                         <xsl:when test="unitid">
                             <xsl:for-each select="unitid">
                                 <xsl:choose>
-                                    <xsl:when test="@label = 'Former Reference'' or
+                                    <xsl:when test="@label = 'Former Reference' or
                                                     @label = 'alternative' or
                                                     @label = 'altrefno' or
                                                     @type = 'previous' or
-                                                    @label = 'former'"">
+                                                    @label = 'former'">
                                         <!-- deal with these separately -->
                                     </xsl:when>
                                     <xsl:otherwise>
