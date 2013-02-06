@@ -72,7 +72,7 @@
   </xsl:param>
   <xsl:param name="copac_search_icon">
     <xsl:value-of select="$copac_base_url"/>
-    <xsl:text>/favicon.ico</xsl:text>
+    <xsl:text>/images/logos/copac/copac-green-no-strap-20x61.png</xsl:text>
   </xsl:param>
   
   <!-- Google -->
