@@ -2133,6 +2133,15 @@
         </xsl:variable>
 
         <div id="utilitybar" class="bar utility">
+            <!-- utility bar help link -->
+            <a href="http://archiveshub.ac.uk/utilitybarhelp/"
+                title="Help with online descriptions of archive collections"
+                class="helplink tip utilitybarhelp">
+                <xsl:text>What is this</xsl:text>
+                <img
+                    src="http://archiveshub.ac.uk/img/structure/form_tip.png"
+                    alt="?" />
+            </a>
             <!-- Switch Version (Level of detail) -->
             <ul class="detail">
                 <li>
