@@ -2137,10 +2137,10 @@
             <a href="http://archiveshub.ac.uk/utilitybarhelp/"
                 title="Help with online descriptions of archive collections"
                 class="helplink tip utilitybarhelp">
-                <xsl:text>What is this</xsl:text>
-                <img
+                <xsl:text>What is this?</xsl:text>
+                <!-- img
                     src="http://archiveshub.ac.uk/img/structure/form_tip.png"
-                    alt="?" />
+                    alt="?" /-->
             </a>
             <!-- Switch Version (Level of detail) -->
             <ul class="detail">
