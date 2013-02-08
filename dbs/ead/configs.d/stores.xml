@@ -24,8 +24,8 @@
 				<path type="defaultPath">stores</path>
 				<path type="databasePath">recordStore.bdb</path>
 				<path type="metadataPath">recordStoreMetadata.bdb</path>
-				<object type="inTransformer" ref="XmlTransformer" />
-				<object type="outParser" ref="LxmlParser" />
+				<object type="inWorkflow" ref="XmlToLZ4Workflow" />
+	        	<object type="outWorkflow" ref="LZ4ToLxmlWorkflow" />
 			</paths>
 			<options>
 				<setting type="digest">sha</setting>
@@ -38,8 +38,8 @@
 				<path type="defaultPath">stores</path>
 				<path type="databasePath">dcStore.bdb</path>
 				<path type="metadataPath">dcStoreMetadata.bdb</path>
-				<object type="inTransformer" ref="XmlTransformer" />
-				<object type="outParser" ref="LxmlParser" />
+				<object type="inWorkflow" ref="XmlToLZ4Workflow" />
+	        	<object type="outWorkflow" ref="LZ4ToLxmlWorkflow" />
 			</paths>
 			<options>
 				<setting type="digest">sha</setting>
@@ -52,8 +52,8 @@
 				<path type="defaultPath">stores</path>
 				<path type="databasePath">compStore.bdb</path>
 				<path type="metadataPath">compStoreMetadata.bdb</path>
-				<object type="inTransformer" ref="XmlTransformer" />
-				<object type="outParser" ref="LxmlParser" />
+				<object type="inWorkflow" ref="XmlToLZ4Workflow" />
+	        	<object type="outWorkflow" ref="LZ4ToLxmlWorkflow" />
 			</paths>
 			<options>
 				<setting type="digest">sha</setting>

@@ -8,6 +8,26 @@
 	-->
 
 	<subConfigs>
+	
+		<subConfig type="workflow" id="XmlToLZ4Workflow">
+			<docs>Workflow to take a Record and compress the XML data with the lz4
+				algorithm</docs>
+			<objectType>cheshire3.workflow.CachingWorkflow</objectType>
+			<workflow>
+				<object ref="XmlTransformer" type="transformer" />
+				<object ref="LZ4CompressPreParser" type="preParser" />
+			</workflow>
+		</subConfig>
+	
+		<subConfig type="workflow" id="LZ4ToLxmlWorkflow">
+			<docs>Workflow to take a Document containing data compressed with the
+				lz4 algorithm, decompress and parse into an LxmlRecord</docs>
+			<objectType>cheshire3.workflow.CachingWorkflow</objectType>
+			<workflow>
+				<object ref="LZ4DecompressPreParser" type="preParser" />
+				<object ref="LxmlParser" type="parser" />
+			</workflow>
+		</subConfig>
 
 		<subConfig type="workflow" id="preParserWorkflow">
 			<objectType>cheshire3.workflow.CachingWorkflow</objectType>
