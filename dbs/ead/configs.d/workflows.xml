@@ -232,7 +232,7 @@
 			<workflow>
 				<object type="recordStore" ref="recordStore" function="store_record" />
 				<object type="database" function="add_record" />
-				<object type="index" ref="ead-idx-creationDate" function="index_record" />
+				<object type="index" ref="idx-creationDate" function="index_record" />
 				<object type="workflow" ref="indexRecordWorkflow" />
 				<object type="workflow" ref="buildDcRecordWorkflow" />
 			</workflow>

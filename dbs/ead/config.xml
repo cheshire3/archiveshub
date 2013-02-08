@@ -63,12 +63,7 @@
 
 		<!-- postgreSQL -->
 		<subConfig type="resultSetStore" id="eadResultSetStore">
-<<<<<<< HEAD
-			<objectType>cheshire3.sql.postgres.PostgresResultSetStore
-			</objectType>
-=======
 			<objectType>cheshire3.sql.postgres.PostgresResultSetStore</objectType>
->>>>>>> style, docs: consistent XML identing + copyright statement
 			<paths>
 				<path type="databaseName">db_ead</path>
 				<path type="tableName">eadResultSetStore</path>
