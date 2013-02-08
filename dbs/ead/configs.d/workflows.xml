@@ -234,6 +234,7 @@
 				<object type="database" function="add_record" />
 				<object type="index" ref="ead-idx-creationDate" function="index_record" />
 				<object type="workflow" ref="indexRecordWorkflow" />
+				<object type="workflow" ref="buildDcRecordWorkflow" />
 			</workflow>
 		</subConfig>
 
@@ -250,7 +251,6 @@
 					<log level="warning">"*** Identifier: " + input.id + " - Some indexes incomplete"</log>
 					<log level="debug">"\n" + ''.join(traceback.format_exception(sys.exc_type,sys.exc_value,sys.exc_traceback))</log>
 				</except>
-				<object type="workflow" ref="buildDcRecordWorkflow" />
 			</workflow>
 		</subConfig>
 		
