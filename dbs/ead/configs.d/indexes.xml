@@ -2,6 +2,7 @@
 
 	<!--
 	Configuration for Indexes.
+	
 	This file was produced, and released as part of Cheshire for Archives v3.x.
 	Copyright &#169; 2005-2013 the University of Liverpool 
 	-->
@@ -813,8 +814,6 @@
 				<setting type="recordStoreSizes">1</setting>
 			</options>
 		</subConfig>
-
-		<!-- Geographic locations (Lat Long coordinates) -->
 
 		<!-- geographic names -->
 		<subConfig type="index" id="idx-geogname">

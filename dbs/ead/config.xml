@@ -1,8 +1,11 @@
-<config xmlns="http://www.cheshire3.org/schemas/config/" type="database"
+<config
+	xmlns="http://www.cheshire3.org/schemas/config/"
+	type="database"
 	id="db_ead">
 
 	<!--
 	Configuration for Database.
+	
 	This file was produced, and released as part of Cheshire for Archives v3.x.
 	Copyright &#169; 2005-2013 the University of Liverpool 
 	-->
@@ -60,8 +63,12 @@
 
 		<!-- postgreSQL -->
 		<subConfig type="resultSetStore" id="eadResultSetStore">
+<<<<<<< HEAD
 			<objectType>cheshire3.sql.postgres.PostgresResultSetStore
 			</objectType>
+=======
+			<objectType>cheshire3.sql.postgres.PostgresResultSetStore</objectType>
+>>>>>>> style, docs: consistent XML identing + copyright statement
 			<paths>
 				<path type="databaseName">db_ead</path>
 				<path type="tableName">eadResultSetStore</path>

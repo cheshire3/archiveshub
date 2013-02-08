@@ -2,6 +2,7 @@
 
 	<!--
 	Configuration for Workflows.
+	
 	This file was produced, and released as part of Cheshire for Archives v3.x.
 	Copyright &#169; 2005-2013 the University of Liverpool 
 	-->
@@ -133,19 +134,19 @@
 				<assign to="VAR_ctr" from="0" />
 				<for-each>
 					<!-- type: document -->
-					<!-- <log level="debug">"preParsing"</log> -->
+					<log level="debug">"preParsing"</log>
 					<object type="workflow" ref="preParserWorkflow" />
-					<!-- <log level="debug">"parsing"</log> -->
+					<log level="debug">"parsing"</log>
 					<try>
 						<object type="parser" ref="LxmlParser" />
 					</try>
 					<except>
 						<log level="warning">"*** Unparsable Components"</log>
-						<log level="warning">"" + str(err)</log>
+						<log level="debug">"" + str(err)</log>
 						<continue />
 					</except>
 					<!-- type: record -->
-					<!-- <log level="debug">"assigning id"</log> -->
+					<log level="debug">"assigning id"</log>
 					<try>
 						<object type="workflow" ref="assignDataIdentifierWorkflow" />
 					</try>
@@ -153,28 +154,25 @@
 						<assign from="recid + '-' + str(VAR_ctr)" to="input.id" />
 					</except>
 					<assign from="VAR_ctr + 1" to="VAR_ctr" />
-					<!-- <log level="debug">"storing"</log> -->
+					<log level="debug">"storing " + input.id</log>
 					<try>
 						<object type="recordStore" ref="componentStore" function="store_record" />
 					</try>
 					<except>
 						<log level="critical">"*** Component unstorable"</log>
-						<log level="critical">
-							"\n" +
-							''.join(traceback.format_exception(sys.exc_type,sys.exc_value,sys.exc_traceback))
-						</log>
+						<log level="critical">"\n" + ''.join(traceback.format_exception(sys.exc_type,sys.exc_value,sys.exc_traceback))</log>
 						<log level="critical">"" + input.get_xml(session)</log>
 						<continue />
 					</except>
-					<!-- <log level="debug">"adding"</log> -->
+					<log level="debug">"adding " + input.id + " to database"</log>
 					<object type="database" function="add_record" />
-					<!-- <log level="debug">"indexing"</log> -->
+					<log level="debug">"indexing" + input.id</log>
 					<try>
 						<object type="database" function="index_record" />
 					</try>
 					<except>
 						<log level="warning">"*** Some indexes incomplete"</log>
-						<!-- <log>"\n" + ''.join(traceback.format_exception(sys.exc_type,sys.exc_value,sys.exc_traceback))</log> -->
+						<log level="debug">"\n" + "".join(traceback.format_exception(sys.exc_type,sys.exc_value,sys.exc_traceback))</log>
 					</except>
 				</for-each>
 			</workflow>
@@ -241,8 +239,8 @@
 					<log level="info">"... Identifier: " + input.id + " - loaded, indexed"</log>
 				</try>
 				<except>
-					<log level="warning">"*** Identifier: " + input.id + " - Some indexes
-						incomplete"</log>
+					<log level="warning">"*** Identifier: " + input.id + " - Some indexes incomplete"</log>
+					<log level="debug">"\n" + ''.join(traceback.format_exception(sys.exc_type,sys.exc_value,sys.exc_traceback))</log>
 				</except>
 				<object type="workflow" ref="buildDcRecordWorkflow" />
 			</workflow>
