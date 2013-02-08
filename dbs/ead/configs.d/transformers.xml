@@ -119,6 +119,18 @@
 				<path type="xsltPath">xsl/ead2oai_dc.xsl</path>
 			</paths>
 		</subConfig>
+		
+		<subConfig type="transformer" id="persistentIdTxr">
+			<docs>Transformer to return simply the persistent identifier as a string</docs>
+			<objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
+			<paths>
+			    <path type="xsltPath">xsl/persistentId.xsl</path>
+			</paths>
+		</subConfig>
+	    
+		<!--
+		Old-style GRS1 Transformers for Z39.50
+		-->
 
 		<subConfig type="transformer" id="tpgrsTxr">
 			<objectType>cheshire3.web.transformer.GrsMapTransformer</objectType>

@@ -52,25 +52,13 @@
 		<subConfig type="workflow" id="assignDataIdentifierWorkflow">
 			<objectType>cheshire3.workflow.CachingWorkflow</objectType>
 			<workflow>
-				<!-- input type: record -->
+				<!-- input type: Record -->
 				<!-- first put record aside so we can re-assign it later -->
 				<assign from="input" to="myRecord" />
-				<try>
-					<assign
-						from="input.process_xpath(session, '/ead/eadheader/eadid[1]/text()')[0]"
-						to="input" />
-				</try>
-				<except>
-					<!-- component record -->
-					<assign from="input.process_xpath(session, '/c3component/@parent')[0]"
-						to="parentid" />
-					<assign from="parentid.split('/', 1)[-1]" to="parentid" />
-					<assign from="input.process_xpath(session, '/*/*/did/unitid')[0]"
-						to="input" />
-					<object type="extractor" ref="SimpleExtractor" function="process_node" />
-					<assign from="input.keys()[0]" to="input" />
-					<assign from="parentid + '-' + input" to="input" />
-				</except>
+				<object type="transformer" ref="persistentIdTxr" />
+				<!-- input type: Document -->
+				<object type="input" function="get_raw" />
+				<!-- input type: string -->
 				<object type="workflow" ref="normalizeDataIdentifierWorkflow" />
 				<assign from="input" to="myRecord.id" />
 				<assign from="myRecord" to="input" />
