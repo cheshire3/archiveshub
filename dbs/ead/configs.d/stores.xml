@@ -12,6 +12,7 @@
 		<subConfig type="objectStore" id="eadAuthStore">
 			<objectType>cheshire3.objectStore.BdbObjectStore</objectType>
 			<paths>
+				<path type="defaultPath">auth</path>
 				<path type="databasePath">eadAuthStore.bdb</path>
 				<object type="inTransformer" ref="XmlTransformer" />
 				<object type="outParser" ref="LxmlParser" />
