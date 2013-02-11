@@ -290,6 +290,7 @@
 				<object type="indexStore" ref="indexStore" />
 			</paths>
 			<source>
+                <selector ref="titleSelector"/>
 				<xpath>/*/*/did/unittitle</xpath>
 				<process>
 					<object type="extractor" ref="SimpleExtractor" />
