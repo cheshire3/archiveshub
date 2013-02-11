@@ -9,22 +9,22 @@
 
 	<subConfigs>
 
-		<subConfig type="xpathProcessor" id="identifierXPath">
-			<objectType>cheshire3.xpathProcessor.MetadataXPath</objectType>
+		<subConfig type="selector" id="identifierSelector">
+			<objectType>cheshire3.selector.MetadataSelector</objectType>
 			<source>
 				<xpath>id</xpath>
 			</source>
 		</subConfig>
 
-		<subConfig type="xpathProcessor" id="nowTimeXPath">
-			<objectType>cheshire3.xpathProcessor.MetadataXPath</objectType>
+		<subConfig type="selector" id="nowTimeSelector">
+			<objectType>cheshire3.selector.MetadataSelector</objectType>
 			<source>
 				<xpath>now</xpath>
 			</source>
 		</subConfig>
 
-		<subConfig type="xpathProcessor" id="descriptionXPath">
-			<objectType>cheshire3.xpathProcessor.SimpleXPathProcessor</objectType>
+		<subConfig type="selector" id="descriptionXPath">
+			<objectType>cheshire3.selector.XPathSelector</objectType>
 			<source>
 				<xpath>/ead//did/unittitle</xpath>
 				<xpath>/ead//did/origination</xpath>
@@ -37,8 +37,8 @@
 			</source>
 		</subConfig>
 
-		<subConfig type="xpathProcessor" id="anywhereXPath">
-			<objectType>cheshire3.xpathProcessor.SimpleXPathProcessor</objectType>
+		<subConfig type="selector" id="anywhereXPath">
+			<objectType>cheshire3.selector.XPathSelector</objectType>
 			<source>
 				<xpath>/ead/eadheader/*</xpath>
 				<xpath>/ead/archdesc/*</xpath>
@@ -46,8 +46,8 @@
 			</source>
 		</subConfig>
 
-		<subConfig type="xpathProcessor" id="componentXPath">
-			<objectType>cheshire3.xpathProcessor.SimpleXPathProcessor</objectType>
+		<subConfig type="selector" id="componentXPath">
+			<objectType>cheshire3.selector.XPathSelector</objectType>
 			<source>
 				<xpath>c</xpath>
 				<xpath>c01</xpath>

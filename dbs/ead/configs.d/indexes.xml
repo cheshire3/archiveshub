@@ -182,7 +182,7 @@
 				<object type="indexStore" ref="indexStore" />
 			</paths>
 			<source>
-				<xpath ref="identifierXPath" />
+				<xpath ref="identifierSelector" />
 				<process>
 					<object type="extractor" ref="SimpleExtractor" />
 				</process>
@@ -922,7 +922,7 @@
 				<object type="indexStore" ref="indexStore" />
 			</paths>
 			<source>
-				<xpath ref="nowTimeXPath" />
+				<xpath ref="nowTimeSelector" />
 				<process>
 					<object type="extractor" ref="SimpleExtractor" />
 					<object type="tokenizer" ref="DateTokenizer" />
@@ -945,7 +945,7 @@
 				<object type="indexStore" ref="indexStore" />
 			</paths>
 			<source>
-				<xpath ref="nowTimeXPath" />
+				<xpath ref="nowTimeSelector" />
 				<process>
 					<object type="extractor" ref="SimpleExtractor" />
 					<object type="tokenizer" ref="DateTokenizer" />
