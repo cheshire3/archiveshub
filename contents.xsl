@@ -88,8 +88,18 @@
                 <xsl:text>setCookie('RECID-tocstate', stateToString('someId'))</xsl:text>
             </xsl:attribute>
             <xsl:if test="$node/unitid">
-              <xsl:value-of select="$node/unitid"/>
-              <xsl:text> - </xsl:text>
+            <xsl:choose>
+                <xsl:when test="$node/unitid[@type='persistent']">
+                    <xsl:value-of select="$node/unitid[@type='persistent']"/>
+                </xsl:when>
+                <xsl:when test="$node/unitid[@label='Former Reference']">
+                    <xsl:value-of select="$node/unitid[@label != 'Former Reference']"/>
+	            </xsl:when>
+	            <xsl:otherwise>
+	                <xsl:value-of select="$node/unitid[1]"/>
+	            </xsl:otherwise>
+            </xsl:choose>
+            <xsl:text> - </xsl:text>
             </xsl:if>
             <xsl:choose>
                 <xsl:when test="$node/unittitle">
