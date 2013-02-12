@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE xsl:stylesheet []>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:exsl="http://exslt.org/common" extension-element-prefixes="exsl"
-    xmlns:c3="http://www.cheshire3.org" xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:addthis="http://www.addthis.com/help/api-spec"
-    exclude-result-prefixes="#default xhtml c3" version="1.0">
+<xsl:stylesheet
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:exsl="http://exslt.org/common"
+    extension-element-prefixes="exsl"
+    xmlns:c3="http://www.cheshire3.org"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:xhtml="http://www.w3.org/1999/xhtml"
+    xmlns:addthis="http://www.addthis.com/help/api-spec"
+    exclude-result-prefixes="#all #default xhtml c3"
+    version="1.0">
 
     <!--
         This file was produced for the Archives Hub v3. Copyright &#169;
@@ -194,13 +199,13 @@
                     <xsl:choose>
                         <xsl:when test=".//unitdate">
                             <xsl:for-each select=".//unitdate">
-                                <xsl:if test="position() &gt; 1">
-                                    <br />
-                                </xsl:if>
                                 <strong>
                                     <xsl:apply-templates
                                         select="." />
                                 </strong>
+                                <xsl:if test="position() &lt; last()">
+                                    <xsl:text>; </xsl:text>
+                                </xsl:if>
                             </xsl:for-each>
                         </xsl:when>
                         <xsl:otherwise>
@@ -458,6 +463,7 @@
     <xsl:template match="archdesc">
         <!--TEMPLATES FOR MAIN BODY-->
         <xsl:apply-templates select="./did/abstract" />
+        <xsl:apply-templates select="./did/note" mode="own-section" />
 
         <xsl:apply-templates select="./scopecontent|./descgrp/scopecontent" />
         <xsl:apply-templates select="./bioghist|./descgrp/bioghist" />
@@ -1419,6 +1425,7 @@
         <!-- did for this component -->
         <xsl:apply-templates select="did" mode="didtable" />
 
+        <xsl:apply-templates select="did/note" mode="own-section" />
         <xsl:apply-templates select="scopecontent" />
         <xsl:apply-templates select="bioghist" />
         <xsl:apply-templates select="arrangement" />
@@ -2476,7 +2483,7 @@
 		          <xsl:value-of select="$copac_search_icon"/>
 		      </xsl:attribute>
 		    </xsl:element>-->
-		  <xsl:text>Search for this book on Copac</xsl:text>
+		    <xsl:text>Search for this book on Copac</xsl:text>
 	  	</a>
 	</xsl:template>
 	
