@@ -12,11 +12,14 @@
     version="1.0">
 
     <!--
-        This file was produced for the Archives Hub v3. Copyright &#169;
-        2005-2013 the University of Liverpool. include configurations from
-        external file - over-rideable locally (i.e. in this file)
+     This file was produced for the Cheshire3 for Archives and the Archives Hub.
+     Copyright &#169; 2005-2013 the University of Liverpool
     -->
-
+    
+    <!--
+    include configurations from external file - over-rideable locally
+    (i.e. in this file)
+    -->
     <xsl:include href="./configuration.xsl" />
 
     <xsl:variable name="script" select="'SCRIPT'" />
@@ -1054,10 +1057,18 @@
     </xsl:template>
 
     <!--
-        <xsl:template match="title"> <xsl:choose> <xsl:when test="./@render or
-        ./@altrender"> <xsl:apply-templates /> </xsl:when> <xsl:otherwise>
-        <em><xsl:apply-templates/></em> </xsl:otherwise> </xsl:choose>
-        </xsl:template>
+    <xsl:template match="title">
+        <xsl:choose>
+            <xsl:when test="./@render or ./@altrender">
+                <xsl:apply-templates />
+            </xsl:when>
+            <xsl:otherwise>
+                <em>
+                    <xsl:apply-templates/>
+                </em>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
     -->
 
     <!-- ODD -->
@@ -2125,8 +2136,8 @@
         </xsl:choose>
     </xsl:template>
 
-
     <!-- Template for creating utility bar -->
+    
     <xsl:template name="utilitybar">
 
         <xsl:param name="unittitle" />
