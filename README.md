@@ -20,10 +20,10 @@ want to embed the XSLT relative to (and assuming you will run the commands from)
 your project's root.
 
 
-Git
-~~~
+### Git
 
-I'd recommend the [subtree merging][3] strategy, rather than submodules [2].
+
+I'd recommend the [subtree merging][3] strategy, rather than [submodules][2].
 I'd also recommend reading up on [subtree merging][4] before blindly continuing
 with the following steps; I'm far from an expert in git, and you should really
 read up on what you're getting into...
@@ -39,8 +39,8 @@ git read-tree --prefix=path/to/xslt -u xslt_branch
 [4]: http://git-scm.com/book/en/Git-Tools-Submodules
 
 
-Mercurial
-~~~~~~~~~
+### Mercurial
+
 
 Create a [Mercurial subrepository][5]. I'd highly recommend reading up on
 [Mercurial Subrepositories][5] before blindly continuing with the following
