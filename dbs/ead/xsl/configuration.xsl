@@ -2,14 +2,11 @@
 <!DOCTYPE xsl:stylesheet []>
     
 <!-- 
-	This file was produced, and released as part of Cheshire for Archives v3.x.
+	This file was produced for the Archives Hub v3.
 	Copyright &#169; 2005-2008 the University of Liverpool
 -->
 
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
-
-    <!--  Host machine address -->
-    <xsl:variable name="host" select="'172.20.252.2'"/>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes="#default" version="1.0">
 
   <!-- Administrator configurable 'switches'
        for each option, you may set the 'select' attribute to:
@@ -18,6 +15,7 @@
   -->
 
   <xsl:variable name="link_to_archon" select="true()"/>
+  <xsl:variable name="link_to_hubmap" select="true()"/>
   <xsl:variable name="finding_aid_metadata" select="true()"/>
   <xsl:variable name="count_subordinates_in_summary" select="true()"/>
   <xsl:variable name="horizontal_rule_between_units" select="true()"/>
@@ -32,8 +30,20 @@
 
   <!-- other configuration parameters -->
 
+  <!--  Archon -->
   <xsl:param name="archon_url">
     <xsl:text>http://www.archon.nationalarchives.gov.uk/archon/searches/locresult_details.asp?LR=</xsl:text>
+  </xsl:param>
+  <xsl:param name="archon_icon">
+    <xsl:text>http://www.nationalarchives.gov.uk/favicon.ico</xsl:text>
+  </xsl:param>
+  
+  <!-- Archives Hub Contributors Map -->
+  <xsl:param name="hubmap_url">
+    <xsl:text>/contributorsmap/index.html?archonid=</xsl:text>
+  </xsl:param>
+  <xsl:param name="hubmap_icon">
+    <xsl:text>http://maps.google.co.uk/favicon.ico</xsl:text>
   </xsl:param>
   
   <!-- Amazon -->
@@ -49,18 +59,21 @@
   	<xsl:text>/favicon.ico</xsl:text>
   </xsl:param>
   
-    <!-- Copac -->
-    <xsl:param name="copac_base_url">
-        <xsl:text>http://www.copac.ac.uk</xsl:text>
-    </xsl:param>
-    <xsl:param name="copac_search_url">
-      	<xsl:value-of select="$copac_base_url"/>
-      	<xsl:text>/wzgw?form=A%2FT&amp;fs=Search</xsl:text>
-    </xsl:param>
-    <xsl:param name="copac_search_icon">
-      	<xsl:value-of select="$copac_base_url"/>
-      	<xsl:text>/favicon.ico</xsl:text>
-    </xsl:param>
+  <!-- Copac -->
+  <xsl:param name="copac_base_url">
+  	<xsl:text>http://copac.ac.uk</xsl:text>
+  </xsl:param>
+  <xsl:param name="copac_search_url">
+  	<xsl:value-of select="$copac_base_url"/>
+  	<xsl:text>/wzgw?form=qs&amp;fs=Search</xsl:text>
+  </xsl:param>
+  <xsl:param name="copac_search_link_title">
+    <xsl:text>look for this in research libraries</xsl:text>
+  </xsl:param>
+  <xsl:param name="copac_search_icon">
+    <xsl:value-of select="$copac_base_url"/>
+    <xsl:text>/images/logos/copac/copac-green-no-strap-20x61.png</xsl:text>
+  </xsl:param>
   
   <!-- Google -->
   <xsl:param name="googlemaps_base_url">
@@ -70,9 +83,12 @@
   	<xsl:value-of select="$googlemaps_base_url"/>
   	<xsl:text>/maps?ie=UTF8&amp;hl=en&amp;q=</xsl:text>
   </xsl:param>
+  <xsl:param name="googlemaps_search_link_title">
+    <xsl:text>Look up location in Google Maps</xsl:text>
+  </xsl:param>
   <xsl:param name="googlemaps_search_icon">
-  	<xsl:value-of select="$googlemaps_base_url"/>
-  	<xsl:text>/favicon.ico</xsl:text>
+    <xsl:value-of select="$googlemaps_base_url"/>
+    <xsl:text>/favicon.ico</xsl:text>
   </xsl:param>
   
   <!-- Wikipedia -->

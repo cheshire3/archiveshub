@@ -10,6 +10,7 @@
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns:c3="http://www.cheshire3.org"
+  exclude-result-prefixes="#all"
   version="1.0">
   
   <!-- 
@@ -21,13 +22,17 @@
     <!-- import common HTML templates and ToC templates -->
     <xsl:import href="interopXmlOut.xsl"/>
 
-	<xsl:output method="xml" omit-xml-declaration="yes"/>
+	<xsl:output method="xml" 
+	   encoding="utf-8"
+	   omit-xml-declaration="no"
+	   doctype-public="-//Society of American Archivists//DTD ead.dtd (Encoded Archival Description (EAD) Version 1.0)//EN"
+       />
 	
 	<xsl:template match="/">
 	   <xsl:apply-templates />
 	</xsl:template>
     
-    <xsl:param name="script" select="'/api/sru/hub'"/>
+    <xsl:param name="script" select="'/data'"/>
 	
 	<!-- Strip all audience=internal -->
 	
@@ -49,13 +54,9 @@
                                     @role = 'http://www.archiveshub.ac.uk/apps/linkroles/descendant' or
                                     @role = 'http://www.archiveshub.ac.uk/apps/linkroles/ancestor'">
                         <xsl:value-of select="$script"/>
-                        <xsl:text>?</xsl:text>
-                        <xsl:text>operation=searchRetrieve</xsl:text>
-                        <xsl:text>&amp;version=1.1</xsl:text>
-                        <xsl:text>&amp;maximumRecords=1</xsl:text>
-                        <xsl:text>&amp;recordSchema=ead</xsl:text>
-                        <xsl:text>&amp;query=rec.identifier+exact+</xsl:text>
+                        <xsl:text>/</xsl:text>
                         <xsl:value-of select="@href"/>
+                        <xsl:text>.xml</xsl:text>
                     </xsl:when>
                     <xsl:otherwise>
                         <xsl:value-of select="@href"/>

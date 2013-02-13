@@ -12,6 +12,7 @@
   xmlns:dc="http://purl.org/dc/elements/1.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd"
+  xmlns:c3="http://www.cheshire3.org"
   version="1.0">
   
 	<xsl:output method="xml"/>
@@ -40,7 +41,7 @@
 		</oai_dc:dc>
 	</xsl:template>
 
-	<xsl:template match="/c3component">
+	<xsl:template match="/c3:component">
 		<oai_dc:dc>
 			<!-- always insert identifier -->
 		    <dc:identifier>
@@ -58,7 +59,6 @@
 	</xsl:template>
 
   	<xsl:template match="did">
-        <xsl:apply-templates select="./unitid"/>
 		<dc:title>
 			<xsl:choose>
 				<xsl:when test="./unittitle">
@@ -75,20 +75,11 @@
 				</xsl:otherwise>
 			</xsl:choose>
 		</dc:title>
-		<xsl:apply-templates select="./unitdate"/>
-		<xsl:apply-templates select="./origination"/>
+		<xsl:apply-templates select="./did/origination"/>
   	</xsl:template>
 
 	<!-- strip head tags - they're meaningless in Dublin Core -->
 	<xsl:template match="head"/>
-	
-	<xsl:template match="unitid">
-        <dc:identifier><xsl:apply-templates/></dc:identifier>
-    </xsl:template>
-
-    <xsl:template match="unitdate">
-        <dc:date><xsl:apply-templates/></dc:date>
-    </xsl:template>
 	
 	<xsl:template match="origination">
 		<dc:creator><xsl:apply-templates/></dc:creator>

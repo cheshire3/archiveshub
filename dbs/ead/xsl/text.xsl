@@ -2,8 +2,8 @@
 <!DOCTYPE xsl:stylesheet []>
 
 <!-- 
-    This file was produced, and released as part of Cheshire for Archives v3.x.
-    Copyright &#169; 2005-2008 the University of Liverpool
+	This file was produced for the Archives Hub v3.
+	Copyright &#169; 2005-2008 the University of Liverpool
 -->
 
 <xsl:stylesheet
@@ -25,10 +25,11 @@
   <xsl:template match="/">
     <xsl:apply-templates/>
   </xsl:template>
+  
+  <xsl:param name="script" select="'/data/'"/>
 
   <!-- Strip internal -->
   <xsl:template match='//*[@audience="internal"]' priority="100"/>
-
 
   <xsl:template match="/ead">
     <!-- Core information about described material from <did> -->
@@ -169,7 +170,7 @@
     <xsl:value-of select="$newline"/>
     <xsl:value-of select="$newline"/>
 
-    <xsl:text>Reference: </xsl:text>
+    <xsl:text>Reference Number: </xsl:text>
       <xsl:choose>
         <xsl:when test="unitid">
           <xsl:apply-templates select="unitid[1]"/>
@@ -696,6 +697,33 @@
   
   </xsl:template>
 
+    <!-- ARCHREF  -->
+    <xsl:template match="archref">
+        <xsl:copy>
+            <xsl:copy-of select="@title"/>
+            <xsl:copy-of select="@target"/>
+            <xsl:attribute name="href">
+                <xsl:choose>
+                    <xsl:when test="@role = 'http://www.archiveshub.ac.uk/apps/linkroles/related' or
+                                    @role = 'http://www.archiveshub.ac.uk/apps/linkroles/extended' or
+                                    @role = 'http://www.archiveshub.ac.uk/apps/linkroles/child' or
+                                    @role = 'http://www.archiveshub.ac.uk/apps/linkroles/parent' or
+                                    @role = 'http://www.archiveshub.ac.uk/apps/linkroles/descendant' or
+                                    @role = 'http://www.archiveshub.ac.uk/apps/linkroles/ancestor'">
+                        <xsl:value-of select="$script"/>
+                        <xsl:value-of select="@href"/>
+                        <xsl:text>.txt</xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="@href"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:attribute>
+            <!-- inner XML -->
+            <xsl:apply-templates />
+        </xsl:copy>
+        
+    </xsl:template>
 
   <xsl:template match="extref[@href]">
 	<xsl:apply-templates/>

@@ -2,8 +2,8 @@
 <!DOCTYPE xsl:stylesheet []>
 
 <!-- 
-	This file was produced, and released as part of Cheshire for Archives v3.x.
-	Copyright &#169; 2005-2008 the University of Liverpool
+	This file was produced for the Archives Hub v3.
+	Copyright &#169; 2005-2009 the University of Liverpool
 -->
 	
 <xsl:stylesheet
@@ -11,6 +11,7 @@
   xmlns:rec="http://www.cheshire3.org/srw/extension/2/record-1.1"
   xmlns:srw_dc="info:srw/schema/1/dc-v1.1"
   xmlns:dc="http://purl.org/dc/elements/1.0"
+  xmlns:c3="http://www.cheshire3.org"
   version="1.0">
   
 	<xsl:output method="xml"/>
@@ -41,7 +42,7 @@
 		</srw_dc:dc>
 	</xsl:template>
 
-	<xsl:template match="/c3component">
+	<xsl:template match="/c3:component">
         <xsl:variable name="unitid">
             <xsl:call-template name="strip_space_and_lowercase">
                 <xsl:with-param name="text">
@@ -67,7 +68,7 @@
             <rec:collectionIdentifier>
                 <xsl:call-template name="parent_collection_identifier">
                     <xsl:with-param name="parent">
-                        <xsl:value-of select="/c3component/@parent" />
+                        <xsl:value-of select="/c3:component/@parent" />
                     </xsl:with-param>
                 </xsl:call-template>
             </rec:collectionIdentifier>
@@ -82,7 +83,6 @@
     </xsl:template>
 
 	<xsl:template match="did">
-	    <xsl:apply-templates select="./unitid"/>
 		<dc:title>
 			<xsl:choose>
 				<xsl:when test="./unittitle">
@@ -99,20 +99,11 @@
 				</xsl:otherwise>
 			</xsl:choose>
 		</dc:title>
-		<xsl:apply-templates select="./unitdate"/>
-		<xsl:apply-templates select="./origination"/>
+		<xsl:apply-templates select="./did/origination"/>
 	</xsl:template>
 
 	<!-- strip head tags - they're meaningless in Dublin Core -->
 	<xsl:template match="head"/>
-
-    <xsl:template match="unitid">
-        <dc:identifier><xsl:apply-templates/></dc:identifier>
-    </xsl:template>
-
-    <xsl:template match="unitdate">
-        <dc:date><xsl:apply-templates/></dc:date>
-    </xsl:template>
 
 	<xsl:template match="origination">
 		<dc:creator><xsl:apply-templates/></dc:creator>

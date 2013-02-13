@@ -2,111 +2,89 @@
 <!DOCTYPE xsl:stylesheet []>
 
 <!-- 
-    This file was produced, and released as part of Cheshire for Archives v3.x.
-    Copyright &#169; 2005-2008 the University of Liverpool
+	This file was produced for the Archives Hub v3.
+	Copyright &#169; 2005-2008 the University of Liverpool
 -->
 
 <xsl:stylesheet
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:exsl="http://exslt.org/common"
   extension-element-prefixes="exsl"
+  xmlns:c3="http://www.cheshire3.org"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml"
+  exclude-result-prefixes="#default xhtml c3"
   version="1.0">
   
-	<!-- import common HTML templates and ToC templates -->
-	<xsl:import href="html-common.xsl"/>
-	<xsl:import href="contents.xsl"/>
-	  
-<!--	<xsl:output method="xml" omit-xml-declaration="yes"/>-->
-<!--	<xsl:preserve-space elements="*"/>-->
-        <xsl:output method="html"/>
-  
-	<!-- root template - varies for each type of transformer -->
-	<xsl:template match="/">
-            <xsl:apply-templates/>
-            <xsl:if test="/ead/archdesc/dsc"> 
-            	<exsl:document
-            	  href="file:///home/cheshire/cheshire3-archives/www/htdocs/ead/tocs/foo.bar"
-            	  method="xml"
-            	  omit-xml-declaration="yes"
-            	  indent="yes">
-            	    <!-- content for this document should go here -->
-                    <xsl:call-template name="toc"/>
-            	</exsl:document>
-            </xsl:if>
-	</xsl:template>
+    <!-- import common HTML templates and ToC templates -->
+    <xsl:import href="html-common.xsl"/>
+    <xsl:import href="contents.xsl"/>
+      
+<!--    <xsl:output method="xml" omit-xml-declaration="yes"/>-->
+<!--    <xsl:preserve-space elements="*"/>-->
+    <xsl:output method="html"  indent="yes"/>
+
+    <!-- root template - varies for each type of transformer -->
+    <xsl:template match="/">
+    	<xsl:apply-templates/>
+    	<xsl:if test="/ead/archdesc/dsc"> 
+            <exsl:document href="file:///home/cheshire/install/htdocs/hub/tocs/foo.bar"
+              method="xml"
+              omit-xml-declaration="yes"
+              indent="yes">
+                <!-- content for this document should go here -->
+            	<xsl:call-template name="toc"/>
+            </exsl:document>
+    	</xsl:if>
+    </xsl:template>
 
 
-	<xsl:template match="/ead">
-            <div id="record-head">
-            	<!-- Core information about described material from <did> -->
-                <xsl:apply-templates select="./archdesc/did"/>
-                <!-- finding aid metadata from <eadheader> - creator, revisions etc -->
-            	<xsl:if test="$finding_aid_metadata">
-            	   <xsl:apply-templates select="./eadheader"/>
-            	</xsl:if>
-            </div>
-            <div class="archdesc">
-            	<xsl:apply-templates select="./archdesc" />
-            </div>
-	    <p style="page-break-before: always" />
-	    <!-- DSC -->
-            <xsl:apply-templates select="./archdesc/dsc"/>
-	</xsl:template>
-    
-    <!-- for component records -->
-    <xsl:template match="/c3component">
-        <!-- link to collection level -->
-        <xsl:text>LINKTOPARENT</xsl:text>
+    <xsl:template match="/ead">
         <div id="record-head">
             <!-- Core information about described material from <did> -->
-            <xsl:apply-templates select="./*/did[1]"/>
+            <xsl:apply-templates select="./archdesc/did"/>
         </div>
-        <!-- TEMPLATES FOR MAIN BODY -->
         <div class="archdesc">
-			<xsl:apply-templates select="./*/did[1]/abstract"/>
-			<xsl:apply-templates select="./*/scopecontent|./*/descgrp/scopecontent"/>
-			<xsl:apply-templates select="./*/bioghist|./*/descgrp/bioghist"/>
-			<xsl:apply-templates select="./*/arrangement|./*/descgrp/arrangement"/>
-			<!-- ACCESS + USE RESTRICTIONS -->
-			<xsl:apply-templates select="./*/accessrestrict|./*/descgrp/accessrestrict"/>
-			<xsl:apply-templates select="./*/userestrict|./*/descgrp/userestrict"/>
-            <xsl:apply-templates select="./*/phystech|./*/descgrp/phystech"/>
-			<!-- ADMINISTRATIVE INFORMATION / ARCHIVAL HISTORY-->
-			<xsl:apply-templates select="./*/appraisal|./*/descgrp/appraisal"/>
-			<xsl:apply-templates select="./*/acqinfo|./*/descgrp/acqinfo"/>
-			<xsl:apply-templates select="./*/custodhist|./*/descgrp/custodhist"/>
-			<xsl:apply-templates select="./*/accruals|./*/descgrp/accruals"/>
-			<xsl:apply-templates select="./*/processinfo|./*/descgrp/processinfo"/>
-			<!-- USER INFO -->
-			<xsl:apply-templates select="./*/otherfindaid|./*/descgrp/otherfindaid"/>
-			<xsl:apply-templates select="./*/originalsloc|./*/descgrp/originalsloc"/>
-			<xsl:apply-templates select="./*/altformavail|./*/descgrp/altformavail"/>
-			<xsl:apply-templates select="./*/relatedmaterial|./*/descgrp/relatedmaterial"/>
-			<xsl:apply-templates select="./*/separatedmaterial|./*/descgrp/separatedmaterial"/>
-			<!--  BIBLIOGRAPHY / CITATIONS -->
-			<xsl:apply-templates select="./*/bibliography|./*/descgrp/bibliography"/>
-			<xsl:apply-templates select="./*/prefercite|./*/descgrp/prefercite"/>
-			<!-- MISCELLANEOUS -->
-			<xsl:apply-templates select="./*/odd|./*/descgrp/odd"/>
-			<xsl:apply-templates select="./*/note|./*/descgrp/note"/>
-			
-			<!-- CONTROLACCESS -->
-			<xsl:apply-templates select="./*/controlaccess|./*/descgrp/controlaccess"/> 
-		</div>
+            <xsl:apply-templates select="./archdesc" />
+        </div>
+        <!-- finding aid metadata from <eadheader> - creator, revisions etc -->
+        <xsl:if test="$finding_aid_metadata">
+           <xsl:apply-templates select="./eadheader"/>
+        </xsl:if>
         <p style="page-break-before: always" />
-        <!-- somehow match all sub-levels -->
-        <xsl:apply-templates select="./c/c|./c01/c02|./c02/c03|./c03/c04|./c04/c05|./c05/c06|./c06/c07|./c07/c08|./c08/c09|./c09/c10|./c10/c11|./c11/c12"/>
+        <!-- DSC -->
+        <xsl:apply-templates select="./archdesc/dsc"/>
     </xsl:template>
 	
-	<!--DSC SECTION-->
-	<xsl:template name="all-component" match="c|c01|c02|c03|c04|c05|c06|c07|c08|c09|c10|c11|c12">
-            <xsl:if test="not(@audience and @audience = 'internal')">
-            	<xsl:if test="$horizontal_rule_between_units">
-                    <hr/>    
-            	</xsl:if>
-            	<p style="page-break-before: always"/>
-            	<xsl:call-template name="single-component" />
+    <!--DSC SECTION-->
+    <xsl:template name="all-component" match="c|c01|c02|c03|c04|c05|c06|c07|c08|c09|c10|c11|c12">
+        <xsl:if test="not(@audience and @audience = 'internal')">
+            <xsl:if test="$horizontal_rule_between_units">
+                <hr/>    
             </xsl:if>
-	</xsl:template>
+            <p style="page-break-before: always"/>
+            <xsl:call-template name="single-component" />
+        </xsl:if>
+    </xsl:template>
+    
+    <xsl:template name="switch-view-link">
+        <xsl:element name="a">
+            <xsl:attribute name="class">
+                <xsl:text>bgimg brief</xsl:text>
+            </xsl:attribute>
+            <xsl:attribute name="href">
+                <xsl:value-of select="$script"/>
+                <xsl:text>/summary.html?recid=</xsl:text>
+                <xsl:value-of select="$recid"/>
+            </xsl:attribute>
+            <xsl:attribute name="target">
+                <xsl:text>_top</xsl:text>
+            </xsl:attribute>
+            <xsl:attribute name="title">
+                <xsl:text>Go to Brief Description.</xsl:text>
+            </xsl:attribute>
+            <xsl:text>Brief Description</xsl:text>
+        </xsl:element>
+    </xsl:template>
 
 </xsl:stylesheet>
