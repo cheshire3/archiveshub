@@ -23,27 +23,28 @@ your project's root.
 ### Git
 
 
-I'd recommend the [subtree merging][3] strategy, rather than [submodules][2].
-I'd also recommend reading up on [subtree merging][4] before blindly continuing
-with the following steps; I'm far from an expert in git, and you should really
-read up on what you're getting into...
+I'd recommend the [git subtree command][3], rather than [subtree merging][4]
+strategy, or [submodules][5]. I'd also recommend reading up on the
+[git subtree command][3] before blindly continuing with the following steps;
+I'm far from an expert in git, and you should really read up on and understand
+what you're getting into...
 
 ```shell
-git remote add xslt_remote git@github.com:cheshire3/ead-xslt.git
-git fetch xslt_remote
-git checkout -b xslt_branch xslt_remote/master
-git read-tree --prefix=path/to/xslt -u xslt_branch
+git remote add ead-xslt git@github.com:cheshire3/ead-xslt.git
+git fetch ead-xslt
+git subtree add [--squash] --prefix=path/to/xslt ead-xslt HEAD
 ```
 
-[3]: http://git-scm.com/book/en/Git-Tools-Subtree-Merging
-[4]: http://git-scm.com/book/en/Git-Tools-Submodules
+[3]: https://github.com/git/git/tree/master/contrib/subtree
+[4]: http://git-scm.com/book/en/Git-Tools-Subtree-Merging
+[5]: http://git-scm.com/book/en/Git-Tools-Submodules
 
 
 ### Mercurial
 
 
-Create a [Mercurial subrepository][5]. I'd highly recommend reading up on
-[Mercurial Subrepositories][5] before blindly continuing with the following
+Create a [Mercurial subrepository][6]. I'd highly recommend reading up on
+[Mercurial Subrepositories][6] before blindly continuing with the following
 steps; I'm a relative novice with Mercurial, and you should **really** read up
 on what you're getting into...
 
@@ -54,7 +55,7 @@ git clone git://github.com/cheshire3/ead-xslt.git path/to/xslt
 hg commit -m "adding XSLT subrepository" 
 ```
 
-[5]: http://mercurial.selenic.com/wiki/Subrepository
+[6]: http://mercurial.selenic.com/wiki/Subrepository
 
 
 Licensing
