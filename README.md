@@ -4,8 +4,8 @@ ead-xslt
 Description
 -----------
 
-XSLT used by [cheshire3-archives][1], the [Archives Hub][2] and related projects to
-transform EAD
+XSLT used by [cheshire3-archives][1], the [Archives Hub][2] and related
+projects to transform EAD.
 
 [1]: https://github.com/cheshire3/cheshire3-archives
 [2]: http://archiveshub.ac.uk
@@ -35,6 +35,12 @@ git fetch ead-xslt
 git subtree add [--squash] --prefix=path/to/xslt ead-xslt HEAD
 ```
 
+To fetch future updates:
+
+```shell
+git subtree pull [--squash] --prefix=path/to/xslt ead-xslt
+```
+
 [3]: https://github.com/git/git/tree/master/contrib/subtree
 [4]: http://git-scm.com/book/en/Git-Tools-Subtree-Merging
 [5]: http://git-scm.com/book/en/Git-Tools-Submodules
@@ -53,6 +59,14 @@ echo "nested = [git]git://github.com/cheshire3/ead-xslt.git" > .hgsub
 hg add .hgsub
 git clone git://github.com/cheshire3/ead-xslt.git path/to/xslt
 hg commit -m "adding XSLT subrepository" 
+```
+
+To fetch future updates:
+
+```shell
+cd path/to/xslt
+hg pull
+hg update
 ```
 
 [6]: http://mercurial.selenic.com/wiki/Subrepository
