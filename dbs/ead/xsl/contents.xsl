@@ -17,8 +17,8 @@
     <!-- <xsl:output method="html" indent="yes"/> -->
 
     <!-- templates for Table of Contents (toc) -->
-    <xsl:template name="toc" exclude-result-prefixes="#all #default xhtml c3">
-        <div xsl:exclude-result-prefixes="#all #default xhtml c3">
+    <xsl:template name="toc" xsl:exclude-result-prefixes="#all #default xhtml c3">
+        <div class="toclist" >
             <h2>
                 <xsl:text>Contents&#160;</xsl:text>
                 <span class="printlink">

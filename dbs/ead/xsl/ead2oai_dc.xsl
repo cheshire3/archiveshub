@@ -59,25 +59,25 @@
     </xsl:template>
 
     <xsl:template match="did">
+        <xsl:apply-templates select="./unitid"/>
         <dc:title>
             <xsl:choose>
                 <xsl:when test="./unittitle">
-                    <xsl:apply-templates select="./unittitle[1]" />
+                    <xsl:apply-templates select="./unittitle[1]"/>
                 </xsl:when>
                 <xsl:when test="/ead/archdesc/did/unittitle">
-                    <xsl:apply-templates select="/ead/archdesc/did/unittitle" />
+                    <xsl:apply-templates select="/ead/archdesc/did/unittitle"/>
                 </xsl:when>
-                <xsl:when
-                    test="/ead/eadheader/filedesc/titlestmt/titleproper">
-                    <xsl:apply-templates
-                        select="/ead/eadheader/filedesc/titlestmt/titleproper" />
+                <xsl:when test="/ead/eadheader/filedesc/titlestmt/titleproper">
+                    <xsl:apply-templates select="/ead/eadheader/filedesc/titlestmt/titleproper"/>
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:text>(untitled)</xsl:text>
                 </xsl:otherwise>
             </xsl:choose>
         </dc:title>
-        <xsl:apply-templates select="./did/origination" />
+        <xsl:apply-templates select="./unitdate"/>
+        <xsl:apply-templates select="./origination"/>
     </xsl:template>
 
     <!-- strip head tags - they're meaningless in Dublin Core -->
