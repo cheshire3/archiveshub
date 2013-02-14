@@ -32,7 +32,6 @@
 
     <!-- DID -->
     <xsl:template match="did">
-
         <a>
             <xsl:attribute name="name">
                 <xsl:choose>
@@ -47,7 +46,7 @@
                 	</xsl:otherwise>
                 </xsl:choose>
         	</xsl:attribute>
-            <xsl:text> </xsl:text>
+        	<xsl:text> </xsl:text>
         </a>
 
         <xsl:variable name="unittitle">
@@ -59,8 +58,7 @@
                     <xsl:apply-templates select="/ead/archdesc/did/unittitle" />
                 </xsl:when>
                 <xsl:when test="/ead/eadheader/filedesc/titlestmt/titleproper">
-                    <xsl:apply-templates
-                        select="/ead/eadheader/filedesc/titlestmt/titleproper" />
+                    <xsl:apply-templates select="/ead/eadheader/filedesc/titlestmt/titleproper"/>
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:text>(untitled)</xsl:text>
@@ -308,40 +306,32 @@
         </xsl:if>
         <xsl:if test="publicationstmt">
             <tr>
-                <td>
-                    <span class="fieldname">Publication</span>
-                </td>
-                <td>
+                <td class="field-name">Publication</td>
+                <td class="field-value">
                     <xsl:apply-templates select="publicationstmt" />
                 </td>
             </tr>
         </xsl:if>
         <xsl:if test="editionstmt">
             <tr>
-                <td>
-                    <span class="fieldname">Edition</span>
-                </td>
-                <td>
+                <td class="field-name">Edition</td>
+                <td class="field-value">
                     <xsl:apply-templates select="editionstmt" />
                 </td>
             </tr>
         </xsl:if>
         <xsl:if test="seriesstmt">
             <tr>
-                <td>
-                    <span class="fieldname">Series</span>
-                </td>
-                <td>
+                <td class="field-name">Series</td>
+                <td class="field-value">
                     <xsl:apply-templates select="seriesstmt" />
                 </td>
             </tr>
         </xsl:if>
         <xsl:if test="notesstmt">
             <tr>
-                <td>
-                    <span class="fieldname">Notes</span>
-                </td>
-                <td>
+                <td class="field-name">Notes</td>
+                <td class="field-value">
                     <xsl:apply-templates select="notesstmt" />
                 </td>
             </tr>
@@ -349,46 +339,35 @@
     </xsl:template>
 
     <xsl:template match="titlestmt">
-        <!--
-            ignore titleproper, usually the same as title of material
-            (unittitle)
-        -->
+        <!-- ignore titleproper, usually the same as title of material (unittitle) -->
         <xsl:if test="titleproper">
             <tr>
-                <td>
-                    <span class="fieldname">Title</span>
-                </td>
-                <td>
+                <td class="field-name">Title</td>
+                <td class="field-value">
                     <xsl:apply-templates select="titleproper" />
                 </td>
             </tr>
         </xsl:if>
         <xsl:if test="subtitle">
             <tr>
-                <td>
-                    <span class="fieldname">Sub-title</span>
-                </td>
-                <td>
+                <td class="field-name">Sub-title</td>
+                <td class="field-value">
                     <xsl:apply-templates select="subtitle" />
                 </td>
             </tr>
         </xsl:if>
         <xsl:for-each select="author">
             <tr>
-                <td>
-                    <span class="fieldname">Author</span>
-                </td>
-                <td>
+                <td class="field-name">Author</td>
+                <td class="field-value">
                     <xsl:apply-templates select="." />
                 </td>
             </tr>
         </xsl:for-each>
         <xsl:if test="sponsor">
             <tr>
-                <td>
-                    <span class="fieldname">Sponsor</span>
-                </td>
-                <td>
+                <td class="field-name">Sponsor</td>
+                <td class="field-value">
                     <xsl:apply-templates select="sponsor" />
                 </td>
             </tr>
@@ -398,30 +377,24 @@
     <xsl:template match="profiledesc">
         <xsl:if test="creation">
             <tr>
-                <td>
-                    <span class="fieldname">Creation</span>
-                </td>
-                <td>
+                <td class="field-name">Creation</td>
+                <td class="field-value">
                     <xsl:apply-templates select="./creation" />
                 </td>
             </tr>
         </xsl:if>
         <xsl:if test="descrules">
             <tr>
-                <td>
-                    <span class="fieldname">Descriptive Rules</span>
-                </td>
-                <td>
+                <td class="field-name">Descriptive Rules</td>
+                <td class="field-value">
                     <xsl:apply-templates select="./descrules" />
                 </td>
             </tr>
         </xsl:if>
         <xsl:if test="langusage">
             <tr>
-                <td>
-                    <span class="fieldname">Language Usage</span>
-                </td>
-                <td>
+                <td class="field-name">Language Usage</td>
+                <td class="field-value">
                     <xsl:apply-templates select="./langusage" />
                 </td>
             </tr>
@@ -431,10 +404,8 @@
     <xsl:template match="revisiondesc">
         <xsl:if test="./text()">
             <tr>
-                <td>
-                    <span class="fieldname">Revisions</span>
-                </td>
-                <td>
+                <td class="field-name">Revisions</td>
+                <td class="field-value">
                     <xsl:apply-templates />
                 </td>
             </tr>
@@ -462,9 +433,9 @@
         </span>
     </xsl:template>
 
-    <!--  ARCHDESC -->
+    <!-- ARCHDESC -->
     <xsl:template match="archdesc">
-        <!--TEMPLATES FOR MAIN BODY-->
+        <!-- TEMPLATES FOR MAIN BODY-->
         <xsl:apply-templates select="./did/abstract" />
         <xsl:apply-templates select="./did/note" mode="own-section" />
 
@@ -489,7 +460,7 @@
         <xsl:apply-templates select="./userestrict|./descgrp/userestrict" />
         <xsl:apply-templates select="./phystech|./descgrp/phystech" />
 
-        <!-- ADMINISTRATIVE INFORMATION / ARCHIVAL HISTORY-->
+        <!-- ADMINISTRATIVE INFORMATION / ARCHIVAL HISTORY -->
         <xsl:apply-templates select="./appraisal|./descgrp/appraisal" />
         <xsl:apply-templates select="./acqinfo|./descgrp/acqinfo" />
         <xsl:apply-templates select="./custodhist|./descgrp/custodhist" />
@@ -694,7 +665,7 @@
     </xsl:template>
 
 
-    <!-- ADMINISTRATIVE INFORMATION / ARCHIVAL HISTORY-->
+    <!-- ADMINISTRATIVE INFORMATION / ARCHIVAL HISTORY -->
     <xsl:template match="admininfo">
         <xsl:if test="@id">
             <a name="{@id}">
@@ -1283,7 +1254,7 @@
                             </xsl:call-template>
                         </td>
                         <td class="cross-search">
-                            <!--  cross search links -->
+                            <!-- cross search links -->
                             <xsl:if test="$link_to_googlemaps">
                                 <xsl:call-template name="googlemapslink" />
                             </xsl:if>
@@ -1308,7 +1279,7 @@
                         <td>
                             <xsl:apply-templates />
                         </td>
-                        <!--  cross search links -->
+                        <!-- cross search links -->
                         <td class="cross-search">
                             <xsl:if test="$link_to_copac">
                                 <xsl:call-template name="copaclink" />
@@ -1375,7 +1346,7 @@
                         <xsl:value-of select="$indexName" />
                     </td>
                 </tr>
-                <xsl:for-each select="../occupation">
+                <xsl:for-each select=".//occupation">
                     <tr>
                         <td>
                             <xsl:value-of select="." />
@@ -1390,8 +1361,8 @@
 
     </xsl:template>
 
-
     <!-- COMPONENT -->
+    
     <xsl:template name="single-component">
         <a>
             <xsl:attribute name="name">
@@ -1449,7 +1420,7 @@
         <xsl:apply-templates select="accessrestrict|descgrp/accessrestrict" />
         <xsl:apply-templates select="userestrict|descgrp/userestrict" />
         <xsl:apply-templates select="phystech|descgrp/phystech" />
-        <!-- ADMINISTRATIVE INFORMATION / ARCHIVAL HISTORY-->
+        <!-- ADMINISTRATIVE INFORMATION / ARCHIVAL HISTORY -->
         <xsl:apply-templates select="appraisal|descgrp/appraisal" />
         <xsl:apply-templates select="acqinfo|descgrp/acqinfo" />
         <xsl:apply-templates select="custodhist|descgrp/custodhist" />
@@ -1476,7 +1447,7 @@
     </xsl:template>
 
 
-    <!--HEAD-->
+    <!-- HEAD-->
     <xsl:template match="head">
         <xsl:choose>
             <xsl:when
@@ -1518,7 +1489,7 @@
         <xsl:apply-templates />
     </xsl:template>
 
-    <!--NOTES-->
+    <!-- NOTES -->
     <xsl:template match="bioghist/note">
         <xsl:if test="not(head/text())">
             <b>
@@ -1638,7 +1609,7 @@
         <xsl:apply-templates select="./daodesc" />
     </xsl:template>
 
-    <!--BUILDING REFS AND ANCS-->
+    <!-- BUILDING REFS AND ANCS-->
     <xsl:template match="ref[@target]">
         <a>
             <xsl:attribute name="href">
@@ -1872,7 +1843,7 @@
         </xsl:for-each>
     </xsl:template>
 
-    <!--LINE BREAKS-->
+    <!-- LINE BREAKS-->
     <xsl:template match="lb">
         <br />
     </xsl:template>
@@ -1891,7 +1862,7 @@
         </div>
     </xsl:template>
 
-    <!--LISTS-->
+    <!-- LISTS-->
     <xsl:template match="list">
         <xsl:choose>
             <xsl:when test="@type='ordered'">
@@ -1942,7 +1913,7 @@
         </xsl:choose>
     </xsl:template>
 
-    <!--CHRON LISTS-->
+    <!-- CHRON LISTS-->
     <xsl:template match="chronlist">
         <ul>
             <xsl:for-each select="chronitem">
@@ -1965,6 +1936,21 @@
         </p>
     </xsl:template>
 
+    <xsl:template match="p" mode="inline">
+        <xsl:if test="@id">
+            <a name="{@id}">
+                <xsl:text> </xsl:text>
+            </a>
+        </xsl:if>
+        <xsl:value-of select="." />
+    </xsl:template>
+
+    <xsl:template match="blockquote">
+        <blockquote>
+            <xsl:apply-templates />
+        </blockquote>
+    </xsl:template>
+
     <xsl:template match="defitem">
         <xsl:apply-templates />
         <xsl:text>; </xsl:text>
@@ -1973,7 +1959,7 @@
     <!-- rendering/altrendering for all elements -->
     <xsl:template match="*">
         <xsl:choose>
-            <!--  @render -->
+            <!-- @render -->
             <xsl:when test="@render='bold'">
                 <b>
                     <xsl:apply-templates />
@@ -1990,19 +1976,19 @@
                 </u>
             </xsl:when>
             <xsl:when test="@render='quoted'">
-                <xsl:text>'</xsl:text>
+                <xsl:text>&apos;</xsl:text>
                 <xsl:apply-templates />
-                <xsl:text>'</xsl:text>
+                <xsl:text>&apos;</xsl:text>
             </xsl:when>
             <xsl:when test="@render='singlequote'">
-                <xsl:text>'</xsl:text>
+                <xsl:text>&apos;</xsl:text>
                 <xsl:apply-templates />
-                <xsl:text>'</xsl:text>
+                <xsl:text>&apos;</xsl:text>
             </xsl:when>
             <xsl:when test="@render='doublequote'">
-                <xsl:text>"</xsl:text>
+                <xsl:text>&quot;</xsl:text>
                 <xsl:apply-templates />
-                <xsl:text>"</xsl:text>
+                <xsl:text>&quot;</xsl:text>
             </xsl:when>
             <xsl:when test="@render='bolditalic'">
                 <b>
@@ -2020,19 +2006,19 @@
             </xsl:when>
             <xsl:when test="@render='boldquoted'">
                 <b>
-                    <xsl:text>'</xsl:text>
+                    <xsl:text>&apos;</xsl:text>
                     <xsl:apply-templates />
-                    <xsl:text>'</xsl:text>
+                    <xsl:text>&apos;</xsl:text>
                 </b>
             </xsl:when>
             <xsl:when test="@render='bolddoublequote'">
                 <b>
-                    <xsl:text>"</xsl:text>
+                    <xsl:text>&quot;</xsl:text>
                     <xsl:apply-templates />
-                    <xsl:text>"</xsl:text>
+                    <xsl:text>&quot;</xsl:text>
                 </b>
             </xsl:when>
-            <!--  @altrender -->
+            <!-- @altrender -->
             <xsl:when test="@altrender='bold'">
                 <b>
                     <xsl:apply-templates />
@@ -2049,14 +2035,14 @@
                 </u>
             </xsl:when>
             <xsl:when test="@altrender='quoted'">
-                <xsl:text>'</xsl:text>
+                <xsl:text>&apos;</xsl:text>
                 <xsl:apply-templates />
-                <xsl:text>'</xsl:text>
+                <xsl:text>&apos;</xsl:text>
             </xsl:when>
             <xsl:when test="@altrender='doublequote'">
-                <xsl:text>"</xsl:text>
+                <xsl:text>&quot;</xsl:text>
                 <xsl:apply-templates />
-                <xsl:text>"</xsl:text>
+                <xsl:text>&quot;</xsl:text>
             </xsl:when>
             <xsl:when test="@altrender='bolditalic'">
                 <b>
@@ -2074,16 +2060,16 @@
             </xsl:when>
             <xsl:when test="@altrender='boldquoted'">
                 <b>
-                    <xsl:text>'</xsl:text>
+                    <xsl:text>&apos;</xsl:text>
                     <xsl:apply-templates />
-                    <xsl:text>'</xsl:text>
+                    <xsl:text>&apos;</xsl:text>
                 </b>
             </xsl:when>
             <xsl:when test="@altrender='bolddoublequote'">
                 <b>
-                    <xsl:text>"</xsl:text>
+                    <xsl:text>&quot;</xsl:text>
                     <xsl:apply-templates />
-                    <xsl:text>"</xsl:text>
+                    <xsl:text>&quot;</xsl:text>
                 </b>
             </xsl:when>
             <xsl:when test="@altrender='italicunderline'">
@@ -2095,16 +2081,16 @@
             </xsl:when>
             <xsl:when test="@altrender='italicquoted'">
                 <i>
-                    <xsl:text>'</xsl:text>
+                    <xsl:text>&apos;</xsl:text>
                     <xsl:value-of select="." />
-                    <xsl:text>'</xsl:text>
+                    <xsl:text>&apos;</xsl:text>
                 </i>
             </xsl:when>
             <xsl:when test="@altrender='italicdoublequote'">
                 <i>
-                    <xsl:text>"</xsl:text>
+                    <xsl:text>&quot;</xsl:text>
                     <xsl:value-of select="." />
-                    <xsl:text>"</xsl:text>
+                    <xsl:text>&quot;</xsl:text>
                 </i>
             </xsl:when>
             <xsl:when test="@altrender='queryTerm'">
@@ -2156,9 +2142,9 @@
                 title="Help with online descriptions of archive collections"
                 class="helplink tip utilitybarhelp">
                 <xsl:text>What is this?</xsl:text>
-                <!-- img
-                    src="http://archiveshub.ac.uk/img/structure/form_tip.png"
-                    alt="?" /-->
+                <!--
+                <img src="http://archiveshub.ac.uk/img/structure/form_tip.png" alt="?" />
+                -->
             </a>
             <!-- Switch Version (Level of detail) -->
             <ul class="detail">
@@ -2333,20 +2319,60 @@
     <!-- Template for making string cgi link friendly -->
     <xsl:template name="cgiencode">
         <xsl:param name="text" />
-        <!--
-            following line contains a weird invisible character propably a
-            Windows \r\n or something!
-        -->
-        <xsl:value-of select="translate(normalize-space($text),'  ', '++')" />
+        <xsl:call-template name="replace-substring">
+            <xsl:with-param name="original">
+                <xsl:call-template name="replace-substring">
+                    <xsl:with-param name="original">
+                        <!-- following line contains a weird invisible character 
+                            propably a Windows \r\n or something! -->
+                        <xsl:value-of
+                            select="translate(normalize-space($text),'  ', '++')" />
+                    </xsl:with-param>
+                    <xsl:with-param name="substring">
+                        <xsl:text>THGLHGH</xsl:text>
+                    </xsl:with-param>
+                    <xsl:with-param name="replacement">
+                        <xsl:text></xsl:text>
+                    </xsl:with-param>
+                </xsl:call-template>
+            </xsl:with-param>
+            <xsl:with-param name="substring">
+                <xsl:text>HGHLGHT</xsl:text>
+            </xsl:with-param>
+            <xsl:with-param name="replacement">
+                <xsl:text></xsl:text>
+            </xsl:with-param>
+        </xsl:call-template>
     </xsl:template>
 
     <!-- Template for making string Wikipedia friendly -->
     <xsl:template name="wikipediacgiencode">
         <xsl:param name="text" />
-        <xsl:value-of select="translate(normalize-space($text),' ', '_')" />
+        <xsl:call-template name="replace-substring">
+            <xsl:with-param name="original">
+                <xsl:call-template name="replace-substring">
+                    <xsl:with-param name="original">
+                        <xsl:value-of
+                            select="translate(normalize-space($text),' ', '_')" />
+                    </xsl:with-param>
+                    <xsl:with-param name="substring">
+                        <xsl:text>THGLHGH</xsl:text>
+                    </xsl:with-param>
+                    <xsl:with-param name="replacement">
+                        <xsl:text></xsl:text>
+                    </xsl:with-param>
+                </xsl:call-template>
+            </xsl:with-param>
+            <xsl:with-param name="substring">
+                <xsl:text>HGHLGHT</xsl:text>
+            </xsl:with-param>
+            <xsl:with-param name="replacement">
+                <xsl:text></xsl:text>
+            </xsl:with-param>
+        </xsl:call-template>
     </xsl:template>
 
-    <!--  template to carry out recursive string replacements -->
+    <!-- template to carry out recursive string replacements -->
     <xsl:template name="replace-substring">
         <xsl:param name="original" />
         <xsl:param name="substring" />
@@ -2411,49 +2437,50 @@
     -->
     <xsl:template name="browselink">
         <xsl:param name="index" />
+        <xsl:param name="indexName" />
         <a>
             <xsl:attribute name="href">
 	        <xsl:value-of select="$script" />
 	        <xsl:text>/browse.html</xsl:text>
             <xsl:text>?</xsl:text>
 	        <xsl:text>&amp;fieldidx1=</xsl:text>
-	        <xsl:value-of select="$index"/>
+	        <xsl:value-of select="$index" />
 	        <xsl:text>&amp;fieldcont1=</xsl:text>
 	        <xsl:call-template name="cgiencode">
 	          <xsl:with-param name="text">
-	            <xsl:apply-templates select="."/>
+	            <xsl:apply-templates select="." />
 	          </xsl:with-param>
 	        </xsl:call-template>
             <xsl:text>#leftcol</xsl:text>
 	      </xsl:attribute>
 	      <xsl:attribute name="title">
 	        <xsl:text>Browse </xsl:text>
-	        <xsl:value-of select="$index"/>
+	        <xsl:value-of select="$indexName" />
 	        <xsl:text> index</xsl:text>
 	      </xsl:attribute>
           <xsl:attribute name="class">
             <xsl:text>ajax</xsl:text>
           </xsl:attribute>
-	      <xsl:apply-templates select="."/>
-	    </a>
-	</xsl:template>
-  
-	<xsl:template name="amazonlink">
-	  	<a target="_new">
-	  		<xsl:attribute name="href">
-	  			<xsl:value-of select="$amazon_search_url"/>
+            <xsl:apply-templates select="." />
+        </a>
+    </xsl:template>
+
+    <xsl:template name="amazonlink">
+        <a target="_new">
+            <xsl:attribute name="href">
+                <xsl:value-of select="$amazon_search_url" />
 	  			<xsl:call-template name="cgiencode">
 		          <xsl:with-param name="text">
-		            <xsl:apply-templates select="."/>
+		            <xsl:apply-templates select="." />
 		          </xsl:with-param>
 		        </xsl:call-template>
 			</xsl:attribute>
 			<xsl:attribute name="title">
 		        <xsl:text>Search Amazon</xsl:text>
 		    </xsl:attribute>
-		    <img alt="Amazon">
-		    	<xsl:attribute name="src">
-		    		<xsl:value-of select="$amazon_search_icon"/>
+            <img alt="Amazon">
+                <xsl:attribute name="src">
+                    <xsl:value-of select="$amazon_search_icon" />
 		    	</xsl:attribute>
 		    </img>
 	  	</a>
@@ -2488,12 +2515,16 @@
 			<xsl:attribute name="title">
 		        <xsl:value-of select="$copac_search_link_title"/>
 		    </xsl:attribute>
-		    <!--<xsl:element name="img">
-		      <xsl:attribute name="alt"><xsl:text></xsl:text></xsl:attribute>
+		    <!--
+            <xsl:element name="img">
+		      <xsl:attribute name="alt">
+                <xsl:text></xsl:text>
+              </xsl:attribute>
 		      <xsl:attribute name="src">
 		          <xsl:value-of select="$copac_search_icon"/>
 		      </xsl:attribute>
-		    </xsl:element>-->
+		    </xsl:element>
+            -->
 		    <xsl:text>Search for this book on Copac</xsl:text>
 	  	</a>
 	</xsl:template>
@@ -2532,7 +2563,7 @@
 	  			<xsl:value-of select="$wikipedia_search_url"/>
 	  			<xsl:call-template name="wikipediacgiencode">
 		          <xsl:with-param name="text">
-		            <xsl:apply-templates select="."/>
+		            <xsl:apply-templates select="." />
 		          </xsl:with-param>
 		        </xsl:call-template>
 			</xsl:attribute>
