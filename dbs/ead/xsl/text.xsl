@@ -744,11 +744,15 @@
         <xsl:value-of select="./@href" />
         <xsl:text>&gt; </xsl:text>
     </xsl:template>
-
+    
     <!--LINE BREAKS -->
     
     <xsl:template match="//lb">
         <xsl:value-of select="$newline" />
+    </xsl:template>
+
+    <xsl:template match="*">
+        <xsl:value-of select="normalize-space()"/>
     </xsl:template>
 
     <!--
