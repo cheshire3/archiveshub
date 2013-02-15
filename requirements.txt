@@ -1,1 +1,2 @@
-cheshire3 [web, sql] >= 1.0.4
+cheshire3 [web, sql] >= 1.1
+google.foresite-toolkit >= 1.2
