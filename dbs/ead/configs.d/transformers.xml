@@ -40,6 +40,14 @@
 				<path type="xsltPath">xsl/oaiOut.xsl</path>
 			</paths>
 		</subConfig>
+        
+        <subConfig type="transformer" id="dataOutgoingTxr">
+            <docs>Transformer for EAD XML sent by the record resolver</docs>
+            <objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
+            <paths>
+                <path type="xsltPath">xsl/dataOut.xsl</path>
+            </paths>
+        </subConfig>
 
 		<subConfig type="transformer" id="highlightTxr">
 			<objectType>cheshire3.transformer.LxmlOffsetQueryTermHighlightingTransformer</objectType>
