@@ -76,7 +76,7 @@ Latest Version
 
 The latest stable version will be available from our website:
 
-http://download.cheshire3.org/download/ead/
+http://download.cheshire3.org/ead/
 
 Source code is under version control and available from:
 
