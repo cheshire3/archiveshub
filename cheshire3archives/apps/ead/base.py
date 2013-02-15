@@ -96,6 +96,39 @@ class EADWsgiApplication(object):
         except IndexError:
             raise c3errors.FileDoesNotExistException(recid)
 
+    def _textFromRecord(self, rec):
+        # Return a text representation of the Record
+        global namespaceUriHash
+        txr = self.database.get_object(self.session, "textTxr")
+        doc = txr.process_record(session, rec)
+        docString = doc.get_raw(session)
+        # Resolve link to parent if a component
+        try:
+            parentId = rec.process_xpath(session,
+                                         '/c3:component/@c3:parent', 
+                                         namespaceUriHash)[0]
+        except IndexError:
+            return docString
+        else:
+            parentId = parentId.split('/')[-1]
+            try:
+                parentPath = rec.process_xpath(session, 
+                                               '/c3component/@xpath')[0]
+            except IndexError:
+                parentPath = rec.process_xpath(session, 
+                                               '/c3:component/@c3:xpath', 
+                                               namespaceUriHash)[0]
+            parentRec = self._fetch_record(session, parentId)
+            titles = self._backwalkTitles(parentRec, parentPath)
+            hierarchy = [(' ' * 4 * x) + t[1] for x,t in enumerate(titles[:-1])]
+            parentTitle = '\n'.join(hierarchy)
+            txt = ['In: {0}'.format(parentTitle),
+                   '-' * 78,
+                   '',
+                   docString
+                   ]
+            return '\n'.join(txt)
+
 
 def main():
     """Start up a simple app server to serve the SRU application."""
@@ -111,6 +144,22 @@ serv = SimpleServer(session, os.path.join(cheshire3Root,
 db = serv.get_object(session, 'db_ead')
 config = SafeConfigParser()
 application = EADWsgiApplication(session, db, config)
+
+# Useful URIs
+namespaceUriHash = {
+    'dc': 'http://purl.org/dc/elements/1.0',
+    'sru_dc': "info:srw/schema/1/dc-v1.1",
+    'zrx': "http://explain.z3950.org/dtd/2.0/",
+    'c3': "http://www.cheshire3.org",
+    'rec': "info:srw/extension/2/record-1.1",
+    'rec_ah': "http://www.archiveshub.ac.uk/srw/extension/2/record-1.1",
+    'rec_c3': "http://www.cheshire3.org/srw/extension/2/record-1.1",
+    'rec_c3srw': "http://srw.cheshire3.org/extension/2/record-1.1",
+    'rs': "info:srw/extension/2/resultSet-1.1",
+    'rs_ah': "http://www.archiveshub.ac.uk/srw/extension/2/resultSet-1.1",
+    'rs_c3': "http://www.cheshire3.org/srw/extension/2/resultSet-1.1",
+    'rs_c3srw': "http://srw.cheshire3.org/extension/2/resultSet-1.1",
+}
 
 
 if __name__ == "__main__":

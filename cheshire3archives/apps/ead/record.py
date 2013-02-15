@@ -5,11 +5,13 @@ import os
 import webbrowser
 import socket
 import mimetypes
-import cheshire3.exceptions as c3errors
+import textwrap
 
 from cgi import FieldStorage
 from foresite import conneg
 from argparse import ArgumentParser
+
+import cheshire3.exceptions as c3errors
 
 from base import *
 
@@ -115,7 +117,8 @@ class EADRecordWsgiApplication(EADWsgiApplication):
 
     def text(self, rec, form):
         self.response_headers.append(('Content-Type', 'text/plain'))
-        raise NotImplementedError()
+        for rawline in self._textFromRecord(rec).split('\n'):
+            yield textwrap.fill(rawline, 78) + '\n'
 
 
 def main(argv=None):
