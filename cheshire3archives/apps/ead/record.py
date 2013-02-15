@@ -91,8 +91,27 @@ class EADRecordWsgiApplication(EADWsgiApplication):
         raise NotImplementedError()
 
     def xml(self, rec, form):
+        session = self.session
+        db = self.database
         self.response_headers.append(('Content-Type', 'application/xml'))
-        raise NotImplementedError()
+        # Check for requested schema, or revert to default, currently 'ead'
+        schema = form.get('schema', 'ead')
+        if schema == 'ead-hub':
+            txr = db.get_object(session, 'XmlTransformer')
+        elif schema == 'ead':
+            txr = db.get_object(session, 'dataOutgoingTxr')
+        else:
+            # Find transformer from SRU ProtocolMap
+            db._cacheProtocolMaps(session)
+            map_ = db.protocolMaps.get('http://www.loc.gov/zing/srw/', None)
+            recordMap = map_.recordNamespaces
+            if (schema in recordMap):
+                schema = recordMap[schema]
+            if (schema and not (schema in map_.recordNamespaces.values())):
+                raise ValueError('Unknown schema: {0}'.format(schema))
+            txr = map_.transformerHash.get(schema, None)
+        doc = txr.process_record(session, rec)
+        return [doc.get_raw(session)]
 
     def text(self, rec, form):
         self.response_headers.append(('Content-Type', 'text/plain'))
