@@ -14,8 +14,21 @@ from ConfigParser import SafeConfigParser
 
 
 class EADWsgiApplication(object):
+    """Abstract Base Class for EAD search/retrieve applications.
+    
+    Sub-classes must define the special __call__ method to make their instances
+    of this class callable. This method should always call start_response, and
+    return an iterable of string objects (list or generator). 
+    
+    NOTE: any method that does not return an iterable suitable for returning to
+    the server, should be indicated as internal using a leading underscore,
+    e.g. _fetch_record
+    
+    """
+    
     
     def __init__(self, session, database, config):
+        # Constructor method
         self.session = session
         self.database = database
         self.queryFactory = self.database.get_object(session,
@@ -27,10 +40,11 @@ class EADWsgiApplication(object):
             '<br>': '<br/>',
             '<hr>': '<hr/>'
         }
-    
-    def __call__(self, environ, start_response):
-        # Method to make instances of this class callable
+
+    def _setUp(self, environ):
+        # Prepare application to handle a new request
         self.response_headers = []
+        self.environ = environ
         self.htmlTitle = []
         self.htmlNav = []
 

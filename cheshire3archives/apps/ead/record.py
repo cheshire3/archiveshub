@@ -17,6 +17,7 @@ from base import *
 class EADRecordWsgiApplication(EADWsgiApplication):
     
     def __init__(self, session, database, config):
+        # Constructor method
         super(EADRecordWsgiApplication, self).__init__(session,
                                                        database,
                                                        config)
@@ -30,8 +31,7 @@ class EADRecordWsgiApplication(EADWsgiApplication):
     
     def __call__(self, environ, start_response):
         # Method to make instances of this class callable
-        super(EADRecordWsgiApplication, self).__call__(environ, start_response)
-        self.environ = environ
+        self._setUp(environ)
         path = environ.get('PATH_INFO', '').strip('/')
         if path == "environ":
             self.response_headers.append(('Content-Type', 'text/plain'))
