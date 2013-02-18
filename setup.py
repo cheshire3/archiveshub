@@ -20,7 +20,7 @@ from cheshire3archives.setuptools.commands import (develop, install, upgrade,
                                                    uninstall,
                                                    unavailable_command) 
 
-_name = 'cheshire3-archives'
+_name = 'cheshire3archives'
 _version = '3.6'
 
 # Inspect to find current path
