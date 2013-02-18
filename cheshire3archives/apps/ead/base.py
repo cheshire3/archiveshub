@@ -2,15 +2,18 @@
 
 import os
 import sys
+import mimetypes
 import traceback
 
+from pkg_resources import Requirement, get_distribution
+from pkg_resources import resource_filename, resource_stream
+from ConfigParser import SafeConfigParser
 
 from cheshire3.baseObjects import Session
 import cheshire3.exceptions as c3errors
 from cheshire3.internal import cheshire3Root
 from cheshire3.server import SimpleServer
 from cheshire3.web.www_utils import html_encode
-from ConfigParser import SafeConfigParser
 
 
 class EADWsgiApplication(object):
@@ -47,6 +50,23 @@ class EADWsgiApplication(object):
         self.htmlNav = []
         self.globalReplacements['SCRIPT'] = environ.get("SCRIPT_NAME")
 
+    def _static_content(self, path):
+        # Serve static content, CSS, images JavaScript etc.
+        try:
+            stream =  resource_stream(
+                Requirement.parse('cheshire3archives'),
+                'www/htdocs/ead/{0}'.format(path)             
+            )
+        except IOError:
+            return ["404 NOT FOUND"]
+        else:
+            mType, encoding = mimetypes.guess_type(path)
+            if mType is not None:
+                self.response_headers.append(('Content-Type', mType))
+            if encoding is not None:
+                self.response_headers.append(('Content-Encoding', encoding))
+            return stream
+        
     def _handle_error(self):
         self.htmlTitle.append('Error')
         cla, exc, trbk = sys.exc_info()
