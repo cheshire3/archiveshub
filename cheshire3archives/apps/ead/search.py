@@ -22,16 +22,7 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         # Method to make instances of this class callable
         # Prepare application to handle a new request
         self._setUp(environ)
-        # Check for static content request
         path = environ.get('PATH_INFO', '').strip('/')
-        if path.startswith(('css', 'img', 'js')):
-            content = self._static_content(path)
-            if not content:
-                start_response("404 NOT FOUND", self.response_headers)
-            else:
-                start_response("200 OK", self.response_headers)
-            return content
-            
         fields = FieldStorage(fp=environ['wsgi.input'], environ=environ)
         # Normalize form
         form = {}
@@ -54,14 +45,30 @@ class EADSearchWsgiApplication(EADWsgiApplication):
             try:
                 fn = getattr(self, operation)
             except AttributeError:
-                # Invalid operation selected
-                self.htmlTitle.append('Error')
-                content = ('<p class="error">',
-                           'An invalid operation was attempted. ',
-                           'Valid operations are:<br/>',
-                           'search, browse, resolve, summary, full, toc, email',
-                           '</p>'
-                           )
+                # Check for static content request
+                if path.startswith(('css', 'img', 'js', 'ead')):
+                    content = self._static_content(path)
+                    if not content:
+                        start_response("404 NOT FOUND", self.response_headers)
+                        self.htmlTitle.append('Error')
+                        content = ('<p class="error">',
+                                   'An invalid resource was requested. ',
+                                   '</p>'
+                                   )
+                    else:
+                        start_response("200 OK", self.response_headers)
+                        return content
+                else:
+                    # Invalid operation selected
+                    self.htmlTitle.append('Error')
+                    start_response("404 NOT FOUND", self.response_headers)
+                    content = ('<p class="error">',
+                               'An invalid operation was attempted. ',
+                               'Valid operations are:<br/>',
+                               'search, browse, resolve, summary, full, toc, email',
+                               '</p>'
+                               )
+                return content
             else:
                 # Simple method of self
                 try:

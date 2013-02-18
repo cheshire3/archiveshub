@@ -73,7 +73,10 @@ class EADWsgiApplication(object):
                 'www/htdocs/ead/{0}'.format(path)             
             )
         except IOError:
-            return ["404 NOT FOUND"]
+            print path
+            if path.startswith('ead/'):
+                return self._static_content(path[3:])
+            return []
         else:
             mType, encoding = mimetypes.guess_type(path)
             if mType is not None:
