@@ -1,3 +1,35 @@
+ul.SimpleContextMenu {
+    display: none;
+    position: absolute;
+    margin: 0px;
+    padding: 0px;
+    font-family: arial;
+    font-size: 12px;
+    list-style-type: none;
+    border: 1px solid #000000;
+    z-index:1;
+}
+
+ul.SimpleContextMenu li {
+ /*   border-bottom: 1px solid #000000;*/
+    width: 100px;
+    margin: 0px;
+    padding: 2px 10px 3px 10px;
+    clear: both;
+    background-color: #eeeeee;
+    cursor: default;
+}
+
+ul.SimpleContextMenu li img {
+	float: right;
+}
+
+ul.SimpleContextMenu li:hover {
+    text-decoration: none;
+    color: black;
+    background: #aaffaa;
+}
+
 /*
 	This file was produced, and released as part of Cheshire for Archives v3.x
 	Copyright &copy; 2005-2009 the University of Liverpool
@@ -330,3 +362,5 @@ DAO STUFF
 	padding-top: 10px;
 	border-top: 1px solid gray;
 }
+
+
