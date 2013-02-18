@@ -1,26 +1,37 @@
+"""EAD Search WSGI Application."""
 
 import sys
 import os
+import socket
+import webbrowser
+import textwrap
 
 from cgi import FieldStorage
+from argparse import ArgumentParser
 
 from cheshire3.baseObjects import Session
 from cheshire3.server import SimpleServer
 from cheshire3.internal import cheshire3Version, cheshire3Root
 
-# Local imports
-from ead import EADWsgiApplication
-from localConfig import *
+from base import *
 
 
 class EADSearchWsgiApplication(EADWsgiApplication):
     
     def __call__(self, environ, start_response):
+        # Method to make instances of this class callable
+        # Prepare application to handle a new request
+        self._setUp(environ)
+        # Check for static content request
         path = environ.get('PATH_INFO', '').strip('/')
-        self.globalReplacements.update({'SCRIPT': path,
-                                        '%SCRIPT%': path
-                                        }
-                                       )
+        if path.startswith(('css', 'img', 'js')):
+            content = self._static_content(path)
+            if not content:
+                start_response("404 NOT FOUND", self.response_headers)
+            else:
+                start_response("200 OK", self.response_headers)
+            return content
+            
         fields = FieldStorage(fp=environ['wsgi.input'], environ=environ)
         # Normalize form
         form = {}
@@ -35,7 +46,9 @@ class EADSearchWsgiApplication(EADWsgiApplication):
             operation = os.path.splitext(path.split('/')[-1])[0]
         
         # Check operation and act accordingly
-        if operation == 'resolve':
+        if not operation:
+            content = self._render_template('search.html')
+        elif operation == 'resolve':
             content = self.subject(form)
         else:
             try:
@@ -94,33 +107,55 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         raise NotImplementedError()
 
 
-def main():
-    """Start up a simple app server to serve the SRU application."""
+def main(argv=None):
+    """Start up a simple app server to serve the application."""
+    global argparser, application
     from wsgiref.simple_server import make_server
-    try:
-        host = sys.argv[1]
-    except IndexError:
-        try:
-            import socket
-            host = socket.gethostname()
-        except:
-            host = 'localhost'
-    try:
-        port = int(sys.argv[2])
-    except IndexError, ValueError:
-        port = 8000
-    httpd = make_server(host, port, application)
-    print """You will be able to access the application at:
-http://{0}:{1}""".format(host, port)
-    httpd.serve_forever()
+    if argv is None:
+        args = argparser.parse_args()
+    else:
+        args = argparser.parse_args(argv)
+    httpd = make_server(args.hostname, args.port, application)
+    url = "http://{0}:{1}".format(args.hostname, args.port)
+    if args.browser:
+        webbrowser.open(url)
+        print ("Hopefully a new browser window/tab should have opened "
+               "displaying the application.")
+        print "If not, you should be able to access the application at:"
+    else:
+        print "You should be able to access the application at:"
+        
+    print url
+    return httpd.serve_forever()
 
 
-session = Session()
-session.environment = "apache"
-serv = SimpleServer(session, os.path.join(cheshire3Root,
-                                          'configs',
-                                          'serverConfig.xml'))
-application = EADSearchWsgiApplication()
+application = EADSearchWsgiApplication(session, db, config)
+
+# Set up argument parser
+argparser = ArgumentParser(description=__doc__.splitlines()[0])
+# Find default hostname
+try:
+    hostname = socket.gethostname()
+except:
+    hostname = 'localhost'
+
+argparser.add_argument('--hostname', type=str,
+                       action='store', dest='hostname',
+                       default=hostname, metavar='HOSTNAME',
+                       help=("name of host to listen on. default derived by "
+                             "inspection of local system"))
+argparser.add_argument('-p', '--port', type=int,
+                       action='store', dest='port',
+                       default=8008, metavar='PORT',
+                       help="number of port to listen on. default: 8008")
+argparser.add_argument('--no-browser',
+                       action='store_false', dest='browser',
+                       default=True,
+                       help=("don't open a browser window/tab containing the "
+                             "app. useful if you want to deploy the app for "
+                             "other users"
+                             )
+                       )
 
 
 if __name__ == "__main__":

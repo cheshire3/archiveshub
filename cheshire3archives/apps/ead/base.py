@@ -8,6 +8,11 @@ import traceback
 from pkg_resources import Requirement, get_distribution
 from pkg_resources import resource_filename, resource_stream
 from ConfigParser import SafeConfigParser
+# Mako
+from mako.template import Template
+from mako.lookup import TemplateLookup
+from mako import exceptions
+from tempfile import gettempdir
 
 from cheshire3.baseObjects import Session
 import cheshire3.exceptions as c3errors
@@ -37,6 +42,16 @@ class EADWsgiApplication(object):
         self.config = config
         self.queryFactory = self.database.get_object(session,
                                                      'defaultQueryFactory')
+        template_dir = resource_filename(
+            Requirement.parse('cheshire3archives'),
+            'www/apps/ead/tmpl'
+        )
+        mod_dir = os.path.join(gettempdir(), 'mako_modules')
+        
+        self.templateLookup = TemplateLookup(directories=[template_dir],
+                                             output_encoding='utf-8',
+                                             module_directory=mod_dir,
+                                             strict_undefined=True)
         self.globalReplacements = {
             'version': get_distribution("cheshire3archives").version,
         }
@@ -67,6 +82,17 @@ class EADWsgiApplication(object):
                 self.response_headers.append(('Content-Encoding', encoding))
             return stream
         
+
+    def _render_template(self, template_name, **kwargs):
+        try:
+            template = self.templateLookup.get_template(template_name)
+            d = self.globalReplacements.copy()
+            d.update(kwargs)
+            return template.render(**d)
+        except:
+            
+            return exceptions.html_error_template().render()
+
     def _handle_error(self):
         self.htmlTitle.append('Error')
         cla, exc, trbk = sys.exc_info()

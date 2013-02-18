@@ -1,0 +1,68 @@
+<%!
+    # Global attributes
+    page_title = "Home"
+%>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>${repository_name} :: page_title</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <!-- screen CSS -->
+        <!-- printout CSS -->
+        <!-- favourite icon -->
+        <!-- JavaScript -->
+        <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script type="text/javascript" src="/js/cheshire3archives.js"></script>
+    </head>
+    <body>
+        <div id="header">
+            <div id="banner">
+                <div id="crest">
+                    <a href="${repository_link}" title="${repository_name}">
+                      <img src="${repository_logo}" alt="${repository_name}" class="rep-logo"/>
+                    </a>
+                </div>
+                <div id="titles">
+                    <h1>${repository_name}</h1>
+                    <h2>${self.attr.page_title}</h2>
+                </div>
+            </div> <!-- end banner div -->
+            <!-- site navigation links -->
+            <%block name="navbar">
+                <div id="navbar" class="navbar">
+                    <a href="${SCRIPT}/index.html" title="Search for EAD Records"
+                        class="navlink">Search</a>
+                    &gt;
+                    <a href="${SCRIPT}/browse.html" title="Browse Indexes"
+                        class="navlink">Browse</a>
+                    &gt;
+                    <a href="${SCRIPT}/subject.html" title="Find Subjects"
+                        class="navlink">Subjects</a>
+                    &gt;
+                    <a href="${SCRIPT}/about.html" title="About Cheshire for Archives"
+                        class="navlink">About </a>
+                    &gt;
+                    <a href="${SCRIPT}/help.html" title="Search Help"
+                        class="navlink">Help</a>
+                    &gt;
+                </div>
+            </%block>
+        </div>
+        <div id="content">
+            <!-- content here may be 1 or 2 column - div classes/ids determined by handler -->
+            <%block name="content"/>
+        </div>
+        <%include file="footer.html"/>
+        <script type="text/javascript">
+$(document).ready(function() {
+    // hide content that should be hidden
+    hideStuff();
+    // add validation to certain form elements
+    addFormValidation();
+    // Wrap any desired links or forms in AJAX requests
+    ajaxifyLinks(document);
+    ajaxifyForms(document);
+});
+        </script>
+    </body>
+</html>
