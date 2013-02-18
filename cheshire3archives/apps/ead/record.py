@@ -2,16 +2,14 @@
 
 import sys
 import os
-import webbrowser
 import socket
+import webbrowser
 import mimetypes
 import textwrap
 
 from cgi import FieldStorage
-from foresite import conneg
 from argparse import ArgumentParser
-
-import cheshire3.exceptions as c3errors
+from foresite import conneg
 
 from base import *
 
@@ -39,10 +37,6 @@ class EADRecordWsgiApplication(EADWsgiApplication):
             self.response_headers.append(('Content-Type', 'text/plain'))
             start_response('200 OK', self.response_headers)
             return [repr(i) + '\n' for i in environ.iteritems()]
-        self.globalReplacements.update({'SCRIPT': path,
-                                        '%SCRIPT%': path
-                                        }
-                                       )
 
         # Parse request to determine record, Internet (MIME) Type etc.
         recid, mimetype, encoding, args = self._parse_recSpec(path)
@@ -122,7 +116,7 @@ class EADRecordWsgiApplication(EADWsgiApplication):
 
 
 def main(argv=None):
-    """Start up a simple app server to serve the SRU application."""
+    """Start up a simple app server to serve the application."""
     global argparser, application
     from wsgiref.simple_server import make_server
     if argv is None:
@@ -144,7 +138,6 @@ def main(argv=None):
 
 
 application = EADRecordWsgiApplication(session, db, config)
-
 
 # Set up argument parser
 argparser = ArgumentParser(description=__doc__.splitlines()[0])

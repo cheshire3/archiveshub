@@ -31,15 +31,13 @@ class EADWsgiApplication(object):
         # Constructor method
         self.session = session
         self.database = database
+        self.config = config
         self.queryFactory = self.database.get_object(session,
                                                      'defaultQueryFactory')
         self.globalReplacements = {
-#            '%REP_NAME%': repository_name,
-#            '%REP_LINK%': repository_link,
-#            '%REP_LOGO%': repository_logo,
-            '<br>': '<br/>',
-            '<hr>': '<hr/>'
+            'version': get_distribution("cheshire3archives").version,
         }
+        self.globalReplacements.update(config.defaults())
 
     def _setUp(self, environ):
         # Prepare application to handle a new request
@@ -47,6 +45,7 @@ class EADWsgiApplication(object):
         self.environ = environ
         self.htmlTitle = []
         self.htmlNav = []
+        self.globalReplacements['SCRIPT'] = environ.get("SCRIPT_NAME")
 
     def _handle_error(self):
         self.htmlTitle.append('Error')
@@ -130,9 +129,11 @@ class EADWsgiApplication(object):
             return '\n'.join(txt)
 
 
+
+
 def main():
-    """Start up a simple app server to serve the SRU application."""
-    raise NotImplementedError("cheshire3archives.apps.ead.base contains only"
+    """Start up a simple app server to serve the application."""
+    raise NotImplementedError("cheshire3archives.apps.ead.base contains only "
                               "an Abstract Base Class")
 
 
@@ -142,7 +143,15 @@ serv = SimpleServer(session, os.path.join(cheshire3Root,
                                           'configs',
                                           'serverConfig.xml'))
 db = serv.get_object(session, 'db_ead')
-config = SafeConfigParser()
+configDefaults= {
+    'repository_name': "Cheshire3 for Archives",
+    'repository_link': "http://github.com/cheshire3/cheshire3archives",
+    'repository_logo': "http://cheshire3.org/gfx/c3_black.gif",
+}
+config = SafeConfigParser(defaults=configDefaults)
+
+
+
 application = EADWsgiApplication(session, db, config)
 
 # Useful URIs
