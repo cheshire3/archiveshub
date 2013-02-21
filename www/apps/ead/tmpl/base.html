@@ -1,6 +1,7 @@
 <%!
     # Global attributes
     page_title = "Home"
+    body_class = ""
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
@@ -16,7 +17,7 @@
         <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
         <script type="text/javascript" src="${SCRIPT}/js/cheshire3archives.js"></script>
     </head>
-    <body>
+    <body class="${self.attr.body_class}">
         <div id="header">
             <div id="banner">
                 <div id="crest">
