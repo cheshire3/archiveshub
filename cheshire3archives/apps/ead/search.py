@@ -23,15 +23,8 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         # Prepare application to handle a new request
         self._setUp(environ)
         path = environ.get('PATH_INFO', '').strip('/')
-        fields = FieldStorage(fp=environ['wsgi.input'], environ=environ)
-        # Normalize form
-        form = {}
-        for qp in fields.list:
-            if qp.value.isdigit():
-                form[qp.name] = int(qp.value)
-            else:
-                form[qp.name] = qp.value
-        operation = form.get('operation', None)
+        form = FieldStorage(fp=environ['wsgi.input'], environ=environ)
+        operation = form.getvalue('operation', None)
         if operation is None:
             # Filename based?
             operation = os.path.splitext(path.split('/')[-1])[0]
