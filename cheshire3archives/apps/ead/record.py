@@ -92,7 +92,7 @@ class EADRecordWsgiApplication(EADWsgiApplication):
         self.response_headers.append(('Content-Type', 'application/xml'))
         # Check for requested schema, or revert to default, currently 'ead'
         schema = form.get('schema', 'ead')
-        if schema == 'ead-hub':
+        if schema == 'ead-raw':
             txr = db.get_object(session, 'XmlTransformer')
         elif schema == 'ead':
             txr = db.get_object(session, 'dataOutgoingTxr')

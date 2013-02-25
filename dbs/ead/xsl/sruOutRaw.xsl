@@ -21,7 +21,7 @@
         <xsl:apply-templates />
     </xsl:template>
 
-    <xsl:param name="script" select="'/services/ead'" />
+    <xsl:param name="script" select="'/api/sru/hub'" />
 	
 	<!-- Strip all audience=internal -->
 	

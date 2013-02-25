@@ -25,11 +25,11 @@
 			</paths>
 		</subConfig>
 
-		<subConfig type="transformer" id="sruOutgoingHubTxr">
-			<docs>Transformer for EAD sent via SRU to the Archives Hub</docs>
+		<subConfig type="transformer" id="sruOutgoingRawTxr">
+			<docs>Transformer for raw EAD sent via SRU to the Archives Hub</docs>
 			<objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
 			<paths>
-				<path type="xsltPath">xsl/sruOutHub.xsl</path>
+				<path type="xsltPath">xsl/sruOutRaw.xsl</path>
 			</paths>
 		</subConfig>
 
