@@ -1,20 +1,30 @@
-<%inherit file="dual.hmtl"/>
+<%inherit file="dual.html"/>
+<%!
+    # Over-ride global attributes
+    page_title = "Search :: Results"
+    leftcol_class = "search"
+    rightcol_class = "facets"
+%>
 <%block name="leftcol">
-	<p class="hitreport">You searched for 
-		${format_query(resultSet.query)}. ${len(resultSet)} hits. 
+	<p class="hitreport">
+        ${queryString}
+        There are ${len(resultSet)} hits.
 	</p>
 	
 	${displaying(resultSet, sortBy, maximumRecords, startRecord)}
-	
-	${sorting(resultSet, sortBy, maximumRecords, startRecord)}
-	
-	% for rsi in resultset:
-	    ${pass}
+    
+    <table>
+	% for rsi in resultSet[startRecord - 1: min(startRecord + maximumRecords - 1, len(resultSet))]:
+        <tr>
+            <td>${rsi.id}</td>
+        </tr>
 	% endfor
-	
+    </table>
+
 	${displaying(resultSet, sortBy, maximumRecords, startRecord)}
-	
-	% if hits > maximumRecords and startRecord > 1:
+
+	% if len(resultSet) > maximumRecords and startRecord > 1:
+        ${maximumRecordsSelect(resultSet, sortBy, maximumRecords, startRecord)}
 		${back_links(resultSet, maximumRecords, startRecord)}
 	% endif
 	
@@ -28,9 +38,6 @@
 		% endfor
 	% endif
 </%block>
-
-<%def name="format_query(query)">
-<%/def>
 
 <%def name="back_links(resultSet, maximumRecords, startRecord)">
 	<div class="backlinks">
@@ -48,41 +55,54 @@
 </%def>
 
 <%def name="displaying(resultSet, sortBy, maximumRecords, startRecord)">
-		Displaying <strong>${startRecord}</strong>
-		to <strong>${startRecord + maximumRecords - 1}</strong>
-		of ${len(resultSet)}.
-		<a 
-			href="${SCRIPT}/search.html?rsid=${resultSet.id|u}&amp;startRecord=${startRecord}&amp;maximumRecords=20#leftcol"
-			class="ajax maximumRecords">
-			20
-		</a>
-		% if len(resultSet) >= 100:
-			<a 
-				href="${SCRIPT}/search.html?rsid=${resultSet.id|u}&amp;startRecord=${startRecord}&amp;maximumRecords=50#leftcol"
-				class="ajax maximumRecords">
-				50
-			</a>
-		% endif
-		% if len(resultSet) >= 200:
-			<a 
-				href="${SCRIPT}/search.html?rsid=${resultSet.id|u}&amp;startRecord=${startRecord}&amp;maximumRecords=100#leftcol"
-				class="ajax maximumRecords">
-				100
-			</a>
-		% endif
-		<a 
-			href="${SCRIPT}/search.html?rsid=${resultSet.id|u}&amp;startRecord=${startRecord}&amp;maximumRecords=${len(resultSet)}#leftcol"
-			class="ajax maximumRecords">
-			all
-		</a>
-	</div>
+    <div class="displaying">
+        Displaying <strong>${startRecord}</strong>
+        to <strong>${min(startRecord + maximumRecords - 1, len(resultSet))}</strong>
+        of ${len(resultSet)}.
+    </div>
 </%def>
 
+<%def name="sortBySelect(resultSet, sortBy, maximumRecords, startRecord)">
+    <div class="sortBy">
+        <form action="${SCRIPT}/search.html">
+            <input type="hidden" name="rsid" value="${resultSet.id}"/>
+            <select name="sortBy">
+                % for val, label in [('weight', 'Relevance')]:
+                    <option value="${val}">${label}</option>
+                % endfor
+            </select>
+        </form>
+    </div>
+</%def>
 
-<%def name="sorting(resultSet, sortBy, maximumRecords, startRecord)">
-	${pass}
+<%def name="maximumRecordsSelect(resultSet, sortBy, maximumRecords, startRecord)">
+    <div class="maximumRecords">
+        <a 
+            href="${SCRIPT}/search.html?rsid=${resultSet.id|u}&amp;startRecord=${startRecord}&amp;maximumRecords=20#leftcol"
+            class="ajax maximumRecords">
+            20
+        </a>
+        % if len(resultSet) >= 100:
+            <a 
+                href="${SCRIPT}/search.html?rsid=${resultSet.id|u}&amp;startRecord=${startRecord}&amp;maximumRecords=50#leftcol"
+                class="ajax maximumRecords">
+                50
+            </a>
+        % endif
+        % if len(resultSet) >= 200:
+            <a 
+                href="${SCRIPT}/search.html?rsid=${resultSet.id|u}&amp;startRecord=${startRecord}&amp;maximumRecords=100#leftcol"
+                class="ajax maximumRecords">
+                100
+            </a>
+        % endif
+        <a 
+            href="${SCRIPT}/search.html?rsid=${resultSet.id|u}&amp;startRecord=${startRecord}&amp;maximumRecords=${len(resultSet)}#leftcol"
+            class="ajax maximumRecords">
+            all
+        </a>
+    </div>
 </%def>
 
 <%def name="format_facet(facet)">
-    ${pass}
 </%def>
