@@ -10,8 +10,11 @@ from cgi import FieldStorage
 from argparse import ArgumentParser
 
 from cheshire3.baseObjects import Session
+from cheshire3.cqlParser import Diagnostic as CQLDiagnostic
 from cheshire3.server import SimpleServer
 from cheshire3.internal import cheshire3Version, cheshire3Root
+
+from cheshire3.web.www_utils import generate_cqlQuery
 
 from base import *
 
@@ -32,8 +35,6 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         # Check operation and act accordingly
         if not operation or operation == 'index':
             content = self._render_template('search.html')
-        elif operation == 'resolve':
-            content = self.subject(form)
         else:
             try:
                 fn = getattr(self, operation)
@@ -68,6 +69,7 @@ class EADSearchWsgiApplication(EADWsgiApplication):
                     content = fn(form)
                 except:
                     content = self._handle_error()
+                    raise
         response_headers = [('Content-Type',
                              'text/html'),
                             ('Content-Length',
@@ -76,8 +78,110 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         start_response("200 OK", response_headers)
         return content
 
+    def _format_query(self, query):
+        u"""Format simple query and return user friendly text form.
+        
+        For complex (multi-clause) queries, will return an empty string,
+        except in the special case where Keywords are being searched for
+        """
+        try:
+            # Check for single clause query
+            idx = query.index
+            rel = query.relation.value
+            term = query.term.toCQL()
+        except AttributeError:
+            try:
+                # Check for special "keywords" multi-clause query
+                idx = query.leftOperand.leftOperand.index
+                if idx.toCQL() != u'cql.anywhere':
+                    return u''
+                rel = query.leftOperand.leftOperand.relation.value
+                term = query.leftOperand.leftOperand.term.toCQL()
+            except AttributeError:
+                return u''
+        if idx is None:
+            return u''
+        elif idx.toCQL() == u'cql.anywhere':
+            displayIdx = u''
+        else:
+            if idx.toCQL() == u'dc.identifier':
+                displayName = u'Ref numbers'
+            elif idx.toCQL() == u'bath.personalname':
+                displayName = u'People'
+            elif idx.toCQL() == u'bath.corporatename':
+                displayName = u'Organizations'
+            elif idx.toCQL() == u'bath.geographicname':
+                displayName = u'Places'
+            elif idx.toCQL() == u'bath.genreform':
+                displayName = u'Media Types'
+            else:
+                displayName = idx.value.title() + u's'
+            displayIdx = u' in <strong>{0}</strong>'.format(displayName)
+        return u'''You searched for <strong>{0}</strong>{1}.'''.format(term, displayIdx)
+
     def search(self, form):
-        raise NotImplementedError()
+        session = self.session
+        db = self.database
+        queryFactory = self.queryFactory
+        rsid = form.getvalue('rsid', None)
+        qString = form.getvalue('query')
+        withinCollection = form.getvalue('withinCollection', None)
+        sortBy = form.getlist('sortBy')
+        maximumRecords = int(form.getvalue('numreq', 20))
+        startRecord = int(form.getvalue('firstrec', 0))
+        if (rsid):
+            rs = self._fetch_resultSet(rsid)
+        else:
+            if not qString:
+                qString = generate_cqlQuery(form)
+                if not (len(qString)):
+                    if not self.redirected:
+                        self.htmlTitle.append('Error')
+                    self._log(40, '*** Unable to generate CQL query')
+                    return self._render_template('fail/invalidQuery.html')
+                
+            if (withinCollection and withinCollection != 'allcollections'):
+                qString = ('(c3.idx-docid exact "%s" or '
+                           'ead.parentid exact "%s/%s") and/relevant/proxinfo '
+                           '(%s)'
+                           '' % (withinCollection,
+                                 recordStore.id,
+                                 withinCollection,
+                                 qString
+                                 )
+                           )
+            elif 'noComponents' in form:
+                qString = ('ead.istoplevel=1 and/relevant/proxinfo (%s)'
+                           '' % qString)
+            
+            self._log(20, 'Searching CQL query: %s' % (qString))
+            try:
+                query = queryFactory.get_query(session, qString, format="cql")
+            except CQLDiagnostic:
+                self._log(40, '*** Unparsable query: %s' % qString)
+                if (qString.count('"') % 2):
+                    return self._render_template('fail/unpairedQuotes.html')
+                else:
+                    return self._render_template('fail/invalidQuery.html')
+            rs = db.search(session, query)
+        if sortBy:
+            for spec in reversed(sortBy):
+                rs.order(session, spec)
+        if rs.query:
+            queryString = self._format_query(rs.query)
+        else:
+            queryString = u''
+        if len(rs):
+            return self._render_template('searchResults.html',
+                                         queryString=queryString,
+                                         resultSet=rs,
+                                         sortBy=sortBy,
+                                         maximumRecords=maximumRecords,
+                                         startRecord=startRecord, 
+                                         facets={}
+                                         )
+        else:
+            return self._render_template('fail/noHits.html')
 
     def lastResultSet(self, form):
         raise NotImplementedError()
