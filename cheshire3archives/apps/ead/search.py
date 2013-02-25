@@ -167,12 +167,10 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         if sortBy:
             for spec in reversed(sortBy):
                 rs.order(session, spec)
-        if rs.query:
-            queryString = self._format_query(rs.query)
-        else:
-            queryString = u''
+        queryString = self._format_query(query)
         if len(rs):
             return self._render_template('searchResults.html',
+                                         session=session,
                                          queryString=queryString,
                                          resultSet=rs,
                                          sortBy=sortBy,
@@ -181,7 +179,8 @@ class EADSearchWsgiApplication(EADWsgiApplication):
                                          facets={}
                                          )
         else:
-            return self._render_template('fail/noHits.html')
+            return self._render_template('fail/noHits.html',
+                                         queryString=queryString)
 
     def lastResultSet(self, form):
         raise NotImplementedError()

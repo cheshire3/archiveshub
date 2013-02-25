@@ -5,7 +5,8 @@
 %>
 <%block name="single">
     <p>
-        <strong>Sorry, your search didn&apos;t match any records.</strong>
+        ${queryString}
+        Sorry, your search didn&apos;t match any records.
     </p>
     <div id="no-hits-img">
         <img src="${SCRIPT}/img/no_hits.png" alt=""/>
