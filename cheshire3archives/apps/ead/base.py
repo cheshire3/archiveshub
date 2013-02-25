@@ -65,6 +65,9 @@ class EADWsgiApplication(object):
         self.htmlNav = []
         self.globalReplacements['SCRIPT'] = environ.get("SCRIPT_NAME")
 
+    def _log(self, lvl, msg):
+        print >> self.environ['wsgi.errors'], msg
+
     def _static_content(self, path):
         # Serve static content, CSS, images JavaScript etc.
         try:
