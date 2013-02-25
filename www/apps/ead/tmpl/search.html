@@ -1,10 +1,14 @@
 <%inherit file="single.html"/>
+<%!
+    # Global attributes
+    page_title = "Search"
+%>
 <%block name="single">
     	<p>
     		Enter your query and then click 'Start Search' or hit the enter key.
     		See the help section for further details on <a href="${SCRIPT}/help.html#queries">constructing queries</a>.
     	</p>
-    	<form name="searchform" method="post" action="SCRIPT" onsubmit="setCookie('eadsearchform', formToString());">
+    	<form name="searchform" method="post" action="${SCRIPT}/search.html" onsubmit="setCookie('eadsearchform', formToString());">
             <input type="hidden" name="_charset_"/>
     		<input type="hidden" name="numreq" value="20" id="numreq"></input>
     		<input type="hidden" name="firstrec" value="1" id="firstrec"></input>
