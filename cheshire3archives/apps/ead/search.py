@@ -37,7 +37,7 @@ class EADSearchWsgiApplication(EADWsgiApplication):
             operation = os.path.splitext(path.split('/')[-1])[0]
         
         # Check operation and act accordingly
-        if not operation:
+        if not operation or operation == 'index':
             content = self._render_template('search.html')
         elif operation == 'resolve':
             content = self.subject(form)
