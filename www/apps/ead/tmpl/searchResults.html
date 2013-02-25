@@ -1,5 +1,8 @@
 <%inherit file="dual.html"/>
 <%!
+    # Imports
+    from cheshire3.utils import flattenTexts
+    
     # Over-ride global attributes
     page_title = "Search :: Results"
     leftcol_class = "search"
@@ -14,9 +17,9 @@
 	${displaying(resultSet, sortBy, maximumRecords, startRecord)}
     
     <table>
-	% for rsi in resultSet[startRecord - 1: min(startRecord + maximumRecords - 1, len(resultSet))]:
+    % for index in range(startRecord - 1, min(len(resultSet), startRecord - 1 + maximumRecords)):
         <tr>
-            <td>${rsi.id}</td>
+            <td>${format_resultSetItem(resultSet, sortBy, maximumRecords, startRecord, index)}</td>
         </tr>
 	% endfor
     </table>
@@ -26,8 +29,7 @@
 	% if len(resultSet) > maximumRecords and startRecord > 1:
         ${maximumRecordsSelect(resultSet, sortBy, maximumRecords, startRecord)}
 		${back_links(resultSet, maximumRecords, startRecord)}
-	% endif
-	
+	% endif	
 </%block>
 
 <%block name="rightcol">
@@ -102,6 +104,33 @@
             all
         </a>
     </div>
+</%def>
+
+<%def name="format_resultSetItem(resultSet, sortBy, maximumRecords, startRecord, index)">
+    <%
+    rec = resultSet[index].fetch_record(session)
+    %>
+    ## Check for potential component-level record
+    <%
+    try:
+        titleEl = rec.process_xpath(session,
+                                    '/*/*/did/unittitle')[0]
+    except IndexError:
+        xp = '/ead/eadheader/filedesc/titlestmt/titleproper'
+        try:
+            titleEl = rec.process_xpath(session, xp)[0]
+        except IndexError:
+            titleEl = '(untitled)'
+    try:
+        title = flattenTexts(titleEl)
+    except AttributeError:
+        title = titleEl
+    %>
+    <a \
+        href="${SCRIPT}/summary.html?rsid=${resultSet.id}&amp;hit=${index}&amp;startRecord=${startRecord}&amp;maximumRecords=${maximumRecords}">
+        ${title}
+    </a>
+    ## Relevance
 </%def>
 
 <%def name="format_facet(facet)">
