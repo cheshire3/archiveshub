@@ -165,25 +165,20 @@ docs/ directory.
 Roadmap
 -------
 
-**Version 3.6 – September 2012**
+**Version 3.6 – March 2013**
 
 * Improved Unique Identifier derivation
+* Migrate existing `mod_python`_ handlers to WSGI_ Applications
+* Convert user editable configurations to a more user friendly format
 * Consolidate recent `Archives Hub`_ display enhancements (Record Resolver,
   Utility Bar)
 * Consolidate recent `EAD Editor`_ enhancements (Support for improved Unique
   Identifiers, Multiple field addition and editing)
 
 
-**Version 3.7 – January 2013**
+**Version 3.7 – October 2013**
 
-* Migrate existing `mod_python`_ handlers to WSGI_ Applications
 * Search within descriptions
-* Convert user editable configurations to a more user friendly format
-  (probably YAML_)
-
-
-**Version 3.8 – July 2013**
-
 * Support for `EAD Schema`_
 * Support for `EAC-CPF`_
 
