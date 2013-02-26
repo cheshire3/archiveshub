@@ -5,13 +5,12 @@
     leftcol_class = ""
     rightcol_class = ""
 %>
-<%block name="content">
-	<div id="leftcol" class="${self.attr.leftcol_class}">
-		<%block name="leftcol"/>
+
+<div id="leftcol" class="${self.attr.leftcol_class}">
+	<%block name="leftcol"/>
+</div>
+<div id="padder">
+    <div id="rightcol" class="${self.attr.rightcol_class}">
+        <%block name="rightcol"/>
     </div>
-	<div id="padder">
-        <div id="rightcol" class="${self.attr.rightcol_class}">
-            <%block name="rightcol"/>
-        </div>
-    </div>
-</%block>
+</div>

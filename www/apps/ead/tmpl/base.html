@@ -55,7 +55,7 @@
         </div>
         <div id="content">
             <!-- content here may be 1 or 2 column - div classes/ids determined by handler -->
-            <%block name="content"/>
+            ${next.body()}
         </div>
         <%include file="footer.html"/>
         <script type="text/javascript">
