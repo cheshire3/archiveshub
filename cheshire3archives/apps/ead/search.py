@@ -129,7 +129,12 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         maximumRecords = int(form.getvalue('numreq', 20))
         startRecord = int(form.getvalue('firstrec', 0))
         if (rsid):
-            rs = self._fetch_resultSet(session, rsid)
+            try:
+                rs = self._fetch_resultSet(session, rsid)
+            except c3errors.ObjectDoesNotExistException:
+                self._log(40, '*** Invalid ResultSet identifier: %s' % rsid)
+                return self._render_template('fail/invalidResultSet.html',
+                                             rsid=rsid)
         else:
             if not qString:
                 qString = generate_cqlQuery(form)
