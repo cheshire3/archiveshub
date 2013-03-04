@@ -11,14 +11,17 @@
 // 
 */
 
-* {margin:0;padding:0;}
+* {
+    margin: 0;
+    padding: 0;
+}
 
 body {
-  margin: 0;
-  padding: 105px 10px 60px 0;
-  /* Prevent body becoming narrower than wrapper - keeps the content from disappearing off the left edge with Gecko browsers */ 
-  min-width: 770px;
-  height: 100%;
+    margin: 0;
+    padding: 105px 10px 60px 0;
+    /* Prevent body becoming narrower than wrapper - keeps the content from disappearing off the left edge with Gecko browsers */ 
+    min-width: 770px;
+    height: 100%;
 }
 
 div#header,
@@ -631,6 +634,12 @@ a.jscall {
   color: #0000ff;
   font-size: small;	
   font-weight: normal;
+}
+
+.maximumRecords a {
+    background-color: #ddd;
+    margin: 2px;
+    border: 1px solid #aaa;
 }
 
 .navbar { 
