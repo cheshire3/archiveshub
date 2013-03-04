@@ -76,7 +76,6 @@ class EADWsgiApplication(object):
                 'www/htdocs/ead/{0}'.format(path)             
             )
         except IOError:
-            print path
             if path.startswith('ead/'):
                 return self._static_content(path[3:])
             return []

@@ -17,6 +17,7 @@
 	</p>
 	
 	${displaying(resultSet, sortBy, maximumRecords, startRecord)}
+    ${sortBySelect(resultSet, sortBy, maximumRecords, startRecord)}
     
     <table>
     % for index in range(startRecord - 1, min(len(resultSet), startRecord - 1 + maximumRecords)):
@@ -32,6 +33,15 @@
         ${maximumRecordsSelect(resultSet, sortBy, maximumRecords, startRecord)}
 		${back_links(resultSet, maximumRecords, startRecord)}
 	% endif	
+    
+    <script type="text/javascript">
+    $(document).ready(function() {
+        $('select[name="sortBy"]').change(function() {
+            $(this).closest("form").submit();
+        });
+    });
+    </script>
+    
 </%block>
 
 <%block name="rightcol">
