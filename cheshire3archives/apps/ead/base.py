@@ -87,7 +87,6 @@ class EADWsgiApplication(object):
             if encoding is not None:
                 self.response_headers.append(('Content-Encoding', encoding))
             return stream
-        
 
     def _render_template(self, template_name, **kwargs):
         try:
@@ -147,6 +146,10 @@ class EADWsgiApplication(object):
         except IndexError:
             raise c3errors.FileDoesNotExistException(recid)
 
+    def _fetch_resultSet(self, session, rsid):
+        rss = self.database.get_object(session, 'eadResultSetStore')
+        return rss.fetch_resultSet(session, rsid)
+
     def _textFromRecord(self, rec):
         # Return a text representation of the Record
         global namespaceUriHash
@@ -181,8 +184,6 @@ class EADWsgiApplication(object):
             return '\n'.join(txt)
 
 
-
-
 def main():
     """Start up a simple app server to serve the application."""
     raise NotImplementedError("cheshire3archives.apps.ead.base contains only "
@@ -201,8 +202,6 @@ configDefaults= {
     'repository_logo': "http://cheshire3.org/gfx/c3_black.gif",
 }
 config = SafeConfigParser(defaults=configDefaults)
-
-
 
 application = EADWsgiApplication(session, db, config)
 

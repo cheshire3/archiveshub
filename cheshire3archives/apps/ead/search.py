@@ -129,13 +129,11 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         maximumRecords = int(form.getvalue('numreq', 20))
         startRecord = int(form.getvalue('firstrec', 0))
         if (rsid):
-            rs = self._fetch_resultSet(rsid)
+            rs = self._fetch_resultSet(session, rsid)
         else:
             if not qString:
                 qString = generate_cqlQuery(form)
                 if not (len(qString)):
-                    if not self.redirected:
-                        self.htmlTitle.append('Error')
                     self._log(40, '*** Unable to generate CQL query')
                     return self._render_template('fail/invalidQuery.html')
                 
@@ -163,10 +161,13 @@ class EADSearchWsgiApplication(EADWsgiApplication):
                 else:
                     return self._render_template('fail/invalidQuery.html')
             rs = db.search(session, query)
+            # Store the resultSet
+            rss = db.get_object(session, 'eadResultSetStore')
+            rss.create_resultSet(session, rs)
         if sortBy:
             for spec in reversed(sortBy):
                 rs.order(session, spec)
-        queryString = self._format_query(query)
+        queryString = self._format_query(rs.query)
         if len(rs):
             return self._render_template('searchResults.html',
                                          session=session,
