@@ -18,8 +18,6 @@ from cheshire3.server import SimpleServer
 from cheshire3.session import Session
 from cheshire3.web.sruWsgi import SRUWsgiHandler
 
-from cheshire3archives.apps.ead.search import application as ead_search_app
-
 from cheshire3archives.commands.utils import WSGIAppArgumentParser
 
 
@@ -35,7 +33,14 @@ def main(argv=None):
     sru_app = tornado.wsgi.WSGIContainer(SRUWsgiHandler())
     container = tornado.web.Application(
         [
-            ('/api/sru', tornado.web.FallbackHandler, dict(fallback=sru_app))
+            (r"/services",
+             tornado.web.RedirectHandler,
+             dict(url="/api/sru")
+             ),
+            (r'/api/sru',
+             tornado.web.FallbackHandler,
+             dict(fallback=sru_app)
+             ),
          ]
     ) 
     http_server = tornado.httpserver.HTTPServer(container)
