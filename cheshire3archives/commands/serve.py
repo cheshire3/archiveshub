@@ -20,6 +20,9 @@ from cheshire3.web.sruWsgi import SRUWsgiHandler
 
 from cheshire3archives.commands.utils import WSGIAppArgumentParser
 
+from cheshire3archives.apps.ead.search import application as ead_search_app
+from cheshire3archives.apps.ead.record import application as ead_data_app
+
 
 def main(argv=None):
     """Start up a simple app server to serve the SRU application."""
@@ -30,19 +33,26 @@ def main(argv=None):
         args = argparser.parse_args(argv)
     session = Session()
     server = SimpleServer(session, args.serverconfig)
-    sru_app = tornado.wsgi.WSGIContainer(SRUWsgiHandler())
+    sru_app = SRUWsgiHandler()
     container = tornado.web.Application(
         [
             (r"/services",
              tornado.web.RedirectHandler,
              dict(url="/api/sru")
              ),
-            (r'/api/sru',
+            (r'/api/sru/.*',
              tornado.web.FallbackHandler,
-             dict(fallback=sru_app)
+             dict(fallback=tornado.wsgi.WSGIContainer(sru_app))
              ),
-         ]
-    ) 
+            (r'/ead/data/.*',
+             tornado.web.FallbackHandler,
+             dict(fallback=tornado.wsgi.WSGIContainer(ead_data_app))
+             ),
+            (r'/ead/.*',
+             tornado.web.FallbackHandler,
+             dict(fallback=tornado.wsgi.WSGIContainer(ead_search_app))
+             ),
+         ])
     http_server = tornado.httpserver.HTTPServer(container)
     http_server.listen(args.port)
     print """You will be able to access the application at:
