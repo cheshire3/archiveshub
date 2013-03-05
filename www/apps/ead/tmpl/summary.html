@@ -1,48 +1,11 @@
-<%inherit file="dual.html"/>
-<%namespace file="facets.html" import="format_facet"/>
+<%inherit file="searchResults.html"/>
 <%namespace file="resultSet.html" import="displaying, format_resultSetItem, maximumRecordsSelect, sortBySelect, back_links"/>
 <%!
-    # Imports
-    from cheshire3.utils import flattenTexts
-    
     # Over-ride global attributes
     page_title = "Display :: Brief"
     leftcol_class = "search"
     rightcol_class = "brief"
 %>
-<%block name="leftcol">
-    <p class="hitreport">
-        ${queryString}
-        There are ${len(resultSet)} hits.
-    </p>
-    
-    ${displaying(resultSet, sortBy, maximumRecords, startRecord)}
-    ${sortBySelect(resultSet, sortBy, maximumRecords, startRecord)}
-    
-    <table>
-    % for index in range(startRecord - 1, min(len(resultSet), startRecord - 1 + maximumRecords)):
-        <tr>
-            <td>${format_resultSetItem(resultSet, sortBy, maximumRecords, startRecord, index)}</td>
-        </tr>
-    % endfor
-    </table>
-
-    ${displaying(resultSet, sortBy, maximumRecords, startRecord)}
-
-    % if len(resultSet) > maximumRecords and startRecord > 1:
-        ${maximumRecordsSelect(resultSet, sortBy, maximumRecords, startRecord)}
-        ${back_links(resultSet, maximumRecords, startRecord)}
-    % endif 
-    
-    <script type="text/javascript">
-    $(document).ready(function() {
-        $('select[name="sortBy"]').change(function() {
-            $(this).closest("form").submit();
-        });
-    });
-    </script>
-    
-</%block>
 
 <%block name="rightcol">
     ${doc.get_raw(session).decode('utf-8')}
