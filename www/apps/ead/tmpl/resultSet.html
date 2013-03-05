@@ -111,11 +111,14 @@
     % endtry
     <%
     title = dataFromRecordXpaths(session, rec, ['/*/*/did/unittitle', '/ead/eadheader/filedesc/titlestmt/titleproper'], nTerms=1, joiner=u'; ')
+    date = dataFromRecordXpaths(session, rec, ['/*/*/did/unitdate', '/*/*/did/unittitle/unitdate'], nTerms=1, joiner=u'; ')
     %>
     <a \
         href="${SCRIPT}/summary.html?rsid=${resultSet.id}&amp;hit=${index}&amp;startRecord=${startRecord}&amp;maximumRecords=${maximumRecords}">
         ${title}
     </a>
+    <br/>
+    ${date}
     ## Relevance
     </td>
 </%def>
