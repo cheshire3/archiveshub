@@ -11,6 +11,7 @@ from argparse import ArgumentParser
 
 # Cheshire3 Imports
 from cheshire3.cqlParser import Diagnostic as CQLDiagnostic
+from cheshire3.cqlParser import SearchClause as CQLClause, Triple as CQLTriple
 from cheshire3.web.www_utils import generate_cqlQuery
 
 # Cheshire3 for Archives Imports
@@ -118,13 +119,47 @@ class EADSearchWsgiApplication(EADWsgiApplication):
             displayIdx = u' in <strong>{0}</strong>'.format(displayName)
         return u'''You searched for <strong>{0}</strong>{1}.'''.format(term, displayIdx)
 
+    def _get_query(self, form):
+        session = self.session
+        queryFactory = self.queryFactory
+        qString = form.getvalue('query')
+        withinCollection = form.getvalue('withinCollection', None)
+        if not qString:
+            qString = generate_cqlQuery(form)
+            if not (len(qString)):
+                self._log(40, '*** Unable to generate CQL query')
+                return self._render_template('fail/invalidQuery.html')
+            
+        if (withinCollection and withinCollection != 'allcollections'):
+            qString = ('(c3.idx-docid exact "%s" or '
+                       'ead.parentid exact "%s/%s") and/relevant/proxinfo '
+                       '(%s)'
+                       '' % (withinCollection,
+                             recordStore.id,
+                             withinCollection,
+                             qString
+                             )
+                       )
+        elif 'noComponents' in form:
+            qString = ('ead.istoplevel=1 and/relevant/proxinfo (%s)'
+                       '' % qString)
+        try:
+            return queryFactory.get_query(session, qString, format="cql")
+        except CQLDiagnostic:
+            self._log(40, '*** Unparsable query: %s' % qString)
+            if (qString.count('"') % 2):
+                return self._render_template('fail/unpairedQuotes.html')
+            else:
+                return self._render_template('fail/invalidQuery.html')
+
+    def _search(self, form):
+        # Does a raw search - i.e. processes form and returns a ResultSet
+        pass
+
     def search(self, form):
         session = self.session
         db = self.database
-        queryFactory = self.queryFactory
         rsid = form.getvalue('rsid', None)
-        qString = form.getvalue('query')
-        withinCollection = form.getvalue('withinCollection', None)
         sortBy = form.getlist('sortBy')
         maximumRecords = int(form.getvalue('numreq', 20))
         startRecord = int(form.getvalue('firstrec', 0))
@@ -136,39 +171,13 @@ class EADSearchWsgiApplication(EADWsgiApplication):
                 return self._render_template('fail/invalidResultSet.html',
                                              rsid=rsid)
         else:
-            if not qString:
-                qString = generate_cqlQuery(form)
-                if not (len(qString)):
-                    self._log(40, '*** Unable to generate CQL query')
-                    return self._render_template('fail/invalidQuery.html')
-                
-            if (withinCollection and withinCollection != 'allcollections'):
-                qString = ('(c3.idx-docid exact "%s" or '
-                           'ead.parentid exact "%s/%s") and/relevant/proxinfo '
-                           '(%s)'
-                           '' % (withinCollection,
-                                 recordStore.id,
-                                 withinCollection,
-                                 qString
-                                 )
-                           )
-            elif 'noComponents' in form:
-                qString = ('ead.istoplevel=1 and/relevant/proxinfo (%s)'
-                           '' % qString)
-            
-            self._log(20, 'Searching CQL query: %s' % (qString))
-            try:
-                query = queryFactory.get_query(session, qString, format="cql")
-            except CQLDiagnostic:
-                self._log(40, '*** Unparsable query: %s' % qString)
-                if (qString.count('"') % 2):
-                    return self._render_template('fail/unpairedQuotes.html')
-                else:
-                    return self._render_template('fail/invalidQuery.html')
+            query = self._get_query(form)
+            if not isinstance(query, (CQLClause, CQLTriple)):
+                # Error message
+                return query
+            self._log(20, 'Searching CQL query: %s' % (query.toCQL()))
             rs = db.search(session, query)
-            # Store the resultSet
-            rss = db.get_object(session, 'eadResultSetStore')
-            rss.create_resultSet(session, rs)
+            self._store_resultSet(session, rs)
         if sortBy:
             for spec in reversed(sortBy):
                 rs.order(session, spec)
