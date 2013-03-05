@@ -148,7 +148,15 @@ class EADWsgiApplication(object):
             raise c3errors.FileDoesNotExistException(recid)
 
     def _fetch_resultSet(self, session, rsid):
+        # Fetch a ResultSet
         return self.resultSetStore.fetch_resultSet(session, rsid)
+
+    def _store_resultSet(self, session, rs):
+        # Store the ResultSet
+        if rs.id:
+            self.resultSetStore.store_resultSet(session, rs)
+        else:
+            self.resultSetStore.create_resultSet(session, rs)
 
     def _textFromRecord(self, rec):
         # Return a text representation of the Record
