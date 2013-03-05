@@ -1,6 +1,6 @@
 <%inherit file="dual.html"/>
 <%namespace file="facets.html" import="format_facet"/>
-<%namespace file="resultSet.html" import="displaying, format_resultSetItem, maximumRecordsSelect, sortBySelect, back_links"/>
+<%namespace file="resultSet.html" import="*"/>
 <%!
     # Imports
     from cheshire3.utils import flattenTexts
@@ -16,24 +16,56 @@
         There are ${len(resultSet)} hits.
 	</p>
 	
-	${displaying(resultSet, sortBy, maximumRecords, startRecord)}
-    ${sortBySelect(resultSet, sortBy, maximumRecords, startRecord)}
+    <div class="rsMod">
+        <div class="displaying">
+            ${displaying(resultSet, sortBy, maximumRecords, startRecord)}
+        </div>
+        <div class="sortBySel">
+            ${sortBySelect(resultSet, sortBy, maximumRecords, startRecord)}
+        </div>
+    </div>
     
-    <table>
-    % for index in range(startRecord - 1, min(len(resultSet), startRecord - 1 + maximumRecords)):
-        <tr>
-            <td>${format_resultSetItem(resultSet, sortBy, maximumRecords, startRecord, index)}</td>
-        </tr>
-	% endfor
+    <table summary="Table of results" class="rs">
+        % for index in range(startRecord - 1, min(len(resultSet), startRecord - 1 + maximumRecords)):
+            <tr class="hit">
+                <td>${index + 1}</td>
+                ${format_resultSetItem(resultSet, sortBy, maximumRecords, startRecord, index)}
+            </tr>
+    	% endfor
     </table>
-
-	${displaying(resultSet, sortBy, maximumRecords, startRecord)}
-
-	% if len(resultSet) > maximumRecords and startRecord > 1:
-        ${maximumRecordsSelect(resultSet, sortBy, maximumRecords, startRecord)}
-		${back_links(resultSet, maximumRecords, startRecord)}
-	% endif	
     
+    <div class="rsMod">
+        <div class="displaying">
+            ${displaying(resultSet, sortBy, maximumRecords, startRecord)}
+        </div>
+        % if len(resultSet) > 20:
+            <div class="maxRecSel">
+                ${maximumRecordsSelect(resultSet, sortBy, maximumRecords, startRecord)}
+            </div>
+        % endif
+    </div>
+
+	% if len(resultSet) > maximumRecords:
+        ## Hit list navigation
+        <div class="rsNav">
+            ## Back links
+            % if startRecord > 1:
+                <div class="backlinks">
+                    ${back_links(resultSet, maximumRecords, startRecord)}
+                </div>
+            % endif
+            ## Page skip
+            ## Forward links
+            % if startRecord < len(resultSet) - maximumRecords:
+                <div class="forwardlinks">
+                    ${forward_links(resultSet, maximumRecords, startRecord)}
+                </div>
+            % endif
+        </div>
+            
+    		
+    	% endif
+
     <script type="text/javascript">
     $(document).ready(function() {
         $('select[name="sortBy"]').change(function() {

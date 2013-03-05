@@ -2,19 +2,27 @@
     # Imports
     from cheshire3.utils import flattenTexts
 %>
+
 <%def name="back_links(resultSet, maximumRecords, startRecord)">
-    <div class="backlinks">
-        <a 
-            href="${SCRIPT}/search.html?rsid=${resultSet.id|u}&amp;startRecord=1&amp;maximumRecords=${maximumRecords}#leftcol"
-            class="ajax">
-            <img src="${config.get('icons', 'fast-rewind-url')|u}" alt="|&lt;&lt;">
-        </a>
-        <a
-            href="${SCRIPT}/search.html?rsid=${resultSet.id|u}&amp;startRecord=${max(startRecord - maximumRecords, 1)}&amp;maximumRecords=${maximumRecords}&amp;#leftcol"
-            class="ajax">
-            <img src="${config.get('icons', 'rewind-url')|u}" alt="&lt;&lt;">
-        </a>
-    </div>
+    <a href="${SCRIPT}/search.html?rsid=${resultSet.id|u}&amp;startRecord=1&amp;maximumRecords=${maximumRecords}#leftcol"
+      class="ajax">
+        <img src="${config.get('icons', 'fast-rewind-url')|u}" alt="|&lt;&lt;">
+    </a>
+    <a href="${SCRIPT}/search.html?rsid=${resultSet.id|u}&amp;startRecord=${max(startRecord - maximumRecords, 1)}&amp;maximumRecords=${maximumRecords}&amp;#leftcol"
+      class="ajax">
+        <img src="${config.get('icons', 'rewind-url')|u}" alt="&lt;&lt;">
+    </a>
+</%def>
+
+<%def name="forward_links(resultSet, maximumRecords, startRecord)">
+    <a href="${SCRIPT}/search.html?rsid=${resultSet.id|u}&amp;startRecord=${min(startRecord + maximumRecords, len(resultSet))}&amp;maximumRecords=${maximumRecords}&amp;#leftcol"
+      class="ajax">
+        <img src="${config.get('icons', 'forward-url')|u}" alt="&gt;&gt;">
+    </a>
+    <a href="${SCRIPT}/search.html?rsid=${resultSet.id|u}&amp;startRecord=${((len(resultSet) / maximumRecords) * maximumRecords) + 1}&amp;maximumRecords=${maximumRecords}#leftcol"
+      class="ajax">
+        <img src="${config.get('icons', 'fast-forward-url')|u}" alt="&gt;&gt;|">
+    </a>
 </%def>
 
 <%def name="displaying(resultSet, sortBy, maximumRecords, startRecord)">
@@ -73,6 +81,7 @@
 </%def>
 
 <%def name="format_resultSetItem(resultSet, sortBy, maximumRecords, startRecord, index)">
+    <td>
     <%
     rec = resultSet[index].fetch_record(session)
     %>
@@ -83,7 +92,7 @@
                                      '/c3component/@parent')[0]
         %>
         ## OK, must be a component record
-        <img src="${SCRIPT}/img/folderOpen.gif" alt="|/`/">
+        <img src="${SCRIPT}/img/folderOpen.gif" alt="|/`/"/>
     % except IndexError:
         ## Collection level
     % endtry
@@ -107,4 +116,5 @@
         ${title}
     </a>
     ## Relevance
+    </td>
 </%def>

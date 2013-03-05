@@ -223,7 +223,8 @@ div.row {
 	margin:0px;
 }
 
-.backlinks { 
+.backlinks,
+.displaying { 
   float: left;
   /*min-width: 85px;*/
   text-align:left;
@@ -233,10 +234,19 @@ div.row {
   margin-right:85px;
   text-align:center;
 }
-.forwardlinks { 
+.forwardlinks,
+.sortBySel,
+.maxRecSel { 
   float:right;
   /*min-width: 85px;*/
   text-align: right;
+}
+.rs,
+.rsNav {
+    clear: both;
+}
+.rsNav {
+    padding-top: 5px;
 }
 
 ul {
