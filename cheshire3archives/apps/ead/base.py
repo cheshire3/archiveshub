@@ -52,6 +52,7 @@ class EADWsgiApplication(object):
         
         self.templateLookup = TemplateLookup(directories=[template_dir],
                                              output_encoding='utf-8',
+                                             input_encoding='utf-8',
                                              module_directory=mod_dir,
                                              strict_undefined=True)
         self.globalReplacements = {
