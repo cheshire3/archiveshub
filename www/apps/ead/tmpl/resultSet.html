@@ -1,6 +1,7 @@
 <%!
     # Imports
     from cheshire3.utils import flattenTexts
+    from cheshire3archives.apps.ead.base import namespaceUriHash
 %>
 
 <%def name="back_links(resultSet, maximumRecords, startRecord)">
@@ -80,6 +81,18 @@
     </div>
 </%def>
 
+<%def name="dataFromRecordXpaths(session, rec, xps, nTerms=1, joiner=u'; ')">
+    <%
+    # Extract data from record by XPaths in priority order provided in xps.
+    data = []
+    for xp in xps:
+        data.extend(rec.process_xpath(session, xp, namespaceUriHash))
+        if len(data) >= nTerms:
+            break
+    return joiner.join([flattenTexts(d) for d in data[:nTerms]])
+    %>
+</%def>
+
 <%def name="format_resultSetItem(resultSet, sortBy, maximumRecords, startRecord, index)">
     <td>
     <%
@@ -97,19 +110,7 @@
         ## Collection level
     % endtry
     <%
-    try:
-        titleEl = rec.process_xpath(session,
-                                    '/*/*/did/unittitle')[0]
-    except IndexError:
-        xp = '/ead/eadheader/filedesc/titlestmt/titleproper'
-        try:
-            titleEl = rec.process_xpath(session, xp)[0]
-        except IndexError:
-            titleEl = '(untitled)'
-    try:
-        title = flattenTexts(titleEl)
-    except AttributeError:
-        title = titleEl
+    title = dataFromRecordXpaths(session, rec, ['/*/*/did/unittitle', '/ead/eadheader/filedesc/titlestmt/titleproper'], nTerms=1, joiner=u'; ')
     %>
     <a \
         href="${SCRIPT}/summary.html?rsid=${resultSet.id}&amp;hit=${index}&amp;startRecord=${startRecord}&amp;maximumRecords=${maximumRecords}">
