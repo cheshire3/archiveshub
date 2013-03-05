@@ -30,7 +30,7 @@
         <form action="${SCRIPT}/search.html">
             <input type="hidden" name="rsid" value="${resultSet.id}"/>
             <select name="sortBy">
-                % for val, label in [('weight', 'Relevance'), ('/*/*/did/unittitle', 'Title')]:
+                % for val, label in [('weight', 'Relevance'), ('/*/*/did/unittitle/text()', 'Title')]:
                     % if val in sortBy:
                     <option value="${val}" selected="selected">${label}</option>
                     % else:
