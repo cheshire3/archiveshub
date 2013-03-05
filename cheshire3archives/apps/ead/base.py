@@ -42,6 +42,8 @@ class EADWsgiApplication(object):
         self.config = config
         self.queryFactory = self.database.get_object(session,
                                                      'defaultQueryFactory')
+        self.resultSetStore = self.database.get_object(session,
+                                                       'eadResultSetStore')
         template_dir = resource_filename(
             Requirement.parse('cheshire3archives'),
             'www/apps/ead/tmpl'
@@ -146,8 +148,7 @@ class EADWsgiApplication(object):
             raise c3errors.FileDoesNotExistException(recid)
 
     def _fetch_resultSet(self, session, rsid):
-        rss = self.database.get_object(session, 'eadResultSetStore')
-        return rss.fetch_resultSet(session, rsid)
+        return self.resultSetStore.fetch_resultSet(session, rsid)
 
     def _textFromRecord(self, rec):
         # Return a text representation of the Record
