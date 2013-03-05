@@ -8,6 +8,11 @@ import traceback
 from pkg_resources import Requirement, get_distribution
 from pkg_resources import resource_filename, resource_stream
 from ConfigParser import SafeConfigParser
+try:
+    from CStringIO import CStringIO as StringIO
+except ImportError:
+    from StringIO import StringIO
+
 # Mako
 from mako.template import Template
 from mako.lookup import TemplateLookup
@@ -57,8 +62,9 @@ class EADWsgiApplication(object):
                                              strict_undefined=True)
         self.globalReplacements = {
             'version': get_distribution("cheshire3archives").version,
+            'config': config
         }
-        self.globalReplacements.update(config.defaults())
+        self.globalReplacements.update(dict(config.items('brand')))
 
     def _setUp(self, environ):
         # Prepare application to handle a new request
@@ -67,6 +73,7 @@ class EADWsgiApplication(object):
         self.htmlTitle = []
         self.htmlNav = []
         self.globalReplacements['SCRIPT'] = environ.get("SCRIPT_NAME")
+        self.config.set('icons', 'base-url', environ.get("SCRIPT_NAME"))
 
     def _log(self, lvl, msg):
         print >> self.environ['wsgi.errors'], msg
@@ -205,12 +212,29 @@ serv = SimpleServer(session, os.path.join(cheshire3Root,
                                           'configs',
                                           'serverConfig.xml'))
 db = serv.get_object(session, 'db_ead')
-configDefaults= {
-    'repository_name': "Cheshire3 for Archives",
-    'repository_link': "http://github.com/cheshire3/cheshire3archives",
-    'repository_logo': "http://cheshire3.org/gfx/c3_black.gif",
-}
-config = SafeConfigParser(defaults=configDefaults)
+
+# App Configuration
+config = SafeConfigParser()
+# Default configuration
+configDefaults = StringIO("""
+[brand]
+repository_name = Cheshire3 for Archives
+repository_link = http://github.com/cheshire3/cheshire3archives
+repository_logo = http://cheshire3.org/gfx/c3_black.gif
+
+[icons]
+base-url = /
+forward-url = %(base-url)s/img/forward.png
+fast-forward-url = %(base-url)s/img/fforward.png
+rewind-url = %(base-url)s/img/back.png
+fast-rewind-url = %(base-url)s/img/fback.png
+""")
+config.readfp(configDefaults, 'hard-coded')
+app_config_path = resource_filename(
+    Requirement.parse('cheshire3archives'),
+    'www/apps/ead/ead.cfg'
+)
+config.read([app_config_path])
 
 application = EADWsgiApplication(session, db, config)
 
