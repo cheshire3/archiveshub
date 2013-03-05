@@ -12,6 +12,7 @@ from argparse import ArgumentParser
 # Cheshire3 Imports
 from cheshire3.cqlParser import Diagnostic as CQLDiagnostic
 from cheshire3.cqlParser import SearchClause as CQLClause, Triple as CQLTriple
+from cheshire3.baseObjects import ResultSet
 from cheshire3.web.www_utils import generate_cqlQuery
 
 # Cheshire3 for Archives Imports
@@ -152,17 +153,12 @@ class EADSearchWsgiApplication(EADWsgiApplication):
             else:
                 return self._render_template('fail/invalidQuery.html')
 
-    def _search(self, form):
-        # Does a raw search - i.e. processes form and returns a ResultSet
-        pass
-
-    def search(self, form):
+    def _searchAndSort(self, form):
+        # Process form and returns a ResultSet
         session = self.session
         db = self.database
         rsid = form.getvalue('rsid', None)
         sortBy = form.getlist('sortBy')
-        maximumRecords = int(form.getvalue('numreq', 20))
-        startRecord = int(form.getvalue('firstrec', 1))
         if rsid:
             try:
                 rs = self._fetch_resultSet(session, rsid)
@@ -181,6 +177,17 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         if sortBy:
             for spec in reversed(sortBy):
                 rs.order(session, spec)
+        return rs
+
+    def search(self, form):
+        session = self.session
+        sortBy = form.getlist('sortBy')
+        maximumRecords = int(form.getvalue('maximumRecords', 20))
+        startRecord = int(form.getvalue('startRecord', 1))
+        rs = self._searchAndSort(form)
+        if not isinstance(rs, ResultSet):
+            # Error message
+            return rs
         queryString = self._format_query(rs.query)
         if len(rs):
             return self._render_template('searchResults.html',
