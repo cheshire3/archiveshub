@@ -219,7 +219,42 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         raise NotImplementedError()
 
     def summary(self, form):
-        raise NotImplementedError()
+        session = self.session
+        db = self.database
+        sortBy = form.getlist('sortBy')
+        maximumRecords = int(form.getvalue('maximumRecords', 20))
+        startRecord = int(form.getvalue('startRecord', 1))
+        hit = int(form.getvalue('hit', 0))
+        rs = self._searchAndSort(form)
+        if not isinstance(rs, ResultSet):
+            # Error message
+            return rs
+        queryString = self._format_query(rs.query)
+        rec = rs[hit].fetch_record(session)
+        # Save rec.id now
+        recid = rec.id
+        # Highlight search terms
+        highlighter = db.get_object(session, 'highlightTxr')
+        doc = highlighter.process_record(session, rec)
+        xmlp = db.get_object(session, 'LxmlParser')
+        rec = xmlp.process_document(session, doc)
+        self._log(10, 'Search terms highlighted')
+        summaryTxr = db.get_object(session, 'htmlSummaryTxr')
+        doc = summaryTxr.process_record(session, rec)
+        page = self._render_template('summary.html',
+                                     session=session,
+                                     queryString=queryString,
+                                     resultSet=rs,
+                                     sortBy=sortBy,
+                                     maximumRecords=maximumRecords,
+                                     startRecord=startRecord, 
+                                     doc=doc
+                                     )
+        script = self.globalReplacements['SCRIPT']
+        page = page.replace('SCRIPT', script)
+        page = page.replace('DATAURL', '{0}/data'.format(script))
+        page = page.replace('RECID', recid)
+        return page
 
     def full(self, form):
         raise NotImplementedError()
