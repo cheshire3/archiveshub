@@ -5,9 +5,9 @@
 %>
 <p>
 	Enter your query and then click 'Start Search' or hit the enter key.
-	See the help section for further details on <a href="${SCRIPT}/help.html#queries">constructing queries</a>.
+	See the help section for further details on <a href="help.html#queries">constructing queries</a>.
 </p>
-<form name="searchform" method="post" action="${SCRIPT}/search.html" onsubmit="setCookie('eadsearchform', formToString());">
+<form name="searchform" method="post" action="search.html" onsubmit="setCookie('eadsearchform', formToString());">
     <input type="hidden" name="_charset_"/>
 	<input type="hidden" name="numreq" value="20" id="numreq"></input>
 	<input type="hidden" name="firstrec" value="1" id="firstrec"></input>
@@ -107,7 +107,7 @@
         <script type="text/javascript">
         <!--
         document.write('<a href="javascript:addSearchClause(1)" id="addClauseLink" title="Add another search clause, like the one above - [requires JavaScript]">...Add another search term</a>');
-        document.write('<a href="${SCRIPT}/help.html#additionalclause" title="What is this?"><img src="${SCRIPT}/img/whatisthis.png" alt="[What is this?]"/></a>');
+        document.write('<a href="help.html#additionalclause" title="What is this?"><img src="img/whatisthis.png" alt="[What is this?]"/></a>');
         -->
         </script>
     </div>
@@ -117,8 +117,8 @@
     		Only display collections:&nbsp;
     	</label>
     	<input type="checkbox" name="noComponents" id="noComponents"/>
-    	<a href="${SCRIPT}/help.html#nocomponents" title="What is this?">
-    		<img src="${SCRIPT}/img/whatisthis.png" alt="[What is this?]"/>
+    	<a href="help.html#nocomponents" title="What is this?">
+    		<img src="img/whatisthis.png" alt="[What is this?]"/>
     	</a>
     </div>
     

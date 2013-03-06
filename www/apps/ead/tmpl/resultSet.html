@@ -5,22 +5,22 @@
 %>
 
 <%def name="back_links(resultSet, maximumRecords, startRecord)">
-    <a href="${SCRIPT}/search.html?rsid=${resultSet.id|u}&amp;startRecord=1&amp;maximumRecords=${maximumRecords}#leftcol"
+    <a href="search.html?rsid=${resultSet.id|u}&amp;startRecord=1&amp;maximumRecords=${maximumRecords}#leftcol"
       class="ajax">
         <img src="${config.get('icons', 'fast-rewind-url')|u}" alt="|&lt;&lt;">
     </a>
-    <a href="${SCRIPT}/search.html?rsid=${resultSet.id|u}&amp;startRecord=${max(startRecord - maximumRecords, 1)}&amp;maximumRecords=${maximumRecords}&amp;#leftcol"
+    <a href="search.html?rsid=${resultSet.id|u}&amp;startRecord=${max(startRecord - maximumRecords, 1)}&amp;maximumRecords=${maximumRecords}&amp;#leftcol"
       class="ajax">
         <img src="${config.get('icons', 'rewind-url')|u}" alt="&lt;&lt;">
     </a>
 </%def>
 
 <%def name="forward_links(resultSet, maximumRecords, startRecord)">
-    <a href="${SCRIPT}/search.html?rsid=${resultSet.id|u}&amp;startRecord=${min(startRecord + maximumRecords, len(resultSet))}&amp;maximumRecords=${maximumRecords}&amp;#leftcol"
+    <a href="search.html?rsid=${resultSet.id|u}&amp;startRecord=${min(startRecord + maximumRecords, len(resultSet))}&amp;maximumRecords=${maximumRecords}&amp;#leftcol"
       class="ajax">
         <img src="${config.get('icons', 'forward-url')|u}" alt="&gt;&gt;">
     </a>
-    <a href="${SCRIPT}/search.html?rsid=${resultSet.id|u}&amp;startRecord=${((len(resultSet) / maximumRecords) * maximumRecords) + 1}&amp;maximumRecords=${maximumRecords}#leftcol"
+    <a href="search.html?rsid=${resultSet.id|u}&amp;startRecord=${((len(resultSet) / maximumRecords) * maximumRecords) + 1}&amp;maximumRecords=${maximumRecords}#leftcol"
       class="ajax">
         <img src="${config.get('icons', 'fast-forward-url')|u}" alt="&gt;&gt;|">
     </a>
@@ -36,7 +36,7 @@
 
 <%def name="sortBySelect(resultSet, sortBy, maximumRecords, startRecord)">
     <div class="sortBy">
-        <form action="${SCRIPT}/search.html">
+        <form action="search.html">
             <input type="hidden" name="rsid" value="${resultSet.id}"/>
             <select name="sortBy">
                 % for val, label in [('weight', 'Relevance'), ('/*/*/did/unittitle/text()', 'Title')]:
@@ -55,26 +55,26 @@
 <%def name="maximumRecordsSelect(resultSet, sortBy, maximumRecords, startRecord)">
     <div class="maximumRecords">
         <a 
-            href="${SCRIPT}/search.html?rsid=${resultSet.id|u}&amp;startRecord=${startRecord}&amp;maximumRecords=20#leftcol"
+            href="search.html?rsid=${resultSet.id|u}&amp;startRecord=${startRecord}&amp;maximumRecords=20#leftcol"
             class="ajax maximumRecords">
             20
         </a>
         % if len(resultSet) >= 100:
             <a 
-                href="${SCRIPT}/search.html?rsid=${resultSet.id|u}&amp;startRecord=${startRecord}&amp;maximumRecords=50#leftcol"
+                href="search.html?rsid=${resultSet.id|u}&amp;startRecord=${startRecord}&amp;maximumRecords=50#leftcol"
                 class="ajax maximumRecords">
                 50
             </a>
         % endif
         % if len(resultSet) >= 200:
             <a 
-                href="${SCRIPT}/search.html?rsid=${resultSet.id|u}&amp;startRecord=${startRecord}&amp;maximumRecords=100#leftcol"
+                href="search.html?rsid=${resultSet.id|u}&amp;startRecord=${startRecord}&amp;maximumRecords=100#leftcol"
                 class="ajax maximumRecords">
                 100
             </a>
         % endif
         <a 
-            href="${SCRIPT}/search.html?rsid=${resultSet.id|u}&amp;startRecord=${startRecord}&amp;maximumRecords=${len(resultSet)}#leftcol"
+            href="search.html?rsid=${resultSet.id|u}&amp;startRecord=${startRecord}&amp;maximumRecords=${len(resultSet)}#leftcol"
             class="ajax maximumRecords">
             all
         </a>
@@ -105,7 +105,7 @@
                                      '/c3component/@parent')[0]
         %>
         ## OK, must be a component record
-        <img src="${SCRIPT}/img/folderOpen.gif" alt="|/`/"/>
+        <img src="img/folderOpen.gif" alt="|/`/"/>
     % except IndexError:
         ## Collection level
     % endtry
@@ -114,7 +114,7 @@
     date = dataFromRecordXpaths(session, rec, ['/*/*/did/unitdate', '/*/*/did/unittitle/unitdate'], nTerms=1, joiner=u'; ')
     %>
     <a \
-        href="${SCRIPT}/summary.html?rsid=${resultSet.id}&amp;hit=${index}&amp;startRecord=${startRecord}&amp;maximumRecords=${maximumRecords}">
+        href="summary.html?rsid=${resultSet.id}&amp;hit=${index}&amp;startRecord=${startRecord}&amp;maximumRecords=${maximumRecords}">
         ${title}
     </a>
     <br/>

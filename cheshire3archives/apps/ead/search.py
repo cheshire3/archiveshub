@@ -250,9 +250,8 @@ class EADSearchWsgiApplication(EADWsgiApplication):
                                      startRecord=startRecord, 
                                      doc=doc
                                      )
-        script = self.globalReplacements['SCRIPT']
-        page = page.replace('SCRIPT', script)
-        page = page.replace('DATAURL', '{0}/data'.format(script))
+        page = page.replace('SCRIPT', self.script)
+        page = page.replace('DATAURL', 'data'.format(self.script))
         page = page.replace('RECID', recid)
         return page
 
