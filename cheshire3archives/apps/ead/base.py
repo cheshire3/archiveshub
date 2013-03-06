@@ -72,8 +72,9 @@ class EADWsgiApplication(object):
         self.environ = environ
         self.htmlTitle = []
         self.htmlNav = []
-        self.globalReplacements['SCRIPT'] = environ.get("SCRIPT_NAME")
-        self.config.set('icons', 'base-url', environ.get("SCRIPT_NAME"))
+        script = self.script = environ.get('SCRIPT_NAME', '')
+        self.globalReplacements['SCRIPT'] = script
+        self.config.set('icons', 'base-url', script)
 
     def _log(self, lvl, msg):
         print >> self.environ['wsgi.errors'], msg
