@@ -12,7 +12,7 @@ import socket
 #from wsgiref.simple_server import make_server
 import tornado.web
 import tornado.httpserver
-import tornado.wsgi
+from tornado.wsgi import WSGIApplication, WSGIContainer
 
 from cheshire3.server import SimpleServer
 from cheshire3.session import Session
@@ -40,17 +40,17 @@ def main(argv=None):
              tornado.web.RedirectHandler,
              dict(url="/api/sru")
              ),
-            (r'/api/sru/.*',
+            (r'/api/sru/(.*)',
              tornado.web.FallbackHandler,
-             dict(fallback=tornado.wsgi.WSGIContainer(sru_app))
+             dict(fallback=WSGIContainer(sru_app))
              ),
-            (r'/ead/data/.*',
+            (r'/ead/data/(.*)',
              tornado.web.FallbackHandler,
-             dict(fallback=tornado.wsgi.WSGIContainer(ead_data_app))
+             dict(fallback=WSGIContainer(ead_data_app))
              ),
-            (r'/ead/.*',
+            (r'/ead/(.*)',
              tornado.web.FallbackHandler,
-             dict(fallback=tornado.wsgi.WSGIContainer(ead_search_app))
+             dict(fallback=WSGIContainer(ead_search_app))
              ),
          ])
     http_server = tornado.httpserver.HTTPServer(container)
