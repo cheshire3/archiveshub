@@ -242,10 +242,13 @@ div.row {
   text-align: right;
 }
 .rs,
-.rsNav {
+.rsNav,
+table.browse,
+.browseNav {
     clear: both;
 }
-.rsNav {
+.rsNav,
+.browseNav {
     padding-top: 5px;
 }
 

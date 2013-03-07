@@ -4,7 +4,6 @@ import sys
 import os
 import socket
 import webbrowser
-import textwrap
 
 from cgi import FieldStorage
 from argparse import ArgumentParser
@@ -178,7 +177,7 @@ class EADSearchWsgiApplication(EADWsgiApplication):
             for spec in reversed(sortBy):
                 rs.order(session, spec)
         return rs
-
+    
     def search(self, form):
         if not form:
             # Simply return the search form
@@ -219,7 +218,31 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         if not form:
             # Simply return the search form
             return self._render_template('browse.html')
-        raise NotImplementedError()
+        session = self.session
+        idx = form.getfirst('fieldidx1', None)
+        rel = form.getfirst('fieldrel1', 'exact')
+        scanTerm = form.getfirst('fieldcont1', '')
+        startTerm = int(form.getfirst('startTerm',
+                                      form.getfirst('firstrec', 1)))
+        maximumTerms = int(form.getfirst('maximumTerms',
+                                         form.getfirst('numreq', 25)))
+        scanData = self._scanIndex(form)
+        if not isinstance(scanData, dict):
+            return scanData
+        else:
+            scanTermNorm, (hitstart, scanData, hitend) = scanData.popitem()
+        if not len(scanData):
+            return self._render_template('fail/noTerms.html')
+        return self._render_template('browseResults.html',
+                                     idx=idx,
+                                     rel=rel,
+                                     scanTerm=scanTermNorm,
+                                     scanData=scanData,
+                                     startTerm=startTerm,
+                                     maximumTerms=maximumTerms,
+                                     hitstart=hitstart,
+                                     hitend=hitend
+                                     )
 
     def subject(self, form):
         raise NotImplementedError()

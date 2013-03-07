@@ -3,6 +3,8 @@
 import os
 import sys
 import mimetypes
+import re
+import textwrap
 import traceback
 
 from pkg_resources import Requirement, get_distribution
@@ -200,6 +202,142 @@ class EADWsgiApplication(object):
                    ]
             return '\n'.join(txt)
 
+    def _scanIndex(self, form):
+        session = self.session
+        queryFactory = self.queryFactory
+        db = self.database
+        formcodec = form.getfirst('_charset_', 'utf-8')
+        idx = form.getfirst('fieldidx1', None)
+        rel = form.getfirst('fieldrel1', 'exact')
+        scanTerm = form.getfirst('fieldcont1', '')
+        startTerm = int(form.getfirst('startTerm',
+                                      form.getfirst('firstrec', 1)))
+        maximumTerms = int(form.getfirst('maximumTerms',
+                                         form.getfirst('numreq', 25)))
+        rp = int(form.getfirst('responsePosition', (maximumTerms + 1) / 2))
+        
+        qString = u'%s %s "%s"' % (idx, rel, scanTerm)
+        try:
+            scanClause = queryFactory.get_query(session,
+                                                qString,
+                                                format="cql"
+                                                )
+        except:
+            try:
+                scanClause = queryFactory.get_query(session,
+                                                    form,
+                                                    format="www"
+                                                    )
+            except:
+                self._log(40, 'Unparsable browse clause: %s' % qString)
+                return self._render_template('fail/invalidBrowse.html',
+                                             clause=qString)
+        self._log(10, 'Browsing for "%s"' % (qString))
+        hitstart = False
+        hitend = False
+        if (scanTerm == ''):
+            hitstart = True
+            rp = 0
+        scanTermNorm = scanTerm
+        if (rp == 0):
+            scanData = db.scan(session, scanClause, maximumTerms, direction=">")
+            if (len(scanData) < maximumTerms):
+                hitend = True
+        elif (rp == 1):
+            scanData = db.scan(session, scanClause, maximumTerms, direction=">=")
+            if (len(scanData) < maximumTerms):
+                hitend = True
+        elif (rp == maximumTerms):
+            scanData = db.scan(session, scanClause, maximumTerms, direction="<=")
+            scanData.reverse()
+            if (len(scanData) < maximumTerms):
+                hitstart = True
+        elif (rp == maximumTerms + 1):
+            scanData = db.scan(session, scanClause, maximumTerms, direction="<")
+            scanData.reverse()
+            if (len(scanData) < maximumTerms):
+                hitstart = True
+        else:
+            # We ask for 1 extra term and trim it off later to check if there
+            # are more terms (for navigation purposes)
+            # Need to go up...
+            try:
+                scanData = db.scan(session, scanClause, rp + 1, direction="<=")
+            except:
+                scanData = []
+            if (len(scanData) < rp + 1):
+                hitstart = True
+            else:
+                scanData.pop(-1)
+            # ... then down
+            try:
+                scanData1 = db.scan(session,
+                                    scanClause,
+                                    (maximumTerms - rp + 1) + 1,
+                                    direction=">=")
+            except:
+                scanData1 = []
+            
+            if (len(scanData1) < (maximumTerms - rp + 1) + 1):
+                hitend = True
+            else:
+                scanData1.pop(-1)
+            # Try to stick them together
+            try:
+                if scanData1[0][0] == scanData[0][0]:
+                    scanTermNorm = scanData.pop(0)[0]
+                else:
+                    scanData.insert(0, None)
+                    scanData.pop(-1)
+                    scanData1.pop(-1)
+            except:
+                pass
+            scanData.reverse()
+            scanData.extend(scanData1)
+            del scanData1
+        return {scanTermNorm: (hitstart, scanData, hitend)}
+
+
+def cleverTitleCase(txt):
+    global config
+    always_lower = config.get('casing', 'always_lower')
+    always_upper = config.get('casing', 'always_upper')
+    romanNumeralRe = re.compile(config.get('casing', 'roman_numeral_regex'),
+                                re.IGNORECASE)
+    words = []
+    for word in txt.split():
+        try:
+            if word in always_upper or \
+                    romanNumeralRe.match(word):
+                # Word in always_upper (i.e. abbreviation) or a roman
+                # numeral
+                word = word.upper()
+            elif word.endswith("'s"):
+                # Possessive - don't capitalize trailing s
+                word = word[:-2].title() + "'s"
+            elif (len(words) == 0 and not
+                  (word[0].isdigit() or
+                   word.strip('\'"(')[0].isdigit()
+                   )
+                  ):
+                
+                # 1st word always capitalized, unless starts with a number
+                word = word.title()
+            elif (word not in always_lower and word[0].isalpha()):
+                # Word not always_lower, and starts with alphabetical char
+                word = word.title()
+            elif (word.strip('\'"()') not in always_lower and
+                  word.strip('\'"()')[0].isalpha()):
+                # Word is always_lower, but is in brackets/quotes
+                word = word.title()
+            elif (len(words) and words[-1][-1] in ":;"):
+                # Word following this punctuation always title-cased
+                word = word.title()
+        except IndexError:
+            pass
+        words.append(word)
+    return u' '.join(words)
+
 
 def main():
     """Start up a simple app server to serve the application."""
@@ -229,6 +367,15 @@ forward-url = %(base-url)s/img/forward.png
 fast-forward-url = %(base-url)s/img/fforward.png
 rewind-url = %(base-url)s/img/back.png
 fast-rewind-url = %(base-url)s/img/fback.png
+
+[casing]
+# Configuration settings related to capitalization
+# Comma separate lists of words that should always appear in lower case
+always_lower = a,and,by,etc,for,in,is,of,on,or,s,th,that,the,to
+# Comma separate lists of words that should always appear in UPPER CASE
+always_upper = BBC,BT,CNN,UK,US,USA
+# Regular expression for Roman numerals
+roman_numeral_regex = ^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$
 """)
 config.readfp(configDefaults, 'hard-coded')
 app_config_path = resource_filename(

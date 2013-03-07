@@ -1,0 +1,14 @@
+<%inherit file="../single.html"/>
+<%!
+    # Global attributes
+    page_title = "Search :: Error"
+%>
+<div id="browseresult">
+    <p class="error">
+        Invalid browse query:
+        <br>
+        ${clause}
+    </p>
+</div>
+<hr>
+<%include file="../browseForm.html"/>
