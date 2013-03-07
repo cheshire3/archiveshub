@@ -34,6 +34,7 @@ class EADRecordWsgiApplication(EADWsgiApplication):
     def __call__(self, environ, start_response):
         # Method to make instances of this class callable
         self._setUp(environ)
+        session = self.session
         path = environ.get('PATH_INFO', '').strip('/')
         if path == "environ":
             self.response_headers.append(('Content-Type', 'text/plain'))
@@ -41,7 +42,7 @@ class EADRecordWsgiApplication(EADWsgiApplication):
             return [repr(i) + '\n' for i in environ.iteritems()]
 
         # Parse request to determine record, Internet (MIME) Type etc.
-        recid, mimetype, encoding, args = self._parse_recSpec(path)
+        recid, mimetype, encoding, form = self._parse_recSpec(path)
         # Content negotiation if not specified by file extension
         if mimetype is None:
             mtrequested = environ.get('HTTP_ACCEPT', 'text/html')
@@ -52,19 +53,20 @@ class EADRecordWsgiApplication(EADWsgiApplication):
         # Fetch the Record
         try:
             rec = self._fetch_record(session, recid)
-        except c3errors.FileDoesNotExistException as e:
-            # Still could not be found - 404!
-            start_response("404 Not Found", self.response_headers)
-            return []
-        fn = self.mimetypeHash.get(str(mimetype), getattr(self, 'html'))
-        content = fn(rec, args)
-        print self.response_headers
-#        try:
-#            content = fn(rec, args)
-#        except:
-#            content = self._handle_error()
-#            start_response("500 Not Found", response_headers)
-#            return content
+        except (IndexError, c3errors.FileDoesNotExistException) as e:
+            # IndexError can occur due to a 'feature' (bug) in Cheshire3 which
+            # assumes that all search terms will be a string of 1 or more
+            # characters
+            if not recid or recid == 'index':
+                content = self.index(mimetype, form)
+            else:
+                # Record specified but could not be found - 404!
+                start_response("404 Not Found", self.response_headers)
+                return []
+        else:
+            self._log(10, 'Retrieved record "{0}"'.format(recid))
+            fn = self.mimetypeHash.get(str(mimetype), getattr(self, 'html'))
+            content = fn(rec, form)
         start_response("200 OK", self.response_headers)
         return content
 
@@ -74,26 +76,30 @@ class EADRecordWsgiApplication(EADWsgiApplication):
         if mType is not None:
             # There is a filename extension to strip off
             recid, ext = os.path.splitext(recid)
-        fields = FieldStorage(fp=self.environ['wsgi.input'], environ=self.environ)
-        # Normalize form
-        form = {}
-        for qp in fields.list:
-            if qp.value.isdigit():
-                form[qp.name] = int(qp.value)
-            else:
-                form[qp.name] = qp.value
+        form = FieldStorage(fp=self.environ['wsgi.input'],
+                              environ=self.environ)
         return recid, mType, encoding, form
 
     def html(self, rec, form):
         self.response_headers.append(('Content-Type', 'text/html'))
         raise NotImplementedError()
 
+    def index(self, mimetype, form):
+        # Scan the rec.identifier index
+        # Return a display appropriate for the requested mimetype
+        raise NotImplementedError()
+
+    def text(self, rec, form):
+        self.response_headers.append(('Content-Type', 'text/plain'))
+        for rawline in self._textFromRecord(rec).split('\n'):
+            yield textwrap.fill(rawline, 78) + '\n'
+
     def xml(self, rec, form):
         session = self.session
         db = self.database
         self.response_headers.append(('Content-Type', 'application/xml'))
         # Check for requested schema, or revert to default, currently 'ead'
-        schema = form.get('schema', 'ead')
+        schema = form.getvalue('schema', 'ead')
         if schema == 'ead-raw':
             txr = db.get_object(session, 'XmlTransformer')
         elif schema == 'ead':
@@ -110,11 +116,6 @@ class EADRecordWsgiApplication(EADWsgiApplication):
             txr = map_.transformerHash.get(schema, None)
         doc = txr.process_record(session, rec)
         return [doc.get_raw(session)]
-
-    def text(self, rec, form):
-        self.response_headers.append(('Content-Type', 'text/plain'))
-        for rawline in self._textFromRecord(rec).split('\n'):
-            yield textwrap.fill(rawline, 78) + '\n'
 
 
 def main(argv=None):
