@@ -35,7 +35,7 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         
         # Check operation and act accordingly
         if not operation or operation == 'index':
-            content = self._render_template('search.html')
+            content = self._render_template('index.html')
         else:
             try:
                 fn = getattr(self, operation)
