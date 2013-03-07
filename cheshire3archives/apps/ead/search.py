@@ -181,6 +181,9 @@ class EADSearchWsgiApplication(EADWsgiApplication):
 
     def search(self, form):
         session = self.session
+        if not form:
+            # Simply return the search form
+            return self._render_template('search.html')
         sortBy = form.getlist('sortBy')
         maximumRecords = int(form.getvalue('maximumRecords', 20))
         startRecord = int(form.getvalue('startRecord', 1))
