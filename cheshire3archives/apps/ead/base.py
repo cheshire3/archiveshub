@@ -84,7 +84,7 @@ class EADWsgiApplication(object):
     def _static_content(self, path):
         # Serve static content, CSS, images JavaScript etc.
         try:
-            stream =  resource_stream(
+            stream = resource_stream(
                 Requirement.parse('cheshire3archives'),
                 'www/htdocs/ead/{0}'.format(path)             
             )
@@ -367,6 +367,7 @@ forward-url = %(base-url)s/img/forward.png
 fast-forward-url = %(base-url)s/img/fforward.png
 rewind-url = %(base-url)s/img/back.png
 fast-rewind-url = %(base-url)s/img/fback.png
+plus-url = %(base-url)s/img/form_add_row.png
 
 [casing]
 # Configuration settings related to capitalization
