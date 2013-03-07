@@ -34,7 +34,7 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         
         # Check operation and act accordingly
         if not operation or operation == 'index':
-            content = self._render_template('index.html')
+            content = [self._render_template('index.html')]
         else:
             try:
                 fn = getattr(self, operation)
@@ -42,34 +42,29 @@ class EADSearchWsgiApplication(EADWsgiApplication):
                 # Check for static content request
                 if path.startswith(('css', 'img', 'js', 'ead')):
                     content = self._static_content(path)
-                    if not content:
-                        start_response("404 NOT FOUND", self.response_headers)
-                        self.htmlTitle.append('Error')
-                        content = ('<p class="error">',
-                                   'An invalid resource was requested. ',
-                                   '</p>'
-                                   )
-                    else:
+                    if content:
                         start_response("200 OK", self.response_headers)
                         return content
+                    else:
+                        start_response("404 NOT FOUND", self.response_headers)
+                        content = [self._render_template(
+                                       'fail/404.html',
+                                       resource=path
+                                   )]
                 else:
                     # Invalid operation selected
                     self.htmlTitle.append('Error')
                     start_response("404 NOT FOUND", self.response_headers)
-                    content = ('<p class="error">',
-                               'An invalid operation was attempted. ',
-                               'Valid operations are:<br/>',
-                               'search, browse, resolve, summary, full, toc, email',
-                               '</p>'
-                               )
+                    content = [
+                        self._render_template(
+                            'fail/invalidOperation.html',
+                            operation=operation
+                        )
+                    ]
                 return content
             else:
                 # Simple method of self
-                try:
-                    content = fn(form)
-                except:
-                    content = self._handle_error()
-                    raise
+                content = fn(form)
         response_headers = [('Content-Type',
                              'text/html'),
                             ('Content-Length',
@@ -181,7 +176,7 @@ class EADSearchWsgiApplication(EADWsgiApplication):
     def search(self, form):
         if not form:
             # Simply return the search form
-            return self._render_template('search.html')
+            return [self._render_template('search.html')]
         session = self.session
         sortBy = form.getlist('sortBy')
         maximumRecords = int(form.getvalue('maximumRecords', 20))
@@ -189,21 +184,21 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         rs = self._searchAndSort(form)
         if not isinstance(rs, ResultSet):
             # Error message
-            return rs
+            return [rs]
         queryString = self._format_query(rs.query)
         if len(rs):
-            return self._render_template('searchResults.html',
-                                         session=session,
-                                         queryString=queryString,
-                                         resultSet=rs,
-                                         sortBy=sortBy,
-                                         maximumRecords=maximumRecords,
-                                         startRecord=startRecord, 
-                                         facets={}
-                                         )
+            return [self._render_template('searchResults.html',
+                                          session=session,
+                                          queryString=queryString,
+                                          resultSet=rs,
+                                          sortBy=sortBy,
+                                          maximumRecords=maximumRecords,
+                                          startRecord=startRecord, 
+                                          facets={}
+                                          )]
         else:
-            return self._render_template('fail/noHits.html',
-                                         queryString=queryString)
+            return [self._render_template('fail/noHits.html',
+                                          queryString=queryString)]
 
     def lastResultSet(self, form):
         raise NotImplementedError()
@@ -217,7 +212,7 @@ class EADSearchWsgiApplication(EADWsgiApplication):
     def browse(self, form):
         if not form:
             # Simply return the search form
-            return self._render_template('browse.html')
+            return [self._render_template('browse.html')]
         session = self.session
         idx = form.getfirst('fieldidx1', None)
         rel = form.getfirst('fieldrel1', 'exact')
@@ -232,17 +227,17 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         else:
             scanTermNorm, (hitstart, scanData, hitend) = scanData.popitem()
         if not len(scanData):
-            return self._render_template('fail/noTerms.html')
-        return self._render_template('browseResults.html',
-                                     idx=idx,
-                                     rel=rel,
-                                     scanTerm=scanTermNorm,
-                                     scanData=scanData,
-                                     startTerm=startTerm,
-                                     maximumTerms=maximumTerms,
-                                     hitstart=hitstart,
-                                     hitend=hitend
-                                     )
+            return [self._render_template('fail/noTerms.html')]
+        return [self._render_template('browseResults.html',
+                                      idx=idx,
+                                      rel=rel,
+                                      scanTerm=scanTermNorm,
+                                      scanData=scanData,
+                                      startTerm=startTerm,
+                                      maximumTerms=maximumTerms,
+                                      hitstart=hitstart,
+                                      hitend=hitend
+                                      )]
 
     def subject(self, form):
         raise NotImplementedError()
