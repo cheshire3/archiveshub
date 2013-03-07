@@ -1,32 +1,35 @@
-<%inherit file="../single.html"/>
+<%inherit file="base.html"/>
 <%!
     # Global attributes
     page_title = "Search :: No Hits"
 %>
-
-<p>
-    ${queryString}
-    Sorry, your search didn&apos;t match any records.
-</p>
-<div id="no-hits-img">
-    <img src="img/no_hits.png" alt=""/>
-</div>
-<ul>
-    <li>Please check your spelling and try your 
-        <a href="#searchform" title="go to the search form">Search</a> again.
-    </li>
-    <li>You might find related subjects using the 
-        <a href="subject.html" title="go to the Subject Finder tool">Subject Finder</a> tool
-    </li>
-    <li>You can browse our indexes from the 
-        <a href="browse.html" title="go to the Browse Indexes page">Browse Indexes</a> page
-    </li>
-    <li>Have a look at the 
-        <a href="help.html" title="go to the search help page">Search Help</a> page
-    </li>
-    <li>Try searching the 
-        <a href="http://www.archiveshub.ac.uk/" title="go to the Archives Hub">Archives Hub</a> for records located at other repositories around the UK.
-    </li>
-</ul>
-<hr>
-<%include file="../searchForm.html"/>
+<%block name="extra">
+    <p>
+        ${queryString}
+        Sorry, your search didn&apos;t match any records.
+    </p>
+    <div id="no-hits-img">
+        <img src="img/no_hits.png" alt=""/>
+    </div>
+    <ul>
+        <li>Please check your spelling and try your 
+            <a href="#searchform" title="go to the search form">Search</a> again.
+        </li>
+        <li>You might find related subjects using the 
+            <a href="subject.html" title="go to the Subject Finder tool">Subject Finder</a> tool
+        </li>
+        <li>You can browse our indexes from the 
+            <a href="browse.html" title="go to the Browse Indexes page">Browse Indexes</a> page
+        </li>
+        <li>Have a look at the 
+            <a href="help.html" title="go to the search help page">Search Help</a> page
+        </li>
+        <li>Try searching the 
+            <a href="http://www.archiveshub.ac.uk/" title="go to the Archives Hub">Archives Hub</a> for records located at other repositories around the UK.
+        </li>
+    </ul>
+</%block>
+<%block name="retry">
+    <hr>
+    <%include file="../searchForm.html"/>
+</%block>

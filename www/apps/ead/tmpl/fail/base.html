@@ -1,0 +1,12 @@
+<%inherit file="../single.html"/>
+<%!
+    # Global attributes
+    page_title = "Error"
+%>
+<p class="error">
+    <%block name="error">
+        ${next.body()}
+    </%block>
+</p>
+<%block name="extra"/>
+<%block name="retry"/>
