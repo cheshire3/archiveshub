@@ -240,6 +240,9 @@ class EADSearchWsgiApplication(EADWsgiApplication):
                                       )]
 
     def subject(self, form):
+        if not form:
+            # Simply return the search form
+            return [self._render_template('subject.html')]
         raise NotImplementedError()
 
     def summary(self, form):
