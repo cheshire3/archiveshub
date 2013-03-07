@@ -15,11 +15,8 @@ class WSGIAppArgumentParser(BaseArgumentParser):
 
     def __init__(self, *args, **kwargs):
         BaseArgumentParser.__init__(self, *args, **kwargs)
-        # Find default hostname
-        try:
-            hostname = socket.gethostname()
-        except:
-            hostname = '127.0.0.1'
+        # Set default hostname
+        hostname = '127.0.0.1'
         self.add_argument('--hostname', type=str,
                           action='store', dest='hostname',
                           default=hostname, metavar='HOSTNAME',
