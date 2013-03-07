@@ -1,6 +1,6 @@
 <%inherit file="dual.html"/>
 <%namespace file="facets.html" import="format_facet"/>
-<%namespace file="resultSet.html" import="*"/>
+<%namespace file="searchResultsDefs.html" import="*"/>
 <%!
     # Imports
     from cheshire3.utils import flattenTexts
@@ -62,9 +62,7 @@
                 </div>
             % endif
         </div>
-            
-    		
-    	% endif
+	% endif
 
     <script type="text/javascript">
     $(document).ready(function() {
