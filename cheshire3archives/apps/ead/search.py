@@ -180,10 +180,10 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         return rs
 
     def search(self, form):
-        session = self.session
         if not form:
             # Simply return the search form
             return self._render_template('search.html')
+        session = self.session
         sortBy = form.getlist('sortBy')
         maximumRecords = int(form.getvalue('maximumRecords', 20))
         startRecord = int(form.getvalue('startRecord', 1))
@@ -216,6 +216,9 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         raise NotImplementedError()
 
     def browse(self, form):
+        if not form:
+            # Simply return the search form
+            return self._render_template('browse.html')
         raise NotImplementedError()
 
     def subject(self, form):

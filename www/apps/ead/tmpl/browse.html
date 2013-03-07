@@ -1,0 +1,11 @@
+<%inherit file="single.html"/>
+<%!
+    # Global attributes
+    page_title = "Search"
+%>
+<%include file="browseForm.html"/>
+<div id="browse-preview"></div>
+<script type="text/javascript">
+liveSearch('fieldidx1', 'browse-preview', 'CHANGE');
+liveSearch('fieldcont1', 'browse-preview');
+</script>
