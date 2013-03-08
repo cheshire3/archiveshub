@@ -1,7 +1,6 @@
 <%!
     # Imports
-    from cheshire3.utils import flattenTexts
-    from cheshire3archives.apps.ead.base import namespaceUriHash
+    from cheshire3archives.apps.ead.base import dataFromRecordXPaths
 %>
 
 <%def name="back_links(resultSet, maximumRecords, startRecord)">
@@ -81,22 +80,16 @@
     </div>
 </%def>
 
-<%def name="dataFromRecordXpaths(session, rec, xps, nTerms=1, joiner=u'; ')">
-    <%
-    # Extract data from record by XPaths in priority order provided in xps.
-    data = []
-    for xp in xps:
-        data.extend(rec.process_xpath(session, xp, namespaceUriHash))
-        if len(data) >= nTerms:
-            break
-    return joiner.join([flattenTexts(d) for d in data[:nTerms]])
-    %>
-</%def>
-
 <%def name="format_resultSetItem(resultSet, sortBy, maximumRecords, startRecord, index)">
     <td>
     <%
     rec = resultSet[index].fetch_record(session)
+    titleXPaths = ['/*/*/did/unittitle',
+                   '/ead/eadheader/filedesc/titlestmt/titleproper'
+                   ]
+    dateXPaths = ['/*/*/did/unitdate',
+                  '/*/*/did/unittitle/unitdate'
+                  ]
     %>
     ## Check for potential component-level record
     % try:
@@ -109,16 +102,12 @@
     % except IndexError:
         ## Collection level
     % endtry
-    <%
-    title = dataFromRecordXpaths(session, rec, ['/*/*/did/unittitle', '/ead/eadheader/filedesc/titlestmt/titleproper'], nTerms=1, joiner=u'; ')
-    date = dataFromRecordXpaths(session, rec, ['/*/*/did/unitdate', '/*/*/did/unittitle/unitdate'], nTerms=1, joiner=u'; ')
-    %>
     <a \
         href="summary.html?rsid=${resultSet.id}&amp;hit=${index}&amp;startRecord=${startRecord}&amp;maximumRecords=${maximumRecords}">
-        ${title}
+        ${dataFromRecordXPaths(session, rec, titleXPaths)}
     </a>
     <br/>
-    ${date}
+    ${dataFromRecordXPaths(session, rec, dateXPaths, nTerms=3)}
     ## Relevance
     </td>
 </%def>

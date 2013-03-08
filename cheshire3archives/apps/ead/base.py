@@ -25,6 +25,7 @@ from cheshire3.baseObjects import Session
 import cheshire3.exceptions as c3errors
 from cheshire3.internal import cheshire3Root
 from cheshire3.server import SimpleServer
+from cheshire3.utils import flattenTexts
 from cheshire3.web.www_utils import html_encode
 
 
@@ -295,6 +296,22 @@ class EADWsgiApplication(object):
             scanData.extend(scanData1)
             del scanData1
         return {scanTermNorm: (hitstart, scanData, hitend)}
+
+
+def dataFromRecordXPaths(session, rec, xps, nTerms=1, joiner=u'; '):
+    """Extract data from ``rec`` return a single unicode object.
+    
+    Extract data from ``rec`` using multiple XPaths ``xps`` in priority order.
+    Return a maximum of ``nTerms`` matches, joining any multiple values with
+    `joiner``. 
+    """
+    global namespaceUriHash
+    data = []
+    for xp in xps:
+        data.extend(rec.process_xpath(session, xp, namespaceUriHash))
+        if len(data) >= nTerms:
+            break
+    return joiner.join([flattenTexts(d) for d in data[:nTerms]])
 
 
 def cleverTitleCase(txt):
