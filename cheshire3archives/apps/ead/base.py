@@ -87,11 +87,9 @@ class EADWsgiApplication(object):
         try:
             stream = resource_stream(
                 Requirement.parse('cheshire3archives'),
-                'www/htdocs/ead/{0}'.format(path)             
+                'www/apps/ead/{0}'.format(path)             
             )
         except IOError:
-            if path.startswith('ead/'):
-                return self._static_content(path[3:])
             return []
         else:
             mType, encoding = mimetypes.guess_type(path)
