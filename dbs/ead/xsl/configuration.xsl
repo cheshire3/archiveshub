@@ -43,7 +43,7 @@
 
     <!-- Archives Hub Contributors Map -->
     <xsl:param name="hubmap_url">
-        <xsl:text>/contributorsmap/index.html?archonid=</xsl:text>
+        <xsl:text>http://archiveshub.ac.uk/contributorsmap/index.html?archonid=</xsl:text>
     </xsl:param>
     <xsl:param name="hubmap_icon">
         <xsl:text>http://maps.google.co.uk/favicon.ico</xsl:text>
