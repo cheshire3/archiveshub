@@ -72,11 +72,12 @@ class EADWsgiApplication(object):
         # Prepare application to handle a new request
         self.response_headers = []
         self.environ = environ
-        self.htmlTitle = []
-        self.htmlNav = []
         script = self.script = environ.get('SCRIPT_NAME', '')
         self.globalReplacements['SCRIPT'] = script
-        self.config.set('icons', 'base-url', script)
+        # Set the base URL of this family of apps
+        base = script
+        self.globalReplacements['BASE'] = base
+        self.config.set('icons', 'base-url', '{0}/img'.format(base))
 
     def _log(self, lvl, msg):
         print >> self.environ['wsgi.errors'], msg
@@ -362,12 +363,12 @@ repository_link = http://github.com/cheshire3/cheshire3archives
 repository_logo = http://cheshire3.org/gfx/c3_black.gif
 
 [icons]
-base-url = /
-forward-url = %(base-url)s/img/forward.png
-fast-forward-url = %(base-url)s/img/fforward.png
-rewind-url = %(base-url)s/img/back.png
-fast-rewind-url = %(base-url)s/img/fback.png
-plus-url = %(base-url)s/img/form_add_row.png
+base-url = /img
+forward-url = %(base-url)s/forward.png
+fast-forward-url = %(base-url)s/fforward.png
+rewind-url = %(base-url)s/back.png
+fast-rewind-url = %(base-url)s/fback.png
+plus-url = %(base-url)s/form_add_row.png
 
 [casing]
 # Configuration settings related to capitalization

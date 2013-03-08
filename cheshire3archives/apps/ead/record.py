@@ -2,6 +2,7 @@
 
 import sys
 import os
+import re
 import socket
 import webbrowser
 import mimetypes
@@ -30,6 +31,13 @@ class EADRecordWsgiApplication(EADWsgiApplication):
         # Fix for mimetypes module bug
         mtHash.update({'text/xml': self.xml})
         self.mimetypeList = conneg.parse(', '.join(mtHash.keys()))
+
+    def _setUp(self, environ):
+        super(EADRecordWsgiApplication, self)._setUp(environ)
+        # Set the base URL of this family of apps
+        base = re.sub('/data$', '', self.script)
+        self.globalReplacements['BASE'] = base
+        self.config.set('icons', 'base-url', '{0}/img'.format(base))
     
     def __call__(self, environ, start_response):
         # Method to make instances of this class callable

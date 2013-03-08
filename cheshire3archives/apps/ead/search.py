@@ -44,7 +44,6 @@ class EADSearchWsgiApplication(EADWsgiApplication):
                     content = self._static_content(path)
                     if content:
                         start_response("200 OK", self.response_headers)
-                        return content
                     else:
                         start_response("404 NOT FOUND", self.response_headers)
                         content = [self._render_template(
