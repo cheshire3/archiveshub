@@ -784,4 +784,41 @@ table {
 	padding-top: 0;
 }
 
+/* Record Utility Bar
+--------------------------------------------------------------------------- */
+
+div#utilitybar a.utilitybarhelp {
+    float: right;
+}
+
+div#utilitybar ul li {
+    display: block;
+    height: 20px;
+    padding: 0px 5px;
+}
+
+
+div#utilitybar a {
+    color: #24205c;
+    font-weight: bolder;
+    text-decoration:underline;
+ 
+        
+
+}
+#addright{
+        float: right;
+        margin-top:-1.6cm;
+/*      margin-right:200px;*/
+        
+
+}
+
+
+div#utilitybar a.detailed,
+div#utilitybar a.brief {
+    font-weight: bolder;
+        font-size: 1.3em;
+}
+
 
