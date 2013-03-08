@@ -384,6 +384,7 @@ fast-forward-url = %(base-url)s/fforward.png
 rewind-url = %(base-url)s/back.png
 fast-rewind-url = %(base-url)s/fback.png
 plus-url = %(base-url)s/form_add_row.png
+what-url = %(base-url)s/whatisthis.png
 
 [casing]
 # Configuration settings related to capitalization
