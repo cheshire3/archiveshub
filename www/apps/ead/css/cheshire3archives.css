@@ -665,12 +665,6 @@ a.jscall {
   font-weight: normal;
 }
 
-.maximumRecords a {
-    background-color: #ddd;
-    margin: 2px;
-    border: 1px solid #aaa;
-}
-
 .navbar { 
 	color: #16145f;
 	font-size: 11pt;

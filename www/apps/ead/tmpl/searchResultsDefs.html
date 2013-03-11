@@ -51,32 +51,29 @@
     </div>
 </%def>
 
+<%def name="maximumRecordsSelectButton(resultSet, sortBy, maximumRecords, startRecord, label=None)">
+    <a 
+        href="search.html?rsid=${resultSet.id|u}&amp;startRecord=${startRecord}&amp;maximumRecords=${maximumRecords}#leftcol"
+        class="ajax maximumRecords">
+        % if label is not None:
+            <button label="${label}">${label}</button>
+        % else:
+            <button label="${maximumRecords}">${maximumRecords}</button>
+        % endif
+    </a>
+</%def>
+
 <%def name="maximumRecordsSelect(resultSet, sortBy, maximumRecords, startRecord)">
     <div class="maximumRecords">
-        <a 
-            href="search.html?rsid=${resultSet.id|u}&amp;startRecord=${startRecord}&amp;maximumRecords=20#leftcol"
-            class="ajax maximumRecords">
-            20
-        </a>
+        Show:
+        ${maximumRecordsSelectButton(resultSet, sortBy, 20, startRecord)}
         % if len(resultSet) >= 100:
-            <a 
-                href="search.html?rsid=${resultSet.id|u}&amp;startRecord=${startRecord}&amp;maximumRecords=50#leftcol"
-                class="ajax maximumRecords">
-                50
-            </a>
+            ${maximumRecordsSelectButton(resultSet, sortBy, 50, startRecord)}
         % endif
         % if len(resultSet) >= 200:
-            <a 
-                href="search.html?rsid=${resultSet.id|u}&amp;startRecord=${startRecord}&amp;maximumRecords=100#leftcol"
-                class="ajax maximumRecords">
-                100
-            </a>
+            ${maximumRecordsSelectButton(resultSet, sortBy, 100, startRecord)}
         % endif
-        <a 
-            href="search.html?rsid=${resultSet.id|u}&amp;startRecord=${startRecord}&amp;maximumRecords=${len(resultSet)}#leftcol"
-            class="ajax maximumRecords">
-            all
-        </a>
+        ${maximumRecordsSelectButton(resultSet, sortBy, len(resultSet), startRecord, label="all")}
     </div>
 </%def>
 
