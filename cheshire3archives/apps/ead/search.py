@@ -117,13 +117,22 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         session = self.session
         queryFactory = self.queryFactory
         qString = form.getvalue('query')
+        rsid = form.getvalue('rsid', None)
+        filter_ = form.getvalue('filter', '')
         withinCollection = form.getvalue('withinCollection', None)
-        if not qString:
+        if rsid:
+            qString = 'cql.resultSetId = "{0}/{1}"'.format(
+                self.resultSetStore.id,
+                rsid
+            )
+        elif not qString:
             qString = generate_cqlQuery(form)
             if not (len(qString)):
                 self._log(40, '*** Unable to generate CQL query')
                 return self._render_template('fail/invalidQuery.html')
-            
+        if filter_:
+            qString = '{0} and/relevant/proxinfo ({1})'.format(filter_,
+                                                               qString)
         if (withinCollection and withinCollection != 'allcollections'):
             qString = ('(c3.idx-docid exact "%s" or '
                        'ead.parentid exact "%s/%s") and/relevant/proxinfo '
@@ -152,7 +161,7 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         db = self.database
         rsid = form.getvalue('rsid', None)
         sortBy = form.getlist('sortBy')
-        if rsid:
+        if rsid and not 'filter' in form:
             try:
                 rs = self._fetch_resultSet(session, rsid)
             except c3errors.ObjectDoesNotExistException:
@@ -185,6 +194,7 @@ class EADSearchWsgiApplication(EADWsgiApplication):
             # Error message
             return [rs]
         queryString = self._format_query(rs.query)
+        facets = self.facets(rs)
         if len(rs):
             return [self._render_template('searchResults.html',
                                           session=session,
@@ -193,7 +203,7 @@ class EADSearchWsgiApplication(EADWsgiApplication):
                                           sortBy=sortBy,
                                           maximumRecords=maximumRecords,
                                           startRecord=startRecord, 
-                                          facets={}
+                                          facets=facets
                                           )]
         else:
             return [self._render_template('fail/noHits.html',
@@ -204,9 +214,26 @@ class EADSearchWsgiApplication(EADWsgiApplication):
 
     def similar(self, form):
         raise NotImplementedError()
-
-    def facet(self, form):
-        raise NotImplementedError()
+    
+    def facets(self, rs):
+        session = self.session
+        db = self.database
+        pm = db.get_path(session, 'protocolMap')
+        if not pm:
+            db._cacheProtocolMaps(session)
+            pm = db.protocolMaps.get('http://www.loc.gov/zing/srw/')
+        facets = {}
+        for idx in ['dc.subject', 'dc.creator']:
+            query = self.queryFactory.get_query(session,
+                                                '{0}="*"'.format(idx),
+                                                format='cql')
+            idxObj = pm.resolveIndex(session, query)
+            try:
+                facets[idx] = idxObj.facets(session, rs)
+            except:
+                self._log(40, "Couldn't get facets from {0}".format(idx))
+                raise
+        return facets
 
     def browse(self, form):
         if not form:

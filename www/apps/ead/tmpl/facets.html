@@ -1,2 +1,21 @@
 <%def name="format_facet(facet)">
+    <%
+    idx = facet[0]
+    termHash = facet[1]
+    %>
+    <span class="facethead">${idx[idx.find('.') + 1:].title()}</span>
+    <ul class="facet" id="${idx}-facet" >
+    % for term, termData in termHash:
+        <%
+        filterClause = '{0} exact "{1}"'.format(idx, term)
+        %> 
+        <li class="unmarked">
+            <a href="${SCRIPT}/search.html?rsid=${resultSet.id}&filter=${filterClause|u}#leftCol">
+            ${term.title()|h}
+            </a>
+            <span class="facet-hitcount">(${termData[1]})</span>
+        </li>
+    % endfor
+    </ul>
+     
 </%def>
