@@ -1,10 +1,9 @@
-"""Start a demo server for Cheshire3 for Archives
+"""Start an HTTP server for Cheshire3 for Archives
 
 Start an HTTP server to expose Cheshire3 databases via the web services and 
-web application development and demonstration purposes.
+web application for development and demonstration purposes.
 
-For production use it may be advisable to deploy the server via a production
-ready WSGI server or framework (e.g. CherryPy, mod_wsgi etc.) 
+The current implementation uses CherryPy. 
 """
 import sys
 import socket
@@ -14,7 +13,9 @@ from cherrypy.wsgiserver import CherryPyWSGIServer, WSGIPathInfoDispatcher
 
 from cheshire3.server import SimpleServer
 from cheshire3.session import Session
-from cheshire3.web.sruWsgi import application as sru_app
+from cheshire3.web.sruWsgi import SRUWsgiHandler, get_configsFromServer
+from cheshire3.web.oaipmhWsgi import OAIPMHWsgiApplication
+from cheshire3.web.oaipmhWsgi import get_databasesAndConfigs
 
 from cheshire3archives.commands.utils import WSGIAppArgumentParser
 
@@ -30,10 +31,17 @@ def main(argv=None):
         args = argparser.parse_args()
     else:
         args = argparser.parse_args(argv)
-    session = Session()
-    server = SimpleServer(session, args.serverconfig)
+    c3_session = Session()
+    c3_server = SimpleServer(c3_session, args.serverconfig)
+    # Init SRU App
+    sru_configs = get_configsFromServer(c3_session, c3_server)
+    sru_app = SRUWsgiHandler(c3_session, sru_configs)
+    # Init OAI-PMH App
+    dbs, oaipmh_configs = get_databasesAndConfigs(c3_session, c3_server)
+    oaipmh_app = OAIPMHWsgiApplication(c3_session, oaipmh_configs, dbs)
     dispatcher = WSGIPathInfoDispatcher([
         ('/api/sru', sru_app),
+        ('/api/oaipmh/2.0', oaipmh_app),
         ('/ead/data', ead_data_app),
         ('/ead', ead_search_app)
     ])
@@ -44,6 +52,12 @@ def main(argv=None):
         wsgi_server.stop()
         sys.exit(0)
     signal.signal(signal.SIGINT, signal_handler)
+    sys.stdout.write("Starting CherryPy HTTP server for Cheshire3 for Archives"
+                     ".\n")
+    sys.stdout.write("If running in foreground Ctrl-C will stop the server.\n")
+    sys.stdout.write("You will be able to access the applications from:\n")
+    sys.stdout.write("http://{0}:{1}\n""".format(args.hostname, args.port))
+    sys.stdout.flush()
     wsgi_server.start()
     
     
