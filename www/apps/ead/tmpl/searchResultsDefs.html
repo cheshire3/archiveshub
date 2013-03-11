@@ -6,22 +6,31 @@
 <%def name="back_links(resultSet, maximumRecords, startRecord)">
     <a href="search.html?rsid=${resultSet.id|u}&amp;startRecord=1&amp;maximumRecords=${maximumRecords}#leftcol"
       class="ajax">
-        <img src="${config.get('icons', 'fast-rewind-url')}" alt="|&lt;&lt;">
+        <button label="fast-rewind" class="rsNav">
+            <img src="${config.get('icons', 'fast-rewind-url')}" alt="|&lt;&lt;">
+        </button>
     </a>
     <a href="search.html?rsid=${resultSet.id|u}&amp;startRecord=${max(startRecord - maximumRecords, 1)}&amp;maximumRecords=${maximumRecords}&amp;#leftcol"
       class="ajax">
-        <img src="${config.get('icons', 'rewind-url')}" alt="&lt;&lt;">
+        <button label="rewind" class="rsNav">
+            <img src="${config.get('icons', 'rewind-url')}" alt="&lt;&lt;">
+        </button>
     </a>
 </%def>
 
 <%def name="forward_links(resultSet, maximumRecords, startRecord)">
     <a href="search.html?rsid=${resultSet.id|u}&amp;startRecord=${min(startRecord + maximumRecords, len(resultSet))}&amp;maximumRecords=${maximumRecords}&amp;#leftcol"
       class="ajax">
-        <img src="${config.get('icons', 'forward-url')}" alt="&gt;&gt;">
+        <button label="forward" class="rsNav">
+            <img src="${config.get('icons', 'forward-url')}" alt="&gt;&gt;">
+        </button>
     </a>
     <a href="search.html?rsid=${resultSet.id|u}&amp;startRecord=${((len(resultSet) / maximumRecords) * maximumRecords) + 1}&amp;maximumRecords=${maximumRecords}#leftcol"
       class="ajax">
-        <img src="${config.get('icons', 'fast-forward-url')}" alt="&gt;&gt;|">
+        <button label="fast-forward" class="rsNav">
+            <img src="${config.get('icons', 'fast-forward-url')}"
+            alt="&gt;&gt;|">
+        </button>
     </a>
 </%def>
 
