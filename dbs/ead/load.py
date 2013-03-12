@@ -21,7 +21,7 @@ optional arguments:
   -l, --load            load and index EAD documents
   -d DIR, --data DIR    directory from which to load and index EAD documents
   -c, --components      load and index components from loaded EAD records
-  -s, --clusters        load and index subject clusters
+  -s, --subjects        load and index subject clusters
   -i, --index           index pre-loaded EAD records
   -x, --index-components
                         index pre-loaded component records
@@ -74,7 +74,7 @@ class LoadArgumentParser(BaseArgumentParser):
                           help=("load and index components from loaded EAD "
                                 "records")
                           )
-        self.add_argument("-s", "--clusters", 
+        self.add_argument("-s", "--subjects", 
                           action="store_true", dest="clusters",
                           default=False, 
                           help="load and index subject clusters"
