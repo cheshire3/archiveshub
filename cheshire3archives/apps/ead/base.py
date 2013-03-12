@@ -386,6 +386,11 @@ fast-rewind-url = %(base-url)s/fback.png
 plus-url = %(base-url)s/form_add_row.png
 what-url = %(base-url)s/whatisthis.png
 
+[cache]
+# This section contains configuration for where to cache HTML copies of
+# descriptions
+html_cache_path = {html_cache_path}
+
 [casing]
 # Configuration settings related to capitalization
 # Comma separate lists of words that should always appear in lower case
@@ -393,8 +398,14 @@ always_lower = a,and,by,etc,for,in,is,of,on,or,s,th,that,the,to
 # Comma separate lists of words that should always appear in UPPER CASE
 always_upper = BBC,BT,CNN,UK,US,USA
 # Regular expression for Roman numerals
-roman_numeral_regex = ^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$
-""")
+roman_numeral_regex = ^M{{0,4}}(CM|CD|D?C{{0,3}})(XC|XL|L?X{{0,3}})(IX|IV|V?I{{0,3}})$
+""".format(
+   html_cache_path=resource_filename(
+       Requirement.parse('cheshire3archives'),
+       'www/apps/ead/html'
+   )
+))
+
 config.readfp(configDefaults, 'hard-coded')
 app_config_path = resource_filename(
     Requirement.parse('cheshire3archives'),
@@ -408,6 +419,7 @@ application = EADWsgiApplication(session, db, config)
 namespaceUriHash = {
     'dc': 'http://purl.org/dc/elements/1.0',
     'sru_dc': "info:srw/schema/1/dc-v1.1",
+    'xhtml': "http://www.w3.org/1999/xhtml",
     'zrx': "http://explain.z3950.org/dtd/2.0/",
     'c3': "http://www.cheshire3.org",
     'rec': "info:srw/extension/2/record-1.1",

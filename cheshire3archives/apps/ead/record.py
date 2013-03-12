@@ -11,6 +11,7 @@ import textwrap
 from cgi import FieldStorage
 from argparse import ArgumentParser
 from foresite import conneg
+from lxml import etree
 
 # Cheshire3 for Archives Imports
 from cheshire3archives.commands.utils import WSGIAppArgumentParser
@@ -90,7 +91,53 @@ class EADRecordWsgiApplication(EADWsgiApplication):
 
     def html(self, rec, form):
         self.response_headers.append(('Content-Type', 'text/html'))
-        raise NotImplementedError()
+        session = self.session
+        db = self.database
+        recid = rec.id
+        pagenum = int(form.getfirst('page', 1))
+        try:
+            parentId = rec.process_xpath(session, '/c3component/@parent')[0]
+        except IndexError:
+            isComponent = False
+            parentId = recid
+            parentLink = ''
+        else:
+            # OK, must be a component record
+            isComponent = True
+        path = os.path.join(self.config.get('cache', 'html_cache_path'),
+                            recid.replace('/', '-') +
+                            '.%d.html' % (pagenum)
+                            )
+        self._log(10, 'Full-text requested for {0}: {1}'
+                  ''.format(['record', 'component'][int(isComponent)], recid)
+                  )
+        try:
+            return open(path)
+        except IOError:
+            txr = db.get_object(session, 'htmlFullTxr') 
+            doc = txr.process_record(session, rec)
+            page = doc.get_raw(session).decode('utf-8')
+#            htmlp = db.get_object(session, 'LxmlHtmlParser')
+#            hrec = htmlp.process_document(session, doc)
+#            eadhtml = StringIO('Hello World!')
+#            eadhtml.write(doc.get_raw(session).decode('utf-8'))
+#            divs = hrec.process_xpath(session,
+#                                      '//xhtml:div[id="rightcol"]/*',
+#                                      namespaceUriHash)
+#            eadhtml.write(divs)
+#            for el in divs:
+#                eadhtml.write(etree.tostring(eadhtml,
+#                                             encoding="UTF-8",
+#                                             xml_declaration=False)
+#                              )
+#                eadhtml.write('\n')
+#            page = eadhtml.getvalue()
+#            eadhtml.close()
+            return [self._render_template('detailed.html',
+                                          session=session,
+                                          page=page)]
+        else:
+            self._log(10, 'Retrieved from cache')
 
     def index(self, mimetype, form):
         # Scan the rec.identifier index
