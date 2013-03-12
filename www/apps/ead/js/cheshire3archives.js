@@ -742,11 +742,18 @@ function deleteRow(tr){
 // Copyright: &copy; University of Liverpool 2005-2008
 //
 // Version History:
-// 0.01 - 03/08/2006 - JH - Nested list manipulation functions pasted in from previous script for easier error tracking etc.
-// 0.02 - 11/01/2008 - CS - Code adapted to allow list to begin collapsed or uncollapsed (collapseList boolean) and to allow
-//							for either each level to be controlled to that only one folder from it can be open at a time or not
+// 0.01 - 03/08/2006 - JH - Nested list manipulation functions pasted in from
+//                          previous script for easier error tracking etc.
+// 0.02 - 11/01/2008 - CS - Code adapted to allow list to begin collapsed or
+//                          uncollapsed (collapseList boolean) and to allow for
+//                          either each level to be controlled to that only one
+//                          folder from it can be open at a time or not
 //							(controlLevels boolean)
-						  - Function names changed to be more generic (necessary changes made in eadAdminHandler.py, htmlFragments.py and eadEditingHandler
+//                        - Function names changed to be more generic
+//                          (necessary changes made in eadAdminHandler.py,
+//                          htmlFragments.py and eadEditingHandler
+// X.xx - 12/03/2013 - JH - Added function to truncate long lists (e.g. facets)
+//
 */
 
 /* Note: list must be well formed, all tags closed, 
@@ -1086,6 +1093,31 @@ function isInArray(obj, array) {
   	} 
   	return false;
 }
+
+
+function truncateList(index, list) {
+    if ($(list).children('li').length > 5) { 
+        $(list).children('li:gt(2)').hide();
+        // Add links to un-truncate
+        
+        $(list).append('<li class="unmarked"><a href="javascript:void(0);" title="Show all ' + $(list).children('li').length + '">' + ($(list).children('li').length - 3) + ' more...</a></li>')
+        // Add action for un-truncate
+        $(list).children('li:last').children('a').click(
+            function(){
+                console.log($(this));
+                if ($(this).closest('li').siblings().last().is(":visible")) {
+                    $(this).closest('ul').children('li:gt(2):not(:last)').slideUp();
+                    $(this).text(' more...').attr('title', 'Show all');;
+                } else {
+                    $(this).closest('li').siblings().slideDown();
+                    $(this).text('fewer...').attr('title', 'Show only the top 3');
+                }
+            }
+        );
+    }
+}
+
+
 /**
 *
 * Simple Context Menu
