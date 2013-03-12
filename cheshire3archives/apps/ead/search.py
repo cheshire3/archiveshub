@@ -304,7 +304,7 @@ class EADSearchWsgiApplication(EADWsgiApplication):
                                      doc=doc
                                      )
         page = page.replace('SCRIPT', self.script)
-        page = page.replace('DATAURL', 'data'.format(self.script))
+        page = page.replace('DATAURL', '{0}/data'.format(self.script))
         page = page.replace('RECID', recid)
         return page
 
