@@ -9,10 +9,17 @@
   
    
   Copyright &copy; 2005-2013 the University of Liverpool
-  
+
 Colours:
-Electric blue: #b7e8f5
- 
+
+blues (pale - dark):
+
+b7e8f5
+00afdb
+16145f
+
+orange: f8971d
+  
 */
 
 * {
@@ -238,11 +245,13 @@ div.row {
   /*min-width: 85px;*/
   text-align:left;
 }
+
 .numnav { 
   margin-left: 85px;
   margin-right:85px;
   text-align:center;
 }
+
 .forwardlinks,
 .sortBySel,
 .maxRecSel { 
@@ -250,15 +259,21 @@ div.row {
   /*min-width: 85px;*/
   text-align: right;
 }
+
 .rs,
 div.rsNav,
 table.browse,
 div.browseNav {
     clear: both;
 }
-div.rsNav,
+
 div.browseNav {
     padding-top: 5px;
+}
+
+div.displaying,
+div.sortBySel {
+    margin-bottom: 5px;
 }
 
 button.rsNav,
@@ -271,41 +286,6 @@ button.browseNav {
     -webkit-border-radius: 3px;
 }
 
-ul {
-  list-style-position: inside;
-  padding-bottom: 2px;
-}
-
-ul li, ol li {
-	margin-left: 30px;	
-}
-
-ul.hierarchy li,
-ul.unmarked li {
-  list-style-type: none;
-  list-style-position: outside;
-  margin-left: 0px;
-  padding-left: 15px;
-}
-
-ul.hierarchy {
-	margin-left: 5px;
-	padding-bottom: 0;
-}
-
-ul.hierarchy li {
-	clear: both;
-	white-space: nowrap;
-}
-
-ul.facetlist li {
-	list-style-position: outside;
-	margin-left: 2em;
-}
-
-ul.facetlist li.unmarked {
-	margin-left: 1em;
-}
 
 div.facet {
 	padding-bottom: 10px;
@@ -354,19 +334,6 @@ div.embed-img {
 	
 }
 
-table.results {
-	width:94%;
-	max-width: 600px;
-}
-
-table.browseresults {
-	width:94%;
-}
-
-td.term {
-	min-width: 150px;
-}
-
 p {
 	padding: 0 0 0.2em 0;
 	margin: 0.75em 0 0.75em 0;
@@ -380,17 +347,6 @@ blockquote {
 /*
   This file was produced, and released as part of Cheshire for Archives v3.x
   Copyright &copy; 2005-2010 the University of Liverpool
-
-colours:
-
-blues (pale - dark):
-
-b7e8f5
-00afdb
-16145f
-
-orange: f8971d
-
 */
 
 body { 
@@ -485,75 +441,6 @@ div#no-hits-img img {
 
 }
 
-/* TABLES */
-
-table.results {
-	border-collapse: collapse;
-	font-size: 10pt;
-}
-
-table.adminmenu { 
-}
-
-table.rebuildtable {
-	font-size: 10pt;
-	border-collapse: collapse;
-	border-spacing: 0;
-	margin: 10px 0
-}
-
-table.rebuildtable tr,
-table.rebuildtable td {
-	border: 1px solid black;
-	padding: 0 5px;	
-}
-
-tr.headrow {
-	font-size: 11pt;
-	font-weight: bolder;
-/* like navbar */
-/*  color: #ffffff;*/
-/*  background-color: #0b2265;*/ /*dark blue*/
-/* like titlebar */
-	color: #16145f;
-	background-color: #b7e8f5;
-}
-
-tr.odd { 
-  color: black;
-}
-
-tr.even {
-  color: black;
-  background-color: #eeeeee;
-}
-
-td.hit,
-td.comphit {
-	border-width: 1px 0 1px 0;
-	border-style: dotted;
-	border-color: black;
-}
-
-td.relv,
-td.hitcount {
-	padding-left: 10px;
-	text-align: right;
-}
-
-
-table.nassischneiderman {
-	border-collapse: collapse;
-	margin-top: 1em;
-	margin-bottom: 1em;
-}
-
-table.nassischneiderman td {
-	border: 1px solid black;
-	vertical-align:top;
-}
-
-
 /* HEADINGS */
 
 h1 {
@@ -581,9 +468,13 @@ h3 {
 h3.ead, 
 h3.redheading, 
 h3.greenheading {
-	background-color: #b7e8f5;
-	padding: 2px;
-	margin: 1em 0 0.5em 0;
+    background-color: #b7e8f5;
+    padding: 2px;
+    margin: 1em 0 0.5em 0;
+    
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
 }
 h3.redheading {
     background-color: #ffaaaa;
@@ -612,7 +503,97 @@ h6 {
     margin-bottom: 0.1em;
 }
 
+/* TABLES */
+
+table.rs {
+	border-collapse: collapse;
+	font-size: 10pt;
+    width:94%;
+    max-width: 600px;
+    margin-bottom: 5px;
+}
+
+table.rs td {
+    padding: 5px 2px;
+}
+
+table.browseresults {
+    width:94%;
+}
+
+td.term {
+    min-width: 150px;
+}
+
+tr.headrow {
+    font-size: 11pt;
+    font-weight: bolder;
+    color: #16145f;
+    background-color: #b7e8f5;
+}
+
+
+table.adminmenu { 
+}
+
+table.rebuildtable {
+	font-size: 10pt;
+	border-collapse: collapse;
+	border-spacing: 0;
+	margin: 10px 0
+}
+
+table.rebuildtable tr,
+table.rebuildtable td {
+	border: 1px solid black;
+	padding: 0 5px;	
+}
+
+
+tr.odd { 
+  color: black;
+}
+
+tr.even {
+  color: black;
+  background-color: #eeeeee;
+}
+
+tr.hit {
+    border-width: 1px 0 1px 0;
+    border-style: dotted;
+    border-color: black;
+}
+
+td.relv,
+td.hitcount {
+	padding-left: 10px;
+	text-align: right;
+}
+
+
+table.nassischneiderman {
+	border-collapse: collapse;
+	margin-top: 1em;
+	margin-bottom: 1em;
+}
+
+table.nassischneiderman td {
+	border: 1px solid black;
+	vertical-align:top;
+}
+
+
 /* LISTS */
+
+ul {
+  list-style-position: inside;
+  padding-bottom: 2px;
+}
+
+ul li, ol li {
+    margin-left: 30px;  
+}
 
 ul.unmarked {
     margin-bottom: 1em;
@@ -620,18 +601,39 @@ ul.unmarked {
 
 ul.hierarchy { 
     border-left: 1px dotted #aaaaaa;
+    margin-left: 5px;
+    padding-bottom: 0;
 }
 
-/* Facets */
+
+ul.hierarchy li,
+ul.unmarked li {
+  list-style-type: none;
+  list-style-position: outside;
+  margin-left: 0px;
+  padding-left: 15px;
+}
+
+ul.hierarchy li {
+    clear: both;
+    white-space: nowrap;
+}
+
+
+/* FACETS */
+
 div.facet {
 	font-size: 10pt;
 }
+
 span.facethead {
 	font-weight: bold;	
 }
+
 span.facet-hitcount {
 	color: #666;	
 }
+
 ul.facetlist {
 	list-style: square inside;
 }
@@ -641,26 +643,38 @@ ul.facetlist li:before {
 	content: "\00BB \0020";
 }
 */
+
+ul.facetlist li {
+    list-style-position: outside;
+    margin-left: 2em;
+}
+
 ul.facetlist li.unmarked {
-	list-style: none;
+    margin-left: 1em;
+    list-style: none;
 }
 
 
 /* LINKS */
 
 a:link,
-a:visited
-{
-  cursor:pointer;cursor:hand
-  color: #0000dd;
-  text-decoration: none;
+a:visited {
+    color: #00afdb;
+    text-decoration: none;
 }
 
 a:hover,
-a:visited:hover
-{
-  color: #6600ff;
-  text-decoration: underline;
+a:visited:hover {
+    color: #b7e8f5;
+    text-decoration: underline;
+}
+
+table.rs a:link,
+table.rs a:visited,
+table.rs a:hover,
+table.rs a:visited:hover {
+    font-weight: bolder;
+    text-decoration: none;
 }
 
 a.jscall {
