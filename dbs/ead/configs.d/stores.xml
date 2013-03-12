@@ -33,20 +33,6 @@
 			</options>
 		</subConfig>
 
-		<subConfig type="recordStore" id="eadDcStore">
-			<objectType>cheshire3.recordStore.BdbRecordStore</objectType>
-			<paths>
-				<path type="defaultPath">stores</path>
-				<path type="databasePath">dcStore.bdb</path>
-				<path type="metadataPath">dcStoreMetadata.bdb</path>
-				<object type="inWorkflow" ref="XmlToLZ4Workflow" />
-	        	<object type="outWorkflow" ref="LZ4ToLxmlWorkflow" />
-			</paths>
-			<options>
-				<setting type="digest">sha</setting>
-			</options>
-		</subConfig>
-
 		<subConfig type="recordStore" id="componentStore">
 			<objectType>cheshire3.recordStore.BdbRecordStore</objectType>
 			<paths>
