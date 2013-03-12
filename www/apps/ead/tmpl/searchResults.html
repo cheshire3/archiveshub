@@ -11,11 +11,12 @@
     rightcol_class = "facets"
 %>
 <%block name="leftcol">
-	<p class="hitreport">
-        ${queryString}
-        There are ${len(resultSet)} hits.
-	</p>
-	
+    % if queryString:
+    	<p class="hitreport">
+            ${queryString}
+    	</p>
+	% endif
+    
     <div class="rsMod">
         <div class="displaying">
             ${displaying(resultSet, sortBy, maximumRecords, startRecord)}
