@@ -175,7 +175,15 @@ class EADSearchWsgiApplication(EADWsgiApplication):
                 return query
             self._log(20, 'Searching CQL query: %s' % (query.toCQL()))
             rs = db.search(session, query)
-            self._store_resultSet(session, rs)
+            if len(rs):
+                # Store the Query
+                query = self._store_query(session, query)
+                # Store the Resultset
+                rs.id = query.id
+                self._store_resultSet(session, rs)
+            else:
+                # Log 0 result?
+                pass
         if sortBy:
             for spec in reversed(sortBy):
                 rs.order(session, spec)

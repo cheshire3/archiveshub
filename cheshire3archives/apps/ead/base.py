@@ -7,6 +7,7 @@ import re
 import textwrap
 import traceback
 
+from hashlib import sha1
 from pkg_resources import Requirement, get_distribution
 from pkg_resources import resource_filename, resource_stream
 from ConfigParser import SafeConfigParser
@@ -50,6 +51,8 @@ class EADWsgiApplication(object):
         self.config = config
         self.queryFactory = self.database.get_object(session,
                                                      'defaultQueryFactory')
+        self.queryStore = self.database.get_object(session,
+                                                   'eadQueryStore')
         self.resultSetStore = self.database.get_object(session,
                                                        'eadResultSetStore')
         template_dir = resource_filename(
@@ -147,6 +150,7 @@ class EADWsgiApplication(object):
 #        '''.format(excName, excArgs, excTb).split('\n')
 
     def _fetch_record(self, session, recid):
+        # Fetch a Record
         session = self.session
         db = self.database
         queryFactory = self.queryFactory
@@ -158,16 +162,33 @@ class EADWsgiApplication(object):
         except IndexError:
             raise c3errors.FileDoesNotExistException(recid)
 
-    def _fetch_resultSet(self, session, rsid):
-        # Fetch a ResultSet
-        return self.resultSetStore.fetch_resultSet(session, rsid)
+    def _store_query(self, session, query):
+        # Store a query, return its identifier
+        identifier = sha1(query.toCQL()).hexdigest()
+        # The fist 7 characters should be OK; it's good enough for git...
+        query.id = identifier[:7]
+        return self.queryStore.store_query(session, query)
+
+    def _fetch_query(self, session, identifier):
+        # Fetch a Query
+        return self.queryStore.fetch_query(session, identifier)
 
     def _store_resultSet(self, session, rs):
         # Store the ResultSet
         if rs.id:
-            self.resultSetStore.store_resultSet(session, rs)
+            return self.resultSetStore.store_resultSet(session, rs)
         else:
-            self.resultSetStore.create_resultSet(session, rs)
+            return self.resultSetStore.create_resultSet(session, rs)
+
+    def _fetch_resultSet(self, session, rsid):
+        # Fetch a ResultSet
+        try:
+            return self.resultSetStore.fetch_resultSet(session, rsid)
+        except c3errors.ObjectDoesNotExistException:
+            query = self._fetch_query(session, rsid)
+            rs = self.database.search(session, query)
+            rs.id = rsid
+            return rs
 
     def _textFromRecord(self, rec):
         # Return a text representation of the Record
