@@ -11,11 +11,25 @@
     rightcol_class = "facets"
 %>
 <%block name="leftcol">
+    <%
+    if filtered:
+        queryString = capture(format_query, resultSet.query.rightOperand).strip()
+        filterString = capture(format_query, resultSet.query.leftOperand).strip()
+    else:
+        queryString = capture(format_query, resultSet.query).strip()
+        filterString = ''
+    %>
     % if queryString:
-    	<p class="hitreport">
+        <p class="hitreport">
+            You searched for
             ${queryString}
-    	</p>
-	% endif
+            % if filterString:
+                <br>
+                Filtered by:
+                ${filterString}
+            % endif
+        </p>
+    % endif
     
     <div class="rsMod">
         <div class="displaying">

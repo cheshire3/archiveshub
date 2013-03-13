@@ -1,11 +1,19 @@
 <%inherit file="base.html"/>
+<%namespace file="../searchResultsDefs.html" import="format_query"/>
 <%!
     # Global attributes
     page_title = "Search :: No Hits"
 %>
 <%block name="extra">
-    <p>
-        ${queryString}
+    <%
+    queryString = capture(format_query, query).strip()
+    %>
+    <p  class="hitreport">
+        % if queryString:
+            You searched for
+            ${queryString}
+            <br>
+        % endif
         Sorry, your search didn&apos;t match any records.
     </p>
     <div id="no-hits-img">

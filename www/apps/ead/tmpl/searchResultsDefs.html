@@ -86,6 +86,67 @@
     </div>
 </%def>
 
+<%def name="complex_query()">
+    <span title="sorry, it's too complex to summarize neatly here.">
+        a complex query
+    </span>
+</%def>
+
+<%def name="format_query(query)">
+    ## Format simple query and return user friendly text form.
+    ## 
+    ## For complex (multi-clause) queries, will return an empty string,
+    ## except in the special case where Keywords are being searched for
+    % try:
+        ## Check for single clause query
+        <%
+        idx = query.index
+        rel = query.relation.value
+        term = query.term.toCQL()
+        %>
+    % except AttributeError:
+        % try:
+            ## Check for special "keywords" multi-clause query
+            <%
+            idx = query.leftOperand.leftOperand.index
+            if idx.toCQL() != u'cql.anywhere':
+                return complex_query()
+            rel = query.leftOperand.leftOperand.relation.value
+            term = query.leftOperand.leftOperand.term.toCQL()
+            %>
+        % except AttributeError:
+            <%
+            return complex_query()
+            %>
+        % endtry
+    % endtry
+    % if idx is None:
+        <%
+        return complex_query()
+        %>
+    % endif
+    <strong>${term}</strong>
+    <%
+    if idx.toCQL() == u'cql.anywhere':
+        displayIdx = u''
+    else:
+        if idx.toCQL() == u'dc.identifier':
+            displayName = u'Ref numbers'
+        elif idx.toCQL() == u'bath.personalname':
+            displayName = u'People'
+        elif idx.toCQL() == u'bath.corporatename':
+            displayName = u'Organizations'
+        elif idx.toCQL() == u'bath.geographicname':
+            displayName = u'Places'
+        elif idx.toCQL() == u'bath.genreform':
+            displayName = u'Media Types'
+        else:
+            displayName = idx.value.title() + u's'
+        displayIdx = u' in <strong>{0}</strong>'.format(displayName)
+    %>
+    ${displayIdx}
+</%def>
+
 <%def name="format_resultSetItem(resultSet, sortBy, maximumRecords, startRecord, index)">
     <td>
     <%
