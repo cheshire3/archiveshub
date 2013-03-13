@@ -85,6 +85,14 @@
                 <default type="expires">3600</default>
             </options>
         </subConfig>
+        
+        <subConfig type="queryStore" id="eadQueryStore">
+            <objectType>cheshire3.sql.postgres.PostgresQueryStore</objectType>
+            <paths>
+                <path type="databaseName">db_ead</path>
+                <path type="tableName">eadQueryStore</path>
+            </paths>
+        </subConfig>
 
 	</subConfigs>
 
