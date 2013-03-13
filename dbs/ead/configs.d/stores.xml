@@ -82,6 +82,7 @@
             </paths>
             <options>
                 <default type="expires">3600</default>
+                <setting type="overwriteOkay">1</setting>
             </options>
         </subConfig>
         
