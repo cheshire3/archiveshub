@@ -102,9 +102,12 @@
         <%
         parentId = rec.process_xpath(session,
                                      '/c3component/@parent')[0]
+        parentId = parentId.split('/')[-1]
         %>
         ## OK, must be a component record
         <img src="img/folderOpen.gif" alt="|/`/"/>
+        <a href="${SCRIPT}/data/${parentId}">${parentId}</a>
+        <br>
     % except IndexError:
         ## Collection level
     % endtry
