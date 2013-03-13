@@ -27,6 +27,10 @@
                 <br>
                 Filtered by:
                 ${filterString}
+                <a href="${SCRIPT}/search.html?query=${resultSet.query.rightOperand.toCQL()|u}"
+                    class="delete-sprite">
+                    [X]
+                </a>
             % endif
         </p>
     % endif
