@@ -72,47 +72,6 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         start_response("200 OK", response_headers)
         return content
 
-    def _format_query(self, query):
-        u"""Format simple query and return user friendly text form.
-        
-        For complex (multi-clause) queries, will return an empty string,
-        except in the special case where Keywords are being searched for
-        """
-        try:
-            # Check for single clause query
-            idx = query.index
-            rel = query.relation.value
-            term = query.term.toCQL()
-        except AttributeError:
-            try:
-                # Check for special "keywords" multi-clause query
-                idx = query.leftOperand.leftOperand.index
-                if idx.toCQL() != u'cql.anywhere':
-                    return u''
-                rel = query.leftOperand.leftOperand.relation.value
-                term = query.leftOperand.leftOperand.term.toCQL()
-            except AttributeError:
-                return u''
-        if idx is None:
-            return u''
-        elif idx.toCQL() == u'cql.anywhere':
-            displayIdx = u''
-        else:
-            if idx.toCQL() == u'dc.identifier':
-                displayName = u'Ref numbers'
-            elif idx.toCQL() == u'bath.personalname':
-                displayName = u'People'
-            elif idx.toCQL() == u'bath.corporatename':
-                displayName = u'Organizations'
-            elif idx.toCQL() == u'bath.geographicname':
-                displayName = u'Places'
-            elif idx.toCQL() == u'bath.genreform':
-                displayName = u'Media Types'
-            else:
-                displayName = idx.value.title() + u's'
-            displayIdx = u' in <strong>{0}</strong>'.format(displayName)
-        return u'''You searched for <strong>{0}</strong>{1}.'''.format(term, displayIdx)
-
     def _get_query(self, form):
         session = self.session
         queryFactory = self.queryFactory
@@ -121,10 +80,7 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         filter_ = form.getvalue('filter', '')
         withinCollection = form.getvalue('withinCollection', None)
         if rsid:
-            qString = 'cql.resultSetId = "{0}/{1}"'.format(
-                self.resultSetStore.id,
-                rsid
-            )
+            qString = self._fetch_query(session, rsid).toCQL()
         elif not qString:
             qString = generate_cqlQuery(form)
             if not (len(qString)):
@@ -175,12 +131,20 @@ class EADSearchWsgiApplication(EADWsgiApplication):
                 return query
             self._log(20, 'Searching CQL query: %s' % (query.toCQL()))
             rs = db.search(session, query)
-            self._store_resultSet(session, rs)
+            if len(rs):
+                # Store the Query
+                query = self._store_query(session, query)
+                # Store the Resultset
+                rs.id = query.id
+                self._store_resultSet(session, rs)
+            else:
+                # Log 0 result?
+                pass
         if sortBy:
             for spec in reversed(sortBy):
                 rs.order(session, spec)
         return rs
-    
+
     def search(self, form):
         if not form:
             # Simply return the search form
@@ -193,13 +157,12 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         if not isinstance(rs, ResultSet):
             # Error message
             return [rs]
-        queryString = self._format_query(rs.query)
         facets = self.facets(rs)
         if len(rs):
             return [self._render_template('searchResults.html',
                                           session=session,
-                                          queryString=queryString,
                                           resultSet=rs,
+                                          filtered='filter' in form,
                                           sortBy=sortBy,
                                           maximumRecords=maximumRecords,
                                           startRecord=startRecord, 
@@ -207,14 +170,14 @@ class EADSearchWsgiApplication(EADWsgiApplication):
                                           )]
         else:
             return [self._render_template('fail/noHits.html',
-                                          queryString=queryString)]
+                                          query=rs.query)]
 
     def lastResultSet(self, form):
         raise NotImplementedError()
 
     def similar(self, form):
         raise NotImplementedError()
-    
+
     def facets(self, rs):
         session = self.session
         db = self.database
@@ -282,7 +245,6 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         if not isinstance(rs, ResultSet):
             # Error message
             return rs
-        queryString = self._format_query(rs.query)
         rec = rs[hit].fetch_record(session)
         # Save rec.id now
         recid = rec.id
@@ -293,19 +255,20 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         rec = xmlp.process_document(session, doc)
         self._log(10, 'Search terms highlighted')
         summaryTxr = db.get_object(session, 'htmlSummaryTxr')
-        doc = summaryTxr.process_record(session, rec)
         page = self._render_template('summary.html',
                                      session=session,
-                                     queryString=queryString,
                                      resultSet=rs,
+                                     filtered='filter' in form,
                                      sortBy=sortBy,
                                      maximumRecords=maximumRecords,
                                      startRecord=startRecord, 
-                                     doc=doc
+                                     rec=rec,
+                                     txr=summaryTxr
                                      )
         page = page.replace('SCRIPT', self.script)
-        page = page.replace('DATAURL', 'data'.format(self.script))
+        page = page.replace('DATAURL', '{0}/data'.format(self.script))
         page = page.replace('RECID', recid)
+        page = page.replace('LINKTOPARENT', '')
         return page
 
     def full(self, form):

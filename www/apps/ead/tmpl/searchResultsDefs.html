@@ -1,6 +1,7 @@
 <%!
     # Imports
     from cheshire3archives.apps.ead.base import dataFromRecordXPaths
+    from cheshire3archives.apps.ead.base import parentFromComponent
 %>
 
 <%def name="back_links(resultSet, maximumRecords, startRecord)">
@@ -38,7 +39,7 @@
     <div class="displaying">
         Displaying <strong>${startRecord}</strong>
         to <strong>${min(startRecord + maximumRecords - 1, len(resultSet))}</strong>
-        of ${len(resultSet)}.
+        of <strong>${len(resultSet)}</strong> hits.
     </div>
 </%def>
 
@@ -86,6 +87,90 @@
     </div>
 </%def>
 
+<%def name="complex_query()">
+    <span title="sorry, it's too complex to summarize neatly here.">
+        a complex query
+    </span>
+</%def>
+
+<%def name="format_query(query)">
+    ## Format simple query and return user friendly text form.
+    ## 
+    ## For complex (multi-clause) queries, will return an empty string,
+    ## except in the special case where Keywords are being searched for
+    % try:
+        ## Check for single clause query
+        <%
+        idx = query.index
+        rel = query.relation.value
+        term = query.term.toCQL()
+        %>
+    % except AttributeError:
+        % try:
+            ## Check for special "keywords" multi-clause query
+            <%
+            idx = query.leftOperand.leftOperand.index
+            if idx.toCQL() != u'cql.anywhere':
+                return complex_query()
+            rel = query.leftOperand.leftOperand.relation.value
+            term = query.leftOperand.leftOperand.term.toCQL()
+            %>
+        % except AttributeError:
+            <%
+            return complex_query()
+            %>
+        % endtry
+    % endtry
+    % if idx is None:
+        <%
+        return complex_query()
+        %>
+    % endif
+    <strong>${term}</strong>
+    <%
+    if idx.toCQL() == u'cql.anywhere':
+        displayIdx = u''
+    else:
+        if idx.toCQL() == u'dc.identifier':
+            displayName = u'Ref numbers'
+        elif idx.toCQL() == u'bath.personalname':
+            displayName = u'People'
+        elif idx.toCQL() == u'bath.corporatename':
+            displayName = u'Organizations'
+        elif idx.toCQL() == u'bath.geographicname':
+            displayName = u'Places'
+        elif idx.toCQL() == u'bath.genreform':
+            displayName = u'Media Types'
+        else:
+            displayName = idx.value.title() + u's'
+        displayIdx = u' in <strong>{0}</strong>'.format(displayName)
+    %>
+    ${displayIdx}
+</%def>
+
+<%def name="parentLink(session, rec)">
+    <%
+    titleXPaths = ['/*/*/did/unittitle',
+                   '/ead/eadheader/filedesc/titlestmt/titleproper'
+                   ]
+    %>
+    % try:
+        <%
+        parentId = rec.process_xpath(session,
+                                     '/c3component/@parent')[0]
+        parentRec = parentFromComponent(session, rec)
+        %>
+        ## OK, must be a component record
+        <img src="${config.get('icons', 'folder-open-url')}" alt="|/`/"/>
+        <a href="${SCRIPT}/data/${parentRec.id}">
+            ${dataFromRecordXPaths(session, parentRec, titleXPaths)}
+        </a>
+        <br>
+    % except IndexError:
+        ## Collection level
+    % endtry
+</%def>
+
 <%def name="format_resultSetItem(resultSet, sortBy, maximumRecords, startRecord, index)">
     <td>
     <%
@@ -98,19 +183,12 @@
                   ]
     %>
     ## Check for potential component-level record
-    % try:
-        <%
-        parentId = rec.process_xpath(session,
-                                     '/c3component/@parent')[0]
-        %>
-        ## OK, must be a component record
-        <img src="img/folderOpen.gif" alt="|/`/"/>
-    % except IndexError:
-        ## Collection level
-    % endtry
+    ${parentLink(session, rec)}
     <a \
         href="summary.html?rsid=${resultSet.id}&amp;hit=${index}&amp;startRecord=${startRecord}&amp;maximumRecords=${maximumRecords}">
-        ${dataFromRecordXPaths(session, rec, titleXPaths)}
+        <strong>
+            ${dataFromRecordXPaths(session, rec, titleXPaths)}
+        </strong>
     </a>
     <br/>
     ${dataFromRecordXPaths(session, rec, dateXPaths, nTerms=3)}

@@ -7,6 +7,7 @@ import re
 import textwrap
 import traceback
 
+from hashlib import sha1
 from pkg_resources import Requirement, get_distribution
 from pkg_resources import resource_filename, resource_stream
 from ConfigParser import SafeConfigParser
@@ -50,6 +51,8 @@ class EADWsgiApplication(object):
         self.config = config
         self.queryFactory = self.database.get_object(session,
                                                      'defaultQueryFactory')
+        self.queryStore = self.database.get_object(session,
+                                                   'eadQueryStore')
         self.resultSetStore = self.database.get_object(session,
                                                        'eadResultSetStore')
         template_dir = resource_filename(
@@ -147,6 +150,7 @@ class EADWsgiApplication(object):
 #        '''.format(excName, excArgs, excTb).split('\n')
 
     def _fetch_record(self, session, recid):
+        # Fetch a Record
         session = self.session
         db = self.database
         queryFactory = self.queryFactory
@@ -158,16 +162,33 @@ class EADWsgiApplication(object):
         except IndexError:
             raise c3errors.FileDoesNotExistException(recid)
 
-    def _fetch_resultSet(self, session, rsid):
-        # Fetch a ResultSet
-        return self.resultSetStore.fetch_resultSet(session, rsid)
+    def _store_query(self, session, query):
+        # Store a query, return its identifier
+        identifier = sha1(query.toCQL()).hexdigest()
+        # The fist 7 characters should be OK; it's good enough for git...
+        query.id = identifier[:7]
+        return self.queryStore.store_query(session, query)
+
+    def _fetch_query(self, session, identifier):
+        # Fetch a Query
+        return self.queryStore.fetch_query(session, identifier)
 
     def _store_resultSet(self, session, rs):
         # Store the ResultSet
         if rs.id:
-            self.resultSetStore.store_resultSet(session, rs)
+            return self.resultSetStore.store_resultSet(session, rs)
         else:
-            self.resultSetStore.create_resultSet(session, rs)
+            return self.resultSetStore.create_resultSet(session, rs)
+
+    def _fetch_resultSet(self, session, rsid):
+        # Fetch a ResultSet
+        try:
+            return self.resultSetStore.fetch_resultSet(session, rsid)
+        except c3errors.ObjectDoesNotExistException:
+            query = self._fetch_query(session, rsid)
+            rs = self.database.search(session, query)
+            rs.id = rsid
+            return rs
 
     def _textFromRecord(self, rec):
         # Return a text representation of the Record
@@ -298,6 +319,52 @@ class EADWsgiApplication(object):
         return {scanTermNorm: (hitstart, scanData, hitend)}
 
 
+def parentFromComponent(session, record):
+    # Get Database object
+    db = session.server.get_object(session, session.database)
+    wf = db.get_object(session, "ParentFromComponentWorkflow")
+    return wf.process(session, record)
+
+
+def backwalkComponentTitles(session, record):
+    # Get Database object
+    db = session.server.get_object(session, session.database)
+    normIdFlow = db.get_object(session, 'normalizeDataIdentifierWorkflow')
+    normIdFlow.load_cache(session, db)
+    xpath = record.process_xpath(session, '/c3component/@xpath')[0]
+    # Get parent Record
+    parentRec = parentFromComponent(session, record)
+        
+    def __processNode(node):
+        t = node.xpath('string(./did/unittitle)')
+        if not len(t):
+            t = '(untitled)'
+        i = node.xpath('string(./did/unitid)')
+        if len(i):
+            i = parentRec.id + '/' + normIdFlow.process(session, i)
+        else:
+            i = None
+        return [i, t.strip()]
+        
+#    node = parentRec.get_dom(session).xpath(xpath)[0]
+    node = parentRec.process_xpath(session, xpath)[0]
+    titles = [__processNode(node)]
+    for n in node.iterancestors():
+        if n.tag == 'dsc':
+            continue
+        elif n.tag == 'ead':
+            break
+        else:
+            titles.append(__processNode(n))
+    
+    titles.reverse()
+    # Top level id doesn't conform to pattern - is simply the top level
+    # record id
+    titles[0][0] = parentRec.id
+    return titles
+    # / _backwalkTitles() ------------------------------------------------
+    
+
 def dataFromRecordXPaths(session, rec, xps, nTerms=1, joiner=u'; '):
     """Extract data from ``rec`` return a single unicode object.
     
@@ -385,6 +452,13 @@ rewind-url = %(base-url)s/back.png
 fast-rewind-url = %(base-url)s/fback.png
 plus-url = %(base-url)s/form_add_row.png
 what-url = %(base-url)s/whatisthis.png
+folder-open-url = %(base-url)s/folderOpen.png
+folder-closed-url = %(base-url)s/folderClosed.png
+
+[cache]
+# This section contains configuration for where to cache HTML copies of
+# descriptions
+html_cache_path = {html_cache_path}
 
 [casing]
 # Configuration settings related to capitalization
@@ -393,8 +467,14 @@ always_lower = a,and,by,etc,for,in,is,of,on,or,s,th,that,the,to
 # Comma separate lists of words that should always appear in UPPER CASE
 always_upper = BBC,BT,CNN,UK,US,USA
 # Regular expression for Roman numerals
-roman_numeral_regex = ^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$
-""")
+roman_numeral_regex = ^M{{0,4}}(CM|CD|D?C{{0,3}})(XC|XL|L?X{{0,3}})(IX|IV|V?I{{0,3}})$
+""".format(
+   html_cache_path=resource_filename(
+       Requirement.parse('cheshire3archives'),
+       'www/apps/ead/html'
+   )
+))
+
 config.readfp(configDefaults, 'hard-coded')
 app_config_path = resource_filename(
     Requirement.parse('cheshire3archives'),
@@ -408,6 +488,7 @@ application = EADWsgiApplication(session, db, config)
 namespaceUriHash = {
     'dc': 'http://purl.org/dc/elements/1.0',
     'sru_dc': "info:srw/schema/1/dc-v1.1",
+    'xhtml': "http://www.w3.org/1999/xhtml",
     'zrx': "http://explain.z3950.org/dtd/2.0/",
     'c3': "http://www.cheshire3.org",
     'rec': "info:srw/extension/2/record-1.1",

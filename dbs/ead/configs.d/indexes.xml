@@ -233,6 +233,25 @@
 				</process>
 			</source>
 		</subConfig>
+        
+        <!-- parent titles -->
+        <subConfig type="index" id="idx-parenttitle">
+            <objectType>cheshire3.index.SimpleIndex</objectType>
+            <paths>
+                <object type="indexStore" ref="indexStore" />
+            </paths>
+            <source>
+                <!-- Load the parent record into memory -->
+                <preprocess ref="ParentFromComponentWorkflow"/>
+                <selector ref="titleSelector"/>
+                <process>
+                    <object type="extractor" ref="SimpleExtractor" />
+                </process>
+            </source>
+            <options>
+                <setting type="vectors">1</setting>
+            </options>
+        </subConfig>
 
 		<!-- reference numbers -->
 		<subConfig type="index" id="idx-unitid">

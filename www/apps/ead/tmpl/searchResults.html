@@ -11,11 +11,30 @@
     rightcol_class = "facets"
 %>
 <%block name="leftcol">
-	<p class="hitreport">
-        ${queryString}
-        There are ${len(resultSet)} hits.
-	</p>
-	
+    <%
+    if filtered:
+        queryString = capture(format_query, resultSet.query.rightOperand).strip()
+        filterString = capture(format_query, resultSet.query.leftOperand).strip()
+    else:
+        queryString = capture(format_query, resultSet.query).strip()
+        filterString = ''
+    %>
+    % if queryString:
+        <p class="hitreport">
+            You searched for
+            ${queryString}
+            % if filterString:
+                <br>
+                Filtered by:
+                ${filterString}
+                <a href="${SCRIPT}/search.html?query=${resultSet.query.rightOperand.toCQL()|u}"
+                    class="delete-sprite">
+                    [X]
+                </a>
+            % endif
+        </p>
+    % endif
+    
     <div class="rsMod">
         <div class="displaying">
             ${displaying(resultSet, sortBy, maximumRecords, startRecord)}
@@ -66,6 +85,7 @@
 
     <script type="text/javascript">
     $(document).ready(function() {
+        $('.facet').each(truncateList);
         $('select[name="sortBy"]').change(function() {
             $(this).closest("form").submit();
         });

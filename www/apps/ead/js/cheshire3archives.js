@@ -742,11 +742,18 @@ function deleteRow(tr){
 // Copyright: &copy; University of Liverpool 2005-2008
 //
 // Version History:
-// 0.01 - 03/08/2006 - JH - Nested list manipulation functions pasted in from previous script for easier error tracking etc.
-// 0.02 - 11/01/2008 - CS - Code adapted to allow list to begin collapsed or uncollapsed (collapseList boolean) and to allow
-//							for either each level to be controlled to that only one folder from it can be open at a time or not
+// 0.01 - 03/08/2006 - JH - Nested list manipulation functions pasted in from
+//                          previous script for easier error tracking etc.
+// 0.02 - 11/01/2008 - CS - Code adapted to allow list to begin collapsed or
+//                          uncollapsed (collapseList boolean) and to allow for
+//                          either each level to be controlled to that only one
+//                          folder from it can be open at a time or not
 //							(controlLevels boolean)
-						  - Function names changed to be more generic (necessary changes made in eadAdminHandler.py, htmlFragments.py and eadEditingHandler
+//                        - Function names changed to be more generic
+//                          (necessary changes made in eadAdminHandler.py,
+//                          htmlFragments.py and eadEditingHandler
+// X.xx - 12/03/2013 - JH - Added function to truncate long lists (e.g. facets)
+//
 */
 
 /* Note: list must be well formed, all tags closed, 
@@ -1086,6 +1093,31 @@ function isInArray(obj, array) {
   	} 
   	return false;
 }
+
+
+function truncateList(index, list) {
+    if ($(list).children('li').length > 5) { 
+        $(list).children('li:gt(2)').hide();
+        // Add links to un-truncate
+        
+        $(list).append('<li class="unmarked"><a href="javascript:void(0);" title="Show all ' + $(list).children('li').length + '">' + ($(list).children('li').length - 3) + ' more...</a></li>')
+        // Add action for un-truncate
+        $(list).children('li:last').children('a').click(
+            function(){
+                console.log($(this));
+                if ($(this).closest('li').siblings().last().is(":visible")) {
+                    $(this).closest('ul').children('li:gt(2):not(:last)').slideUp();
+                    $(this).text(' more...').attr('title', 'Show all');;
+                } else {
+                    $(this).closest('li').siblings().slideDown();
+                    $(this).text('fewer...').attr('title', 'Show only the top 3');
+                }
+            }
+        );
+    }
+}
+
+
 /**
 *
 * Simple Context Menu
@@ -4392,14 +4424,16 @@ function templateConflicts(){
 //
 // Version History:
 // 0.01 - 28/07/2008 - JH - functions scripted
-//
+// X.xx - 12/03/2013 - JH - Replace some low-level code with jQuery
+//                          (ported from Archives Hub)
 */
 
 function fadeToWhite(element,red,green,blue) {
-  if (element.fade) {
-    clearTimeout(element.fade);
+    
+  if ($(element).fade) {
+    clearTimeout($(element).fade);
   }
-  element.style.backgroundColor = "rgb("+red+","+green+","+blue+")";
+  $(element).css('background-color', "rgb("+red+","+green+","+blue+")")
   if (red == 255 && green == 255 && blue == 255) {
     return;
   }
@@ -4407,9 +4441,9 @@ function fadeToWhite(element,red,green,blue) {
   var newgreen = green + Math.ceil((255 - green)/10);
   var newblue = blue + Math.ceil((255 - blue)/10);
   var repeat = function() {
-    fadeToWhite(element,newred,newgreen,newblue)
+    fadeToWhite($(element), newred, newgreen, newblue)
   };
-  element.fade = setTimeout(repeat,10);
+  $(element).fade = setTimeout(repeat,10);
 }
 
 linkHash = new Array();
@@ -4418,50 +4452,33 @@ linkHash['plusMinus'] = new Array('[+]', '[-]');
 linkHash['arrows'] = new Array('<img src="/icons/right.png" alt="&gt;"/>', '<img src="/icons/down.png" alt="V"/>');
 linkHash['folders'] = new Array('<img src="/ead/img/folderClosed.gif" alt="[+]"/>', '<img src="/ead/img/folderOpen.gif" alt="[-]"/>');
 
-function toggleShow(callLink, elementId, toggleStyle){
-	if( !document.getElementById) {
-		return;
-	}
-	if (typeof toggleStyle == "undefined") {
-    	toggleStyle = "text";
-  	}
-	e = document.getElementById( elementId );
-	if (e.style.display == 'block') {
-		callLink.innerHTML = linkHash[toggleStyle][0];
-		e.style.display = 'none';
-	} else {
-		callLink.innerHTML = linkHash[toggleStyle][1];
-		e.style.display = 'block';
-	}
-	return;
-}
-
-function hideStuff(){
-	if( !document.getElementsByTagName) {
-  		return;
-  	}
-  	var linkList = document.getElementsByTagName("a");
-	for (var i = 0; i < linkList.length; i++) {
-		var el = linkList[i]
-		if (el.className.match('jstoggle')){
-			var classBits = el.className.split('-')
-			var toggleStyle = classBits[classBits.length-1]
-			el.innerHTML = linkHash[toggleStyle][0]
-			el.onclick = function() {
-				var hrefParts = this.getAttribute("href").split("#")
-				var div = hrefParts.pop()
-				var classBits = this.className.split('-')
-				var style = classBits[classBits.length-1]
-				toggleShow(this, div, style);
-				return false;
-			}
-		}
-	}
-	var divList = document.getElementsByTagName("div");
-	for (var i = 0; i < divList.length; i++) {
-		var el = divList[i]
-		if (el.className.match('jshide')){
-			el.style.display = 'none';
-		}
-	}
+function hideStuff() {
+    $('a[class|="jstoggle"]').each(function(i, el){
+        var classBits = el.className.split('-')
+        var toggleStyle = classBits[classBits.length-1]
+        if (toggleStyle != 'jstoggle') {
+            $(el).html(linkHash[toggleStyle][0]);
+        }
+        var hrefParts = el.getAttribute("href").split("#");
+        var divId = hrefParts.pop();
+        var div = $('#' + divId)
+        $(el).click(function(evt){
+            $(div).slideToggle(200, function(){
+                // after toggle, change link text
+                if (typeof(toggleStyle) != "undefined" && toggleStyle != 'jstoggle') {
+                    if (linkHash[toggleStyle].indexOf($(el).html()) == -1){
+                        $(el).html(linkHash[toggleStyle][1 - linkHash[toggleStyle].indexOf($(el).text())]);
+                    } else {
+                        $(el).html(linkHash[toggleStyle][1 - linkHash[toggleStyle].indexOf($(el).html())]);
+                    }
+                }
+            });
+            // make sure displayed is not off bottom of screen
+            if ($(div).is(":visible")) {
+                $(div).parents(".column:eq(0)").animate({scrollTop: $(div).offset().top}, 500);
+            }
+            return false;
+        });
+    });
+    $('div[class*="jshide"]').hide();
 }
