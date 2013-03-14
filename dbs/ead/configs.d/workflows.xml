@@ -212,6 +212,20 @@
 			</workflow>
 		</subConfig>
 		
+        <subConfig type="workflow" id="ParentFromComponentWorkflow">
+            <objectType>cheshire3.workflow.CachingWorkflow</objectType>
+            <workflow>
+                <try>
+                    <object type="transformer" ref="ComponentParentTransformer"/>
+                    <object type="parser" ref="LxmlParser"/>
+                </try>
+                <except>
+                    <!-- Not a component -->
+                    <return/>
+                </except>
+            </workflow>
+        </subConfig>
+        
 		<!--
 		Output/display related Workflows
 		-->
