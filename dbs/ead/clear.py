@@ -8,6 +8,7 @@ import time
 from lockfile import FileLock
 
 from cheshire3.baseObjects import Session
+from cheshire3.exceptions import ObjectDoesNotExistException
 from cheshire3.server import SimpleServer
 
 from cheshire3.commands.cmd_utils import identify_database
