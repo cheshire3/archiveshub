@@ -217,12 +217,14 @@
             <workflow>
                 <try>
                     <object type="transformer" ref="ComponentParentTransformer"/>
-                    <object type="parser" ref="LxmlParser"/>
                 </try>
                 <except>
                     <!-- Not a component -->
                     <return/>
                 </except>
+                <else>
+                    <object type="parser" ref="LxmlParser"/>
+                </else>
             </workflow>
         </subConfig>
         

@@ -1,6 +1,7 @@
 <%!
     # Imports
     from cheshire3archives.apps.ead.base import dataFromRecordXPaths
+    from cheshire3archives.apps.ead.base import parentFromComponent
 %>
 
 <%def name="back_links(resultSet, maximumRecords, startRecord)">
@@ -163,11 +164,13 @@
         <%
         parentId = rec.process_xpath(session,
                                      '/c3component/@parent')[0]
-        parentId = parentId.split('/')[-1]
+        parentRec = parentFromComponent(session, rec)
         %>
         ## OK, must be a component record
         <img src="img/folderOpen.gif" alt="|/`/"/>
-        <a href="${SCRIPT}/data/${parentId}">${parentId}</a>
+        <a href="${SCRIPT}/data/${parentRec.id}">
+            ${dataFromRecordXPaths(session, parentRec, titleXPaths)}
+        </a>
         <br>
     % except IndexError:
         ## Collection level

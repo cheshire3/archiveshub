@@ -319,6 +319,12 @@ class EADWsgiApplication(object):
         return {scanTermNorm: (hitstart, scanData, hitend)}
 
 
+def parentFromComponent(session, record):
+    db = session.server.get_object(session, session.database)
+    wf = db.get_object(session, "ParentFromComponentWorkflow")
+    return wf.process(session, record)
+
+
 def dataFromRecordXPaths(session, rec, xps, nTerms=1, joiner=u'; '):
     """Extract data from ``rec`` return a single unicode object.
     
