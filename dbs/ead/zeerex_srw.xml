@@ -45,18 +45,21 @@
                 <supports type="relation">=</supports>
             </configInfo>
         </index>
-        	  
+        
         <index c3:index="idx-parentid">
-            <title>ID of parent document (including recordStore)</title>
+            <title>ID of parent document/collection (includes recordStore identifier)</title>
             <map>
+                <name set="rec">collectionIdentifier</name>
                 <name set="ead">parentid</name>
             </map>
             <configInfo>
-                <supports type="relation">exact</supports>
                 <supports type="relation">=</supports>
+                <supports type="relation">any</supports>
+                <supports type="relation">all</supports>
+                <supports type="relation">exact</supports>
             </configInfo>
         </index>
-        	
+        
         <index c3:index="idx-unitid">
             <title>Unit Identifier / Reference Number</title>
             <map>
@@ -324,19 +327,6 @@
 			</configInfo>
 		</index>
         
-        <index c3:index="idx-parentid">
-            <title>Collection Identifier</title>
-            <map>
-                <name set="rec">collectionIdentifier</name>
-            </map>
-            <configInfo>
-                <supports type="relation">=</supports>
-                <supports type="relation">any</supports>
-                <supports type="relation">all</supports>
-                <supports type="relation">exact</supports>
-            </configInfo>
-        </index>
-	
 	</indexInfo>
 
 	<schemaInfo>
