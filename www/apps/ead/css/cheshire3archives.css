@@ -441,6 +441,11 @@ div#no-hits-img img {
 
 }
 
+div.indent {
+    margin-left: 25px;
+    text-indent: -25px;
+}
+
 /* HEADINGS */
 
 h1 {

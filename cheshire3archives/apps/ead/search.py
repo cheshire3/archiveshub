@@ -255,7 +255,6 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         rec = xmlp.process_document(session, doc)
         self._log(10, 'Search terms highlighted')
         summaryTxr = db.get_object(session, 'htmlSummaryTxr')
-        doc = summaryTxr.process_record(session, rec)
         page = self._render_template('summary.html',
                                      session=session,
                                      resultSet=rs,
@@ -263,11 +262,13 @@ class EADSearchWsgiApplication(EADWsgiApplication):
                                      sortBy=sortBy,
                                      maximumRecords=maximumRecords,
                                      startRecord=startRecord, 
-                                     doc=doc
+                                     rec=rec,
+                                     txr=summaryTxr
                                      )
         page = page.replace('SCRIPT', self.script)
         page = page.replace('DATAURL', '{0}/data'.format(self.script))
         page = page.replace('RECID', recid)
+        page = page.replace('LINKTOPARENT', '')
         return page
 
     def full(self, form):

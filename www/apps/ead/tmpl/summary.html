@@ -1,12 +1,42 @@
 <%inherit file="searchResults.html"/>
-<%namespace file="searchResultsDefs.html" import="*"/>
 <%!
+    # Imports
+    from cheshire3archives.apps.ead.base import backwalkComponentTitles
+
     # Over-ride global attributes
     page_title = "Display :: Brief"
     leftcol_class = "search"
     rightcol_class = "brief"
 %>
 
+<%def name="hierarchyList(titles)">
+    % if titles:
+        <div class="indent">
+            <img src="${config.get('icons', 'folder-open-url')}" alt="|/`/">
+            <%identifier, title = titles.pop(0)%>
+            
+            % if identifier:
+                <a href="${SCRIPT}/data/${identifier}">${title|h}</a>
+            % else:
+                ${title}
+            % endif
+            ${hierarchyList(titles)}
+        </div>
+    % endif
+</%def>
+
 <%block name="rightcol">
-    ${doc.get_raw(session).decode('utf-8')}
+    % try:
+        <%
+        parentId = rec.process_xpath(session,
+                                     '/c3component/@parent')[0]
+        titles = backwalkComponentTitles(session, rec)
+        %>
+        ## OK, must be a component record
+        ${hierarchyList(titles[:-1])}
+    % except IndexError:
+        ## Collection level
+    % endtry
+    
+    ${txr.process_record(session, rec).get_raw(session).decode('utf-8')}
 </%block>

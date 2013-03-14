@@ -148,18 +148,12 @@
     ${displayIdx}
 </%def>
 
-<%def name="format_resultSetItem(resultSet, sortBy, maximumRecords, startRecord, index)">
-    <td>
+<%def name="parentLink(session, rec)">
     <%
-    rec = resultSet[index].fetch_record(session)
     titleXPaths = ['/*/*/did/unittitle',
                    '/ead/eadheader/filedesc/titlestmt/titleproper'
                    ]
-    dateXPaths = ['/*/*/did/unitdate',
-                  '/*/*/did/unittitle/unitdate'
-                  ]
     %>
-    ## Check for potential component-level record
     % try:
         <%
         parentId = rec.process_xpath(session,
@@ -175,6 +169,21 @@
     % except IndexError:
         ## Collection level
     % endtry
+</%def>
+
+<%def name="format_resultSetItem(resultSet, sortBy, maximumRecords, startRecord, index)">
+    <td>
+    <%
+    rec = resultSet[index].fetch_record(session)
+    titleXPaths = ['/*/*/did/unittitle',
+                   '/ead/eadheader/filedesc/titlestmt/titleproper'
+                   ]
+    dateXPaths = ['/*/*/did/unitdate',
+                  '/*/*/did/unittitle/unitdate'
+                  ]
+    %>
+    ## Check for potential component-level record
+    ${parentLink(session, rec)}
     <a \
         href="summary.html?rsid=${resultSet.id}&amp;hit=${index}&amp;startRecord=${startRecord}&amp;maximumRecords=${maximumRecords}">
         <strong>

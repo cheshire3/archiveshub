@@ -320,10 +320,50 @@ class EADWsgiApplication(object):
 
 
 def parentFromComponent(session, record):
+    # Get Database object
     db = session.server.get_object(session, session.database)
     wf = db.get_object(session, "ParentFromComponentWorkflow")
     return wf.process(session, record)
 
+
+def backwalkComponentTitles(session, record):
+    # Get Database object
+    db = session.server.get_object(session, session.database)
+    normIdFlow = db.get_object(session, 'normalizeDataIdentifierWorkflow')
+    normIdFlow.load_cache(session, db)
+    xpath = record.process_xpath(session, '/c3component/@xpath')[0]
+    # Get parent Record
+    parentRec = parentFromComponent(session, record)
+        
+    def __processNode(node):
+        t = node.xpath('string(./did/unittitle)')
+        if not len(t):
+            t = '(untitled)'
+        i = node.xpath('string(./did/unitid)')
+        if len(i):
+            i = parentRec.id + '/' + normIdFlow.process(session, i)
+        else:
+            i = None
+        return [i, t.strip()]
+        
+#    node = parentRec.get_dom(session).xpath(xpath)[0]
+    node = parentRec.process_xpath(session, xpath)[0]
+    titles = [__processNode(node)]
+    for n in node.iterancestors():
+        if n.tag == 'dsc':
+            continue
+        elif n.tag == 'ead':
+            break
+        else:
+            titles.append(__processNode(n))
+    
+    titles.reverse()
+    # Top level id doesn't conform to pattern - is simply the top level
+    # record id
+    titles[0][0] = parentRec.id
+    return titles
+    # / _backwalkTitles() ------------------------------------------------
+    
 
 def dataFromRecordXPaths(session, rec, xps, nTerms=1, joiner=u'; '):
     """Extract data from ``rec`` return a single unicode object.
