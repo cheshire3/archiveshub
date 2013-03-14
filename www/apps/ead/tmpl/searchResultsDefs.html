@@ -184,8 +184,12 @@
     %>
     ## Check for potential component-level record
     ${parentLink(session, rec)}
-    <a \
-        href="summary.html?rsid=${resultSet.id}&amp;hit=${index}&amp;startRecord=${startRecord}&amp;maximumRecords=${maximumRecords}">
+    <%
+    href="summary.html?rsid={resultSet.id}&amp;hit={index}&amp;startRecord={startRecord}&amp;maximumRecords={maximumRecords}".format(**locals())
+    for criteria in sortBy:
+        href += '&amp;sortBy={criteria}'.format(**locals())
+    %>
+    <a href="${SCRIPT}/${href}">
         <strong>
             ${dataFromRecordXPaths(session, rec, titleXPaths)}
         </strong>
