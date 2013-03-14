@@ -669,14 +669,6 @@ a:visited:hover {
     text-decoration: underline;
 }
 
-table.rs a:link,
-table.rs a:visited,
-table.rs a:hover,
-table.rs a:visited:hover {
-    font-weight: bolder;
-    text-decoration: none;
-}
-
 a.jscall {
   color: #0000ff;
   font-size: small;	

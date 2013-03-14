@@ -177,7 +177,9 @@
     % endtry
     <a \
         href="summary.html?rsid=${resultSet.id}&amp;hit=${index}&amp;startRecord=${startRecord}&amp;maximumRecords=${maximumRecords}">
-        ${dataFromRecordXPaths(session, rec, titleXPaths)}
+        <strong>
+            ${dataFromRecordXPaths(session, rec, titleXPaths)}
+        </strong>
     </a>
     <br/>
     ${dataFromRecordXPaths(session, rec, dateXPaths, nTerms=3)}
