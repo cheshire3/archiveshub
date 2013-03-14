@@ -167,7 +167,7 @@
         parentRec = parentFromComponent(session, rec)
         %>
         ## OK, must be a component record
-        <img src="img/folderOpen.gif" alt="|/`/"/>
+        <img src="${config.get('icons', 'folder-open-url')}" alt="|/`/"/>
         <a href="${SCRIPT}/data/${parentRec.id}">
             ${dataFromRecordXPaths(session, parentRec, titleXPaths)}
         </a>

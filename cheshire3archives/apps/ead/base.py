@@ -412,6 +412,8 @@ rewind-url = %(base-url)s/back.png
 fast-rewind-url = %(base-url)s/fback.png
 plus-url = %(base-url)s/form_add_row.png
 what-url = %(base-url)s/whatisthis.png
+folder-open-url = %(base-url)s/folderOpen.png
+folder-closed-url = %(base-url)s/folderClosed.png
 
 [cache]
 # This section contains configuration for where to cache HTML copies of
