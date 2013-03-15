@@ -7,10 +7,10 @@ import re
 import textwrap
 import traceback
 
+from ConfigParser import SafeConfigParser
 from hashlib import sha1
 from pkg_resources import Requirement, get_distribution
 from pkg_resources import resource_filename, resource_stream
-from ConfigParser import SafeConfigParser
 try:
     from CStringIO import CStringIO as StringIO
 except ImportError:
@@ -319,6 +319,20 @@ class EADWsgiApplication(object):
         return {scanTermNorm: (hitstart, scanData, hitend)}
 
 
+# Methods that could usefully be imported by Templates
+
+def listCollections(session):
+    "Return a list of Collection Identifier, Collection Title tuples."""
+    # Get Database object
+    db = session.server.get_object(session, session.database)
+    identifierIdx = db.get_object(session, 'idx-collectionid')
+    titleIdx = db.get_object(session, 'idx-collectiontitle')
+    for rs in identifierIdx:
+        term = rs.queryTerm
+        titles = titleIdx.facets(session, rs)
+        yield (term, titles[0][0])
+    
+
 def collectionFromComponent(session, record):
     # Get Database object
     db = session.server.get_object(session, session.database)
@@ -363,7 +377,7 @@ def backwalkComponentTitles(session, record):
     titles[0][0] = parentRec.id
     return titles
     # / _backwalkTitles() ------------------------------------------------
-    
+
 
 def dataFromRecordXPaths(session, rec, xps, nTerms=1, joiner=u'; '):
     """Extract data from ``rec`` return a single unicode object.
