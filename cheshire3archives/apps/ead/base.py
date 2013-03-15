@@ -319,10 +319,10 @@ class EADWsgiApplication(object):
         return {scanTermNorm: (hitstart, scanData, hitend)}
 
 
-def parentFromComponent(session, record):
+def collectionFromComponent(session, record):
     # Get Database object
     db = session.server.get_object(session, session.database)
-    wf = db.get_object(session, "ParentFromComponentWorkflow")
+    wf = db.get_object(session, "CollectionFromComponentWorkflow")
     return wf.process(session, record)
 
 
@@ -333,7 +333,7 @@ def backwalkComponentTitles(session, record):
     normIdFlow.load_cache(session, db)
     xpath = record.process_xpath(session, '/c3component/@xpath')[0]
     # Get parent Record
-    parentRec = parentFromComponent(session, record)
+    parentRec = collectionFromComponent(session, record)
         
     def __processNode(node):
         t = node.xpath('string(./did/unittitle)')

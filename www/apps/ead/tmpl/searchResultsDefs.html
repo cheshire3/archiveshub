@@ -1,7 +1,7 @@
 <%!
     # Imports
     from cheshire3archives.apps.ead.base import dataFromRecordXPaths
-    from cheshire3archives.apps.ead.base import parentFromComponent
+    from cheshire3archives.apps.ead.base import collectionFromComponent
 %>
 
 <%def name="back_links(resultSet, maximumRecords, startRecord)">
@@ -158,7 +158,7 @@
         <%
         parentId = rec.process_xpath(session,
                                      '/c3component/@parent')[0]
-        parentRec = parentFromComponent(session, rec)
+        parentRec = collectionFromComponent(session, rec)
         %>
         ## OK, must be a component record
         <img src="${config.get('icons', 'folder-open-url')}" alt="|/`/"/>

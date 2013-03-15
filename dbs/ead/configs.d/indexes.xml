@@ -221,7 +221,7 @@
 		</subConfig>
 
 		<!-- parentid index -->
-		<subConfig type="index" id="idx-parentid">
+		<subConfig type="index" id="idx-collectionid">
 			<objectType>cheshire3.index.SimpleIndex</objectType>
 			<paths>
 				<object type="indexStore" ref="indexStore" />
@@ -235,14 +235,14 @@
 		</subConfig>
         
         <!-- parent titles -->
-        <subConfig type="index" id="idx-parenttitle">
+        <subConfig type="index" id="idx-collectiontitle">
             <objectType>cheshire3.index.SimpleIndex</objectType>
             <paths>
                 <object type="indexStore" ref="indexStore" />
             </paths>
             <source>
                 <!-- Load the parent record into memory -->
-                <preprocess ref="ParentFromComponentWorkflow"/>
+                <preprocess ref="CollectionFromComponentWorkflow"/>
                 <selector ref="titleSelector"/>
                 <process>
                     <object type="extractor" ref="SimpleExtractor" />

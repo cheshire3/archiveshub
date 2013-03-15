@@ -46,7 +46,7 @@
             </configInfo>
         </index>
         
-        <index c3:index="idx-parentid">
+        <index c3:index="idx-collectionid">
             <title>ID of parent document/collection (includes recordStore identifier)</title>
             <map>
                 <name set="rec">collectionIdentifier</name>
@@ -60,7 +60,7 @@
             </configInfo>
         </index>
         
-        <index c3:index="idx-parenttitle">
+        <index c3:index="idx-collectiontitle">
             <title>Title of parent document/collection</title>
             <map>
                 <name set="rec">collectionName</name>

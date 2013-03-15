@@ -212,7 +212,7 @@
 			</workflow>
 		</subConfig>
 		
-        <subConfig type="workflow" id="ParentFromComponentWorkflow">
+        <subConfig type="workflow" id="CollectionFromComponentWorkflow">
             <objectType>cheshire3.workflow.CachingWorkflow</objectType>
             <workflow>
                 <try>
