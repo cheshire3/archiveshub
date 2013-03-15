@@ -1337,7 +1337,7 @@
                 </xsl:for-each>
             </xsl:if>
 
-            <xsl:if test="../occupation">
+            <xsl:if test=".//occupation">
                 <xsl:variable name="indexName">
                     <xsl:text>Occupation</xsl:text>
                 </xsl:variable>
