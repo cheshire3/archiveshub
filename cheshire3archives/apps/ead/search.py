@@ -52,7 +52,6 @@ class EADSearchWsgiApplication(EADWsgiApplication):
                                    )]
                 else:
                     # Invalid operation selected
-                    self.htmlTitle.append('Error')
                     start_response("404 NOT FOUND", self.response_headers)
                     content = [
                         self._render_template(

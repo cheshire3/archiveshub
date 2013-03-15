@@ -1,0 +1,12 @@
+<%inherit file="base.html"/>
+<%!
+    # Global attributes
+    page_title = "Error"
+%>
+<%block name="error">
+    An invalid operation was attempted: ${operation}<br>
+</%block>
+<%block name="extra">
+    Valid operations are:<br>
+    search, browse, resolve, summary, full, toc, email
+</%block>
