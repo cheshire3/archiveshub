@@ -233,13 +233,18 @@
                 <object type="indexStore" ref="indexStore" />
             </paths>
             <source>
-                <xpath>/c3component/@parent</xpath>
+                <!-- Load the parent record into memory -->
+                <preprocess ref="CollectionFromComponentWorkflow"/>
+                <xpath ref="identifierSelector" />
                 <process>
                     <object type="extractor" ref="SimpleExtractor" />
                 </process>
             </source>
+            <options>
+                <setting type="vectors">1</setting>
+            </options>
         </subConfig>
-
+        
         <!-- parent titles -->
         <subConfig type="index" id="idx-collectiontitle">
             <objectType>cheshire3.index.SimpleIndex</objectType>

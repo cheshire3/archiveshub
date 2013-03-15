@@ -47,7 +47,7 @@
         </index>
         
         <index c3:index="idx-collectionid">
-            <title>ID of parent document/collection (includes recordStore identifier)</title>
+            <title>ID of parent document/collection</title>
             <map>
                 <name set="rec">collectionIdentifier</name>
                 <name set="ead">parentid</name>
