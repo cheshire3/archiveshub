@@ -1,239 +1,245 @@
 <config xmlns="http://www.cheshire3.org/schemas/config/">
 
-	<!--
-	Configuration for Indexes.
-	
-	This file was produced, and released as part of Cheshire for Archives v3.x.
-	Copyright &#169; 2005-2013 the University of Liverpool 
-	-->
+    <!-- Configuration for Indexes. This file was produced, and released 
+        as part of Cheshire for Archives v3.x. Copyright &#169; 2005-2013 the University 
+        of Liverpool -->
 
-	<subConfigs>
+    <subConfigs>
 
-		<!-- indexStore -->
-		<subConfig type="indexStore" id="indexStore">
-			<objectType>cheshire3.indexStore.BdbIndexStore</objectType>
-			<paths>
-				<path type="defaultPath">indexes</path>
-				<path type="tempPath">temp</path>
-				<path type="recordStoreHash">recordStore componentStore</path>
-			</paths>
-		</subConfig>
+        <!-- indexStore -->
+        <subConfig type="indexStore" id="indexStore">
+            <objectType>cheshire3.indexStore.BdbIndexStore</objectType>
+            <paths>
+                <path type="defaultPath">indexes</path>
+                <path type="tempPath">temp</path>
+                <path type="recordStoreHash">recordStore componentStore</path>
+            </paths>
+        </subConfig>
 
-		<!-- Custom tokenizers -->
+        <!-- Custom tokenizers -->
 
-		<subConfig type="tokenizer" id="FuzzyDateTokenizer">
-			<objectType>cheshire3.tokenizer.DateTokenizer</objectType>
-			<options>
-				<setting type="dayfirst">1</setting>
-				<setting type="fuzzy">1</setting>
-			</options>
-		</subConfig>
+        <subConfig type="tokenizer" id="FuzzyDateTokenizer">
+            <objectType>cheshire3.tokenizer.DateTokenizer</objectType>
+            <options>
+                <setting type="dayfirst">1</setting>
+                <setting type="fuzzy">1</setting>
+            </options>
+        </subConfig>
 
-		<subConfig type="tokenizer" id="DateRangeTokenizer">
-			<objectType>cheshire3.tokenizer.DateRangeTokenizer</objectType>
-			<options>
-				<setting type="dayfirst">1</setting>
-			</options>
-		</subConfig>
+        <subConfig type="tokenizer" id="DateRangeTokenizer">
+            <objectType>cheshire3.tokenizer.DateRangeTokenizer
+            </objectType>
+            <options>
+                <setting type="dayfirst">1</setting>
+            </options>
+        </subConfig>
 
-		<subConfig type="tokenizer" id="FuzzyDateRangeTokenizer">
-			<objectType>cheshire3.tokenizer.DateRangeTokenizer</objectType>
-			<options>
-				<setting type="dayfirst">1</setting>
-				<setting type="fuzzy">1</setting>
-			</options>
-		</subConfig>
+        <subConfig type="tokenizer" id="FuzzyDateRangeTokenizer">
+            <objectType>cheshire3.tokenizer.DateRangeTokenizer
+            </objectType>
+            <options>
+                <setting type="dayfirst">1</setting>
+                <setting type="fuzzy">1</setting>
+            </options>
+        </subConfig>
 
-		<subConfig type="tokenizer" id="PreserveMaskingTokenizer"
-			version="1.0.1">
-			<objectType>cheshire3.tokenizer.RegexpSubTokenizer</objectType>
-			<docs>A keyword tokenizer which doesn't split at CQL masking
-				characters (^*?). Especially useful when tokenizing incoming
-				queries.</docs>
-			<options>
-				<setting type="regexp">([-.,'\")}\]]+((?=\s)|$)|(^|(?&lt;=\s))[-.,']+|[`~!@+=\#\&amp;\()\[\]{}\\\|\":;&lt;&gt;/]|\.\.\.)</setting>
-			</options>
-		</subConfig>
+        <subConfig type="tokenizer" id="PreserveMaskingTokenizer"
+            version="1.0.1">
+            <objectType>cheshire3.tokenizer.RegexpSubTokenizer
+            </objectType>
+            <docs>A keyword tokenizer which doesn't split at CQL masking
+                characters (^*?). Especially useful when tokenizing
+                incoming
+                queries.
+            </docs>
+            <options>
+                <setting type="regexp">([-.,'\")}\]]+((?=\s)|$)|(^|(?&lt;=\s))[-.,']+|[`~!@+=\#\&amp;\()\[\]{}\\\|\":;&lt;&gt;/]|\.\.\.)
+                </setting>
+            </options>
+        </subConfig>
 
-		<!-- Custom normalizers -->
+        <!-- Custom normalizers -->
 
-		<subConfig type="normalizer" id="StoplistNormalizer">
-			<objectType>cheshire3.normalizer.StoplistNormalizer</objectType>
-			<paths>
-				<path type="stoplist">stopwords.txt</path>
-			</paths>
-		</subConfig>
+        <subConfig type="normalizer" id="StoplistNormalizer">
+            <objectType>cheshire3.normalizer.StoplistNormalizer
+            </objectType>
+            <paths>
+                <path type="stoplist">stopwords.txt</path>
+            </paths>
+        </subConfig>
 
-		<!-- mini-workflows for processing chains -->
+        <!-- mini-workflows for processing chains -->
 
-		<subConfig type="workflow" id="PreserveMaskingKeywordExtractorWorkflow">
-			<objectType>cheshire3.workflow.CachingWorkflow</objectType>
-			<workflow>
-				<object type="extractor" ref="SimpleExtractor" />
-				<object type="tokenizer" ref="PreserveMaskingTokenizer" />
-				<object type="tokenMerger" ref="SimpleTokenMerger" />
-			</workflow>
-		</subConfig>
+        <subConfig type="workflow"
+            id="PreserveMaskingKeywordExtractorWorkflow">
+            <objectType>cheshire3.workflow.CachingWorkflow</objectType>
+            <workflow>
+                <object type="extractor" ref="SimpleExtractor" />
+                <object type="tokenizer" ref="PreserveMaskingTokenizer" />
+                <object type="tokenMerger" ref="SimpleTokenMerger" />
+            </workflow>
+        </subConfig>
 
-		<subConfig type="workflow" id="ProximityExtractorWorkflow">
-			<objectType>cheshire3.workflow.CachingWorkflow</objectType>
-			<workflow>
-				<object type="extractor" ref="ProxExtractor" />
-				<object type="tokenizer" ref="RegexpFindOffsetTokenizer" />
-				<object type="tokenMerger" ref="OffsetProxTokenMerger" />
-			</workflow>
-		</subConfig>
+        <subConfig type="workflow" id="ProximityExtractorWorkflow">
+            <objectType>cheshire3.workflow.CachingWorkflow</objectType>
+            <workflow>
+                <object type="extractor" ref="ProxExtractor" />
+                <object type="tokenizer" ref="RegexpFindOffsetTokenizer" />
+                <object type="tokenMerger" ref="OffsetProxTokenMerger" />
+            </workflow>
+        </subConfig>
 
-		<subConfig type="workflow" id="ProxDataWorkflow">
-			<objectType>cheshire3.workflow.CachingWorkflow</objectType>
-			<workflow>
-				<object type="extractor" ref="ProxExtractor" />
-				<object type="normalizer" ref="CaseNormalizer" />
-				<object type="tokenizer" ref="RegexpFindOffsetTokenizer" />
-				<object type="normalizer" ref="StoplistNormalizer" />
-				<!-- this is here so as not to screw up proximity info -->
-				<object type="tokenMerger" ref="OffsetProxTokenMerger" />
-				<object type="workflow"
-					ref="Diacritic-Case-Possessive-EnglishStem-NormalizerWorkflow" />
-			</workflow>
-		</subConfig>
+        <subConfig type="workflow" id="ProxDataWorkflow">
+            <objectType>cheshire3.workflow.CachingWorkflow</objectType>
+            <workflow>
+                <object type="extractor" ref="ProxExtractor" />
+                <object type="normalizer" ref="CaseNormalizer" />
+                <object type="tokenizer" ref="RegexpFindOffsetTokenizer" />
+                <object type="normalizer" ref="StoplistNormalizer" />
+                <!-- this is here so as not to screw up proximity info -->
+                <object type="tokenMerger" ref="OffsetProxTokenMerger" />
+                <object type="workflow"
+                    ref="Diacritic-Case-Possessive-EnglishStem-NormalizerWorkflow" />
+            </workflow>
+        </subConfig>
 
-		<subConfig type="workflow" id="ProxSearchWorkflow">
-			<objectType>cheshire3.workflow.CachingWorkflow</objectType>
-			<workflow>
-				<object type="extractor" ref="ProxExtractor" />
-				<object type="normalizer" ref="CaseNormalizer" />
-				<object type="tokenizer" ref="PreserveMaskingTokenizer" />
-				<object type="normalizer" ref="StoplistNormalizer" />
-				<!-- this is here so as not to screw up proximity info -->
-				<object type="tokenMerger" ref="ProxTokenMerger" />
-				<object type="workflow"
-					ref="Diacritic-Case-Possessive-EnglishStem-NormalizerWorkflow" />
-			</workflow>
-		</subConfig>
+        <subConfig type="workflow" id="ProxSearchWorkflow">
+            <objectType>cheshire3.workflow.CachingWorkflow</objectType>
+            <workflow>
+                <object type="extractor" ref="ProxExtractor" />
+                <object type="normalizer" ref="CaseNormalizer" />
+                <object type="tokenizer" ref="PreserveMaskingTokenizer" />
+                <object type="normalizer" ref="StoplistNormalizer" />
+                <!-- this is here so as not to screw up proximity info -->
+                <object type="tokenMerger" ref="ProxTokenMerger" />
+                <object type="workflow"
+                    ref="Diacritic-Case-Possessive-EnglishStem-NormalizerWorkflow" />
+            </workflow>
+        </subConfig>
 
-		<subConfig type="workflow" id="Diacritic-Case-NormalizerWorkflow">
-			<objectType>cheshire3.workflow.CachingWorkflow</objectType>
-			<workflow>
-				<object type="normalizer" ref="DiacriticNormalizer" />
-				<object type="normalizer" ref="CaseNormalizer" />
-			</workflow>
-		</subConfig>
+        <subConfig type="workflow" id="Diacritic-Case-NormalizerWorkflow">
+            <objectType>cheshire3.workflow.CachingWorkflow</objectType>
+            <workflow>
+                <object type="normalizer" ref="DiacriticNormalizer" />
+                <object type="normalizer" ref="CaseNormalizer" />
+            </workflow>
+        </subConfig>
 
-		<subConfig type="workflow" id="Space-Diacritic-Case-NormalizerWorkflow">
-			<objectType>cheshire3.workflow.CachingWorkflow</objectType>
-			<workflow>
-				<object type="normalizer" ref="SpaceNormalizer" />
-				<object type="normalizer" ref="DiacriticNormalizer" />
-				<object type="normalizer" ref="CaseNormalizer" />
-			</workflow>
-		</subConfig>
+        <subConfig type="workflow"
+            id="Space-Diacritic-Case-NormalizerWorkflow">
+            <objectType>cheshire3.workflow.CachingWorkflow</objectType>
+            <workflow>
+                <object type="normalizer" ref="SpaceNormalizer" />
+                <object type="normalizer" ref="DiacriticNormalizer" />
+                <object type="normalizer" ref="CaseNormalizer" />
+            </workflow>
+        </subConfig>
 
-		<subConfig type="workflow"
-			id="Diacritic-Case-Possessive-NormalizerWorkflow">
-			<objectType>cheshire3.workflow.CachingWorkflow</objectType>
-			<workflow>
-				<object type="normalizer" ref="DiacriticNormalizer" />
-				<object type="normalizer" ref="CaseNormalizer" />
-				<object type="normalizer" ref="PossessiveNormalizer" />
-			</workflow>
-		</subConfig>
+        <subConfig type="workflow"
+            id="Diacritic-Case-Possessive-NormalizerWorkflow">
+            <objectType>cheshire3.workflow.CachingWorkflow</objectType>
+            <workflow>
+                <object type="normalizer" ref="DiacriticNormalizer" />
+                <object type="normalizer" ref="CaseNormalizer" />
+                <object type="normalizer" ref="PossessiveNormalizer" />
+            </workflow>
+        </subConfig>
 
-		<subConfig type="workflow"
-			id="Space-Diacritic-Case-Possessive-NormalizerWorkflow">
-			<objectType>cheshire3.workflow.CachingWorkflow</objectType>
-			<workflow>
-				<object type="normalizer" ref="SpaceNormalizer" />
-				<object type="normalizer" ref="DiacriticNormalizer" />
-				<object type="normalizer" ref="CaseNormalizer" />
-				<object type="normalizer" ref="PossessiveNormalizer" />
-			</workflow>
-		</subConfig>
+        <subConfig type="workflow"
+            id="Space-Diacritic-Case-Possessive-NormalizerWorkflow">
+            <objectType>cheshire3.workflow.CachingWorkflow</objectType>
+            <workflow>
+                <object type="normalizer" ref="SpaceNormalizer" />
+                <object type="normalizer" ref="DiacriticNormalizer" />
+                <object type="normalizer" ref="CaseNormalizer" />
+                <object type="normalizer" ref="PossessiveNormalizer" />
+            </workflow>
+        </subConfig>
 
-		<subConfig type="workflow"
-			id="Diacritic-Case-Possessive-EnglishStem-NormalizerWorkflow">
-			<objectType>cheshire3.workflow.CachingWorkflow</objectType>
-			<workflow>
-				<object type="normalizer" ref="DiacriticNormalizer" />
-				<object type="normalizer" ref="CaseNormalizer" />
-				<object type="normalizer" ref="PossessiveNormalizer" />
-				<object type="normalizer" ref="EnglishStemNormalizer" />
-			</workflow>
-		</subConfig>
+        <subConfig type="workflow"
+            id="Diacritic-Case-Possessive-EnglishStem-NormalizerWorkflow">
+            <objectType>cheshire3.workflow.CachingWorkflow</objectType>
+            <workflow>
+                <object type="normalizer" ref="DiacriticNormalizer" />
+                <object type="normalizer" ref="CaseNormalizer" />
+                <object type="normalizer" ref="PossessiveNormalizer" />
+                <object type="normalizer" ref="EnglishStemNormalizer" />
+            </workflow>
+        </subConfig>
 
-		<subConfig type="workflow"
-			id="Diacritic-Case-Possessive-Stoplist-EnglishStem-NormalizerWorkflow">
-			<objectType>cheshire3.workflow.CachingWorkflow</objectType>
-			<workflow>
-				<object type="normalizer" ref="DiacriticNormalizer" />
-				<object type="normalizer" ref="CaseNormalizer" />
-				<object type="normalizer" ref="PossessiveNormalizer" />
-				<object type="normalizer" ref="StoplistNormalizer" />
-				<object type="normalizer" ref="EnglishStemNormalizer" />
-			</workflow>
-		</subConfig>
+        <subConfig type="workflow"
+            id="Diacritic-Case-Possessive-Stoplist-EnglishStem-NormalizerWorkflow">
+            <objectType>cheshire3.workflow.CachingWorkflow</objectType>
+            <workflow>
+                <object type="normalizer" ref="DiacriticNormalizer" />
+                <object type="normalizer" ref="CaseNormalizer" />
+                <object type="normalizer" ref="PossessiveNormalizer" />
+                <object type="normalizer" ref="StoplistNormalizer" />
+                <object type="normalizer" ref="EnglishStemNormalizer" />
+            </workflow>
+        </subConfig>
 
-		<!-- Indexes -->
+        <!-- Indexes -->
 
-		<!-- record identifier index -->
-		<subConfig type="index" id="idx-recid">
-			<objectType>cheshire3.index.SimpleIndex</objectType>
-			<paths>
-				<object type="indexStore" ref="indexStore" />
-			</paths>
-			<source>
-				<xpath ref="identifierSelector" />
-				<process>
-					<object type="extractor" ref="SimpleExtractor" />
-				</process>
-			</source>
-		</subConfig>
+        <!-- record identifier index -->
+        <subConfig type="index" id="idx-recid">
+            <objectType>cheshire3.index.SimpleIndex</objectType>
+            <paths>
+                <object type="indexStore" ref="indexStore" />
+            </paths>
+            <source>
+                <xpath ref="identifierSelector" />
+                <process>
+                    <object type="extractor" ref="SimpleExtractor" />
+                </process>
+            </source>
+        </subConfig>
 
-		<!-- docid index - for Z39.50 access -->
-		<subConfig type="index" id="idx-docid">
-			<objectType>cheshire3.index.RecordIdentifierIndex</objectType>
-			<paths>
-				<object type="recordStore" ref="recordStore" />
-			</paths>
-		</subConfig>
+        <!-- docid index - for Z39.50 access -->
+        <subConfig type="index" id="idx-docid">
+            <objectType>cheshire3.index.RecordIdentifierIndex</objectType>
+            <paths>
+                <object type="recordStore" ref="recordStore" />
+            </paths>
+        </subConfig>
 
-		<!-- componentid index - for Z39.50 access -->
-		<subConfig type="index" id="idx-componentid">
-			<objectType>cheshire3.index.RecordIdentifierIndex</objectType>
-			<paths>
-				<object type="recordStore" ref="componentStore" />
-			</paths>
-		</subConfig>
+        <!-- componentid index - for Z39.50 access -->
+        <subConfig type="index" id="idx-componentid">
+            <objectType>cheshire3.index.RecordIdentifierIndex</objectType>
+            <paths>
+                <object type="recordStore" ref="componentStore" />
+            </paths>
+        </subConfig>
 
-		<!-- is a component index -->
-		<subConfig type="index" id="idx-istoplevel">
-			<objectType>cheshire3.index.SimpleIndex</objectType>
-			<paths>
-				<object type="indexStore" ref="indexStore" />
-			</paths>
-			<source>
-				<xpath>/ead</xpath>
-				<process>
-					<object type="extractor" ref="SimpleExtractor" />
-					<object type="normalizer" ref="DataExistsNormalizer" />
-				</process>
-			</source>
-		</subConfig>
+        <!-- is a component index -->
+        <subConfig type="index" id="idx-istoplevel">
+            <objectType>cheshire3.index.SimpleIndex</objectType>
+            <paths>
+                <object type="indexStore" ref="indexStore" />
+            </paths>
+            <source>
+                <xpath>/ead</xpath>
+                <process>
+                    <object type="extractor" ref="SimpleExtractor" />
+                    <object type="normalizer" ref="DataExistsNormalizer" />
+                </process>
+            </source>
+        </subConfig>
 
-		<!-- parentid index -->
-		<subConfig type="index" id="idx-collectionid">
-			<objectType>cheshire3.index.SimpleIndex</objectType>
-			<paths>
-				<object type="indexStore" ref="indexStore" />
-			</paths>
-			<source>
-				<xpath>/c3component/@parent</xpath>
-				<process>
-					<object type="extractor" ref="SimpleExtractor" />
-				</process>
-			</source>
-		</subConfig>
-        
+        <!-- parentid index -->
+        <subConfig type="index" id="idx-collectionid">
+            <objectType>cheshire3.index.SimpleIndex</objectType>
+            <paths>
+                <object type="indexStore" ref="indexStore" />
+            </paths>
+            <source>
+                <xpath>/c3component/@parent</xpath>
+                <process>
+                    <object type="extractor" ref="SimpleExtractor" />
+                </process>
+            </source>
+        </subConfig>
+
         <!-- parent titles -->
         <subConfig type="index" id="idx-collectiontitle">
             <objectType>cheshire3.index.SimpleIndex</objectType>
@@ -242,8 +248,8 @@
             </paths>
             <source>
                 <!-- Load the parent record into memory -->
-                <preprocess ref="CollectionFromComponentWorkflow"/>
-                <selector ref="titleSelector"/>
+                <preprocess ref="CollectionFromComponentWorkflow" />
+                <selector ref="titleSelector" />
                 <process>
                     <object type="extractor" ref="SimpleExtractor" />
                 </process>
@@ -253,767 +259,778 @@
             </options>
         </subConfig>
 
-		<!-- reference numbers -->
-		<subConfig type="index" id="idx-unitid">
-			<objectType>cheshire3.index.SimpleIndex</objectType>
-			<paths>
-				<object type="indexStore" ref="indexStore" />
-			</paths>
-			<source>
-				<xpath>/*/*/did/unitid/@identifier</xpath>
-				<xpath>/*/*/did/unitid</xpath>
-				<process>
-					<object type="extractor" ref="SimpleExtractor" />
-					<object type="workflow" ref="Space-Diacritic-Case-NormalizerWorkflow" />
-				</process>
-			</source>
-			<options>
-				<setting type="recordStoreSizes">1</setting>
-			</options>
-		</subConfig>
+        <!-- reference numbers -->
+        <subConfig type="index" id="idx-unitid">
+            <objectType>cheshire3.index.SimpleIndex</objectType>
+            <paths>
+                <object type="indexStore" ref="indexStore" />
+            </paths>
+            <source>
+                <xpath>/*/*/did/unitid/@identifier</xpath>
+                <xpath>/*/*/did/unitid</xpath>
+                <process>
+                    <object type="extractor" ref="SimpleExtractor" />
+                    <object type="workflow"
+                        ref="Space-Diacritic-Case-NormalizerWorkflow" />
+                </process>
+            </source>
+            <options>
+                <setting type="recordStoreSizes">1</setting>
+            </options>
+        </subConfig>
 
-		<subConfig type="index" id="idx-unitidword">
-			<objectType>cheshire3.index.SimpleIndex</objectType>
-			<paths>
-				<object type="indexStore" ref="indexStore" />
-			</paths>
-			<source mode="data">
-				<xpath>/*/*/did/unitid/@identifier</xpath>
-				<xpath>/*/*/did/unitid</xpath>
-				<process>
-					<object type="workflow" ref="KeywordExtractorWorkflow" />
-					<object type="workflow" ref="Diacritic-Case-NormalizerWorkflow" />
-				</process>
-			</source>
-			<source mode="all|any">
-				<process>
-					<object type="workflow" ref="PreserveMaskingKeywordExtractorWorkflow" />
-					<object type="workflow" ref="Diacritic-Case-NormalizerWorkflow" />
-				</process>
-			</source>
-			<source mode="=|exact">
-				<process>
-					<object type="extractor" ref="SimpleExtractor" />
-					<object type="workflow" ref="Space-Diacritic-Case-NormalizerWorkflow" />
-				</process>
-			</source>
-			<options>
-				<setting type="recordStoreSizes">1</setting>
-			</options>
-		</subConfig>
+        <subConfig type="index" id="idx-unitidword">
+            <objectType>cheshire3.index.SimpleIndex</objectType>
+            <paths>
+                <object type="indexStore" ref="indexStore" />
+            </paths>
+            <source mode="data">
+                <xpath>/*/*/did/unitid/@identifier</xpath>
+                <xpath>/*/*/did/unitid</xpath>
+                <process>
+                    <object type="workflow" ref="KeywordExtractorWorkflow" />
+                    <object type="workflow"
+                        ref="Diacritic-Case-NormalizerWorkflow" />
+                </process>
+            </source>
+            <source mode="all|any">
+                <process>
+                    <object type="workflow"
+                        ref="PreserveMaskingKeywordExtractorWorkflow" />
+                    <object type="workflow"
+                        ref="Diacritic-Case-NormalizerWorkflow" />
+                </process>
+            </source>
+            <source mode="=|exact">
+                <process>
+                    <object type="extractor" ref="SimpleExtractor" />
+                    <object type="workflow"
+                        ref="Space-Diacritic-Case-NormalizerWorkflow" />
+                </process>
+            </source>
+            <options>
+                <setting type="recordStoreSizes">1</setting>
+            </options>
+        </subConfig>
 
-		<!-- titles -->
-		<subConfig type="index" id="idx-title">
-			<objectType>cheshire3.index.SimpleIndex</objectType>
-			<paths>
-				<object type="indexStore" ref="indexStore" />
-			</paths>
-			<source>
-                <selector ref="titleSelector"/>
-				<xpath>/*/*/did/unittitle</xpath>
-				<process>
-					<object type="extractor" ref="SimpleExtractor" />
-					<object type="workflow" ref="Space-Diacritic-Case-NormalizerWorkflow" />
-				</process>
-			</source>
-			<options>
-				<setting type="sortStore">1</setting>
-				<setting type="recordStoreSizes">1</setting>
-				<setting type="vectors">1</setting>
-			</options>
-		</subConfig>
+        <!-- titles -->
+        <subConfig type="index" id="idx-title">
+            <objectType>cheshire3.index.SimpleIndex</objectType>
+            <paths>
+                <object type="indexStore" ref="indexStore" />
+            </paths>
+            <source>
+                <selector ref="titleSelector" />
+                <xpath>/*/*/did/unittitle</xpath>
+                <process>
+                    <object type="extractor" ref="SimpleExtractor" />
+                    <object type="workflow"
+                        ref="Space-Diacritic-Case-NormalizerWorkflow" />
+                </process>
+            </source>
+            <options>
+                <setting type="sortStore">1</setting>
+                <setting type="recordStoreSizes">1</setting>
+                <setting type="vectors">1</setting>
+            </options>
+        </subConfig>
 
-		<subConfig type="index" id="idx-titleword">
-			<objectType>cheshire3.index.ProximityIndex</objectType>
-			<paths>
-				<object type="indexStore" ref="indexStore" />
-			</paths>
-			<source mode="data">
-				<xpath>/*/*/did/unittitle</xpath>
-				<process>
-					<object type="workflow" ref="ProxDataWorkflow" />
-				</process>
-			</source>
-			<source mode="all|any|=">
-				<process>
-					<object type="workflow" ref="ProxSearchWorkflow" />
-				</process>
-			</source>
-			<source mode="exact">
-				<process>
-					<object type="extractor" ref="SimpleExtractor" />
-					<object type="workflow" ref="Space-Diacritic-Case-NormalizerWorkflow" />
-				</process>
-			</source>
-			<options>
-				<setting type="recordStoreSizes">1</setting>
-				<setting type="nProxInts">3</setting>
-				<setting type="termIds">1</setting>
-			</options>
-		</subConfig>
+        <subConfig type="index" id="idx-titleword">
+            <objectType>cheshire3.index.ProximityIndex</objectType>
+            <paths>
+                <object type="indexStore" ref="indexStore" />
+            </paths>
+            <source mode="data">
+                <xpath>/*/*/did/unittitle</xpath>
+                <process>
+                    <object type="workflow" ref="ProxDataWorkflow" />
+                </process>
+            </source>
+            <source mode="all|any|=">
+                <process>
+                    <object type="workflow" ref="ProxSearchWorkflow" />
+                </process>
+            </source>
+            <source mode="exact">
+                <process>
+                    <object type="extractor" ref="SimpleExtractor" />
+                    <object type="workflow"
+                        ref="Space-Diacritic-Case-NormalizerWorkflow" />
+                </process>
+            </source>
+            <options>
+                <setting type="recordStoreSizes">1</setting>
+                <setting type="nProxInts">3</setting>
+                <setting type="termIds">1</setting>
+            </options>
+        </subConfig>
 
-		<!-- creators -->
-		<subConfig type="index" id="idx-creator">
-			<objectType>cheshire3.index.SimpleIndex</objectType>
-			<paths>
-				<object type="indexStore" ref="indexStore" />
-			</paths>
-			<source>
-				<xpath>/*/*/did/origination</xpath>
-				<process>
-					<object type="extractor" ref="SimpleExtractor" />
-					<object type="workflow" ref="Space-Diacritic-Case-NormalizerWorkflow" />
-				</process>
-			</source>
-			<options>
-				<setting type="sortStore">1</setting>
-				<setting type="recordStoreSizes">1</setting>
-				<setting type="vectors">1</setting>
-			</options>
-		</subConfig>
+        <!-- creators -->
+        <subConfig type="index" id="idx-creator">
+            <objectType>cheshire3.index.SimpleIndex</objectType>
+            <paths>
+                <object type="indexStore" ref="indexStore" />
+            </paths>
+            <source>
+                <xpath>/*/*/did/origination</xpath>
+                <process>
+                    <object type="extractor" ref="SimpleExtractor" />
+                    <object type="workflow"
+                        ref="Space-Diacritic-Case-NormalizerWorkflow" />
+                </process>
+            </source>
+            <options>
+                <setting type="sortStore">1</setting>
+                <setting type="recordStoreSizes">1</setting>
+                <setting type="vectors">1</setting>
+            </options>
+        </subConfig>
 
-		<subConfig type="index" id="idx-creatorword">
-			<objectType>cheshire3.index.SimpleIndex</objectType>
-			<paths>
-				<object type="indexStore" ref="indexStore" />
-			</paths>
-			<source mode="data">
-				<xpath>/*/*/did/origination</xpath>
-				<process>
-					<object type="extractor" ref="SimpleExtractor" />
-					<object type="tokenizer" ref="RegexpSubTokenizer" />
-					<object type="tokenMerger" ref="SimpleTokenMerger" />
-					<object type="workflow" ref="Diacritic-Case-NormalizerWorkflow" />
-				</process>
-			</source>
-			<source mode="all|any|=">
-				<process>
-					<object type="extractor" ref="SimpleExtractor" />
-					<object type="tokenizer" ref="PreserveMaskingTokenizer" />
-					<object type="tokenMerger" ref="SimpleTokenMerger" />
-					<object type="workflow" ref="Diacritic-Case-NormalizerWorkflow" />
-				</process>
-			</source>
-			<source mode="exact">
-				<process>
-					<object type="extractor" ref="SimpleExtractor" />
-					<object type="workflow" ref="Space-Diacritic-Case-NormalizerWorkflow" />
-				</process>
-			</source>
-			<options>
-				<setting type="recordStoreSizes">1</setting>
-			</options>
-		</subConfig>
+        <subConfig type="index" id="idx-creatorword">
+            <objectType>cheshire3.index.SimpleIndex</objectType>
+            <paths>
+                <object type="indexStore" ref="indexStore" />
+            </paths>
+            <source mode="data">
+                <xpath>/*/*/did/origination</xpath>
+                <process>
+                    <object type="extractor" ref="SimpleExtractor" />
+                    <object type="tokenizer" ref="RegexpSubTokenizer" />
+                    <object type="tokenMerger" ref="SimpleTokenMerger" />
+                    <object type="workflow"
+                        ref="Diacritic-Case-NormalizerWorkflow" />
+                </process>
+            </source>
+            <source mode="all|any|=">
+                <process>
+                    <object type="extractor" ref="SimpleExtractor" />
+                    <object type="tokenizer" ref="PreserveMaskingTokenizer" />
+                    <object type="tokenMerger" ref="SimpleTokenMerger" />
+                    <object type="workflow"
+                        ref="Diacritic-Case-NormalizerWorkflow" />
+                </process>
+            </source>
+            <source mode="exact">
+                <process>
+                    <object type="extractor" ref="SimpleExtractor" />
+                    <object type="workflow"
+                        ref="Space-Diacritic-Case-NormalizerWorkflow" />
+                </process>
+            </source>
+            <options>
+                <setting type="recordStoreSizes">1</setting>
+            </options>
+        </subConfig>
 
-		<!-- date -->
-		<subConfig type="index" id="idx-date">
-			<objectType>cheshire3.index.SimpleIndex</objectType>
-			<paths>
-				<object type="indexStore" ref="indexStore" />
-			</paths>
-			<source mode="data|exactly|&lt;|&gt;|within|encloses">
-				<xpath>/*/*/did/unitdate/@normal</xpath>
-				<process>
-					<object type="extractor" ref="SimpleExtractor" />
-					<object type="tokenizer" ref="DateTokenizer" />
-					<object type="tokenMerger" ref="SimpleTokenMerger" />
-				</process>
-			</source>
-			<source mode="data">
-				<xpath>/*/*/did/unitdate</xpath>
-				<process>
-					<object type="extractor" ref="SimpleExtractor" />
-					<object type="tokenizer" ref="FuzzyDateTokenizer" />
-					<object type="tokenMerger" ref="SimpleTokenMerger" />
-				</process>
-			</source>
-			<options>
-				<setting type="recordStoreSizes">1</setting>
-			</options>
-		</subConfig>
+        <!-- date -->
+        <subConfig type="index" id="idx-date">
+            <objectType>cheshire3.index.SimpleIndex</objectType>
+            <paths>
+                <object type="indexStore" ref="indexStore" />
+            </paths>
+            <source mode="data|exactly|&lt;|&gt;|within|encloses">
+                <xpath>/*/*/did/unitdate/@normal</xpath>
+                <process>
+                    <object type="extractor" ref="SimpleExtractor" />
+                    <object type="tokenizer" ref="DateTokenizer" />
+                    <object type="tokenMerger" ref="SimpleTokenMerger" />
+                </process>
+            </source>
+            <source mode="data">
+                <xpath>/*/*/did/unitdate</xpath>
+                <process>
+                    <object type="extractor" ref="SimpleExtractor" />
+                    <object type="tokenizer" ref="FuzzyDateTokenizer" />
+                    <object type="tokenMerger" ref="SimpleTokenMerger" />
+                </process>
+            </source>
+            <options>
+                <setting type="recordStoreSizes">1</setting>
+            </options>
+        </subConfig>
 
-		<subConfig type="index" id="idx-dateYear">
-			<name>Year</name>
-			<objectType>cheshire3.index.SimpleIndex</objectType>
-			<paths>
-				<object type="indexStore" ref="indexStore" />
-			</paths>
-			<source mode="data|exactly|&lt;|&gt;|within|encloses">
-				<xpath>/*/*/did/unitdate/@normal</xpath>
-				<process>
-					<object type="extractor" ref="SimpleExtractor" />
-					<object type="tokenizer" ref="DateTokenizer" />
-					<object type="normalizer" ref="DateYearNormalizer" />
-					<object type="tokenMerger" ref="SimpleTokenMerger" />
-				</process>
-			</source>
-			<source mode="data">
-				<xpath>/*/*/did/unitdate</xpath>
-				<process>
-					<object type="extractor" ref="SimpleExtractor" />
-					<object type="tokenizer" ref="FuzzyDateTokenizer" />
-					<object type="normalizer" ref="DateYearNormalizer" />
-					<object type="tokenMerger" ref="SimpleTokenMerger" />
-				</process>
-			</source>
-			<options>
-				<setting type="recordStoreSizes">1</setting>
-				<setting type="vectors">1</setting>
-			</options>
-		</subConfig>
+        <subConfig type="index" id="idx-dateYear">
+            <name>Year</name>
+            <objectType>cheshire3.index.SimpleIndex</objectType>
+            <paths>
+                <object type="indexStore" ref="indexStore" />
+            </paths>
+            <source mode="data|exactly|&lt;|&gt;|within|encloses">
+                <xpath>/*/*/did/unitdate/@normal</xpath>
+                <process>
+                    <object type="extractor" ref="SimpleExtractor" />
+                    <object type="tokenizer" ref="DateTokenizer" />
+                    <object type="normalizer" ref="DateYearNormalizer" />
+                    <object type="tokenMerger" ref="SimpleTokenMerger" />
+                </process>
+            </source>
+            <source mode="data">
+                <xpath>/*/*/did/unitdate</xpath>
+                <process>
+                    <object type="extractor" ref="SimpleExtractor" />
+                    <object type="tokenizer" ref="FuzzyDateTokenizer" />
+                    <object type="normalizer" ref="DateYearNormalizer" />
+                    <object type="tokenMerger" ref="SimpleTokenMerger" />
+                </process>
+            </source>
+            <options>
+                <setting type="recordStoreSizes">1</setting>
+                <setting type="vectors">1</setting>
+            </options>
+        </subConfig>
 
-		<subConfig type="index" id="idx-dateRange">
-			<objectType>cheshire3.index.RangeIndex</objectType>
-			<paths>
-				<object type="indexStore" ref="indexStore" />
-			</paths>
-			<source mode="data|exactly|&lt;|&gt;|within|encloses">
-				<xpath>/*/*/did/unitdate/@normal</xpath>
-				<process>
-					<object type="extractor" ref="SimpleExtractor" />
-					<object type="tokenizer" ref="DateRangeTokenizer" />
-					<object type="tokenMerger" ref="SequenceRangeTokenMerger" />
-				</process>
-			</source>
-			<source mode="data">
-				<!-- ideally would be: <xpath>/*/*/did/unitdate[not (@normal)]</xpath> 
-					however some normalized dates violate ISO 8601 and would cause false negatives. 
-					IMO false positives are less bad than false negatives. -->
-				<xpath>/*/*/did/unitdate</xpath>
-				<process>
-					<object type="extractor" ref="SimpleExtractor" />
-					<object type="tokenizer" ref="FuzzyDateRangeTokenizer" />
-					<object type="tokenMerger" ref="SequenceRangeTokenMerger" />
-				</process>
-			</source>
-			<options>
-				<setting type="recordStoreSizes">1</setting>
-			</options>
-		</subConfig>
+        <subConfig type="index" id="idx-dateRange">
+            <objectType>cheshire3.index.RangeIndex</objectType>
+            <paths>
+                <object type="indexStore" ref="indexStore" />
+            </paths>
+            <source mode="data|exactly|&lt;|&gt;|within|encloses">
+                <xpath>/*/*/did/unitdate/@normal</xpath>
+                <process>
+                    <object type="extractor" ref="SimpleExtractor" />
+                    <object type="tokenizer" ref="DateRangeTokenizer" />
+                    <object type="tokenMerger" ref="SequenceRangeTokenMerger" />
+                </process>
+            </source>
+            <source mode="data">
+                <!-- ideally would be: <xpath>/*/*/did/unitdate[not (@normal)]</xpath> 
+                    however some normalized dates violate ISO 8601 and would cause false negatives. 
+                    IMO false positives are less bad than false negatives. -->
+                <xpath>/*/*/did/unitdate</xpath>
+                <process>
+                    <object type="extractor" ref="SimpleExtractor" />
+                    <object type="tokenizer" ref="FuzzyDateRangeTokenizer" />
+                    <object type="tokenMerger" ref="SequenceRangeTokenMerger" />
+                </process>
+            </source>
+            <options>
+                <setting type="recordStoreSizes">1</setting>
+            </options>
+        </subConfig>
 
-		<!-- description/topic/quick search index -->
-		<subConfig type="index" id="idx-description">
-			<objectType>cheshire3.index.ProximityIndex</objectType>
-			<paths>
-				<object type="indexStore" ref="indexStore" />
-			</paths>
-			<source mode="data">
-				<xpath ref="descriptionXPath" />
-				<process>
-					<object type="workflow" ref="ProxDataWorkflow" />
-				</process>
-			</source>
-			<source mode="all|any|=">
-				<process>
-					<object type="workflow" ref="ProxSearchWorkflow" />
-				</process>
-			</source>
-			<source mode="exact">
-				<process>
-					<object type="extractor" ref="SimpleExtractor" />
-					<object type="workflow" ref="Space-Diacritic-Case-NormalizerWorkflow" />
-				</process>
-			</source>
-			<options>
-				<setting type="recordStoreSizes">1</setting>
-				<setting type="nProxInts">3</setting>
-				<setting type="termIds">1</setting>
-			</options>
-		</subConfig>
+        <!-- description/topic/quick search index -->
+        <subConfig type="index" id="idx-description">
+            <objectType>cheshire3.index.ProximityIndex</objectType>
+            <paths>
+                <object type="indexStore" ref="indexStore" />
+            </paths>
+            <source mode="data">
+                <xpath ref="descriptionXPath" />
+                <process>
+                    <object type="workflow" ref="ProxDataWorkflow" />
+                </process>
+            </source>
+            <source mode="all|any|=">
+                <process>
+                    <object type="workflow" ref="ProxSearchWorkflow" />
+                </process>
+            </source>
+            <source mode="exact">
+                <process>
+                    <object type="extractor" ref="SimpleExtractor" />
+                    <object type="workflow"
+                        ref="Space-Diacritic-Case-NormalizerWorkflow" />
+                </process>
+            </source>
+            <options>
+                <setting type="recordStoreSizes">1</setting>
+                <setting type="nProxInts">3</setting>
+                <setting type="termIds">1</setting>
+            </options>
+        </subConfig>
 
-		<!-- full text index -->
-		<subConfig type="index" id="idx-all">
-			<objectType>cheshire3.index.ProximityIndex</objectType>
-			<paths>
-				<object type="indexStore" ref="indexStore" />
-			</paths>
-			<source mode="data">
-				<xpath ref="anywhereXPath" />
-				<process>
-					<object type="workflow" ref="ProxDataWorkflow" />
-				</process>
-			</source>
-			<source mode="all|any|=">
-				<process>
-					<object type="workflow" ref="ProxSearchWorkflow" />
-				</process>
-			</source>
-			<source mode="exact">
-				<process>
-					<object type="extractor" ref="SimpleExtractor" />
-					<object type="workflow" ref="Space-Diacritic-Case-NormalizerWorkflow" />
-				</process>
-			</source>
-			<options>
-				<setting type="recordStoreSizes">1</setting>
-				<setting type="nProxInts">3</setting>
-			</options>
-		</subConfig>
+        <!-- full text index -->
+        <subConfig type="index" id="idx-all">
+            <objectType>cheshire3.index.ProximityIndex</objectType>
+            <paths>
+                <object type="indexStore" ref="indexStore" />
+            </paths>
+            <source mode="data">
+                <xpath ref="anywhereXPath" />
+                <process>
+                    <object type="workflow" ref="ProxDataWorkflow" />
+                </process>
+            </source>
+            <source mode="all|any|=">
+                <process>
+                    <object type="workflow" ref="ProxSearchWorkflow" />
+                </process>
+            </source>
+            <source mode="exact">
+                <process>
+                    <object type="extractor" ref="SimpleExtractor" />
+                    <object type="workflow"
+                        ref="Space-Diacritic-Case-NormalizerWorkflow" />
+                </process>
+            </source>
+            <options>
+                <setting type="recordStoreSizes">1</setting>
+                <setting type="nProxInts">3</setting>
+            </options>
+        </subConfig>
 
-		<!-- subjects -->
-		<subConfig type="index" id="idx-subject">
-			<objectType>cheshire3.index.SimpleIndex</objectType>
-			<paths>
-				<object type="indexStore" ref="indexStore" />
-			</paths>
-			<source>
-				<xpath>controlaccess/subject</xpath>
-				<!-- index subfields - ignoring geographic subfields -->
-				<xpath>subject/emph[@altrender!='z']</xpath>
-				<process>
-					<object type="extractor" ref="SimpleExtractor" />
-					<object type="workflow" ref="Space-Diacritic-Case-NormalizerWorkflow" />
-				</process>
-			</source>
-			<options>
-				<setting type="recordStoreSizes">1</setting>
-				<setting type="vectors">1</setting>
-			</options>
-		</subConfig>
+        <!-- subjects -->
+        <subConfig type="index" id="idx-subject">
+            <objectType>cheshire3.index.SimpleIndex</objectType>
+            <paths>
+                <object type="indexStore" ref="indexStore" />
+            </paths>
+            <source>
+                <xpath>controlaccess/subject</xpath>
+                <!-- index subfields - ignoring geographic subfields -->
+                <xpath>subject/emph[@altrender!='z']</xpath>
+                <process>
+                    <object type="extractor" ref="SimpleExtractor" />
+                    <object type="workflow"
+                        ref="Space-Diacritic-Case-NormalizerWorkflow" />
+                </process>
+            </source>
+            <options>
+                <setting type="recordStoreSizes">1</setting>
+                <setting type="vectors">1</setting>
+            </options>
+        </subConfig>
 
-		<subConfig type="index" id="idx-subjectword">
-			<objectType>cheshire3.index.SimpleIndex</objectType>
-			<paths>
-				<object type="indexStore" ref="indexStore" />
-			</paths>
-			<source mode="data">
-				<xpath>subject</xpath>
-				<process>
-					<object type="workflow" ref="KeywordExtractorWorkflow" />
-					<object type="workflow"
-						ref="Diacritic-Case-Possessive-EnglishStem-NormalizerWorkflow" />
-				</process>
-			</source>
-			<source mode="all|any">
-				<process>
-					<object type="workflow" ref="PreserveMaskingKeywordExtractorWorkflow" />
-					<object type="workflow"
-						ref="Diacritic-Case-Possessive-EnglishStem-NormalizerWorkflow" />
-				</process>
-			</source>
-			<source mode="=|exact">
-				<process>
-					<object type="extractor" ref="SimpleExtractor" />
-					<object type="workflow" ref="Space-Diacritic-Case-NormalizerWorkflow" />
-				</process>
-			</source>
-			<options>
-				<setting type="recordStoreSizes">1</setting>
-			</options>
-		</subConfig>
+        <subConfig type="index" id="idx-subjectword">
+            <objectType>cheshire3.index.SimpleIndex</objectType>
+            <paths>
+                <object type="indexStore" ref="indexStore" />
+            </paths>
+            <source mode="data">
+                <xpath>subject</xpath>
+                <process>
+                    <object type="workflow" ref="KeywordExtractorWorkflow" />
+                    <object type="workflow"
+                        ref="Diacritic-Case-Possessive-EnglishStem-NormalizerWorkflow" />
+                </process>
+            </source>
+            <source mode="all|any">
+                <process>
+                    <object type="workflow"
+                        ref="PreserveMaskingKeywordExtractorWorkflow" />
+                    <object type="workflow"
+                        ref="Diacritic-Case-Possessive-EnglishStem-NormalizerWorkflow" />
+                </process>
+            </source>
+            <source mode="=|exact">
+                <process>
+                    <object type="extractor" ref="SimpleExtractor" />
+                    <object type="workflow"
+                        ref="Space-Diacritic-Case-NormalizerWorkflow" />
+                </process>
+            </source>
+            <options>
+                <setting type="recordStoreSizes">1</setting>
+            </options>
+        </subConfig>
 
-		<subConfig type="index" id="idx-name">
-			<objectType>cheshire3.index.SimpleIndex</objectType>
-			<paths>
-				<object type="indexStore" ref="indexStore" />
-			</paths>
-			<source>
-				<!-- all ...name in controlaccess, or with 'normal' attributes -->
-				<!-- <xpath>controlaccess/*[regexp(name(), '.*name$')]</xpath> <xpath>*[regexp(name(), 
-					'.*name$')]/@normal</xpath> -->
-				<xpath>controlaccess/name</xpath>
-				<xpath>controlaccess/persname</xpath>
-				<xpath>controlaccess/famname</xpath>
-				<xpath>controlaccess/corpname</xpath>
-				<xpath>controlaccess/geogname</xpath>
-				<xpath>name/@normal</xpath>
-				<xpath>persname/@normal</xpath>
-				<xpath>famname/@normal</xpath>
-				<xpath>corpname/@normal</xpath>
-				<xpath>geogname/@normal</xpath>
-				<process>
-					<object type="extractor" ref="SimpleExtractor" />
-					<object type="workflow"
-						ref="Space-Diacritic-Case-Possessive-NormalizerWorkflow" />
-				</process>
-			</source>
-			<options>
-				<setting type="recordStoreSizes">1</setting>
-				<setting type="vectors">1</setting>
-			</options>
-		</subConfig>
+        <subConfig type="index" id="idx-name">
+            <objectType>cheshire3.index.SimpleIndex</objectType>
+            <paths>
+                <object type="indexStore" ref="indexStore" />
+            </paths>
+            <source>
+                <!-- all ...name in controlaccess, or with 'normal' attributes -->
+                <!--
+                <xpath>controlaccess/*[regexp(name(), '.*name$')]</xpath> 
+                <xpath>*[regexp(name(), '.*name$')]/@normal</xpath>
+                -->
+                <xpath>controlaccess/name</xpath>
+                <xpath>controlaccess/persname</xpath>
+                <xpath>controlaccess/famname</xpath>
+                <xpath>controlaccess/corpname</xpath>
+                <xpath>controlaccess/geogname</xpath>
+                <xpath>name/@normal</xpath>
+                <xpath>persname/@normal</xpath>
+                <xpath>famname/@normal</xpath>
+                <xpath>corpname/@normal</xpath>
+                <xpath>geogname/@normal</xpath>
+                <process>
+                    <object type="extractor" ref="SimpleExtractor" />
+                    <object type="workflow"
+                        ref="Space-Diacritic-Case-Possessive-NormalizerWorkflow" />
+                </process>
+            </source>
+            <options>
+                <setting type="recordStoreSizes">1</setting>
+                <setting type="vectors">1</setting>
+            </options>
+        </subConfig>
 
-		<subConfig type="index" id="idx-nameword">
-			<objectType>cheshire3.index.SimpleIndex</objectType>
-			<paths>
-				<object type="indexStore" ref="indexStore" />
-			</paths>
-			<source mode="data">
-				<xpath>name</xpath>
-				<xpath>persname</xpath>
-				<xpath>famname</xpath>
-				<xpath>corpname</xpath>
-				<xpath>geogname</xpath>
-				<process>
-					<object type="workflow" ref="KeywordExtractorWorkflow" />
-					<object type="workflow" ref="Diacritic-Case-Possessive-NormalizerWorkflow" />
-				</process>
-			</source>
-			<source mode="all|any|=">
-				<process>
-					<object type="workflow" ref="PreserveMaskingKeywordExtractorWorkflow" />
-					<object type="workflow" ref="Diacritic-Case-Possessive-NormalizerWorkflow" />
-				</process>
-			</source>
-			<source mode="exact">
-				<process>
-					<object type="extractor" ref="SimpleExtractor" />
-					<object type="workflow" ref="Space-Diacritic-Case-NormalizerWorkflow" />
-				</process>
-			</source>
-			<options>
-				<setting type="recordStoreSizes">1</setting>
-			</options>
-		</subConfig>
+        <subConfig type="index" id="idx-nameword">
+            <objectType>cheshire3.index.SimpleIndex</objectType>
+            <paths>
+                <object type="indexStore" ref="indexStore" />
+            </paths>
+            <source mode="data">
+                <xpath>name</xpath>
+                <xpath>persname</xpath>
+                <xpath>famname</xpath>
+                <xpath>corpname</xpath>
+                <xpath>geogname</xpath>
+                <process>
+                    <object type="workflow" ref="KeywordExtractorWorkflow" />
+                    <object type="workflow"
+                        ref="Diacritic-Case-Possessive-NormalizerWorkflow" />
+                </process>
+            </source>
+            <source mode="all|any|=">
+                <process>
+                    <object type="workflow"
+                        ref="PreserveMaskingKeywordExtractorWorkflow" />
+                    <object type="workflow"
+                        ref="Diacritic-Case-Possessive-NormalizerWorkflow" />
+                </process>
+            </source>
+            <source mode="exact">
+                <process>
+                    <object type="extractor" ref="SimpleExtractor" />
+                    <object type="workflow"
+                        ref="Space-Diacritic-Case-NormalizerWorkflow" />
+                </process>
+            </source>
+            <options>
+                <setting type="recordStoreSizes">1</setting>
+            </options>
+        </subConfig>
 
-		<!-- personal names -->
-		<subConfig type="index" id="idx-persname">
-			<objectType>cheshire3.index.SimpleIndex</objectType>
-			<paths>
-				<object type="indexStore" ref="indexStore" />
-			</paths>
-			<source>
-				<xpath>controlaccess/persname</xpath>
-				<xpath>persname/@normal</xpath>
-				<process>
-					<object type="extractor" ref="SimpleExtractor" />
-					<object type="workflow"
-						ref="Space-Diacritic-Case-Possessive-NormalizerWorkflow" />
-				</process>
-			</source>
-			<options>
-				<setting type="recordStoreSizes">1</setting>
-				<setting type="vectors">1</setting>
-			</options>
-		</subConfig>
+        <!-- personal names -->
+        <subConfig type="index" id="idx-persname">
+            <objectType>cheshire3.index.SimpleIndex</objectType>
+            <paths>
+                <object type="indexStore" ref="indexStore" />
+            </paths>
+            <source>
+                <xpath>controlaccess/persname</xpath>
+                <xpath>persname/@normal</xpath>
+                <process>
+                    <object type="extractor" ref="SimpleExtractor" />
+                    <object type="workflow"
+                        ref="Space-Diacritic-Case-Possessive-NormalizerWorkflow" />
+                </process>
+            </source>
+            <options>
+                <setting type="recordStoreSizes">1</setting>
+                <setting type="vectors">1</setting>
+            </options>
+        </subConfig>
 
-		<subConfig type="index" id="idx-persnameword">
-			<objectType>cheshire3.index.SimpleIndex</objectType>
-			<paths>
-				<object type="indexStore" ref="indexStore" />
-			</paths>
-			<source mode="data">
-				<xpath>persname</xpath>
-				<process>
-					<object type="workflow" ref="KeywordExtractorWorkflow" />
-					<object type="workflow" ref="Diacritic-Case-Possessive-NormalizerWorkflow" />
-				</process>
-			</source>
-			<source mode="all|any|=">
-				<process>
-					<object type="workflow" ref="PreserveMaskingKeywordExtractorWorkflow" />
-					<object type="workflow" ref="Diacritic-Case-Possessive-NormalizerWorkflow" />
-				</process>
-			</source>
-			<source mode="exact">
-				<process>
-					<object type="extractor" ref="SimpleExtractor" />
-					<object type="workflow" ref="Space-Diacritic-Case-NormalizerWorkflow" />
-				</process>
-			</source>
-			<options>
-				<setting type="recordStoreSizes">1</setting>
-			</options>
-		</subConfig>
+        <subConfig type="index" id="idx-persnameword">
+            <objectType>cheshire3.index.SimpleIndex</objectType>
+            <paths>
+                <object type="indexStore" ref="indexStore" />
+            </paths>
+            <source mode="data">
+                <xpath>persname</xpath>
+                <process>
+                    <object type="workflow" ref="KeywordExtractorWorkflow" />
+                    <object type="workflow"
+                        ref="Diacritic-Case-Possessive-NormalizerWorkflow" />
+                </process>
+            </source>
+            <source mode="all|any|=">
+                <process>
+                    <object type="workflow"
+                        ref="PreserveMaskingKeywordExtractorWorkflow" />
+                    <object type="workflow"
+                        ref="Diacritic-Case-Possessive-NormalizerWorkflow" />
+                </process>
+            </source>
+            <source mode="exact">
+                <process>
+                    <object type="extractor" ref="SimpleExtractor" />
+                    <object type="workflow"
+                        ref="Space-Diacritic-Case-NormalizerWorkflow" />
+                </process>
+            </source>
+            <options>
+                <setting type="recordStoreSizes">1</setting>
+            </options>
+        </subConfig>
 
-		<!-- epithets -->
-		<subConfig type="index" id="idx-persnameepithet">
-			<objectType>cheshire3.index.SimpleIndex</objectType>
-			<paths>
-				<object type="indexStore" ref="indexStore" />
-			</paths>
-			<source>
-				<xpath>persname/emph[@altrender='epithet']</xpath>
-				<process>
-					<object type="extractor" ref="SimpleExtractor" />
-					<object type="workflow" ref="Space-Diacritic-Case-NormalizerWorkflow" />
-				</process>
-			</source>
-			<options>
-				<setting type="recordStoreSizes">1</setting>
-			</options>
-		</subConfig>
+        <!-- epithets -->
+        <subConfig type="index" id="idx-persnameepithet">
+            <objectType>cheshire3.index.SimpleIndex</objectType>
+            <paths>
+                <object type="indexStore" ref="indexStore" />
+            </paths>
+            <source>
+                <xpath>persname/emph[@altrender='epithet']</xpath>
+                <process>
+                    <object type="extractor" ref="SimpleExtractor" />
+                    <object type="workflow"
+                        ref="Space-Diacritic-Case-NormalizerWorkflow" />
+                </process>
+            </source>
+            <options>
+                <setting type="recordStoreSizes">1</setting>
+            </options>
+        </subConfig>
 
-		<subConfig type="index" id="idx-persnameepithetword">
-			<objectType>cheshire3.index.SimpleIndex</objectType>
-			<paths>
-				<object type="indexStore" ref="indexStore" />
-			</paths>
-			<source mode="data">
-				<xpath>persname/emph[@altrender='epithet']</xpath>
-				<process>
-					<object type="workflow" ref="KeywordExtractorWorkflow" />
-					<object type="workflow" ref="Diacritic-Case-NormalizerWorkflow" />
-				</process>
-			</source>
-			<source mode="all|any|=">
-				<process>
-					<object type="workflow" ref="PreserveMaskingKeywordExtractorWorkflow" />
-					<object type="workflow" ref="Diacritic-Case-NormalizerWorkflow" />
-				</process>
-			</source>
-			<source mode="exact">
-				<process>
-					<object type="extractor" ref="SimpleExtractor" />
-					<object type="workflow" ref="Space-Diacritic-Case-NormalizerWorkflow" />
-				</process>
-			</source>
-			<options>
-				<setting type="recordStoreSizes">1</setting>
-			</options>
-		</subConfig>
+        <subConfig type="index" id="idx-persnameepithetword">
+            <objectType>cheshire3.index.SimpleIndex</objectType>
+            <paths>
+                <object type="indexStore" ref="indexStore" />
+            </paths>
+            <source mode="data">
+                <xpath>persname/emph[@altrender='epithet']</xpath>
+                <process>
+                    <object type="workflow" ref="KeywordExtractorWorkflow" />
+                    <object type="workflow"
+                        ref="Diacritic-Case-NormalizerWorkflow" />
+                </process>
+            </source>
+            <source mode="all|any|=">
+                <process>
+                    <object type="workflow"
+                        ref="PreserveMaskingKeywordExtractorWorkflow" />
+                    <object type="workflow"
+                        ref="Diacritic-Case-NormalizerWorkflow" />
+                </process>
+            </source>
+            <source mode="exact">
+                <process>
+                    <object type="extractor" ref="SimpleExtractor" />
+                    <object type="workflow"
+                        ref="Space-Diacritic-Case-NormalizerWorkflow" />
+                </process>
+            </source>
+            <options>
+                <setting type="recordStoreSizes">1</setting>
+            </options>
+        </subConfig>
 
-		<!-- family names - assume single word or hyphenated -->
-		<subConfig type="index" id="idx-famname">
-			<objectType>cheshire3.index.SimpleIndex</objectType>
-			<paths>
-				<object type="indexStore" ref="indexStore" />
-			</paths>
-			<source>
-				<xpath>famname</xpath>
-				<xpath>persname/emph[@altrender='surname']</xpath>
-				<process>
-					<object type="extractor" ref="SimpleExtractor" />
-					<object type="workflow"
-						ref="Space-Diacritic-Case-Possessive-NormalizerWorkflow" />
-				</process>
-			</source>
-			<options>
-				<setting type="recordStoreSizes">1</setting>
-			</options>
-		</subConfig>
+        <!-- family names - assume single word or hyphenated -->
+        <subConfig type="index" id="idx-famname">
+            <objectType>cheshire3.index.SimpleIndex</objectType>
+            <paths>
+                <object type="indexStore" ref="indexStore" />
+            </paths>
+            <source>
+                <xpath>famname</xpath>
+                <xpath>persname/emph[@altrender='surname']</xpath>
+                <process>
+                    <object type="extractor" ref="SimpleExtractor" />
+                    <object type="workflow"
+                        ref="Space-Diacritic-Case-Possessive-NormalizerWorkflow" />
+                </process>
+            </source>
+            <options>
+                <setting type="recordStoreSizes">1</setting>
+            </options>
+        </subConfig>
 
-		<!-- corporate names -->
-		<subConfig type="index" id="idx-corpname">
-			<objectType>cheshire3.index.SimpleIndex</objectType>
-			<paths>
-				<object type="indexStore" ref="indexStore" />
-			</paths>
-			<source>
-				<xpath>controlaccess/corpname</xpath>
-				<!-- subfields - excluding extraneous and geographic subfields -->
-				<xpath>corpname/emph[@altrender!='x' and @altrender!='z']</xpath>
-				<!-- any normalised corpname -->
-				<xpath>corpname/@normal</xpath>
-				<process>
-					<object type="extractor" ref="SimpleExtractor" />
-					<object type="workflow"
-						ref="Space-Diacritic-Case-Possessive-NormalizerWorkflow" />
-				</process>
-			</source>
-			<options>
-				<setting type="recordStoreSizes">1</setting>
-			</options>
-		</subConfig>
+        <!-- corporate names -->
+        <subConfig type="index" id="idx-corpname">
+            <objectType>cheshire3.index.SimpleIndex</objectType>
+            <paths>
+                <object type="indexStore" ref="indexStore" />
+            </paths>
+            <source>
+                <xpath>controlaccess/corpname</xpath>
+                <!-- subfields - excluding extraneous and geographic subfields -->
+                <xpath>corpname/emph[@altrender!='x' and
+                    @altrender!='z']</xpath>
+                <!-- any normalised corpname -->
+                <xpath>corpname/@normal</xpath>
+                <process>
+                    <object type="extractor" ref="SimpleExtractor" />
+                    <object type="workflow"
+                        ref="Space-Diacritic-Case-Possessive-NormalizerWorkflow" />
+                </process>
+            </source>
+            <options>
+                <setting type="recordStoreSizes">1</setting>
+            </options>
+        </subConfig>
 
-		<subConfig type="index" id="idx-corpnameword">
-			<objectType>cheshire3.index.SimpleIndex</objectType>
-			<paths>
-				<object type="indexStore" ref="indexStore" />
-			</paths>
-			<source mode="data">
-				<xpath>corpname</xpath>
-				<process>
-					<object type="workflow" ref="KeywordExtractorWorkflow" />
-					<object type="workflow" ref="Diacritic-Case-Possessive-NormalizerWorkflow" />
-				</process>
-			</source>
-			<source mode="all|any|=">
-				<process>
-					<object type="workflow" ref="PreserveMaskingKeywordExtractorWorkflow" />
-					<object type="workflow" ref="Diacritic-Case-Possessive-NormalizerWorkflow" />
-				</process>
-			</source>
-			<source mode="exact">
-				<process>
-					<object type="extractor" ref="SimpleExtractor" />
-					<object type="workflow" ref="Space-Diacritic-Case-NormalizerWorkflow" />
-				</process>
-			</source>
-			<options>
-				<setting type="recordStoreSizes">1</setting>
-			</options>
-		</subConfig>
+        <subConfig type="index" id="idx-corpnameword">
+            <objectType>cheshire3.index.SimpleIndex</objectType>
+            <paths>
+                <object type="indexStore" ref="indexStore" />
+            </paths>
+            <source mode="data">
+                <xpath>corpname</xpath>
+                <process>
+                    <object type="workflow" ref="KeywordExtractorWorkflow" />
+                    <object type="workflow"
+                        ref="Diacritic-Case-Possessive-NormalizerWorkflow" />
+                </process>
+            </source>
+            <source mode="all|any|=">
+                <process>
+                    <object type="workflow"
+                        ref="PreserveMaskingKeywordExtractorWorkflow" />
+                    <object type="workflow"
+                        ref="Diacritic-Case-Possessive-NormalizerWorkflow" />
+                </process>
+            </source>
+            <source mode="exact">
+                <process>
+                    <object type="extractor" ref="SimpleExtractor" />
+                    <object type="workflow"
+                        ref="Space-Diacritic-Case-NormalizerWorkflow" />
+                </process>
+            </source>
+            <options>
+                <setting type="recordStoreSizes">1</setting>
+            </options>
+        </subConfig>
 
-		<!-- geographic names -->
-		<subConfig type="index" id="idx-geogname">
-			<objectType>cheshire3.index.SimpleIndex</objectType>
-			<paths>
-				<object type="indexStore" ref="indexStore" />
-			</paths>
-			<source>
-				<xpath>geogname</xpath>
-				<!-- index subfields -->
-				<xpath>geogname/emph[@altrender!='z']</xpath>
-				<xpath>controlaccess/*/emph[@altrender='z']</xpath>
-				<process>
-					<object type="extractor" ref="SimpleExtractor" />
-					<object type="workflow" ref="Space-Diacritic-Case-NormalizerWorkflow" />
-				</process>
-			</source>
-			<options>
-				<setting type="recordStoreSizes">1</setting>
-			</options>
-		</subConfig>
+        <!-- geographic names -->
+        <subConfig type="index" id="idx-geogname">
+            <objectType>cheshire3.index.SimpleIndex</objectType>
+            <paths>
+                <object type="indexStore" ref="indexStore" />
+            </paths>
+            <source>
+                <xpath>geogname</xpath>
+                <!-- index subfields -->
+                <xpath>geogname/emph[@altrender!='z']</xpath>
+                <xpath>controlaccess/*/emph[@altrender='z']</xpath>
+                <process>
+                    <object type="extractor" ref="SimpleExtractor" />
+                    <object type="workflow"
+                        ref="Space-Diacritic-Case-NormalizerWorkflow" />
+                </process>
+            </source>
+            <options>
+                <setting type="recordStoreSizes">1</setting>
+            </options>
+        </subConfig>
 
-		<subConfig type="index" id="idx-geognameword">
-			<objectType>cheshire3.index.SimpleIndex</objectType>
-			<paths>
-				<object type="indexStore" ref="indexStore" />
-			</paths>
-			<source mode="data">
-				<xpath>geogname</xpath>
-				<xpath>controlaccess/*/emph[@altrender='z']</xpath>
-				<process>
-					<object type="workflow" ref="KeywordExtractorWorkflow" />
-					<object type="workflow" ref="Diacritic-Case-NormalizerWorkflow" />
-				</process>
-			</source>
-			<source mode="all|any|=">
-				<process>
-					<object type="workflow" ref="PreserveMaskingKeywordExtractorWorkflow" />
-					<object type="workflow" ref="Diacritic-Case-NormalizerWorkflow" />
-				</process>
-			</source>
-			<source mode="exact">
-				<process>
-					<object type="extractor" ref="SimpleExtractor" />
-					<object type="workflow" ref="Space-Diacritic-Case-NormalizerWorkflow" />
-				</process>
-			</source>
-			<options>
-				<setting type="recordStoreSizes">1</setting>
-			</options>
-		</subConfig>
+        <subConfig type="index" id="idx-geognameword">
+            <objectType>cheshire3.index.SimpleIndex</objectType>
+            <paths>
+                <object type="indexStore" ref="indexStore" />
+            </paths>
+            <source mode="data">
+                <xpath>geogname</xpath>
+                <xpath>controlaccess/*/emph[@altrender='z']</xpath>
+                <process>
+                    <object type="workflow" ref="KeywordExtractorWorkflow" />
+                    <object type="workflow"
+                        ref="Diacritic-Case-NormalizerWorkflow" />
+                </process>
+            </source>
+            <source mode="all|any|=">
+                <process>
+                    <object type="workflow"
+                        ref="PreserveMaskingKeywordExtractorWorkflow" />
+                    <object type="workflow"
+                        ref="Diacritic-Case-NormalizerWorkflow" />
+                </process>
+            </source>
+            <source mode="exact">
+                <process>
+                    <object type="extractor" ref="SimpleExtractor" />
+                    <object type="workflow"
+                        ref="Space-Diacritic-Case-NormalizerWorkflow" />
+                </process>
+            </source>
+            <options>
+                <setting type="recordStoreSizes">1</setting>
+            </options>
+        </subConfig>
 
-		<!-- genreform -->
-		<subConfig type="index" id="idx-genreform">
-			<objectType>cheshire3.index.SimpleIndex</objectType>
-			<paths>
-				<object type="indexStore" ref="indexStore" />
-			</paths>
-			<source>
-				<xpath>genreform</xpath>
-				<process>
-					<object type="extractor" ref="SimpleExtractor" />
-					<object type="workflow" ref="Space-Diacritic-Case-NormalizerWorkflow" />
-				</process>
-			</source>
-			<options>
-				<setting type="recordStoreSizes">1</setting>
-				<setting type="vectors">1</setting>
-			</options>
-		</subConfig>
+        <!-- genreform -->
+        <subConfig type="index" id="idx-genreform">
+            <objectType>cheshire3.index.SimpleIndex</objectType>
+            <paths>
+                <object type="indexStore" ref="indexStore" />
+            </paths>
+            <source>
+                <xpath>genreform</xpath>
+                <process>
+                    <object type="extractor" ref="SimpleExtractor" />
+                    <object type="workflow"
+                        ref="Space-Diacritic-Case-NormalizerWorkflow" />
+                </process>
+            </source>
+            <options>
+                <setting type="recordStoreSizes">1</setting>
+                <setting type="vectors">1</setting>
+            </options>
+        </subConfig>
 
-		<!-- genreform -->
-		<subConfig type="index" id="idx-genreformword">
-			<objectType>cheshire3.index.SimpleIndex</objectType>
-			<paths>
-				<object type="indexStore" ref="indexStore" />
-			</paths>
-			<source mode="data">
-				<xpath>genreform</xpath>
-				<process>
-					<object type="workflow" ref="KeywordExtractorWorkflow" />
-					<object type="workflow" ref="Diacritic-Case-NormalizerWorkflow" />
-				</process>
-			</source>
-			<source mode="all|any|=">
-				<process>
-					<object type="workflow" ref="PreserveMaskingKeywordExtractorWorkflow" />
-					<object type="workflow" ref="Diacritic-Case-NormalizerWorkflow" />
-				</process>
-			</source>
-			<source mode="exact">
-				<process>
-					<object type="extractor" ref="SimpleExtractor" />
-					<object type="workflow" ref="Space-Diacritic-Case-NormalizerWorkflow" />
-				</process>
-			</source>
-			<options>
-				<setting type="recordStoreSizes">1</setting>
-			</options>
-		</subConfig>
+        <!-- genreform -->
+        <subConfig type="index" id="idx-genreformword">
+            <objectType>cheshire3.index.SimpleIndex</objectType>
+            <paths>
+                <object type="indexStore" ref="indexStore" />
+            </paths>
+            <source mode="data">
+                <xpath>genreform</xpath>
+                <process>
+                    <object type="workflow" ref="KeywordExtractorWorkflow" />
+                    <object type="workflow"
+                        ref="Diacritic-Case-NormalizerWorkflow" />
+                </process>
+            </source>
+            <source mode="all|any|=">
+                <process>
+                    <object type="workflow"
+                        ref="PreserveMaskingKeywordExtractorWorkflow" />
+                    <object type="workflow"
+                        ref="Diacritic-Case-NormalizerWorkflow" />
+                </process>
+            </source>
+            <source mode="exact">
+                <process>
+                    <object type="extractor" ref="SimpleExtractor" />
+                    <object type="workflow"
+                        ref="Space-Diacritic-Case-NormalizerWorkflow" />
+                </process>
+            </source>
+            <options>
+                <setting type="recordStoreSizes">1</setting>
+            </options>
+        </subConfig>
 
-		<!-- metadata indexes for OAI -->
-		<subConfig type="index" id="idx-creationDate">
-			<objectType>cheshire3.index.SimpleIndex</objectType>
-			<paths>
-				<object type="indexStore" ref="indexStore" />
-			</paths>
-			<source>
-				<xpath ref="nowTimeSelector" />
-				<process>
-					<object type="extractor" ref="SimpleExtractor" />
-					<object type="tokenizer" ref="DateTokenizer" />
-					<object type="tokenMerger" ref="SimpleTokenMerger" />
-				</process>
-			</source>
-			<options>
-				<!-- don't index or unindex in db.[un]index_record() -->
-				<setting type="noIndexDefault">1</setting>
-				<setting type="noUnindexDefault">1</setting>
-				<!-- We need vectors to unindex these, current value cannot be recreated 
-					in the future -->
-				<setting type="vectors">1</setting>
-			</options>
-		</subConfig>
+        <!-- metadata indexes for OAI -->
+        <subConfig type="index" id="idx-creationDate">
+            <objectType>cheshire3.index.SimpleIndex</objectType>
+            <paths>
+                <object type="indexStore" ref="indexStore" />
+            </paths>
+            <source>
+                <xpath ref="nowTimeSelector" />
+                <process>
+                    <object type="extractor" ref="SimpleExtractor" />
+                    <object type="tokenizer" ref="DateTokenizer" />
+                    <object type="tokenMerger" ref="SimpleTokenMerger" />
+                </process>
+            </source>
+            <options>
+                <!-- don't index or unindex in db.[un]index_record() -->
+                <setting type="noIndexDefault">1</setting>
+                <setting type="noUnindexDefault">1</setting>
+                <!-- We need vectors to unindex these, current value cannot 
+                    be recreated in the future -->
+                <setting type="vectors">1</setting>
+            </options>
+        </subConfig>
 
-		<subConfig type="index" id="idx-modificationDate">
-			<objectType>cheshire3.index.SimpleIndex</objectType>
-			<paths>
-				<object type="indexStore" ref="indexStore" />
-			</paths>
-			<source>
-				<xpath ref="nowTimeSelector" />
-				<process>
-					<object type="extractor" ref="SimpleExtractor" />
-					<object type="tokenizer" ref="DateTokenizer" />
-					<object type="tokenMerger" ref="SimpleTokenMerger" />
-				</process>
-			</source>
-			<options>
-				<!-- We need vectors to unindex these, current value cannot be recreated 
-					in the future -->
-				<setting type="vectors">1</setting>
-			</options>
-		</subConfig>
+        <subConfig type="index" id="idx-modificationDate">
+            <objectType>cheshire3.index.SimpleIndex</objectType>
+            <paths>
+                <object type="indexStore" ref="indexStore" />
+            </paths>
+            <source>
+                <xpath ref="nowTimeSelector" />
+                <process>
+                    <object type="extractor" ref="SimpleExtractor" />
+                    <object type="tokenizer" ref="DateTokenizer" />
+                    <object type="tokenMerger" ref="SimpleTokenMerger" />
+                </process>
+            </source>
+            <options>
+                <!-- We need vectors to unindex these, current value cannot 
+                    be recreated in the future -->
+                <setting type="vectors">1</setting>
+            </options>
+        </subConfig>
 
-		<!-- subject cluster extraction - DEPRECATED -->
-		<!-- <subConfig type="index" id="clusterExtractionIndex"> -->
-		<!-- <objectType>cheshire3.index.ClusterExtractionIndex</objectType> -->
-		<!-- <paths> -->
-		<!-- <path type="tempPath">cluster/tempCluster.data</path> -->
-		<!-- <object type="indexStore" ref="indexStore"/> -->
-		<!-- </paths> -->
-		<!-- <cluster> -->
-		<!-- <map type="key"> -->
-		<!-- <xpath>controlaccess/subject</xpath> -->
-		<!-- <xpath>key</xpath> -->
-		<!-- <process> -->
-		<!-- <object type="extractor" ref="SimpleExtractor"/> -->
-		<!-- <object type="normalizer" ref="CaseNormalizer"/> -->
-		<!-- </process> -->
-		<!-- </map> -->
-		<!-- <map> -->
-		<!-- <xpath>did/unittitle</xpath> -->
-		<!-- <xpath>title</xpath> -->
-		<!-- <process> -->
-		<!-- <object type="extractor" ref="SimpleExtractor"/> -->
-		<!-- <object type="normalizer" ref="CaseNormalizer"/> -->
-		<!-- </process> -->
-		<!-- </map> -->
-		<!-- <map> -->
-		<!-- <xpath>subject</xpath> -->
-		<!-- <xpath>description</xpath> -->
-		<!-- <process> -->
-		<!-- <object type="extractor" ref="SimpleExtractor"/> -->
-		<!-- <object type="normalizer" ref="CaseNormalizer"/> -->
-		<!-- </process> -->
-		<!-- </map> -->
-		<!-- </cluster> -->
-		<!-- </subConfig> -->
-
-	</subConfigs>
+    </subConfigs>
 
 </config>
