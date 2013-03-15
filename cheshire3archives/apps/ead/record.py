@@ -142,7 +142,15 @@ class EADRecordWsgiApplication(EADWsgiApplication):
     def index(self, mimetype, form):
         # Scan the rec.identifier index
         # Return a display appropriate for the requested mimetype
-        raise NotImplementedError()
+        collections = listCollections(self.session)
+        if mimetype.endswith('/xml'):
+            raise NotImplementedError()
+        elif mimetype == 'text/plain':
+            raise NotImplementedError()
+        else:
+            return [self._render_template('dataIndex.html',
+                                          collections=collections
+                                          )]
 
     def text(self, rec, form):
         self.response_headers.append(('Content-Type', 'text/plain'))

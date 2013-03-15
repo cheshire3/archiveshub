@@ -537,6 +537,19 @@ tr.headrow {
     background-color: #b7e8f5;
 }
 
+table.dataindex td.title {
+    width: 80%;
+}
+table.dataindex td.formats {
+    width: 20%;
+}
+table.dataindex td.formats ul {
+    display: table-row;
+}
+
+table.dataindex td.formats ul li{
+    display: table-cell;
+}
 
 table.adminmenu { 
 }
