@@ -106,7 +106,7 @@
 				</try>
 				<except>
 					<assign from="'unparsable: ' + str(err)" to="input" />
-					<log level="warning">"*** " + input</log>
+					<log level="warning">"" + input</log>
 					<return />
 				</except>
 				<!-- type: record -->
@@ -149,7 +149,7 @@
 						<object type="parser" ref="LxmlParser" />
 					</try>
 					<except>
-						<log level="warning">"*** Unparsable Components"</log>
+						<log level="warning">"Unparsable Components"</log>
 						<log level="debug">"" + str(err)</log>
 						<continue />
 					</except>
@@ -167,19 +167,19 @@
 						<object type="recordStore" ref="componentStore" function="store_record" />
 					</try>
 					<except>
-						<log level="critical">"*** Component unstorable"</log>
+						<log level="critical">"Component unstorable"</log>
 						<log level="critical">"\n" + ''.join(traceback.format_exception(sys.exc_type,sys.exc_value,sys.exc_traceback))</log>
 						<log level="critical">"" + input.get_xml(session)</log>
 						<continue />
 					</except>
 					<log level="debug">"adding " + input.id + " to database"</log>
 					<object type="database" function="add_record" />
-					<log level="debug">"indexing" + input.id</log>
+					<log level="debug">"indexing " + input.id</log>
 					<try>
 						<object type="database" function="index_record" />
 					</try>
 					<except>
-						<log level="warning">"*** Some indexes incomplete"</log>
+						<log level="warning">"Some indexes incomplete"</log>
 						<log level="debug">"\n" + "".join(traceback.format_exception(sys.exc_type,sys.exc_value,sys.exc_traceback))</log>
 					</except>
 				</for-each>
@@ -206,7 +206,7 @@
 					<log level="info">"... Identifier: " + input.id + " - loaded, indexed"</log>
 				</try>
 				<except>
-					<log level="warning">"*** Identifier: " + input.id + " - Some indexes incomplete"</log>
+					<log level="warning">"Identifier: " + input.id + " - Some indexes incomplete"</log>
 					<log level="debug">"\n" + ''.join(traceback.format_exception(sys.exc_type,sys.exc_value,sys.exc_traceback))</log>
 				</except>
 			</workflow>
