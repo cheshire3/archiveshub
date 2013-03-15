@@ -5,17 +5,16 @@
         <input type="hidden" name="numreq" value="20" id="numreq"></input>
         <input type="hidden" name="firstrec" value="1" id="firstrec"></input>
         <input type="hidden" name="operation" value="search" id="operation"></input>
-        <!-- uncomment and edit the following if you wish to enable searching within a specific collecion -->
-        <!--
-        <div class="row bar">
-            Search: 
+        
+        <div class="row">
+            Search within: 
             <select name="withinCollection" id="withinCollection" title="Specify which collections to search">
-            <option value="allcollections" selected="selected">All Collections</option>
-            <option value="identifier1">Collection Title 1</option>
-            <option value="identifier2">Collection Title 2</option>
-        </select>
+                <option value="allcollections" selected="selected">All Collections</option>
+                % for identifier, title in collections:
+                    <option value="${identifier}">${(title[:72] + '...') if len(title) > 75 else title}</option>
+                % endfor
+            </select>
         </div>
-        -->
           
         <noscript>
             <div class="row searchClause">  

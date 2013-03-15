@@ -34,7 +34,11 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         
         # Check operation and act accordingly
         if not operation or operation == 'index':
-            content = [self._render_template('index.html')]
+            session = self.session
+            content = [self._render_template(
+                           'index.html',
+                           collections=listCollections(session)
+                       )]
         else:
             try:
                 fn = getattr(self, operation)
@@ -84,19 +88,18 @@ class EADSearchWsgiApplication(EADWsgiApplication):
             qString = generate_cqlQuery(form)
             if not (len(qString)):
                 self._log(40, '*** Unable to generate CQL query')
-                return self._render_template('fail/invalidQuery.html')
+                return self._render_template(
+                    'fail/invalidQuery.html',
+                    collections=listCollections(session)
+                )
         if filter_:
             qString = '{0} and/relevant/proxinfo ({1})'.format(filter_,
                                                                qString)
         if (withinCollection and withinCollection != 'allcollections'):
-            qString = ('(c3.idx-docid exact "%s" or '
-                       'ead.parentid exact "%s/%s") and/relevant/proxinfo '
-                       '(%s)'
-                       '' % (withinCollection,
-                             recordStore.id,
-                             withinCollection,
-                             qString
-                             )
+            qString = ('(rec.collectionIdentifier exact "{0}") '
+                       'and/relevant/proxinfo '
+                       '({1})'.format(withinCollection,
+                                      qString)
                        )
         elif 'noComponents' in form:
             qString = ('ead.istoplevel=1 and/relevant/proxinfo (%s)'
@@ -106,9 +109,15 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         except CQLDiagnostic:
             self._log(40, '*** Unparsable query: %s' % qString)
             if (qString.count('"') % 2):
-                return self._render_template('fail/unpairedQuotes.html')
+                return self._render_template(
+                    'fail/unpairedQuotes.html',
+                    collections=listCollections(session)
+                )
             else:
-                return self._render_template('fail/invalidQuery.html')
+                return self._render_template(
+                    'fail/invalidQuery.html',
+                    collections=listCollections(session)
+                )
 
     def _searchAndSort(self, form):
         # Process form and returns a ResultSet
@@ -121,8 +130,11 @@ class EADSearchWsgiApplication(EADWsgiApplication):
                 rs = self._fetch_resultSet(session, rsid)
             except c3errors.ObjectDoesNotExistException:
                 self._log(40, '*** Invalid ResultSet identifier: %s' % rsid)
-                return self._render_template('fail/invalidResultSet.html',
-                                             rsid=rsid)
+                return self._render_template(
+                    'fail/invalidResultSet.html',
+                    collections=listCollections(session),
+                    rsid=rsid
+                )
         else:
             query = self._get_query(form)
             if not isinstance(query, (CQLClause, CQLTriple)):
@@ -145,10 +157,12 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         return rs
 
     def search(self, form):
+        session = self.session
         if not form:
             # Simply return the search form
-            return [self._render_template('search.html')]
-        session = self.session
+            return [self._render_template('search.html',
+                                          collections=listCollections(session)
+                                          )]
         sortBy = form.getlist('sortBy')
         maximumRecords = int(form.getvalue('maximumRecords', 20))
         startRecord = int(form.getvalue('startRecord', 1))
@@ -169,7 +183,9 @@ class EADSearchWsgiApplication(EADWsgiApplication):
                                           )]
         else:
             return [self._render_template('fail/noHits.html',
-                                          query=rs.query)]
+                                          collections=listCollections(session),
+                                          query=rs.query)
+                    ]
 
     def lastResultSet(self, form):
         raise NotImplementedError()
