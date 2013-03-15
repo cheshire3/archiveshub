@@ -260,10 +260,11 @@ div.row {
   text-align: right;
 }
 
-.rs,
+table.rs,
 div.rsNav,
 table.browse,
-div.browseNav {
+div.browseNav,
+table.subjects {
     clear: both;
 }
 
@@ -522,8 +523,10 @@ table.rs td {
     padding: 5px 2px;
 }
 
-table.browseresults {
-    width:94%;
+table.browseresults,
+table.subjects {
+    width: 94%;
+    margin-bottom: 5px;
 }
 
 td.term {

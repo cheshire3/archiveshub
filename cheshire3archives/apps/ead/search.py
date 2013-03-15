@@ -247,7 +247,37 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         if not form:
             # Simply return the search form
             return [self._render_template('subject.html')]
-        raise NotImplementedError()
+        session = self.session
+        db = self.database
+        queryFactory = self.queryFactory
+        maximumRecords = int(form.getvalue('maximumRecords', 20))
+        startRecord = int(form.getvalue('startRecord', 1))
+        qString = form.getvalue('query')
+        if not qString:
+            qString = generate_cqlQuery(form)
+            if not (len(qString)):
+                self._log(40, 'Unable to generate CQL subject finder query')
+                return self._render_template('fail/invalidSubjectQuery.html')
+        try:
+            query = queryFactory.get_query(session, qString, format='cql')
+        except CQLDiagnostic:
+            return self._render_template('fail/invalidSubjectQuery.html')
+        session.database = 'db_ead_cluster'
+        clusDb = session.server.get_object(session, session.database)
+        rs = clusDb.search(session, query)
+        if not len(rs):
+            content = [self._render_template('fail/noSubjectHits.html',
+                                             query=rs.query)
+                       ]
+        else:
+            content = [self._render_template('subjectResults.html',
+                                             session=session,
+                                             resultSet=rs,
+                                             maximumRecords=maximumRecords,
+                                             startRecord=startRecord, 
+                                             )]
+        session.database = 'db_ead'
+        return content
 
     def summary(self, form):
         session = self.session
