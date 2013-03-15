@@ -646,7 +646,7 @@
         </xsl:if>
         <xsl:if test="not(head/text())">
             <xsl:variable name="headstring">
-                <xsl:text>Physical Characteristics and/or Technical Requirements</xsl:text>
+                <xsl:text>Physical Description</xsl:text>
             </xsl:variable>
             <xsl:choose>
                 <xsl:when test="../../archdesc or ../../../c3:component">
