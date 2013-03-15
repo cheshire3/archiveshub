@@ -21,6 +21,7 @@
     -->
 
     <xsl:variable name="link_to_archon" select="true()"/>
+    <xsl:variable name="link_to_hubmap" select="true()"/>
     <xsl:variable name="finding_aid_metadata" select="true()"/>
     <xsl:variable name="count_subordinates_in_summary" select="true()"/>
     <xsl:variable name="horizontal_rule_between_units" select="true()"/>
