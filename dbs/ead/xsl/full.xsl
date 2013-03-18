@@ -25,24 +25,7 @@
 
     <!-- root template - varies for each type of transformer -->
     <xsl:template match="/">
-        <div id="padder">
-            <div id="rightcol" class="ead">
-                <xsl:apply-templates />
-            </div>
-        </div>
-        <div id="leftcol" class="toc">
-            <xsl:comment>
-                <xsl:text>#config errmsg="[ Table of Contents unavailable ]"</xsl:text>
-            </xsl:comment>
-            <xsl:comment>
-                <xsl:text>#include virtual="</xsl:text>
-                <xsl:value-of select="$toc_cache_url" />
-                <xsl:text>/</xsl:text>
-                <xsl:value-of select="$recid" />
-                <xsl:text>.inc"</xsl:text>
-            </xsl:comment>
-            <br />
-        </div>
+        <xsl:apply-templates />
         <xsl:if test="/ead/archdesc/dsc">
             <exsl:document
                 href="file:///home/cheshire/cheshire3-archives/www/htdocs/ead/tocs/foo.bar"
