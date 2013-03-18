@@ -39,6 +39,12 @@ class EADSearchWsgiApplication(EADWsgiApplication):
                            'index.html',
                            collections=listCollections(session)
                        )]
+        elif operation == 'explore':
+            session = self.session
+            content = [self._render_template(
+                           'explore.html',
+                           collections=listCollections(session)
+                       )]
         else:
             try:
                 fn = getattr(self, operation)
