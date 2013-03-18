@@ -1,0 +1,25 @@
+<%inherit file="single.html"/>
+<%!
+    # Global attributes
+    page_title = "Index"
+%>
+<table summary="Table of available records" class="dataindex">
+    <tr class="headrow">
+        <th>Title</th>
+        <th>Formats</th>
+    </tr>
+    % for identifier, title in collections:
+        <tr>
+            <td class="title">
+                <a href="${identifier}"><strong>${title}</strong></a>
+            </td>
+            <td class="formats">
+                <ul class="unmarked">
+                    <li><a href="${identifier}.html">HTML</a></li>
+                    <li><a href="${identifier}.txt">Text</a></li>
+                    <li><a href="${identifier}.xml">XML</a></li>                    
+                </ul>
+            </td>
+        </tr>
+    % endfor
+</table>
