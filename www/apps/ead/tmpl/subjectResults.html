@@ -1,0 +1,77 @@
+<%inherit file="dual.html"/>
+<%namespace file="subjectResultsDefs.html" import="*"/>
+<%!
+    # Imports
+    from cheshire3.utils import flattenTexts
+    
+    # Over-ride global attributes
+    page_title = "Search :: Results"
+    leftcol_class = "search"
+    rightcol_class = "facets"
+%>
+<%block name="leftcol">
+    <%
+    queryString = capture(format_query, resultSet.query).strip()
+    %>
+    % if queryString:
+        <p class="hitreport">
+            You searched for
+            ${queryString}
+        </p>
+    % endif
+    
+    <div class="rsMod">
+        <div class="displaying">
+            ${displaying(resultSet, maximumRecords, startRecord)}
+        </div>
+    </div>
+
+    <table cellspacing="0" summary="suggested relevant subject headings"
+        class="subjects">
+        <tr class="headrow">
+            <td>Subject</td>
+            <td class="hitcount">Hits</td>
+        </tr>
+        % for index in range(startRecord - 1, min(len(resultSet), startRecord - 1 + maximumRecords)):
+            <tr class="subjecthit ${loop.cycle('even', 'odd')}">
+                ${format_resultSetItem(resultSet, maximumRecords, startRecord, index)}
+            </tr>
+        % endfor
+    </table>
+    
+    <div class="rsMod">
+        <div class="displaying">
+            ${displaying(resultSet, maximumRecords, startRecord)}
+        </div>
+        % if len(resultSet) > 20:
+            <div class="maxRecSel">
+                ${maximumRecordsSelect(resultSet, maximumRecords, startRecord)}
+            </div>
+        % endif
+    </div>
+
+	% if len(resultSet) > maximumRecords:
+        ## Hit list navigation
+        <div class="rsNav">
+            ## Back links
+            % if startRecord > 1:
+                <div class="backlinks">
+                    ${back_links(resultSet, maximumRecords, startRecord)}
+                </div>
+            % endif
+            ## Page skip
+            ## Forward links
+            % if startRecord < len(resultSet) - maximumRecords:
+                <div class="forwardlinks">
+                    ${forward_links(resultSet, maximumRecords, startRecord)}
+                </div>
+            % endif
+        </div>
+	% endif
+
+    <script type="text/javascript">
+    $(document).ready(function() {
+    });
+    </script>
+    
+</%block>

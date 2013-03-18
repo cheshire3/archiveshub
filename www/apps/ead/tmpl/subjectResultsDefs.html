@@ -1,0 +1,150 @@
+<%!
+    # Imports
+    from cheshire3archives.apps.ead.base import cleverTitleCase
+    from cheshire3archives.apps.ead.base import dataFromRecordXPaths
+%>
+
+<%def name="back_links(resultSet, maximumRecords, startRecord)">
+    <a href="search.html?rsid=${resultSet.id|u}&amp;startRecord=1&amp;maximumRecords=${maximumRecords}#leftcol"
+      class="ajax">
+        <button label="fast-rewind" class="rsNav">
+            <img src="${config.get('icons', 'fast-rewind-url')}" alt="|&lt;&lt;">
+        </button>
+    </a>
+    <a href="search.html?rsid=${resultSet.id|u}&amp;startRecord=${max(startRecord - maximumRecords, 1)}&amp;maximumRecords=${maximumRecords}&amp;#leftcol"
+      class="ajax">
+        <button label="rewind" class="rsNav">
+            <img src="${config.get('icons', 'rewind-url')}" alt="&lt;&lt;">
+        </button>
+    </a>
+</%def>
+
+<%def name="forward_links(resultSet, maximumRecords, startRecord)">
+    <a href="search.html?rsid=${resultSet.id|u}&amp;startRecord=${min(startRecord + maximumRecords, len(resultSet))}&amp;maximumRecords=${maximumRecords}&amp;#leftcol"
+      class="ajax">
+        <button label="forward" class="rsNav">
+            <img src="${config.get('icons', 'forward-url')}" alt="&gt;&gt;">
+        </button>
+    </a>
+    <a href="search.html?rsid=${resultSet.id|u}&amp;startRecord=${((len(resultSet) / maximumRecords) * maximumRecords) + 1}&amp;maximumRecords=${maximumRecords}#leftcol"
+      class="ajax">
+        <button label="fast-forward" class="rsNav">
+            <img src="${config.get('icons', 'fast-forward-url')}"
+            alt="&gt;&gt;|">
+        </button>
+    </a>
+</%def>
+
+<%def name="displaying(resultSet, maximumRecords, startRecord)">
+    <div class="displaying">
+        Displaying <strong>${startRecord}</strong>
+        to <strong>${min(startRecord + maximumRecords - 1, len(resultSet))}</strong>
+        of <strong>${len(resultSet)}</strong> hits.
+    </div>
+</%def>
+
+<%def name="maximumRecordsSelectButton(resultSet, maximumRecords, startRecord, label=None)">
+    <a 
+        href="search.html?rsid=${resultSet.id|u}&amp;startRecord=${startRecord}&amp;maximumRecords=${maximumRecords}#leftcol"
+        class="ajax maximumRecords">
+        % if label is not None:
+            <button label="${label}">${label}</button>
+        % else:
+            <button label="${maximumRecords}">${maximumRecords}</button>
+        % endif
+    </a>
+</%def>
+
+<%def name="maximumRecordsSelect(resultSet, maximumRecords, startRecord)">
+    <div class="maximumRecords">
+        Show:
+        ${maximumRecordsSelectButton(resultSet, 20, startRecord)}
+        % if len(resultSet) >= 100:
+            ${maximumRecordsSelectButton(resultSet, 50, startRecord)}
+        % endif
+        % if len(resultSet) >= 200:
+            ${maximumRecordsSelectButton(resultSet, 100, startRecord)}
+        % endif
+        ${maximumRecordsSelectButton(resultSet, len(resultSet), startRecord, label="all")}
+    </div>
+</%def>
+
+<%def name="complex_query()">
+    <span title="sorry, it's too complex to summarize neatly here.">
+        a complex query
+    </span>
+</%def>
+
+<%def name="format_query(query)">
+    ## Format simple query and return user friendly text form.
+    ## 
+    ## For complex (multi-clause) queries, will return an empty string,
+    ## except in the special case where Keywords are being searched for
+    % try:
+        ## Check for single clause query
+        <%
+        idx = query.index
+        rel = query.relation.value
+        term = query.term.toCQL()
+        %>
+    % except AttributeError:
+        % try:
+            ## Check for special "keywords" multi-clause query
+            <%
+            idx = query.leftOperand.leftOperand.index
+            if idx.toCQL() != u'cql.anywhere':
+                return complex_query()
+            rel = query.leftOperand.leftOperand.relation.value
+            term = query.leftOperand.leftOperand.term.toCQL()
+            %>
+        % except AttributeError:
+            <%
+            return complex_query()
+            %>
+        % endtry
+    % endtry
+    % if idx is None:
+        <%
+        return complex_query()
+        %>
+    % endif
+    <strong>${term}</strong>
+    <%
+    if idx.toCQL() == u'cql.anywhere':
+        displayIdx = u''
+    else:
+        if idx.toCQL() == u'dc.identifier':
+            displayName = u'Ref numbers'
+        elif idx.toCQL() == u'bath.personalname':
+            displayName = u'People'
+        elif idx.toCQL() == u'bath.corporatename':
+            displayName = u'Organizations'
+        elif idx.toCQL() == u'bath.geographicname':
+            displayName = u'Places'
+        elif idx.toCQL() == u'bath.genreform':
+            displayName = u'Media Types'
+        else:
+            displayName = idx.value.title() + u's'
+        displayIdx = u' in <strong>{0}</strong>'.format(displayName)
+    %>
+    ${displayIdx}
+</%def>
+
+
+<%def name="format_resultSetItem(resultSet, maximumRecords, startRecord, index)">
+    <td>
+    <%
+    rec = resultSet[index].fetch_record(session)
+    key = dataFromRecordXPaths(session, rec, ['/cluster/key'])
+    qString = 'dc.subject exact "{0}"'.format(key)
+    %>
+    <a href="${SCRIPT}/search.html?query=${qString|u}&amp;startRecord=${1}&amp;maximumRecords=${maximumRecords}">
+        <strong>
+            ${cleverTitleCase(key)}
+        </strong>
+    </a>
+    </td>
+    <td>
+        N/A
+    </td>
+</%def>

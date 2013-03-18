@@ -1,0 +1,40 @@
+<%inherit file="base.html"/>
+<%namespace file="../searchResultsDefs.html" import="format_query"/>
+<%!
+    # Global attributes
+    page_title = "Subject Finder :: No Hits"
+%>
+<%block name="extra">
+    <%
+    queryString = capture(format_query, query).strip()
+    %>
+    <p  class="hitreport">
+        % if queryString:
+            You searched for
+            ${queryString}
+            <br>
+        % endif
+        Sorry, no matching subjects were found.
+    </p>
+    <div id="no-hits-img">
+        <img src="img/no_hits.png" alt=""/>
+    </div>
+    <ul>
+        <li>Please check your spelling and try your 
+            <a href="#subjectform" title="go to the subject finder form">Search</a> again.
+        </li>
+        <li>You might find relevant records by searching for subjects using our
+            <a href="${SCRIPT}/search.html" title="go to the Search page">Search</a> tool
+        </li>
+        <li>You can browse our subject indexes from the 
+            <a href="browse.html" title="go to the Browse Indexes page">Browse Indexes</a> page
+        </li>
+        <li>Try searching the 
+            <a href="http://www.archiveshub.ac.uk/" title="go to the Archives Hub">Archives Hub</a> for records located at other repositories around the UK.
+        </li>
+    </ul>
+</%block>
+<%block name="retry">
+    <hr>
+    <%include file="../subjectForm.html"/>
+</%block>

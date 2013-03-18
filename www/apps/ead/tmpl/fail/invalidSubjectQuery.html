@@ -1,0 +1,12 @@
+<%inherit file="base.html"/>
+<%!
+    # Global attributes
+    page_title = "Subject Finder :: Error"
+%>
+<%block name="error">
+    Invalid subject finder query submitted.
+</%block>
+<%block name="retry">
+    <hr>
+    <%include file="../subjectForm.html"/>
+</%block>
