@@ -35,21 +35,28 @@
             <!-- site navigation links -->
             <%block name="navbar">
             <div id="navbar" class="navbar">
-                <a href="${BASE}/index.html" title="Search for EAD Records"
-                    class="navlink">Search</a>
-                &gt;
-                <a href="${BASE}/browse.html" title="Browse Indexes"
-                    class="navlink">Browse</a>
-                &gt;
-                <a href="${BASE}/subject.html" title="Find Subjects"
-                    class="navlink">Subjects</a>
-                &gt;
-                <a href="${BASE}/about.html" title="About Cheshire for Archives"
-                    class="navlink">About </a>
-                &gt;
-                <a href="${BASE}/help.html" title="Search Help"
-                    class="navlink">Help</a>
-                &gt;
+                <ul id="navbar-list">
+                    <li class="home">
+                        &gt;
+                        <a href="${BASE}/index.html" title="Home page"
+                            class="navlink">Home</a>
+                    </li>
+                    <li class="search">
+                        &gt;
+                        <a href="${BASE}/search.html" title="Search page"
+                            class="navlink">Search</a>
+                    </li>
+                    <li class="explore">
+                        &gt;
+                        <a href="${BASE}/explore.html" title="Explore: Browse Indexes, Find Subjects"
+                            class="navlink">Explore</a>
+                    </li>
+                    <li class="help">
+                        &gt;
+                        <a href="${BASE}/help.html" title="Search Help"
+                            class="navlink">Help</a>
+                    </li>
+                </ul>                        
             </div>
             </%block>
         </div>

@@ -395,6 +395,12 @@ div#navbar {
 	background-color: #b7e8f5;
 }
 
+div#header ul#navbar-list li {
+    display: table-cell;
+    height: 30px;
+    padding-right: 10px;
+}
+
 div#leftcol.toc {
 	font-size: 10pt;	
 }
