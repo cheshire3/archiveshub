@@ -12,6 +12,7 @@ from cgi import FieldStorage
 from argparse import ArgumentParser
 from foresite import conneg
 from lxml import etree
+from lxml import html as lxmlhtml
 
 # Cheshire3 for Archives Imports
 from cheshire3archives.commands.utils import WSGIAppArgumentParser
@@ -116,26 +117,15 @@ class EADRecordWsgiApplication(EADWsgiApplication):
         except IOError:
             txr = db.get_object(session, 'htmlFullTxr') 
             doc = txr.process_record(session, rec)
-            page = doc.get_raw(session).decode('utf-8')
-#            htmlp = db.get_object(session, 'LxmlHtmlParser')
-#            hrec = htmlp.process_document(session, doc)
-#            eadhtml = StringIO('Hello World!')
-#            eadhtml.write(doc.get_raw(session).decode('utf-8'))
-#            divs = hrec.process_xpath(session,
-#                                      '//xhtml:div[id="rightcol"]/*',
-#                                      namespaceUriHash)
-#            eadhtml.write(divs)
-#            for el in divs:
-#                eadhtml.write(etree.tostring(eadhtml,
-#                                             encoding="UTF-8",
-#                                             xml_declaration=False)
-#                              )
-#                eadhtml.write('\n')
-#            page = eadhtml.getvalue()
-#            eadhtml.close()
-            return [self._render_template('detailed.html',
+            divs = lxmlhtml.fragments_fromstring(doc.get_raw(session).decode('utf-8'))
+            assert len(divs) == 2
+            toc = '\n'.join([etree.tostring(el) for el in divs[1].iterchildren()])
+            page = ''.join([etree.tostring(el) for el in divs[0][0].iterchildren()])
+            return [self._render_template('detailedToc.html',
                                           session=session,
-                                          page=page)]
+                                          toc=toc,
+                                          page=page
+                                          )]
         else:
             self._log(10, 'Retrieved from cache')
 

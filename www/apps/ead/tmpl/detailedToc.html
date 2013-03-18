@@ -1,0 +1,17 @@
+<%inherit file="dual.html"/>
+<%!
+    # Imports
+    from cheshire3.utils import flattenTexts
+    
+    # Over-ride global attributes
+    page_title = "Detailed Description"
+    leftcol_class = "toc"
+    rightcol_class = "ead"
+%>
+<%block name="leftcol">
+	${toc}    
+</%block>
+
+<%block name="rightcol">
+	${page}
+</%block>
