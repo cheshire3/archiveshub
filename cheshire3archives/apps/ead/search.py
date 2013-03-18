@@ -39,11 +39,11 @@ class EADSearchWsgiApplication(EADWsgiApplication):
                            'index.html',
                            collections=listCollections(session)
                        )]
-        elif operation == 'explore':
+        elif operation in ['explore', 'help']:
+            # Serve simple templated page
             session = self.session
             content = [self._render_template(
-                           'explore.html',
-                           collections=listCollections(session)
+                           '{0}.html'.format(operation)
                        )]
         else:
             try:
