@@ -48,7 +48,7 @@
         <xsl:if test="$finding_aid_metadata">
             <xsl:apply-templates select="./eadheader" />
         </xsl:if>
-        <p style="page-break-before: always" />
+        <xsl:processing-instruction name="soft-break"/>
         <!-- DSC -->
         <xsl:apply-templates select="./archdesc/dsc" />
     </xsl:template>
@@ -105,7 +105,7 @@
             <xsl:apply-templates
                 select="./*/controlaccess|./*/descgrp/controlaccess" />
         </div>
-        <p style="page-break-before: always" />
+        <xsl:processing-instruction name="soft-break"/>
         <!-- somehow match all sub-levels -->
         <xsl:apply-templates
             select="./c/c|./c01/c02|./c02/c03|./c03/c04|./c04/c05|./c05/c06|./c06/c07|./c07/c08|./c08/c09|./c09/c10|./c10/c11|./c11/c12" />
@@ -119,7 +119,7 @@
             <xsl:if test="$horizontal_rule_between_units">
                 <hr />
             </xsl:if>
-            <p style="page-break-before: always" />
+            <xsl:processing-instruction name="soft-break"/>
             <xsl:call-template name="single-component" />
         </xsl:if>
     </xsl:template>
