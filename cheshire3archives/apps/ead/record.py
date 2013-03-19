@@ -134,9 +134,13 @@ class EADRecordWsgiApplication(EADWsgiApplication):
             assert False
             return open(path).readlines()
         except (AssertionError, IOError):
+            # Transform the Record
             txr = db.get_object(session, 'htmlFullSplitTxr') 
             doc = txr.process_record(session, rec)
             docstr = doc.get_raw(session).decode('utf-8')
+            # Before we split need to find all internal anchors
+            anchors = anchorRe.findall(docstr)
+            # Parse HTML fragments
             divs = lxmlhtml.fragments_fromstring(docstr)
             # Get Table of Contents
             tocdiv = divs.pop(0)
@@ -254,6 +258,8 @@ argparser = WSGIAppArgumentParser(
     conflict_handler='resolve',
     description=__doc__.splitlines()[0]
 )
+
+anchorRe = re.compile('<a .*?name="(.*?)".*?>')
 
 
 if __name__ == "__main__":
