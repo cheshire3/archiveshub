@@ -164,7 +164,8 @@ class EADRecordWsgiApplication(EADWsgiApplication):
                     pageBuffer = StringIO()
                 pageBuffer.write(etree.tostring(div,
                                                 pretty_print=True,
-                                                encoding="utf-8")
+                                                encoding="utf-8",
+                                                method="html")
                                  )
             # Output remaining content to final page
             pageN = self._outputPage(recid, pageIdx, pageBuffer)
