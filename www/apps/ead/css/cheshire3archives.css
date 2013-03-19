@@ -278,7 +278,8 @@ div.sortBySel {
 }
 
 button.rsNav,
-button.browseNav {
+button.browseNav,
+button.pageNav {
     min-width: 40px;
     background-color: #0baedb;
     border-color: #0baedb;

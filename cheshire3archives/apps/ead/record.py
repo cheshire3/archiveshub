@@ -153,7 +153,6 @@ class EADRecordWsgiApplication(EADWsgiApplication):
             pageIdx = 1
             for div in divs:
                 if (pageBuffer.tell() > pageSizeBound * 1024):
-                    self._log(10, pageBuffer.tell())
                     # Output page to file
                     pageN = self._outputPage(recid, pageIdx, pageBuffer)
                     if pageIdx == pagenum:
@@ -173,6 +172,7 @@ class EADRecordWsgiApplication(EADWsgiApplication):
                 page = pageN
             return [self._render_template('detailedToc.html',
                                           session=session,
+                                          recid=recid,
                                           toc=toc,
                                           page=page.decode('utf-8'),
                                           pagenum=pagenum,
