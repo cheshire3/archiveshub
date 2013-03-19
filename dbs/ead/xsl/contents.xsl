@@ -18,26 +18,24 @@
 
     <!-- templates for Table of Contents (toc) -->
     <xsl:template name="toc" xsl:exclude-result-prefixes="#all #default xhtml c3">
-        <div class="toclist" >
-            <h2>
-                <xsl:text>Contents&#160;</xsl:text>
-                <span class="printlink">
-                    <a href="SCRIPT/toc.html?recid=RECID">
-                        <xsl:text>[ printable ]</xsl:text>
-                    </a>
-                </span>
-            </h2>
-            <strong>
-                <xsl:call-template name="toc-link">
-                    <xsl:with-param name="node"
-                        select="/ead/archdesc/did" />
-                </xsl:call-template>
-            </strong>
-            <ul id="someId" class="hierarchy">
-                <xsl:apply-templates select="/ead/archdesc/dsc"
-                    mode="toc" />
-            </ul>
-        </div>
+        <h2>
+            <xsl:text>Contents&#160;</xsl:text>
+            <span class="printlink">
+                <a href="SCRIPT/toc.html?recid=RECID">
+                    <xsl:text>[ printable ]</xsl:text>
+                </a>
+            </span>
+        </h2>
+        <strong>
+            <xsl:call-template name="toc-link">
+                <xsl:with-param name="node"
+                    select="/ead/archdesc/did" />
+            </xsl:call-template>
+        </strong>
+        <ul id="someId" class="hierarchy">
+            <xsl:apply-templates select="/ead/archdesc/dsc"
+                mode="toc" />
+        </ul>
     </xsl:template>
 
     <xsl:template match="dsc" mode="toc">

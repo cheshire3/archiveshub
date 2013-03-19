@@ -2,8 +2,6 @@
 <!DOCTYPE xsl:stylesheet []>
 <xsl:stylesheet
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:exsl="http://exslt.org/common"
-    extension-element-prefixes="exsl"
     xmlns:c3="http://www.cheshire3.org"
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:xhtml="http://www.w3.org/1999/xhtml"
@@ -25,15 +23,12 @@
 
     <!-- root template - varies for each type of transformer -->
     <xsl:template match="/">
-        <xsl:apply-templates />
-        <xsl:if test="/ead/archdesc/dsc">
-            <exsl:document
-                href="file:///home/cheshire/cheshire3-archives/www/htdocs/ead/tocs/foo.bar"
-                method="xml" omit-xml-declaration="yes" indent="yes">
-                <!-- content for this document should go here -->
+        <div class="toclist" >
+            <xsl:if test="/ead/archdesc/dsc">
                 <xsl:call-template name="toc" />
-            </exsl:document>
-        </xsl:if>
+            </xsl:if>
+        </div>
+        <xsl:apply-templates />
     </xsl:template>
 
     <xsl:template match="/ead">
@@ -48,7 +43,7 @@
         <xsl:if test="$finding_aid_metadata">
             <xsl:apply-templates select="./eadheader" />
         </xsl:if>
-        <p style="page-break-before: always" />
+        <xsl:processing-instruction name="soft-break"/>
         <!-- DSC -->
         <xsl:apply-templates select="./archdesc/dsc" />
     </xsl:template>
@@ -105,7 +100,7 @@
             <xsl:apply-templates
                 select="./*/controlaccess|./*/descgrp/controlaccess" />
         </div>
-        <p style="page-break-before: always" />
+        <xsl:processing-instruction name="soft-break"/>
         <!-- somehow match all sub-levels -->
         <xsl:apply-templates
             select="./c/c|./c01/c02|./c02/c03|./c03/c04|./c04/c05|./c05/c06|./c06/c07|./c07/c08|./c08/c09|./c09/c10|./c10/c11|./c11/c12" />
@@ -119,7 +114,7 @@
             <xsl:if test="$horizontal_rule_between_units">
                 <hr />
             </xsl:if>
-            <p style="page-break-before: always" />
+            <xsl:processing-instruction name="soft-break"/>
             <xsl:call-template name="single-component" />
         </xsl:if>
     </xsl:template>
