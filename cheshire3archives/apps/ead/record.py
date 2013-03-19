@@ -115,7 +115,7 @@ class EADRecordWsgiApplication(EADWsgiApplication):
         try:
             return open(path)
         except IOError:
-            txr = db.get_object(session, 'htmlFullTxr') 
+            txr = db.get_object(session, 'htmlFullSplitTxr') 
             doc = txr.process_record(session, rec)
             divs = lxmlhtml.fragments_fromstring(doc.get_raw(session).decode('utf-8'))
             assert len(divs) == 2
