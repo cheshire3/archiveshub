@@ -2,8 +2,6 @@
 <!DOCTYPE xsl:stylesheet []>
 <xsl:stylesheet
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:exsl="http://exslt.org/common"
-    extension-element-prefixes="exsl"
     xmlns:c3="http://www.cheshire3.org"
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:xhtml="http://www.w3.org/1999/xhtml"
@@ -25,15 +23,12 @@
 
     <!-- root template - varies for each type of transformer -->
     <xsl:template match="/">
-        <xsl:apply-templates />
-        <xsl:if test="/ead/archdesc/dsc">
-            <exsl:document
-                href="file:///home/cheshire/install/htdocs/hub/tocs/foo.bar"
-                method="xml" omit-xml-declaration="yes" indent="yes">
-                <!-- content for this document should go here -->
+        <div class="toclist" >
+            <xsl:if test="/ead/archdesc/dsc">
                 <xsl:call-template name="toc" />
-            </exsl:document>
-        </xsl:if>
+            </xsl:if>
+        </div>
+        <xsl:apply-templates />
     </xsl:template>
 
     <xsl:template match="/ead">
@@ -48,9 +43,67 @@
         <xsl:if test="$finding_aid_metadata">
             <xsl:apply-templates select="./eadheader" />
         </xsl:if>
-        <p style="page-break-before: always" />
+        <xsl:processing-instruction name="soft-break"/>
         <!-- DSC -->
         <xsl:apply-templates select="./archdesc/dsc" />
+    </xsl:template>
+
+    <!-- for component records -->
+    <xsl:template match="/c3:component">
+        <!-- link to collection level -->
+        <xsl:text>LINKTOPARENT</xsl:text>
+        <div id="record-head">
+            <!-- Core information about described material from <did> -->
+            <xsl:apply-templates select="./*/did[1]" />
+        </div>
+        <!-- TEMPLATES FOR MAIN BODY -->
+        <div class="archdesc">
+            <xsl:apply-templates select="./*/did[1]/abstract" />
+            <xsl:apply-templates
+                select="./*/scopecontent|./*/descgrp/scopecontent" />
+            <xsl:apply-templates select="./*/bioghist|./*/descgrp/bioghist" />
+            <xsl:apply-templates
+                select="./*/arrangement|./*/descgrp/arrangement" />
+            <!-- ACCESS + USE RESTRICTIONS -->
+            <xsl:apply-templates
+                select="./*/accessrestrict|./*/descgrp/accessrestrict" />
+            <xsl:apply-templates
+                select="./*/userestrict|./*/descgrp/userestrict" />
+            <xsl:apply-templates select="./*/phystech|./*/descgrp/phystech" />
+            <!-- ADMINISTRATIVE INFORMATION / ARCHIVAL HISTORY -->
+            <xsl:apply-templates select="./*/appraisal|./*/descgrp/appraisal" />
+            <xsl:apply-templates select="./*/acqinfo|./*/descgrp/acqinfo" />
+            <xsl:apply-templates select="./*/custodhist|./*/descgrp/custodhist" />
+            <xsl:apply-templates select="./*/accruals|./*/descgrp/accruals" />
+            <xsl:apply-templates
+                select="./*/processinfo|./*/descgrp/processinfo" />
+            <!-- USER INFO -->
+            <xsl:apply-templates
+                select="./*/otherfindaid|./*/descgrp/otherfindaid" />
+            <xsl:apply-templates
+                select="./*/originalsloc|./*/descgrp/originalsloc" />
+            <xsl:apply-templates
+                select="./*/altformavail|./*/descgrp/altformavail" />
+            <xsl:apply-templates
+                select="./*/relatedmaterial|./*/descgrp/relatedmaterial" />
+            <xsl:apply-templates
+                select="./*/separatedmaterial|./*/descgrp/separatedmaterial" />
+            <!-- BIBLIOGRAPHY / CITATIONS -->
+            <xsl:apply-templates
+                select="./*/bibliography|./*/descgrp/bibliography" />
+            <xsl:apply-templates select="./*/prefercite|./*/descgrp/prefercite" />
+            <!-- MISCELLANEOUS -->
+            <xsl:apply-templates select="./*/odd|./*/descgrp/odd" />
+            <xsl:apply-templates select="./*/note|./*/descgrp/note" />
+
+            <!-- CONTROLACCESS -->
+            <xsl:apply-templates
+                select="./*/controlaccess|./*/descgrp/controlaccess" />
+        </div>
+        <xsl:processing-instruction name="soft-break"/>
+        <!-- somehow match all sub-levels -->
+        <xsl:apply-templates
+            select="./c/c|./c01/c02|./c02/c03|./c03/c04|./c04/c05|./c05/c06|./c06/c07|./c07/c08|./c08/c09|./c09/c10|./c10/c11|./c11/c12" />
     </xsl:template>
 
     <!--DSC SECTION -->
@@ -61,7 +114,7 @@
             <xsl:if test="$horizontal_rule_between_units">
                 <hr />
             </xsl:if>
-            <p style="page-break-before: always" />
+            <xsl:processing-instruction name="soft-break"/>
             <xsl:call-template name="single-component" />
         </xsl:if>
     </xsl:template>

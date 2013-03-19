@@ -10,23 +10,27 @@
     Copyright &#169; 2005-2013 the University of Liverpool
     -->
 
-    <!-- Administrator configurable 'switches' for each option, you may set 
-        the 'select' attribute to: "true()" "false()" -->
+    <!--  Host machine address -->
+    <xsl:variable name="host" select="'localhost'"/>
 
-    <xsl:variable name="link_to_archon" select="true()" />
-    <xsl:variable name="link_to_hubmap" select="true()" />
-    <xsl:variable name="finding_aid_metadata" select="true()" />
-    <xsl:variable name="count_subordinates_in_summary"
-        select="true()" />
-    <xsl:variable name="horizontal_rule_between_units"
-        select="true()" />
+    <!--
+    Administrator configurable 'switches'
+    for each option, you may set the 'select' attribute to:
+    "true()"
+    "false()"
+    -->
+
+    <xsl:variable name="link_to_archon" select="true()"/>
+    <xsl:variable name="link_to_hubmap" select="true()"/>
+    <xsl:variable name="finding_aid_metadata" select="true()"/>
+    <xsl:variable name="count_subordinates_in_summary" select="true()"/>
+    <xsl:variable name="horizontal_rule_between_units" select="true()"/>
     <!-- external resource link switches -->
     <xsl:variable name="link_to_amazon" select="false()" />
-    <xsl:variable name="link_to_copac" select="true()" />
-    <xsl:variable name="link_to_googlemaps" select="true()" />
-    <xsl:variable name="link_to_wikipedia" select="false()" />
-
-    <!-- end of switches -->
+    <xsl:variable name="link_to_copac" select="true()"/>
+    <xsl:variable name="link_to_googlemaps" select="true()"/>
+    <xsl:variable name="link_to_wikipedia" select="false()"/>
+  
 
     <!-- other configuration parameters -->
 
