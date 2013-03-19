@@ -14,6 +14,11 @@ from foresite import conneg
 from lxml import etree
 from lxml import html as lxmlhtml
 
+try:
+    from cStringIO import StringIO
+except ImportError:
+    from StringIO import StringIO
+
 # Cheshire3 for Archives Imports
 from cheshire3archives.commands.utils import WSGIAppArgumentParser
 from cheshire3archives.apps.ead.base import *
@@ -90,6 +95,19 @@ class EADRecordWsgiApplication(EADWsgiApplication):
                               environ=self.environ)
         return recid, mType, encoding, form
 
+    def _outputPage(self, recid, idx, pageIO):
+        path = os.path.join(self.config.get('cache', 'html_cache_path'),
+                            recid.replace('/', '-') +
+                            '.{0}.html'.format(idx)
+                            )
+        pageIO.seek(0)
+        page = pageIO.read()
+        self._log(10, "outputting {0}".format(path))
+        with open(path, 'wb') as fh:
+            fh.write(page)
+        pageIO.close()
+        return page
+
     def html(self, rec, form):
         self.response_headers.append(('Content-Type', 'text/html'))
         session = self.session
@@ -113,8 +131,9 @@ class EADRecordWsgiApplication(EADWsgiApplication):
                   ''.format(['record', 'component'][int(isComponent)], recid)
                   )
         try:
-            return open(path)
-        except IOError:
+            assert False
+            return open(path).readlines()
+        except (AssertionError, IOError):
             txr = db.get_object(session, 'htmlFullSplitTxr') 
             doc = txr.process_record(session, rec)
             docstr = doc.get_raw(session).decode('utf-8')
@@ -123,11 +142,41 @@ class EADRecordWsgiApplication(EADWsgiApplication):
             tocdiv = divs.pop(0)
             toc = '\n'.join([etree.tostring(el) for el in tocdiv])
             # Get HTML for remaining pages
-            page = docstr = '\n'.join([etree.tostring(el) for el in divs])
+            docstr = '\n'.join([etree.tostring(el) for el in divs])
+            # Assemble real pages
+            # Start a StringIO
+            pageIO = StringIO()
+            # Set page size bound
+            pageSizeBound = self.config.getint('cache', 'html_file_size_kb')
+            # Allow space for wrapper template
+            pageSizeBound = pageSizeBound - 1
+            pageIdx = 1
+            for div in divs:
+                if (pageIO.tell() > pageSizeBound * 1024):
+                    self._log(10, pageIO.tell())
+                    # Output page to file
+                    pageN = self._outputPage(recid, pageIdx, pageIO)
+                    if pageIdx == pagenum:
+                        page = pageN
+                    # Resolve ToC links
+                    # Increment pageIdx
+                    pageIdx += 1
+                    # Start new pageIO
+                    pageIO = StringIO()
+                pageIO.write(etree.tostring(div,
+                                            pretty_print=True,
+                                            encoding="utf-8")
+                             )
+            # Output remaining content to final page
+            pageN = self._outputPage(recid, pageIdx, pageIO)
+            if pageIdx == pagenum:
+                page = pageN
             return [self._render_template('detailedToc.html',
                                           session=session,
                                           toc=toc,
-                                          page=page
+                                          page=page.decode('utf-8'),
+                                          pagenum=pagenum,
+                                          maxPages=pageIdx
                                           )]
         else:
             self._log(10, 'Retrieved from cache')

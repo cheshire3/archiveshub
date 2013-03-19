@@ -473,6 +473,7 @@ folder-closed-url = %(base-url)s/folderClosed.png
 # This section contains configuration for where to cache HTML copies of
 # descriptions
 html_cache_path = {html_cache_path}
+html_file_size_kb = 50
 
 [casing]
 # Configuration settings related to capitalization
