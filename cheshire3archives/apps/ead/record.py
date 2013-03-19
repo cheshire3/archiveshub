@@ -117,10 +117,13 @@ class EADRecordWsgiApplication(EADWsgiApplication):
         except IOError:
             txr = db.get_object(session, 'htmlFullSplitTxr') 
             doc = txr.process_record(session, rec)
-            divs = lxmlhtml.fragments_fromstring(doc.get_raw(session).decode('utf-8'))
-            assert len(divs) == 2
-            toc = '\n'.join([etree.tostring(el) for el in divs[1].iterchildren()])
-            page = ''.join([etree.tostring(el) for el in divs[0][0].iterchildren()])
+            docstr = doc.get_raw(session).decode('utf-8')
+            divs = lxmlhtml.fragments_fromstring(docstr)
+            # Get Table of Contents
+            tocdiv = divs.pop(0)
+            toc = '\n'.join([etree.tostring(el) for el in tocdiv])
+            # Get HTML for remaining pages
+            page = docstr = '\n'.join([etree.tostring(el) for el in divs])
             return [self._render_template('detailedToc.html',
                                           session=session,
                                           toc=toc,
