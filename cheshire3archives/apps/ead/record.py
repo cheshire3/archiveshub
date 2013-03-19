@@ -95,17 +95,17 @@ class EADRecordWsgiApplication(EADWsgiApplication):
                               environ=self.environ)
         return recid, mType, encoding, form
 
-    def _outputPage(self, recid, idx, pageIO):
+    def _outputPage(self, recid, idx, pageBuffer):
         path = os.path.join(self.config.get('cache', 'html_cache_path'),
                             recid.replace('/', '-') +
                             '.{0}.html'.format(idx)
                             )
-        pageIO.seek(0)
-        page = pageIO.read()
+        pageBuffer.seek(0)
+        page = pageBuffer.read()
         self._log(10, "outputting {0}".format(path))
         with open(path, 'wb') as fh:
             fh.write(page)
-        pageIO.close()
+        pageBuffer.close()
         return page
 
     def html(self, rec, form):
@@ -145,30 +145,30 @@ class EADRecordWsgiApplication(EADWsgiApplication):
             docstr = '\n'.join([etree.tostring(el) for el in divs])
             # Assemble real pages
             # Start a StringIO
-            pageIO = StringIO()
+            pageBuffer = StringIO()
             # Set page size bound
             pageSizeBound = self.config.getint('cache', 'html_file_size_kb')
             # Allow space for wrapper template
             pageSizeBound = pageSizeBound - 1
             pageIdx = 1
             for div in divs:
-                if (pageIO.tell() > pageSizeBound * 1024):
-                    self._log(10, pageIO.tell())
+                if (pageBuffer.tell() > pageSizeBound * 1024):
+                    self._log(10, pageBuffer.tell())
                     # Output page to file
-                    pageN = self._outputPage(recid, pageIdx, pageIO)
+                    pageN = self._outputPage(recid, pageIdx, pageBuffer)
                     if pageIdx == pagenum:
                         page = pageN
                     # Resolve ToC links
                     # Increment pageIdx
                     pageIdx += 1
-                    # Start new pageIO
-                    pageIO = StringIO()
-                pageIO.write(etree.tostring(div,
-                                            pretty_print=True,
-                                            encoding="utf-8")
-                             )
+                    # Start new pageBuffer
+                    pageBuffer = StringIO()
+                pageBuffer.write(etree.tostring(div,
+                                                pretty_print=True,
+                                                encoding="utf-8")
+                                 )
             # Output remaining content to final page
-            pageN = self._outputPage(recid, pageIdx, pageIO)
+            pageN = self._outputPage(recid, pageIdx, pageBuffer)
             if pageIdx == pagenum:
                 page = pageN
             return [self._render_template('detailedToc.html',
@@ -177,7 +177,8 @@ class EADRecordWsgiApplication(EADWsgiApplication):
                                           page=page.decode('utf-8'),
                                           pagenum=pagenum,
                                           maxPages=pageIdx
-                                          )]
+                                          )
+                    ]
         else:
             self._log(10, 'Retrieved from cache')
 
