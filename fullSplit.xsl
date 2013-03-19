@@ -23,10 +23,12 @@
 
     <!-- root template - varies for each type of transformer -->
     <xsl:template match="/">
+        <div class="toclist" >
+            <xsl:if test="/ead/archdesc/dsc">
+                <xsl:call-template name="toc" />
+            </xsl:if>
+        </div>
         <xsl:apply-templates />
-        <xsl:if test="/ead/archdesc/dsc">
-            <xsl:call-template name="toc" />
-        </xsl:if>
     </xsl:template>
 
     <xsl:template match="/ead">
