@@ -2,8 +2,6 @@
 <!DOCTYPE xsl:stylesheet []>
 <xsl:stylesheet
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:exsl="http://exslt.org/common"
-    extension-element-prefixes="exsl"
     xmlns:c3="http://www.cheshire3.org"
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:xhtml="http://www.w3.org/1999/xhtml"
@@ -27,12 +25,7 @@
     <xsl:template match="/">
         <xsl:apply-templates />
         <xsl:if test="/ead/archdesc/dsc">
-            <exsl:document
-                href="file:///home/cheshire/cheshire3-archives/www/htdocs/ead/tocs/foo.bar"
-                method="xml" omit-xml-declaration="yes" indent="yes">
-                <!-- content for this document should go here -->
-                <xsl:call-template name="toc" />
-            </exsl:document>
+            <xsl:call-template name="toc" />
         </xsl:if>
     </xsl:template>
 
