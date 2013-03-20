@@ -130,17 +130,33 @@ class EADRecordWsgiApplication(EADWsgiApplication):
         else:
             # OK, must be a component record
             isComponent = True
-        path = os.path.join(self.config.get('cache', 'html_cache_path'),
-                            recid.replace('/', '-') +
-                            '.%d.html' % (pagenum)
-                            )
         self._log(10, 'Full-text requested for {0}: {1}'
                   ''.format(['record', 'component'][int(isComponent)], recid)
                   )
-        try:
-            assert False
-            return open(path).readlines()
-        except (AssertionError, IOError):
+        path = os.path.join(self.config.get('cache', 'html_cache_path'),
+                            '{0}.1.html'.format(recid.replace('/', '_'))
+                            )
+        if os.path.exists(path):
+            path = os.path.join(self.config.get('cache', 'html_cache_path'),
+                                '{0}.{1}.html'.format(recid.replace('/', '_'),
+                                                      pagenum
+                                                      )
+            )
+            page = unicode(open(path, 'rb').read(), 'utf-8')
+            self._log(10, 'Retrieved {0} from cache'.format(path))
+            # Retrieve toc
+            tocpath = os.path.join(self.config.get('cache', 'html_cache_path'),
+                                   '{0}.toc.html'.format(
+                                        recid.replace('/', '_')
+                                   )
+            )
+            try:
+                toc = unicode(open(tocpath, 'rb').read(), 'utf-8')
+            except IOError:
+                # No ToC file
+                toc = ''
+                
+        else:
             # Transform the Record
             txr = db.get_object(session, 'htmlFullSplitTxr') 
             doc = txr.process_record(session, rec)
@@ -243,15 +259,13 @@ class EADRecordWsgiApplication(EADWsgiApplication):
             except IndexError:
                 # TODO: Return fail page
                 raise
-            return [self._render_template('detailedWithToC.html',
-                                          session=session,
-                                          recid=recid,
-                                          toc=toc,
-                                          page=page,
-                                          )
-                    ]
-        else:
-            self._log(10, 'Retrieved from cache')
+        return [self._render_template('detailedWithToC.html',
+                                      session=session,
+                                      recid=recid,
+                                      toc=toc,
+                                      page=page,
+                                      )
+                ]
 
     def index(self, mimetype, form):
         # Scan the rec.identifier index
