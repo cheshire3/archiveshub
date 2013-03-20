@@ -165,7 +165,6 @@ class EADRecordWsgiApplication(EADWsgiApplication):
             pages = []
             anchorPageHash = {}
             for div in divs:
-                self._log(10, anchorPageHash)
                 # Convert to HTML (from XHTML)
                 lxmlhtml.xhtml_to_html(div)
                 if (pageBuffer.tell() > pageSizeBound * 1024):
@@ -231,7 +230,7 @@ class EADRecordWsgiApplication(EADWsgiApplication):
             except IndexError:
                 # TODO: Return fail page
                 raise
-            return [self._render_template('detailedToc.html',
+            return [self._render_template('detailedWithToC.html',
                                           session=session,
                                           recid=recid,
                                           toc=toc,
