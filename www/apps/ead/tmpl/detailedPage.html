@@ -1,20 +1,17 @@
-<%inherit file="dual.html"/>
-<%!
-    # Imports
-    from cheshire3.utils import flattenTexts
-    
-    # Over-ride global attributes
-    page_title = "Detailed Description"
-    leftcol_class = "toc"
-    rightcol_class = "ead"
-%>
-<%block name="leftcol">
-	${toc}    
-</%block>
-
-<%block name="rightcol">
-	${page}
-</%block>
+% if maxPages > 1:
+    ${page_nav(recid, pagenum, maxPages)}
+% endif
+${page}
+% if maxPages > 1:
+    ${page_nav(recid, pagenum, maxPages)}
+% endif
+<script type="text/javascript">
+$(document).ready(function() {
+    $('select[name="page"]').change(function() {
+        $(this).closest("form").submit();
+    });
+});
+</script>
 
 <%def name="page_nav(recid, pagenum, maxPages)">
     <div class="pagenav">
@@ -40,6 +37,8 @@
                     % endif
                 % endfor
                 </select>
+                of
+                ${maxPages}
             </form>
         </div>
     </div>
@@ -70,7 +69,7 @@
             <img src="${config.get('icons', 'forward-url')}" alt="&gt;&gt;">
         </button>
     </a>
-    <a href="%s/%s-p%d.shtml"
+    <a href="${SCRIPT}/${recid}.html?page=${maxPages}"
         title="Final page"
         onclick="setCookie('${recid}-tocstate', stateToString('someId'))">
         <button label="fast-forward" class="pageNav">

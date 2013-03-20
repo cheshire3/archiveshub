@@ -189,6 +189,16 @@ class EADRecordWsgiApplication(EADWsgiApplication):
             pages.append(self._readBuffer(pageBuffer))
             # Output pages to cache
             for idx, page in enumerate(pages):
+                # Template for page navigation if necessary
+                page = self._render_template('detailedPage.html',
+                                             session=session,
+                                             recid=recid,
+                                             page=page,
+                                             pagenum=idx + 1,
+                                             maxPages=len(pages)
+                                             )
+                # Keep as unicode (decode early, encode late)
+                page = page.decode('utf-8')
                 # Resolve anchors
                 for anchorName, anchorPage in anchorPageHash.iteritems():
                     page = page.replace('PAGE#{0}"'.format(anchorName),
@@ -198,6 +208,9 @@ class EADRecordWsgiApplication(EADWsgiApplication):
                                                   anchorPage,
                                                   anchorName)
                                         )
+                # Replace page in pages
+                
+                pages[idx] = page
                 path = os.path.join(self.config.get('cache',
                                                     'html_cache_path'),
                                     "{0}.{1}.html".format(recid.replace('/',
@@ -235,8 +248,6 @@ class EADRecordWsgiApplication(EADWsgiApplication):
                                           recid=recid,
                                           toc=toc,
                                           page=page,
-                                          pagenum=pagenum,
-                                          maxPages=len(pages)
                                           )
                     ]
         else:
