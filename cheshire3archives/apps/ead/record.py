@@ -120,7 +120,14 @@ class EADRecordWsgiApplication(EADWsgiApplication):
         session = self.session
         db = self.database
         recid = rec.id
-        pagenum = int(form.getfirst('page', 1))
+        try:
+            pagenum = int(form.getfirst('page', 1))
+        except ValueError:
+            return [self._render_template('fail/incorrectValueType.html',
+                                          key="page",
+                                          value=form.getfirst('page'),
+                                          expected="an integer (whole number)"
+                                          )]
         try:
             parentId = rec.process_xpath(session, '/c3component/@parent')[0]
         except IndexError:
