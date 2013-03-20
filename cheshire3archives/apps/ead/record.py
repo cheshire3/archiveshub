@@ -95,6 +95,13 @@ class EADRecordWsgiApplication(EADWsgiApplication):
                               environ=self.environ)
         return recid, mType, encoding, form
 
+    def _readBuffer(self, buffer_):
+        # Read and close the given file-like page buffer, return the content
+        buffer_.seek(0)
+        data = buffer_.read()
+        buffer_.close()
+        return data
+
     def _outputPage(self, recid, idx, pageBuffer):
         path = os.path.join(self.config.get('cache', 'html_cache_path'),
                             recid.replace('/', '-') +
@@ -138,13 +145,14 @@ class EADRecordWsgiApplication(EADWsgiApplication):
             txr = db.get_object(session, 'htmlFullSplitTxr') 
             doc = txr.process_record(session, rec)
             docstr = doc.get_raw(session).decode('utf-8')
-            # Before we split need to find all internal anchors
-            anchors = anchorRe.findall(docstr)
             # Parse HTML fragments
             divs = lxmlhtml.fragments_fromstring(docstr)
             # Get Table of Contents
             tocdiv = divs.pop(0)
-            toc = '\n'.join([etree.tostring(el) for el in tocdiv])
+            toc = etree.tounicode(tocdiv,
+                                  pretty_print=True,
+                                  method="html")
+#            toc = '\n'.join([etree.tostring(el) for el in tocdiv])
             # Get HTML for remaining pages
             docstr = '\n'.join([etree.tostring(el) for el in divs])
             # Assemble real pages
@@ -154,34 +162,82 @@ class EADRecordWsgiApplication(EADWsgiApplication):
             pageSizeBound = self.config.getint('cache', 'html_file_size_kb')
             # Allow space for wrapper template
             pageSizeBound = pageSizeBound - 1
-            pageIdx = 1
+            pages = []
+            anchorPageHash = {}
             for div in divs:
+                self._log(10, anchorPageHash)
+                # Convert to HTML (from XHTML)
+                lxmlhtml.xhtml_to_html(div)
                 if (pageBuffer.tell() > pageSizeBound * 1024):
-                    # Output page to file
-                    pageN = self._outputPage(recid, pageIdx, pageBuffer)
-                    if pageIdx == pagenum:
-                        page = pageN
-                    # Resolve ToC links
-                    # Increment pageIdx
-                    pageIdx += 1
+                    # Finish current page
+                    # Add completed page to final pages
+                    pages.append(self._readBuffer(pageBuffer))
                     # Start new pageBuffer
                     pageBuffer = StringIO()
-                pageBuffer.write(etree.tostring(div,
-                                                pretty_print=True,
-                                                encoding="utf-8",
-                                                method="html")
-                                 )
-            # Output remaining content to final page
-            pageN = self._outputPage(recid, pageIdx, pageBuffer)
-            if pageIdx == pagenum:
-                page = pageN
+                elif isinstance(div, etree.ElementBase):
+                    # Only include elements
+                    # Find all internal anchors
+                    anchors = div.xpath('descendant-or-self::a/@name')
+                    anchorPageHash.update(dict([(name, len(pages) + 1) for
+                                                name in anchors
+                                                ])
+                                          )
+                    pageBuffer.write(etree.tounicode(div,
+                                                     pretty_print=True,
+                                                     method="html")
+                                     )
+            # Read final page
+            pages.append(self._readBuffer(pageBuffer))
+            # Output pages to cache
+            for idx, page in enumerate(pages):
+                # Resolve anchors
+                for anchorName, anchorPage in anchorPageHash.iteritems():
+                    page = page.replace('PAGE#{0}"'.format(anchorName),
+                                        '{0}/{1}.html?page={2}#{3}"'
+                                        ''.format(self.script,
+                                                  recid,
+                                                  anchorPage,
+                                                  anchorName)
+                                        )
+                path = os.path.join(self.config.get('cache',
+                                                    'html_cache_path'),
+                                    "{0}.{1}.html".format(recid.replace('/',
+                                                                        '_'),
+                                                          idx + 1
+                                                          )
+                                    )
+                self._log(10, "outputting {0}".format(path))
+                with open(path, 'wb') as fh:
+                    fh.write(page.encode('utf-8'))
+            # Resolve anchors in Toc
+            for anchorName, anchorPage in anchorPageHash.iteritems():
+                toc = toc.replace('PAGE#{0}"'.format(anchorName),
+                                  '{0}/{1}.html?page={2}#{3}"'
+                                  ''.format(self.script,
+                                            recid,
+                                            anchorPage,
+                                            anchorName)
+                                  )
+            # Output ToC to cache
+            path = os.path.join(self.config.get('cache', 'html_cache_path'),
+                                "{0}.toc.html".format(recid.replace('/', '_'))
+                                )
+            self._log(10, "outputting {0}".format(path))
+            with open(path, 'wb') as fh:
+                fh.write(toc.encode('utf-8'))
+            # Return requested page
+            try:
+                page = pages[pagenum - 1]
+            except IndexError:
+                # TODO: Return fail page
+                raise
             return [self._render_template('detailedToc.html',
                                           session=session,
                                           recid=recid,
                                           toc=toc,
-                                          page=page.decode('utf-8'),
+                                          page=page,
                                           pagenum=pagenum,
-                                          maxPages=pageIdx
+                                          maxPages=len(pages)
                                           )
                     ]
         else:
@@ -258,8 +314,6 @@ argparser = WSGIAppArgumentParser(
     conflict_handler='resolve',
     description=__doc__.splitlines()[0]
 )
-
-anchorRe = re.compile('<a .*?name="(.*?)".*?>')
 
 
 if __name__ == "__main__":
