@@ -65,7 +65,7 @@ class EADWsgiApplication(object):
                                              output_encoding='utf-8',
                                              input_encoding='utf-8',
                                              module_directory=mod_dir,
-                                             strict_undefined=True)
+                                             strict_undefined=False)
         self.globalReplacements = {
             'version': get_distribution("cheshire3archives").version,
             'config': config

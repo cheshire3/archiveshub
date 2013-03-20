@@ -142,7 +142,15 @@ class EADRecordWsgiApplication(EADWsgiApplication):
                                                       pagenum
                                                       )
             )
-            page = unicode(open(path, 'rb').read(), 'utf-8')
+            try:
+                page = unicode(open(path, 'rb').read(), 'utf-8')
+            except IOError:
+                # Page 1 exists, but not requested page
+                # Return invalid page number
+                return [self._render_template('fail/invalidPageNumber.html',
+                                      session=session,
+                                      recid=recid,
+                                      pagenum=pagenum)]
             self._log(10, 'Retrieved {0} from cache'.format(path))
             # Retrieve toc
             tocpath = os.path.join(self.config.get('cache', 'html_cache_path'),
@@ -257,8 +265,12 @@ class EADRecordWsgiApplication(EADWsgiApplication):
             try:
                 page = pages[pagenum - 1]
             except IndexError:
-                # TODO: Return fail page
-                raise
+                # Return invalid page number
+                return [self._render_template('fail/invalidPageNumber.html',
+                                      session=session,
+                                      recid=recid,
+                                      pagenum=pagenum,
+                                      maxPages=len(pages))]
         return [self._render_template('detailedWithToC.html',
                                       session=session,
                                       recid=recid,

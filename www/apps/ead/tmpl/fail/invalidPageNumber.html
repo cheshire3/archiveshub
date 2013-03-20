@@ -1,0 +1,25 @@
+<%inherit file="base.html"/>
+<%namespace file="../detailedPage.html" import="num_nav"/>
+<%!
+    
+    # Global attributes
+    page_title = "Detailed Description :: Error"
+%>
+<%block name="error">
+    Requested page "${pagenum}" does not exist.
+</%block>
+
+<%block name="extra">
+% if maxPages is UNDEFINED:
+    
+% else:
+    This description has only ${maxPages} pages.
+% endif
+</%block>
+<%block name="retry">
+% if maxPages is UNDEFINED:
+    
+% else:
+    ${num_nav(recid, pagenum, maxPages)}
+% endif
+</%block>
