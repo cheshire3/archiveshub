@@ -151,6 +151,16 @@ class EADWsgiApplication(object):
             rs.id = rsid
             return rs
 
+    def _transformRecord(self, rec, txr_id):
+        # Transform Record with Transformer, return unicode object
+        txr = self.database.get_object(self.session, txr_id) 
+        doc = txr.process_record(self.session, rec)
+        self._log(10, "Transformed with {0}".format(txr_id))
+        doc_uc = doc.get_raw(session).decode('utf-8')
+        # Fix horrible Unicode space
+        doc_uc = doc_uc.replace(u"\xa0", u" ")
+        return doc_uc
+
     def _textFromRecord(self, rec):
         # Return a text representation of the Record
         global namespaceUriHash
