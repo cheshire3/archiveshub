@@ -5,10 +5,14 @@
     from cheshire3archives.apps.ead.base import cleverTitleCase
     
     # Over-ride global attributes
-    page_title = "Browse :: Results"
     leftcol_class = "browse"
     rightcol_class = "none"
 %>
+
+<%block name="title">
+    Browse :: Results
+</%block>
+
 <%block name="leftcol">
     % if not all([hitstart, hitend]):
         ## Term list navigation

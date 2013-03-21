@@ -4,10 +4,13 @@
     from cheshire3archives.apps.ead.base import backwalkComponentTitles
 
     # Over-ride global attributes
-    page_title = "Display :: Brief"
     leftcol_class = "search"
     rightcol_class = "brief"
 %>
+
+<%block name="title">
+    Display :: Brief
+</%block>
 
 <%def name="hierarchyList(titles)">
     % if titles:

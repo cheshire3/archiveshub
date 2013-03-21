@@ -6,10 +6,14 @@
     from cheshire3.utils import flattenTexts
     
     # Over-ride global attributes
-    page_title = "Search :: Results"
     leftcol_class = "search"
     rightcol_class = "facets"
 %>
+
+<%block name="title">
+    Search :: Results
+</%block>
+
 <%block name="leftcol">
     <%
     if filtered:

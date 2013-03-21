@@ -1,11 +1,13 @@
 <%inherit file="base.html"/>
-<%!
-    # Global attributes
-    page_title = "Search :: Error"
-%>
-<%block name="error">
-Invalid query submitted.
+
+<%block name="title">
+    Search :: Error :: Invalid Query
 </%block>
+
+<%block name="error">
+    Invalid query submitted.
+</%block>
+
 <%block name="retry">
     <hr>
     <%include file="../searchForm.html"/>

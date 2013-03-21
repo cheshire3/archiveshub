@@ -1,9 +1,10 @@
 <%inherit file="base.html"/>
 <%namespace file="../searchResultsDefs.html" import="format_query"/>
-<%!
-    # Global attributes
-    page_title = "Subject Finder :: No Hits"
-%>
+
+<%block name="title">
+    Subject Finder :: No Hits
+</%block>
+
 <%block name="extra">
     <%
     queryString = capture(format_query, query).strip()

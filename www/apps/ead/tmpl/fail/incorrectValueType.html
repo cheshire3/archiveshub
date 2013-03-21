@@ -1,8 +1,9 @@
 <%inherit file="base.html"/>
-<%!
-    # Global attributes
-    page_title = "Error"
-%>
+
+<%block name="title">
+    Error :: Invalid Argument Type
+</%block>
+
 <%block name="error">
     Given value for ${key}, ${value}, is not ${expected}.
 </%block>

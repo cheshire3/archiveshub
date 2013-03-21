@@ -1,8 +1,9 @@
 <%inherit file="base.html"/>
-<%!
-    # Global attributes
-    page_title = "Not Found"
-%>
+
+<%block name="title">
+    Not Found
+</%block>
+
 <%block name="error">
     Requested resource "${resource}" was not found
 </%block>

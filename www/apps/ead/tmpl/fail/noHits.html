@@ -1,9 +1,10 @@
 <%inherit file="base.html"/>
 <%namespace file="../searchResultsDefs.html" import="format_query"/>
-<%!
-    # Global attributes
-    page_title = "Search :: No Hits"
-%>
+
+<%block name="title">
+    Search :: No Hits
+</%block>
+
 <%block name="extra">
     <%
     queryString = capture(format_query, query).strip()
@@ -37,6 +38,7 @@
         </li>
     </ul>
 </%block>
+
 <%block name="retry">
     <hr>
     <%include file="../searchForm.html"/>

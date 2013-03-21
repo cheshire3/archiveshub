@@ -1,11 +1,18 @@
 <%inherit file="base.html"/>
-<%!
-    # Global attributes
-    page_title = "Error"
-%>
-<%block name="error">
-Invalid resultSet.
+
+<%block name="title">
+    Error :: Invalid Result Set
 </%block>
-<p>ResultSet "${rsid}" does not exist, or has expired.</p>
-<hr>
-<%include file="../searchForm.html"/>
+
+<%block name="error">
+    Invalid resultSet.
+</%block>
+
+<%block name="extra">
+    <p>ResultSet "${rsid}" does not exist, or has expired.</p>
+</%block>
+
+<%block name="retry">
+    <hr>
+    <%include file="../searchForm.html"/>
+</%block>

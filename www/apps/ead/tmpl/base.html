@@ -1,12 +1,11 @@
 <%!
     # Global attributes
-    page_title = "Home"
     body_class = ""
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
     <head>
-        <title>${repository_name} :: ${self.attr.page_title}</title>
+        <title>${repository_name} :: ${self.title()}</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
         <!-- screen CSS -->
         <link rel="stylesheet" type="text/css" media="screen"
@@ -29,7 +28,11 @@
                 </div>
                 <div id="titles">
                     <h1>${repository_name}</h1>
-                    <h2>${self.attr.page_title}</h2>
+                    <h2>
+                        <%block name="title">
+                            Home
+                        </%block>
+                    </h2>
                 </div>
             </div> <!-- end banner div -->
             <!-- site navigation links -->

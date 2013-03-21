@@ -4,10 +4,14 @@
     from cheshire3.utils import flattenTexts
     
     # Over-ride global attributes
-    page_title = "Detailed Description"
     leftcol_class = "toc"
     rightcol_class = "ead"
 %>
+
+<%block name="title">
+    Detailed Description    
+</%block>
+
 <%block name="leftcol">
 	${toc}    
 </%block>
