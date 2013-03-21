@@ -113,42 +113,6 @@ class EADWsgiApplication(object):
             
             return exceptions.html_error_template().render()
 
-    def _handle_error(self):
-        self.htmlTitle.append('Error')
-        cla, exc, trbk = sys.exc_info()
-        excName = cla.__name__
-        try:
-            excArgs = exc.__dict__["args"]
-        except KeyError:
-            excArgs = str(exc)
-        excTb = traceback.format_tb(trbk, 100)
-        # TODO: add logging
-        #self.log('*** {0}: {1}'.format(excName, excArgs))
-        #self.logExc('{0}: {1}\n{2}'.format(excName, excArgs, '\n'.join(excTb)))
-        yield html_encode(excName)
-        yield html_encode(excArgs)
-        for line in excTb:
-            yield html_encode(line)
-            yield '<br/>\n'
-#        return '''\
-#        <div id="single">
-#          <p class="error">An error occurred while processing your request.
-#            <br/>The message returned was as follows:
-#          </p>
-#          <code>{0}: {1}</code>
-#          <p>
-#            <strong>
-#              Please try again, or contact the system administrator if this 
-#              problem persists.
-#            </strong>
-#          </p>
-#          <p>Debugging Traceback: 
-#            <a href="#traceback" class="jstoggle-text">[ hide ]</a>
-#          </p>
-#          <div id="traceback" class="jshide">{2}</div>
-#        </div> <!-- /single -->
-#        '''.format(excName, excArgs, excTb).split('\n')
-
     def _fetch_record(self, session, recid):
         # Fetch a Record
         session = self.session
