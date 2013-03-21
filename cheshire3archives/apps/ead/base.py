@@ -66,21 +66,21 @@ class EADWsgiApplication(object):
                                              input_encoding='utf-8',
                                              module_directory=mod_dir,
                                              strict_undefined=False)
-        self.globalReplacements = {
+        self.defaultContext = {
             'version': get_distribution("cheshire3archives").version,
             'config': config
         }
-        self.globalReplacements.update(dict(config.items('brand')))
+        self.defaultContext.update(dict(config.items('brand')))
 
     def _setUp(self, environ):
         # Prepare application to handle a new request
         self.response_headers = []
         self.environ = environ
         script = self.script = environ.get('SCRIPT_NAME', '')
-        self.globalReplacements['SCRIPT'] = script
+        self.defaultContext['SCRIPT'] = script
         # Set the base URL of this family of apps
         base = script
-        self.globalReplacements['BASE'] = base
+        self.defaultContext['BASE'] = base
         self.config.set('icons', 'base-url', '{0}/img'.format(base))
 
     def _log(self, lvl, msg):
@@ -106,7 +106,7 @@ class EADWsgiApplication(object):
     def _render_template(self, template_name, **kwargs):
         try:
             template = self.templateLookup.get_template(template_name)
-            d = self.globalReplacements.copy()
+            d = self.defaultContext.copy()
             d.update(kwargs)
             return template.render(**d)
         except:

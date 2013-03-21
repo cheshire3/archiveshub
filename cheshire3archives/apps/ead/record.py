@@ -43,7 +43,7 @@ class EADRecordWsgiApplication(EADWsgiApplication):
         super(EADRecordWsgiApplication, self)._setUp(environ)
         # Set the base URL of this family of apps
         base = re.sub('/data$', '', self.script)
-        self.globalReplacements['BASE'] = base
+        self.defaultContext['BASE'] = base
         self.config.set('icons', 'base-url', '{0}/img'.format(base))
     
     def __call__(self, environ, start_response):
