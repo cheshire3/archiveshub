@@ -120,13 +120,18 @@ class EADRecordWsgiApplication(EADWsgiApplication):
         session = self.session
         db = self.database
         recid = rec.id
+        pagenum = form.getfirst('page', 1)
+        if pagenum == 'toc':
+            # Redirect to self.toc
+            return self.toc(rec, form)
         try:
-            pagenum = int(form.getfirst('page', 1))
+            pagenum = int(pagenum)
         except ValueError:
             return [self._render_template('fail/incorrectValueType.html',
                                           key="page",
                                           value=form.getfirst('page'),
-                                          expected="an integer (whole number)"
+                                          expected=('an integer (whole number)'
+                                                    ' or "toc"')
                                           )]
         try:
             parentId = rec.process_xpath(session, '/c3component/@parent')[0]
@@ -175,6 +180,7 @@ class EADRecordWsgiApplication(EADWsgiApplication):
             # Transform the Record
             txr = db.get_object(session, 'htmlFullSplitTxr') 
             doc = txr.process_record(session, rec)
+            self._log(10, "Transformed with {0}".format(txr.id))
             docstr = doc.get_raw(session).decode('utf-8')
             # Parse HTML fragments
             divs = lxmlhtml.fragments_fromstring(docstr)
@@ -303,6 +309,17 @@ class EADRecordWsgiApplication(EADWsgiApplication):
         self.response_headers.append(('Content-Type', 'text/plain'))
         for rawline in self._textFromRecord(rec).split('\n'):
             yield textwrap.fill(rawline, 78) + '\n'
+
+    def toc(self, rec, form):
+        session = self.session
+        txr = self.database.get_object(session, 'htmlContentsTxr') 
+        doc = txr.process_record(session, rec)
+        self._log(10, "Transformed with {0}".format(txr.id))
+        docstr = doc.get_raw(session).decode('utf-8')
+        return [self._render_template('toc.html',
+                                      recid=rec.id,
+                                      toc=docstr
+                                      )]
 
     def xml(self, rec, form):
         session = self.session
