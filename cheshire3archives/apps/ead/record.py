@@ -197,20 +197,14 @@ class EADRecordWsgiApplication(EADWsgiApplication):
                 
         else:
             # Transform the Record
-            txr = db.get_object(session, 'htmlFullSplitTxr') 
-            doc = txr.process_record(session, rec)
-            self._log(10, "Transformed with {0}".format(txr.id))
-            docstr = doc.get_raw(session).decode('utf-8')
+            doc_uc = self._transformRecord(rec, 'htmlFullSplitTxr')
             # Parse HTML fragments
-            divs = lxmlhtml.fragments_fromstring(docstr)
+            divs = lxmlhtml.fragments_fromstring(doc_uc)
             # Get Table of Contents
             tocdiv = divs.pop(0)
             toc = etree.tounicode(tocdiv,
                                   pretty_print=True,
                                   method="html")
-#            toc = '\n'.join([etree.tostring(el) for el in tocdiv])
-            # Get HTML for remaining pages
-            docstr = '\n'.join([etree.tostring(el) for el in divs])
             # Assemble real pages
             # Start a StringIO
             pageBuffer = StringIO()
@@ -296,9 +290,10 @@ class EADRecordWsgiApplication(EADWsgiApplication):
                                           )]
 
     def text(self, rec, form):
-        self.response_headers.append(('Content-Type', 'text/plain'))
-        for rawline in self._textFromRecord(rec).split('\n'):
-            yield textwrap.fill(rawline, 78) + '\n'
+        self.response_headers.append(('Content-Type',
+                                      'text/plain; charset=utf-8'))
+        for rawline in self._textFromRecord(rec).split(u'\n'):
+            yield (textwrap.fill(rawline, 78) + u'\n').encode('utf-8')
 
     def toc(self, rec, form):
         path = os.path.join(self.config.get('cache', 'html_cache_path'),
@@ -307,17 +302,13 @@ class EADRecordWsgiApplication(EADWsgiApplication):
                             )
         )
         try:
-            docstr = unicode(open(path, 'rb').read(), 'utf-8')
+            doc_uc = unicode(open(path, 'rb').read(), 'utf-8')
         except IOError:
             # No ToC file
-            session = self.session
-            txr = self.database.get_object(session, 'htmlContentsTxr') 
-            doc = txr.process_record(session, rec)
-            self._log(10, "Transformed with {0}".format(txr.id))
-            docstr = doc.get_raw(session).decode('utf-8')
+            doc_uc = self._transformRecord(rec, 'htmlContentsTxr')
         return [self._render_template('toc.html',
                                       recid=rec.id,
-                                      toc=docstr
+                                      toc=doc_uc
                                       )]
 
     def xml(self, rec, form):

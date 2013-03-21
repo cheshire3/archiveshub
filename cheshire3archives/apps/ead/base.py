@@ -164,16 +164,14 @@ class EADWsgiApplication(object):
     def _textFromRecord(self, rec):
         # Return a text representation of the Record
         global namespaceUriHash
-        txr = self.database.get_object(self.session, "textTxr")
-        doc = txr.process_record(session, rec)
-        docString = doc.get_raw(session)
+        doc_uc = self._transformRecord(rec, "textTxr")
         # Resolve link to parent if a component
         try:
             parentId = rec.process_xpath(session,
                                          '/c3:component/@c3:parent', 
                                          namespaceUriHash)[0]
         except IndexError:
-            return docString
+            return doc_uc
         else:
             parentId = parentId.split('/')[-1]
             try:
@@ -187,12 +185,12 @@ class EADWsgiApplication(object):
             titles = self._backwalkTitles(parentRec, parentPath)
             hierarchy = [(' ' * 4 * x) + t[1] for x,t in enumerate(titles[:-1])]
             parentTitle = '\n'.join(hierarchy)
-            txt = ['In: {0}'.format(parentTitle),
-                   '-' * 78,
-                   '',
-                   docString
+            txt = [u'In: {0}'.format(parentTitle),
+                   u'-' * 78,
+                   u'',
+                   doc_uc
                    ]
-            return '\n'.join(txt)
+            return u'\n'.join(txt)
 
     def _scanIndex(self, form):
         session = self.session
