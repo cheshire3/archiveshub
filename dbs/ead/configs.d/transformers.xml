@@ -57,6 +57,14 @@
 				<setting type="breakElementsList">dsc</setting>
 			</options>
 		</subConfig>
+        
+        <subConfig type="transformer" id="htmlContentsTxr">
+            <docs>HTML Table of Content Transformer</docs>
+            <objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
+            <paths>
+                <path type="xsltPath">xsl/contents.xsl</path>
+            </paths>
+        </subConfig>
 
 		<subConfig type="transformer" id="htmlFullTxr">
 			<objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
