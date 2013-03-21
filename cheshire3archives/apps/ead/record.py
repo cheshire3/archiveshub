@@ -299,11 +299,20 @@ class EADRecordWsgiApplication(EADWsgiApplication):
             yield textwrap.fill(rawline, 78) + '\n'
 
     def toc(self, rec, form):
-        session = self.session
-        txr = self.database.get_object(session, 'htmlContentsTxr') 
-        doc = txr.process_record(session, rec)
-        self._log(10, "Transformed with {0}".format(txr.id))
-        docstr = doc.get_raw(session).decode('utf-8')
+        path = os.path.join(self.config.get('cache', 'html_cache_path'),
+                            '{0}.toc.html'.format(
+                            rec.id.replace('/', '_')
+                            )
+        )
+        try:
+            docstr = unicode(open(path, 'rb').read(), 'utf-8')
+        except IOError:
+            # No ToC file
+            session = self.session
+            txr = self.database.get_object(session, 'htmlContentsTxr') 
+            doc = txr.process_record(session, rec)
+            self._log(10, "Transformed with {0}".format(txr.id))
+            docstr = doc.get_raw(session).decode('utf-8')
         return [self._render_template('toc.html',
                                       recid=rec.id,
                                       toc=docstr
