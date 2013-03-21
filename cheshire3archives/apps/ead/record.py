@@ -102,17 +102,27 @@ class EADRecordWsgiApplication(EADWsgiApplication):
         buffer_.close()
         return data
 
-    def _outputPage(self, recid, idx, pageBuffer):
+    def _outputPage(self, recid, page_number, page, anchorPageHash={}):
+        # Make some global replacements
+        page = page.replace('RECID', recid)
+        page = page.replace('SCRIPT', self.defaultContext['BASE'])
+        # Resolve anchors
+        for anchorName, anchorPage in anchorPageHash.iteritems():
+            page = page.replace('PAGE#{0}"'.format(anchorName),
+                                '{0}/{1}.html?page={2}#{3}"'
+                                ''.format(self.script,
+                                          recid,
+                                          anchorPage,
+                                          anchorName)
+                                )
+        # Get path of file
         path = os.path.join(self.config.get('cache', 'html_cache_path'),
-                            recid.replace('/', '-') +
-                            '.{0}.html'.format(idx)
+                            '{0}.{1}.html'.format(recid.replace('/', '-'),
+                                                  page_number)
                             )
-        pageBuffer.seek(0)
-        page = pageBuffer.read()
         self._log(10, "outputting {0}".format(path))
         with open(path, 'wb') as fh:
-            fh.write(page)
-        pageBuffer.close()
+            fh.write(page.encode('utf-8'))
         return page
 
     def html(self, rec, form):
