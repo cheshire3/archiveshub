@@ -13,7 +13,13 @@
 </%block>
 
 <%block name="leftcol">
-	${toc}    
+    ${toc}
+    <script type="text/javascript">
+    $(document).ready(function() {
+        // Process Table of Contents
+        createTreeFromList('someId', getCookie('${recid}-tocstate'), true, true);
+    });
+    </script>
 </%block>
 
 <%block name="rightcol">
