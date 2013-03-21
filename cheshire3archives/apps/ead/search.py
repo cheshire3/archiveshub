@@ -5,6 +5,7 @@ import os
 import webbrowser
 
 from cgi import FieldStorage
+from wsgiref.util import application_uri
 
 # Cheshire3 Imports
 from cheshire3.cqlParser import Diagnostic as CQLDiagnostic
@@ -326,7 +327,11 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         raise NotImplementedError()
 
     def toc(self, form):
-        raise NotImplementedError()
+        recid = form.getfirst('recid')
+        url = application_uri(self.environ) + '/data/' + recid + '?page=toc'
+        self.response_headers.append(('Location', url))
+        self.response_code = "301 Moved Permanently"
+        return ['<a href="{0}">{0}</a>'.format(url)]
 
     def email(self, form):
         raise NotImplementedError()
