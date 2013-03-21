@@ -165,25 +165,20 @@ docs/ directory.
 Roadmap
 -------
 
-**Version 3.6 – September 2012**
+**Version 3.6 – March 2013**
 
 * Improved Unique Identifier derivation
+* Migrate existing `mod_python`_ handlers to WSGI_ Applications
+* Convert user editable configurations to a more user friendly format
 * Consolidate recent `Archives Hub`_ display enhancements (Record Resolver,
   Utility Bar)
 * Consolidate recent `EAD Editor`_ enhancements (Support for improved Unique
   Identifiers, Multiple field addition and editing)
 
 
-**Version 3.7 – January 2013**
+**Version 3.7 – October 2013**
 
-* Migrate existing `mod_python`_ handlers to WSGI_ Applications
 * Search within descriptions
-* Convert user editable configurations to a more user friendly format
-  (probably YAML_)
-
-
-**Version 3.8 – July 2013**
-
 * Support for `EAD Schema`_
 * Support for `EAC-CPF`_
 
@@ -291,119 +286,96 @@ http://(your-host)/services/ead
 Available Indexes
 `````````````````
 
-*   rec.identifier
+rec.identifier
+  Internal identifiers for each record. The values in this index are those 
+  used to generate persistent unique URLs for each of the descriptions.
 
-    Internal identifiers for each record. The values in this index are those 
-    used to generate persistent unique URLs for each of the descriptions.
+cql.anywhere
+  All keywords from all records, regardless of their position within records. 
+  Using the = relation means search for a phrase in this index.
 
-*   cql.anywhere
+dc.description
+  Keywords from specific areas of records that give a good representation of 
+  what the records is about. This includes titles, subjects and description 
+  of the scope and content of the collect/item in question. Using the = 
+  relation means search for a phrase in this index.
 
-    All keywords from all records, regardless of their position within records. 
-    Using the = relation means search for a phrase in this index.
+dc.title
+  Precise titles and keywords from titles. Using the exact relation will 
+  search for the full and precise title (wildcard are permitted), whereas 
+  the other relations will search for keywords, = meaning search for a 
+  phrase.
 
-*   dc.description
+dc.identifier
+  Unit identifier, or reference number assigned to a collection or item by 
+  the cataloguer. Using the any or all relations will match partial 
+  identifiers, assuming that they are separated by a non alpha-numerical 
+  character.
 
-    Keywords from specific areas of records that give a good representation of 
-    what the records is about. This includes titles, subjects and description 
-    of the scope and content of the collect/item in question. Using the = 
-    relation means search for a phrase in this index.
+dc.creator
+  The name of the creator of the collection or item, as recorded by the 
+  cataloguer.
 
-*   dc.title
+dc.subject
+  Subjects or topics, as assigned by the cataloguer.
 
-    Precise titles and keywords from titles. Using the exact relation will 
-    search for the full and precise title (wildcard are permitted), whereas 
-    the other relations will search for keywords, = meaning search for a 
-    phrase.
+bath.name
+  Names of things, people, organizations or places.
 
-*   dc.identifier
+bath.personalName
+  Names of people.
 
-    Unit identifier, or reference number assigned to a collection or item by 
-    the cataloguer. Using the any or all relations will match partial 
-    identifiers, assuming that they are separated by a non alpha-numerical 
-    character.
+bath.familyName
+  Names of families (surnames)
 
-*   dc.creator
+bath.corporateName
+  Names of any organizations, corporations or groups.
 
-    The name of the creator of the collection or item, as recorded by the 
-    cataloguer.
+bath.geographicName
+  Names of places, towns, regions, countries etc.
 
-*   dc.subject
+bath.genreForm
+  Types of media represented in the collection or item, e.g. photographs, 
+  audio recordings etc.
 
-    Subjects or topics, as assigned by the cataloguer.
+dc.date
+  Significant dates, most commonly the date of creation of the material.
 
-*   bath.name
+rec.creationDate
+  The date and time at which the record was inserted into the database. 
+  Please note that this is not the same as the date the EAD description was 
+  created, nor is it guaranteed to remain unaltered; occasionally it may be 
+  necessary to completely recreate the indexes, which will result in the 
+  record creation time being updated.
 
-    Names of things, people, organizations or places.
+rec.lastModifiedDate
+  The date and time at which the index entries for the description were last 
+  updated. Please note that this is not necessarily the same as the date the 
+  content of the record was modified, nor does it guaranteed that the record 
+  was actually altered at this time; occasionally it may be necessary to 
+  reindex, which will result in the last modification time being updated, 
+  as it is not practical to test every record for the presence of actual 
+  modifications.
 
-*   bath.personalName
-
-    Names of people.
-
-*   bath.familyName
-
-    Names of families (surnames)
-
-*   bath.corporateName
-
-    Names of any organizations, corporations or groups.
-
-*   bath.geographicName
-
-    Names of places, towns, regions, countries etc.
-
-*   bath.genreForm
-
-    Types of media represented in the collection or item, e.g. photographs, 
-    audio recordings etc.
-
-*   dc.date
-
-    Significant dates, most commonly the date of creation of the material.
-
-*   rec.creationDate
-
-    The date and time at which the record was inserted into the database. 
-    Please note that this is not the same as the date the EAD description was 
-    created, nor is it guaranteed to remain unaltered; occasionally it may be 
-    necessary to completely recreate the indexes, which will result in the 
-    record creation time being updated.
-
-*   rec.lastModifiedDate
-
-    The date and time at which the index entries for the description were last 
-    updated. Please note that this is not necessarily the same as the date the 
-    content of the record was modified, nor does it guaranteed that the record 
-    was actually altered at this time; occasionally it may be necessary to 
-    reindex, which will result in the last modification time being updated, 
-    as it is not practical to test every record for the presence of actual 
-    modifications.
-
-*   ead.istoplevel
-
-    Values in this index are all 1. This index is used as a filter to 
-    discriminate collections from the items contained within them.
+ead.istoplevel
+  Values in this index are all 1. This index is used as a filter to 
+  discriminate collections from the items contained within them.
     
     
 Available Record Schemas
 ````````````````````````
 
-*   ead
+ead
+  info:srw/schema/1/ead-2002
+  EAD 2002 – DTD Version
 
-    info:srw/schema/1/ead-2002
+dc, srw_dc
+  info:srw/schema/1/dc-v1.1
+  Simple Dublin Core Elements (inside an srw_dc wrapper)
 
-    EAD 2002 – DTD Version
-
-*   dc, srw_dc
-
-    info:srw/schema/1/dc-v1.1
-
-    Simple Dublin Core Elements (inside an srw_dc wrapper)
-
-*   oai_dc
-
-    http://www.openarchives.org/OAI/2.0/oai_dc/
-
-    Simple Dublin Core Elements (inside an oai_dc wrapper)
+oai_dc
+  http://www.openarchives.org/OAI/2.0/oai_dc/
+  Simple Dublin Core Elements (inside an oai_dc wrapper)
     
     
     
