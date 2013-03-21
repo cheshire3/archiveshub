@@ -3,9 +3,13 @@
 import sys
 import os
 import webbrowser
+import smtplib
+import textwrap
 
 from cgi import FieldStorage
 from wsgiref.util import application_uri
+# Email modules
+from email import Message, MIMEMultipart, MIMEText
 
 # Cheshire3 Imports
 from cheshire3.cqlParser import Diagnostic as CQLDiagnostic
@@ -338,7 +342,43 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         return ['<a href="{0}">{0}</a>'.format(url)]
 
     def email(self, form):
-        raise NotImplementedError()
+        recid = form.getfirst('recid')
+        if 'address' not in form:
+            # Simply return the search form
+            return [self._render_template('email.html',
+                                          recid=recid)]
+        address = form.getfirst('address')
+        rec = self._fetch_record(session, recid)
+        docTxt = u'\n'.join([textwrap.fill(rawline, 78) + u'\n'
+                              for rawline
+                              in self._textFromRecord(rec).split(u'\n')]
+                             ).encode('utf-8')
+        mimemsg = MIMEMultipart.MIMEMultipart()
+        mimemsg['Subject'] = 'Requested Finding Aid'
+        mimemsg['From'] = 'noreply@cheshire3.org'
+        mimemsg['To'] = address
+    
+        # Guarantees the message ends in a newline
+        mimemsg.epilogue = '\n'        
+        msg = MIMEText.MIMEText(docTxt)
+        mimemsg.attach(msg)
+        
+        # send message
+        s = smtplib.SMTP()
+        s.connect(host=self.config.get('email', 'host'),
+                  port=self.config.getint('email', 'port'))
+        s.sendmail('{0}@{1}'.format(self.config.get('email', 'username'),
+                                    self.environ['SERVER_NAME']),
+                   address,
+                   mimemsg.as_string()
+                   )
+        s.quit()
+        self._log(10, 'Record {0} emailed to {1}'.format(recid, address))
+        return [self._render_template('emailSent.html',
+                                      session=self.session,
+                                      recid=recid,
+                                      address=address
+                                      )]
 
 
 def main(argv=None):

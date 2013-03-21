@@ -453,6 +453,11 @@ always_lower = a,and,by,etc,for,in,is,of,on,or,s,th,that,the,to
 always_upper = BBC,BT,CNN,UK,US,USA
 # Regular expression for Roman numerals
 roman_numeral_regex = ^M{{0,4}}(CM|CD|D?C{{0,3}})(XC|XL|L?X{{0,3}})(IX|IV|V?I{{0,3}})$
+
+[email]
+username = cheshire
+host = mail1.liv.ac.uk
+port = 25
 """.format(
    html_cache_path=resource_filename(
        Requirement.parse('cheshire3archives'),
