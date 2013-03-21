@@ -324,7 +324,11 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         return page
 
     def full(self, form):
-        raise NotImplementedError()
+        recid = form.getfirst('recid')
+        url = application_uri(self.environ) + '/data/' + recid
+        self.response_headers.append(('Location', url))
+        self.response_code = "301 Moved Permanently"
+        return ['<a href="{0}">{0}</a>'.format(url)]
 
     def toc(self, form):
         recid = form.getfirst('recid')
