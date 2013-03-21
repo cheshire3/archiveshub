@@ -246,44 +246,15 @@ class EADRecordWsgiApplication(EADWsgiApplication):
                                              )
                 # Keep as unicode (decode early, encode late)
                 page = page.decode('utf-8')
-                # Resolve anchors
-                for anchorName, anchorPage in anchorPageHash.iteritems():
-                    page = page.replace('PAGE#{0}"'.format(anchorName),
-                                        '{0}/{1}.html?page={2}#{3}"'
-                                        ''.format(self.script,
-                                                  recid,
-                                                  anchorPage,
-                                                  anchorName)
-                                        )
+                # Make global replacements and output to file
+                page = self._outputPage(recid,
+                                        idx + 1,
+                                        page,
+                                        anchorPageHash)
                 # Replace page in pages
-                
                 pages[idx] = page
-                path = os.path.join(self.config.get('cache',
-                                                    'html_cache_path'),
-                                    "{0}.{1}.html".format(recid.replace('/',
-                                                                        '_'),
-                                                          idx + 1
-                                                          )
-                                    )
-                self._log(10, "outputting {0}".format(path))
-                with open(path, 'wb') as fh:
-                    fh.write(page.encode('utf-8'))
-            # Resolve anchors in Toc
-            for anchorName, anchorPage in anchorPageHash.iteritems():
-                toc = toc.replace('PAGE#{0}"'.format(anchorName),
-                                  '{0}/{1}.html?page={2}#{3}"'
-                                  ''.format(self.script,
-                                            recid,
-                                            anchorPage,
-                                            anchorName)
-                                  )
             # Output ToC to cache
-            path = os.path.join(self.config.get('cache', 'html_cache_path'),
-                                "{0}.toc.html".format(recid.replace('/', '_'))
-                                )
-            self._log(10, "outputting {0}".format(path))
-            with open(path, 'wb') as fh:
-                fh.write(toc.encode('utf-8'))
+            toc = self._outputPage(recid, "toc", toc, anchorPageHash)
             # Return requested page
             try:
                 page = pages[pagenum - 1]
