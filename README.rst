@@ -54,10 +54,6 @@ documents via the web. It features:
    * add, delete records
    * rebuild, reindex database
    * manage users allowed to perform administrative tasks
-*  Online Cataloguing
-   * Create new files
-   * Import existing EAD files for editing
-   * Export created/edited records for immediate inclusion in the database
 
 
 Authors
@@ -172,13 +168,10 @@ Roadmap
 * Convert user editable configurations to a more user friendly format
 * Consolidate recent `Archives Hub`_ display enhancements (Record Resolver,
   Utility Bar)
-* Consolidate recent `EAD Editor`_ enhancements (Support for improved Unique
-  Identifiers, Multiple field addition and editing)
-
+* Search within descriptions
 
 **Version 3.7 – October 2013**
 
-* Search within descriptions
 * Support for `EAD Schema`_
 * Support for `EAC-CPF`_
 
@@ -242,7 +235,7 @@ Using the Admin Console
 
 1. Create an administration account
 
-   1. Change directory to (Cheshire3-base-directory)/cheshire3/dbs/ead
+   1. Change directory to (cheshire3-archives-base-directory)/dbs/ead
    
    2. Run the command: ::
    
