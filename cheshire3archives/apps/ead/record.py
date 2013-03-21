@@ -111,10 +111,17 @@ class EADRecordWsgiApplication(EADWsgiApplication):
             page = page.replace(u'PAGE#{0}"'.format(anchorName),
                                 u'{0}/{1}.html?page={2}#{3}"'
                                 u''.format(self.script,
-                                          recid,
-                                          anchorPage,
-                                          anchorName)
+                                           recid,
+                                           anchorPage,
+                                           anchorName)
                                 )
+        # All links should now have been resolved to their correct pages
+        # Revert any remaining ones to the first page
+        page = page.replace(u'PAGE#"',
+                            u'{0}/{1}.html?page=1#"'
+                            u''.format(self.script,
+                                       recid)
+                            )
         # Get path of file
         path = os.path.join(self.config.get('cache', 'html_cache_path'),
                             '{0}.{1}.html'.format(recid.replace('/', '-'),
