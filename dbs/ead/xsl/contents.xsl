@@ -15,15 +15,21 @@
     <xsl:output method="xml" omit-xml-declaration="yes" />
     <xsl:preserve-space elements="*" />
     <!-- <xsl:output method="html" indent="yes"/> -->
+    
+    <xsl:variable name="recid" select="'RECID'" />
 
     <!-- templates for Table of Contents (toc) -->
     <xsl:template match="/ead" name="toc" xsl:exclude-result-prefixes="#all #default xhtml c3">
         <h2>
             <xsl:text>Contents&#160;</xsl:text>
             <span class="printlink">
-                <a href="SCRIPT/toc.html?recid=RECID">
+                <xsl:element name="a">
+                    <xsl:attribute name="href">
+                        <xsl:value-of select="$recid"/>
+                        <xsl:text>?page=toc</xsl:text>
+                    </xsl:attribute>
                     <xsl:text>[ printable ]</xsl:text>
-                </a>
+                </xsl:element>
             </span>
         </h2>
         <strong>
