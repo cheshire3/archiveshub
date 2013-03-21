@@ -1,0 +1,201 @@
+<%!
+    # Imports
+    from cheshire3archives.apps.ead.base import dataFromRecordXPaths
+    from cheshire3archives.apps.ead.base import collectionFromComponent
+%>
+
+<%def name="back_links(resultSet, maximumRecords, startRecord)">
+    <a href="search.html?rsid=${resultSet.id|u}&amp;startRecord=1&amp;maximumRecords=${maximumRecords}#leftcol"
+      class="ajax">
+        <button label="fast-rewind" class="rsNav">
+            <img src="${config.get('icons', 'fast-rewind-url')}" alt="|&lt;&lt;">
+        </button>
+    </a>
+    <a href="search.html?rsid=${resultSet.id|u}&amp;startRecord=${max(startRecord - maximumRecords, 1)}&amp;maximumRecords=${maximumRecords}&amp;#leftcol"
+      class="ajax">
+        <button label="rewind" class="rsNav">
+            <img src="${config.get('icons', 'rewind-url')}" alt="&lt;&lt;">
+        </button>
+    </a>
+</%def>
+
+<%def name="forward_links(resultSet, maximumRecords, startRecord)">
+    <a href="search.html?rsid=${resultSet.id|u}&amp;startRecord=${min(startRecord + maximumRecords, len(resultSet))}&amp;maximumRecords=${maximumRecords}&amp;#leftcol"
+      class="ajax">
+        <button label="forward" class="rsNav">
+            <img src="${config.get('icons', 'forward-url')}" alt="&gt;&gt;">
+        </button>
+    </a>
+    <a href="search.html?rsid=${resultSet.id|u}&amp;startRecord=${((len(resultSet) / maximumRecords) * maximumRecords) + 1}&amp;maximumRecords=${maximumRecords}#leftcol"
+      class="ajax">
+        <button label="fast-forward" class="rsNav">
+            <img src="${config.get('icons', 'fast-forward-url')}"
+            alt="&gt;&gt;|">
+        </button>
+    </a>
+</%def>
+
+<%def name="displaying(resultSet, sortBy, maximumRecords, startRecord)">
+    <div class="displaying">
+        Displaying <strong>${startRecord}</strong>
+        to <strong>${min(startRecord + maximumRecords - 1, len(resultSet))}</strong>
+        of <strong>${len(resultSet)}</strong> hits.
+    </div>
+</%def>
+
+<%def name="sortBySelect(resultSet, sortBy, maximumRecords, startRecord)">
+    <div class="sortBy">
+        <form action="search.html">
+            <input type="hidden" name="rsid" value="${resultSet.id}"/>
+            <select name="sortBy">
+                % for val, label in [('weight', 'Relevance'), ('normalize-space(/*/*/did/unittitle/text())', 'Title'), ('/*/*/did/unitdate/@normal', 'Date'), ('normalize-space(/*/*/did/unitid/text())', 'Reference')]:
+                    % if val in sortBy:
+                    <option value="${val}" selected="selected">${label}</option>
+                    % else:
+                    <option value="${val}">${label}</option>
+                    % endif
+                    
+                % endfor
+            </select>
+        </form>
+    </div>
+</%def>
+
+<%def name="maximumRecordsSelectButton(resultSet, sortBy, maximumRecords, startRecord, label=None)">
+    <a 
+        href="search.html?rsid=${resultSet.id|u}&amp;startRecord=${startRecord}&amp;maximumRecords=${maximumRecords}#leftcol"
+        class="ajax maximumRecords">
+        % if label is not None:
+            <button label="${label}">${label}</button>
+        % else:
+            <button label="${maximumRecords}">${maximumRecords}</button>
+        % endif
+    </a>
+</%def>
+
+<%def name="maximumRecordsSelect(resultSet, sortBy, maximumRecords, startRecord)">
+    <div class="maximumRecords">
+        Show:
+        ${maximumRecordsSelectButton(resultSet, sortBy, 20, startRecord)}
+        % if len(resultSet) >= 100:
+            ${maximumRecordsSelectButton(resultSet, sortBy, 50, startRecord)}
+        % endif
+        % if len(resultSet) >= 200:
+            ${maximumRecordsSelectButton(resultSet, sortBy, 100, startRecord)}
+        % endif
+        ${maximumRecordsSelectButton(resultSet, sortBy, len(resultSet), startRecord, label="all")}
+    </div>
+</%def>
+
+<%def name="complex_query()">
+    <span title="sorry, it's too complex to summarize neatly here.">
+        a complex query
+    </span>
+</%def>
+
+<%def name="format_query(query)">
+    ## Format simple query and return user friendly text form.
+    ## 
+    ## For complex (multi-clause) queries, will return an empty string,
+    ## except in the special case where Keywords are being searched for
+    % try:
+        ## Check for single clause query
+        <%
+        idx = query.index
+        rel = query.relation.value
+        term = query.term.toCQL()
+        %>
+    % except AttributeError:
+        % try:
+            ## Check for special "keywords" multi-clause query
+            <%
+            idx = query.leftOperand.leftOperand.index
+            if idx.toCQL() != u'cql.anywhere':
+                return complex_query()
+            rel = query.leftOperand.leftOperand.relation.value
+            term = query.leftOperand.leftOperand.term.toCQL()
+            %>
+        % except AttributeError:
+            <%
+            return complex_query()
+            %>
+        % endtry
+    % endtry
+    % if idx is None:
+        <%
+        return complex_query()
+        %>
+    % endif
+    <strong>${term}</strong>
+    <%
+    if idx.toCQL() == u'cql.anywhere':
+        displayIdx = u''
+    else:
+        if idx.toCQL() == u'dc.identifier':
+            displayName = u'Ref numbers'
+        elif idx.toCQL() == u'bath.personalname':
+            displayName = u'People'
+        elif idx.toCQL() == u'bath.corporatename':
+            displayName = u'Organizations'
+        elif idx.toCQL() == u'bath.geographicname':
+            displayName = u'Places'
+        elif idx.toCQL() == u'bath.genreform':
+            displayName = u'Media Types'
+        else:
+            displayName = idx.value.title() + u's'
+        displayIdx = u' in <strong>{0}</strong>'.format(displayName)
+    %>
+    ${displayIdx}
+</%def>
+
+<%def name="parentLink(session, rec)">
+    <%
+    titleXPaths = ['/*/*/did/unittitle',
+                   '/ead/eadheader/filedesc/titlestmt/titleproper'
+                   ]
+    %>
+    % try:
+        <%
+        parentId = rec.process_xpath(session,
+                                     '/c3component/@parent')[0]
+        parentRec = collectionFromComponent(session, rec)
+        %>
+        ## OK, must be a component record
+        <img src="${config.get('icons', 'folder-open-url')}" alt="|/`/"/>
+        <a href="${SCRIPT}/data/${parentRec.id}">
+            ${dataFromRecordXPaths(session, parentRec, titleXPaths)}
+        </a>
+        <br>
+    % except IndexError:
+        ## Collection level
+    % endtry
+</%def>
+
+<%def name="format_resultSetItem(resultSet, sortBy, maximumRecords, startRecord, index)">
+    <td>
+    <%
+    rec = resultSet[index].fetch_record(session)
+    titleXPaths = ['/*/*/did/unittitle',
+                   '/ead/eadheader/filedesc/titlestmt/titleproper'
+                   ]
+    dateXPaths = ['/*/*/did/unitdate',
+                  '/*/*/did/unittitle/unitdate'
+                  ]
+    %>
+    ## Check for potential component-level record
+    ${parentLink(session, rec)}
+    <%
+    href="summary.html?rsid={resultSet.id}&amp;hit={index}&amp;startRecord={startRecord}&amp;maximumRecords={maximumRecords}".format(**locals())
+    for criteria in sortBy:
+        href += '&amp;sortBy={criteria}'.format(**locals())
+    %>
+    <a href="${SCRIPT}/${href}">
+        <strong>
+            ${dataFromRecordXPaths(session, rec, titleXPaths)}
+        </strong>
+    </a>
+    <br/>
+    ${dataFromRecordXPaths(session, rec, dateXPaths, nTerms=3)}
+    ## Relevance
+    </td>
+</%def>

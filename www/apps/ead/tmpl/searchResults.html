@@ -1,0 +1,108 @@
+<%inherit file="dual.html"/>
+<%namespace file="facets.html" import="format_facet"/>
+<%namespace file="searchResultsDefs.html" import="*"/>
+<%!
+    # Imports
+    from cheshire3.utils import flattenTexts
+    
+    # Over-ride global attributes
+    leftcol_class = "search"
+    rightcol_class = "facets"
+%>
+
+<%block name="title">
+    Search :: Results
+</%block>
+
+<%block name="leftcol">
+    <%
+    if filtered:
+        queryString = capture(format_query, resultSet.query.rightOperand).strip()
+        filterString = capture(format_query, resultSet.query.leftOperand).strip()
+    else:
+        queryString = capture(format_query, resultSet.query).strip()
+        filterString = ''
+    %>
+    % if queryString:
+        <p class="hitreport">
+            You searched for
+            ${queryString}
+            % if filterString:
+                <br>
+                Filtered by:
+                ${filterString}
+                <a href="${SCRIPT}/search.html?query=${resultSet.query.rightOperand.toCQL()|u}"
+                    class="delete-sprite">
+                    [X]
+                </a>
+            % endif
+        </p>
+    % endif
+    
+    <div class="rsMod">
+        <div class="displaying">
+            ${displaying(resultSet, sortBy, maximumRecords, startRecord)}
+        </div>
+        <div class="sortBySel">
+            ${sortBySelect(resultSet, sortBy, maximumRecords, startRecord)}
+        </div>
+    </div>
+    
+    <table summary="Table of results" class="rs">
+        % for index in range(startRecord - 1, min(len(resultSet), startRecord - 1 + maximumRecords)):
+            <tr class="hit">
+                <td>${index + 1}</td>
+                ${format_resultSetItem(resultSet, sortBy, maximumRecords, startRecord, index)}
+            </tr>
+    	% endfor
+    </table>
+    
+    <div class="rsMod">
+        <div class="displaying">
+            ${displaying(resultSet, sortBy, maximumRecords, startRecord)}
+        </div>
+        % if len(resultSet) > 20:
+            <div class="maxRecSel">
+                ${maximumRecordsSelect(resultSet, sortBy, maximumRecords, startRecord)}
+            </div>
+        % endif
+    </div>
+
+	% if len(resultSet) > maximumRecords:
+        ## Hit list navigation
+        <div class="rsNav">
+            ## Back links
+            % if startRecord > 1:
+                <div class="backlinks">
+                    ${back_links(resultSet, maximumRecords, startRecord)}
+                </div>
+            % endif
+            ## Page skip
+            ## Forward links
+            % if startRecord < len(resultSet) - maximumRecords:
+                <div class="forwardlinks">
+                    ${forward_links(resultSet, maximumRecords, startRecord)}
+                </div>
+            % endif
+        </div>
+	% endif
+
+    <script type="text/javascript">
+    $(document).ready(function() {
+        $('.facet').each(truncateList);
+        $('select[name="sortBy"]').change(function() {
+            $(this).closest("form").submit();
+        });
+    });
+    </script>
+    
+</%block>
+
+<%block name="rightcol">
+	% if facets:
+		<h3>Filter your results by:</h3>
+		% for facet in facets.iteritems():
+			${format_facet(facet)}
+		% endfor
+	% endif
+</%block>

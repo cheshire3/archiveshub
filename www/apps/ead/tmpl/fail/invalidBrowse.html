@@ -1,0 +1,16 @@
+<%inherit file="base.html"/>
+
+<%block name="title">
+    Browse :: Error
+</%block>
+
+<%block name="error">
+    Invalid browse query:
+    <br>
+    ${clause}
+</%block>
+
+<%block name="retry">
+    <hr>
+    <%include file="../browseForm.html"/>
+</%block>

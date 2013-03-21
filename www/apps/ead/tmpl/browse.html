@@ -1,0 +1,13 @@
+<%inherit file="single.html"/>
+
+<%block name="title">
+    Browse
+</%block>
+
+<%include file="browseTips.html"/>
+<%include file="browseForm.html"/>
+<div id="browse-preview"></div>
+<script type="text/javascript">
+liveSearch('fieldidx1', 'browse-preview', 'CHANGE');
+liveSearch('fieldcont1', 'browse-preview');
+</script>

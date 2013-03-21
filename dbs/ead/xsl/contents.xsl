@@ -15,29 +15,33 @@
     <xsl:output method="xml" omit-xml-declaration="yes" />
     <xsl:preserve-space elements="*" />
     <!-- <xsl:output method="html" indent="yes"/> -->
+    
+    <xsl:variable name="recid" select="'RECID'" />
 
     <!-- templates for Table of Contents (toc) -->
-    <xsl:template name="toc" xsl:exclude-result-prefixes="#all #default xhtml c3">
-        <div class="toclist" >
-            <h2>
-                <xsl:text>Contents&#160;</xsl:text>
-                <span class="printlink">
-                    <a href="SCRIPT/toc.html?recid=RECID">
-                        <xsl:text>[ printable ]</xsl:text>
-                    </a>
-                </span>
-            </h2>
-            <strong>
-                <xsl:call-template name="toc-link">
-                    <xsl:with-param name="node"
-                        select="/ead/archdesc/did" />
-                </xsl:call-template>
-            </strong>
-            <ul id="someId" class="hierarchy">
-                <xsl:apply-templates select="/ead/archdesc/dsc"
-                    mode="toc" />
-            </ul>
-        </div>
+    <xsl:template match="/ead" name="toc" xsl:exclude-result-prefixes="#all #default xhtml c3">
+        <h2>
+            <xsl:text>Contents&#160;</xsl:text>
+            <span class="printlink">
+                <xsl:element name="a">
+                    <xsl:attribute name="href">
+                        <xsl:value-of select="$recid"/>
+                        <xsl:text>?page=toc</xsl:text>
+                    </xsl:attribute>
+                    <xsl:text>[ printable ]</xsl:text>
+                </xsl:element>
+            </span>
+        </h2>
+        <strong>
+            <xsl:call-template name="toc-link">
+                <xsl:with-param name="node"
+                    select="/ead/archdesc/did" />
+            </xsl:call-template>
+        </strong>
+        <ul id="someId" class="hierarchy">
+            <xsl:apply-templates select="/ead/archdesc/dsc"
+                mode="toc" />
+        </ul>
     </xsl:template>
 
     <xsl:template match="dsc" mode="toc">

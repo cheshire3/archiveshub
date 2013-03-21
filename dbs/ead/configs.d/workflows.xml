@@ -83,7 +83,6 @@
 			<workflow>
 				<!-- input type: documentFactory -->
 				<object type="recordStore" ref="recordStore" function="begin_storing" />
-				<object type="recordStore" ref="eadDcStore" function="begin_storing" />
 				<object type="database" function="begin_indexing" />
 				<for-each>
 					<!-- input type: document -->
@@ -91,7 +90,6 @@
 					<object type="workflow" ref="buildIndexSingleWorkflow" />
 				</for-each>
 				<object type="recordStore" ref="recordStore" function="commit_storing" />
-				<object type="recordStore" ref="eadDcStore" function="commit_storing" />
 				<object type="database" function="commit_indexing" />
 				<object type="database" function="commit_metadata" />
 			</workflow>
@@ -108,39 +106,12 @@
 				</try>
 				<except>
 					<assign from="'unparsable: ' + str(err)" to="input" />
-					<log level="warning">"*** " + input</log>
+					<log level="warning">"" + input</log>
 					<return />
 				</except>
 				<!-- type: record -->
 				<object type="workflow" ref="assignDataIdentifierWorkflow" />
 				<object type="workflow" ref="indexNewRecordWorkflow" />
-			</workflow>
-		</subConfig>
-
-
-		<subConfig type="workflow" id="buildDcRecordWorkflow">
-			<objectType>cheshire3.workflow.CachingWorkflow</objectType>
-			<workflow>
-				<!-- input type: record -->
-				<assign from="input.id" to="identifier" />
-				<object type="transformer" ref="eadDublinCoreTxr" />
-				<!-- type: document -->
-				<assign from="input" to="doc" />
-				<try>
-					<object type="parser" ref="LxmlParser" />
-					<assign from="identifier" to="input.id" />
-					<try>
-						<object type="recordStore" ref="eadDcStore" function="store_record" />
-					</try>
-					<except>
-						<log level="warning">"*** duplicate DC record"</log>
-					</except>
-				</try>
-				<except>
-					<log level="warning">"" + str(err)</log>
-					<log level="warning">"" + doc.get_raw(session)</log>
-					<log level="warning">"*** " + identifier + " DC record unparsable"</log>
-				</except>
 			</workflow>
 		</subConfig>
 
@@ -178,7 +149,7 @@
 						<object type="parser" ref="LxmlParser" />
 					</try>
 					<except>
-						<log level="warning">"*** Unparsable Components"</log>
+						<log level="warning">"Unparsable Components"</log>
 						<log level="debug">"" + str(err)</log>
 						<continue />
 					</except>
@@ -196,19 +167,19 @@
 						<object type="recordStore" ref="componentStore" function="store_record" />
 					</try>
 					<except>
-						<log level="critical">"*** Component unstorable"</log>
+						<log level="critical">"Component unstorable"</log>
 						<log level="critical">"\n" + ''.join(traceback.format_exception(sys.exc_type,sys.exc_value,sys.exc_traceback))</log>
 						<log level="critical">"" + input.get_xml(session)</log>
 						<continue />
 					</except>
 					<log level="debug">"adding " + input.id + " to database"</log>
 					<object type="database" function="add_record" />
-					<log level="debug">"indexing" + input.id</log>
+					<log level="debug">"indexing " + input.id</log>
 					<try>
 						<object type="database" function="index_record" />
 					</try>
 					<except>
-						<log level="warning">"*** Some indexes incomplete"</log>
+						<log level="warning">"Some indexes incomplete"</log>
 						<log level="debug">"\n" + "".join(traceback.format_exception(sys.exc_type,sys.exc_value,sys.exc_traceback))</log>
 					</except>
 				</for-each>
@@ -222,7 +193,6 @@
 				<object type="database" function="add_record" />
 				<object type="index" ref="idx-creationDate" function="index_record" />
 				<object type="workflow" ref="indexRecordWorkflow" />
-				<object type="workflow" ref="buildDcRecordWorkflow" />
 			</workflow>
 		</subConfig>
 
@@ -236,12 +206,28 @@
 					<log level="info">"... Identifier: " + input.id + " - loaded, indexed"</log>
 				</try>
 				<except>
-					<log level="warning">"*** Identifier: " + input.id + " - Some indexes incomplete"</log>
+					<log level="warning">"Identifier: " + input.id + " - Some indexes incomplete"</log>
 					<log level="debug">"\n" + ''.join(traceback.format_exception(sys.exc_type,sys.exc_value,sys.exc_traceback))</log>
 				</except>
 			</workflow>
 		</subConfig>
 		
+        <subConfig type="workflow" id="CollectionFromComponentWorkflow">
+            <objectType>cheshire3.workflow.CachingWorkflow</objectType>
+            <workflow>
+                <try>
+                    <object type="transformer" ref="ComponentParentTransformer"/>
+                </try>
+                <except>
+                    <!-- Not a component -->
+                    <return/>
+                </except>
+                <else>
+                    <object type="parser" ref="LxmlParser"/>
+                </else>
+            </workflow>
+        </subConfig>
+        
 		<!--
 		Output/display related Workflows
 		-->

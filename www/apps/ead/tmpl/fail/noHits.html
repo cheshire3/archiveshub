@@ -1,0 +1,45 @@
+<%inherit file="base.html"/>
+<%namespace file="../searchResultsDefs.html" import="format_query"/>
+
+<%block name="title">
+    Search :: No Hits
+</%block>
+
+<%block name="extra">
+    <%
+    queryString = capture(format_query, query).strip()
+    %>
+    <p  class="hitreport">
+        % if queryString:
+            You searched for
+            ${queryString}
+            <br>
+        % endif
+        Sorry, your search didn&apos;t match any records.
+    </p>
+    <div id="no-hits-img">
+        <img src="img/no_hits.png" alt=""/>
+    </div>
+    <ul>
+        <li>Please check your spelling and try your 
+            <a href="#searchform" title="go to the search form">Search</a> again.
+        </li>
+        <li>You might find related subjects using the 
+            <a href="subject.html" title="go to the Subject Finder tool">Subject Finder</a> tool
+        </li>
+        <li>You can browse our indexes from the 
+            <a href="browse.html" title="go to the Browse Indexes page">Browse Indexes</a> page
+        </li>
+        <li>Have a look at the 
+            <a href="help.html" title="go to the search help page">Search Help</a> page
+        </li>
+        <li>Try searching the 
+            <a href="http://www.archiveshub.ac.uk/" title="go to the Archives Hub">Archives Hub</a> for records located at other repositories around the UK.
+        </li>
+    </ul>
+</%block>
+
+<%block name="retry">
+    <hr>
+    <%include file="../searchForm.html"/>
+</%block>

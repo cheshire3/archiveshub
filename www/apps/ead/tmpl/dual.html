@@ -1,0 +1,16 @@
+<%inherit file="base.html"/>
+<%!
+    # Global attributes
+    body_class = "splitscreen"
+    leftcol_class = ""
+    rightcol_class = ""
+%>
+
+<div id="leftcol" class="column ${self.attr.leftcol_class}">
+	<%block name="leftcol"/>
+</div>
+<div id="padder">
+    <div id="rightcol" class="column ${self.attr.rightcol_class}">
+        <%block name="rightcol"/>
+    </div>
+</div>

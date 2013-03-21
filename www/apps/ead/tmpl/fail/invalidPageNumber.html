@@ -1,0 +1,26 @@
+<%inherit file="base.html"/>
+<%namespace file="../detailedPage.html" import="num_nav"/>
+
+<%block name="title">
+    Detailed Description :: Error :: Invalid Page Number
+</%block>
+
+<%block name="error">
+    Requested page "${pagenum}" does not exist.
+</%block>
+
+<%block name="extra">
+% if maxPages is UNDEFINED:
+    
+% else:
+    This description has only ${maxPages} pages.
+% endif
+</%block>
+
+<%block name="retry">
+% if maxPages is UNDEFINED:
+    
+% else:
+    ${num_nav(recid, pagenum, maxPages)}
+% endif
+</%block>

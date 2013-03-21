@@ -10,7 +10,7 @@
   <serverInfo protocol="srw/u" version="1.1" transport="http">
     <host>172.20.252.2</host>
     <port>80</port>
-    <database numRecs="1" lastUpdate="2005-03-10 15:00:00">services/ead/cluster</database>
+    <database numRecs="1" lastUpdate="2005-03-10 15:00:00">api/sru/ead/cluster</database>
   </serverInfo>
 
   <databaseInfo>

@@ -1337,7 +1337,7 @@
                 </xsl:for-each>
             </xsl:if>
 
-            <xsl:if test="../occupation">
+            <xsl:if test=".//occupation">
                 <xsl:variable name="indexName">
                     <xsl:text>Occupation</xsl:text>
                 </xsl:variable>
@@ -2270,44 +2270,6 @@
                         </xsl:attribute>
                         <xsl:text>View Text</xsl:text>
                     </a>
-                </li>
-
-                <li>
-                    <!-- AddThis Button BEGIN -->
-                    <div class="addthis_toolbox addthis_default_style ">
-                        <xsl:attribute name="addthis:url">
-                           <xsl:value-of select="$data_uri_base" />
-                       </xsl:attribute>
-                        <xsl:if test="$unittitle != '(untitled)'">
-                            <xsl:attribute name="addthis:title">
-                                <xsl:value-of select="normalize-space($unittitle)" />
-                            </xsl:attribute>
-                        </xsl:if>
-                        <a class="addthis_button_twitter" />
-                        <a class="addthis_button_facebook" />
-                        <a class="addthis_button_email" />
-                        <a class="addthis_button_favorites" />
-                        <a class="addthis_button_compact" />
-                        <a class="addthis_counter addthis_bubble_style" />
-                    </div>
-                    <script>
-                        var addthis_config = {
-                        ui_cobrand: 'archiveshub.ac.uk',
-                        ui_header_color: '#24205c',
-                        ui_header_background: '#b7e8f5',
-                        services_exclude: 'print'
-                        }
-
-                        var addthis_share =
-                        {
-                        templates: {
-                        twitter: '{{title}} {{lurl}} via @archiveshub'
-                        }
-                        }
-                    </script>
-                    <script type="text/javascript"
-                        src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=ra-4eb3f45910f0a240" />
-                    <!-- AddThis Button END -->
                 </li>
 
             </ul>

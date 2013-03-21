@@ -61,20 +61,6 @@
 			</paths>
 		</subConfig>
 
-		<!-- postgreSQL -->
-		<subConfig type="resultSetStore" id="eadResultSetStore">
-			<objectType>cheshire3.sql.postgres.PostgresResultSetStore</objectType>
-			<paths>
-				<path type="databaseName">db_ead</path>
-				<path type="tableName">eadResultSetStore</path>
-				<path type="recordStoreHash">recordStore componentStore</path>
-				<object type="idNormalizer" ref="StringIntNormalizer" />
-			</paths>
-			<options>
-				<default type="expires">3600</default>
-			</options>
-		</subConfig>
-
 	</subConfigs>
 
 </config>

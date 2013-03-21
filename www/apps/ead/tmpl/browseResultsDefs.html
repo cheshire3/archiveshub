@@ -1,0 +1,17 @@
+<%def name="back_links(scanData, maximumTerms, startTerm)">
+    <a href="browse.html?fieldidx1=${idx}&amp;fieldrel1=${rel}&amp;fieldcont1=${scanData[0][0] | u}&amp;responsePosition=${maximumTerms + 1}#leftcol"
+      class="ajax">
+        <button label="rewind" class="browseNav">
+            <img src="${config.get('icons', 'rewind-url')}" alt="&lt;&lt;">
+        </button>
+    </a>
+</%def>
+
+<%def name="forward_links(scanData, maximumTerms, startTerm)">
+    <a href="browse.html?fieldidx1=${idx}&amp;fieldrel1=${rel}&amp;fieldcont1=${scanData[-1][0] | u}&amp;responsePosition=0&amp;#leftcol"
+      class="ajax">
+        <button label="forward" class="browseNav">
+            <img src="${config.get('icons', 'forward-url')}" alt="&gt;&gt;">
+        </button>
+    </a>
+</%def>

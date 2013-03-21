@@ -3,9 +3,9 @@
   xmlns:c3="http://www.cheshire3.org/schemas/explain/">
 
 	<serverInfo protocol="oai-pmh" version="2.0" transport="http">
-	  <host>172.20.252.2</host>
-	  <port>80</port>
-	  <database>OAI/2.0/ead</database>
+	  <host>127.0.0.1</host>
+	  <port>8000</port>
+	  <database>api/oaipmh/2.0/ead</database>
 	</serverInfo>
 
 	<databaseInfo>
