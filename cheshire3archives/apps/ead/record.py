@@ -3,13 +3,11 @@
 import sys
 import os
 import re
-import socket
 import webbrowser
 import mimetypes
 import textwrap
 
 from cgi import FieldStorage
-from argparse import ArgumentParser
 from foresite import conneg
 from lxml import etree
 from lxml import html as lxmlhtml
@@ -19,9 +17,13 @@ try:
 except ImportError:
     from StringIO import StringIO
 
+from cheshire3.exceptions import FileDoesNotExistException
+
 # Cheshire3 for Archives Imports
 from cheshire3archives.commands.utils import WSGIAppArgumentParser
-from cheshire3archives.apps.ead.base import *
+from cheshire3archives.apps.ead.base import EADWsgiApplication 
+from cheshire3archives.apps.ead.base import listCollections
+from cheshire3archives.apps.ead.base import config, session, db
 
 
 class EADRecordWsgiApplication(EADWsgiApplication):
@@ -68,7 +70,7 @@ class EADRecordWsgiApplication(EADWsgiApplication):
         # Fetch the Record
         try:
             rec = self._fetch_record(session, recid)
-        except (IndexError, c3errors.FileDoesNotExistException) as e:
+        except (IndexError, FileDoesNotExistException) as e:
             # IndexError can occur due to a 'feature' (bug) in Cheshire3 which
             # assumes that all search terms will be a string of 1 or more
             # characters

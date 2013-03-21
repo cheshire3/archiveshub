@@ -4,8 +4,6 @@ import os
 import sys
 import mimetypes
 import re
-import textwrap
-import traceback
 
 from ConfigParser import SafeConfigParser
 from hashlib import sha1
@@ -17,7 +15,6 @@ except ImportError:
     from StringIO import StringIO
 
 # Mako
-from mako.template import Template
 from mako.lookup import TemplateLookup
 from mako import exceptions
 from tempfile import gettempdir

@@ -2,21 +2,22 @@
 
 import sys
 import os
-import socket
 import webbrowser
 
 from cgi import FieldStorage
-from argparse import ArgumentParser
 
 # Cheshire3 Imports
 from cheshire3.cqlParser import Diagnostic as CQLDiagnostic
 from cheshire3.cqlParser import SearchClause as CQLClause, Triple as CQLTriple
 from cheshire3.baseObjects import ResultSet
+from cheshire3.exceptions import ObjectDoesNotExistException
 from cheshire3.web.www_utils import generate_cqlQuery
 
 # Cheshire3 for Archives Imports
 from cheshire3archives.commands.utils import WSGIAppArgumentParser
-from cheshire3archives.apps.ead.base import *
+from cheshire3archives.apps.ead.base import EADWsgiApplication 
+from cheshire3archives.apps.ead.base import listCollections
+from cheshire3archives.apps.ead.base import config, session, db
 
 
 class EADSearchWsgiApplication(EADWsgiApplication):
@@ -134,7 +135,7 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         if rsid and not 'filter' in form:
             try:
                 rs = self._fetch_resultSet(session, rsid)
-            except c3errors.ObjectDoesNotExistException:
+            except ObjectDoesNotExistException:
                 self._log(40, '*** Invalid ResultSet identifier: %s' % rsid)
                 return self._render_template(
                     'fail/invalidResultSet.html',
