@@ -79,6 +79,7 @@ class EADWsgiApplication(object):
         base = script
         self.defaultContext['BASE'] = base
         self.config.set('icons', 'base-url', '{0}/img'.format(base))
+        self.response_code = "200 OK"
 
     def _log(self, lvl, msg):
         print >> self.environ['wsgi.errors'], msg

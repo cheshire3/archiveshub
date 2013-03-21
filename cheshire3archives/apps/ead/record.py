@@ -84,7 +84,7 @@ class EADRecordWsgiApplication(EADWsgiApplication):
             self._log(10, 'Retrieved record "{0}"'.format(recid))
             fn = self.mimetypeHash.get(str(mimetype), getattr(self, 'html'))
             content = fn(rec, form)
-        start_response("200 OK", self.response_headers)
+        start_response(self.response_code, self.response_headers)
         return content
 
     def _parse_recSpec(self, path_info):

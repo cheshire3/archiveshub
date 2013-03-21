@@ -74,12 +74,11 @@ class EADSearchWsgiApplication(EADWsgiApplication):
             else:
                 # Simple method of self
                 content = fn(form)
-        response_headers = [('Content-Type',
-                             'text/html'),
-                            ('Content-Length',
-                             str(sum([len(d) for d in content])))
-                            ]
-        start_response("200 OK", response_headers)
+        self.response_headers.extend([('Content-Type', 'text/html'),
+                                      ('Content-Length',
+                                       str(sum([len(d) for d in content])))
+                                      ])
+        start_response(self.response_code, self.response_headers)
         return content
 
     def _get_query(self, form):
