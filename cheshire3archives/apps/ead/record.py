@@ -104,13 +104,13 @@ class EADRecordWsgiApplication(EADWsgiApplication):
 
     def _outputPage(self, recid, page_number, page, anchorPageHash={}):
         # Make some global replacements
-        page = page.replace('RECID', recid)
-        page = page.replace('SCRIPT', self.defaultContext['BASE'])
+        page = page.replace(u'RECID', unicode(recid))
+        page = page.replace(u'SCRIPT', unicode(self.defaultContext['BASE']))
         # Resolve anchors
         for anchorName, anchorPage in anchorPageHash.iteritems():
-            page = page.replace('PAGE#{0}"'.format(anchorName),
-                                '{0}/{1}.html?page={2}#{3}"'
-                                ''.format(self.script,
+            page = page.replace(u'PAGE#{0}"'.format(anchorName),
+                                u'{0}/{1}.html?page={2}#{3}"'
+                                u''.format(self.script,
                                           recid,
                                           anchorPage,
                                           anchorName)
