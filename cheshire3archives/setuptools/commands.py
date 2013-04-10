@@ -48,10 +48,11 @@ class c3_command(Command):
     ]
 
     def initialize_options(self):
-        self.with_httpd = '/etc/httpd'
+        self.with_httpd = None
 
     def finalize_options(self):
-        self.with_httpd = normalize_path(expanduser(self.with_httpd))
+        if self.with_httpd is not None:
+            self.with_httpd = normalize_path(expanduser(self.with_httpd))
 
     def install_apache_mods(self, develop=False):
         """Install Apache HTTPD modifications."""
@@ -131,8 +132,9 @@ class develop(_develop.develop, c3_command):
         global distropath, server, session
         # Carry out normal procedure
         _develop.develop.install_for_development(self)
-        # Install Apache HTTPD mods
-        self.install_apache_mods(develop=True)
+        if self.with_httpd is not None:
+            # Install Apache HTTPD mods
+            self.install_apache_mods(develop=True)
         # Tell the server to register the config file
         try:
             server.register_databaseConfigFile(session, join(distropath,
@@ -159,8 +161,9 @@ class develop(_develop.develop, c3_command):
         global server, session
         # Carry out normal procedure
         _develop.develop.uninstall_link(self)
-        # Uninstall Apache HTTPD mods
-        self.uninstall_apache_mods()
+        if self.with_httpd is not None:
+            # Uninstall Apache HTTPD mods
+            self.uninstall_apache_mods()
         # Unregister the database by deleting
         # Cheshire3 database config plugin
         serverDefaultPath = server.get_path(session,
@@ -199,8 +202,9 @@ class install(_install.install, c3_command):
     def run(self):
         # Carry out normal procedure
         _install.install.run(self)
-        # Install Apache HTTPD mods
-        self.install_apache_mods()
+        if self.with_httpd is not None:
+            # Install Apache HTTPD mods
+            self.install_apache_mods()
         # Install Cheshire3 database config plugin
         # Tell the server to register the config file
         try:
@@ -240,8 +244,9 @@ class upgrade(_install.install, c3_command):
     def run(self):
         # Carry out normal procedure
         _install.install.run(self)
-        # Install Apache HTTPD mods
-        self.install_apache_mods()
+        if self.with_httpd is not None:
+            # Install Apache HTTPD mods
+            self.install_apache_mods()
         # Upgrade database directory
         subpath = join('cheshire3',
                        'dbs',
@@ -275,8 +280,9 @@ class uninstall(c3_command):
     description = "Uninstall Cheshire3 for Archives"
     
     def run(self):
-        # Uninstall Apache HTTPD mods
-        self.uninstall_apache_mods()
+        if self.with_httpd is not None:
+            # Uninstall Apache HTTPD mods
+            self.uninstall_apache_mods()
         # Unregister the database by deleting
         # Cheshire3 database config plugin
         serverDefaultPath = server.get_path(session,
