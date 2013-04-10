@@ -347,10 +347,18 @@ class EADSearchWsgiApplication(EADWsgiApplication):
 
     def email(self, form):
         recid = form.getfirst('recid')
+        # Fetch most recent resultSet
+        rsdata = self._fetch_mostRecentResultSet()
+        rs, startRecord, maximumRecords, sortBy = rsdata
         if 'address' not in form:
             # Simply return the search form
             return [self._render_template('email.html',
-                                          recid=recid)]
+                                          session=self.session,
+                                          recid=recid,
+                                          resultSet=rs,
+                                          startRecord=startRecord,
+                                          maximumRecords=maximumRecords,
+                                          sortBy=sortBy)]
         address = form.getfirst('address')
         rec = self._fetch_record(session, recid)
         docTxt = u'\n'.join([textwrap.fill(rawline, 78) + u'\n'
@@ -381,7 +389,11 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         return [self._render_template('emailSent.html',
                                       session=self.session,
                                       recid=recid,
-                                      address=address
+                                      address=address,
+                                      resultSet=rs,
+                                      startRecord=startRecord,
+                                      maximumRecords=maximumRecords,
+                                      sortBy=sortBy
                                       )]
 
 
