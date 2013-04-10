@@ -66,7 +66,7 @@ class EADRecordWsgiApplication(EADWsgiApplication):
             mtc = conneg.parse(mtrequested)
             mimetype = conneg.best(mtc, self.mimetypeList)
             encoding = None
-        
+
         # Fetch the Record
         try:
             rec = self._fetch_record(session, recid)
@@ -194,7 +194,7 @@ class EADRecordWsgiApplication(EADWsgiApplication):
                 toc = unicode(open(tocpath, 'rb').read(), 'utf-8')
             except IOError:
                 # No ToC file
-                toc = ''
+                toc = None
                 
         else:
             # Transform the Record
@@ -203,9 +203,12 @@ class EADRecordWsgiApplication(EADWsgiApplication):
             divs = lxmlhtml.fragments_fromstring(doc_uc)
             # Get Table of Contents
             tocdiv = divs.pop(0)
-            toc = etree.tounicode(tocdiv,
-                                  pretty_print=True,
-                                  method="html")
+            if len(tocdiv):
+                toc = etree.tounicode(tocdiv,
+                                      pretty_print=True,
+                                      method="html")
+            else:
+                toc = None
             # Assemble real pages
             # Start a StringIO
             pageBuffer = StringIO()
@@ -257,25 +260,42 @@ class EADRecordWsgiApplication(EADWsgiApplication):
                                         anchorPageHash)
                 # Replace page in pages
                 pages[idx] = page
-            # Output ToC to cache
-            toc = self._outputPage(recid, "toc", toc, anchorPageHash)
+            if toc is not None:
+                # Output ToC to cache
+                toc = self._outputPage(recid, "toc", toc, anchorPageHash)
             # Return requested page
             try:
                 page = pages[pagenum - 1]
             except IndexError:
                 # Return invalid page number
                 return [self._render_template('fail/invalidPageNumber.html',
-                                      session=session,
-                                      recid=recid,
-                                      pagenum=pagenum,
-                                      maxPages=len(pages))]
-        return [self._render_template('detailedWithToC.html',
-                                      session=session,
-                                      recid=recid,
-                                      toc=toc,
-                                      page=page,
-                                      )
-                ]
+                                              session=session,
+                                              recid=recid,
+                                              pagenum=pagenum,
+                                              maxPages=len(pages))
+                        ]
+        if not toc:
+            # Fetch most recent resultSet
+            rsdata = self._fetch_mostRecentResultSet()
+            rs, startRecord, maximumRecords, sortBy = rsdata
+            return [self._render_template('detailed.html',
+                                          session=session,
+                                          recid=recid,
+                                          page=page,
+                                          resultSet=rs,
+                                          startRecord=startRecord,
+                                          maximumRecords=maximumRecords,
+                                          sortBy=sortBy
+                                          )
+                    ]
+        else:
+            return [self._render_template('detailedWithToC.html',
+                                          session=session,
+                                          recid=recid,
+                                          toc=toc,
+                                          page=page,
+                                          )
+                    ]
 
     def index(self, mimetype, form):
         # Scan the rec.identifier index
