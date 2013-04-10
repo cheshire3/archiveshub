@@ -39,6 +39,11 @@ setup(
     packages=[],
     requires=['cheshire3'],
     install_requires=_install_requires,
+    entry_points={
+        'console_scripts': [
+            'c3archives-serve = cheshire3archives.commands.serve:main'
+        ],
+    },
     author = 'John Harrison, et al.',
     author_email = u'john.harrison@liv.ac.uk',
     maintainer = 'John Harrison',
