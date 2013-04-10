@@ -1,6 +1,8 @@
 """Setuptools command sub-classes."""
+from __future__ import with_statement
 
 import os
+import re
 import sys
 import shutil
 import inspect
@@ -114,6 +116,39 @@ class c3_command(Command):
                               e.filename)
             else:
                 raise e
+
+    def apply_config_templates(self):
+        """Read config template(s), make subs, write config file(s)."""
+        global distropath
+
+        def apply_config_tmpl(path):
+            "Subroutine to turn templates into configs"
+            global distropath
+            # Read in template
+            with open(path + '.tmpl', 'r') as fh:
+                config = fh.read()
+            # Make replacements
+            config = re.sub('type="defaultPath">~/cheshire3-archives/(.*?)</',
+                            r'type="defaultPath">{0}/\1</'.format(distropath),
+                            config
+                            )
+            # Write finished config file
+            with open(path, 'w') as fh:
+                fh.write(config)
+                
+        # EAD Database
+        apply_config_tmpl(join(distropath,
+                               'dbs',
+                               'ead',
+                               'config.xml')
+                          )
+        # EAD Cluster Database
+        apply_config_tmpl(join(distropath,
+                               'dbs',
+                               'ead',
+                               'cluster',
+                               'config.xml')
+                          )
     
 
 class develop(_develop.develop, c3_command):
@@ -132,9 +167,8 @@ class develop(_develop.develop, c3_command):
         global distropath, server, session
         # Carry out normal procedure
         _develop.develop.install_for_development(self)
-        if self.with_httpd is not None:
-            # Install Apache HTTPD mods
-            self.install_apache_mods(develop=True)
+        # Use config templates to generate configs
+        self.apply_config_templates()
         # Tell the server to register the config file
         try:
             server.register_databaseConfigFile(session, join(distropath,
@@ -156,6 +190,9 @@ class develop(_develop.develop, c3_command):
                                                              'config.xml'))
         # New version runs from unpacked / checked out directory
         # No need to install database or web app
+        if self.with_httpd is not None:
+            # Install Apache HTTPD mods
+            self.install_apache_mods(develop=True)
         
     def uninstall_link(self):
         global server, session
@@ -202,9 +239,8 @@ class install(_install.install, c3_command):
     def run(self):
         # Carry out normal procedure
         _install.install.run(self)
-        if self.with_httpd is not None:
-            # Install Apache HTTPD mods
-            self.install_apache_mods()
+        # Use config templates to generate configs
+        self.apply_config_templates()
         # Install Cheshire3 database config plugin
         # Tell the server to register the config file
         try:
@@ -227,9 +263,14 @@ class install(_install.install, c3_command):
                                                              'config.xml'))
         # New version runs from unpacked / checked out directory
         # No need to install database or web app
+        if self.with_httpd is not None:
+            # Install Apache HTTPD mods
+            self.install_apache_mods()
 
 
 class upgrade(_install.install, c3_command):
+    
+    # Extremely experimental and untested...
     
     user_options = _install.install.user_options + c3_command.user_options
     
@@ -244,9 +285,8 @@ class upgrade(_install.install, c3_command):
     def run(self):
         # Carry out normal procedure
         _install.install.run(self)
-        if self.with_httpd is not None:
-            # Install Apache HTTPD mods
-            self.install_apache_mods()
+        # Use config templates to generate configs
+        self.apply_config_templates()
         # Upgrade database directory
         subpath = join('cheshire3',
                        'dbs',
@@ -273,6 +313,9 @@ class upgrade(_install.install, c3_command):
                                                       "*.bdb", 
                                                       "*.log")
                         )
+        if self.with_httpd is not None:
+            # Install Apache HTTPD mods
+            self.install_apache_mods()
 
 
 class uninstall(c3_command):
