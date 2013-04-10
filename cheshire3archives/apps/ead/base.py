@@ -9,6 +9,7 @@ from ConfigParser import SafeConfigParser
 from hashlib import sha1
 from pkg_resources import Requirement, get_distribution
 from pkg_resources import resource_filename, resource_stream
+from Cookie import SimpleCookie
 try:
     from CStringIO import CStringIO as StringIO
 except ImportError:
@@ -110,6 +111,22 @@ class EADWsgiApplication(object):
         except:
             
             return exceptions.html_error_template().render()
+
+    def _set_cookie(self, name, value, **kwargs):
+        # Prepend app name
+        fullname = "c3archives_{0}".format(name)
+        cookie = SimpleCookie()
+        cookie[fullname] = value
+        for extra in kwargs:
+            cookie[fullname][extra] = kwargs[extra]
+        self.response_headers.append(tuple(cookie.output().split(': ', 1)))
+
+    def _get_cookie(self, name):
+        # Prepend app name
+        fullname = "c3archives_{0}".format(name)
+        cookie = SimpleCookie()
+        cookie.load(self.environ.get('HTTP_COOKIE'))
+        return cookie.get(fullname).value
 
     def _fetch_record(self, session, recid):
         # Fetch a Record

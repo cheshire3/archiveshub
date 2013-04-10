@@ -168,13 +168,10 @@ class EADSearchWsgiApplication(EADWsgiApplication):
             for spec in reversed(sortBy):
                 rs.order(session, spec)
         # Set resultSet cookie
-        self.response_headers.append(('Set-Cookie',
-                                      "c3archives_resultSet={0}-{1}-{2}-{3}; "
-                                      "".format(rs.id,
-                                                startRecord,
-                                                maximumRecords,
-                                                ','.join(sortBy))
-                                      ))
+        self._set_cookie('resultSet_id', rs.id)
+        self._set_cookie('resultSet_startRecord', startRecord)
+        self._set_cookie('resultSet_maximumRecords', maximumRecords)
+        self._set_cookie('resultSet_sortBy', ','.join(sortBy))
         return rs
 
     def search(self, form):
