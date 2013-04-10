@@ -302,10 +302,17 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         startRecord = int(form.getvalue('startRecord', 1))
         hit = int(form.getvalue('hit', 0))
         rs = self._searchAndSort(form)
-        if not isinstance(rs, ResultSet):
+        if not isinstance(rs, ResultSet) and 'recid' in form:
+            # Explicit request by Record identifier
+            rec = self._fetch_record(session, form.getvalue('recid'))
+            # Fetch most recent resultSet
+            rsdata = self._fetch_mostRecentResultSet()
+            rs, startRecord, maximumRecords, sortBy = rsdata
+        elif not isinstance(rs, ResultSet):
             # Error message
-            return rs
-        rec = rs[hit].fetch_record(session)
+            return [rs]
+        else:
+            rec = rs[hit].fetch_record(session)
         # Save rec.id now
         recid = rec.id
         # Highlight search terms
@@ -329,7 +336,7 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         page = page.replace('DATAURL', '{0}/data'.format(self.script))
         page = page.replace('RECID', recid)
         page = page.replace('LINKTOPARENT', '')
-        return page
+        return [page]
 
     def full(self, form):
         recid = form.getfirst('recid')
