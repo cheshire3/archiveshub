@@ -43,10 +43,12 @@ class EADRecordWsgiApplication(EADWsgiApplication):
 
     def _setUp(self, environ):
         super(EADRecordWsgiApplication, self)._setUp(environ)
-        # Set the base URL of this family of apps
+        # Set the base URL for this family of apps
         base = re.sub('/data$', '', self.script)
         self.defaultContext['BASE'] = base
         self.config.set('icons', 'base-url', '{0}/img'.format(base))
+        # Set SCRIPT to be base search aop, rather than data app
+        self.defaultContext['SCRIPT'] = base
     
     def __call__(self, environ, start_response):
         # Method to make instances of this class callable
