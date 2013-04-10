@@ -79,7 +79,8 @@ class EADRecordWsgiApplication(EADWsgiApplication):
             else:
                 # Record specified but could not be found - 404!
                 start_response("404 Not Found", self.response_headers)
-                return []
+                return [self._render_template('fail/404.html',
+                                              resource=recid)]
         else:
             self._log(10, 'Retrieved record "{0}"'.format(recid))
             fn = self.mimetypeHash.get(str(mimetype), getattr(self, 'html'))
