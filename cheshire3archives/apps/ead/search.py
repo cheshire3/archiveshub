@@ -205,9 +205,6 @@ class EADSearchWsgiApplication(EADWsgiApplication):
                                           query=rs.query)
                     ]
 
-    def lastResultSet(self, form):
-        raise NotImplementedError()
-
     def similar(self, form):
         raise NotImplementedError()
 

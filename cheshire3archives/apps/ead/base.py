@@ -169,6 +169,16 @@ class EADWsgiApplication(object):
             rs.id = rsid
             return rs
 
+    def _fetch_mostRecentResultSet(self):
+        # Return most recent resultSet, and values for startRecord,
+        # maximumRecord and sortBy
+        rsid = self._get_cookie('resultSet_id')
+        startRecord = int(self._get_cookie('resultSet_startRecord'))
+        maximumRecords = int(self._get_cookie('resultSet_maximumRecords'))
+        sortBy = self._get_cookie('resultSet_sortBy').split(',')
+        rs = self._fetch_resultSet(self.session, rsid)
+        return rs, startRecord, maximumRecords, sortBy
+
     def _transformRecord(self, rec, txr_id):
         # Transform Record with Transformer, return unicode object
         txr = self.database.get_object(self.session, txr_id) 
