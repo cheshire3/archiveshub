@@ -43,6 +43,8 @@ class EADRecordWsgiApplication(EADWsgiApplication):
 
     def _setUp(self, environ):
         super(EADRecordWsgiApplication, self)._setUp(environ)
+        # Set the URL of the data resolver (i.e. self)
+        self.defaultContext['DATAURL'] = self.script
         # Set the base URL for this family of apps
         base = re.sub('/data$', '', self.script)
         self.defaultContext['BASE'] = base
@@ -110,7 +112,8 @@ class EADRecordWsgiApplication(EADWsgiApplication):
     def _outputPage(self, recid, page_number, page, anchorPageHash={}):
         # Make some global replacements
         page = page.replace(u'RECID', unicode(recid))
-        page = page.replace(u'SCRIPT', unicode(self.defaultContext['BASE']))
+        page = page.replace(u'SCRIPT', unicode(self.defaultContext['SCRIPT']))
+        page = page.replace(u'DATAURL', unicode(self.script))
         # Resolve anchors
         for anchorName, anchorPage in anchorPageHash.iteritems():
             page = page.replace(u'PAGE#{0}"'.format(anchorName),

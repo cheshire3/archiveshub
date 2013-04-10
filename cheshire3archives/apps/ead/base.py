@@ -80,6 +80,9 @@ class EADWsgiApplication(object):
         base = script
         self.defaultContext['BASE'] = base
         self.config.set('icons', 'base-url', '{0}/img'.format(base))
+        # Set the URL of the data resolver
+        self.defaultContext['DATAURL'] = "{0}/data".format(script)
+        # Set default response code
         self.response_code = "200 OK"
 
     def _log(self, lvl, msg):
