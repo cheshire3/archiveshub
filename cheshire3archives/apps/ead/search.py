@@ -136,6 +136,8 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         db = self.database
         rsid = form.getvalue('rsid', None)
         sortBy = form.getlist('sortBy')
+        maximumRecords = int(form.getvalue('maximumRecords', 20))
+        startRecord = int(form.getvalue('startRecord', 1))
         if rsid and not 'filter' in form:
             try:
                 rs = self._fetch_resultSet(session, rsid)
@@ -165,6 +167,14 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         if sortBy:
             for spec in reversed(sortBy):
                 rs.order(session, spec)
+        # Set resultSet cookie
+        self.response_headers.append(('Set-Cookie',
+                                      "c3archives_resultSet={0}-{1}-{2}-{3}; "
+                                      "".format(rs.id,
+                                                startRecord,
+                                                maximumRecords,
+                                                ','.join(sortBy))
+                                      ))
         return rs
 
     def search(self, form):
