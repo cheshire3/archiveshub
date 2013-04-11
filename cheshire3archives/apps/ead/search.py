@@ -31,10 +31,7 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         # Prepare application to handle a new request
         self._setUp(environ)
         path = self.request.path_info.strip('/')
-        form = self.request.params
-        # Set up some aliases on form
-        form.getfirst = form.getvalue = form.get
-        form.getlist = form.getall
+        form = self._get_params()
         operation = form.get('operation', None)
         if operation is None:
             # Filename based?

@@ -88,6 +88,14 @@ class EADWsgiApplication(object):
         # Set the URL of the data resolver
         self.defaultContext['DATAURL'] = req.relative_url('data').rstrip(u'/')
 
+    def _get_params(self):
+        # Parse request parameters into a single data structure
+        form = self.request.params
+        # Set up some aliases on form for when FieldStorage is expected
+        form.getfirst = form.getvalue = form.get
+        form.getlist = form.getall
+        return form
+
     def _log(self, lvl, msg):
         # Log a message with the given level
         print >> self.request.environ['wsgi.errors'], msg
