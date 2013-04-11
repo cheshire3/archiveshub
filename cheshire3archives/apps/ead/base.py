@@ -82,11 +82,14 @@ class EADWsgiApplication(object):
         # Set the base URL of this family of apps
         base = script
         self.defaultContext['BASE'] = base
-        self.config.set('icons', 'base-url', req.relative_url('img'))
+        self.config.set('icons',
+                        'base-url',
+                        req.relative_url('img').rstrip(u'/'))
         # Set the URL of the data resolver
-        self.defaultContext['DATAURL'] = req.relative_url('data')
+        self.defaultContext['DATAURL'] = req.relative_url('data').rstrip(u'/')
 
     def _log(self, lvl, msg):
+        # Log a message with the given level
         print >> self.request.environ['wsgi.errors'], msg
 
     def _static_content(self, path):

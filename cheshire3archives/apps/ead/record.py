@@ -44,11 +44,14 @@ class EADRecordWsgiApplication(EADWsgiApplication):
     def _setUp(self, environ):
         super(EADRecordWsgiApplication, self)._setUp(environ)
         # Set the URL of the data resolver (i.e. self)
-        self.defaultContext['DATAURL'] = self.script
+        self.defaultContext['DATAURL'] = self.request.script_name
         # Set the base URL for this family of apps
-        base = re.sub('/data$', '', self.script)
+        base = self.request.relative_url('..').rstrip(u'/')
         self.defaultContext['BASE'] = base
-        self.config.set('icons', 'base-url', '{0}/img'.format(base))
+        self.config.set('icons',
+                        'base-url',
+                        self.request.relative_url('../img').rstrip(u'/')
+                        )
         # Set SCRIPT to be base search aop, rather than data app
         self.defaultContext['SCRIPT'] = base
     
