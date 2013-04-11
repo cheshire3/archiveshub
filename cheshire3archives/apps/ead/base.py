@@ -87,7 +87,7 @@ class EADWsgiApplication(object):
         self.defaultContext['DATAURL'] = req.relative_url('data')
 
     def _log(self, lvl, msg):
-        print >> self.environ['wsgi.errors'], msg
+        print >> self.request.environ['wsgi.errors'], msg
 
     def _static_content(self, path):
         # Serve static content, CSS, images JavaScript etc.
