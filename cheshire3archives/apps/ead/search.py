@@ -163,7 +163,10 @@ class EADSearchWsgiApplication(EADWsgiApplication):
                 pass
         if sortBy:
             for spec in reversed(sortBy):
-                rs.order(session, spec)
+                # Only sort if the spec is not an empty string
+                if spec:
+                    rs.order(session, spec)
+                    
         # Set resultSet cookie
         self._set_cookie('resultSet_id', rs.id)
         self._set_cookie('resultSet_startRecord', startRecord)
