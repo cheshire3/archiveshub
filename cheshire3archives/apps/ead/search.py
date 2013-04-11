@@ -6,7 +6,6 @@ import webbrowser
 import smtplib
 import textwrap
 
-from cgi import FieldStorage
 from wsgiref.util import application_uri
 # Email modules
 from email import Message, MIMEMultipart, MIMEText
@@ -33,6 +32,9 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         self._setUp(environ)
         path = self.request.path_info.strip('/')
         form = self.request.params
+        # Set up some aliases on form
+        form.getfirst = form.getvalue = form.get
+        form.getlist = form.getall
         operation = form.get('operation', None)
         if operation is None:
             # Filename based?
