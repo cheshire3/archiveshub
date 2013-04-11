@@ -6,7 +6,6 @@ import webbrowser
 import smtplib
 import textwrap
 
-from cgi import FieldStorage
 from wsgiref.util import application_uri
 # Email modules
 from email import Message, MIMEMultipart, MIMEText
@@ -31,9 +30,9 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         # Method to make instances of this class callable
         # Prepare application to handle a new request
         self._setUp(environ)
-        path = environ.get('PATH_INFO', '').strip('/')
-        form = FieldStorage(fp=environ['wsgi.input'], environ=environ)
-        operation = form.getvalue('operation', None)
+        path = self.request.path_info.strip('/')
+        form = self._get_params()
+        operation = form.get('operation', None)
         if operation is None:
             # Filename based?
             operation = os.path.splitext(path.split('/')[-1])[0]
@@ -41,50 +40,48 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         # Check operation and act accordingly
         if not operation or operation == 'index':
             session = self.session
-            content = [self._render_template(
-                           'index.html',
-                           collections=listCollections(session)
-                       )]
+            self.response.body = self._render_template(
+                'index.html',
+                collections=listCollections(session)
+            )
         elif operation in ['explore', 'help']:
             # Serve simple templated page
             session = self.session
-            content = [self._render_template(
-                           '{0}.html'.format(operation)
-                       )]
+            self.response.body = self._render_template(
+                '{0}.html'.format(operation)
+            )
         else:
             try:
                 fn = getattr(self, operation)
             except AttributeError:
                 # Check for static content request
                 if path.startswith(('css', 'img', 'js', 'ead')):
-                    content = self._static_content(path)
-                    if content:
-                        start_response("200 OK", self.response_headers)
+                    self.response.app_iter = self._static_content(path)
+                    contentlen = sum([len(d) for d in self.response.app_iter])
+                    if contentlen:
+                        self.response.content_length = contentlen
                     else:
-                        start_response("404 NOT FOUND", self.response_headers)
-                        content = [self._render_template(
-                                       'fail/404.html',
-                                       resource=path
-                                   )]
+                        self.response.status = 404
+                        self.response.body = self._render_template(
+                            'fail/404.html',
+                            resource=path
+                        )
                 else:
                     # Invalid operation selected
-                    start_response("404 NOT FOUND", self.response_headers)
-                    content = [
-                        self._render_template(
-                            'fail/invalidOperation.html',
-                            operation=operation
-                        )
-                    ]
-                return content
+                    self.response.status = 404
+                    self.response.body = self._render_template(
+                        'fail/invalidOperation.html',
+                        operation=operation
+                    )
+                return self.response(environ, start_response)
             else:
                 # Simple method of self
-                content = fn(form)
-        self.response_headers.extend([('Content-Type', 'text/html'),
-                                      ('Content-Length',
-                                       str(sum([len(d) for d in content])))
-                                      ])
-        start_response(self.response_code, self.response_headers)
-        return content
+                # May be a generator
+                self.response.app_iter = fn(form)
+                contentlen = sum([len(d) for d in self.response.app_iter])
+                self.response.content_length = contentlen
+        
+        return self.response(environ, start_response)
 
     def _get_query(self, form):
         session = self.session
@@ -166,7 +163,10 @@ class EADSearchWsgiApplication(EADWsgiApplication):
                 pass
         if sortBy:
             for spec in reversed(sortBy):
-                rs.order(session, spec)
+                # Only sort if the spec is not an empty string
+                if spec:
+                    rs.order(session, spec)
+                    
         # Set resultSet cookie
         self._set_cookie('resultSet_id', rs.id)
         self._set_cookie('resultSet_startRecord', startRecord)
@@ -332,8 +332,10 @@ class EADSearchWsgiApplication(EADWsgiApplication):
                                      rec=rec,
                                      txr=summaryTxr
                                      )
-        page = page.replace('SCRIPT', self.script)
-        page = page.replace('DATAURL', '{0}/data'.format(self.script))
+        page = page.replace('SCRIPT',
+                            self.request.script_name.encode('utf8'))
+        page = page.replace('DATAURL',
+                            self.request.relative_url('data').encode('utf8'))
         page = page.replace('RECID', recid)
         page = page.replace('LINKTOPARENT', '')
         return [page]

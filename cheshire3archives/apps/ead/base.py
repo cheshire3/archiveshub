@@ -8,8 +8,9 @@ import re
 from ConfigParser import SafeConfigParser
 from hashlib import sha1
 from pkg_resources import Requirement, get_distribution
-from pkg_resources import resource_filename, resource_stream
-from Cookie import SimpleCookie
+from pkg_resources import resource_filename, resource_stream, resource_string
+from webob import Request, Response
+
 try:
     from CStringIO import CStringIO as StringIO
 except ImportError:
@@ -41,7 +42,6 @@ class EADWsgiApplication(object):
     
     """
     
-    
     def __init__(self, session, database, config):
         # Constructor method
         self.session = session
@@ -72,26 +72,38 @@ class EADWsgiApplication(object):
 
     def _setUp(self, environ):
         # Prepare application to handle a new request
-        self.response_headers = []
-        self.environ = environ
-        script = self.script = environ.get('SCRIPT_NAME', '')
+        # Wrap environ in a Request object
+        req = self.request = Request(environ, charset='utf8')
+        # Create a Response object with defaults for status, encoding etc. 
+        # Methods should over-ride these defaults as necessary
+        self.response = Response()
+        script = req.script_name
         self.defaultContext['SCRIPT'] = script
         # Set the base URL of this family of apps
         base = script
         self.defaultContext['BASE'] = base
-        self.config.set('icons', 'base-url', '{0}/img'.format(base))
+        self.config.set('icons',
+                        'base-url',
+                        req.relative_url('img').rstrip(u'/'))
         # Set the URL of the data resolver
-        self.defaultContext['DATAURL'] = "{0}/data".format(script)
-        # Set default response code
-        self.response_code = "200 OK"
+        self.defaultContext['DATAURL'] = req.relative_url('data').rstrip(u'/')
+
+    def _get_params(self):
+        # Parse request parameters into a single data structure
+        form = self.request.params
+        # Set up some aliases on form for when FieldStorage is expected
+        form.getfirst = form.getvalue = form.get
+        form.getlist = form.getall
+        return form
 
     def _log(self, lvl, msg):
-        print >> self.environ['wsgi.errors'], msg
+        # Log a message with the given level
+        print >> self.request.environ['wsgi.errors'], msg
 
     def _static_content(self, path):
         # Serve static content, CSS, images JavaScript etc.
         try:
-            stream = resource_stream(
+            content = resource_string(
                 Requirement.parse('cheshire3archives'),
                 'www/apps/ead/{0}'.format(path)             
             )
@@ -100,10 +112,10 @@ class EADWsgiApplication(object):
         else:
             mType, encoding = mimetypes.guess_type(path)
             if mType is not None:
-                self.response_headers.append(('Content-Type', mType))
+                self.response.content_type = mType
             if encoding is not None:
-                self.response_headers.append(('Content-Encoding', encoding))
-            return stream
+                self.response.content_encoding = encoding
+            return [content]
 
     def _render_template(self, template_name, **kwargs):
         try:
@@ -118,18 +130,12 @@ class EADWsgiApplication(object):
     def _set_cookie(self, name, value, **kwargs):
         # Prepend app name
         fullname = "c3archives_{0}".format(name)
-        cookie = SimpleCookie()
-        cookie[fullname] = value
-        for extra in kwargs:
-            cookie[fullname][extra] = kwargs[extra]
-        self.response_headers.append(tuple(cookie.output().split(': ', 1)))
+        self.response.set_cookie(fullname, str(value), **kwargs)
 
     def _get_cookie(self, name):
         # Prepend app name
         fullname = "c3archives_{0}".format(name)
-        cookie = SimpleCookie()
-        cookie.load(self.environ.get('HTTP_COOKIE'))
-        return cookie.get(fullname).value
+        return self.request.cookies.get(fullname)
 
     def _fetch_record(self, session, recid):
         # Fetch a Record

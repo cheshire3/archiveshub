@@ -7,7 +7,6 @@ import webbrowser
 import mimetypes
 import textwrap
 
-from cgi import FieldStorage
 from foresite import conneg
 from lxml import etree
 from lxml import html as lxmlhtml
@@ -44,11 +43,14 @@ class EADRecordWsgiApplication(EADWsgiApplication):
     def _setUp(self, environ):
         super(EADRecordWsgiApplication, self)._setUp(environ)
         # Set the URL of the data resolver (i.e. self)
-        self.defaultContext['DATAURL'] = self.script
+        self.defaultContext['DATAURL'] = self.request.script_name
         # Set the base URL for this family of apps
-        base = re.sub('/data$', '', self.script)
+        base = self.request.relative_url('..').rstrip(u'/')
         self.defaultContext['BASE'] = base
-        self.config.set('icons', 'base-url', '{0}/img'.format(base))
+        self.config.set('icons',
+                        'base-url',
+                        self.request.relative_url('../img').rstrip(u'/')
+                        )
         # Set SCRIPT to be base search aop, rather than data app
         self.defaultContext['SCRIPT'] = base
     
@@ -56,14 +58,21 @@ class EADRecordWsgiApplication(EADWsgiApplication):
         # Method to make instances of this class callable
         self._setUp(environ)
         session = self.session
-        path = environ.get('PATH_INFO', '').strip('/')
+        path = self.request.path_info.strip('/')
         if path == "environ":
-            self.response_headers.append(('Content-Type', 'text/plain'))
-            start_response('200 OK', self.response_headers)
-            return [repr(i) + '\n' for i in environ.iteritems()]
+            if self.request.remote_addr in ['127.0.0.1']:
+                self.response.content_type = 'text/plain'
+                self.response.app_iter = [repr(i) + '\n'
+                                         for i
+                                         in self.request.environ.iteritems()
+                                         ]
+            else:
+                self.response.status = 403
+            return self.response(environ, start_response)
 
         # Parse request to determine record, Internet (MIME) Type etc.
-        recid, mimetype, encoding, form = self._parse_recSpec(path)
+        recid, mimetype, encoding = self._parse_recSpec(path)
+        form = self._get_params()
         # Content negotiation if not specified by file extension
         if mimetype is None:
             mtrequested = environ.get('HTTP_ACCEPT', 'text/html')
@@ -79,18 +88,28 @@ class EADRecordWsgiApplication(EADWsgiApplication):
             # assumes that all search terms will be a string of 1 or more
             # characters
             if not recid or recid == 'index':
-                content = self.index(mimetype, form)
+                self.response.app_iter = self.index(mimetype, form)
             else:
                 # Record specified but could not be found - 404!
-                start_response("404 Not Found", self.response_headers)
-                return [self._render_template('fail/404.html',
-                                              resource=recid)]
+                self.response.status = 404
+                self.response.body = self._render_template('fail/404.html',
+                                                           resource=recid
+                                                           )
         else:
             self._log(10, 'Retrieved record "{0}"'.format(recid))
-            fn = self.mimetypeHash.get(str(mimetype), getattr(self, 'html'))
-            content = fn(rec, form)
-        start_response(self.response_code, self.response_headers)
-        return content
+            fn = self.mimetypeHash.get(str(mimetype))
+            if fn is None:
+                # Unsupported mimetype - may be supported in future
+                self.response.status = 303
+                self.response.location = "{0}.html".format(recid)
+                self.response.body = ('<a href="{0}">{0}</a>'
+                                      ''.format(self.response.location))
+            else:
+                # Set Content-Type now to allow method to over-ride
+                self.response.content_type = str(mimetype)
+                self.response.body = fn(rec, form)
+        
+        return self.response(environ, start_response)
 
     def _parse_recSpec(self, path_info):
         recid = path_info
@@ -98,9 +117,7 @@ class EADRecordWsgiApplication(EADWsgiApplication):
         if mType is not None:
             # There is a filename extension to strip off
             recid, ext = os.path.splitext(recid)
-        form = FieldStorage(fp=self.environ['wsgi.input'],
-                              environ=self.environ)
-        return recid, mType, encoding, form
+        return recid, mType, encoding
 
     def _readBuffer(self, buffer_):
         # Read and close the given file-like page buffer, return the content
@@ -112,13 +129,14 @@ class EADRecordWsgiApplication(EADWsgiApplication):
     def _outputPage(self, recid, page_number, page, anchorPageHash={}):
         # Make some global replacements
         page = page.replace(u'RECID', unicode(recid))
-        page = page.replace(u'SCRIPT', unicode(self.defaultContext['SCRIPT']))
-        page = page.replace(u'DATAURL', unicode(self.script))
+        
+        page = page.replace(u'SCRIPT', self.defaultContext['SCRIPT'])
+        page = page.replace(u'DATAURL', self.defaultContext['DATAURL'])
         # Resolve anchors
         for anchorName, anchorPage in anchorPageHash.iteritems():
             page = page.replace(u'PAGE#{0}"'.format(anchorName),
                                 u'{0}/{1}.html?page={2}#{3}"'
-                                u''.format(self.script,
+                                u''.format(self.defaultContext['DATAURL'],
                                            recid,
                                            anchorPage,
                                            anchorName)
@@ -127,7 +145,7 @@ class EADRecordWsgiApplication(EADWsgiApplication):
         # Revert any remaining ones to the first page
         page = page.replace(u'PAGE#"',
                             u'{0}/{1}.html?page=1#"'
-                            u''.format(self.script,
+                            u''.format(self.defaultContext['DATAURL'],
                                        recid)
                             )
         # Get path of file
@@ -135,13 +153,11 @@ class EADRecordWsgiApplication(EADWsgiApplication):
                             '{0}.{1}.html'.format(recid.replace('/', '-'),
                                                   page_number)
                             )
-        self._log(10, "outputting {0}".format(path))
         with open(path, 'wb') as fh:
             fh.write(page.encode('utf-8'))
         return page
 
     def html(self, rec, form):
-        self.response_headers.append(('Content-Type', 'text/html'))
         session = self.session
         db = self.database
         recid = rec.id
@@ -152,12 +168,12 @@ class EADRecordWsgiApplication(EADWsgiApplication):
         try:
             pagenum = int(pagenum)
         except ValueError:
-            return [self._render_template('fail/incorrectValueType.html',
-                                          key="page",
-                                          value=form.getfirst('page'),
-                                          expected=('an integer (whole number)'
-                                                    ' or "toc"')
-                                          )]
+            return self._render_template('fail/incorrectValueType.html',
+                                         key="page",
+                                         value=form.getfirst('page'),
+                                         expected=('an integer (whole number)'
+                                                   ' or "toc"')
+                                         )
         try:
             parentId = rec.process_xpath(session, '/c3component/@parent')[0]
         except IndexError:
@@ -184,10 +200,10 @@ class EADRecordWsgiApplication(EADWsgiApplication):
             except IOError:
                 # Page 1 exists, but not requested page
                 # Return invalid page number
-                return [self._render_template('fail/invalidPageNumber.html',
-                                      session=session,
-                                      recid=recid,
-                                      pagenum=pagenum)]
+                return self._render_template('fail/invalidPageNumber.html',
+                                             session=session,
+                                             recid=recid,
+                                             pagenum=pagenum)
             self._log(10, 'Retrieved {0} from cache'.format(path))
             # Retrieve toc
             tocpath = os.path.join(self.config.get('cache', 'html_cache_path'),
@@ -273,34 +289,31 @@ class EADRecordWsgiApplication(EADWsgiApplication):
                 page = pages[pagenum - 1]
             except IndexError:
                 # Return invalid page number
-                return [self._render_template('fail/invalidPageNumber.html',
-                                              session=session,
-                                              recid=recid,
-                                              pagenum=pagenum,
-                                              maxPages=len(pages))
-                        ]
+                return self._render_template('fail/invalidPageNumber.html',
+                                             session=session,
+                                             recid=recid,
+                                             pagenum=pagenum,
+                                             maxPages=len(pages))
         if not toc:
             # Fetch most recent resultSet
             rsdata = self._fetch_mostRecentResultSet()
             rs, startRecord, maximumRecords, sortBy = rsdata
-            return [self._render_template('detailed.html',
-                                          session=session,
-                                          recid=recid,
-                                          page=page,
-                                          resultSet=rs,
-                                          startRecord=startRecord,
-                                          maximumRecords=maximumRecords,
-                                          sortBy=sortBy
-                                          )
-                    ]
+            return self._render_template('detailed.html',
+                                         session=session,
+                                         recid=recid,
+                                         page=page,
+                                         resultSet=rs,
+                                         startRecord=startRecord,
+                                         maximumRecords=maximumRecords,
+                                         sortBy=sortBy
+                                         )
         else:
-            return [self._render_template('detailedWithToC.html',
-                                          session=session,
-                                          recid=recid,
-                                          toc=toc,
-                                          page=page,
-                                          )
-                    ]
+            return self._render_template('detailedWithToC.html',
+                                         session=session,
+                                         recid=recid,
+                                         toc=toc,
+                                         page=page,
+                                         )
 
     def index(self, mimetype, form):
         # Scan the rec.identifier index
@@ -311,15 +324,17 @@ class EADRecordWsgiApplication(EADWsgiApplication):
         elif mimetype == 'text/plain':
             raise NotImplementedError()
         else:
-            return [self._render_template('dataIndex.html',
-                                          collections=collections
-                                          )]
+            return self._render_template('dataIndex.html',
+                                         collections=collections
+                                         )
 
     def text(self, rec, form):
-        self.response_headers.append(('Content-Type',
-                                      'text/plain; charset=utf-8'))
-        for rawline in self._textFromRecord(rec).split(u'\n'):
-            yield (textwrap.fill(rawline, 78) + u'\n').encode('utf-8')
+        txt = self._textFromRecord(rec)
+        # Wrap long lines
+        return u'\n'.join([textwrap.fill(rawline, 78)
+                           for rawline
+                           in txt.split(u'\n')
+                           ]).encode('utf-8')
 
     def toc(self, rec, form):
         path = os.path.join(self.config.get('cache', 'html_cache_path'),
@@ -332,15 +347,16 @@ class EADRecordWsgiApplication(EADWsgiApplication):
         except IOError:
             # No ToC file
             doc_uc = self._transformRecord(rec, 'htmlContentsTxr')
-        return [self._render_template('toc.html',
-                                      recid=rec.id,
-                                      toc=doc_uc
-                                      )]
+        return self._render_template('toc.html',
+                                     recid=rec.id,
+                                     toc=doc_uc
+                                     )
 
     def xml(self, rec, form):
+        # Fix mimetype modules incorrect text/xml
+        self.response.content_type = 'application/xml'
         session = self.session
         db = self.database
-        self.response_headers.append(('Content-Type', 'application/xml'))
         # Check for requested schema, or revert to default, currently 'ead'
         schema = form.getvalue('schema', 'ead')
         if schema == 'ead-raw':
@@ -358,7 +374,7 @@ class EADRecordWsgiApplication(EADWsgiApplication):
                 raise ValueError('Unknown schema: {0}'.format(schema))
             txr = map_.transformerHash.get(schema, None)
         doc = txr.process_record(session, rec)
-        return [doc.get_raw(session)]
+        return doc.get_raw(session)
 
 
 def main(argv=None):
