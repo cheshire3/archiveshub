@@ -51,7 +51,7 @@ class EADRecordWsgiApplication(EADWsgiApplication):
                         'base-url',
                         self.request.relative_url('../img').rstrip(u'/')
                         )
-        # Set SCRIPT to be base search aop, rather than data app
+        # Set SCRIPT to be base search app, rather than data app
         self.defaultContext['SCRIPT'] = base
     
     def __call__(self, environ, start_response):
