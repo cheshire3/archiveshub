@@ -186,15 +186,23 @@
 			</workflow>
 		</subConfig>
 
-		<subConfig type="workflow" id="indexNewRecordWorkflow">
-			<objectType>cheshire3.workflow.CachingWorkflow</objectType>
-			<workflow>
-				<object type="recordStore" ref="recordStore" function="store_record" />
-				<object type="database" function="add_record" />
-				<object type="index" ref="idx-creationDate" function="index_record" />
-				<object type="workflow" ref="indexRecordWorkflow" />
-			</workflow>
-		</subConfig>
+        <subConfig type="workflow" id="indexNewRecordWorkflow">
+            <objectType>cheshire3.workflow.CachingWorkflow</objectType>
+            <workflow>
+                <try>
+                    <object type="recordStore" ref="recordStore" function="store_record" />
+                </try>
+                <except>
+                    <!-- Most likely duplicate Record -->
+                    <log level="error">"Record not storable: " + str(err)</log>
+                </except>
+                <else>
+                    <object type="database" function="add_record" />
+                    <object type="index" ref="idx-creationDate" function="index_record" />
+                    <object type="workflow" ref="indexRecordWorkflow" />
+                </else>
+            </workflow>
+        </subConfig>
 
 		<subConfig type="workflow" id="indexRecordWorkflow">
 			<objectType>cheshire3.workflow.CachingWorkflow</objectType>
