@@ -1,4 +1,4 @@
-"""Start an HTTP server for Cheshire3 for Archives
+"""Start an HTTP server for Archives Hub
 
 Start an HTTP server to expose Cheshire3 databases via the web services and 
 web application for development and demonstration purposes.
@@ -17,10 +17,10 @@ from cheshire3.web.sruWsgi import SRUWsgiHandler, get_configsFromServer
 from cheshire3.web.oaipmhWsgi import OAIPMHWsgiApplication
 from cheshire3.web.oaipmhWsgi import get_databasesAndConfigs
 
-from cheshire3archives.commands.utils import WSGIAppArgumentParser
+from archiveshub.commands.utils import WSGIAppArgumentParser
 
-from cheshire3archives.apps.ead.search import application as ead_search_app
-from cheshire3archives.apps.ead.record import application as ead_data_app
+from archiveshub.apps.ead.search import application as ead_search_app
+from archiveshub.apps.ead.record import application as ead_data_app
 
 
 def main(argv=None):
@@ -47,13 +47,13 @@ def main(argv=None):
     ])
     wsgi_server = CherryPyWSGIServer((args.hostname, args.port),
                                      dispatcher,
-                                     server_name="Cheshire3 for Archives")
+                                     server_name="Archives Hub")
     def signal_handler(signal, frame):
         wsgi_server.stop()
         sys.exit(0)
     signal.signal(signal.SIGINT, signal_handler)
-    sys.stdout.write("Starting CherryPy HTTP server for Cheshire3 for Archives"
-                     ".\n")
+    sys.stdout.write("Starting CherryPy HTTP server for {0}"
+                     ".\n".format(wsgi_server.server_name))
     sys.stdout.write("If running in foreground Ctrl-C will stop the server.\n")
     sys.stdout.write("You will be able to access the applications from:\n")
     sys.stdout.write("http://{0}:{1}\n""".format(args.hostname, args.port))

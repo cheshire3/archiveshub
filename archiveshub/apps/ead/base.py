@@ -54,7 +54,7 @@ class EADWsgiApplication(object):
         self.resultSetStore = self.database.get_object(session,
                                                        'eadResultSetStore')
         template_dir = resource_filename(
-            Requirement.parse('cheshire3archives'),
+            Requirement.parse('archiveshub'),
             'www/apps/ead/tmpl'
         )
         mod_dir = os.path.join(gettempdir(),
@@ -70,7 +70,7 @@ class EADWsgiApplication(object):
                                              module_directory=mod_dir,
                                              strict_undefined=False)
         self.defaultContext = {
-            'version': get_distribution("cheshire3archives").version,
+            'version': get_distribution("archiveshub").version,
             'config': config
         }
         self.defaultContext.update(dict(config.items('brand')))
@@ -109,7 +109,7 @@ class EADWsgiApplication(object):
         # Serve static content, CSS, images JavaScript etc.
         try:
             content = resource_string(
-                Requirement.parse('cheshire3archives'),
+                Requirement.parse('archiveshub'),
                 'www/apps/ead/{0}'.format(path)             
             )
         except IOError:
@@ -449,7 +449,7 @@ def cleverTitleCase(txt):
 
 def main():
     """Start up a simple app server to serve the application."""
-    raise NotImplementedError("cheshire3archives.apps.ead.base contains only "
+    raise NotImplementedError("archiveshub.apps.ead.base contains only "
                               "an Abstract Base Class")
 
 
@@ -466,7 +466,7 @@ config = SafeConfigParser()
 configDefaults = StringIO("""
 [brand]
 repository_name = Cheshire3 for Archives
-repository_link = http://github.com/cheshire3/cheshire3archives
+repository_link = http://github.com/cheshire3/archiveshub
 repository_logo = http://cheshire3.org/gfx/c3_black.gif
 
 [icons]
@@ -501,14 +501,14 @@ host = mail1.liv.ac.uk
 port = 25
 """.format(
    html_cache_path=resource_filename(
-       Requirement.parse('cheshire3archives'),
+       Requirement.parse('archiveshub'),
        'www/apps/ead/html'
    )
 ))
 
 config.readfp(configDefaults, 'hard-coded')
 app_config_path = resource_filename(
-    Requirement.parse('cheshire3archives'),
+    Requirement.parse('archiveshub'),
     'www/apps/ead/ead.cfg'
 )
 config.read([app_config_path])

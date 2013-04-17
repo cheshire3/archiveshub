@@ -18,10 +18,10 @@ from cheshire3.exceptions import ObjectDoesNotExistException
 from cheshire3.web.www_utils import generate_cqlQuery
 
 # Cheshire3 for Archives Imports
-from cheshire3archives.commands.utils import WSGIAppArgumentParser
-from cheshire3archives.apps.ead.base import EADWsgiApplication 
-from cheshire3archives.apps.ead.base import listCollections
-from cheshire3archives.apps.ead.base import config, session, db
+from archiveshub.commands.utils import WSGIAppArgumentParser
+from archiveshub.apps.ead.base import EADWsgiApplication 
+from archiveshub.apps.ead.base import listCollections
+from archiveshub.apps.ead.base import config, session, db
 
 
 class EADSearchWsgiApplication(EADWsgiApplication):

@@ -1,6 +1,6 @@
-"""Setup Cheshire3 for Archives.
+"""Setup Cheshire3 for Archives Hub.
 
-Although Cheshire3 for Archives is not a pure Python package,
+Although Cheshire3 for Archives Hub is not a pure Python package,
 needing to be unpacked and used in situ, the convention of using setup.py
 as the installation method is followed.
 """
@@ -16,12 +16,15 @@ import distribute_setup
 distribute_setup.use_setuptools()
 
 from setuptools import setup
-from cheshire3archives.setuptools.commands import (develop, install, upgrade,
-                                                   uninstall,
-                                                   unavailable_command) 
+from archiveshub.setuptools.commands import (develop,
+                                             install,
+                                             upgrade,
+                                             uninstall,
+                                             unavailable_command
+                                             ) 
 
-_name = 'cheshire3archives'
-_version = '3.6'
+_name = 'archiveshub'
+_version = '3.2'
 
 # Inspect to find current path
 setuppath = inspect.getfile(inspect.currentframe())
@@ -35,16 +38,16 @@ with open(os.path.join(setupdir, 'requirements.txt'), 'r') as fh:
 setup(
     name = _name,
     version = _version,
-    description = 'Cheshire3 for Archives',
+    description = 'Cheshire3 for Archives Hub',
     packages=[],
     requires=['cheshire3'],
     install_requires=_install_requires,
     entry_points={
         'console_scripts': [
-            'c3archives-serve = cheshire3archives.commands.serve:main'
+            'ah-serve = archiveshub.commands.serve:main'
         ],
     },
-    author = 'John Harrison, et al.',
+    author = 'John Harrison',
     author_email = u'john.harrison@liv.ac.uk',
     maintainer = 'John Harrison',
     maintainer_email = u'john.harrison@liv.ac.uk',
