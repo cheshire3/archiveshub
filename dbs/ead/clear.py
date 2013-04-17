@@ -67,11 +67,12 @@ def clear(args):
     (mins, secs) = divmod(time.time() - start, 60)
     (hours, mins) = divmod(mins, 60)
     lgr.log_info(session, 
-                 'Complete ({0:.0f}h {1:.0f}m {2:.0f}s)'.format(hours,
+                 'Finished ({0:.0f}h {1:.0f}m {2:.0f}s)'.format(hours,
                                                                 mins,
                                                                 secs)
                  )
-    return 0
+    # Clear resultSetStore - no longer valid if indexes change
+    return clear_resultSets(args)
 
 
 def clear_clusters(args):
@@ -87,12 +88,30 @@ def clear_clusters(args):
     (mins, secs) = divmod(time.time() - start, 60)
     (hours, mins) = divmod(mins, 60)
     lgr.log_info(session, 
-                 'Complete ({0:.0f}h {1:.0f}m {2:.0f}s)'.format(hours,
+                 'Finished ({0:.0f}h {1:.0f}m {2:.0f}s)'.format(hours,
                                                                 mins,
                                                                 secs)
                  )
     # return session.database to the default (finding aid) DB
     session.database = db.id
+    return 0
+
+
+def clear_resultSets(args):
+    global session, db, lgr
+    lgr.log_info(session,
+                 "Clearing stored resultSets..."
+                 )
+    start = time.time()
+    resultSetStore = db.get_object(session, 'eadResultSetStore')
+    resultSetStore.clear(session)
+    (mins, secs) = divmod(time.time() - start, 60)
+    (hours, mins) = divmod(mins, 60)
+    lgr.log_info(session, 
+                 'Finished ({0:.0f}h {1:.0f}m {2:.0f}s)'.format(hours,
+                                                                mins,
+                                                                secs)
+                 )
     return 0
 
 
