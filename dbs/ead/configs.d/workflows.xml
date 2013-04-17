@@ -167,9 +167,9 @@
 						<object type="recordStore" ref="componentStore" function="store_record" />
 					</try>
 					<except>
-						<log level="critical">"Component unstorable"</log>
-						<log level="critical">"\n" + ''.join(traceback.format_exception(sys.exc_type,sys.exc_value,sys.exc_traceback))</log>
-						<log level="critical">"" + input.get_xml(session)</log>
+						<log level="error">"Component unstorable"</log>
+						<log level="error">"\n" + ''.join(traceback.format_exception(sys.exc_type,sys.exc_value,sys.exc_traceback))</log>
+						<log level="error">"" + input.get_xml(session)</log>
 						<continue />
 					</except>
 					<log level="debug">"adding " + input.id + " to database"</log>
