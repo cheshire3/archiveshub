@@ -7,7 +7,7 @@
     <ul class="facet" id="${idx}-facet" >
     % for term, termData in termHash:
         <%
-        filterClause = '{0} exact "{1}"'.format(idx, term)
+        filterClause = u'{0} exact "{1}"'.format(idx, term)
         %> 
         <li class="unmarked">
             <a href="${SCRIPT}/search.html?rsid=${resultSet.id}&filter=${filterClause|u}#leftCol">
