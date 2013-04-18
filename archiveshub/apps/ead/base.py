@@ -465,9 +465,9 @@ config = SafeConfigParser()
 # Default configuration
 configDefaults = StringIO("""
 [brand]
-repository_name = Cheshire3 for Archives
-repository_link = http://github.com/cheshire3/archiveshub
-repository_logo = http://cheshire3.org/gfx/c3_black.gif
+repository_name = Archives Hub
+repository_link = http://archiveshub.ac.uk
+repository_logo = /img/ah-logo.png
 
 [icons]
 base-url = /img
