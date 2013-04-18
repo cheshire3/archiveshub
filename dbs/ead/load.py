@@ -64,7 +64,7 @@ class LoadArgumentParser(BaseArgumentParser):
                           help="identifier of Cheshire3 database")
         self.add_argument('data',
                           type=str, action='store', nargs='*',
-                          default=None, metavar="DIR",
+                          metavar="DIR",
                           help=("directory from which to load and index EAD "
                                 "documents")
                           )
@@ -94,7 +94,7 @@ class LoadArgumentParser(BaseArgumentParser):
         args = super(LoadArgumentParser, self).parse_args(args, namespace)
         # Sanity checking for load
         args.load = bool(args.load or 
-                         args.data is not None or
+                         args.data or
                          not any([args.components,
                                   args.clusters,
                                   args.index,
