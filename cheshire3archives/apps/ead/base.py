@@ -57,7 +57,12 @@ class EADWsgiApplication(object):
             Requirement.parse('cheshire3archives'),
             'www/apps/ead/tmpl'
         )
-        mod_dir = os.path.join(gettempdir(), 'mako_modules')
+        mod_dir = os.path.join(gettempdir(),
+                               'mako_modules',
+                               'cheshire3archives',
+                               'apps',
+                               'ead'
+                               )
         
         self.templateLookup = TemplateLookup(directories=[template_dir],
                                              output_encoding='utf-8',
