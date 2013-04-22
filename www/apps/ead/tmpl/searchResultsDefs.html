@@ -55,7 +55,7 @@
         top when re-ordering
         -->
         <select name="sortBy">
-            % for val, label in [('weight', 'Relevance'), ('dc.title', 'Title'), ('/*/*/did/unitdate/@normal', 'Date'), ('normalize-space(/*/*/did/unitid/text())', 'Reference')]:
+            % for val, label in [('weight', 'Relevance'), ('dc.title', 'Title'), ('dc.date', 'Date'), ('normalize-space(/*/*/did/unitid/text())', 'Reference')]:
                 % if val in sortBy:
                 <option value="${val}" selected="selected">${label}</option>
                 % else:
