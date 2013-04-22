@@ -41,21 +41,24 @@
 </%def>
 
 <%def name="sortBySelect(resultSet, sortBy, maximumRecords, startRecord)">
-    <div class="sortBy">
-        <form action="search.html">
-            <input type="hidden" name="rsid" value="${resultSet.id}"/>
-            <select name="sortBy">
-                % for val, label in [('weight', 'Relevance'), ('dc.title', 'Title'), ('/*/*/did/unitdate/@normal', 'Date'), ('normalize-space(/*/*/did/unitid/text())', 'Reference')]:
-                    % if val in sortBy:
-                    <option value="${val}" selected="selected">${label}</option>
-                    % else:
-                    <option value="${val}">${label}</option>
-                    % endif
-                    
-                % endfor
-            </select>
-        </form>
-    </div>
+    <form action="search.html">
+        <input type="hidden" name="rsid" value="${resultSet.id}"/>
+        <!-- Respect specified maximumRecords -->
+        <input type="hidden" name="maximumRecords" value="${maximumRecords}"/>
+        <!-- Don't include startRecord - it is most sensible to return to the
+        top when re-ordering
+        -->
+        <select name="sortBy">
+            % for val, label in [('weight', 'Relevance'), ('dc.title', 'Title'), ('/*/*/did/unitdate/@normal', 'Date'), ('normalize-space(/*/*/did/unitid/text())', 'Reference')]:
+                % if val in sortBy:
+                <option value="${val}" selected="selected">${label}</option>
+                % else:
+                <option value="${val}">${label}</option>
+                % endif
+                
+            % endfor
+        </select>
+    </form>
 </%def>
 
 <%def name="maximumRecordsSelectButton(resultSet, sortBy, maximumRecords, startRecord, label=None)">
