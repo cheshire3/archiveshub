@@ -59,7 +59,7 @@ class EADWsgiApplication(object):
         )
         mod_dir = os.path.join(gettempdir(),
                                'mako_modules',
-                               'cheshire3archives',
+                               'archiveshub',
                                'apps',
                                'ead'
                                )
