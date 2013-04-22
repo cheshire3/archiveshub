@@ -163,8 +163,23 @@ class EADSearchWsgiApplication(EADWsgiApplication):
                 pass
         if sortBy:
             for spec in reversed(sortBy):
-                # Only sort if the spec is not an empty string
-                if spec:
+                # Check if the sort spec is an index
+                protocolMap = db.get_path(session, 'protocolMap')
+                try:
+                    sortClause = self.queryFactory.get_query(
+                        session,
+                        '{0} exact ""'.format(spec)
+                    )
+                    # Fetch the index object from the database
+                    index = protocolMap.resolveIndex(session, sortClause)
+                except CQLDiagnostic:
+                    index = None
+                        
+                if index:
+                    rs.order(session, index)
+                elif spec:
+                    # Not an index, maybe a ResultSetItem attribute, or XPath?
+                    # Pass the string to ResultSet to see what it makes of it
                     rs.order(session, spec)
                     
         # Set resultSet cookie
