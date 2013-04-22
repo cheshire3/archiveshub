@@ -10,14 +10,14 @@
     % endfor
 </%def>
 
-<%def name="back_links(resultSet, maximumRecords, startRecord)">
-    <a href="search.html?rsid=${resultSet.id|u}&amp;startRecord=1&amp;maximumRecords=${maximumRecords}#leftcol"
+<%def name="back_links(resultSet, sortBy, maximumRecords, startRecord)">
+    <a href="search.html?rsid=${resultSet.id|u}&amp;startRecord=1&amp;maximumRecords=${maximumRecords}${sortByString(sortBy)}#leftcol"
       class="ajax">
         <button label="fast-rewind" class="rsNav">
             <img src="${config.get('icons', 'fast-rewind-url')}" alt="|&lt;&lt;">
         </button>
     </a>
-    <a href="search.html?rsid=${resultSet.id|u}&amp;startRecord=${max(startRecord - maximumRecords, 1)}&amp;maximumRecords=${maximumRecords}&amp;#leftcol"
+    <a href="search.html?rsid=${resultSet.id|u}&amp;startRecord=${max(startRecord - maximumRecords, 1)}&amp;maximumRecords=${maximumRecords}${sortByString(sortBy)}#leftcol"
       class="ajax">
         <button label="rewind" class="rsNav">
             <img src="${config.get('icons', 'rewind-url')}" alt="&lt;&lt;">
@@ -25,14 +25,14 @@
     </a>
 </%def>
 
-<%def name="forward_links(resultSet, maximumRecords, startRecord)">
-    <a href="search.html?rsid=${resultSet.id|u}&amp;startRecord=${min(startRecord + maximumRecords, len(resultSet))}&amp;maximumRecords=${maximumRecords}&amp;#leftcol"
+<%def name="forward_links(resultSet, sortBy, maximumRecords, startRecord)">
+    <a href="search.html?rsid=${resultSet.id|u}&amp;startRecord=${min(startRecord + maximumRecords, len(resultSet))}&amp;maximumRecords=${maximumRecords}${sortByString(sortBy)}#leftcol"
       class="ajax">
         <button label="forward" class="rsNav">
             <img src="${config.get('icons', 'forward-url')}" alt="&gt;&gt;">
         </button>
     </a>
-    <a href="search.html?rsid=${resultSet.id|u}&amp;startRecord=${((len(resultSet) / maximumRecords) * maximumRecords) + 1}&amp;maximumRecords=${maximumRecords}#leftcol"
+    <a href="search.html?rsid=${resultSet.id|u}&amp;startRecord=${((len(resultSet) / maximumRecords) * maximumRecords) + 1}&amp;maximumRecords=${maximumRecords}${sortByString(sortBy)}#leftcol"
       class="ajax">
         <button label="fast-forward" class="rsNav">
             <img src="${config.get('icons', 'fast-forward-url')}"
