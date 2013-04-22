@@ -45,7 +45,7 @@
         <form action="search.html">
             <input type="hidden" name="rsid" value="${resultSet.id}"/>
             <select name="sortBy">
-                % for val, label in [('weight', 'Relevance'), ('normalize-space(/*/*/did/unittitle/text())', 'Title'), ('/*/*/did/unitdate/@normal', 'Date'), ('normalize-space(/*/*/did/unitid/text())', 'Reference')]:
+                % for val, label in [('weight', 'Relevance'), ('dc.title', 'Title'), ('/*/*/did/unitdate/@normal', 'Date'), ('normalize-space(/*/*/did/unitid/text())', 'Reference')]:
                     % if val in sortBy:
                     <option value="${val}" selected="selected">${label}</option>
                     % else:
