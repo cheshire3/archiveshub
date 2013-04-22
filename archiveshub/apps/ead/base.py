@@ -85,13 +85,15 @@ class EADWsgiApplication(object):
         script = req.script_name
         self.defaultContext['SCRIPT'] = script
         # Set the base URL of this family of apps
-        base = script
+        base = '/search'
         self.defaultContext['BASE'] = base
         self.config.set('icons',
                         'base-url',
-                        req.relative_url('img').rstrip(u'/'))
+                        self.request.relative_url('../img').rstrip(u'/')
+                        )
         # Set the URL of the data resolver
-        self.defaultContext['DATAURL'] = req.relative_url('data').rstrip(u'/')
+        dataUrl = self.request.relative_url('../data')
+        self.defaultContext['DATAURL'] = dataUrl.rstrip(u'/')
 
     def _get_params(self):
         # Parse request parameters into a single data structure

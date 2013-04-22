@@ -348,9 +348,9 @@ class EADSearchWsgiApplication(EADWsgiApplication):
                                      txr=summaryTxr
                                      )
         page = page.replace('SCRIPT',
-                            self.request.script_name.encode('utf8'))
+                            self.defaultContext['SCRIPT'].encode('utf8'))
         page = page.replace('DATAURL',
-                            self.request.relative_url('data').encode('utf8'))
+                            self.defaultContext['DATAURL'].encode('utf8'))
         page = page.replace('RECID', recid)
         page = page.replace('LINKTOPARENT', '')
         return [page]
