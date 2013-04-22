@@ -41,7 +41,10 @@
     
     <div class="rsMod">
         <div class="displaying">
+            Displaying 
             ${displaying(resultSet, sortBy, maximumRecords, startRecord)}
+            of <strong>${len(resultSet)}</strong>
+            hits.
         </div>
         <div class="sortBySel">
             ${sortBySelect(resultSet, sortBy, maximumRecords, startRecord)}

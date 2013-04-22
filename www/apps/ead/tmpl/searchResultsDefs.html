@@ -36,11 +36,8 @@
 </%def>
 
 <%def name="displaying(resultSet, sortBy, maximumRecords, startRecord)">
-    <div class="displaying">
-        Displaying <strong>${startRecord}</strong>
-        to <strong>${min(startRecord + maximumRecords - 1, len(resultSet))}</strong>
-        of <strong>${len(resultSet)}</strong> hits.
-    </div>
+    <strong>${startRecord}</strong>
+    to <strong>${min(startRecord + maximumRecords - 1, len(resultSet))}</strong>
 </%def>
 
 <%def name="sortBySelect(resultSet, sortBy, maximumRecords, startRecord)">
