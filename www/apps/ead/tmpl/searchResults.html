@@ -41,7 +41,10 @@
     
     <div class="rsMod">
         <div class="displaying">
+            Displaying 
             ${displaying(resultSet, sortBy, maximumRecords, startRecord)}
+            of <strong>${len(resultSet)}</strong>
+            hits.
         </div>
         <div class="sortBySel">
             ${sortBySelect(resultSet, sortBy, maximumRecords, startRecord)}
@@ -74,14 +77,14 @@
             ## Back links
             % if startRecord > 1:
                 <div class="backlinks">
-                    ${back_links(resultSet, maximumRecords, startRecord)}
+                    ${back_links(resultSet, sortBy, maximumRecords, startRecord)}
                 </div>
             % endif
             ## Page skip
             ## Forward links
             % if startRecord < len(resultSet) - maximumRecords:
                 <div class="forwardlinks">
-                    ${forward_links(resultSet, maximumRecords, startRecord)}
+                    ${forward_links(resultSet, sortBy, maximumRecords, startRecord)}
                 </div>
             % endif
         </div>
