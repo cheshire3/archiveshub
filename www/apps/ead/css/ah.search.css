@@ -369,13 +369,9 @@ img.screenshot {
 }
 
 div#header {
-    background-image: url(/ead/img/c4a_boxstack.png);
-    background-repeat: no-repeat;
-    background-position: top right;
-	/*background-color: #b7e8f5;*/
-  	color: #16145f;
+    color: #16145f;
   	
-  	/* give it a funky shadow */
+    /* give it a funky shadow */
     -moz-box-shadow: 0px 2px 5px #555;
     -webkit-box-shadow: 0px 2px 5px #555;
     box-shadow: 0px 2px 5px #555;
