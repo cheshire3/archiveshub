@@ -748,7 +748,7 @@ a.delete-sprite {
     padding-left: 5px;
     height: 14px;
     width: 19px;
-    background: url('/ead/img/delete-sprite.png') no-repeat 5px 0;
+    background: url('/img/delete-sprite.png') no-repeat 5px 0;
     color: transparent;
 }
 
