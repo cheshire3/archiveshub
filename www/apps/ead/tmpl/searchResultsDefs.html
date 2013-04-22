@@ -4,6 +4,12 @@
     from cheshire3archives.apps.ead.base import collectionFromComponent
 %>
 
+<%def name="sortByString(sortBy)">
+    % for criteria in sortBy:
+&amp;sortBy=${criteria}
+    % endfor
+</%def>
+
 <%def name="back_links(resultSet, maximumRecords, startRecord)">
     <a href="search.html?rsid=${resultSet.id|u}&amp;startRecord=1&amp;maximumRecords=${maximumRecords}#leftcol"
       class="ajax">
@@ -63,7 +69,7 @@
 
 <%def name="maximumRecordsSelectButton(resultSet, sortBy, maximumRecords, startRecord, label=None)">
     <a 
-        href="search.html?rsid=${resultSet.id|u}&amp;startRecord=${startRecord}&amp;maximumRecords=${maximumRecords}#leftcol"
+        href="search.html?rsid=${resultSet.id|u}&amp;startRecord=${startRecord}&amp;maximumRecords=${maximumRecords}${sortByString(sortBy)}#leftcol"
         class="ajax maximumRecords">
         % if label is not None:
             <button label="${label}">${label}</button>
