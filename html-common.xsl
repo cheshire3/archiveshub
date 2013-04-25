@@ -66,6 +66,24 @@
             </xsl:choose>
         </xsl:variable>
 
+        <xsl:variable name="unitid">
+            <xsl:choose>
+                <xsl:when test="unitid[@type='persistent']">
+                    <xsl:apply-templates select="unitid[@type='persistent'][1]" />
+                </xsl:when>
+                <xsl:when test="unitid[@label='Former Reference']">
+                     <xsl:apply-templates
+                            select="unitid[@label != 'Former Reference'][1]"/>
+                </xsl:when>
+                <xsl:when test="unitid">
+                    <xsl:apply-templates select="unitid[1]"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:text></xsl:text>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+
         <h1 class="unittitle">
             <xsl:value-of select="normalize-space($unittitle)" />
         </h1>
@@ -73,6 +91,7 @@
         <!-- utility bar -->
         <xsl:call-template name="utilitybar">
             <xsl:with-param name="unittitle" select="normalize-space($unittitle)" />
+            <xsl:with-param name="unitid" select="normalize-space($unitid)" />
             <xsl:with-param name="digital" select="boolean(./dao|..//dao)" />
             <xsl:with-param name="repcode">
                 <!-- determine repository code -->
@@ -2127,6 +2146,7 @@
     <xsl:template name="utilitybar">
 
         <xsl:param name="unittitle" />
+        <xsl:param name="unitid" />
         <xsl:param name="digital" />
         <xsl:param name="repcode" />
 
@@ -2162,40 +2182,28 @@
                 </li>
                 <br />
             </ul>
-
+            <p>Archives described on the Archives Hub are held in repositories across the UK</p>
             <!-- Information -->
             <ul class="info">
                 <li>
-                    How to:&#160;
-                    <a class="bgimg access">
-                        <xsl:attribute name="href">
-                            <xsl:text>http://archiveshub.ac.uk/accesstomaterials</xsl:text>
-                        </xsl:attribute>
-                        <xsl:attribute name="title">
-                            <xsl:text>Help on how to access these materials</xsl:text>
-                        </xsl:attribute>
-                        <xsl:text>Access These Materials</xsl:text>
-                    </a>
-                </li>
-                <li>
-                    See the:
                     <a class="bgimg contact">
                         <xsl:attribute name="href">
-                            <xsl:value-of select="$archon_url" />
+                            <xsl:text>mailto:contributor_</xsl:text>
                             <xsl:value-of select="$repcode" />
+                            <xsl:text>@example.com</xsl:text>
+                            <xsl:text>?cc=archiveshubqueries@archiveshub.ac.uk</xsl:text>
+                            <xsl:text>&amp;subject=Query via the Archives Hub about </xsl:text>
+                            <xsl:value-of select="$unitid"/>
                         </xsl:attribute>
                         <xsl:attribute name="title">
-                            <xsl:text>Find contact details for the repository to arrange to see these materials [opens new window]</xsl:text>
+                            <xsl:text>Email the repository for more information [opens your email program]</xsl:text>
                         </xsl:attribute>
-                        <xsl:attribute name="target">
-                            <xsl:text>_blank</xsl:text>
-                        </xsl:attribute>
-                        <xsl:text>Contact details</xsl:text>
+                        <xsl:text>Email</xsl:text>
                     </a>
-                    for the Repository
+                    the repository for more information
                 </li>
                 <li>
-                    See the:
+                    View the
                     <a class="bgimg location">
                         <xsl:attribute name="href">
                             <xsl:value-of select="$hubmap_url" />
@@ -2207,9 +2215,21 @@
                         <xsl:attribute name="target">
                             <xsl:text>_blank</xsl:text>
                         </xsl:attribute>
-                        <xsl:text>Location details</xsl:text>
+                        <xsl:text>location</xsl:text>
                     </a>
-                    for the Repository
+                    of the repository
+                </li>
+                <li>
+                    More about
+                    <a class="bgimg access">
+                        <xsl:attribute name="href">
+                            <xsl:text>http://archiveshub.ac.uk/accesstomaterials</xsl:text>
+                        </xsl:attribute>
+                        <xsl:attribute name="title">
+                            <xsl:text>Help on how to access these materials</xsl:text>
+                        </xsl:attribute>
+                        <xsl:text>accessing these materials</xsl:text>
+                    </a>
                 </li>
                 <xsl:if test="$digital">
                     <li>
