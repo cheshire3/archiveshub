@@ -47,6 +47,23 @@
 			</options>
 		</subConfig>
 
+        <subConfig type="configStore" id="documentStoreConfigStore">
+            <docs>
+            A ConfigStore in which to store configurations for DocumentStores.
+            Additional DocumentStores will be added programmatically, one per
+            contributor. Documents will be loaded from these DocumentStores,
+            rather than by using a DocumentFactory.
+            </docs>
+            <objectType>cheshire3.objectStore.BdbObjectStore</objectType>
+            <paths>
+                <path type="databasePath">configStore.bdb</path>
+                <path type="metadataPath">configStoreMetadata.bdb</path>
+            </paths>
+            <options>
+                <setting type="digest">sha</setting>
+            </options>
+        </subConfig>
+
 		<subConfig type="recordStore" id="editingStore">
 			<objectType>cheshire3.sql.postgres.PostgresRecordStore</objectType>
 			<paths>
