@@ -54,6 +54,18 @@ class MercurialDocumentStore(DirectoryDocumentStore):
         else:
             return DirectoryDocumentStore._verify(self, session, dbp)
 
+    def get_dbSize(self, session):
+        """Return number of items in storage."""
+        databasePath = self.get_path(session, 'databasePath')
+        dbSize = 0
+        for root, dirs, files in os.walk(databasePath):
+            dbSize += len(files)
+            # Ignore special .hg directory
+            for d in dirs:
+                if d == '.hg':
+                    dirs.remove(d)
+        return dbSize
+
     def store_document(self, session, doc):
         # Do standard storage for directory based store
         DirectoryDocumentStore.store_document(self, session, doc)
