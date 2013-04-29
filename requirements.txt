@@ -4,3 +4,4 @@ google.foresite-toolkit >= 1.2
 Mako >= 0.7.3
 CherryPy >= 3.0.0
 webob >= 1.2
+hgapi
