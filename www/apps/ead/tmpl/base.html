@@ -1,76 +1,80 @@
 <%!
     # Global attributes
     body_class = ""
+    body_id = "home"
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
     <head>
-        <title>${repository_name} :: ${self.title()}</title>
+        <title><%block name="title">Home</%block> - Archives Hub</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-        <!-- screen CSS -->
-        <link rel="stylesheet" type="text/css" media="screen"
-            href="${BASE}/css/ah.search.css"></link>
+        <!-- Digital Blah Blah CSS + JavaScript -->
+        <link rel="stylesheet" media="screen" type="text/css"
+            href="/styles/ah.base.css"></link>
+        <script type="text/javascript" src="/scripts/js/ah.libs.js"></script>
+        <script type="text/javascript" src="/scripts/js/ah.text.js"></script>
+        <script type="text/javascript" src="/scripts/js/ah.base.js"></script>
         <!-- printout CSS -->
         <link rel="stylesheet" type="text/css" media="print"
             href="${BASE}/css/print.css"></link>
         <!-- favourite icon -->
-        <!-- JavaScript -->
-        <script type="text/javascript" src="/scripts/js/ah.libs.js"></script>
-        <script type="text/javascript" src="/scripts/js/ah.text.js"></script>
-        <script type="text/javascript" src="/scripts/js/ah.base.js"></script>
-        
+        <!--Search App JavaScript -->
         <script type="text/javascript" src="${BASE}/js/ah.search.js"></script>
     </head>
-    <body class="${self.attr.body_class}">
-        <div id="header">
-            <div id="banner">
-                <div id="crest">
-                    <a href="${repository_link}" title="${repository_name}">
-                      <img src="${repository_logo}" alt="${repository_name}" class="rep-logo"/>
-                    </a>
-                </div>
-                <div id="titles">
-                    <h1>${repository_name}</h1>
-                    <h2>
-                        <%block name="title">
-                            Home
-                        </%block>
-                    </h2>
-                </div>
-            </div> <!-- end banner div -->
+    <body id="${self.attr.body_id}" class="${self.attr.body_class}">
+        <div id="Container">
+        <div id="Accessibility">
+            <ul>
+                <li><a href="#Content" accesskey="0">Skip to page content</a></li>
+                <li><a href="#Navigation" accesskey="1">Skip to navigation</a></li>
+            </ul>
+        </div><!-- end accessibility -->
+        <div id="Header" class="cF">
+            <a href="/" class="r" id="Logo" title="Back to homepage">
+                Archives hub - at the centre of great research<span></span>
+            </a>
+            <div id="bannerextra">
+                <form name="minisearchform" class="minisearch" method="post" action="/search/search.html" onsubmit="setCookie('hubsearchform', miniFormToString(this));">
+                <fieldset>
+                    <legend>Search</legend>
+                    <select name="fieldidx1">
+                        <option value="cql.anywhere||dc.description||dc.title" selected="selected">Keywords</option>
+                        <option value="dc.title">Titles</option>
+                        <option value="dc.creator">Creators</option>
+                        <option value="bath.name">Names</option>
+                        <option value="dc.subject">Subjects</option>
+                    </select>
+                    <input type="hidden" name="fieldrel1" value="all/relevant/proxinfo"/>
+                    <input name="fieldcont1" type="text" size="20"/>
+                    <input type="hidden" name="_charset_"/>
+                    <input type="hidden" name="numreq" value="20"/>
+                    <input type="hidden" name="firstrec" value="1"/>
+<!--                    <input type="hidden" name="noComponents" value="0"/>-->
+                    <input type="submit" name="submit" value="Go" class="submit"/>
+                </fieldset>
+                </form>
+            </div> <!-- /bannerextra -->
             <!-- site navigation links -->
             <%block name="navbar">
-            <div id="navbar" class="navbar">
-                <ul id="navbar-list">
-                    <li class="home">
-                        &gt;
-                        <a href="/index.html" title="Home page"
-                            class="navlink">Home</a>
-                    </li>
-                    <li class="search">
-                        &gt;
-                        <a href="${BASE}/search.html" title="Search page"
-                            class="navlink">Search</a>
-                    </li>
-                    <li class="explore">
-                        &gt;
-                        <a href="${BASE}/explore.html" title="Explore: Browse Indexes, Find Subjects"
-                            class="navlink">Explore</a>
-                    </li>
-                    <li class="help">
-                        &gt;
-                        <a href="${BASE}/help.html" title="Search Help"
-                            class="navlink">Help</a>
-                    </li>
-                </ul>                        
-            </div>
+            <ul id="Sitewide">
+                <li class="search">
+                    <a href="${BASE}/search.html" title="Search page">
+                        Search</a>
+                </li>
+                <li class="explore">
+                    <a href="${BASE}/explore.html" title="Explore: Browse Indexes, Find Subjects">
+                        Explore</a>
+                </li>
+                <li class="help">
+                    <a href="${BASE}/help.html" title="Search Help">
+                        Help</a>
+                </li>
+            </ul>
             </%block>
-        </div>
-        <div id="content">
+        </div> <!-- /Header -->
             <!-- content here may be 1 or 2 column - div classes/ids determined by handler -->
             ${next.body()}
-        </div>
-        <%include file="footer.html"/>
+        </div><!-- /#Container -->
         <script type="text/javascript">
 $(document).ready(function() {
     // hide content that should be hidden
