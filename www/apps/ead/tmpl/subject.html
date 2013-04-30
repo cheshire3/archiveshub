@@ -1,8 +1,13 @@
 <%inherit file="single.html"/>
-
 <%block name="title">
-    Subject Finder
+Subject Finder
 </%block>
-
-<%include file="subjectTips.html"/>
-<%include file="subjectForm.html"/>
+<div class="grid-425-285 panel-browse cF">
+    <div id="subject-finder-panel" class="col-1">
+        <h1>${self.title()}</h1>
+        <%include file="subjectForm.html"/>
+    </div> <!-- /#subject-finder-panel -->
+    <div id="subject-tip-panel" class="col-2 tip-panel">        
+        <%include file="subjectTips.html"/>
+    </div>
+</div>

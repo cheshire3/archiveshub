@@ -1,29 +1,30 @@
-<div>
-    <h2>Browse</h2>
+<div class="panel-form">
     <form name="browseform" action="${SCRIPT}/browse.html" method="post">
-        <input type="hidden" name="_charset_"/>
-        <input type="hidden" name="operation" value="browse"/>
-        <input type="hidden" name="numreq" value="25"/>
-        <p> 
-          <select id="fieldidx1" name="fieldidx1">
-            <option value="dc.title" selected="selected">Title</option>
-            <option value="dc.creator">Creator</option>
-            <option value="dc.subject">Subject</option>
-            <option value="c3.ead-idx-dateYear">Year</option>
-            <option value="bath.name">Name</option>
-            <option value="bath.personalName">&nbsp;&nbsp;Personal</option>
-            <option value="ead.familyName">&nbsp;&nbsp;Family</option>
-            <option value="ead.persnameEpithet">&nbsp;&nbsp;Epithet</option>
-            <option value="bath.corporateName">&nbsp;&nbsp;Corporate</option>
-            <option value="bath.geographicName">&nbsp;&nbsp;Geographic</option>
-            <option value="dc.identifier">Ref. Number</option>
-            <!--<option value="dc.date">Date</option>-->
-          </select>  
-          for
-          <input type="hidden" name="fieldrel1" value="exact"/>
-          <input id="fieldcont1" name="fieldcont1" type="text" size="40"></input>
-          <input type="submit" value=" Go "/>
-        </p>
-</form>
+        <fieldset class="paleblue">
+	        <input type="hidden" name="_charset_"/>
+	        <input type="hidden" name="operation" value="browse"/>
+	        <input type="hidden" name="numreq" value="25"/>
+	        <p> 
+	          <select id="fieldidx1" name="fieldidx1">
+	            <option value="dc.title" selected="selected">Title</option>
+	            <option value="dc.creator">Creator</option>
+	            <option value="dc.subject">Subject</option>
+	            <option value="c3.ead-idx-dateYear">Year</option>
+	            <option value="bath.name">Name</option>
+	            <option value="bath.personalName">&nbsp;&nbsp;Personal</option>
+	            <option value="ead.familyName">&nbsp;&nbsp;Family</option>
+	            <option value="ead.persnameEpithet">&nbsp;&nbsp;Epithet</option>
+	            <option value="bath.corporateName">&nbsp;&nbsp;Corporate</option>
+	            <option value="bath.geographicName">&nbsp;&nbsp;Geographic</option>
+	            <option value="dc.identifier">Ref. Number</option>
+	            <!--<option value="dc.date">Date</option>-->
+	          </select>  
+	          for
+	          <input type="hidden" name="fieldrel1" value="exact"/>
+	          <input id="fieldcont1" name="fieldcont1" type="text" size="40"></input>
+	          <input type="submit" value=" Go "/>
+	        </p>
+        </fieldset>
+    </form>
 </div>
 

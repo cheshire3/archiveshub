@@ -1,12 +1,17 @@
 <%inherit file="single.html"/>
-
 <%block name="title">
-    Browse
+Browse
 </%block>
-
-<%include file="browseTips.html"/>
-<%include file="browseForm.html"/>
-<div id="browse-preview"></div>
+<div class="grid-425-285 panel-browse cF" id="PanelBrowse">
+    <div id="browse-panel" class="col-1">
+        <h1>${self.title()}</h1>
+        <%include file="browseForm.html"/>
+        <div id="browse-preview"></div>
+    </div> <!-- /#browse-panel -->
+    <div id="browse-tip-panel" class="col-2 tip-panel">        
+        <%include file="browseTips.html"/>
+    </div>
+</div>
 <script type="text/javascript">
 liveSearch('fieldidx1', 'browse-preview', 'CHANGE');
 liveSearch('fieldcont1', 'browse-preview');
