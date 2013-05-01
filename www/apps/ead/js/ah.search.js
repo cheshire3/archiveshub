@@ -1104,8 +1104,7 @@ function truncateList(index, list) {
         // Add action for un-truncate
         $(list).children('li:last').children('a').click(
             function(){
-                console.log($(this));
-                if ($(this).closest('li').siblings().last().is(":visible")) {
+                if ($(this).closest('li').siblings(":last").is(":visible")) {
                     $(this).closest('ul').children('li:gt(2):not(:last)').slideUp();
                     $(this).text(' more...').attr('title', 'Show all');;
                 } else {
