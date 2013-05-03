@@ -3,6 +3,7 @@ u"""Manage Archives Hub Contributors."""
 
 import os
 import sys
+import hgapi
 
 from lxml import etree
 from lxml.builder import ElementMaker
@@ -30,7 +31,7 @@ class ContribArgumentParser(BaseArgumentParser):
 
 
 def add_contributor(args):
-    """Add named contributor(s).
+    """Add data for contributor(s).
     
     Add DocumentStore configuration(s) for named contributor(s) to the
     ConfigStore for this database. 
@@ -38,33 +39,88 @@ def add_contributor(args):
     global session, db, lgr
     # Get ConfigStore in which to store DocumentStore
     store = db.get_object(session, 'documentStoreConfigStore')
-    for name in args.name:
+    # Sanity checking
+    if len(args.dir) > 1 and args.identifier:
+        lgr.log_critical(session,
+                         "--id option may only be used when adding a single "
+                         "contributor."
+                         )
+        return 1
+    for dbPath in args.dir:
+        # Sanity checking
+        # Strip off trailing slash
+        dbPath = dbPath.rstrip(os.pathsep)
+        if os.path.exists(dbPath) and not os.path.isdir(dbPath):
+            # Exists, but isn't a directory
+            lgr.log_error(session,
+                          "{0} exists but is not a directory".format(dbPath)
+                          )
+            continue
+        elif not os.path.exists(dbPath) and not args.create:
+            # Directory doesn't exist, and we've not been told to create it
+            lgr.log_error(session,
+                          "{0} doesn't exist. use --create option to creation "
+                          "of it".format(dbPath)
+                          )
+            continue
+        # Generate identifier for the contributor
+        if args.identifier:
+            contributorId = args.identifier
+        else:
+            contributorId = os.path.basename(dbPath)
+        if not contributorId:
+            lgr.log_error(session,
+                          "Unable to generate an identifier for {0}"
+                          "".format(dbPath)
+                          )
+            continue
+        elif contributorId == 'hubdata':
+            lgr.log_error(session,
+                          "Cowardly refusing to add {0}! Use the add command "
+                          "to add a single directory at a time. NOTE: you can "
+                          "use wildcards e.g. {0}{1}*"
+                          "".format(dbPath, os.pathsep)
+                          )
+            continue
         # Generate identifier for new DocumentStore
-        identifier = "{0}DocumentStore".format(name)
+        storeId = "{0}DocumentStore".format(contributorId)
         # Check that DocumentStore does not already exists
         try:
-            store.fetch_object(session, identifier)
+            store.fetch_object(session, storeId)
         except ObjectDoesNotExistException:
             # This is what we want!
             pass
         else:
-            lgr.log_error(session, "DocumentStore for {0} has already been "
-                                   "registered".format(name))
+            lgr.log_error(session,
+                          "Contributor with identifier {0} has already been "
+                          "registered. If you're certain that you want to add "
+                          "this contributor, you can specify an alternative "
+                          "identifier using the --id option"
+                          "".format(contributorId)
+                          )
             continue
-        # Process args
-        if args.dir:
-            # Simple Directory
+        # Create the directory if necessary
+        if not os.path.exists(dbPath) and args.create:
+            # Directory doesn't exist, but we've been told to create it
+            lgr.log_debug(session,
+                         "{0} does not exist, creating it".format(dbPath)
+                         )
+            os.makedirs(dbPath)
+        # Check if it's a Mercurial repository
+        repo = hgapi.Repo(dbPath)
+        try:
+            repo.hg_status()
+        except Exception:
+            # Not a Mercurial repository
             objType = "cheshire3.documentStore.DirectoryDocumentStore"
-            dbPath = args.dir
         else:
-            # Mercurial repository directory
             objType = "archiveshub.documentStore.MercurialDocumentStore"
-            dbPath = os.path.join(args.mercurial, name)
         # Create config node for the new DocumentStore
         config = CONF.config(
-            {'id': identifier,
+            {'id': storeId,
              'type': 'documentStore'},
-            CONF.docs("DocumentStore for contributor {0}".format(name)),
+            CONF.docs("DocumentStore for contributor {0}"
+                      "".format(contributorId)),
             CONF.objectType(objType),
             # <paths>
             CONF.paths(
@@ -82,13 +138,12 @@ def add_contributor(args):
         )
         xml = etree.tostring(config)
         # Store the configuration
-        rec = LxmlRecord(config, xml, byteCount=len(xml))
-        rec.id = identifier
+        rec = LxmlRecord(config, xml, docId=storeId, byteCount=len(xml))
         store.begin_storing(session)
         store.store_record(session, rec)
         store.commit_storing(session)
         lgr.log_info(session, "DocumentStore for {0} located at {1} has been "
-                              "added".format(identifier, dbPath)
+                              "added".format(contributorId, dbPath)
         )
         # TODO: write new contributor into JSON
 
@@ -131,36 +186,41 @@ Please provide a different database identifier using the --database option.
     return args.func(args)
 
 
-# Init ArgumentParser
+# Define the command line UI
 docbits = __doc__.split('\n\n')
 argparser = ContribArgumentParser(conflict_handler='resolve',
                                description=docbits[0]
                                )
 subparsers = argparser.add_subparsers(help='Actions')
-parser_add = subparsers.add_parser('add', help='Add a new contributor')
-parser_add.add_argument('name',
+# Add a new contributor
+parser_add = subparsers.add_parser(
+    'add',
+    help=add_contributor.__doc__
+)
+parser_add.add_argument('dir',
                         nargs='+',
                         action='store',
-                        help=("short identifier for contributor.")
+                        metavar='DIRECTORY',
+                        help=("directory in which to find documents for "
+                              "this contributor. If this directory is part of "
+                              "a Mercurial version control repository, then "
+                              "the system will attempt to commit any changes "
+                              "made using the Cheshire3 API back to the "
+                              "Mercurial repository." 
+                         )
                         )
-group = parser_add.add_mutually_exclusive_group()
-group.add_argument('-m', '--hg',
-                   action='store', dest='mercurial',
-                   default=os.path.expanduser("~/mercurial/hubdata"),
-                   help=("mercurial repository in which to find documents "
-                         "for this contributor. defaults to "
-                         "~/mercurial/hubdata"
+parser_add.add_argument('-i', '--id', '--identifier',
+                   action='store', dest='identifier',
+                   default=None,
+                   help=("short identifier for contributor with which to "
+                         "over-ride the default. default s the lowest level "
+                         "directory name e.g., /home/user/foo --> foo"
                          )
                    )
-group.add_argument('--dir',
-                   action='store', dest='dir',
-                   default=None,
-                   help=("simple directory in which to find documents for "
-                         "this contributor. NOTE: using this option will "
-                         "result in directory NOT being treated as part of a "
-                         "mercurial repository")
+parser_add.add_argument('-c', '--create',
+                   action='store_true', dest='create',
+                   help=("if DIRECTORY doesn't exist, create it")
                    )
-
 parser_add.set_defaults(func=add_contributor)
 
 
