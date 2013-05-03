@@ -146,6 +146,47 @@ def add_contributor(args):
                               "added".format(contributorId, dbPath)
         )
         # TODO: write new contributor into JSON
+    return 0
+
+
+def rm_contributor(args):
+    """Remove named contributor(s).
+    
+    Remove DocumentStore configuration(s) for named contributor(s) in the
+    ConfigStore for this database. This will not delete the data from directory
+    nor have an immediate effect on the live database without further steps.
+    """
+    global session, db, lgr
+    # Get ConfigStore where the DocumentStores are stored
+    store = db.get_object(session, 'documentStoreConfigStore')
+    for contributorId in args.identifier:
+        # Sanity checking
+        if os.path.exists(contributorId) and os.path.isdir(contributorId):
+            # They've given the directory - try to derive identifier
+            contributorId.rstrip(os.pathsep)
+            contributorId = os.path.basename(contributorId)
+        # Generate identifier for new DocumentStore
+        storeId = "{0}DocumentStore".format(contributorId)
+        try:
+            store.fetch_object(session, storeId)
+        except ObjectDoesNotExistException:
+            # Contributor with this id does not exist
+            lgr.log_error(session,
+                          "Contributor with identifier {0} does not seem to "
+                          "exist. It's possible that the default identifier "
+                          "for the directory was over-ridden with the --id "
+                          "option - you'll need to specify the identifier "
+                          "instead of the directory name".format(contributorId)
+                          )
+            continue
+        else:
+            store.delete_object(session, storeId)
+            store.commit_storing(session)
+            lgr.log_info(session,
+                         "DocumentStore for {0} has been removed"
+                         "".format(contributorId)
+            )
+    return 0
 
 
 def main(argv=None):
@@ -222,6 +263,16 @@ parser_add.add_argument('-c', '--create',
                    help=("if DIRECTORY doesn't exist, create it")
                    )
 parser_add.set_defaults(func=add_contributor)
+# Remove a contributor
+parser_rm = subparsers.add_parser(
+    'rm',
+    help=rm_contributor.__doc__)
+parser_rm.add_argument('identifier',
+                       nargs='+',
+                       action='store',
+                       help=("identifier for contributor(s) to remove")
+                       )
+parser_rm.set_defaults(func=rm_contributor)
 
 
 # Set up ElementMaker for Cheshire3 config and METS namespaces
