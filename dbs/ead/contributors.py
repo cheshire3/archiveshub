@@ -189,6 +189,16 @@ def rm_contributor(args):
     return 0
 
 
+def ls_contributors(args):
+    """List registered contributors"""
+    global session, db, lgr
+    # Get ConfigStore where the DocumentStores are stored
+    store = db.get_object(session, 'documentStoreConfigStore')
+    for docStore in store:
+        path = docStore.get_path(session, "databasePath")
+        print docStore.id[:-len('DocumentStore')].ljust(20), path
+
+
 def main(argv=None):
     global argparser
     global session, server, db, lgr
@@ -274,6 +284,10 @@ parser_rm.add_argument('identifier',
                        )
 parser_rm.set_defaults(func=rm_contributor)
 
+parser_ls = subparsers.add_parser(
+    'list',
+    help=ls_contributors.__doc__)
+parser_ls.set_defaults(func=ls_contributors)
 
 # Set up ElementMaker for Cheshire3 config and METS namespaces
 CONF = ElementMaker(namespace=CONFIG_NS,
