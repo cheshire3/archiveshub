@@ -1,17 +1,15 @@
 #!/bin/env python
 #
-# Script:    load.py
-# Date:      12 March 2013
+# Script:    build.py
+# Date:      7 May 2013
 # Copyright: &copy; University of Liverpool 2005-present
 # Author(s): JH - John Harrison <john.harrison@liv.ac.uk>
 # Language:  Python
 #
-u"""Load the Cheshire3 for Archives database of EAD finding aid documents.
+u"""Build the Cheshire3 for Archives database of EAD finding aid documents.
 
-usage: load.py [-h] [-a] [-l] [-d DIR] [-c] [-s] [-i]
+usage: build.py [-h] [-a] [-l] [-d DIR] [-c] [-s] [-i]
                [-x]
-
-Load the Cheshire3 for Archives database of EAD finding aid documents.
 
 optional arguments:
   -h, --help            show this help message and exit
