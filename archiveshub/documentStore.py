@@ -47,10 +47,10 @@ class MercurialDocumentStore(DirectoryDocumentStore):
             self.repo = hgapi.Repo(dbp, user=userString)
             # Check that repository has been initialized
             try:
-                self.repo.hg_init()
+                self.repo.hg_status()
             except Exception:
-                # Probably already a repository
-                pass
+                # Not yet a Mercurial repository
+                self.repo.hg_init()
         else:
             return DirectoryDocumentStore._verify(self, session, dbp)
 
