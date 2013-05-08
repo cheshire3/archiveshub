@@ -27,8 +27,14 @@
 
         <xsl:param name="parent-identifier">
             <xsl:choose>
+                <xsl:when test="local-name() = 'component' and matches(/*/@c3:parent, 'LxmlRecord-')">
+                    <xsl:value-of select="substring-after(/*/@c3:parent, 'LxmlRecord-')" />
+                </xsl:when>
                 <xsl:when test="local-name() = 'component'">
                     <xsl:value-of select="substring-after(/*/@c3:parent, '/')" />
+                </xsl:when>
+                <xsl:when test="local-name() = 'c3component' and matches(/*/@parent, 'LxmlRecord-')">
+                    <xsl:value-of select="substring-after(/*/parent, 'LxmlRecord-')" />
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:value-of select="substring-after(/*/@parent, '/')" />
