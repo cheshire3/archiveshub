@@ -17,6 +17,7 @@ optional arguments:
 
 import os
 import sys
+import time
 
 from lockfile import FileLock
 
@@ -59,6 +60,8 @@ def load(args):
     RecordStore.
     """
     global session, db, lgr
+    lgr.log_info(session, 'Loading and indexing...')
+    start = time.time()
     # Get ConfigStore where the DocumentStores are stored
     store = db.get_object(session, 'documentStoreConfigStore')
     if args.identifier:
@@ -94,6 +97,12 @@ def load(args):
                      "Documents for {0} have been loaded"
                      "".format(contributorId)
         )
+    (mins, secs) = divmod(time.time() - start, 60)
+    (hours, mins) = divmod(mins, 60)
+    lgr.log_info(session,
+                 ('Loading, Indexing complete ({0:.0f}h {1:.0f}m {2:.0f}s)'
+                  ''.format(hours, mins, secs))
+                 )
     return 0
 
 
