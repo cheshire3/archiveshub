@@ -39,11 +39,28 @@ class LoadArgumentParser(BaseArgumentParser):
                           type=str, action='store', dest='database',
                           default=None, metavar='DATABASE',
                           help="identifier of Cheshire3 database")
-        self.add_argument("-c", "--components",
-                          action="store_true", dest="components",
-                          default=False,
-                          help=("load components too")
-                          )
+        group = self.add_mutually_exclusive_group()
+        group.set_defaults(mode='main')
+        group.add_argument("-m", "--main", "--no-components",
+                           action='store_const',
+                           dest='mode',
+                           const='main',
+                           help=("load only collection-level descriptions "
+                                 "(default)")
+                           )
+        group.add_argument("-c", "--with-components",
+                           action='store_const',
+                           dest='mode',
+                           const='both',
+                           help=("load collections-level descriptions and "
+                                 "components")
+                           )
+        group.add_argument("-x", "--no-descriptions", "--components-only",
+                           action='store_const',
+                           dest='mode',
+                           const='components',
+                           help=("load only components")
+                           )
         self.add_argument('identifier',
                           nargs='*',
                           action='store',
@@ -108,8 +125,6 @@ def load(args):
                  ('Loading, Indexing complete ({0:.0f}h {1:.0f}m {2:.0f}s)'
                   ''.format(hours, mins, secs))
                  )
-    if args.components:
-        return load_components(args)
     return 0
 
 
@@ -188,9 +203,19 @@ Please provide a different database identifier using the --database option.
                )
         lgr.log_critical(session, msg)
         return 1
-    # Call
     try:
-        return load(args)
+        if args.mode == "main":
+            # Load only collection-level
+            return load(args)
+        elif args.mode == "components":
+            # Load only components
+            return load_components(args)
+        else:
+            # Load collection-level and components
+            return int(any([load(args),
+                            load_components(args)
+                            ])
+                       )
     finally:
         lock.release()
 
