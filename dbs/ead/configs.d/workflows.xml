@@ -78,10 +78,49 @@
 			</workflow>
 		</subConfig>
 
+        <subConfig type="workflow" id="loadWorkflow">
+            <objectType>cheshire3.workflow.CachingWorkflow</objectType>
+            <workflow>
+                <!-- input type: documentFactory / documentFactory -->
+                <object type="recordStore" ref="recordStore" function="begin_storing" />
+                <for-each>
+                    <!-- input type: document -->
+                    <log level="info">" " + input.filename</log>
+                    <object type="workflow" ref="loadSingleWorkflow" />
+                </for-each>
+                <object type="recordStore" ref="recordStore" function="commit_storing" />
+            </workflow>
+        </subConfig>
+
+        <subConfig type="workflow" id="loadSingleWorkflow">
+            <objectType>cheshire3.workflow.CachingWorkflow</objectType>
+            <workflow>
+                <!-- input type: document -->
+                <object type="workflow" ref="preParserWorkflow" />
+                <try>
+                    <object type="parser" ref="LxmlParser" />
+                </try>
+                <except>
+                    <assign from="'unparsable: ' + str(err)" to="input" />
+                    <log level="warning">"" + input</log>
+                    <return />
+                </except>
+                <!-- type: record -->
+                <object type="workflow" ref="assignDataIdentifierWorkflow" />
+                <try>
+                    <object type="recordStore" ref="recordStore" function="store_record" />
+                </try>
+                <except>
+                    <!-- Most likely duplicate Record -->
+                    <log level="error">"Record not storable: " + str(err)</log>
+                </except>
+            </workflow>
+        </subConfig>
+
 		<subConfig type="workflow" id="buildIndexWorkflow">
 			<objectType>cheshire3.workflow.CachingWorkflow</objectType>
 			<workflow>
-				<!-- input type: documentFactory -->
+				<!-- input type: documentStore / documentFactory -->
 				<object type="recordStore" ref="recordStore" function="begin_storing" />
 				<object type="database" function="begin_indexing" />
 				<for-each>
@@ -94,7 +133,6 @@
 				<object type="database" function="commit_metadata" />
 			</workflow>
 		</subConfig>
-
 
 		<subConfig type="workflow" id="buildIndexSingleWorkflow">
 			<objectType>cheshire3.workflow.CachingWorkflow</objectType>
