@@ -42,8 +42,7 @@ class LoadArgumentParser(BaseArgumentParser):
         self.add_argument("-c", "--components",
                           action="store_true", dest="components",
                           default=False,
-                          help=("load and index components from loaded EAD "
-                                "records")
+                          help=("load components too")
                           )
         self.add_argument('identifier',
                           nargs='*',
@@ -53,15 +52,9 @@ class LoadArgumentParser(BaseArgumentParser):
                           )
 
 
-def load(args):
-    """Load named contributor(s).
-
-    Load the Documents for the named contributor(s) into the internal
-    RecordStore.
-    """
+def _get_storeIterator(args):
+    # Return an iterator for the DocumentStores to load
     global session, db, lgr
-    lgr.log_info(session, 'Loading and indexing...')
-    start = time.time()
     # Get ConfigStore where the DocumentStores are stored
     store = db.get_object(session, 'documentStoreConfigStore')
     if args.identifier:
@@ -87,7 +80,19 @@ def load(args):
                               )
     else:
         storeIterator = store
-    
+    return storeIterator
+
+
+def load(args):
+    """Load named contributor(s).
+
+    Load the Documents for the named contributor(s) into the internal
+    RecordStore.
+    """
+    global session, db, lgr
+    lgr.log_info(session, 'Loading and indexing...')
+    start = time.time()
+    storeIterator = _get_storeIterator(args)
     # Now iterate over the selected stores
     for contributorStore in storeIterator:
         contributorId = contributorStore.id[:-len('DocumentStore')]
@@ -102,6 +107,36 @@ def load(args):
     lgr.log_info(session,
                  ('Loading, Indexing complete ({0:.0f}h {1:.0f}m {2:.0f}s)'
                   ''.format(hours, mins, secs))
+                 )
+    if args.components:
+        return load_components(args)
+    return 0
+
+
+def load_components(args):
+    """Load components for the named contributor(s).
+
+    Load the Documents for the named contributor(s) into the internal
+    Component RecordStore.
+    """
+    global session, db, lgr
+    storeIterator = _get_storeIterator(args)
+    lgr.log_info(session, 'Loading and indexing components...')
+    start = time.time()
+    storeIterator = _get_storeIterator(args)
+    for contributorStore in storeIterator:
+        contributorId = contributorStore.id[:-len('DocumentStore')]
+        wf = db.get_object(session, 'loadAllComponentsWorkflow')
+        wf.process(session, contributorStore)
+        lgr.log_info(session,
+                     "Documents for {0} have been loaded"
+                     "".format(contributorId)
+        )
+    (mins, secs) = divmod(time.time() - start, 60)
+    (hours, mins) = divmod(mins, 60)
+    lgr.log_info(session,
+                 'Components loaded and indexed ({0:.0f}h {1:.0f}m {2:.0f}s)'
+                 ''.format(hours, mins, secs)
                  )
     return 0
 

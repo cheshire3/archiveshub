@@ -116,6 +116,77 @@
                 </except>
             </workflow>
         </subConfig>
+        
+        <subConfig type="workflow" id="loadAllComponentsWorkflow">
+            <objectType>cheshire3.workflow.CachingWorkflow</objectType>
+            <workflow>
+                <!-- input type: documentFactory / documentFactory -->
+                <object type="recordStore" ref="componentStore" function="begin_storing" />
+                <for-each>
+                    <object type="workflow" ref="loadComponentsWorkflow" />
+                </for-each>
+                <object type="recordStore" ref="componentStore" function="commit_storing" />
+            </workflow>
+        </subConfig>
+
+        <subConfig type="workflow" id="loadComponentsWorkflow">
+            <objectType>cheshire3.workflow.CachingWorkflow</objectType>
+            <workflow>
+                <!-- input type: Document -->
+                <object type="workflow" ref="preParserWorkflow" />
+                <try>
+                    <object type="parser" ref="LxmlParser" />
+                </try>
+                <except>
+                    <assign from="'unparsable: ' + str(err)" to="input" />
+                    <log level="warning">"" + input</log>
+                    <return />
+                </except>
+                <!-- type: record -->
+                <object type="workflow" ref="assignDataIdentifierWorkflow" />
+                <!-- input type: Record -->
+                <!-- input is now identical to the Record stored in the RecordStore -->
+                <assign from="input.id" to="recid" />
+                <log level="info">"Loading components from record " + recid</log>
+                <object type="documentFactory" ref="componentDocumentFactory"
+                    function="load" />
+                <!-- type: documentFactory -->
+                <assign to="VAR_ctr" from="0" />
+                <for-each>
+                    <!-- type: document -->
+                    <log level="debug">"preParsing"</log>
+                    <object type="workflow" ref="preParserWorkflow" />
+                    <log level="debug">"parsing"</log>
+                    <try>
+                        <object type="parser" ref="LxmlParser" />
+                    </try>
+                    <except>
+                        <log level="warning">"Unparsable Components"</log>
+                        <log level="debug">"" + str(err)</log>
+                        <continue />
+                    </except>
+                    <!-- type: record -->
+                    <log level="debug">"assigning id"</log>
+                    <try>
+                        <object type="workflow" ref="assignDataIdentifierWorkflow" />
+                    </try>
+                    <except>
+                        <assign from="recid + '-' + str(VAR_ctr)" to="input.id" />
+                    </except>
+                    <assign from="VAR_ctr + 1" to="VAR_ctr" />
+                    <log level="debug">"storing " + input.id</log>
+                    <try>
+                        <object type="recordStore" ref="componentStore" function="store_record" />
+                    </try>
+                    <except>
+                        <log level="error">"Component unstorable"</log>
+                        <log level="error">"\n" + ''.join(traceback.format_exception(sys.exc_type,sys.exc_value,sys.exc_traceback))</log>
+                        <log level="error">"" + input.get_xml(session)</log>
+                        <continue />
+                    </except>
+                </for-each>
+            </workflow>
+        </subConfig>
 
 		<subConfig type="workflow" id="buildIndexWorkflow">
 			<objectType>cheshire3.workflow.CachingWorkflow</objectType>
