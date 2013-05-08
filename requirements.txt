@@ -1,4 +1,4 @@
-cheshire3 [web, sql] >= 1.1
+cheshire3 [web, sql] >= 1.1.dev
 rdflib < 3.0
 google.foresite-toolkit >= 1.2
 Mako >= 0.7.3
