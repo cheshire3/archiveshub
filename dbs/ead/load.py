@@ -188,6 +188,8 @@ Please provide a different database identifier using the --database option.
         return 2
     else:
         lgr = db.get_path(session, 'defaultLogger')
+        # Set default log level to INFO
+        lgr.minLevel = 20
         pass
 
     mp = db.get_path(session, 'metadataPath')
