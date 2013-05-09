@@ -40,7 +40,7 @@
 		<subConfig type="workflow" id="preParserWorkflow">
 			<objectType>cheshire3.workflow.CachingWorkflow</objectType>
 			<workflow>
-				<!-- input type: document -->
+				<!-- input type: Document -->
 				<object type="preParser" ref="PrintableOnlyPreParser" />
 				<object type="preParser" ref="CharacterEntityPreParser" />
 				<object type="preParser" ref="eadSgmlPreParser" />
@@ -68,7 +68,7 @@
 		<subConfig type="workflow" id="normalizeDataIdentifierWorkflow">
 			<objectType>cheshire3.workflow.CachingWorkflow</objectType>
 			<workflow>
-				<!-- input type: String -->
+				<!-- input type: string -->
 				<object type="normalizer" ref="DiacriticNormalizer" function="process_string" />
 				<object type="normalizer" ref="CaseNormalizer" function="process_string" />
 				<object type="normalizer" ref="SpaceNormalizer" function="process_string" />
@@ -81,10 +81,10 @@
         <subConfig type="workflow" id="loadWorkflow">
             <objectType>cheshire3.workflow.CachingWorkflow</objectType>
             <workflow>
-                <!-- input type: documentFactory / documentFactory -->
+                <!-- input type: DocumentStore / DocumentFactory -->
                 <object type="recordStore" ref="recordStore" function="begin_storing" />
                 <for-each>
-                    <!-- input type: document -->
+                    <!-- input type: Document -->
                     <log level="info">" " + input.filename</log>
                     <object type="workflow" ref="loadSingleWorkflow" />
                 </for-each>
@@ -95,7 +95,7 @@
         <subConfig type="workflow" id="loadSingleWorkflow">
             <objectType>cheshire3.workflow.CachingWorkflow</objectType>
             <workflow>
-                <!-- input type: document -->
+                <!-- input type: Document -->
                 <object type="workflow" ref="preParserWorkflow" />
                 <try>
                     <object type="parser" ref="LxmlParser" />
@@ -105,22 +105,26 @@
                     <log level="warning">"" + input</log>
                     <return />
                 </except>
-                <!-- type: record -->
+                <!-- type: Record -->
                 <object type="workflow" ref="assignDataIdentifierWorkflow" />
                 <try>
-                    <object type="recordStore" ref="recordStore" function="store_record" />
+                    <object type="recordStore" ref="recordStore" function="store_record"/>
                 </try>
+                <except type="ObjectAlreadyExistsException">
+                    <!-- Record already stored and has not changed.
+                         Log WARNING rather than  ERROR -->
+                    <log level="warning">"Record not stored: " + str(err)</log>
+                </except>
                 <except>
-                    <!-- Most likely duplicate Record -->
-                    <log level="error">"Record not storable: " + str(err)</log>
+                    <log level="error">"Record not stored: " + str(err)</log>
                 </except>
             </workflow>
         </subConfig>
-        
+
         <subConfig type="workflow" id="loadAllComponentsWorkflow">
             <objectType>cheshire3.workflow.CachingWorkflow</objectType>
             <workflow>
-                <!-- input type: documentFactory / documentFactory -->
+                <!-- input type: DocumentStore / DocumentFactory -->
                 <object type="recordStore" ref="componentStore" function="begin_storing" />
                 <for-each>
                     <object type="workflow" ref="loadComponentsWorkflow" />
@@ -142,18 +146,17 @@
                     <log level="warning">"" + input</log>
                     <return />
                 </except>
-                <!-- type: record -->
-                <object type="workflow" ref="assignDataIdentifierWorkflow" />
                 <!-- input type: Record -->
+                <object type="workflow" ref="assignDataIdentifierWorkflow" />
                 <!-- input is now identical to the Record stored in the RecordStore -->
                 <assign from="input.id" to="recid" />
                 <log level="info">"Loading components from record " + recid</log>
                 <object type="documentFactory" ref="componentDocumentFactory"
                     function="load" />
-                <!-- type: documentFactory -->
+                <!-- input type: DocumentFactory -->
                 <assign to="VAR_ctr" from="0" />
                 <for-each>
-                    <!-- type: document -->
+                    <!-- input type: Document -->
                     <log level="debug">"preParsing"</log>
                     <object type="workflow" ref="preParserWorkflow" />
                     <log level="debug">"parsing"</log>
@@ -165,7 +168,7 @@
                         <log level="debug">"" + str(err)</log>
                         <continue />
                     </except>
-                    <!-- type: record -->
+                    <!-- input type: Record -->
                     <log level="debug">"assigning id"</log>
                     <try>
                         <object type="workflow" ref="assignDataIdentifierWorkflow" />
@@ -178,6 +181,11 @@
                     <try>
                         <object type="recordStore" ref="componentStore" function="store_record" />
                     </try>
+                    <except type="ObjectAlreadyExistsException">
+                        <!-- Record already stored and has not changed.
+                             Log WARNING rather than  ERROR -->
+                        <log level="warning">"Component not stored: " + str(err)</log>
+                    </except>
                     <except>
                         <log level="error">"Component unstorable"</log>
                         <log level="error">"\n" + ''.join(traceback.format_exception(sys.exc_type,sys.exc_value,sys.exc_traceback))</log>
@@ -191,11 +199,11 @@
 		<subConfig type="workflow" id="buildIndexWorkflow">
 			<objectType>cheshire3.workflow.CachingWorkflow</objectType>
 			<workflow>
-				<!-- input type: documentStore / documentFactory -->
+				<!-- input type: DocumentStore / DocumentFactory -->
 				<object type="recordStore" ref="recordStore" function="begin_storing" />
 				<object type="database" function="begin_indexing" />
 				<for-each>
-					<!-- input type: document -->
+					<!-- input type: Document -->
 					<log level="info">" " + input.filename</log>
 					<object type="workflow" ref="buildIndexSingleWorkflow" />
 				</for-each>
@@ -208,7 +216,7 @@
 		<subConfig type="workflow" id="buildIndexSingleWorkflow">
 			<objectType>cheshire3.workflow.CachingWorkflow</objectType>
 			<workflow>
-				<!-- input type: document -->
+				<!-- input type: Document -->
 				<object type="workflow" ref="preParserWorkflow" />
 				<try>
 					<object type="parser" ref="LxmlParser" />
@@ -218,7 +226,7 @@
 					<log level="warning">"" + input</log>
 					<return />
 				</except>
-				<!-- type: record -->
+				<!-- type: Record -->
 				<object type="workflow" ref="assignDataIdentifierWorkflow" />
 				<object type="workflow" ref="indexNewRecordWorkflow" />
 			</workflow>
@@ -227,7 +235,7 @@
 		<subConfig type="workflow" id="buildAllComponentWorkflow">
 			<objectType>cheshire3.workflow.CachingWorkflow</objectType>
 			<workflow>
-				<!-- input type: recordStore -->
+				<!-- input type: RecordStore -->
 				<object type="recordStore" ref="componentStore" function="begin_storing" />
 				<object type="database" function="begin_indexing" />
 				<for-each>
@@ -242,15 +250,15 @@
 		<subConfig type="workflow" id="buildComponentWorkflow">
 			<objectType>cheshire3.workflow.CachingWorkflow</objectType>
 			<workflow>
-				<!-- input type: record -->
+				<!-- input type: Record -->
 				<assign from="input.id" to="recid" />
 				<object type="documentFactory" ref="componentDocumentFactory"
 					function="load" />
-				<!-- type: documentFactory -->
+				<!-- type: DocumentFactory -->
 				<log level="info">"Loading components from record " + recid</log>
 				<assign to="VAR_ctr" from="0" />
 				<for-each>
-					<!-- type: document -->
+					<!-- type: Document -->
 					<log level="debug">"preParsing"</log>
 					<object type="workflow" ref="preParserWorkflow" />
 					<log level="debug">"parsing"</log>
@@ -262,7 +270,7 @@
 						<log level="debug">"" + str(err)</log>
 						<continue />
 					</except>
-					<!-- type: record -->
+					<!-- type: Record -->
 					<log level="debug">"assigning id"</log>
 					<try>
 						<object type="workflow" ref="assignDataIdentifierWorkflow" />
@@ -316,7 +324,7 @@
 		<subConfig type="workflow" id="indexRecordWorkflow">
 			<objectType>cheshire3.workflow.CachingWorkflow</objectType>
 			<workflow>
-				<!-- input type: record -->
+				<!-- input type: Record -->
 				<!-- assign identifier -->
 				<try>
 					<object type="database" function="index_record" />
@@ -352,7 +360,7 @@
 		<subConfig type="workflow" id="highlightSruFilterWorkflow">
 			<objectType>cheshire3.workflow.CachingWorkflow</objectType>
 			<workflow>
-				<!-- input type: record -->
+				<!-- input type: Record -->
 				<object type="transformer" ref="highlightTxr" />
 				<object type="parser" ref="LxmlParser" />
 				<object type="transformer" ref="sruOutgoingHubTxr" />
@@ -362,7 +370,7 @@
 		<subConfig type="workflow" id="highlightSummaryTxrWorkflow">
 			<objectType>cheshire3.workflow.CachingWorkflow</objectType>
 			<workflow>
-				<!-- input type: record -->
+				<!-- input type: Record -->
 				<object type="transformer" ref="highlightTxr" />
 				<object type="parser" ref="LxmlParser" />
 				<object type="transformer" ref="htmlSummaryTxr" />
