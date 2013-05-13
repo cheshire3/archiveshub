@@ -99,33 +99,6 @@ class LoadArgumentParser(BaseArgumentParser):
         return args
 
 
-def clusters(args):
-    """Load and index subject clusters."""
-    global session, db, lgr
-    lgr.log_info(session, 'Accumulating subject clusters...')
-    start = time.time()
-    recordStore = db.get_object(session, 'recordStore')
-    clusDocFac = db.get_object(session, 'clusterDocumentFactory')
-    for rec in recordStore:
-        clusDocFac.load(session, rec)
-    
-    session.database = '{0}_cluster'.format(session.database)
-    clusDb = server.get_object(session, session.database)
-    clusDb.clear_indexes(session)
-    clusFlow = clusDb.get_object(session, 'buildClusterWorkflow')
-    clusFlow.process(session, clusDocFac)
-    (mins, secs) = divmod(time.time() - start, 60)
-    (hours, mins) = divmod(mins, 60)
-    lgr.log_info(session, 
-                 'Subject Clustering complete ({0:.0f}h {1:.0f}m {2:.0f}s)'.format(hours, 
-                                                                       mins, 
-                                                                       secs)
-                 )
-    # return session.database to the default (finding aid) DB
-    session.database = db.id
-    return 0
-
-
 def _conditional_load(args):
     # Check arguments and call necessary load methods
     if args.all:
