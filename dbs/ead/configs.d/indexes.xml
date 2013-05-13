@@ -6,7 +6,7 @@
 
     <subConfigs>
 
-        <!-- indexStore -->
+        <!-- indexStores -->
         <subConfig type="indexStore" id="indexStore">
             <objectType>cheshire3.indexStore.BdbIndexStore</objectType>
             <paths>
@@ -14,6 +14,21 @@
                 <path type="tempPath">temp</path>
                 <path type="recordStoreHash">recordStore componentStore</path>
             </paths>
+            <options>
+                <setting type="dirPerIndex">1</setting>
+            </options>
+        </subConfig>
+        
+        <subConfig type="indexStore" id="offlineIndexStore">
+            <objectType>cheshire3.indexStore.BdbIndexStore</objectType>
+            <paths>
+                <path type="defaultPath">indexes_offline</path>
+                <path type="tempPath">temp</path>
+                <path type="recordStoreHash">recordStore componentStore</path>
+            </paths>
+            <options>
+                <setting type="dirPerIndex">1</setting>
+            </options>
         </subConfig>
 
         <!-- Custom tokenizers -->
