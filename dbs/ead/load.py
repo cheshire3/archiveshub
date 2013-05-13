@@ -1,4 +1,5 @@
 #!/bin/env python
+# -*- coding: utf-8 -*-
 #
 # Script:    load.py
 # Date:      7 May 2013
@@ -8,11 +9,26 @@
 #
 u"""Load the Archives Hub database of EAD finding aid documents.
 
-usage: load.py [-h] [-s PATH] [-d DATABASE] [-c] [ID [ID ...]]
+usage: load.py [-h] [-s PATH] [-d DATABASE] [-m | -c | -x] [ID [ID ...]]
+
+positional arguments:
+  ID                    identifier for contributor(s) to load
 
 optional arguments:
   -h, --help            show this help message and exit
-  -c, --components      load components from loaded EAD records
+  -s PATH, --server-config PATH
+                        path to Cheshire3 server configuration file. default: 
+                        /home/cheshire/cheshire3/cheshire3/configs/serverConfi
+                        g.xml
+  -d DATABASE, --database DATABASE
+                        identifier of Cheshire3 database
+  -m, --main, --no-components
+                        load only collection-level descriptions (default)
+  -c, --with-components
+                        load collections-level descriptions and components
+  -x, --no-descriptions, --components-only
+                        load only components
+
 """
 
 import os
@@ -21,13 +37,9 @@ import time
 
 from lockfile import FileLock
 
-from cheshire3.baseObjects import Session
 from cheshire3.exceptions import ObjectDoesNotExistException
-from cheshire3.server import SimpleServer
 
-from cheshire3.commands.cmd_utils import identify_database
-
-from archiveshub.commands.utils import BaseArgumentParser
+from archiveshub.commands.utils import BaseArgumentParser, getCheshire3Env
 
 
 class LoadArgumentParser(BaseArgumentParser):
@@ -71,7 +83,7 @@ class LoadArgumentParser(BaseArgumentParser):
 
 def _get_storeIterator(args):
     # Return an iterator for the DocumentStores to load
-    global session, db, lgr
+    global session, db
     # Get ConfigStore where the DocumentStores are stored
     store = db.get_object(session, 'documentStoreConfigStore')
     if args.identifier:
@@ -88,7 +100,7 @@ def _get_storeIterator(args):
                 storeIterator.append(store.fetch_object(session, storeId))
             except ObjectDoesNotExistException:
                 # Contributor with this id does not exist
-                lgr.log_error(session,
+                session.logger.log_error(session,
                               "Contributor with identifier {0} does not seem to "
                               "exist. It's possible that the default identifier "
                               "for the directory was over-ridden with the --id "
@@ -106,8 +118,8 @@ def load(args):
     Load the Documents for the named contributor(s) into the internal
     RecordStore.
     """
-    global session, db, lgr
-    lgr.log_info(session, 'Loading and indexing...')
+    global session, db
+    session.logger.log_info(session, 'Loading and indexing...')
     start = time.time()
     storeIterator = _get_storeIterator(args)
     # Now iterate over the selected stores
@@ -115,13 +127,13 @@ def load(args):
         contributorId = contributorStore.id[:-len('DocumentStore')]
         wf = db.get_object(session, 'loadWorkflow')
         wf.process(session, contributorStore)
-        lgr.log_info(session,
+        session.logger.log_info(session,
                      "Documents for {0} have been loaded"
                      "".format(contributorId)
         )
     (mins, secs) = divmod(time.time() - start, 60)
     (hours, mins) = divmod(mins, 60)
-    lgr.log_info(session,
+    session.logger.log_info(session,
                  ('Loading, Indexing complete ({0:.0f}h {1:.0f}m {2:.0f}s)'
                   ''.format(hours, mins, secs))
                  )
@@ -134,22 +146,22 @@ def load_components(args):
     Load the Documents for the named contributor(s) into the internal
     Component RecordStore.
     """
-    global session, db, lgr
+    global session, db
     storeIterator = _get_storeIterator(args)
-    lgr.log_info(session, 'Loading and indexing components...')
+    session.logger.log_info(session, 'Loading and indexing components...')
     start = time.time()
     storeIterator = _get_storeIterator(args)
     for contributorStore in storeIterator:
         contributorId = contributorStore.id[:-len('DocumentStore')]
         wf = db.get_object(session, 'loadAllComponentsWorkflow')
         wf.process(session, contributorStore)
-        lgr.log_info(session,
+        session.logger.log_info(session,
                      "Documents for {0} have been loaded"
                      "".format(contributorId)
         )
     (mins, secs) = divmod(time.time() - start, 60)
     (hours, mins) = divmod(mins, 60)
-    lgr.log_info(session,
+    session.logger.log_info(session,
                  'Components loaded and indexed ({0:.0f}h {1:.0f}m {2:.0f}s)'
                  ''.format(hours, mins, secs)
                  )
@@ -158,39 +170,18 @@ def load_components(args):
 
 def main(argv=None):
     global argparser
-    global session, server, db, lgr
+    global session, server, db
     if argv is None:
         args = argparser.parse_args()
     else:
         args = argparser.parse_args(argv)
-
-    session = Session()
-    server = SimpleServer(session, args.serverconfig)
-    if args.database is None:
-        try:
-            dbid = identify_database(session, os.getcwd())
-        except EnvironmentError as e:
-            server.log_critical(session, e.message)
-            return 1
-        server.log_debug(
-            session, 
-            "database identifier not specified, discovered: {0}".format(dbid))
-    else:
-        dbid = args.database
-        
     try:
-        db = server.get_object(session, dbid)
-    except ObjectDoesNotExistException:
-        msg = """Cheshire3 database {0} does not exist.
-Please provide a different database identifier using the --database option.
-""".format(dbid)
-        server.log_critical(session, msg)
-        return 2
-    else:
-        lgr = db.get_path(session, 'defaultLogger')
-        # Set default log level to INFO
-        lgr.minLevel = 20
-        pass
+        session, server, db = getCheshire3Env(args)
+    except (EnvironmentError, ObjectDoesNotExistException):
+        return 1
+
+    # Set default log level to INFO
+    session.logger.minLevel = 20
 
     mp = db.get_path(session, 'metadataPath')
     lock = FileLock(mp)
@@ -203,7 +194,7 @@ Please provide a different database identifier using the --database option.
                "message and you are sure no one is reindexing the database "
                "please contact the archives hub team for advice."
                )
-        lgr.log_critical(session, msg)
+        session.logger.log_critical(session, msg)
         return 1
     try:
         if args.mode == "main":

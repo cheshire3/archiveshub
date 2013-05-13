@@ -1,4 +1,5 @@
 #!/bin/env python
+# -*- coding: utf-8 -*-
 #
 # Script:    build.py
 # Date:      7 May 2013
@@ -31,12 +32,9 @@ import time
 
 from lockfile import FileLock
 
-from cheshire3.baseObjects import Session
-from cheshire3.server import SimpleServer
-
 from cheshire3.commands.cmd_utils import identify_database
 
-from archiveshub.commands.utils import BaseArgumentParser
+from archiveshub.commands.utils import BaseArgumentParser, getCheshire3Env
 
 
 class LoadArgumentParser(BaseArgumentParser):
@@ -294,33 +292,10 @@ def main(argv=None):
         args = argparser.parse_args()
     else:
         args = argparser.parse_args(argv)
-
-    session = Session()
-    server = SimpleServer(session, args.serverconfig)
-    if args.database is None:
-        try:
-            dbid = identify_database(session, os.getcwd())
-        except EnvironmentError as e:
-            server.log_critical(session, e.message)
-            return 1
-        server.log_debug(
-            session, 
-            "database identifier not specified, discovered: {0}".format(dbid))
-    else:
-        dbid = args.database
-        
     try:
-        db = server.get_object(session, dbid)
-    except ObjectDoesNotExistException:
-        msg = """Cheshire3 database {0} does not exist.
-Please provide a different database identifier using the --database option.
-""".format(dbid)
-        server.log_critical(session, msg)
-        return 2
-    else:
-        lgr = db.get_path(session, 'defaultLogger')
-        pass
-
+        session, server, db = getCheshire3Env(args)
+    except (EnvironmentError, ObjectDoesNotExistException):
+        return 1
     mp = db.get_path(session, 'metadataPath')
     lock = FileLock(mp)
     try:

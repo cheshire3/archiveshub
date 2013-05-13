@@ -1,7 +1,13 @@
 """Command line utils for Cheshire3 for Archives Command-line UI."""
 
+import os
 import socket
 
+from cheshire3.baseObjects import Session
+from cheshire3.exceptions import ObjectDoesNotExistException
+from cheshire3.server import SimpleServer
+
+from cheshire3.commands.cmd_utils import identify_database
 from cheshire3.commands.cmd_utils import Cheshire3ArgumentParser
 
 
@@ -37,3 +43,40 @@ class WSGIAppArgumentParser(BaseArgumentParser):
                                 "other users"
                                 )
                           )
+
+
+def getCheshire3Env(args):
+    """Init and return Cheshire3 Session, Server and Database.
+    
+    Intialize Cheshire3 Session, Server and Database objects based on
+    ``args``.
+    """
+    # Create a Session
+    session = Session()
+    # Get the Server based on given serverConfig file
+    server = SimpleServer(session, args.serverconfig)
+    # Try to get the Database
+    if args.database is None:
+        try:
+            dbid = identify_database(session, os.getcwd())
+        except EnvironmentError as e:
+            server.log_critical(session, e.message)
+            raise
+        server.log_debug(
+            session, 
+            "database identifier not specified, discovered: {0}".format(dbid))
+    else:
+        dbid = args.database
+    try:
+        db = server.get_object(session, dbid)
+    except ObjectDoesNotExistException:
+        msg = """Cheshire3 database {0} does not exist.
+Please provide a different database identifier using the --database option.
+""".format(dbid)
+        server.log_critical(session, msg)
+        raise
+    else:
+        # Attach a default Logger to the Session
+        session.logger = db.get_path(session, 'defaultLogger')
+    
+    return session, server, db
