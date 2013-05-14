@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Script:    index.py
-# Date:      13 May 2013
+# Date:      14 May 2013
 # Copyright: &copy; University of Liverpool 2005-present
 # Author(s): JH - John Harrison <john.harrison@liv.ac.uk>
 # Language:  Python
@@ -32,6 +32,15 @@ import time
 from lockfile import FileLock, LockTimeout
 
 from archiveshub.commands.utils import BaseArgumentParser, getCheshire3Env
+
+# Define some test queries. Each item in the list should be a pair of:
+# (CQLQuery, threshold) where threshold is the mininum number of results the
+# query must return before accepting new Indexes  
+TEST_QUERIES = [
+   ('cql.anywhere all "papers"', 50000),
+   ('cql.anywhere all "police"', 1000),
+   ('bath.name all "greene"', 100)
+]
 
 
 class IndexArgumentParser(BaseArgumentParser):
@@ -92,9 +101,11 @@ def _index_recordStore(recordStore):
                 '{0.id:<40} [OK]'.format(rec)
             )
 
+
 def index(args):
     """Index pre-loaded EAD records."""
     global session, db
+    global TEST_QUERIES
     lgr = session.logger
     lgr.log_info(session, "Indexing pre-loaded records...")
     start = time.time()
@@ -128,21 +139,42 @@ def index(args):
     db.commit_metadata(session)
     if args.mode == 'background':
         # TODO: Test search new indexes
-        # Commit new indexes in place of old
-        lgr.log_debug(session, 'Replacing existing indexes')
-        livePath = indexStore.get_path(session, 'defaultPath')
-        offlinePath = offlineIndexStore.get_path(session, 'defaultPath')
-        for name in os.listdir(offlinePath):
-            fullPath = os.path.join(offlinePath, name)
-            fullLivePath = os.path.join(livePath, name)
-            if name in ['.gitignore', 'temp']:
-                continue 
-            elif os.path.isdir(fullPath):
-                # Remove existing live index
-                shutil.rmtree(fullLivePath)
-                shutil.copytree(fullPath, fullLivePath)
-            elif os.path.isfile(fullPath):
-                shutil.copy2(fullPath, fullLivePath)
+        qf = db.get_object(session, 'defaultQueryFactory')
+        allPassed = False
+        for qString, threshold in TEST_QUERIES:
+            q = qf.get_query(session, qString)
+            rs = db.search(session, q)
+            if len(rs) < threshold:
+                lgr.log_error(session,
+                              'Failed test for {0}; {1} hits < {2}'
+                              ''.format(qString, len(rs), threshold)
+                              )
+                break
+        else:
+            # Run after loop completes, i.e. all tests pass
+            allPassed = True
+        if allPassed:
+            # Commit new indexes in place of old
+            lgr.log_debug(session, 'Replacing existing indexes')
+            livePath = indexStore.get_path(session, 'defaultPath')
+            offlinePath = offlineIndexStore.get_path(session, 'defaultPath')
+            for name in os.listdir(offlinePath):
+                fullPath = os.path.join(offlinePath, name)
+                fullLivePath = os.path.join(livePath, name)
+                if name in ['.gitignore', 'temp']:
+                    continue 
+                elif os.path.isdir(fullPath):
+                    # Remove existing live index
+                    shutil.rmtree(fullLivePath)
+                    shutil.copytree(fullPath, fullLivePath)
+                elif os.path.isfile(fullPath):
+                    shutil.copy2(fullPath, fullLivePath)
+        else:
+            offlinePath = offlineIndexStore.get_path(session, 'defaultPath')
+            lgr.log_error(session,
+                          'Not replacing existing indexes; new indexes remain'
+                          'in {0}'.format(offlinePath)
+                          )
     # Log completed message
     (mins, secs) = divmod(time.time() - start, 60)
     (hours, mins) = divmod(mins, 60)
