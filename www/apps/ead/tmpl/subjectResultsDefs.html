@@ -145,6 +145,18 @@
     </a>
     </td>
     <td>
-        N/A
+        ${get_estimatedHits(qString)}
     </td>
+</%def>
+
+<%def name="get_estimatedHits(qString)">
+    <%
+    session.database = 'db_ead'
+    db = session.server.get_object(session, session.database)
+    qf = db.get_object(session, 'defaultQueryFactory')
+    q = qf.get_query(session, qString)
+    scanRs = db.scan(session, q, nTerms=1)
+    session.database = session.database + '_cluster'
+    %>
+    ${scanRs[0][1][1]}
 </%def>
