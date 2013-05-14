@@ -1,81 +1,84 @@
 <config>
 
-<!-- 
+    <!--
+    Configuration for Subject Cluster Indexes.
+    
     This file was produced, and released as part of Cheshire for Archives v3.x.
-    Copyright &#169; 2005-2008 the University of Liverpool
--->
+    Copyright &#169; 2005-2013 the University of Liverpool
+    -->
 
-  <subConfigs>
-  
-    <subConfig type="index" id="ead-cluster-idx-id">
-        <objectType>cheshire3.index.RecordIdentifierIndex</objectType>
-        <paths>
-            <object type="recordStore" ref="eadClusterStore" />
-        </paths>
-    </subConfig>
+    <subConfigs>
 
-    <subConfig type="index" id="ead-cluster-idx-all">
-      <objectType>cheshire3.index.SimpleIndex</objectType>
-      <paths>
-        <object type="indexStore" ref="eadClusterIndexStore"/>
-      </paths>
-      <source>
-        <xpath>/cluster/key</xpath>
-        <xpath>/cluster/title</xpath>
-        <xpath>/cluster/desciption</xpath>
-        <process>
-          <object type="workflow" ref="KeywordExtractorWorkflow"/>
-          <object type="normalizer" ref="CaseNormalizer"/>
-          <object type="normalizer" ref="EnglishStemNormalizer"/>
-        </process>
-      </source>
-    </subConfig>
+        <subConfig type="index" id="ead-cluster-idx-id">
+            <objectType>cheshire3.index.RecordIdentifierIndex
+            </objectType>
+            <paths>
+                <object type="recordStore" ref="eadClusterStore" />
+            </paths>
+        </subConfig>
 
-    <subConfig type="index" id="ead-cluster-idx-key">
-      <objectType>cheshire3.index.SimpleIndex</objectType>
-      <paths>
-        <object type="indexStore" ref="eadClusterIndexStore"/>
-      </paths>
-      <source>
-        <xpath>/cluster/key</xpath>
-        <process>
-          <object type="workflow" ref="KeywordExtractorWorkflow"/>
-          <object type="normalizer" ref="CaseNormalizer"/>
-          <object type="normalizer" ref="EnglishStemNormalizer"/>
-        </process>
-      </source>
-    </subConfig>
+        <subConfig type="index" id="ead-cluster-idx-all">
+            <objectType>cheshire3.index.SimpleIndex</objectType>
+            <paths>
+                <object type="indexStore" ref="eadClusterIndexStore" />
+            </paths>
+            <source>
+                <xpath>/cluster/key</xpath>
+                <xpath>/cluster/title</xpath>
+                <xpath>/cluster/desciption</xpath>
+                <process>
+                    <object type="workflow" ref="KeywordExtractorWorkflow" />
+                    <object type="normalizer" ref="CaseNormalizer" />
+                    <object type="normalizer" ref="EnglishStemNormalizer" />
+                </process>
+            </source>
+        </subConfig>
 
-    <subConfig type="index" id="ead-cluster-idx-title">
-      <objectType>cheshire3.index.SimpleIndex</objectType>
-      <paths>
-        <object type="indexStore" ref="eadClusterIndexStore"/>
-      </paths>
-      <source>
-        <xpath>/cluster/title</xpath>
-        <process>
-          <object type="workflow" ref="KeywordExtractorWorkflow"/>
-          <object type="normalizer" ref="CaseNormalizer"/>
-          <object type="normalizer" ref="EnglishStemNormalizer"/>
-        </process>
-      </source>
-    </subConfig>
+        <subConfig type="index" id="ead-cluster-idx-key">
+            <objectType>cheshire3.index.SimpleIndex</objectType>
+            <paths>
+                <object type="indexStore" ref="eadClusterIndexStore" />
+            </paths>
+            <source>
+                <xpath>/cluster/key</xpath>
+                <process>
+                    <object type="workflow" ref="KeywordExtractorWorkflow" />
+                    <object type="normalizer" ref="CaseNormalizer" />
+                    <object type="normalizer" ref="EnglishStemNormalizer" />
+                </process>
+            </source>
+        </subConfig>
 
-    <subConfig type="index" id="ead-cluster-idx-description">
-      <objectType>cheshire3.index.SimpleIndex</objectType>
-      <paths>
-        <object type="indexStore" ref="eadClusterIndexStore"/>
-      </paths>
-      <source>
-        <xpath>/cluster/description</xpath>
-        <process>
-          <object type="workflow" ref="KeywordExtractorWorkflow"/>
-          <object type="normalizer" ref="CaseNormalizer"/>
-          <object type="normalizer" ref="EnglishStemNormalizer"/>
-        </process>
-      </source>
-    </subConfig>
+        <subConfig type="index" id="ead-cluster-idx-title">
+            <objectType>cheshire3.index.SimpleIndex</objectType>
+            <paths>
+                <object type="indexStore" ref="eadClusterIndexStore" />
+            </paths>
+            <source>
+                <xpath>/cluster/title</xpath>
+                <process>
+                    <object type="workflow" ref="KeywordExtractorWorkflow" />
+                    <object type="normalizer" ref="CaseNormalizer" />
+                    <object type="normalizer" ref="EnglishStemNormalizer" />
+                </process>
+            </source>
+        </subConfig>
 
-  </subConfigs>
+        <subConfig type="index" id="ead-cluster-idx-description">
+            <objectType>cheshire3.index.SimpleIndex</objectType>
+            <paths>
+                <object type="indexStore" ref="eadClusterIndexStore" />
+            </paths>
+            <source>
+                <xpath>/cluster/description</xpath>
+                <process>
+                    <object type="workflow" ref="KeywordExtractorWorkflow" />
+                    <object type="normalizer" ref="CaseNormalizer" />
+                    <object type="normalizer" ref="EnglishStemNormalizer" />
+                </process>
+            </source>
+        </subConfig>
+
+    </subConfigs>
 
 </config>
