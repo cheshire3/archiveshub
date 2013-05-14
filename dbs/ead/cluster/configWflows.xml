@@ -47,6 +47,9 @@
                     <object type="database" function="add_record" />
                     <object type="database" function="index_record" />
                 </try>
+                <except type="objectAlreadyExistsException">
+                    <log level="debug">"" + str(err)</log>
+                </except>
                 <except>
                     <log level="error">"***" + str(err)</log>
                 </except>
