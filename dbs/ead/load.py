@@ -2,12 +2,12 @@
 # -*- coding: utf-8 -*-
 #
 # Script:    load.py
-# Date:      7 May 2013
+# Date:      14 May 2013
 # Copyright: &copy; University of Liverpool 2005-present
 # Author(s): JH - John Harrison <john.harrison@liv.ac.uk>
 # Language:  Python
 #
-u"""Load the Archives Hub database of EAD finding aid documents.
+u"""Load EAD Documents into the Archives Hub.
 
 usage: load.py [-h] [-s PATH] [-d DATABASE] [-m | -c | -x] [ID [ID ...]]
 
@@ -29,6 +29,9 @@ optional arguments:
   -x, --no-descriptions, --components-only
                         load only components
 
+
+Load EAD finding aid documents from registered contributor directories into
+Cheshire3.
 """
 
 import os
@@ -52,20 +55,19 @@ class LoadArgumentParser(BaseArgumentParser):
                           default=None, metavar='DATABASE',
                           help="identifier of Cheshire3 database")
         group = self.add_mutually_exclusive_group()
-        group.set_defaults(mode='main')
-        group.add_argument("-m", "--main", "--no-components",
-                           action='store_const',
-                           dest='mode',
-                           const='main',
-                           help=("load only collection-level descriptions "
-                                 "(default)")
-                           )
+        group.set_defaults(mode='both')
         group.add_argument("-c", "--with-components",
                            action='store_const',
                            dest='mode',
                            const='both',
                            help=("load collections-level descriptions and "
-                                 "components")
+                                 "components (default)")
+                           )
+        group.add_argument("-m", "--main", "--no-components",
+                           action='store_const',
+                           dest='mode',
+                           const='main',
+                           help=("load only collection-level descriptions")
                            )
         group.add_argument("-x", "--no-descriptions", "--components-only",
                            action='store_const',
@@ -216,7 +218,8 @@ def main(argv=None):
 # Init OptionParser
 docbits = __doc__.split('\n\n')
 argparser = LoadArgumentParser(conflict_handler='resolve',
-                              description=docbits[0]
+                              description=docbits[0],
+                              epilog=docbits[-1]
                               )
 
 
