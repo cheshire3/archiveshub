@@ -48,8 +48,7 @@
                     <object type="database" function="index_record" />
                 </try>
                 <except>
-                    <log level="error">"***"</log>
-                    <raise />
+                    <log level="error">"***" + str(err)</log>
                 </except>
             </workflow>
         </subConfig>
