@@ -150,22 +150,25 @@ def index(args):
     db.commit_indexing(session)
     db.commit_metadata(session)
     if args.mode == 'background':
-        # TODO: Test search new indexes
-        qf = db.get_object(session, 'defaultQueryFactory')
         allPassed = False
-        for qString, threshold in TEST_QUERIES:
-            q = qf.get_query(session, qString)
-            rs = db.search(session, q)
-            if len(rs) < threshold:
-                lgr.log_error(session,
-                              'Failed test for {0}; {1} hits < {2}'
-                              ''.format(qString, len(rs), threshold)
-                              )
-                break
-        else:
-            # Run after loop completes, i.e. all tests pass
-            allPassed = True
-        if allPassed:
+        if args.test:
+            # Test search new indexes
+            qf = db.get_object(session, 'defaultQueryFactory')
+            
+            for qString, threshold in TEST_QUERIES:
+                q = qf.get_query(session, qString)
+                rs = db.search(session, q)
+                if len(rs) < threshold:
+                    lgr.log_error(session,
+                                  'Failed test for {0}; {1} hits < {2}'
+                                  ''.format(qString, len(rs), threshold)
+                                  )
+                    break
+            else:
+                # Run after loop completes, i.e. all tests pass
+                allPassed = True
+
+        if allPassed or not args.test:
             # Commit new indexes in place of old
             lgr.log_debug(session, 'Replacing existing indexes')
             livePath = indexStore.get_path(session, 'defaultPath')
@@ -238,8 +241,8 @@ def main(argv=None):
         session, server, db = getCheshire3Env(args)
     except (EnvironmentError, ObjectDoesNotExistException):
         return 1
-    # TODO: Set default log level to INFO
-    session.logger.minLevel = 10
+    # Set default log level to INFO
+    session.logger.minLevel = 20
     mp = db.get_path(session, 'metadataPath')
     lock = FileLock(mp)
     try:
