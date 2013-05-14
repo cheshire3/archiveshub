@@ -7,7 +7,7 @@
 #
 u"""Index the Archives Hub database of EAD finding aid documents.
 
-usage: index.py [-h] [-s PATH] [-d DATABASE] [-l | -b | -o]
+usage: index.py [-h] [-s PATH] [-d DATABASE] [-j] [-n] [-b | -l | -o]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -17,11 +17,17 @@ optional arguments:
                         g.xml
   -d DATABASE, --database DATABASE
                         identifier of Cheshire3 database
-  -l, --live            load directly into the live indexes.not recommended
-                        for production use
+  -j, --subjects        load and index subject finder
+  -n, --no-test         skip testing new indexes when indexing in
+                        `--background` mode. By default, tests must pass
+                        before before new indexes replace live ones in this
+                        mode.
   -b, --background      load into offline indexes, replace live indexes when
                         complete (default)
+  -l, --live            load directly into the live indexes. not recommended
+                        for production use
   -o, --offline         load into offline indexes for manual checking
+
 
 """
 import os
@@ -50,28 +56,34 @@ class IndexArgumentParser(BaseArgumentParser):
         super(IndexArgumentParser, self).__init__(*args, **kwargs)
         self.add_argument('-d', '--database',
                           type=str, action='store', dest='database',
-                          default=None, metavar='DATABASE',
                           help="identifier of Cheshire3 database")
-        self.add_argument("-s", "--subjects", 
+        self.add_argument("-j", "--subjects",
                           action="store_true", dest="clusters",
-                          default=False, 
                           help="load and index subject finder"
+                          )
+        self.add_argument("-n", "--no-test",
+                          action="store_false", dest="test",
+                          help=("skip testing new indexes when indexing in "
+                                "`--background` mode. By default, tests must "
+                                "pass before before new indexes replace live "
+                                "ones in this mode."
+                                )
                           )
         group = self.add_mutually_exclusive_group()
         group.set_defaults(mode='background')
-        group.add_argument("-l", "--live",
-                           action='store_const',
-                           dest='mode',
-                           const='live',
-                           help=("load directly into the live indexes."
-                                 "not recommended for production use")
-                           )
         group.add_argument("-b", "--background",
                            action='store_const',
                            dest='mode',
                            const='background',
                            help=("load into offline indexes, replace live "
                                  "indexes when complete (default)")
+                           )
+        group.add_argument("-l", "--live",
+                           action='store_const',
+                           dest='mode',
+                           const='live',
+                           help=("load directly into the live indexes. "
+                                 "not recommended for production use")
                            )
         group.add_argument("-o", "--offline",
                            action='store_const',
