@@ -240,7 +240,7 @@ class EADSearchWsgiApplication(EADWsgiApplication):
             db._cacheProtocolMaps(session)
             pm = db.protocolMaps.get('http://www.loc.gov/zing/srw/')
         facets = {}
-        for idx in ['dc.subject', 'dc.creator']:
+        for idx in ['dc.subject', 'dc.creator', 'vdb.name']:
             query = self.queryFactory.get_query(session,
                                                 '{0}="*"'.format(idx),
                                                 format='cql')
