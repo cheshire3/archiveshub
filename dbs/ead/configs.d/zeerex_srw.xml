@@ -34,6 +34,7 @@
         <set identifier="info:srw/cql-context-set/2/relevance-1.0" name="rel"/>
         <set identifier="info:srw/cql-context-set/2/rec-1.1" name="rec"/>
         <set identifier="info:srw/cql-context-set/2/range-1.0" name="range"/>
+        <set identifier="http://www.cheshire3.org/schemas/vdb" name="vdb"/>
 	
         <index c3:index="idx-istoplevel">
             <title>Is a top level EAD record</title>
@@ -43,6 +44,34 @@
             <configInfo>
                 <supports type="relation">exact</supports>
                 <supports type="relation">=</supports>
+            </configInfo>
+        </index>
+        
+        <index c3:index="idx-vdbid">
+            <title>Contributor Identifier</title>
+            <map>
+                <name set="vdb">identifier</name>
+            </map>
+            <configInfo>
+                <supports type="relation">exact</supports>
+                <supports type="relation">=</supports>
+                <supports type="relation">within</supports>
+                <supports type="relation">all</supports>
+                <supports type="relation">any</supports>
+            </configInfo>
+        </index>
+        
+        <index c3:index="idx-vdbName">
+            <title>Contributor Name</title>
+            <map>
+                <name set="vdb">name</name>
+            </map>
+            <configInfo>
+                <supports type="relation">exact</supports>
+                <supports type="relation">=</supports>
+                <supports type="relation">within</supports>
+                <supports type="relation">all</supports>
+                <supports type="relation">any</supports>
             </configInfo>
         </index>
         

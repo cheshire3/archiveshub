@@ -104,7 +104,7 @@
 <%block name="rightcol">
 	% if facets:
 		<h3>Filter your results by:</h3>
-		% for facet in facets.iteritems():
+		% for facet in sorted(facets.iteritems()):
 			${format_facet(facet)}
 		% endfor
 	% endif

@@ -8,9 +8,9 @@
         
         <div class="row">
             Search within: 
-            <select name="withinCollection" id="withinCollection" title="Specify which collections to search">
-                <option value="allcollections" selected="selected">All Collections</option>
-                % for identifier, title in collections:
+            <select name="withinContributor" id="withinContributor" title="Specify which repositories to search">
+                <option value="allcontributors" selected="selected">All Repositories</option>
+                % for identifier, title in contributors:
                     <option value="${identifier}">${(title[:72] + '...') if len(title) > 75 else title}</option>
                 % endfor
             </select>

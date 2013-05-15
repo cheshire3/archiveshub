@@ -332,6 +332,18 @@ class EADWsgiApplication(object):
 
 # Methods that could usefully be imported by Templates
 
+def listContributors(session):
+    "Return a list of Contributor Identifier, Contributor Name tuples."""
+    # Get Database object
+    db = session.server.get_object(session, session.database)
+    identifierIdx = db.get_object(session, 'idx-vdbid')
+    nameIdx = db.get_object(session, 'idx-vdbName')
+    for rs in identifierIdx:
+        term = rs.queryTerm
+        titles = nameIdx.facets(session, rs)
+        yield (term, titles[0][0])
+
+
 def listCollections(session):
     "Return a list of Collection Identifier, Collection Title tuples."""
     # Get Database object
