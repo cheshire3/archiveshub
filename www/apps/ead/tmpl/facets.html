@@ -3,7 +3,12 @@
     idx = facet[0]
     termHash = facet[1]
     %>
-    <span class="facethead">${idx[idx.find('.') + 1:].title()}</span>
+    % if idx.startswith('vdb.'):
+        <span class="facethead">Repository ${idx[idx.find('.') + 1:].title()}</span>
+    % else:
+        <span class="facethead">${idx[idx.find('.') + 1:].title()}</span>
+    % endif
+    
     <ul class="facet" id="${idx}-facet" >
     % for term, termData in termHash:
         <%
