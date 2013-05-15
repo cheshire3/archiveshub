@@ -20,7 +20,7 @@ from cheshire3.web.www_utils import generate_cqlQuery
 # Cheshire3 for Archives Imports
 from archiveshub.commands.utils import WSGIAppArgumentParser
 from archiveshub.apps.ead.base import EADWsgiApplication 
-from archiveshub.apps.ead.base import listCollections
+from archiveshub.apps.ead.base import listContributors
 from archiveshub.apps.ead.base import config, session, db
 
 
@@ -42,7 +42,7 @@ class EADSearchWsgiApplication(EADWsgiApplication):
             session = self.session
             self.response.body = self._render_template(
                 'index.html',
-                collections=listCollections(session)
+                contributors=listContributors(session)
             )
         elif operation in ['explore', 'help']:
             # Serve simple templated page
@@ -89,6 +89,7 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         qString = form.getvalue('query')
         rsid = form.getvalue('rsid', None)
         filter_ = form.getvalue('filter', '')
+        withinContributor = form.getvalue('withinContributor', None)
         withinCollection = form.getvalue('withinCollection', None)
         if rsid:
             qString = self._fetch_query(session, rsid).toCQL()
@@ -98,15 +99,22 @@ class EADSearchWsgiApplication(EADWsgiApplication):
                 self._log(40, '*** Unable to generate CQL query')
                 return self._render_template(
                     'fail/invalidQuery.html',
-                    collections=listCollections(session)
+                    contributors=listContributors(session)
                 )
         if filter_:
             qString = '{0} and/relevant/proxinfo ({1})'.format(filter_,
                                                                qString)
+
         if (withinCollection and withinCollection != 'allcollections'):
             qString = ('(rec.collectionIdentifier exact "{0}") '
                        'and/relevant/proxinfo '
                        '({1})'.format(withinCollection,
+                                      qString)
+                       )
+        if (withinContributor and withinContributor != 'allcontributors'):
+            qString = ('(vdb.identifier exact "{0}") '
+                       'and/relevant/proxinfo '
+                       '({1})'.format(withinContributor,
                                       qString)
                        )
         elif 'noComponents' in form:
@@ -119,12 +127,12 @@ class EADSearchWsgiApplication(EADWsgiApplication):
             if (qString.count('"') % 2):
                 return self._render_template(
                     'fail/unpairedQuotes.html',
-                    collections=listCollections(session)
+                    contributors=listContributors(session)
                 )
             else:
                 return self._render_template(
                     'fail/invalidQuery.html',
-                    collections=listCollections(session)
+                    contributors=listContributors(session)
                 )
 
     def _searchAndSort(self, form):
@@ -142,7 +150,7 @@ class EADSearchWsgiApplication(EADWsgiApplication):
                 self._log(40, '*** Invalid ResultSet identifier: %s' % rsid)
                 return self._render_template(
                     'fail/invalidResultSet.html',
-                    collections=listCollections(session),
+                    contributors=listContributors(session),
                     rsid=rsid
                 )
         else:
@@ -193,9 +201,10 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         session = self.session
         if not form:
             # Simply return the search form
-            return [self._render_template('search.html',
-                                          collections=listCollections(session)
-                                          )]
+            return [self._render_template(
+                        'search.html',
+                        contributors=listContributors(session)
+                    )]
         sortBy = form.getlist('sortBy')
         maximumRecords = int(form.getvalue('maximumRecords', 20))
         startRecord = int(form.getvalue('startRecord', 1))
@@ -216,7 +225,7 @@ class EADSearchWsgiApplication(EADWsgiApplication):
                                           )]
         else:
             return [self._render_template('fail/noHits.html',
-                                          collections=listCollections(session),
+                                          contributors=listContributors(session),
                                           query=rs.query)
                     ]
 
