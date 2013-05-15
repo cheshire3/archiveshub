@@ -1,327 +1,189 @@
 #!/bin/env python
+# -*- coding: utf-8 -*-
 #
 # Script:    load.py
-# Date:      12 March 2013
+# Date:      14 May 2013
 # Copyright: &copy; University of Liverpool 2005-present
 # Author(s): JH - John Harrison <john.harrison@liv.ac.uk>
 # Language:  Python
 #
-u"""Load the Cheshire3 for Archives database of EAD finding aid documents.
+u"""Load EAD Documents into the Archives Hub.
 
-usage: load.py [-h] [-a] [-l] [-d DIR] [-c] [-s] [-i]
-               [-x]
+usage: load.py [-h] [-s PATH] [-d DATABASE] [-m | -c | -x] [ID [ID ...]]
 
-Load the Cheshire3 for Archives database of EAD finding aid documents.
+positional arguments:
+  ID                    identifier for contributor(s) to load
 
 optional arguments:
   -h, --help            show this help message and exit
-  -a, --all             load and index entire Cheshire3 for Archivessystem
-                        (i.e. same as --load --components --cluster.) Excludes
-                        all other operations.
-  -l, --load            load and index EAD documents
-  -d DIR, --data DIR    directory from which to load and index EAD documents
-  -c, --components      load and index components from loaded EAD records
-  -s, --subjects        load and index subject clusters
-  -i, --index           index pre-loaded EAD records
-  -x, --index-components
-                        index pre-loaded component records
+  -s PATH, --server-config PATH
+                        path to Cheshire3 server configuration file. default: 
+                        /home/cheshire/cheshire3/cheshire3/configs/serverConfi
+                        g.xml
+  -d DATABASE, --database DATABASE
+                        identifier of Cheshire3 database
+  -m, --main, --no-components
+                        load only collection-level descriptions (default)
+  -c, --with-components
+                        load collections-level descriptions and components
+  -x, --no-descriptions, --components-only
+                        load only components
+
+
+Load EAD finding aid documents from registered contributor directories into
+Cheshire3.
 """
 
-import sys
 import os
+import sys
 import time
 
 from lockfile import FileLock
 
-from cheshire3.baseObjects import Session
-from cheshire3.server import SimpleServer
+from cheshire3.exceptions import ObjectDoesNotExistException
 
-from cheshire3.commands.cmd_utils import identify_database
-
-from archiveshub.commands.utils import BaseArgumentParser
+from archiveshub.commands.utils import BaseArgumentParser, getCheshire3Env
 
 
 class LoadArgumentParser(BaseArgumentParser):
     """Custom option parser for Cheshire3 for Archives management."""
-    
+
     def __init__(self, *args, **kwargs):
         super(LoadArgumentParser, self).__init__(*args, **kwargs)
-        self.add_argument("-a", "--all", 
-                          action="store_true", dest="all",
-                          default=False, 
-                          help=("load and index entire Cheshire3 for Archives"
-                                "system (i.e. same as --load --components "
-                                "--cluster.) Excludes all other operations.")
-                          )
-        self.add_argument("-l", "--load",
-                          action="store_true", dest="load",
-                          default=False,
-                          help="load and index EAD documents"
-                          )
         self.add_argument('-d', '--database',
                           type=str, action='store', dest='database',
                           default=None, metavar='DATABASE',
                           help="identifier of Cheshire3 database")
-        self.add_argument('data',
-                          type=str, action='store', nargs='*',
-                          metavar="DIR",
-                          help=("directory from which to load and index EAD "
-                                "documents")
-                          )
-        self.add_argument("-c", "--components", 
-                          action="store_true", dest="components",
-                          default=False, 
-                          help=("load and index components from loaded EAD "
-                                "records")
-                          )
-        self.add_argument("-s", "--subjects", 
-                          action="store_true", dest="clusters",
-                          default=False, 
-                          help="load and index subject clusters"
-                          )
-        self.add_argument("-i", "--index", 
-                          action="store_true", dest="index",
-                          default=False, 
-                          help="index pre-loaded EAD records"
-                          )
-        self.add_argument("-x", "--index-components", 
-                          action="store_true", dest="index_components",
-                          default=False,
-                          help="index pre-loaded component records"
+        group = self.add_mutually_exclusive_group()
+        group.set_defaults(mode='both')
+        group.add_argument("-c", "--with-components",
+                           action='store_const',
+                           dest='mode',
+                           const='both',
+                           help=("load collections-level descriptions and "
+                                 "components (default)")
+                           )
+        group.add_argument("-m", "--main", "--no-components",
+                           action='store_const',
+                           dest='mode',
+                           const='main',
+                           help=("load only collection-level descriptions")
+                           )
+        group.add_argument("-x", "--no-descriptions", "--components-only",
+                           action='store_const',
+                           dest='mode',
+                           const='components',
+                           help=("load only components")
+                           )
+        self.add_argument('identifier',
+                          nargs='*',
+                          action='store',
+                          metavar="ID",
+                          help=("identifier for contributor(s) to load")
                           )
 
-    def parse_args(self, args=None, namespace=None):
-        args = super(LoadArgumentParser, self).parse_args(args, namespace)
-        # Sanity checking for load
-        args.load = bool(args.load or 
-                         args.data or
-                         not any([args.components,
-                                  args.clusters,
-                                  args.index,
-                                  args.index_components])
-                         )
-        return args
+
+def _get_storeIterator(args):
+    # Return an iterator for the DocumentStores to load
+    global session, db
+    # Get ConfigStore where the DocumentStores are stored
+    store = db.get_object(session, 'documentStoreConfigStore')
+    if args.identifier:
+        storeIterator = []
+        for contributorId in args.identifier:
+            # Sanity checking
+            if os.path.exists(contributorId) and os.path.isdir(contributorId):
+                # They've given the directory - try to derive identifier
+                contributorId.rstrip(os.pathsep)
+                contributorId = os.path.basename(contributorId)
+            # Generate identifier for new DocumentStore
+            storeId = "{0}DocumentStore".format(contributorId)
+            try:
+                storeIterator.append(store.fetch_object(session, storeId))
+            except ObjectDoesNotExistException:
+                # Contributor with this id does not exist
+                session.logger.log_error(session,
+                              "Contributor with identifier {0} does not seem to "
+                              "exist. It's possible that the default identifier "
+                              "for the directory was over-ridden with the --id "
+                              "option - you'll need to specify the identifier "
+                              "instead of the directory name".format(contributorId)
+                              )
+    else:
+        storeIterator = store
+    return storeIterator
 
 
 def load(args):
-    """Load and index EAD documents."""
+    """Load named contributor(s).
+
+    Load the Documents for the named contributor(s) into the internal
+    RecordStore.
+    """
     global session, db
-    lgr.log_info(session, 'Loading and indexing...')
-    db.clear_indexes(session)
+    session.logger.log_info(session, 'Loading and indexing...')
     start = time.time()
-    # Get necessary objects
-    flow = db.get_object(session, 'buildIndexWorkflow')
-    flow.load_cache(session, db)
-    baseDocFac = db.get_object(session, 'baseDocumentFactory')
-    if not args.data:
-        # Load with configured defaults
-        lgr.log_info(session,
-                     'Loading files from {0}...'.format(baseDocFac.dataPath)
-                     )
-        baseDocFac.load(session)
-        flow.process(session, baseDocFac)
-        (mins, secs) = divmod(time.time() - start, 60)
-        (hours, mins) = divmod(mins, 60)
-        lgr.log_info(session, 
-                     ('Loading, Indexing complete ({0:.0f}h {1:.0f}m {2:.0f}s)'
-                      ''.format(hours, mins, secs))
-                     )
-    else:
-        for data in args.data:
-            lgr.log_info(session,
-                         'Loading files from {0}...'.format(data)
-                         )
-            baseDocFac.load(session, data)
-            flow.process(session, baseDocFac)
-            (mins, secs) = divmod(time.time() - start, 60)
-            (hours, mins) = divmod(mins, 60)
-            lgr.log_info(session, 
-                     ('Loading, Indexing complete ({0:.0f}h {1:.0f}m {2:.0f}s)'
-                      ''.format(hours, mins, secs))
-                     )
-            # Reset timer
-            start = time.time()
-    return 0
-
-
-def index(args):
-    """Index pre-loaded EAD records."""
-    global session, db, lgr
-    lgr.log_info(session, "Indexing pre-loaded records...")
-    start = time.time()
-    if not db.indexes:
-        db._cacheIndexes(session)
-    for idx in db.indexes.itervalues():
-        if not idx.get_setting(session, 'noUnindexDefault', 0):
-            idx.clear(session)
-    recordStore = db.get_object(session, 'recordStore')
-    db.begin_indexing(session)
-    for rec in recordStore:
-        try:
-            db.index_record(session, rec)
-        except UnicodeDecodeError:
-            lgr.log_error(session, 
-                          rec.id.ljust(40) + ' [ERROR] - Some indexes not built; non unicode characters')
-        else:
-            lgr.log_info(session, 
-                         rec.id.ljust(40) + ' [OK]')
-        del rec
-     
-    db.commit_indexing(session)
-    db.commit_metadata(session)
+    storeIterator = _get_storeIterator(args)
+    # Now iterate over the selected stores
+    for contributorStore in storeIterator:
+        contributorId = contributorStore.id[:-len('DocumentStore')]
+        wf = db.get_object(session, 'loadWorkflow')
+        wf.process(session, contributorStore)
+        session.logger.log_info(session,
+                     "Documents for {0} have been loaded"
+                     "".format(contributorId)
+        )
     (mins, secs) = divmod(time.time() - start, 60)
     (hours, mins) = divmod(mins, 60)
-    lgr.log_info(session, 
-                 'Indexing complete ({0:.0f}h {1:.0f}m {2:.0f}s)'.format(hours, 
-                                                             mins, 
-                                                             secs)
+    session.logger.log_info(session,
+                 ('Loading, Indexing complete ({0:.0f}h {1:.0f}m {2:.0f}s)'
+                  ''.format(hours, mins, secs))
                  )
     return 0
 
 
-def components(args):
-    """Load and index components from loaded EAD records."""
-    global session, lgr, db, recordStore
-    lgr.log_info(session, 'Loading and indexing components...')
+def load_components(args):
+    """Load components for the named contributor(s).
+
+    Load the Documents for the named contributor(s) into the internal
+    Component RecordStore.
+    """
+    global session, db
+    storeIterator = _get_storeIterator(args)
+    session.logger.log_info(session, 'Loading and indexing components...')
     start = time.time()
-    compFlow = db.get_object(session, 'buildAllComponentWorkflow')
-    compFlow.load_cache(session, db)
-    recordStore = db.get_object(session, 'recordStore')
-    compFlow.process(session, recordStore)
+    storeIterator = _get_storeIterator(args)
+    for contributorStore in storeIterator:
+        contributorId = contributorStore.id[:-len('DocumentStore')]
+        wf = db.get_object(session, 'loadAllComponentsWorkflow')
+        wf.process(session, contributorStore)
+        session.logger.log_info(session,
+                     "Documents for {0} have been loaded"
+                     "".format(contributorId)
+        )
     (mins, secs) = divmod(time.time() - start, 60)
     (hours, mins) = divmod(mins, 60)
-    lgr.log_info(session, 
-                 'Components loaded and indexed ({0:.0f}h {1:.0f}m {2:.0f}s)'.format(hours, 
-                                                                         mins, 
-                                                                         secs)
+    session.logger.log_info(session,
+                 'Components loaded and indexed ({0:.0f}h {1:.0f}m {2:.0f}s)'
+                 ''.format(hours, mins, secs)
                  )
     return 0
-
-
-def index_components(args):
-    """Index pre-loaded component records."""
-    global lgr, session, db
-    lgr.log_info(session, "Indexing components...")
-    start = time.time()
-    db.begin_indexing(session)
-    parent = ''
-    componentStore = db.get_object(session, 'componentStore')
-    for rec in componentStore:
-        try:
-            db.index_record(session, rec)
-        except UnicodeDecodeError:
-            lgr.log_error(session, 
-                          rec.id.ljust(40) + (' Some indexes not built; non '
-                          'unicode characters')
-                          )
-        else:
-            lgr.log_info(session, 
-                          rec.id.ljust(40) + ' [OK]')  
-        del rec
-            
-    db.commit_indexing(session)
-    db.commit_metadata(session)
-    (mins, secs) = divmod(time.time() - start, 60)
-    (hours, mins) = divmod(mins, 60)
-    lgr.log_info(session, 
-                 'Component Indexing complete ({0:.0f}h {1:.0f}m {2:.0f}s)'.format(hours, 
-                                                                       mins, 
-                                                                       secs)
-                 )
-    return 0
-
-
-def clusters(args):
-    """Load and index subject clusters."""
-    global session, db, lgr
-    lgr.log_info(session, 'Accumulating subject clusters...')
-    start = time.time()
-    recordStore = db.get_object(session, 'recordStore')
-    clusDocFac = db.get_object(session, 'clusterDocumentFactory')
-    for rec in recordStore:
-        clusDocFac.load(session, rec)
-    
-    session.database = '{0}_cluster'.format(session.database)
-    clusDb = server.get_object(session, session.database)
-    clusDb.clear_indexes(session)
-    clusFlow = clusDb.get_object(session, 'buildClusterWorkflow')
-    clusFlow.process(session, clusDocFac)
-    (mins, secs) = divmod(time.time() - start, 60)
-    (hours, mins) = divmod(mins, 60)
-    lgr.log_info(session, 
-                 'Subject Clustering complete ({0:.0f}h {1:.0f}m {2:.0f}s)'.format(hours, 
-                                                                       mins, 
-                                                                       secs)
-                 )
-    # return session.database to the default (finding aid) DB
-    session.database = db.id
-    return 0
-
-
-def _conditional_load(args):
-    # Check arguments and call necessary load methods
-    if args.all:
-        # if exclusive --all option
-        # sum return values - should all return 0
-        retval = sum([load(args),
-                      components(args),
-                      clusters(args)
-                     ])
-        return retval
-    
-    # Check individual load args
-    retval = 0
-    if args.load:
-        retval += load(args)
-    elif args.index:
-        retval += index(args)
-    
-    # Components
-    if args.components:
-        retval += components(args)
-    elif args.index_components:
-        retval += index_components(args)
-    
-    # Subject clusters    
-    if args.clusters:
-        retval += clusters(args)
-        
-    return retval
 
 
 def main(argv=None):
-    global argparser, lockfilepath, lgr
-    global session, server, db, lgr
+    global argparser
+    global session, server, db
     if argv is None:
         args = argparser.parse_args()
     else:
         args = argparser.parse_args(argv)
-
-    session = Session()
-    server = SimpleServer(session, args.serverconfig)
-    if args.database is None:
-        try:
-            dbid = identify_database(session, os.getcwd())
-        except EnvironmentError as e:
-            server.log_critical(session, e.message)
-            return 1
-        server.log_debug(
-            session, 
-            "database identifier not specified, discovered: {0}".format(dbid))
-    else:
-        dbid = args.database
-        
     try:
-        db = server.get_object(session, dbid)
-    except ObjectDoesNotExistException:
-        msg = """Cheshire3 database {0} does not exist.
-Please provide a different database identifier using the --database option.
-""".format(dbid)
-        server.log_critical(session, msg)
-        return 2
-    else:
-        lgr = db.get_path(session, 'defaultLogger')
-        pass
+        session, server, db = getCheshire3Env(args)
+    except (EnvironmentError, ObjectDoesNotExistException):
+        return 1
+
+    # Set default log level to INFO
+    session.logger.minLevel = 20
 
     mp = db.get_path(session, 'metadataPath')
     lock = FileLock(mp)
@@ -334,19 +196,32 @@ Please provide a different database identifier using the --database option.
                "message and you are sure no one is reindexing the database "
                "please contact the archives hub team for advice."
                )
-        lgr.log_critical(session, msg)
+        session.logger.log_critical(session, msg)
         return 1
     try:
-        _conditional_load(args)
+        if args.mode == "main":
+            # Load only collection-level
+            return load(args)
+        elif args.mode == "components":
+            # Load only components
+            return load_components(args)
+        else:
+            # Load collection-level and components
+            return int(any([load(args),
+                            load_components(args)
+                            ])
+                       )
     finally:
         lock.release()
-    
-    
+
+
 # Init OptionParser
 docbits = __doc__.split('\n\n')
 argparser = LoadArgumentParser(conflict_handler='resolve',
-                              description=docbits[0]
+                              description=docbits[0],
+                              epilog=docbits[-1]
                               )
+
 
 if __name__ == '__main__':
     sys.exit(main())

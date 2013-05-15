@@ -1,11 +1,12 @@
-
 <config type="database" id="db_ead_cluster">
 
-    <!-- 
-	This file was produced, and released as part of Cheshire for Archives v3.x.
-	Copyright &#169; 2005-2009 the University of Liverpool
+    <!--
+    Configuration for Subject Cluster Database.
+    
+    This file was produced, and released as part of Cheshire for Archives v3.x.
+    Copyright &#169; 2005-2013 the University of Liverpool 
     -->
-	
+    
     <objectType>cheshire3.database.SimpleDatabase</objectType>
 
     <options>
@@ -14,7 +15,7 @@
     </options>
 
     <paths>
-        <path type="defaultPath">~/cheshire3-archives/dbs/ead/cluster</path>
+        <path type="defaultPath">~/archiveshub/dbs/ead/cluster</path>
         <path type="metadataPath">stores/metadata.bdb</path>
         <path type="indexStoreList">eadClusterIndexStore</path>
         <object type="recordStore" ref="eadClusterStore"/>
@@ -38,16 +39,6 @@
       </paths>
     </subConfig>
 
-<!--    <subConfig type="documentFactory" id="clusterDocumentFactory">-->
-<!--        <objectType>cheshire3.documentFactory.SimpleDocumentFactory</objectType>-->
-<!--        <options>-->
-<!--            <default type="data">tempCluster.data</default>-->
-<!--            <default type="cache">0</default>-->
-<!--            <default type="format">cluster</default>-->
-<!--            <default type="codec">utf-8</default>-->
-<!--        </options>-->
-<!--    </subConfig>-->
-    
     <!-- recordStores -->
     <subConfig type="recordStore" id="eadClusterStore">
         <objectType>cheshire3.recordStore.BdbRecordStore</objectType>

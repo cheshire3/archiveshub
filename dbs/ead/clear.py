@@ -7,13 +7,9 @@ import time
 
 from lockfile import FileLock
 
-from cheshire3.baseObjects import Session
 from cheshire3.exceptions import ObjectDoesNotExistException
-from cheshire3.server import SimpleServer
 
-from cheshire3.commands.cmd_utils import identify_database
-
-from archiveshub.commands.utils import BaseArgumentParser
+from archiveshub.commands.utils import BaseArgumentParser, getCheshire3Env
 
 
 class ClearArgumentParser(BaseArgumentParser):
@@ -25,39 +21,29 @@ class ClearArgumentParser(BaseArgumentParser):
                           type=str, action='store', dest='database',
                           default=None, metavar='DATABASE',
                           help="identifier of Cheshire3 database")
-        self.add_argument("-a", "--all", 
-                          action="store_true", dest="all",
-                          default=False, 
-                          help=("clear entire Cheshire3 for Archives"
-                                "system (i.e. same as --main --clusters.)"
-                                " Excludes all other operations.")
-                          )
-        self.add_argument("-m", "--main",
-                          action="store_true", dest="main",
-                          default=False,
-                          help="clear database of EAD documents and components"
-                          )
-        self.add_argument("-s", "--subjects", 
-                          action="store_true", dest="clusters",
-                          default=False, 
-                          help="clear subject clusters"
-                          )
+#        self.add_argument("-a", "--all", 
+#                          action="store_true", dest="all",
+#                          default=False, 
+#                          help=("clear entire Cheshire3 for Archives"
+#                                "system (i.e. same as --main --clusters.)"
+#                                " Excludes all other operations.")
+#                          )
+#        self.add_argument("-m", "--main",
+#                          action="store_true", dest="main",
+#                          default=False,
+#                          help="clear database of EAD documents and components"
+#                          )
 
 
-def clear(args):
-    global session, db, lgr
-    lgr.log_info(session,
-                 "Clearing database of EAD documents and components..."
-                 )
+def clear_stores(args):
+    "Clear internal data stores."
+    global session, db
+    lgr = session.logger
+    lgr.log_info(
+        session,
+        "Clearing database of EAD documents and components..."
+    )
     start = time.time()
-    db.begin_indexing(session)
-    if not db.indexes:
-        db._cacheIndexes(session)
-    for idx in db.indexes.itervalues():
-        if not idx.get_setting(session, 'noUnindexDefault', 0):
-            idx.clear(session)
-    db.commit_indexing(session)
-    db.commit_metadata(session)
     # Clear recordStore
     recordStore = db.get_object(session, 'recordStore')
     recordStore.clear(session)
@@ -71,13 +57,38 @@ def clear(args):
                                                                 mins,
                                                                 secs)
                  )
+    return 0
+
+
+def clear_indexes(args):
+    "Clear indexes."
+    global session, db
+    lgr = session.logger
+    lgr.log_info(session, 'Clearing indexes...')
+    start = time.time()
+    db.begin_indexing(session)
+    if not db.indexes:
+        db._cacheIndexes(session)
+    for idx in db.indexes.itervalues():
+        if not idx.get_setting(session, 'noUnindexDefault', 0):
+            idx.clear(session)
+    db.commit_indexing(session)
+    db.commit_metadata(session)
+    (mins, secs) = divmod(time.time() - start, 60)
+    (hours, mins) = divmod(mins, 60)
+    lgr.log_info(
+        session, 
+        'Finished ({0:.0f}h {1:.0f}m {2:.0f}s)'.format(hours, mins, secs)
+    )
     # Clear resultSetStore - no longer valid if indexes change
     return clear_resultSets(args)
 
 
 def clear_clusters(args):
-    global session, db, lgr
-    lgr.log_info(session, 'Clearing subject clusters...')
+    "Clear subject finder."
+    global session, db
+    lgr = session.logger
+    lgr.log_info(session, 'Clearing subject finder...')
     start = time.time()
     session.database = '{0}_cluster'.format(session.database)
     clusDb = server.get_object(session, session.database)
@@ -98,7 +109,9 @@ def clear_clusters(args):
 
 
 def clear_resultSets(args):
-    global session, db, lgr
+    "Clear stored ResultSets."
+    global session, db
+    lgr = session.logger
     lgr.log_info(session,
                  "Clearing stored resultSets..."
                  )
@@ -115,61 +128,18 @@ def clear_resultSets(args):
     return 0
 
 
-def _conditional_clear(args):
-    # Check arguments and call necessary load methods
-    if args.all:
-        # if exclusive --all option
-        # sum return values - should all return 0
-        retval = sum([clear(args),
-                      clear_clusters(args)
-                     ])
-        return retval
-    
-    # Check individual load args
-    retval = 0
-    if args.main:
-        retval += clear(args)
-    # Subject clusters    
-    if args.clusters:
-        retval += clear_clusters(args)
-        
-    return retval
-
-
 def main(argv=None):
-    global argparser, lockfilepath, lgr
-    global session, server, db, lgr
+    global argparser, lockfilepath
+    global session, server, db
     if argv is None:
         args = argparser.parse_args()
     else:
         args = argparser.parse_args(argv)
-
-    session = Session()
-    server = SimpleServer(session, args.serverconfig)
-    if args.database is None:
-        try:
-            dbid = identify_database(session, os.getcwd())
-        except EnvironmentError as e:
-            server.log_critical(session, e.message)
-            return 1
-        server.log_debug(
-            session, 
-            "database identifier not specified, discovered: {0}".format(dbid))
-    else:
-        dbid = args.database
-        
     try:
-        db = server.get_object(session, dbid)
-    except ObjectDoesNotExistException:
-        msg = """Cheshire3 database {0} does not exist.
-Please provide a different database identifier using the --database option.
-""".format(dbid)
-        server.log_critical(session, msg)
-        return 2
-    else:
-        lgr = db.get_path(session, 'defaultLogger')
-        pass
-
+        session, server, db = getCheshire3Env(args)
+    except (EnvironmentError, ObjectDoesNotExistException):
+        return 1
+    lgr = session.logger
     mp = db.get_path(session, 'metadataPath')
     lock = FileLock(mp)
     try:
@@ -184,7 +154,7 @@ Please provide a different database identifier using the --database option.
         lgr.log_critical(session, msg)
         return 1
     try:
-        _conditional_clear(args)
+        return args.func(args)
     finally:
         lock.release()
 
@@ -194,6 +164,33 @@ docbits = __doc__.split('\n\n')
 argparser = ClearArgumentParser(conflict_handler='resolve',
                                description=docbits[0]
                                )
+# Subparsers for commands
+subparsers = argparser.add_subparsers(title='Commands')
+# clear.py main
+parser_main = subparsers.add_parser(
+    "stores",
+    help="clear internal stores of EAD documents and components"
+)
+parser_main.set_defaults(func=clear_stores)
+# clear.py index
+parser_index = subparsers.add_parser(
+    "indexes",
+    help="clear indexes"
+)
+parser_index.set_defaults(func=clear_indexes)
+# clear.py subject
+parser_subject = subparsers.add_parser(
+    "subjects", 
+    help="clear subject finder"
+)
+parser_subject.set_defaults(func=clear_clusters)
+# clear.py results
+parser_rss = subparsers.add_parser(
+    "results", 
+    help="clear stored ResultSets"
+)
+parser_rss.set_defaults(func=clear_resultSets)
+
 
 if __name__ == '__main__':
     sys.exit(main())

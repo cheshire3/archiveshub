@@ -1,0 +1,4 @@
+# index files
+*.index
+*.index_*
+recordIdentifiers*.bdb
