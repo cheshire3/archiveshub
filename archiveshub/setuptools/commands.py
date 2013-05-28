@@ -128,7 +128,7 @@ class c3_command(Command):
             with open(path + '.tmpl', 'r') as fh:
                 config = fh.read()
             # Make replacements
-            config = re.sub('type="defaultPath">~/cheshire3-archives/(.*?)</',
+            config = re.sub('type="defaultPath">~/archiveshub/(.*?)</',
                             r'type="defaultPath">{0}/\1</'.format(distropath),
                             config
                             )

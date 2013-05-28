@@ -31,7 +31,7 @@
     </xsl:template>
 
     <!-- for complete EAD instances -->
-    <xsl:template match="/ead">
+    <xsl:template match="ead">
         <div id="record-head">
             <!-- Core information about described material from <did> -->
             <xsl:apply-templates select="./archdesc/did" />
@@ -74,7 +74,7 @@
     </xsl:template>
 
     <!-- for component records -->
-    <xsl:template match="/c3:component|/c3component">
+    <xsl:template match="c3:component">
         <!-- links to higher levels -->
         <xsl:text>LINKTOPARENT</xsl:text>
         <div id="record-head">

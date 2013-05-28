@@ -36,7 +36,7 @@
         </xsl:if>
     </xsl:template>
 
-    <xsl:template match="/ead">
+    <xsl:template match="ead">
         <div id="record-head">
             <!-- Core information about described material from <did> -->
             <xsl:apply-templates select="./archdesc/did" />
@@ -57,7 +57,7 @@
     </xsl:template>
 
     <!-- for component records -->
-    <xsl:template match="/c3:component|/c3component">
+    <xsl:template match="c3:component">
         <!-- link to collection level -->
         <xsl:text>LINKTOPARENT</xsl:text>
         <div id="record-head">

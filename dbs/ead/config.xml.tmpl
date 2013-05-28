@@ -19,7 +19,7 @@
 	</options>
 
 	<paths>
-		<path type="defaultPath">~/cheshire3-archives/dbs/ead</path>
+		<path type="defaultPath">~/archiveshub/dbs/ead</path>
 		<path type="metadataPath">stores/metadata.bdb</path>
 		<path type="indexStoreList">indexStore</path>
 		<object type="recordStore" ref="recordStore" />
@@ -28,6 +28,8 @@
 
 	<subConfigs>
 		<path type="includeConfigs">configs.d</path>
+		<!-- Store for DocumentStores (one DocumentStore per contributor) -->
+		<path type="includeConfigs" ref="documentStoreConfigStore"/>
 	</subConfigs>
 
 	<subConfigs>
@@ -36,21 +38,21 @@
 		<subConfig type="protocolMap" id="eadCqlProtocolMap">
 			<objectType>cheshire3.protocolMap.CQLProtocolMap</objectType>
 			<paths>
-				<path type="zeerexPath">zeerex_srw.xml</path>
+				<path type="zeerexPath">configs.d/zeerex_srw.xml</path>
 			</paths>
 		</subConfig>
 
 		<subConfig type="protocolMap" id="eadZProtocolMap">
 			<objectType>cheshire3.web.protocolMap.Z3950ProtocolMap</objectType>
 			<paths>
-				<path type="zeerexPath">zeerex_z3950.xml</path>
+				<path type="zeerexPath">configs.d/zeerex_z3950.xml</path>
 			</paths>
 		</subConfig>
 
 		<subConfig type="protocolMap" id="eadOAIProtocolMap">
 			<objectType>cheshire3.web.protocolMap.OAIPMHProtocolMap</objectType>
 			<paths>
-				<path type="zeerexPath">zeerex_oai.xml</path>
+				<path type="zeerexPath">configs.d/zeerex_oai.xml</path>
 			</paths>
 		</subConfig>
 
