@@ -62,7 +62,10 @@
     
     <div class="rsMod">
         <div class="displaying">
+            Displaying
             ${displaying(resultSet, sortBy, maximumRecords, startRecord)}
+            of <strong>${len(resultSet)}</strong>
+            hits.
         </div>
         % if len(resultSet) > 20:
             <div class="maxRecSel">
