@@ -23,9 +23,10 @@ optional arguments:
   -d DATABASE, --database DATABASE
                         identifier of Cheshire3 database
   -m, --main, --no-components
-                        load only collection-level descriptions (default)
+                        load only collection-level descriptions
   -c, --with-components
                         load collections-level descriptions and components
+                        (default)
   -x, --no-descriptions, --components-only
                         load only components
 
