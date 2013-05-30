@@ -55,7 +55,7 @@ web, then please have a look at `Cheshire3 for Archives`_ first.
 Both the `Archives Hub`_ and `Cheshire3 for Archives`_ feature:
 
 *  Full document and component indexing to item level
-*  Customisable search and display web-interface provided by WSGI compliant
+*  Customisable search and display web-interface provided by WSGI_ compliant
    applications, Mako_ templating and XSLT_
 *  Faceted result browsing
 *  Subject clustering / Entry Level Vocabulary
@@ -131,7 +131,7 @@ Roadmap
 **Version 3.2 – June 2013**
 
 * Centralized architecture, centred around the version-controlled data
-* Persistent Unique Identifiers (and therefore URIs) based on ``<unitid>``s
+* Persistent Unique Identifiers (and therefore URIs) based on ``<unitid>``
 * WSGI_ Applications for Search and Display
 * Search within descriptions
 * Editable configurations in standard INI-like format
