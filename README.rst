@@ -113,13 +113,15 @@ time it has not been tested on any Microsoft Windows O/S.
 Documentation
 -------------
 
+HTML documentation can be generate using the command::
+
+    python setup.py build_sphinx
+
+
+The generated HTML documentation can then be found in docs/build/html/.
+
 All scripts intended for use by administrative users should return help when 
 passed the `--help` option.
-
-Further documentation for developers can be found in the docs/ folder of the  
-distribution. Before starting work on any of the sub-systems (search, display,
-admin, editor etc.) developers should read any relevant documentation in the 
-docs/ directory.
 
 
 Roadmap
