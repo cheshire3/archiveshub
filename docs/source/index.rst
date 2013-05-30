@@ -12,6 +12,7 @@ Contents:
    :maxdepth: 2
 
    build
+   license
 
 Indices and tables
 ==================

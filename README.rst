@@ -55,10 +55,11 @@ web, then please have a look at `Cheshire3 for Archives`_ first.
 Both the `Archives Hub`_ and `Cheshire3 for Archives`_ feature:
 
 *  Full document and component indexing to item level
-*  Customisable search and display web-interface
+*  Customisable search and display web-interface provided by WSGI compliant
+   applications, Mako_ templating and XSLT_
 *  Faceted result browsing
 *  Subject clustering / Entry Level Vocabulary
-*  SRU and OAI-PMH APIs
+*  `SRU`_ and `OAI-PMH`_ APIs
 
 
 Authors
@@ -427,3 +428,7 @@ It is possible to disable the OAI-PMH Interface:
 .. _`EAD Schema`: http://www.loc.gov/ead/eadschema.html
 .. _`EAC-CPF`: http://eac.staatsbibliothek-berlin.de/
 .. _`git-flow`: https://github.com/nvie/gitflow
+.. _`SRU`: http://www.loc.gov/standards/sru/
+.. _`OAI-PMH`: http://www.openarchives.org/pmh/
+.. _`Mako`: http://www.makotemplates.org/
+.. _`XSLT`: http://www.w3.org/TR/xslt
