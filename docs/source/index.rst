@@ -11,8 +11,10 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+   install
    build
    license
+
 
 About archiveshub
 =================

@@ -1,5 +1,5 @@
 
-Building the Archives Hub Database
+Build the Archives Hub Database(s)
 ==================================
 
 Managing the Archives Hub EAD database is carried out using Python scripts
