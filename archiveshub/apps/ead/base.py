@@ -87,10 +87,6 @@ class EADWsgiApplication(object):
         # Set the base URL of this family of apps
         base = '/search'
         self.defaultContext['BASE'] = base
-        self.config.set('icons',
-                        'base-url',
-                        self.request.relative_url('../img').rstrip(u'/')
-                        )
         # Set the URL of the data resolver
         dataUrl = self.request.relative_url('../data')
         self.defaultContext['DATAURL'] = dataUrl.rstrip(u'/')
@@ -484,7 +480,7 @@ repository_link = http://archiveshub.ac.uk
 repository_logo = /img/ah-logo.png
 
 [icons]
-base-url = /img
+base-url = /images/search
 forward-url = %(base-url)s/forward.png
 fast-forward-url = %(base-url)s/fforward.png
 rewind-url = %(base-url)s/back.png
