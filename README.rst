@@ -55,10 +55,11 @@ web, then please have a look at `Cheshire3 for Archives`_ first.
 Both the `Archives Hub`_ and `Cheshire3 for Archives`_ feature:
 
 *  Full document and component indexing to item level
-*  Customisable search and display web-interface
+*  Customisable search and display web-interface provided by WSGI_ compliant
+   applications, Mako_ templating and XSLT_
 *  Faceted result browsing
 *  Subject clustering / Entry Level Vocabulary
-*  SRU and OAI-PMH APIs
+*  `SRU`_ and `OAI-PMH`_ APIs
 
 
 Authors
@@ -113,13 +114,15 @@ time it has not been tested on any Microsoft Windows O/S.
 Documentation
 -------------
 
+HTML documentation can be generate using the command::
+
+    python setup.py build_sphinx
+
+
+The generated HTML documentation can then be found in docs/build/html/.
+
 All scripts intended for use by administrative users should return help when 
 passed the `--help` option.
-
-Further documentation for developers can be found in the docs/ folder of the  
-distribution. Before starting work on any of the sub-systems (search, display,
-admin, editor etc.) developers should read any relevant documentation in the 
-docs/ directory.
 
 
 Roadmap
@@ -128,7 +131,7 @@ Roadmap
 **Version 3.2 – June 2013**
 
 * Centralized architecture, centred around the version-controlled data
-* Persistent Unique Identifiers (and therefore URIs) based on ``<unitid>``s
+* Persistent Unique Identifiers (and therefore URIs) based on ``<unitid>``
 * WSGI_ Applications for Search and Display
 * Search within descriptions
 * Editable configurations in standard INI-like format
@@ -425,3 +428,7 @@ It is possible to disable the OAI-PMH Interface:
 .. _`EAD Schema`: http://www.loc.gov/ead/eadschema.html
 .. _`EAC-CPF`: http://eac.staatsbibliothek-berlin.de/
 .. _`git-flow`: https://github.com/nvie/gitflow
+.. _`SRU`: http://www.loc.gov/standards/sru/
+.. _`OAI-PMH`: http://www.openarchives.org/pmh/
+.. _`Mako`: http://www.makotemplates.org/
+.. _`XSLT`: http://www.w3.org/TR/xslt

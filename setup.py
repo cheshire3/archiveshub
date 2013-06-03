@@ -42,6 +42,9 @@ setup(
     packages=[],
     requires=['cheshire3'],
     install_requires=_install_requires,
+    extras_require={
+          'docs': ["sphinx"],
+    },
     entry_points={
         'console_scripts': [
             'ah-serve = archiveshub.commands.serve:main'
