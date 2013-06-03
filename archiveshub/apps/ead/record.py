@@ -314,9 +314,9 @@ class EADRecordWsgiApplication(EADWsgiApplication):
         # Scan the rec.identifier index
         # Return a display appropriate for the requested mimetype
         collections = listCollections(self.session)
-        if mimetype.endswith('/xml'):
+        if str(mimetype).endswith('/xml'):
             raise NotImplementedError()
-        elif mimetype == 'text/plain':
+        elif str(mimetype) == 'text/plain':
             raise NotImplementedError()
         else:
             return self._render_template('dataIndex.html',
