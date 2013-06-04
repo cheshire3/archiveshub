@@ -480,15 +480,16 @@ repository_link = http://archiveshub.ac.uk
 repository_logo = /img/ah-logo.png
 
 [icons]
-base-url = /images/search
-forward-url = %(base-url)s/forward.png
-fast-forward-url = %(base-url)s/fforward.png
-rewind-url = %(base-url)s/back.png
-fast-rewind-url = %(base-url)s/fback.png
-plus-url = %(base-url)s/form_add_row.png
-what-url = %(base-url)s/whatisthis.png
-folder-open-url = %(base-url)s/folderOpen.png
-folder-closed-url = %(base-url)s/folderClosed.png
+base-url = /images
+forward-url = %(base-url)s/search/forward.png
+fast-forward-url = %(base-url)s/search/fforward.png
+rewind-url = %(base-url)s/search/back.png
+fast-rewind-url = %(base-url)s/search/fback.png
+plus-url = %(base-url)s/structure/form_add_row.png
+what-url = %(base-url)s/structure/form_tip.png
+folder-open-url = %(base-url)s/search/folderOpen.png
+folder-closed-url = %(base-url)s/search/folderClosed.png
+no-hits-url = %(base-url)s/search/no_hits.png
 
 [cache]
 # This section contains configuration for where to cache HTML copies of
