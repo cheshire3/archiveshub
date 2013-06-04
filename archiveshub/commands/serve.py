@@ -5,11 +5,12 @@ web application for development and demonstration purposes.
 
 The current implementation uses CherryPy. 
 """
+import cherrypy
 import sys
 import socket
 import signal
 
-from cherrypy.wsgiserver import CherryPyWSGIServer, WSGIPathInfoDispatcher
+from os.path import expanduser
 
 from cheshire3.server import SimpleServer
 from cheshire3.session import Session
@@ -39,26 +40,35 @@ def main(argv=None):
     # Init OAI-PMH App
     dbs, oaipmh_configs = get_databasesAndConfigs(c3_session, c3_server)
     oaipmh_app = OAIPMHWsgiApplication(c3_session, oaipmh_configs, dbs)
-    dispatcher = WSGIPathInfoDispatcher([
-        ('/api/sru', sru_app),
-        ('/api/oaipmh/2.0', oaipmh_app),
-        ('/ead/data', ead_data_app),
-        ('/ead', ead_search_app)
-    ])
-    wsgi_server = CherryPyWSGIServer((args.hostname, args.port),
-                                     dispatcher,
-                                     server_name="Archives Hub")
+    # Prepare CherryPy Engine
+    cherrypy.config.update({'server.socket_host': args.hostname,
+                            'server.socket_port': args.port,
+                            'tools.trailing_slash.on': True,
+                            'tools.trailing_slash.missing': True,
+                            'tools.trailing_slash.extra': True})
+    cherrypy.tree.graft(sru_app, '/api/sru')
+    cherrypy.tree.graft(oaipmh_app, '/api/oaipmh/2.0')
+    cherrypy.tree.graft(ead_data_app, '/data')
+    cherrypy.tree.graft(ead_search_app, '/search')
+    config = {
+        '/': {
+            'tools.staticdir.on': True,
+            'tools.staticdir.dir': expanduser('~/mercurial/archiveshub/htdocs'),
+            'tools.staticdir.index': 'index.html'
+        }
+    }
+    cherrypy.tree.mount(None, '/', config=config)
     def signal_handler(signal, frame):
-        wsgi_server.stop()
+        cherrypy.engine.stop()
         sys.exit(0)
     signal.signal(signal.SIGINT, signal_handler)
-    sys.stdout.write("Starting CherryPy HTTP server for {0}"
-                     ".\n".format(wsgi_server.server_name))
+    sys.stdout.write("Starting CherryPy HTTP server for ArchivesHub.\n")
     sys.stdout.write("If running in foreground Ctrl-C will stop the server.\n")
     sys.stdout.write("You will be able to access the applications from:\n")
     sys.stdout.write("http://{0}:{1}\n""".format(args.hostname, args.port))
     sys.stdout.flush()
-    wsgi_server.start()
+    cherrypy.engine.start()
+    cherrypy.engine.block()
     
     
 c3_session = None

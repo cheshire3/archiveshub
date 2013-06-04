@@ -1,0 +1,23 @@
+<%inherit file="base.html"/>
+<div id="Main" class="cF">
+    <div id="Navigation">
+        <ul>
+            <li><a href="/" class="level-1">Home</a></li>
+            <li><a href="/about/" class="level-1">About Us</a></li>
+            <li><a href="/researchers/" class="level-1">Researchers</a></li>
+
+            <li><a href="/features/" class="level-1">Features</a></li>
+            <li><a href="/faq/" class="level-1">FAQ</a></li>
+            <li><a href="/archivists/" class="level-1">Archivists</a></li>
+            <!-- <li><a href="/datacreation/" class="level-1">Data Creation</a></li> -->
+      
+
+        </ul>
+    </div><!-- /#Navigation -->
+    <div id="Content">
+        <div id="single">
+            ${next.body()}
+        </div>
+    </div>
+</div> <!-- /Main -->
+<%include file="footer.html"/>

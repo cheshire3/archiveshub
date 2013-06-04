@@ -4,6 +4,7 @@ import os
 import sys
 import mimetypes
 import re
+import json
 
 from ConfigParser import SafeConfigParser
 from hashlib import sha1
@@ -26,7 +27,10 @@ import cheshire3.exceptions as c3errors
 from cheshire3.internal import cheshire3Root
 from cheshire3.server import SimpleServer
 from cheshire3.utils import flattenTexts
+from cheshire3.web.sru_utils import fetch_data
 from cheshire3.web.www_utils import html_encode
+
+
 
 
 class EADWsgiApplication(object):
@@ -55,11 +59,11 @@ class EADWsgiApplication(object):
                                                        'eadResultSetStore')
         template_dir = resource_filename(
             Requirement.parse('archiveshub'),
-            'www/apps/ead/tmpl'
+            'www/ead/tmpl'
         )
         mod_dir = os.path.join(gettempdir(),
                                'mako_modules',
-                               'cheshire3archives',
+                               'archiveshub',
                                'apps',
                                'ead'
                                )
@@ -85,13 +89,11 @@ class EADWsgiApplication(object):
         script = req.script_name
         self.defaultContext['SCRIPT'] = script
         # Set the base URL of this family of apps
-        base = script
+        base = '/search'
         self.defaultContext['BASE'] = base
-        self.config.set('icons',
-                        'base-url',
-                        req.relative_url('img').rstrip(u'/'))
         # Set the URL of the data resolver
-        self.defaultContext['DATAURL'] = req.relative_url('data').rstrip(u'/')
+        dataUrl = self.request.relative_url('../data')
+        self.defaultContext['DATAURL'] = dataUrl.rstrip(u'/')
 
     def _get_params(self):
         # Parse request parameters into a single data structure
@@ -110,7 +112,7 @@ class EADWsgiApplication(object):
         try:
             content = resource_string(
                 Requirement.parse('archiveshub'),
-                'www/apps/ead/{0}'.format(path)             
+                'www/ead/{0}'.format(path)
             )
         except IOError:
             return []
@@ -332,6 +334,23 @@ class EADWsgiApplication(object):
 
 # Methods that could usefully be imported by Templates
 
+def emailFromArchonCode(code):
+    "Return the enquiry email address for this record's repository."
+    global contributorData
+    # Strip leading zeros
+    try:
+        code = unicode(int(code))
+    except ValueError:
+        # Not an integer!?
+        pass
+    for contributor in contributorData:
+        try:
+            if contributor[u'ids'][u'archon'] == code:
+                return contributor[u'contacts'][u'enquiries']
+        except KeyError:
+            pass
+
+
 def listContributors(session):
     "Return a list of Contributor Identifier, Contributor Name tuples."""
     # Get Database object
@@ -472,6 +491,16 @@ serv = SimpleServer(session, os.path.join(cheshire3Root,
                                           'serverConfig.xml'))
 db = serv.get_object(session, 'db_ead')
 
+# Fetch repository data, email contacts etc.
+try:
+    contributorData = json.loads(
+        fetch_data(
+            'http://archiveshub.ac.uk/contributorsmap/locations.json'
+        )
+    )
+except (TypeError, ValueError):
+    contributorData = []
+
 # App Configuration
 config = SafeConfigParser()
 # Default configuration
@@ -482,15 +511,16 @@ repository_link = http://archiveshub.ac.uk
 repository_logo = /img/ah-logo.png
 
 [icons]
-base-url = /img
-forward-url = %(base-url)s/forward.png
-fast-forward-url = %(base-url)s/fforward.png
-rewind-url = %(base-url)s/back.png
-fast-rewind-url = %(base-url)s/fback.png
-plus-url = %(base-url)s/form_add_row.png
-what-url = %(base-url)s/whatisthis.png
-folder-open-url = %(base-url)s/folderOpen.png
-folder-closed-url = %(base-url)s/folderClosed.png
+base-url = /images
+forward-url = %(base-url)s/search/forward.png
+fast-forward-url = %(base-url)s/search/fforward.png
+rewind-url = %(base-url)s/search/back.png
+fast-rewind-url = %(base-url)s/search/fback.png
+plus-url = %(base-url)s/structure/form_add_row.png
+what-url = %(base-url)s/structure/form_tip.png
+folder-open-url = %(base-url)s/search/folderOpen.png
+folder-closed-url = %(base-url)s/search/folderClosed.png
+no-hits-url = %(base-url)s/search/no_hits.png
 
 [cache]
 # This section contains configuration for where to cache HTML copies of
@@ -514,14 +544,14 @@ port = 25
 """.format(
    html_cache_path=resource_filename(
        Requirement.parse('archiveshub'),
-       'www/apps/ead/html'
+       'www/ead/html'
    )
 ))
 
 config.readfp(configDefaults, 'hard-coded')
 app_config_path = resource_filename(
     Requirement.parse('archiveshub'),
-    'www/apps/ead/ead.cfg'
+    'www/ead/ead.cfg'
 )
 config.read([app_config_path])
 
