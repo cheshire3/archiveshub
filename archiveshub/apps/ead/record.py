@@ -20,8 +20,9 @@ from cheshire3.exceptions import FileDoesNotExistException
 
 # Cheshire3 for Archives Imports
 from archiveshub.commands.utils import WSGIAppArgumentParser
-from archiveshub.apps.ead.base import EADWsgiApplication 
+from archiveshub.apps.ead.base import EADWsgiApplication
 from archiveshub.apps.ead.base import listCollections
+from archiveshub.apps.ead.base import dataFromRecordXPaths, emailFromArchonCode
 from archiveshub.apps.ead.base import config, session, db
 
 
@@ -215,6 +216,19 @@ class EADRecordWsgiApplication(EADWsgiApplication):
         else:
             # Transform the Record
             doc_uc = self._transformRecord(rec, 'htmlFullSplitTxr')
+            # Add in the enquiries email link
+            archon_code = dataFromRecordXPaths(
+                session,
+                rec,
+                ['/*/*/did/unitid/@repositorycode',
+                 '/ead/eadheader/eadid/@mainagencycode'
+                 ]
+            )
+            email_address = emailFromArchonCode(archon_code)
+            doc_uc = doc_uc.replace(
+                         u'contributor_{0}@example.com'.format(archon_code),
+                         email_address
+                     )
             # Parse HTML fragments
             divs = lxmlhtml.fragments_fromstring(doc_uc)
             # Get Table of Contents

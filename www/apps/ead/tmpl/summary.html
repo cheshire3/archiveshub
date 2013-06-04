@@ -1,7 +1,7 @@
 <%inherit file="searchResults.html"/>
 <%!
     # Imports
-    from archiveshub.apps.ead.base import backwalkComponentTitles
+    from archiveshub.apps.ead.base import backwalkComponentTitles, dataFromRecordXPaths, emailFromArchonCode
 
     # Over-ride global attributes
     leftcol_class = "search"
@@ -40,6 +40,18 @@
     % except IndexError:
         ## Collection level
     % endtry
-    
-    ${txr.process_record(session, rec).get_raw(session).decode('utf-8')}
+    <%
+    docstr = txr.process_record(session, rec).get_raw(session).decode('utf-8')
+    ## Add in the enquiries email
+    archon_code = dataFromRecordXPaths(
+        session,
+        rec,
+        ['/*/*/did/unitid/@repositorycode',
+         '/ead/eadheader/eadid/@mainagencycode'
+         ]
+    )
+    email_address = emailFromArchonCode(archon_code)
+    docstr = docstr.replace(u'contributor_{0}@example.com'.format(archon_code), email_address)
+    %>
+    ${docstr}
 </%block>

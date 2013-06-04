@@ -4,6 +4,7 @@ import os
 import sys
 import mimetypes
 import re
+import json
 
 from ConfigParser import SafeConfigParser
 from hashlib import sha1
@@ -26,7 +27,10 @@ import cheshire3.exceptions as c3errors
 from cheshire3.internal import cheshire3Root
 from cheshire3.server import SimpleServer
 from cheshire3.utils import flattenTexts
+from cheshire3.web.sru_utils import fetch_data
 from cheshire3.web.www_utils import html_encode
+
+
 
 
 class EADWsgiApplication(object):
@@ -330,6 +334,23 @@ class EADWsgiApplication(object):
 
 # Methods that could usefully be imported by Templates
 
+def emailFromArchonCode(code):
+    "Return the enquiry email address for this record's repository."
+    global contributorData
+    # Strip leading zeros
+    try:
+        code = unicode(int(code))
+    except ValueError:
+        # Not an integer!?
+        pass
+    for contributor in contributorData:
+        try:
+            if contributor[u'ids'][u'archon'] == code:
+                return contributor[u'contacts'][u'enquiries']
+        except KeyError:
+            pass
+
+
 def listContributors(session):
     "Return a list of Contributor Identifier, Contributor Name tuples."""
     # Get Database object
@@ -469,6 +490,16 @@ serv = SimpleServer(session, os.path.join(cheshire3Root,
                                           'configs',
                                           'serverConfig.xml'))
 db = serv.get_object(session, 'db_ead')
+
+# Fetch repository data, email contacts etc.
+try:
+    contributorData = json.loads(
+        fetch_data(
+            'http://archiveshub.ac.uk/contributorsmap/locations.json'
+        )
+    )
+except (TypeError, ValueError):
+    contributorData = []
 
 # App Configuration
 config = SafeConfigParser()
