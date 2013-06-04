@@ -62,12 +62,12 @@ def main(argv=None):
         cherrypy.engine.stop()
         sys.exit(0)
     signal.signal(signal.SIGINT, signal_handler)
+    cherrypy.engine.start()
     sys.stdout.write("Starting CherryPy HTTP server for ArchivesHub.\n")
     sys.stdout.write("If running in foreground Ctrl-C will stop the server.\n")
     sys.stdout.write("You will be able to access the applications from:\n")
     sys.stdout.write("http://{0}:{1}\n""".format(args.hostname, args.port))
     sys.stdout.flush()
-    cherrypy.engine.start()
     cherrypy.engine.block()
     
     
