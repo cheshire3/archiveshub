@@ -7,6 +7,7 @@ import smtplib
 import textwrap
 
 from wsgiref.util import application_uri
+from webob.exc import *
 # Email modules
 from email import Message, MIMEMultipart, MIMEText
 
@@ -44,12 +45,18 @@ class EADSearchWsgiApplication(EADWsgiApplication):
                 'index.html',
                 contributors=listContributors(session)
             )
-        elif operation in ['explore', 'help']:
+        elif operation in ['explore']:
             # Serve simple templated page
             session = self.session
             self.response.body = self._render_template(
                 '{0}.html'.format(operation)
             )
+        elif operation == 'help':
+            # Redirect to help pages
+            response = HTTPTemporaryRedirect(
+                location="http://archiveshub.ac.uk/searchhelp/"
+            )
+            return response(environ, start_response)
         else:
             try:
                 fn = getattr(self, operation)
