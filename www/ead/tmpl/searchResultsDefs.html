@@ -11,13 +11,13 @@
 </%def>
 
 <%def name="back_links(resultSet, sortBy, maximumRecords, startRecord)">
-    <a href="search.html?rsid=${resultSet.id|u}&amp;startRecord=1&amp;maximumRecords=${maximumRecords}${sortByString(sortBy)}#leftcol"
+    <a href="${SCRIPT}/search.html?rsid=${resultSet.id|u}&amp;startRecord=1&amp;maximumRecords=${maximumRecords}${sortByString(sortBy)}#leftcol"
       class="ajax">
         <button label="fast-rewind" class="rsNav">
             <img src="${config.get('icons', 'fast-rewind-url')}" alt="|&lt;&lt;">
         </button>
     </a>
-    <a href="search.html?rsid=${resultSet.id|u}&amp;startRecord=${max(startRecord - maximumRecords, 1)}&amp;maximumRecords=${maximumRecords}${sortByString(sortBy)}#leftcol"
+    <a href="${SCRIPT}/search.html?rsid=${resultSet.id|u}&amp;startRecord=${max(startRecord - maximumRecords, 1)}&amp;maximumRecords=${maximumRecords}${sortByString(sortBy)}#leftcol"
       class="ajax">
         <button label="rewind" class="rsNav">
             <img src="${config.get('icons', 'rewind-url')}" alt="&lt;&lt;">
@@ -26,13 +26,13 @@
 </%def>
 
 <%def name="forward_links(resultSet, sortBy, maximumRecords, startRecord)">
-    <a href="search.html?rsid=${resultSet.id|u}&amp;startRecord=${min(startRecord + maximumRecords, len(resultSet))}&amp;maximumRecords=${maximumRecords}${sortByString(sortBy)}#leftcol"
+    <a href="${SCRIPT}/search.html?rsid=${resultSet.id|u}&amp;startRecord=${min(startRecord + maximumRecords, len(resultSet))}&amp;maximumRecords=${maximumRecords}${sortByString(sortBy)}#leftcol"
       class="ajax">
         <button label="forward" class="rsNav">
             <img src="${config.get('icons', 'forward-url')}" alt="&gt;&gt;">
         </button>
     </a>
-    <a href="search.html?rsid=${resultSet.id|u}&amp;startRecord=${((len(resultSet) / maximumRecords) * maximumRecords) + 1}&amp;maximumRecords=${maximumRecords}${sortByString(sortBy)}#leftcol"
+    <a href="${SCRIPT}/search.html?rsid=${resultSet.id|u}&amp;startRecord=${((len(resultSet) / maximumRecords) * maximumRecords) + 1}&amp;maximumRecords=${maximumRecords}${sortByString(sortBy)}#leftcol"
       class="ajax">
         <button label="fast-forward" class="rsNav">
             <img src="${config.get('icons', 'fast-forward-url')}"
@@ -47,7 +47,7 @@
 </%def>
 
 <%def name="sortBySelect(resultSet, sortBy, maximumRecords, startRecord)">
-    <form action="search.html">
+    <form action="${SCRIPT}/search.html">
         <input type="hidden" name="rsid" value="${resultSet.id}"/>
         <!-- Respect specified maximumRecords -->
         <input type="hidden" name="maximumRecords" value="${maximumRecords}"/>
@@ -69,7 +69,7 @@
 
 <%def name="maximumRecordsSelectButton(resultSet, sortBy, maximumRecords, startRecord, label=None)">
     <a 
-        href="search.html?rsid=${resultSet.id|u}&amp;startRecord=${startRecord}&amp;maximumRecords=${maximumRecords}${sortByString(sortBy)}#leftcol"
+        href="${SCRIPT}/search.html?rsid=${resultSet.id|u}&amp;startRecord=${startRecord}&amp;maximumRecords=${maximumRecords}${sortByString(sortBy)}#leftcol"
         class="ajax maximumRecords">
         % if label is not None:
             <button label="${label}">${label}</button>
