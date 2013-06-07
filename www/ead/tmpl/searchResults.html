@@ -98,10 +98,10 @@
 
     <script type="text/javascript">
     $(document).ready(function() {
-        $('.facet').each(truncateList);
         $('select[name="sortBy"]').change(function() {
             $(this).closest("form").submit();
         });
+        $('.facet').each(truncateList);
     });
     </script>
     
