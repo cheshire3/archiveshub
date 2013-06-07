@@ -149,6 +149,8 @@
                 <!-- input type: Record -->
                 <object type="workflow" ref="assignDataIdentifierWorkflow" />
                 <!-- input is now identical to the Record stored in the RecordStore -->
+                <!-- put in recordStore for navigation from component to parent -->
+                <assign from="'recordStore'" to="input.recordStore"/>
                 <assign from="input.id" to="recid" />
                 <log level="info">"Loading components from record " + recid</log>
                 <object type="documentFactory" ref="componentDocumentFactory"
