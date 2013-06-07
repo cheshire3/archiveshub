@@ -40,7 +40,7 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         # Check operation and act accordingly
         if not operation or operation == 'index':
             self.response.body = self._render_template('index.html')
-        elif operation in ['explore']:
+        elif operation in ['explore', 'searchContributor']:
             # Serve simple templated page
             self.response.body = self._render_template(
                 '{0}.html'.format(operation)
