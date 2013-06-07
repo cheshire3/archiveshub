@@ -397,9 +397,12 @@
         <schema identifier="info:srw/schema/2/raw/ead-2002"
                 sort="true" retrieve="true" name="ead-raw"
                 c3:transformer="sruOutgoingRawTxr">
-            <title>Encoded Archival Description (EAD) DTD Version 2002, without inter-relational record links resolved.  If you want interoperable EAD, use default ead info:srw/schema/1/ead-2002</title>
+            <title>
+                Encoded Archival Description (EAD) DTD Version 2002, without
+                inter-relational record links resolved.  If you want
+                interoperable EAD, use default ead info:srw/schema/1/ead-2002
+            </title>
         </schema>
-        
 	</schemaInfo>
 
     <configInfo>

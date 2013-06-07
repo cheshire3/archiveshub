@@ -363,7 +363,7 @@ class EADRecordWsgiApplication(EADWsgiApplication):
         db = self.database
         # Check for requested schema, or revert to default, currently 'ead'
         schema = form.getvalue('schema', 'ead')
-        if schema == 'ead-raw':
+        if schema in ['ead-raw', 'ead-hub'] or 'hub' in form:
             txr = db.get_object(session, 'XmlTransformer')
         elif schema == 'ead':
             txr = db.get_object(session, 'dataOutgoingTxr')
