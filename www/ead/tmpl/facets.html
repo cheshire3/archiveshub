@@ -1,3 +1,7 @@
+<%!
+    # Imports
+    from archiveshub.apps.ead.base import cleverTitleCase
+%>
 <%def name="format_facet(facet)">
     <%
     idx = facet[0][0]
@@ -12,7 +16,7 @@
         %> 
         <li class="unmarked">
             <a href="${SCRIPT}/search.html?rsid=${resultSet.id}&filter=${filterClause|u}#leftCol">
-            ${term.title()|h}
+            ${cleverTitleCase(term)|h}
             </a>
             <span class="facet-hitcount">(${termData[1]})</span>
         </li>
