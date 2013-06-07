@@ -545,7 +545,7 @@ html_file_size_kb = 50
 # Comma separate lists of words that should always appear in lower case
 always_lower = a,and,by,etc,for,in,is,of,on,or,s,th,that,the,to
 # Comma separate lists of words that should always appear in UPPER CASE
-always_upper = BBC,BT,CNN,UK,US,USA
+always_upper = AA,BBC,BT,CNN,UK,US,USA
 # Regular expression for Roman numerals
 roman_numeral_regex = ^M{{0,4}}(CM|CD|D?C{{0,3}})(XC|XL|L?X{{0,3}})(IX|IV|V?I{{0,3}})$
 
