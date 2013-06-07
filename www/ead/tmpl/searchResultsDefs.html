@@ -96,6 +96,18 @@
     </span>
 </%def>
 
+<%def name="contributor_name(identifier)">
+    <%
+    session = context.get('session')
+    db = session.server.get_object(session, session.database)
+    identifierIdx = db.get_object(session, 'idx-vdbid')
+    nameIdx = db.get_object(session, 'idx-vdbName')
+    data = identifierIdx.fetch_term(session, identifier)
+    rs = identifierIdx.construct_resultSet(session, data)
+    %>
+    ${nameIdx.facets(session, rs)[0][0]}
+</%def>
+
 <%def name="format_query(query)">
     ## Format simple query and return user friendly text form.
     ## 
@@ -128,27 +140,37 @@
         <%
         return complex_query()
         %>
-    % endif
-    <strong>${term}</strong>
-    <%
-    if idx.toCQL() == u'cql.anywhere':
-        displayIdx = u''
-    else:
-        if idx.toCQL() == u'dc.identifier':
-            displayName = u'Ref numbers'
-        elif idx.toCQL() == u'bath.personalname':
-            displayName = u'People'
-        elif idx.toCQL() == u'bath.corporatename':
-            displayName = u'Organizations'
-        elif idx.toCQL() == u'bath.geographicname':
-            displayName = u'Places'
-        elif idx.toCQL() == u'bath.genreform':
-            displayName = u'Media Types'
+    % elif idx.toCQL() == u'rec.collectionIdentifier':
+        <strong>${term}</strong> as the <strong>Collection Identifier</strong>
+    % elif idx.toCQL() == u'rec.collectionName':
+        <strong>${term}</strong> as the <strong>Collection Title</strong>
+    % elif idx.toCQL() == u'vdb.identifier':
+        <strong>${contributor_name(term)}</strong> as the <strong>Contributor</strong>
+    % elif idx.toCQL() == u'vdb.name':
+        <strong>${term}</strong> as the <strong>Contributor</strong>
+    % else:
+        <strong>${term}</strong>
+        <%
+        if idx.toCQL() == u'cql.anywhere':
+            displayIdx = u''
         else:
-            displayName = idx.value.title() + u's'
-        displayIdx = u' in <strong>{0}</strong>'.format(displayName)
-    %>
-    ${displayIdx}
+            if idx.toCQL() == u'dc.identifier':
+                displayName = u'Ref numbers'
+            elif idx.toCQL() == u'bath.personalname':
+                displayName = u'People'
+            elif idx.toCQL() == u'bath.corporatename':
+                displayName = u'Organizations'
+            elif idx.toCQL() == u'bath.geographicname':
+                displayName = u'Places'
+            elif idx.toCQL() == u'bath.genreform':
+                displayName = u'Media Types'
+            else:
+                displayName = idx.value.title() + u's'
+            displayIdx = u' in <strong>{0}</strong>'.format(displayName)
+        %>
+        ${displayIdx}
+    % endif
+
 </%def>
 
 <%def name="parentLink(session, rec)">
