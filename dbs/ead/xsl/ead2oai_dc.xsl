@@ -41,7 +41,7 @@
         </oai_dc:dc>
     </xsl:template>
 
-    <xsl:template match="/c3:component">
+    <xsl:template match="/c3:component|c3component">
         <oai_dc:dc>
             <!-- always insert identifier -->
             <dc:identifier>

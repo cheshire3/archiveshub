@@ -42,7 +42,7 @@
         </srw_dc:dc>
     </xsl:template>
 
-    <xsl:template match="/c3:component">
+    <xsl:template match="/c3:component|c3component">
         <xsl:variable name="unitid">
             <xsl:call-template name="strip_space_and_lowercase">
                 <xsl:with-param name="text">
@@ -68,7 +68,7 @@
             <rec:collectionIdentifier>
                 <xsl:call-template name="parent_collection_identifier">
                     <xsl:with-param name="parent">
-                        <xsl:value-of select="/c3:component/@parent" />
+                        <xsl:value-of select="/c3:component/@parent|/c3component/@parent" />
                     </xsl:with-param>
                 </xsl:call-template>
             </rec:collectionIdentifier>

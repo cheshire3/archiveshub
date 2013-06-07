@@ -31,7 +31,7 @@
     <!-- this isn't reliable - it returns flat text <xsl:template match='*[@audience="internal"]' 
         priority="100" /> -->
 
-    <xsl:template match="c3:component">
+    <xsl:template match="c3:component|c3component">
         <xsl:apply-templates />
     </xsl:template>
 

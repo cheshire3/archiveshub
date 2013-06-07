@@ -74,7 +74,7 @@
     </xsl:template>
 
     <!-- for component records -->
-    <xsl:template match="c3:component">
+    <xsl:template match="c3:component|c3component">
         <!-- links to higher levels -->
         <xsl:text>LINKTOPARENT</xsl:text>
         <div id="record-head">
