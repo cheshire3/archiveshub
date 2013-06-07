@@ -31,8 +31,8 @@ $(document).ready(function() {
 </%def>
 
 <%def name="num_nav(recid, pagenum, maxPages)">
-    <div class="numnav">
-        <form action="${SCRIPT}/${recid}.html">
+    <div class="pagenumnav">
+        <form action="${DATAURL}/${recid}.html">
             Page:
             <select name="page">
             % for x in range(1, maxPages + 1):
@@ -45,20 +45,20 @@ $(document).ready(function() {
             </select>
             of
             ${maxPages}
-            <input type="submit" value="Go"/>
+            <input type="submit" name="submit" value="Go" class="submit"/>
         </form>
     </div>
 </%def>
 
 <%def name="back_links(recid, pagenum)">
-    <a href="${SCRIPT}/${recid}.html?page=1" 
+    <a href="${DATAURL}/${recid}.html?page=1" 
         title="First page" 
         onclick="setCookie('${recid}-tocstate', stateToString('someId'))">
         <button label="fast-rewind" class="pageNav">
             <img src="${config.get('icons', 'fast-rewind-url')}" alt="|&lt;&lt;">
         </button>
     </a>
-    <a href="${SCRIPT}/${recid}.html?page=${pagenum-1}" 
+    <a href="${DATAURL}/${recid}.html?page=${pagenum-1}" 
         title="Previous page" 
         onclick="setCookie('${recid}-tocstate', stateToString('someId'))">
         <button label="rewind" class="pageNav">
@@ -68,14 +68,14 @@ $(document).ready(function() {
 </%def>
 
 <%def name="forward_links(recid, pagenum, maxPages)">
-    <a href="${SCRIPT}/${recid}.html?page=${pagenum + 1}"
+    <a href="${DATAURL}/${recid}.html?page=${pagenum + 1}"
         title="Next page"
         onclick="setCookie('{$recid}-tocstate', stateToString('someId'))">
         <button label="forward" class="pageNav">
             <img src="${config.get('icons', 'forward-url')}" alt="&gt;&gt;">
         </button>
     </a>
-    <a href="${SCRIPT}/${recid}.html?page=${maxPages}"
+    <a href="${DATAURL}/${recid}.html?page=${maxPages}"
         title="Final page"
         onclick="setCookie('${recid}-tocstate', stateToString('someId'))">
         <button label="fast-forward" class="pageNav">
