@@ -553,6 +553,11 @@ roman_numeral_regex = ^M{{0,4}}(CM|CD|D?C{{0,3}})(XC|XL|L?X{{0,3}})(IX|IV|V?I{{0
 username = cheshire
 host = mail1.liv.ac.uk
 port = 25
+
+[facets]
+dc.subject = Subject
+dc.creator = Creator
+vdb.name = Contributor
 """.format(
    html_cache_path=resource_filename(
        Requirement.parse('archiveshub'),

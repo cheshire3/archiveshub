@@ -240,15 +240,15 @@ class EADSearchWsgiApplication(EADWsgiApplication):
             db._cacheProtocolMaps(session)
             pm = db.protocolMaps.get('http://www.loc.gov/zing/srw/')
         facets = {}
-        for idx in ['dc.subject', 'dc.creator', 'vdb.name']:
+        for cqlIdx, humanName in self.config.items('facets'):
             query = self.queryFactory.get_query(session,
-                                                '{0}="*"'.format(idx),
+                                                '{0}="*"'.format(cqlIdx),
                                                 format='cql')
             idxObj = pm.resolveIndex(session, query)
             try:
-                facets[idx] = idxObj.facets(session, rs)
+                facets[(cqlIdx, humanName)] = idxObj.facets(session, rs)
             except:
-                self._log(40, "Couldn't get facets from {0}".format(idx))
+                self._log(40, "Couldn't get facets from {0}".format(cqlIdx))
                 raise
         return facets
 
