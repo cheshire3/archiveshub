@@ -94,6 +94,8 @@ class EADWsgiApplication(object):
         # Set the URL of the data resolver
         dataUrl = self.request.relative_url('../data')
         self.defaultContext['DATAURL'] = dataUrl.rstrip(u'/')
+        # Add current Cheshire3 Session to defaultContext
+        self.defaultContext['session'] = self.session
 
     def _get_params(self):
         # Parse request parameters into a single data structure

@@ -40,14 +40,12 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         
         # Check operation and act accordingly
         if not operation or operation == 'index':
-            session = self.session
             self.response.body = self._render_template(
                 'index.html',
                 contributors=listContributors(session)
             )
         elif operation in ['explore']:
             # Serve simple templated page
-            session = self.session
             self.response.body = self._render_template(
                 '{0}.html'.format(operation)
             )
@@ -205,7 +203,6 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         return rs
 
     def search(self, form):
-        session = self.session
         if not form:
             # Simply return the search form
             return [self._render_template(
@@ -222,7 +219,6 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         facets = self.facets(rs)
         if len(rs):
             return [self._render_template('searchResults.html',
-                                          session=session,
                                           resultSet=rs,
                                           filtered='filter' in form,
                                           sortBy=sortBy,
@@ -263,7 +259,6 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         if not form:
             # Simply return the search form
             return [self._render_template('browse.html')]
-        session = self.session
         idx = form.getfirst('fieldidx1', None)
         rel = form.getfirst('fieldrel1', 'exact')
         scanTerm = form.getfirst('fieldcont1', '')
@@ -317,7 +312,6 @@ class EADSearchWsgiApplication(EADWsgiApplication):
                        ]
         else:
             content = [self._render_template('subjectResults.html',
-                                             session=session,
                                              resultSet=rs,
                                              maximumRecords=maximumRecords,
                                              startRecord=startRecord, 
@@ -354,7 +348,6 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         self._log(10, 'Search terms highlighted')
         summaryTxr = db.get_object(session, 'htmlSummaryTxr')
         page = self._render_template('summary.html',
-                                     session=session,
                                      resultSet=rs,
                                      filtered='filter' in form,
                                      sortBy=sortBy,
@@ -393,7 +386,6 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         if 'address' not in form:
             # Simply return the search form
             return [self._render_template('email.html',
-                                          session=self.session,
                                           recid=recid,
                                           resultSet=rs,
                                           startRecord=startRecord,
@@ -427,7 +419,6 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         s.quit()
         self._log(10, 'Record {0} emailed to {1}'.format(recid, address))
         return [self._render_template('emailSent.html',
-                                      session=self.session,
                                       recid=recid,
                                       address=address,
                                       resultSet=rs,
