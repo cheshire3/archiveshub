@@ -96,28 +96,43 @@ class EADSearchWsgiApplication(EADWsgiApplication):
             qString = self._fetch_query(session, rsid).toCQL()
         elif not qString:
             qString = generate_cqlQuery(form)
-            if not (len(qString)):
-                self._log(40, '*** Unable to generate CQL query')
-                return self._render_template('fail/invalidQuery.html')
+        self._log(20, qString)
         if filter_:
-            qString = '{0} and/relevant/proxinfo ({1})'.format(filter_,
-                                                               qString)
+            if qString.strip('()'):
+                qString = '{0} and/relevant/proxinfo ({1})'.format(filter_,
+                                                                   qString)
+            else:
+                qString = filter_
 
         if (withinCollection and withinCollection != 'allcollections'):
-            qString = ('(rec.collectionIdentifier exact "{0}") '
-                       'and/relevant/proxinfo '
-                       '({1})'.format(withinCollection,
-                                      qString)
-                       )
-        if (withinContributor and withinContributor != 'allcontributors'):
-            qString = ('(vdb.identifier exact "{0}") '
-                       'and/relevant/proxinfo '
-                       '({1})'.format(withinContributor,
-                                      qString)
-                       )
+            if qString.strip('()'):
+                qString = ('(rec.collectionIdentifier exact "{0}") '
+                           'and/relevant/proxinfo '
+                           '({1})'.format(withinCollection,
+                                          qString)
+                           )
+            else:
+                qString = ('rec.collectionIdentifier exact "{0}"'
+                           ''.format(withinCollection))
         elif 'noComponents' in form:
             qString = ('ead.istoplevel=1 and/relevant/proxinfo (%s)'
                        '' % qString)
+
+        if (withinContributor and withinContributor != 'allcontributors'):
+            if qString.strip('()'):
+                qString = ('(vdb.identifier exact "{0}") '
+                           'and/relevant/proxinfo '
+                           '({1})'.format(withinContributor,
+                                          qString)
+                           )
+            else:
+                qString = ('vdb.identifier exact "{0}"'
+                           ''.format(withinContributor))
+            
+        if not qString.strip('()'):
+            self._log(40, '*** Unable to generate CQL query')
+            return self._render_template('fail/invalidQuery.html')
+
         try:
             return queryFactory.get_query(session, qString, format="cql")
         except CQLDiagnostic:
