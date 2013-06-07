@@ -21,7 +21,6 @@ from cheshire3.web.www_utils import generate_cqlQuery
 # Cheshire3 for Archives Imports
 from archiveshub.commands.utils import WSGIAppArgumentParser
 from archiveshub.apps.ead.base import EADWsgiApplication 
-from archiveshub.apps.ead.base import listContributors
 from archiveshub.apps.ead.base import config, session, db
 
 
@@ -40,10 +39,7 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         
         # Check operation and act accordingly
         if not operation or operation == 'index':
-            self.response.body = self._render_template(
-                'index.html',
-                contributors=listContributors(session)
-            )
+            self.response.body = self._render_template('index.html')
         elif operation in ['explore']:
             # Serve simple templated page
             self.response.body = self._render_template(
@@ -102,10 +98,7 @@ class EADSearchWsgiApplication(EADWsgiApplication):
             qString = generate_cqlQuery(form)
             if not (len(qString)):
                 self._log(40, '*** Unable to generate CQL query')
-                return self._render_template(
-                    'fail/invalidQuery.html',
-                    contributors=listContributors(session)
-                )
+                return self._render_template('fail/invalidQuery.html')
         if filter_:
             qString = '{0} and/relevant/proxinfo ({1})'.format(filter_,
                                                                qString)
@@ -130,15 +123,9 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         except CQLDiagnostic:
             self._log(40, '*** Unparsable query: %s' % qString)
             if (qString.count('"') % 2):
-                return self._render_template(
-                    'fail/unpairedQuotes.html',
-                    contributors=listContributors(session)
-                )
+                return self._render_template('fail/unpairedQuotes.html')
             else:
-                return self._render_template(
-                    'fail/invalidQuery.html',
-                    contributors=listContributors(session)
-                )
+                return self._render_template('fail/invalidQuery.html')
 
     def _searchAndSort(self, form):
         # Process form and returns a ResultSet
@@ -155,7 +142,6 @@ class EADSearchWsgiApplication(EADWsgiApplication):
                 self._log(40, '*** Invalid ResultSet identifier: %s' % rsid)
                 return self._render_template(
                     'fail/invalidResultSet.html',
-                    contributors=listContributors(session),
                     rsid=rsid
                 )
         else:
@@ -205,10 +191,7 @@ class EADSearchWsgiApplication(EADWsgiApplication):
     def search(self, form):
         if not form:
             # Simply return the search form
-            return [self._render_template(
-                        'search.html',
-                        contributors=listContributors(session)
-                    )]
+            return [self._render_template('search.html')]
         sortBy = form.getlist('sortBy')
         maximumRecords = int(form.getvalue('maximumRecords', 20))
         startRecord = int(form.getvalue('startRecord', 1))
@@ -228,7 +211,6 @@ class EADSearchWsgiApplication(EADWsgiApplication):
                                           )]
         else:
             return [self._render_template('fail/noHits.html',
-                                          contributors=listContributors(session),
                                           query=rs.query)
                     ]
 
