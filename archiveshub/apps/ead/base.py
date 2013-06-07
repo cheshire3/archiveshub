@@ -353,8 +353,8 @@ def emailFromArchonCode(code):
             pass
 
 
-def listContributors(session):
-    "Return a list of Contributor Identifier, Contributor Name tuples."""
+def iterContributors(session):
+    """Generator for Contributor Identifier, Contributor Name tuples."""
     # Get Database object
     db = session.server.get_object(session, session.database)
     identifierIdx = db.get_object(session, 'idx-vdbid')
@@ -365,8 +365,13 @@ def listContributors(session):
         yield (term, titles[0][0])
 
 
-def listCollections(session):
-    "Return a list of Collection Identifier, Collection Title tuples."""
+def listContributors(session):
+    "Return a list of Contributor Identifier, Contributor Name tuples."""
+    return list(iterContributors(session))
+
+
+def iterCollections(session):
+    "Generator for Collection Identifier, Collection Title tuples."""
     # Get Database object
     db = session.server.get_object(session, session.database)
     identifierIdx = db.get_object(session, 'idx-collectionid')
@@ -375,7 +380,12 @@ def listCollections(session):
         term = rs.queryTerm
         titles = titleIdx.facets(session, rs)
         yield (term, titles[0][0])
-    
+
+
+def listCollections(session):
+    "Return a list of Collection Identifier, Collection Title tuples."""
+    return list(iterCollections)
+
 
 def collectionFromComponent(session, record):
     # Get Database object
