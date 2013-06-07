@@ -537,7 +537,7 @@
                 <xsl:text>Administrative / Biographical History</xsl:text>
             </xsl:variable>
             <xsl:choose>
-                <xsl:when test="../../archdesc or ../../../c3:component">
+                <xsl:when test="../../archdesc or ../../../c3:component or ../../../c3component">
                     <h2 class="fieldhead-auto">
                         <xsl:value-of select="$headstring" />
                     </h2>
@@ -563,7 +563,7 @@
                 <xsl:text>Scope and Content</xsl:text>
             </xsl:variable>
             <xsl:choose>
-                <xsl:when test="../../archdesc or ../../../c3:component">
+                <xsl:when test="../../archdesc or ../../../c3:component or ../../../c3component">
                     <h2 class="fieldhead-auto">
                         <xsl:value-of select="$headstring" />
                     </h2>
@@ -589,7 +589,7 @@
                 <xsl:text>Arrangement</xsl:text>
             </xsl:variable>
             <xsl:choose>
-                <xsl:when test="../../archdesc  or ../../../c3:component">
+                <xsl:when test="../../archdesc or ../../../c3:component or ../../../c3component">
                     <h2 class="fieldhead-auto">
                         <xsl:value-of select="$headstring" />
                     </h2>
@@ -616,7 +616,7 @@
                 <xsl:text>Conditions Governing Access</xsl:text>
             </xsl:variable>
             <xsl:choose>
-                <xsl:when test="../../archdesc or ../../../c3:component">
+                <xsl:when test="../../archdesc or ../../../c3:component or ../../../c3component">
                     <h2 class="fieldhead-auto">
                         <xsl:value-of select="$headstring" />
                     </h2>
@@ -642,7 +642,7 @@
                 <xsl:text>Conditions Governing Use</xsl:text>
             </xsl:variable>
             <xsl:choose>
-                <xsl:when test="../../archdesc or ../../../c3:component">
+                <xsl:when test="../../archdesc or ../../../c3:component or ../../../c3component">
                     <h2 class="fieldhead-auto">
                         <xsl:value-of select="$headstring" />
                     </h2>
@@ -668,7 +668,7 @@
                 <xsl:text>Physical Characteristics and/or Technical Requirements</xsl:text>
             </xsl:variable>
             <xsl:choose>
-                <xsl:when test="../../archdesc or ../../../c3:component">
+                <xsl:when test="../../archdesc or ../../../c3:component or ../../../c3component">
                     <h2 class="fieldhead-auto">
                         <xsl:value-of select="$headstring" />
                     </h2>
@@ -696,7 +696,7 @@
                 <xsl:text>Administrative Information</xsl:text>
             </xsl:variable>
             <xsl:choose>
-                <xsl:when test="../../archdesc or ../../../c3:component">
+                <xsl:when test="../../archdesc or ../../../c3:component or ../../../c3component">
                     <h2 class="fieldhead-auto">
                         <xsl:value-of select="$headstring" />
                     </h2>
@@ -723,7 +723,7 @@
                 <xsl:text>Appraisal Information</xsl:text>
             </xsl:variable>
             <xsl:choose>
-                <xsl:when test="../../archdesc or ../../../c3:component">
+                <xsl:when test="../../archdesc or ../../../c3:component or ../../../c3component">
                     <h2 class="fieldhead-auto">
                         <xsl:value-of select="$headstring" />
                     </h2>
@@ -749,7 +749,7 @@
                 <xsl:text>Acquisition Information</xsl:text>
             </xsl:variable>
             <xsl:choose>
-                <xsl:when test="../../archdesc or ../../../c3:component">
+                <xsl:when test="../../archdesc or ../../../c3:component or ../../../c3component">
                     <h2 class="fieldhead-auto">
                         <xsl:value-of select="$headstring" />
                     </h2>
@@ -775,7 +775,7 @@
                 <xsl:text>Custodial History</xsl:text>
             </xsl:variable>
             <xsl:choose>
-                <xsl:when test="../../archdesc or ../../../c3:component">
+                <xsl:when test="../../archdesc or ../../../c3:component or ../../../c3component">
                     <h2 class="fieldhead-auto">
                         <xsl:value-of select="$headstring" />
                     </h2>
@@ -801,7 +801,7 @@
                 <xsl:text>Accruals</xsl:text>
             </xsl:variable>
             <xsl:choose>
-                <xsl:when test="../../archdesc or ../../../c3:component">
+                <xsl:when test="../../archdesc or ../../../c3:component or ../../../c3component">
                     <h2 class="fieldhead-auto">
                         <xsl:value-of select="$headstring" />
                     </h2>
@@ -827,7 +827,7 @@
                 <xsl:text>Archivist's Note</xsl:text>
             </xsl:variable>
             <xsl:choose>
-                <xsl:when test="../../archdesc or ../../../c3:component">
+                <xsl:when test="../../archdesc or ../../../c3:component or ../../../c3component">
                     <h2 class="fieldhead-auto">
                         <xsl:value-of select="$headstring" />
                     </h2>
@@ -856,7 +856,7 @@
                 <xsl:text>Other Finding Aid</xsl:text>
             </xsl:variable>
             <xsl:choose>
-                <xsl:when test="../../archdesc or ../../../c3:component">
+                <xsl:when test="../../archdesc or ../../../c3:component or ../../../c3component">
                     <h2 class="fieldhead-auto">
                         <xsl:value-of select="$headstring" />
                     </h2>
@@ -883,7 +883,7 @@
                 <xsl:text>Location of Originals</xsl:text>
             </xsl:variable>
             <xsl:choose>
-                <xsl:when test="../../archdesc or ../../../c3:component">
+                <xsl:when test="../../archdesc or ../../../c3:component or ../../../c3component">
                     <h2 class="fieldhead-auto">
                         <xsl:value-of select="$headstring" />
                     </h2>
@@ -909,7 +909,7 @@
                 <xsl:text>Alternative Form Available</xsl:text>
             </xsl:variable>
             <xsl:choose>
-                <xsl:when test="../../archdesc or ../../../c3:component">
+                <xsl:when test="../../archdesc or ../../../c3:component or ../../../c3component">
                     <h2 class="fieldhead-auto">
                         <xsl:value-of select="$headstring" />
                     </h2>
@@ -936,7 +936,7 @@
                 <xsl:text>Related Material</xsl:text>
             </xsl:variable>
             <xsl:choose>
-                <xsl:when test="../../archdesc or ../../../c3:component">
+                <xsl:when test="../../archdesc or ../../../c3:component or ../../../c3component">
                     <h2 class="fieldhead-auto">
                         <xsl:value-of select="$headstring" />
                     </h2>
@@ -963,7 +963,7 @@
                 <xsl:text>Separated Material</xsl:text>
             </xsl:variable>
             <xsl:choose>
-                <xsl:when test="../../archdesc or ../../../c3:component">
+                <xsl:when test="../../archdesc or ../../../c3:component or ../../../c3component">
                     <h2 class="fieldhead-auto">
                         <xsl:value-of select="$headstring" />
                     </h2>
@@ -993,7 +993,7 @@
             <xsl:when test="head/text()">
                 <xsl:apply-templates select="head" />
             </xsl:when>
-            <xsl:when test="../../archdesc or ../../../c3:component">
+            <xsl:when test="../../archdesc or ../../../c3:component or ../../../c3component">
                 <h2 class="fieldhead-auto">
                     <xsl:value-of select="$headstring" />
                 </h2>
@@ -1031,7 +1031,7 @@
                 <xsl:text>Preferred Citation</xsl:text>
             </xsl:variable>
             <xsl:choose>
-                <xsl:when test="../../archdesc or ../../../c3:component">
+                <xsl:when test="../../archdesc or ../../../c3:component or ../../../c3component">
                     <h2 class="fieldhead-auto">
                         <xsl:value-of select="$headstring" />
                     </h2>
@@ -1073,7 +1073,7 @@
                 <xsl:text>Other Descriptive Data</xsl:text>
             </xsl:variable>
             <xsl:choose>
-                <xsl:when test="../../archdesc or ../../../c3:component">
+                <xsl:when test="../../archdesc or ../../../c3:component or ../../../c3component">
                     <h2 class="fieldhead-auto">
                         <xsl:value-of select="$headstring" />
                     </h2>
@@ -1104,7 +1104,7 @@
             <xsl:when test="head/text()">
                 <xsl:apply-templates select="head" />
             </xsl:when>
-            <xsl:when test="../../archdesc or ../../../c3:component">
+            <xsl:when test="../../archdesc or ../../../c3:component or ../../../c3component">
                 <h2 class="fieldhead-auto">
                     <xsl:value-of select="$headstring" />
                 </h2>
@@ -1470,7 +1470,7 @@
     <xsl:template match="head">
         <xsl:choose>
             <xsl:when
-                test="../../head or not(../../../archdesc or ../../../../c3:component)">
+                test="../../head or not(../../../archdesc or ../../../../c3:component or ../../../../c3component)">
                 <h3 class="fieldhead-ead">
                     <xsl:apply-templates />
                 </h3>
@@ -1536,7 +1536,7 @@
                 <xsl:text>Note</xsl:text>
             </xsl:variable>
             <xsl:choose>
-                <xsl:when test="../../archdesc or ../../../c3:component">
+                <xsl:when test="../../archdesc or ../../../c3:component or ../../../c3component">
                     <h2 class="ead">
                         <xsl:value-of select="$headstring" />
                     </h2>
