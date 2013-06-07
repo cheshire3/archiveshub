@@ -264,9 +264,10 @@ class EADRecordWsgiApplication(EADWsgiApplication):
                                                 name in anchors
                                                 ])
                                           )
-                    pageBuffer.write(etree.tounicode(div,
-                                                     pretty_print=True,
-                                                     method="html")
+                    pageBuffer.write(etree.tostring(div,
+                                                    pretty_print=True,
+                                                    method="html"
+                                                    )
                                      )
             # Read final page
             pages.append(self._readBuffer(pageBuffer))
