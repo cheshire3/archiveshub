@@ -2176,7 +2176,7 @@
                     <a href="http://archiveshub.ac.uk/archivedescriptions/#content"
                         title="Find out about Description" class="helplink tip">
                         <img
-                            src="http://archiveshub.ac.uk/img/structure/form_tip.png"
+                            src="http://archiveshub.ac.uk/images/structure/form_tip.png"
                             alt="[?]" />
                     </a>
                 </li>
@@ -2242,7 +2242,7 @@
                             href="http://archiveshub.ac.uk/displayhelp/#digitalmaterial"
                             title="Find out about Digital Material" class="helplink tip">
                             <img
-                                src="http://archiveshub.ac.uk/img/structure/form_tip.png"
+                                src="http://archiveshub.ac.uk/images/structure/form_tip.png"
                                 alt="[?]" />
                         </a>
                     </li>
