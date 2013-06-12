@@ -1031,38 +1031,38 @@ function createSelect(name, optionList, selIdx){
 }
 
 function createClause(current, clauseState){
-    if (!clauseState) {var clauseState = '0,0,';}
-    var parts = clauseState.split(',');
-    var pElem = document.createElement('div')
-    pElem.setAttribute('id', 'searchClause' + current);
-    pElem.setAttribute('class', 'row searchClause')
-    // index select
-    var iSelIdx = parts.shift();
-    var idxSelect = createSelect('fieldidx' + current, indexList, iSelIdx)
-    idxSelect.onchange = new Function('updateSelects(' + current + ');')
-    pElem.appendChild(idxSelect)
-    pElem.appendChild(document.createTextNode(' for '))
-    // relation select
-    var rSelIdx = parts.shift();
-    // complex conditional to decide available relations
-    var relationList = new Array()
-    if (iSelIdx != 3) { var relationList = kwRelationList; }
-    if (iSelIdx > 0) { var relationList = relationList.concat(exactRelationList); }
-    if (iSelIdx < 2) { var relationList = relationList.concat(proxRelationList); }
-    if (iSelIdx == 3) {
-        var relationList = dateRelationList; 
-    }
-    pElem.appendChild(createSelect('fieldrel' + current, relationList, rSelIdx));
-    // text input
-    var inputElem = document.createElement('input');
-    inputElem.name = 'fieldcont' + current;
-    inputElem.id = 'fieldcont' + current;
-    inputElem.type = 'text';
-    inputElem.size = 35;
-    // last entered value
-    inputElem.value = parts.join(',');
-    pElem.appendChild(inputElem);
-    return pElem;
+	if (!clauseState) {var clauseState = '0,0,';}
+	var parts = clauseState.split(',');
+	var pElem = document.createElement('div')
+	pElem.setAttribute('id', 'searchClause' + current);
+	pElem.setAttribute('class', 'row searchClause')
+	// index select
+	var iSelIdx = parts.shift();
+	var idxSelect = createSelect('fieldidx' + current, indexList, iSelIdx)
+	idxSelect.onchange = new Function('updateSelects(' + current + ');')
+	pElem.appendChild(idxSelect)
+	//pElem.appendChild(document.createTextNode(' for '))
+	// relation select
+	var rSelIdx = parts.shift();
+	// complex conditional to decide available relations
+	var relationList = new Array()
+	if (iSelIdx != 3) { var relationList = kwRelationList; }
+	if (iSelIdx > 0) { var relationList = relationList.concat(exactRelationList); }
+	if (iSelIdx < 2) { var relationList = relationList.concat(proxRelationList); }
+	if (iSelIdx == 3) {
+		var relationList = dateRelationList; 
+	}
+	pElem.appendChild(createSelect('fieldrel' + current, relationList, rSelIdx));
+	// text input
+	var inputElem = document.createElement('input');
+	inputElem.name = 'fieldcont' + current;
+	inputElem.id = 'fieldcont' + current;
+	inputElem.type = 'text';
+	inputElem.size = 35;
+	// last entered value
+	inputElem.value = parts.join(',');
+	pElem.appendChild(inputElem);
+	return pElem;
 }
 
 function removeClause(current) {
