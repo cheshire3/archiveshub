@@ -5,7 +5,7 @@ import sys
 import os
 import time
 
-from lockfile import FileLock
+from lockfile import FileLock, LockTimeout
 
 from cheshire3.exceptions import ObjectDoesNotExistException
 
