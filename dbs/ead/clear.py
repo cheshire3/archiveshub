@@ -139,28 +139,29 @@ def main(argv=None):
         session, server, db = getCheshire3Env(args)
     except (EnvironmentError, ObjectDoesNotExistException):
         return 1
-    lgr = session.logger
-    mp = db.get_path(session, 'metadataPath')
-    lock = FileLock(mp)
-    if lock.is_locked() and args.unlock:
-        # Forcibly unlock
-        session.logger.log_warning(session, "Unlocking Database")
-        lock.break_lock()
-    try:
-        lock.acquire(timeout=30)    # wait up to 30 seconds
-    except LockTimeout:
-        msg = ("The database is locked. It is possible that another"
-               "user is currently indexing this database. Please wait at least" 
-               "10 minutes and then try again. If you continue to get this "
-               "message and you are sure no one is reindexing the database "
-               "please contact the archives hub team for advice."
-               )
-        lgr.log_critical(session, msg)
-        return 1
-    try:
-        return args.func(args)
-    finally:
-        lock.release()
+    with db.get_path(session, 'defaultLogger') as session.logger:
+        mp = db.get_path(session, 'metadataPath')
+        lock = FileLock(mp)
+        if lock.is_locked() and args.unlock:
+            # Forcibly unlock
+            session.logger.log_warning(session, "Unlocking Database")
+            lock.break_lock()
+        try:
+            lock.acquire(timeout=30)    # wait up to 30 seconds
+        except LockTimeout:
+            msg = ("The database is locked. It is possible that another"
+                   "user is currently indexing this database. Please wait at "
+                   "least 10 minutes and then try again. If you continue to "
+                   "get this message and you are sure no one is reindexing "
+                   "the database please contact the archives hub team for "
+                   "advice."
+                   )
+            session.logger.log_critical(session, msg)
+            return 1
+        try:
+            return args.func(args)
+        finally:
+            lock.release()
 
 
 # Init OptionParser

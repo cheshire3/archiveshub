@@ -242,32 +242,33 @@ def main(argv=None):
         session, server, db = getCheshire3Env(args)
     except (EnvironmentError, ObjectDoesNotExistException):
         return 1
-    # Set default log level to INFO
-    session.logger.minLevel = 20
-    mp = db.get_path(session, 'metadataPath')
-    lock = FileLock(mp)
-    if lock.is_locked() and args.unlock:
-        # Forcibly unlock
-        session.logger.log_warning(session, "Unlocking Database")
-        lock.break_lock()
-    try:
-        lock.acquire(timeout=5)    # wait up to 30 seconds
-    except LockTimeout:
-        msg = ("The database is locked. It is possible that another "
-               "user is currently indexing this database. Please wait at least" 
-               " 10 minutes and then try again. If you continue to get this "
-               "message and you are sure no one is reindexing the database "
-               "please contact the archives hub team for advice."
-               )
-        session.logger.log_critical(session, msg)
-        return 1
-    try:
-        if args.clusters:
-            return sum([index(args), clusters(args)])
-        else:
-            return index(args)
-    finally:
-        lock.release()
+    # Set Logger
+    with db.get_object(session, 'loadLogger') as session.logger:
+        mp = db.get_path(session, 'metadataPath')
+        lock = FileLock(mp)
+        if lock.is_locked() and args.unlock:
+            # Forcibly unlock
+            session.logger.log_warning(session, "Unlocking Database")
+            lock.break_lock()
+        try:
+            lock.acquire(timeout=5)    # wait up to 30 seconds
+        except LockTimeout:
+            msg = ("The database is locked. It is possible that another"
+                   "user is currently indexing this database. Please wait at "
+                   "least 10 minutes and then try again. If you continue to "
+                   "get this message and you are sure no one is reindexing "
+                   "the database please contact the archives hub team for "
+                   "advice."
+                   )
+            session.logger.log_critical(session, msg)
+            return 1
+        try:
+            if args.clusters:
+                return sum([index(args), clusters(args)])
+            else:
+                return index(args)
+        finally:
+            lock.release()
 
 
 # Init OptionParser
