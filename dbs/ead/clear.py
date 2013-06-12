@@ -142,6 +142,10 @@ def main(argv=None):
     lgr = session.logger
     mp = db.get_path(session, 'metadataPath')
     lock = FileLock(mp)
+    if lock.is_locked() and args.unlock:
+        # Forcibly unlock
+        session.logger.log_warning(session, "Unlocking Database")
+        lock.break_lock()
     try:
         lock.acquire(timeout=30)    # wait up to 30 seconds
     except LockTimeout:
@@ -164,6 +168,13 @@ docbits = __doc__.split('\n\n')
 argparser = ClearArgumentParser(conflict_handler='resolve',
                                description=docbits[0]
                                )
+argparser.add_argument('-u', '--unlock', action='store_true',
+                       dest='unlock',
+                       help=("if the database is currently locked, force "
+                             "unlock it before proceeding to requested "
+                             "operation"
+                            )
+                       )
 # Subparsers for commands
 subparsers = argparser.add_subparsers(title='Commands')
 # clear.py main

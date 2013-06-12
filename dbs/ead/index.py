@@ -30,6 +30,7 @@ optional arguments:
 
 
 """
+
 import os
 import shutil
 import sys
@@ -245,6 +246,10 @@ def main(argv=None):
     session.logger.minLevel = 20
     mp = db.get_path(session, 'metadataPath')
     lock = FileLock(mp)
+    if lock.is_locked() and args.unlock:
+        # Forcibly unlock
+        session.logger.log_warning(session, "Unlocking Database")
+        lock.break_lock()
     try:
         lock.acquire(timeout=5)    # wait up to 30 seconds
     except LockTimeout:
@@ -270,7 +275,13 @@ docbits = __doc__.split('\n\n')
 argparser = IndexArgumentParser(conflict_handler='resolve',
                                 description=docbits[0]
                                 )
-
+argparser.add_argument('-u', '--unlock', action='store_true',
+                       dest='unlock',
+                       help=("if the database is currently locked, force "
+                             "unlock it before proceeding to requested "
+                             "operation."
+                            )
+                       )
 
 if __name__ == '__main__':
     sys.exit(main())
