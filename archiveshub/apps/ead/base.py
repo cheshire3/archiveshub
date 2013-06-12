@@ -57,6 +57,10 @@ class EADWsgiApplication(object):
                                                    'eadQueryStore')
         self.resultSetStore = self.database.get_object(session,
                                                        'eadResultSetStore')
+        # Fetch Logger
+        self.logger = self.database.get_object(session,
+                                               'searchTransactionLogger'
+                                               )
         template_dir = resource_filename(
             Requirement.parse('archiveshub'),
             'www/ead/tmpl'
@@ -107,7 +111,9 @@ class EADWsgiApplication(object):
 
     def _log(self, lvl, msg):
         # Log a message with the given level
-        print >> self.request.environ['wsgi.errors'], msg
+        self.logger.log_lvl(self.session, lvl, msg, self.request.remote_addr)
+        if lvl >= 30:
+            print >> self.request.environ['wsgi.errors'], msg
 
     def _static_content(self, path):
         # Serve static content, CSS, images JavaScript etc.
@@ -251,8 +257,8 @@ class EADWsgiApplication(object):
         maximumTerms = int(form.getfirst('maximumTerms',
                                          form.getfirst('numreq', 25)))
         rp = int(form.getfirst('responsePosition', (maximumTerms + 1) / 2))
-        
         qString = u'%s %s "%s"' % (idx, rel, scanTerm)
+        self._log('Browsing for "%s"' % (qString))
         try:
             scanClause = queryFactory.get_query(session,
                                                 qString,

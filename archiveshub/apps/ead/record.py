@@ -33,6 +33,10 @@ class EADRecordWsgiApplication(EADWsgiApplication):
         super(EADRecordWsgiApplication, self).__init__(session,
                                                        database,
                                                        config)
+        # Fetch Logger
+        self.logger = self.database.get_object(session,
+                                               'recordTransactionLogger'
+                                               )
         self.mimetypeHash = mtHash = {'text/html': self.html,
                                       'text/plain': self.text,
                                       'application/xml': self.xml
@@ -52,60 +56,67 @@ class EADRecordWsgiApplication(EADWsgiApplication):
     
     def __call__(self, environ, start_response):
         # Method to make instances of this class callable
-        self._setUp(environ)
-        session = self.session
-        path = self.request.path_info.strip('/')
-        if path == "environ":
-            if self.request.remote_addr in ['127.0.0.1']:
-                self.response.content_type = 'text/plain'
-                self.response.app_iter = [repr(i) + '\n'
-                                         for i
-                                         in self.request.environ.iteritems()
-                                         ]
-            else:
-                self.response.status = 403
-            return self.response(environ, start_response)
-
-        # Parse request to determine record, Internet (MIME) Type etc.
-        recid, mimetype, encoding = self._parse_recSpec(path)
-        form = self._get_params()
-        # Content negotiation if not specified by file extension
-        if mimetype is None:
-            mtrequested = environ.get('HTTP_ACCEPT', 'text/html')
-            mtc = conneg.parse(mtrequested)
-            mimetype = conneg.best(mtc, self.mimetypeList)
-            encoding = None
-
-        # Fetch the Record
         try:
-            rec = self._fetch_record(session, recid)
-        except (IndexError, FileDoesNotExistException) as e:
-            # IndexError can occur due to a 'feature' (bug) in Cheshire3 which
-            # assumes that all search terms will be a string of 1 or more
-            # characters
-            if not recid or recid == 'index':
-                self.response.app_iter = self.index(mimetype, form)
+            self._setUp(environ)
+            session = self.session
+            path = self.request.path_info.strip('/')
+            if path == "environ":
+                if self.request.remote_addr in ['127.0.0.1']:
+                    self.response.content_type = 'text/plain'
+                    self.response.app_iter = [repr(i) + '\n'
+                                             for i
+                                             in self.request.environ.iteritems()
+                                             ]
+                else:
+                    self.response.status = 403
+                return self.response(environ, start_response)
+    
+            # Parse request to determine record, Internet (MIME) Type etc.
+            recid, mimetype, encoding = self._parse_recSpec(path)
+            form = self._get_params()
+            # Content negotiation if not specified by file extension
+            if mimetype is None:
+                mtrequested = environ.get('HTTP_ACCEPT', 'text/html')
+                mtc = conneg.parse(mtrequested)
+                mimetype = conneg.best(mtc, self.mimetypeList)
+                encoding = None
+    
+            # Fetch the Record
+            try:
+                rec = self._fetch_record(session, recid)
+            except (IndexError, FileDoesNotExistException) as e:
+                # IndexError can occur due to a 'feature' (bug) in Cheshire3
+                # which assumes that all search terms will be a string of 1 or
+                # more characters
+                if not recid or recid == 'index':
+                    self.response.app_iter = self.index(mimetype, form)
+                else:
+                    # Record specified but could not be found - 404!
+                    self.response.status = 404
+                    self.response.body = self._render_template('fail/404.html',
+                                                               resource=recid
+                                                               )
             else:
-                # Record specified but could not be found - 404!
-                self.response.status = 404
-                self.response.body = self._render_template('fail/404.html',
-                                                           resource=recid
-                                                           )
-        else:
-            self._log(10, 'Retrieved record "{0}"'.format(recid))
-            fn = self.mimetypeHash.get(str(mimetype))
-            if fn is None:
-                # Unsupported mimetype - may be supported in future
-                self.response.status = 303
-                self.response.location = "{0}.html".format(recid)
-                self.response.body = ('<a href="{0}">{0}</a>'
-                                      ''.format(self.response.location))
-            else:
-                # Set Content-Type now to allow method to over-ride
-                self.response.content_type = str(mimetype)
-                self.response.body = fn(rec, form)
-        
-        return self.response(environ, start_response)
+                self._log(10, 'Retrieved record "{0}"'.format(recid))
+                fn = self.mimetypeHash.get(str(mimetype))
+                if fn is None:
+                    # Unsupported mimetype - may be supported in future
+                    self.response.status = 303
+                    self.response.location = "{0}.html".format(recid)
+                    self.response.body = ('<a href="{0}">{0}</a>'
+                                          ''.format(self.response.location))
+                else:
+                    # Set Content-Type now to allow method to over-ride
+                    self.response.content_type = str(mimetype)
+                    self.response.body = fn(rec, form)
+            
+            return self.response(environ, start_response)
+        finally:
+            try:
+                self.logger.flush(self.session, 20, self.request.remote_addr)
+            except ValueError:
+                # It's possible nothing was logged for this remote user
+                pass
 
     def _parse_recSpec(self, path_info):
         recid = path_info
@@ -215,6 +226,7 @@ class EADRecordWsgiApplication(EADWsgiApplication):
         else:
             # Transform the Record
             doc_uc = self._transformRecord(rec, 'htmlFullSplitTxr')
+            self._log(10, 'HTML generated by splitting XSLT')
             # Add in the enquiries email link
             archon_code = dataFromRecordXPaths(
                 session,

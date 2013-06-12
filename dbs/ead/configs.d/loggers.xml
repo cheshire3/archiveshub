@@ -85,6 +85,13 @@
             </options>
         </subConfig>
 
+        <subConfig type="logger" id="zeroResultFileLogger">
+            <objectType>cheshire3.logger.DateTimeFileLogger</objectType>
+            <paths>
+                <path type="filePath">logs/zeroResult</path>
+            </paths>
+        </subConfig>
+
         <subConfig type="logger" id="searchFileLogger">
             <objectType>cheshire3.logger.DateTimeFileLogger</objectType>
             <paths>
@@ -94,6 +101,30 @@
                 <setting type="createSubDirs">1</setting>
                 <setting type="dateTimeLevel">month</setting>
                 <setting type="minLevel">20</setting>
+            </options>
+        </subConfig>
+
+        <subConfig type="logger" id="searchTransactionLogger">
+            <objectType>cheshire3.web.logger.TransactionLogger</objectType>
+            <paths>
+                <path type="filePath">../../www/ead/logs/search.log</path>
+            </paths>
+            <options>
+                <setting type="separatorString">:: </setting>
+                <setting type="minLevel">0</setting>
+                <default type="level">20</default>
+            </options>
+        </subConfig>
+
+        <subConfig type="logger" id="recordTransactionLogger">
+            <objectType>cheshire3.web.logger.TransactionLogger</objectType>
+            <paths>
+                <path type="filePath">../../www/ead/logs/record.log</path>
+            </paths>
+            <options>
+                <setting type="separatorString">:: </setting>
+                <setting type="minLevel">0</setting>
+                <default type="level">20</default>
             </options>
         </subConfig>
 

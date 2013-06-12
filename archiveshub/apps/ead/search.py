@@ -28,61 +28,71 @@ class EADSearchWsgiApplication(EADWsgiApplication):
     
     def __call__(self, environ, start_response):
         # Method to make instances of this class callable
-        # Prepare application to handle a new request
-        self._setUp(environ)
-        path = self.request.path_info.strip('/')
-        form = self._get_params()
-        operation = form.get('operation', None)
-        if operation is None:
-            # Filename based?
-            operation = os.path.splitext(path.split('/')[-1])[0]
-        
-        # Check operation and act accordingly
-        if not operation or operation == 'index':
-            self.response.body = self._render_template('index.html')
-        elif operation in ['explore', 'searchContributor']:
-            # Serve simple templated page
-            self.response.body = self._render_template(
-                '{0}.html'.format(operation)
-            )
-        elif operation == 'help':
-            # Redirect to help pages
-            response = HTTPTemporaryRedirect(
-                location="http://archiveshub.ac.uk/searchhelp/"
-            )
-            return response(environ, start_response)
-        else:
-            try:
-                fn = getattr(self, operation)
-            except AttributeError:
-                # Check for static content request
-                if path.startswith(('css', 'img', 'js', 'ead')):
-                    self.response.app_iter = self._static_content(path)
-                    contentlen = sum([len(d) for d in self.response.app_iter])
-                    if contentlen:
-                        self.response.content_length = contentlen
+        try:
+            # Prepare application to handle a new request
+            self._setUp(environ)
+            path = self.request.path_info.strip('/')
+            form = self._get_params()
+            operation = form.get('operation', None)
+            if operation is None:
+                # Filename based?
+                operation = os.path.splitext(path.split('/')[-1])[0]
+            
+            # Check operation and act accordingly
+            if not operation or operation == 'index':
+                self.response.body = self._render_template('index.html')
+            elif operation in ['explore', 'searchContributor']:
+                # Serve simple templated page
+                self.response.body = self._render_template(
+                    '{0}.html'.format(operation)
+                )
+            elif operation == 'help':
+                # Redirect to help pages
+                response = HTTPTemporaryRedirect(
+                    location="http://archiveshub.ac.uk/searchhelp/"
+                )
+                return response(environ, start_response)
+            else:
+                try:
+                    fn = getattr(self, operation)
+                except AttributeError:
+                    # Check for static content request
+                    if path.startswith(('css', 'img', 'js', 'ead')):
+                        self.response.app_iter = self._static_content(path)
+                        contentlen = sum([len(d)
+                                          for d
+                                          in self.response.app_iter
+                                          ])
+                        if contentlen:
+                            self.response.content_length = contentlen
+                        else:
+                            self.response.status = 404
+                            self.response.body = self._render_template(
+                                'fail/404.html',
+                                resource=path
+                            )
                     else:
+                        # Invalid operation selected
                         self.response.status = 404
                         self.response.body = self._render_template(
-                            'fail/404.html',
-                            resource=path
+                            'fail/invalidOperation.html',
+                            operation=operation
                         )
+                    return self.response(environ, start_response)
                 else:
-                    # Invalid operation selected
-                    self.response.status = 404
-                    self.response.body = self._render_template(
-                        'fail/invalidOperation.html',
-                        operation=operation
-                    )
-                return self.response(environ, start_response)
-            else:
-                # Simple method of self
-                # May be a generator
-                self.response.app_iter = fn(form)
-                contentlen = sum([len(d) for d in self.response.app_iter])
-                self.response.content_length = contentlen
-        
-        return self.response(environ, start_response)
+                    # Simple method of self
+                    # May be a generator
+                    self.response.app_iter = fn(form)
+                    contentlen = sum([len(d) for d in self.response.app_iter])
+                    self.response.content_length = contentlen
+            
+            return self.response(environ, start_response)
+        finally:
+            try:
+                self.logger.flush(self.session, 20, self.request.remote_addr)
+            except ValueError:
+                # It's possible nothing was logged for this remote user
+                pass
 
     def _get_query(self, form):
         session = self.session
@@ -164,8 +174,9 @@ class EADSearchWsgiApplication(EADWsgiApplication):
             if not isinstance(query, (CQLClause, CQLTriple)):
                 # Error message
                 return query
-            self._log(20, 'Searching CQL query: %s' % (query.toCQL()))
+            self._log(20, 'Searching CQL query: {0}'.format(query.toCQL()))
             rs = db.search(session, query)
+            self._log(20, '{0} Hits'.format(len(rs)))
             if len(rs):
                 # Store the Query
                 query = self._store_query(session, query)
@@ -207,6 +218,7 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         if not form:
             # Simply return the search form
             return [self._render_template('search.html')]
+        self._log(10, 'search')
         sortBy = form.getlist('sortBy')
         maximumRecords = int(form.getvalue('maximumRecords', 20))
         startRecord = int(form.getvalue('startRecord', 1))
@@ -256,6 +268,7 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         if not form:
             # Simply return the search form
             return [self._render_template('browse.html')]
+        self._log(10, 'browse')
         idx = form.getfirst('fieldidx1', None)
         rel = form.getfirst('fieldrel1', 'exact')
         scanTerm = form.getfirst('fieldcont1', '')
@@ -285,6 +298,7 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         if not form:
             # Simply return the search form
             return [self._render_template('subject.html')]
+        self._log(10, 'subject')
         session = self.session
         db = self.database
         queryFactory = self.queryFactory
@@ -317,6 +331,7 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         return content
 
     def summary(self, form):
+        self._log(10, 'summary')
         session = self.session
         db = self.database
         sortBy = form.getlist('sortBy')
@@ -369,6 +384,7 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         return ['<a href="{0}">{0}</a>'.format(url)]
 
     def toc(self, form):
+        self._log(10, 'ToC only')
         recid = form.getfirst('recid')
         url = application_uri(self.environ) + '/data/' + recid + '?page=toc'
         self.response_headers.append(('Location', url))
@@ -376,11 +392,13 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         return ['<a href="{0}">{0}</a>'.format(url)]
 
     def email(self, form):
+        self._log(10, 'email')
         recid = form.getfirst('recid')
         # Fetch most recent resultSet
         rsdata = self._fetch_mostRecentResultSet()
         rs, startRecord, maximumRecords, sortBy = rsdata
         if 'address' not in form:
+            self._log(10, 'requesting address')
             # Simply return the search form
             return [self._render_template('email.html',
                                           recid=recid,
@@ -403,7 +421,7 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         mimemsg.epilogue = '\n'        
         msg = MIMEText.MIMEText(docTxt)
         mimemsg.attach(msg)
-        
+
         # send message
         s = smtplib.SMTP()
         s.connect(host=self.config.get('email', 'host'),
@@ -414,7 +432,7 @@ class EADSearchWsgiApplication(EADWsgiApplication):
                    mimemsg.as_string()
                    )
         s.quit()
-        self._log(10, 'Record {0} emailed to {1}'.format(recid, address))
+        self._log(20, 'Record {0} emailed to {1}'.format(recid, address))
         return [self._render_template('emailSent.html',
                                       recid=recid,
                                       address=address,
