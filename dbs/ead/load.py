@@ -122,7 +122,7 @@ def load(args):
     RecordStore.
     """
     global session, db
-    session.logger.log_info(session, 'Loading and indexing...')
+    session.logger.log_info(session, 'Loading...')
     start = time.time()
     storeIterator = _get_storeIterator(args)
     # Now iterate over the selected stores
@@ -137,7 +137,7 @@ def load(args):
     (mins, secs) = divmod(time.time() - start, 60)
     (hours, mins) = divmod(mins, 60)
     session.logger.log_info(session,
-                 ('Loading, Indexing complete ({0:.0f}h {1:.0f}m {2:.0f}s)'
+                 ('Loading complete ({0:.0f}h {1:.0f}m {2:.0f}s)'
                   ''.format(hours, mins, secs))
                  )
     return 0
@@ -151,7 +151,7 @@ def load_components(args):
     """
     global session, db
     storeIterator = _get_storeIterator(args)
-    session.logger.log_info(session, 'Loading and indexing components...')
+    session.logger.log_info(session, 'Loading components...')
     start = time.time()
     storeIterator = _get_storeIterator(args)
     for contributorStore in storeIterator:
@@ -165,7 +165,7 @@ def load_components(args):
     (mins, secs) = divmod(time.time() - start, 60)
     (hours, mins) = divmod(mins, 60)
     session.logger.log_info(session,
-                 'Components loaded and indexed ({0:.0f}h {1:.0f}m {2:.0f}s)'
+                 'Components loaded ({0:.0f}h {1:.0f}m {2:.0f}s)'
                  ''.format(hours, mins, secs)
                  )
     return 0
