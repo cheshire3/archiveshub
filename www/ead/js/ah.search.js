@@ -671,7 +671,7 @@ function createClause(current, clauseState){
 	var idxSelect = createSelect('fieldidx' + current, indexList, iSelIdx)
 	idxSelect.onchange = new Function('updateSelects(' + current + ');')
 	pElem.appendChild(idxSelect)
-	pElem.appendChild(document.createTextNode(' for '))
+	//pElem.appendChild(document.createTextNode(' for '))
 	// relation select
 	var rSelIdx = parts.shift();
 	// complex conditional to decide available relations

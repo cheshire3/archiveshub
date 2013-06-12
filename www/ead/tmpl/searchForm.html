@@ -1,5 +1,5 @@
 <form name="searchform" method="post" action="${SCRIPT}/search.html"
-        onsubmit="setCookie('eadsearchform', formToString());">
+        onsubmit="setCookie('eadsearchform', formToString());" id="hubsearchform">
     <fieldset class="paleblue">
      
      <input type="hidden" name="_charset_"/>
@@ -23,7 +23,6 @@
              <option value="bath.geographicName">&nbsp;&nbsp;Geographical Names</option>
              <option value="bath.genreForm">Genre</option>
            </select>  
-           for
            <select name="fieldrel1" id="fieldrel1">
              <option value="all/relevant/proxinfo" selected="selected">All</option>
              <option value="any/relevant/proxinfo">Any</option>
@@ -51,7 +50,6 @@
              <option value="bath.geographicName">&nbsp;&nbsp;Geographical Names</option>
              <option value="bath.genreForm">Genre</option>
            </select>         
-           for
            <select name="fieldrel2">
              <option value="all/relevant/proxinfo" selected="selected">All</option>
              <option value="any/relevant/proxinfo">Any</option>
@@ -77,7 +75,6 @@
              <option value="bath.geographicName">&nbsp;&nbsp;Geographical Names</option>
              <option value="bath.genreForm">Genre</option>
            </select>
-           for
            <select name="fieldrel3">
              <option value="all/relevant/proxinfo" selected="selected">All</option>
              <option value="any/relevant/proxinfo">Any</option>
