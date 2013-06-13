@@ -2603,14 +2603,14 @@
 		<xsl:param name="text">
 			<xsl:value-of select="."/>
 		</xsl:param>
-		<xsl:value-of select="translate(translate(normalize-space(translate($text, '/', '-')), ' ', ''), $uc, $lc)"/>
+		<xsl:value-of select="translate(translate(normalize-space($text), ' ', ''), $uc, $lc)"/>
 	</xsl:template>
     
     <xsl:template name="normalizeEadid">
         <xsl:param name="uc" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ'"/>
         <xsl:param name="lc" select="'abcdefghijklmnopqrstuvwxyz'"/>
         <xsl:param name="text"/>
-        <xsl:value-of select="translate(translate(normalize-space(translate($text, '/', '-')), ' ', ''), $uc, $lc)"/>
+        <xsl:value-of select="translate(translate(normalize-space($text), ' ', ''), $uc, $lc)"/>
     </xsl:template>
     
 </xsl:stylesheet>
