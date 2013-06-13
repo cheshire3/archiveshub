@@ -405,7 +405,7 @@ function setCookie(name, val) {
     while(cookie.charAt(0) == ' '){cookie = cookie.substr(1, cookie.length)}
     cookie = cookie.split('=');
     if( cookie[0] == escape(name) || cookie[0] == name) {
-        cookieList[x] = null;
+    	cookieList[x] = null;
     }
   }
   // add specified crumb to cookie
@@ -429,27 +429,27 @@ function getCookie(name) {
 // Script:   counter.js
 // Version:   0.01
 // Description:
-//  functions to allow onscreen counter objects
+// 	functions to allow onscreen counter objects
 */
 
 function incr(elementId) {
-    if( !document.getElementById) {
-        return;
-    }
-    var e = document.getElementById( elementId );
-    var i = parseInt(e.innerHTML)
-    i++
-    e.innerHTML = i 
+	if( !document.getElementById) {
+		return;
+	}
+	var e = document.getElementById( elementId );
+	var i = parseInt(e.innerHTML)
+	i++
+	e.innerHTML = i	
 }
 
 function decr(elementId) {
-    if( !document.getElementById) {
-        return;
-    }
-    var e = document.getElementById( elementId );
-    var i = parseInt(e.innerHTML)
-    i--
-    e.innerHTML = i
+	if( !document.getElementById) {
+		return;
+	}
+	var e = document.getElementById( elementId );
+	var i = parseInt(e.innerHTML)
+	i--
+	e.innerHTML = i
 }
 
 /*
@@ -471,7 +471,7 @@ function decr(elementId) {
 // 0.03 - 21/10/2005 - JH - Cookie support added to maintain state of expanded list when page is unloaded
 // 0.04 - 04/01/2006 - JH - E-mail addresses checked before submission to save server time
 // 0.05 - 18/06/2006 - JH - TOC state cookie stuff debugged
-//                                              - Search form manipulation to add more clauses
+// 												- Search form manipulation to add more clauses
 // 0.06 - 03/08/2006 - JH - Non EAD specific functions separated into aptly named files in a separate javascript dir
 // 0.07 - 15/05/2007 - JH - toggleShow function added
 // 0.08 - 23/07/2008 - JH - function stacks implemented using Simon Willison's addLoadEvent
@@ -499,17 +499,17 @@ function addLoadEvent(func) {
 /*
 // DEPRECATED: Use jQuery $(document).ready() instead
 */
-    var oldonload = window.onload;
-    if (typeof window.onload != 'function') {
-        window.onload = func;
-    } else {
-    window.onload = function() {
-            if (oldonload) {
-                oldonload();
-            }
-            func();
-        }
-    }
+	var oldonload = window.onload;
+	if (typeof window.onload != 'function') {
+    	window.onload = func;
+	} else {
+	window.onload = function() {
+			if (oldonload) {
+				oldonload();
+			}
+			func();
+		}
+	}
 }
 
 function addUnloadEvent(func) {
@@ -529,30 +529,30 @@ function addUnloadEvent(func) {
 var op = null;
 
 function confirmOp(){
-    switch(op) {
-        case 'unindex':
-            var msg = 'This operation will PERMANENTLY remove the file from the hard-disk. The record will also be removed from all indexes, which may take some time. Are you sure you wish to continue?';
-            break
-        case 'delete':
-            var msg = 'This operation will PERMANENTLY remove the file from the hard-disk. Are you sure you wish to continue?';
-            break
-            
-        default:
-            if (arguments.length == 1){
-                /*hopefully a message we should send*/
-                var msg = arguments[0];
-            }
-            break
-    }
-    if (msg) {
-        if (window.confirm) { return window.confirm(msg); }
-        else if (confirm) { return confirm(msg); }
-        else { return true; } // no mechanism for confirmation supported by browser - go ahead anyway
-    } else {return true; } // no requirement for confirmation
+	switch(op) {
+		case 'unindex':
+			var msg = 'This operation will PERMANENTLY remove the file from the hard-disk. The record will also be removed from all indexes, which may take some time. Are you sure you wish to continue?';
+			break
+		case 'delete':
+			var msg = 'This operation will PERMANENTLY remove the file from the hard-disk. Are you sure you wish to continue?';
+			break
+			
+		default:
+			if (arguments.length == 1){
+				/*hopefully a message we should send*/
+				var msg = arguments[0];
+			}
+			break
+	}
+	if (msg) {
+		if (window.confirm) { return window.confirm(msg); }
+		else if (confirm) { return confirm(msg); }
+		else { return true; } // no mechanism for confirmation supported by browser - go ahead anyway
+	} else {return true; } // no requirement for confirmation
 }
 
 /*
-// Script:      email.js
+// Script:   	email.js
 // Version:   0.01
 // Description:
 //            JavaScript functions used in the Cheshire3 EAD search/retrieve and display interface 
@@ -614,68 +614,68 @@ function addFormValidation(){
 */
 
 function createXMLHttpRequest() {
-    var xmlHttp=null;
-    try {
-        // Firefox, Opera 8.0+, Safari
-        xmlHttp=new XMLHttpRequest();
-    }
-    catch (e) {
-        // Internet Explorer
-        try {
-            xmlHttp=new ActiveXObject("Msxml2.XMLHTTP");
-            }
-        catch (e) {
-            try {
-                xmlHttp=new ActiveXObject("Microsoft.XMLHTTP");
-            }
-            catch (e) {
-                alert("Your browser does not support AJAX! Some functionality will be unavailable.");
-                return false;
-            }
-        }
-    }
-    return xmlHttp;
+	var xmlHttp=null;
+	try {
+		// Firefox, Opera 8.0+, Safari
+		xmlHttp=new XMLHttpRequest();
+	}
+	catch (e) {
+		// Internet Explorer
+		try {
+			xmlHttp=new ActiveXObject("Msxml2.XMLHTTP");
+			}
+		catch (e) {
+			try {
+		    	xmlHttp=new ActiveXObject("Microsoft.XMLHTTP");
+		    }
+			catch (e) {
+			    alert("Your browser does not support AJAX! Some functionality will be unavailable.");
+			    return false;
+		    }
+		}
+	}
+	return xmlHttp;
 }
 
 
 function updateElementByUrl(id, url, loadImg) {
-    if( !document.getElementById) {
-        window.alert("Your browser does not support functions essential for updating this page with AJAX!\n\nYou should still be able to use all functions of this site by disabling JavaScript in your browser settings.")
-        return true;
-    }
-    var el = document.getElementById(id);
-    // first obscure target to avoid repeat clicks
-    try {
-        displayLoading(el, loadImg);
-    }
-    catch (e) {
-        alert('No element with id: ' + id)
-    }
-    var xmlHttp = createXMLHttpRequest();
-    if (xmlHttp==null) {
-        alert ("Your browser does not support AJAX!");
-        return true;
-    }
-    xmlHttp.onreadystatechange=function() {
-        if(xmlHttp.readyState==4) {
-            if (xmlHttp.status == 200 || xmlHttp.status == 304) {
-                el.innerHTML=xmlHttp.responseText;
-                ajaxifyLinks(el);
-                ajaxifyForms(el);
-                try {
-                    hideStuff(el);
-                } catch(err) {
-                }
-                try {
-                    fadeToWhite(el, 183, 232, 245);
-                } catch(err) {
-                }
-            }
-        }
-    }
-    xmlHttp.open("GET",url,true);
-    xmlHttp.send(null);
-    return false;
+	if( !document.getElementById) {
+		window.alert("Your browser does not support functions essential for updating this page with AJAX!\n\nYou should still be able to use all functions of this site by disabling JavaScript in your browser settings.")
+		return true;
+	}
+	var el = document.getElementById(id);
+	// first obscure target to avoid repeat clicks
+	try {
+		displayLoading(el, loadImg);
+	}
+	catch (e) {
+		alert('No element with id: ' + id)
+	}
+	var xmlHttp = createXMLHttpRequest();
+	if (xmlHttp==null) {
+		alert ("Your browser does not support AJAX!");
+		return true;
+	}
+	xmlHttp.onreadystatechange=function() {
+		if(xmlHttp.readyState==4) {
+			if (xmlHttp.status == 200 || xmlHttp.status == 304) {
+				el.innerHTML=xmlHttp.responseText;
+				ajaxifyLinks(el);
+				ajaxifyForms(el);
+				try {
+					hideStuff(el);
+				} catch(err) {
+				}
+				try {
+					fadeToWhite(el, 183, 232, 245);
+				} catch(err) {
+				}
+			}
+		}
+	}
+	xmlHttp.open("GET",url,true);
+  	xmlHttp.send(null);
+  	return false;
 }
 
 
@@ -756,125 +756,125 @@ function liveUpdater(uriFunc, resultid, preFunc, postFunc) {
 function liveSearch(id, resultid, field_event_type, preFunc, postFunc) {
     function formToURL(){
         if ( !document.getElementById) {
-            window.alert("Your browser does not support functions essential for updating this page with AJAX!");
-            return;
-        }
+	        window.alert("Your browser does not support functions essential for updating this page with AJAX!");
+	        return;
+	    }
         myForm = document.getElementById(id).form; 
-        var i = 0;
-        var params = new Array();
-        params.push('operation=' + myForm.elements['operation'].value);
-        while (myForm.elements['fieldcont' + (i+1)] && myForm.elements['fieldcont' + (i+1)].value != "") {
-            if (i > 0) {
-                var boolgrp = document.getElementsByName('fieldbool' + i);
-                //while (!boolgrp[0].value) {boolgrp = boolgrp.slice(1);}
-                for (var j = 0; j < boolgrp.length; j++) {
-                    if (boolgrp[j].checked == true) {
-                        params.push('fieldbool' + i + '=' + boolgrp[j].value);
-                    }
-                }
-            }
-            i++;
-            var idxSel = myForm.elements['fieldidx' + i];
+	    var i = 0;
+	    var params = new Array();
+	    params.push('operation=' + myForm.elements['operation'].value);
+	    while (myForm.elements['fieldcont' + (i+1)] && myForm.elements['fieldcont' + (i+1)].value != "") {
+	        if (i > 0) {
+	            var boolgrp = document.getElementsByName('fieldbool' + i);
+	            //while (!boolgrp[0].value) {boolgrp = boolgrp.slice(1);}
+	            for (var j = 0; j < boolgrp.length; j++) {
+	                if (boolgrp[j].checked == true) {
+	                    params.push('fieldbool' + i + '=' + boolgrp[j].value);
+	                }
+	            }
+	        }
+	        i++;
+	        var idxSel = myForm.elements['fieldidx' + i];
             try {
-               var idxI = idxSel.selectedIndex;
-               params.push('fieldidx' + i + '=' + idxSel.options[idxI].value);
+	           var idxI = idxSel.selectedIndex;
+	           params.push('fieldidx' + i + '=' + idxSel.options[idxI].value);
             } catch(e) {};
             try { 
-               params.push('fieldrel' + i + '=' + myForm.elements['fieldrel' + i].value);
+	           params.push('fieldrel' + i + '=' + myForm.elements['fieldrel' + i].value);
             } catch(e) {};
-            params.push('fieldcont' + i + '=' + escape(myForm.elements['fieldcont' + i].value));
-        }
-        url = myForm.action + '?' + params.join('&'); 
-        return url + '&maximumTerms=7&ajax=1';
-    };
+	        params.push('fieldcont' + i + '=' + escape(myForm.elements['fieldcont' + i].value));
+	    }
+	    url = myForm.action + '?' + params.join('&'); 
+	    return url + '&maximumTerms=7&ajax=1';
+	};
 
     var updater = liveUpdater(formToURL, resultid);
     var timeout = false;
         
     function start() {
-        if (timeout) {
-            window.clearTimeout(timeout);
-        }
-        timeout = window.setTimeout(updater, 200);
+		if (timeout) {
+		    window.clearTimeout(timeout);
+		}
+		timeout = window.setTimeout(updater, 200);
     };
     
     if (typeof field_event_type != "undefined") {
         addListener(document.getElementById(id), field_event_type.toLowerCase(), updater);
-    } else {
-        addKeyListener(document.getElementById(id), start);
-    }
+	} else {
+	    addKeyListener(document.getElementById(id), start);
+	}
 };
 
 
 function displayLoading(el, loadImg) {
-    if (typeof loadImg == 'undefined'){
-        loadImg = '/ead/img/ajax-loader.gif';
-    }
-    el.innerHTML = '<div class="loading"><img src="' + loadImg + '" alt=""/></div>';
+	if (typeof loadImg == 'undefined'){
+		loadImg = '/ead/img/ajax-loader.gif';
+	}
+	el.innerHTML = '<div class="loading"><img src="' + loadImg + '" alt=""/></div>';
 };
 
 
 function ajaxifyLinks(el){
-    if( !el.getElementsByTagName) {
-        return;
-    }
-    var linkList = el.getElementsByTagName("a");
-    for (var i = 0; i < linkList.length; i++) {
-        var el = linkList[i]
-        if (el.className.match('ajax')){
-            el.onclick = function() {
-                var hrefParts = this.getAttribute("href").split("#")
-                var div = hrefParts.pop()
-                hrefParts.push("&ajax=1")
-                updateElementByUrl(div, hrefParts.join(""));
-                return false;
-            }
-        }
-    }
+	if( !el.getElementsByTagName) {
+  		return;
+  	}
+  	var linkList = el.getElementsByTagName("a");
+	for (var i = 0; i < linkList.length; i++) {
+		var el = linkList[i]
+		if (el.className.match('ajax')){
+			el.onclick = function() {
+				var hrefParts = this.getAttribute("href").split("#")
+				var div = hrefParts.pop()
+				hrefParts.push("&ajax=1")
+				updateElementByUrl(div, hrefParts.join(""));
+				return false;
+			}
+		}
+	}
 };
 
 function ajaxifyForms(el){
-    if( !el.getElementsByTagName) {
-        return;
-    }
-    var formList = el.getElementsByTagName("form");
-    for (var i = 0; i < formList.length; i++) {
-        var el = formList[i]
-        if (el.className.match('ajax')){
-            el.onsubmit = function() {
+	if( !el.getElementsByTagName) {
+  		return;
+  	}
+  	var formList = el.getElementsByTagName("form");
+	for (var i = 0; i < formList.length; i++) {
+		var el = formList[i]
+		if (el.className.match('ajax')){
+			el.onsubmit = function() {
                 var div = this.className.split('-').pop();
-                var hrefParts = new Array([this.getAttribute("action")]);
-                hrefParts.push("?ajax=1")
-                // INPUTS
-                var inputList = this.getElementsByTagName("input");
-                for (var j = 0; j < inputList.length; j++) {
-                    var inp = inputList[j];
-                    hrefParts.push('&');
-                    if (inp.type == "checkbox") {
-                        if (inp.checked) {
-                           hrefParts.push(inp.name + "=" + inp.value);
-                        } else {
-                           hrefParts.push(inp.name + "=0");
-                        }
-                    } else if (inp.type == "radio") {
-                       if (inp.checked) {
-                          hrefParts.push(inp.name + "=" + inp.value);
-                       }
-                    } else {
-                        hrefParts.push(inp.name + "=" + inp.value);
-                    }
-                }
-                //SELECTS
-                var inputList = el.getElementsByTagName("select");
-                for (var j = 0; j < inputList.length; j++) {
-                    hrefParts.push('&');
-                    hrefParts.push(inputList[j].name + "=" + inputList[j].options[inputList[j].selectedIndex].value);
-                }
-                updateElementByUrl(div, hrefParts.join(""));
-                return false;
-            }
-        }
-    }
+				var hrefParts = new Array([this.getAttribute("action")]);
+				hrefParts.push("?ajax=1")
+				// INPUTS
+				var inputList = this.getElementsByTagName("input");
+				for (var j = 0; j < inputList.length; j++) {
+					var inp = inputList[j];
+					hrefParts.push('&');
+				   	if (inp.type == "checkbox") {
+						if (inp.checked) {
+						   hrefParts.push(inp.name + "=" + inp.value);
+						} else {
+						   hrefParts.push(inp.name + "=0");
+						}
+					} else if (inp.type == "radio") {
+					   if (inp.checked) {
+					      hrefParts.push(inp.name + "=" + inp.value);
+					   }
+					} else {
+						hrefParts.push(inp.name + "=" + inp.value);
+					}
+				}
+				//SELECTS
+				var inputList = el.getElementsByTagName("select");
+				for (var j = 0; j < inputList.length; j++) {
+					hrefParts.push('&');
+					hrefParts.push(inputList[j].name + "=" + inputList[j].options[inputList[j].selectedIndex].value);
+				}
+				updateElementByUrl(div, hrefParts.join(""));
+				return false;
+			}
+		}
+	}
 };
 
 /*
@@ -894,8 +894,8 @@ function ajaxifyForms(el){
 // 0.01 - 03/08/2006 - JH - Search form DOM manipulation functions pasted in from previous script for easier error tracking etc.
 // 0.02 - 24/10/2006 - JH - Additions for adding/removing phrase option to relation drop-down when necessary
 // 0.03 - 11/12/2006 - JH - Mods for compatibility with IE7
-//                          - get elements by id rather than name wherever possible
-//                          - use innerHTML to setup radio buttons
+//							- get elements by id rather than name wherever possible
+//							- use innerHTML to setup radio buttons
 // 0.04 - 14/12/2006 - JH - Search form state maintained in cookie. Reset function added.
 // 0.05 - 25/01/2007 - JH - Muchos new stuff in anticipation of date searching
 // 0.06 - 19/12/2007 - JH - Multiple indexes specified in fieldidx
@@ -930,11 +930,11 @@ var proxRelationList = new Array(
                     );
 //var dateRelationList = new Array('%3C|||Before', '%3E|||After', 'within/relevant/proxinfo|||Between', 'encloses/relevant/proxinfo|||Spans...');
 var dateRelationList = new Array(
-                        'range.overlaps/relevant/proxinfo|||Contains', 
-                        '%3C|||Before', 
-                        '%3E|||After', 
-                        'within/relevant/proxinfo|||Between'
-                    );
+						'range.overlaps/relevant/proxinfo|||Contains', 
+						'%3C|||Before', 
+						'%3E|||After', 
+						'within/relevant/proxinfo|||Between'
+				    );
 
 //var relSelectPhraseElement = document.createElement('option');
 //relSelectPhraseElement.value = '=/relevant/proxinfo';
@@ -942,43 +942,43 @@ var dateRelationList = new Array(
 
 
 function updateSelects(current){
-    var idxSelect = document.getElementById('fieldidx' + current)
-    var relSelect = document.getElementById('fieldrel' + current)
-    if  (!idxSelect || !relSelect || !idxSelect.options || !relSelect.options) {
-        return
-    }
-    relSelect.options[relSelect.selectedIndex].selected = false;
-    var iSelIdx = idxSelect.selectedIndex;
-    if(idxSelect.options[iSelIdx].value == 'dc.identifier'){
-        var rSelIdx = 2;
-    } else {
-        var rSelIdx = 0;
-    }
-    // complex conditional to decide available relations
-    var relationList = new Array()
-    if (iSelIdx != 3) { var relationList = kwRelationList; }
-    if (iSelIdx > 0) { var relationList = relationList.concat(exactRelationList); }
-    if (iSelIdx < 2) { var relationList = relationList.concat(proxRelationList); }
-    if (iSelIdx == 3) {
-        //var rSelIdx = 4;
-        var relationList = dateRelationList; 
-    }
-    // now replace existing relation select element
-    relSelect.parentNode.insertBefore(createSelect('fieldrel' + current, relationList, rSelIdx), relSelect);
-    relSelect.parentNode.removeChild(relSelect);
+	var idxSelect = document.getElementById('fieldidx' + current)
+	var relSelect = document.getElementById('fieldrel' + current)
+	if  (!idxSelect || !relSelect || !idxSelect.options || !relSelect.options) {
+		return
+	}
+	relSelect.options[relSelect.selectedIndex].selected = false;
+	var iSelIdx = idxSelect.selectedIndex;
+	if(idxSelect.options[iSelIdx].value == 'dc.identifier'){
+		var rSelIdx = 2;
+	} else {
+		var rSelIdx = 0;
+	}
+	// complex conditional to decide available relations
+	var relationList = new Array()
+	if (iSelIdx != 3) { var relationList = kwRelationList; }
+	if (iSelIdx > 0) { var relationList = relationList.concat(exactRelationList); }
+	if (iSelIdx < 2) { var relationList = relationList.concat(proxRelationList); }
+	if (iSelIdx == 3) {
+		//var rSelIdx = 4;
+		var relationList = dateRelationList; 
+	}
+	// now replace existing relation select element
+	relSelect.parentNode.insertBefore(createSelect('fieldrel' + current, relationList, rSelIdx), relSelect);
+	relSelect.parentNode.removeChild(relSelect);
 
 }
 
 function addSearchClause(current, boolIdx, clauseState){
   if ( !document.getElementById || !document.createElement ) {
-    return
+ 	return
   }
   //var form = document.getElementsByName('searchform')[0]
   var insertHere = document.getElementById('addClauseP');
   if (current > 0) {
-      newBool = createBoolean(current, boolIdx)
-      insertHere.parentNode.insertBefore(newBool, insertHere);
-      //form.insertBefore(boolOp, form.childNodes[insertBeforePosn])
+	  newBool = createBoolean(current, boolIdx)
+	  insertHere.parentNode.insertBefore(newBool, insertHere);
+	  //form.insertBefore(boolOp, form.childNodes[insertBeforePosn])
   }
   current++
   newClause = createClause(current, clauseState)
@@ -988,46 +988,46 @@ function addSearchClause(current, boolIdx, clauseState){
 }
 
 function createBoolean(current, selIdx){
-    /* radio buttons cannot be created by DOM for IE - use innerHTML instead */
-    if (!selIdx) {var selIdx = 0;}
-    var pElem = document.createElement('p');
-    pElem.setAttribute('id', 'boolOp' + current);
-    pElem.setAttribute('class', 'boolOp');
-    var boolList = new Array('and/relevant/proxinfo', 'or/relevant/proxinfo', 'not');
-    var inputs = new Array();
-    for (var i=0;i<boolList.length;i++) {
-        var val = new String(boolList[i]);
-        if (val.indexOf('/') > 0) {
-            var shortName = val.substring(0, val.indexOf('/'));
-        } else {
-            var shortName = val;
-        }
-        inputs[i] = '<input type="radio" name="fieldbool' + current + '" value="' + val + '" id="fieldbool' + current + '-' + shortName + '"';
-        if (i == selIdx) {
-            inputs[i] += ' checked="checked"'
-        }
-        inputs[i] += '/><label for="fieldbool' + current + '-' + shortName + '">' + shortName.toUpperCase() + '&nbsp;&nbsp;</label>';
-    }
-    pElem.innerHTML = inputs.join('\n');
-    return pElem
+	/* radio buttons cannot be created by DOM for IE - use innerHTML instead */
+	if (!selIdx) {var selIdx = 0;}
+	var pElem = document.createElement('p');
+	pElem.setAttribute('id', 'boolOp' + current);
+	pElem.setAttribute('class', 'boolOp');
+	var boolList = new Array('and/relevant/proxinfo', 'or/relevant/proxinfo', 'not');
+	var inputs = new Array();
+	for (var i=0;i<boolList.length;i++) {
+		var val = new String(boolList[i]);
+		if (val.indexOf('/') > 0) {
+			var shortName = val.substring(0, val.indexOf('/'));
+		} else {
+			var shortName = val;
+		}
+		inputs[i] = '<input type="radio" name="fieldbool' + current + '" value="' + val + '" id="fieldbool' + current + '-' + shortName + '"';
+		if (i == selIdx) {
+			inputs[i] += ' checked="checked"'
+		}
+		inputs[i] += '/><label for="fieldbool' + current + '-' + shortName + '">' + shortName.toUpperCase() + '&nbsp;&nbsp;</label>';
+	}
+  	pElem.innerHTML = inputs.join('\n');
+	return pElem
 }
 
 function createSelect(name, optionList, selIdx){
-    // set 1st option as selected by default
-    if (!selIdx) {var selIdx = 0;}
-    var selectElem = document.createElement('select')
-    selectElem.id = name;
-    selectElem.name = name;
-    for (var i=0; i < optionList.length; i++){
-        var optionData = optionList[i].split('|||')
-        var optionElem = document.createElement('option')
-        optionElem.value = optionData[0];
-        optionElem.innerHTML = optionData[1];
-        
-        if (i == selIdx) {optionElem.selected = 'selected'}
-        selectElem.appendChild(optionElem)
-    }
-    return selectElem
+	// set 1st option as selected by default
+	if (!selIdx) {var selIdx = 0;}
+	var selectElem = document.createElement('select')
+	selectElem.id = name;
+  	selectElem.name = name;
+	for (var i=0; i < optionList.length; i++){
+		var optionData = optionList[i].split('|||')
+		var optionElem = document.createElement('option')
+		optionElem.value = optionData[0];
+		optionElem.innerHTML = optionData[1];
+		
+		if (i == selIdx) {optionElem.selected = 'selected'}
+		selectElem.appendChild(optionElem)
+	}
+	return selectElem
 }
 
 function createClause(current, clauseState){
@@ -1066,72 +1066,72 @@ function createClause(current, clauseState){
 }
 
 function removeClause(current) {
-    var pElem = document.getElementById('boolOp' + (current-1));
-    if (pElem) {
-        pElem.parentNode.removeChild(pElem);
-    }
-    var pElem = document.getElementById('searchClause' + current);
-    pElem.parentNode.removeChild(pElem);
-    document.getElementById('addClauseLink').href = 'javascript:addSearchClause(' + current + ');';
+	var pElem = document.getElementById('boolOp' + (current-1));
+	if (pElem) {
+		pElem.parentNode.removeChild(pElem);
+	}
+	var pElem = document.getElementById('searchClause' + current);
+	pElem.parentNode.removeChild(pElem);
+	document.getElementById('addClauseLink').href = 'javascript:addSearchClause(' + current + ');';
 }
 
 function resetForm(formid) {
-    if (typeof formid == "undefined") {
-            formid = "searchform";
-    }
-    var i = 1;
-    while (document.getElementById('searchClause' + i)) {
-        removeClause(i);
-        i++;
-    }
-    addSearchClause(0);
-    document.getElementById('addClauseLink').href = 'javascript:addSearchClause(1);';
-    setCookie(formid, '');
+	if (typeof formid == "undefined") {
+    		formid = "searchform";
+  	}
+	var i = 1;
+	while (document.getElementById('searchClause' + i)) {
+		removeClause(i);
+		i++;
+	}
+	addSearchClause(0);
+	document.getElementById('addClauseLink').href = 'javascript:addSearchClause(1);';
+	setCookie(formid, '');
 }
 
 function formToString(form) {
-    var i = 0;
-    var fields = new Array();
-    var bools = new Array();
-    while (document.getElementById('fieldcont' + (i+1)) && document.getElementById('fieldcont' + (i+1)).value != "") {
-        bools[i] = 0;
-        if (i > 0) {
-            var boolgrp = document.getElementsByName('fieldbool' + i);
-            //while (!boolgrp[0].value) {boolgrp = boolgrp.slice(1);}
-            for (var j=0;j<boolgrp.length;j++) {
-                if (boolgrp[j].checked == true) {
-                    bools[i] = j;
-                }
-            }
-        }
-        i++;
-        var idx = document.getElementById('fieldidx' + i).selectedIndex;
-        var rel = document.getElementById('fieldrel' + i).selectedIndex;
-        var cont = document.getElementById('fieldcont' + i).value;
-        fields[i-1] = new Array(idx, rel, cont).join();
-    } 
-    stateString = fields.join('||') + '<CLAUSES|BOOLS>' + bools.join('||');
-    return stateString;
+	var i = 0;
+	var fields = new Array();
+	var bools = new Array();
+	while (document.getElementById('fieldcont' + (i+1)) && document.getElementById('fieldcont' + (i+1)).value != "") {
+		bools[i] = 0;
+		if (i > 0) {
+			var boolgrp = document.getElementsByName('fieldbool' + i);
+			//while (!boolgrp[0].value) {boolgrp = boolgrp.slice(1);}
+			for (var j=0;j<boolgrp.length;j++) {
+				if (boolgrp[j].checked == true) {
+					bools[i] = j;
+				}
+			}
+		}
+		i++;
+		var idx = document.getElementById('fieldidx' + i).selectedIndex;
+		var rel = document.getElementById('fieldrel' + i).selectedIndex;
+		var cont = document.getElementById('fieldcont' + i).value;
+		fields[i-1] = new Array(idx, rel, cont).join();
+	} 
+	stateString = fields.join('||') + '<CLAUSES|BOOLS>' + bools.join('||');
+	return stateString;
 }
 
 function formFromString(s) {
-    if (s && s.length > 0) {
-        var parts = s.split('<CLAUSES|BOOLS>');
-    } else {
-        var parts = new Array()
-    }
-    if (parts.length == 2) {
-        var clauseList = parts[0].split('||');
-        var boolList = parts[1].split('||');
-        for (var i=0;i<clauseList.length;i++) {
-            addSearchClause(i, boolList[i], clauseList[i]);
-        }
-    } else {
-        // no state - initialise empty search form
-        addSearchClause(0);
-    }
+	if (s && s.length > 0) {
+		var parts = s.split('<CLAUSES|BOOLS>');
+	} else {
+		var parts = new Array()
+	}
+	if (parts.length == 2) {
+		var clauseList = parts[0].split('||');
+		var boolList = parts[1].split('||');
+		for (var i=0;i<clauseList.length;i++) {
+			addSearchClause(i, boolList[i], clauseList[i]);
+		}
+	} else {
+		// no state - initialise empty search form
+		addSearchClause(0);
+	}
 
-    return;
+	return;
 }
 
 

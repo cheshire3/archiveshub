@@ -27,14 +27,14 @@
 
         <xsl:param name="parent-identifier">
             <xsl:choose>
-                <xsl:when test="local-name() = 'component' and matches(/*/@c3:parent, 'LxmlRecord-')">
+                <xsl:when test="local-name() = 'component' and starts-with(/*/@c3:parent, 'LxmlRecord-')">
                     <xsl:value-of select="substring-after(/*/@c3:parent, 'LxmlRecord-')" />
                 </xsl:when>
                 <xsl:when test="local-name() = 'component'">
                     <xsl:value-of select="substring-after(/*/@c3:parent, '/')" />
                 </xsl:when>
-                <xsl:when test="local-name() = 'c3component' and matches(/*/@parent, 'LxmlRecord-')">
-                    <xsl:value-of select="substring-after(/*/parent, 'LxmlRecord-')" />
+                <xsl:when test="local-name() = 'c3component' and starts-with(/*/@parent, 'LxmlRecord-')">
+                    <xsl:value-of select="substring-after(/*/@parent, 'LxmlRecord-')" />
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:value-of select="substring-after(/*/@parent, '/')" />
@@ -116,7 +116,14 @@
                 <!-- if they're not here, we have real problems can't realistically 
                     pattern match in XSLT -->
                 <xsl:value-of select="@countrycode" />
-                <xsl:value-of select="@repositorycode" />
+                <xsl:choose>
+                    <xsl:when test="string(number(@repositorycode)) = 'NaN'">
+                        <xsl:value-of select="@repositorycode" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="format-number(number(@repositorycode), '#')" />
+                    </xsl:otherwise>
+                </xsl:choose>
             </xsl:if>
         </xsl:param>
 

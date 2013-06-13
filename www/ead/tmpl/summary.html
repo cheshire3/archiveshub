@@ -19,7 +19,7 @@
             <%identifier, title = titles.pop(0)%>
             
             % if identifier:
-                <a href="${SCRIPT}/data/${identifier}">${title|h}</a>
+                <a href="${DATAURL}/${identifier}">${title|h}</a>
             % else:
                 ${title}
             % endif
