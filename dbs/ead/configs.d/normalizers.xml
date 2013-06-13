@@ -1,0 +1,21 @@
+<config xmlns="http://www.cheshire3.org/schemas/config/">
+
+    <!--
+    Configuration for Normaizers.
+
+    This file was produced, and released as part of Cheshire for Archives v3.x.
+    Copyright &#169; 2005-2013 the University of Liverpool 
+    -->
+
+    <subConfigs>
+
+        <subConfig type="normalizer" id="identifierZeroStripNormalizer">
+            <objectType>cheshire3.normalizer.RegexpNormalizer</objectType>
+            <options>
+                <setting type="regexp">^gb0+</setting>
+                <setting type="char">gb</setting>
+            </options>
+        </subConfig>
+
+    </subConfigs>
+</config>

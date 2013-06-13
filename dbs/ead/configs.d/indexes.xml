@@ -223,10 +223,28 @@
             <paths>
                 <object type="indexStore" ref="indexStore" />
             </paths>
-            <source>
+            <source mode="data">
                 <xpath ref="identifierSelector" />
                 <process>
                     <object type="extractor" ref="SimpleExtractor" />
+                    <object type="normalizer" ref="identifierZeroStripNormalizer" />
+                </process>
+            </source>
+            <source mode="all|any">
+                <process>
+                    <object type="workflow"
+                        ref="PreserveMaskingKeywordExtractorWorkflow" />
+                    <object type="workflow"
+                        ref="Diacritic-Case-NormalizerWorkflow" />
+                    <object type="normalizer" ref="identifierZeroStripNormalizer" />
+                </process>
+            </source>
+            <source mode="=|exact">
+                <process>
+                    <object type="extractor" ref="SimpleExtractor" />
+                    <object type="workflow"
+                        ref="Space-Diacritic-Case-NormalizerWorkflow" />
+                    <object type="normalizer" ref="identifierZeroStripNormalizer" />
                 </process>
             </source>
         </subConfig>

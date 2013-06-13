@@ -72,6 +72,7 @@
 				<object type="normalizer" ref="DiacriticNormalizer" function="process_string" />
 				<object type="normalizer" ref="CaseNormalizer" function="process_string" />
 				<object type="normalizer" ref="SpaceNormalizer" function="process_string" />
+                <object type="normalizer" ref="identifierZeroStripNormalizer" function="process_string" />
 				<assign
 					from="input.replace(' ', '').replace('\\', '-').replace('\'', '')"
 					to="input" />
