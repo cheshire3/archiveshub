@@ -45,15 +45,6 @@ class EADRecordWsgiApplication(EADWsgiApplication):
         mtHash.update({'text/xml': self.xml})
         self.mimetypeList = conneg.parse(', '.join(mtHash.keys()))
 
-    def _setUp(self, environ):
-        super(EADRecordWsgiApplication, self)._setUp(environ)
-        # Set the URL of the data resolver (i.e. self)
-        self.defaultContext['DATAURL'] = self.request.script_name
-        # Set the base URL for this family of apps
-        base = self.request.relative_url('../search').rstrip(u'/')
-        # Set SCRIPT to be base search app, rather than data app
-        self.defaultContext['SCRIPT'] = base
-    
     def __call__(self, environ, start_response):
         # Method to make instances of this class callable
         try:

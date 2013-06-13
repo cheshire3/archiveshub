@@ -90,14 +90,12 @@ class EADWsgiApplication(object):
         # Create a Response object with defaults for status, encoding etc. 
         # Methods should over-ride these defaults as necessary
         self.response = Response()
-        script = req.script_name
+        script = '/search'
         self.defaultContext['SCRIPT'] = script
         # Set the base URL of this family of apps
-        base = '/search'
-        self.defaultContext['BASE'] = base
+        self.defaultContext['BASE'] = script
         # Set the URL of the data resolver
-        dataUrl = self.request.relative_url('../data')
-        self.defaultContext['DATAURL'] = dataUrl.rstrip(u'/')
+        self.defaultContext['DATAURL'] = '/data'
         # Add current Cheshire3 Session to defaultContext
         self.defaultContext['session'] = self.session
 
