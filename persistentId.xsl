@@ -116,7 +116,14 @@
                 <!-- if they're not here, we have real problems can't realistically 
                     pattern match in XSLT -->
                 <xsl:value-of select="@countrycode" />
-                <xsl:value-of select="@repositorycode" />
+                <xsl:choose>
+                    <xsl:when test="string(number(@repositorycode)) = 'NaN'">
+                        <xsl:value-of select="@repositorycode" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="format-number(number(@repositorycode), '#')" />
+                    </xsl:otherwise>
+                </xsl:choose>
             </xsl:if>
         </xsl:param>
 
