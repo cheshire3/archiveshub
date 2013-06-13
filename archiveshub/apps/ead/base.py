@@ -11,11 +11,15 @@ from hashlib import sha1
 from pkg_resources import Requirement, get_distribution
 from pkg_resources import resource_filename, resource_stream, resource_string
 from webob import Request, Response
+from copy import deepcopy
 
 try:
     from CStringIO import CStringIO as StringIO
 except ImportError:
     from StringIO import StringIO
+
+from lxml import etree
+from lxml.builder import E
 
 # Mako
 from mako.lookup import TemplateLookup
@@ -401,6 +405,14 @@ def collectionFromComponent(session, record):
 def backwalkComponentTitles(session, record):
     # Get Database object
     db = session.server.get_object(session, session.database)
+    persistentIdXSLT = etree.XSLT(
+        etree.parse(
+            resource_stream(
+                Requirement.parse('archiveshub'),
+                'dbs/ead/xsl/persistentId.xsl'
+            )
+        )
+    )
     normIdFlow = db.get_object(session, 'normalizeDataIdentifierWorkflow')
     normIdFlow.load_cache(session, db)
     xpath = record.process_xpath(session, '/c3component/@xpath')[0]
@@ -411,12 +423,15 @@ def backwalkComponentTitles(session, record):
         t = node.xpath('string(./did/unittitle)')
         if not len(t):
             t = '(untitled)'
-        i = node.xpath('string(./did/unitid)')
-        if len(i):
-            i = parentRec.id + '/' + normIdFlow.process(session, i)
+        c3node = E.c3component({'parent': repr(parentRec)}, deepcopy(node))
+        id_ = str(persistentIdXSLT(
+            c3node
+        ))
+        if len(id_):
+            id_ = normIdFlow.process(session, id_)
         else:
-            i = None
-        return [i, t.strip()]
+            id_ = None
+        return [id_, t.strip()]
         
 #    node = parentRec.get_dom(session).xpath(xpath)[0]
     node = parentRec.process_xpath(session, xpath)[0]
