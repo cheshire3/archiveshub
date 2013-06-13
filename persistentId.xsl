@@ -34,7 +34,7 @@
                     <xsl:value-of select="substring-after(/*/@c3:parent, '/')" />
                 </xsl:when>
                 <xsl:when test="local-name() = 'c3component' and matches(/*/@parent, 'LxmlRecord-')">
-                    <xsl:value-of select="substring-after(/*/parent, 'LxmlRecord-')" />
+                    <xsl:value-of select="substring-after(/*/@parent, 'LxmlRecord-')" />
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:value-of select="substring-after(/*/@parent, '/')" />
