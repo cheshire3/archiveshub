@@ -1,4 +1,5 @@
 <%inherit file="searchResults.html"/>
+<%namespace file="hierarchy.html" import="hierarchyList"/>
 <%!
     # Imports
     from archiveshub.apps.ead.base import backwalkComponentTitles, dataFromRecordXPaths, emailFromArchonCode
@@ -11,22 +12,6 @@
 <%block name="title">
     Display :: Brief
 </%block>
-
-<%def name="hierarchyList(titles)">
-    % if titles:
-        <div class="indent">
-            <img src="${config.get('icons', 'folder-open-url')}" alt="|/`/">
-            <%identifier, title = titles.pop(0)%>
-            
-            % if identifier:
-                <a href="${DATAURL}/${identifier}">${title|h}</a>
-            % else:
-                ${title}
-            % endif
-            ${hierarchyList(titles)}
-        </div>
-    % endif
-</%def>
 
 <%block name="rightcol">
     % try:
