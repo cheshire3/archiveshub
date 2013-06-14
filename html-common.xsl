@@ -101,6 +101,8 @@
             <xsl:with-param name="unittitle" select="normalize-space($unittitle)" />
             <xsl:with-param name="unitid" select="normalize-space($unitid)" />
             <xsl:with-param name="digital" select="boolean(./dao|..//dao)" />
+            <!-- Enable search withinCollection if is a component, or has components -->
+            <xsl:with-param name="withinCollection" select="true() or boolean(/c3component|/c3:component) or boolean(../c|../c01|../c02|../c03|../c04|../c05|../c06|../c07|../c08|../c09|../c10|../c11|../c12)"/>
             <xsl:with-param name="repcode">
                 <!-- determine repository code -->
                 <xsl:choose>
@@ -2152,9 +2154,10 @@
     <!-- Template for creating utility bar -->
     
     <xsl:template name="utilitybar">
-
+        
         <xsl:param name="unittitle" />
         <xsl:param name="unitid" />
+        <xsl:param name="withinCollection" />
         <xsl:param name="digital" />
         <xsl:param name="repcode" />
 
@@ -2179,6 +2182,52 @@
                             alt="[?]" />
                     </a>
                 </li>
+                <xsl:if test="$withinCollection">
+                    <!--  Search within description -->
+                    <li class="withinCollection">
+                    <xsl:element name="form">
+                        <xsl:attribute name="name" value="withinsearchform"/>
+                        <xsl:attribute name="method" value="post"/>
+                        <xsl:attribute name="class" value="minisearchform"/>
+                        <xsl:attribute name="action">
+                            <xsl:value-of select="$script"/>
+                            <xsl:text>/search.html</xsl:text>
+                        </xsl:attribute>
+                        <xsl:attribute name="onsubmit" value="setCookie('hubsearchform', miniFormToString(this));"/>
+                        <fieldset>
+                            <legend>Search within this description</legend>
+                            <xsl:element name="input">
+                                <xsl:attribute name="type"><xsl:text>hidden</xsl:text></xsl:attribute>
+                                <xsl:attribute name="name"><xsl:text>withinCollection</xsl:text></xsl:attribute>
+                                <xsl:attribute name="value">
+                                    <xsl:choose>
+                                        <xsl:when test="substring-after(/c3component/@parent|/c3:component/@c3:parent, '/')">
+                                            <xsl:value-of select="substring-after(/c3component/@parent|/c3:component/@c3:parent, '/') "/>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:value-of select="$recid" />
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </xsl:attribute>
+                            </xsl:element>
+                            
+                            <select name="fieldidx1">
+                                <option value="cql.anywhere||dc.description||dc.title" selected="selected">Keywords</option>
+                                <option value="dc.title">Titles</option>
+                                <option value="dc.creator">Creators</option>
+                                <option value="bath.name">Names</option>
+                                <option value="dc.subject">Subjects</option>
+                            </select>
+                            <input type="hidden" name="fieldrel1" value="all/relevant/proxinfo"/>
+                            <input name="fieldcont1" type="text" size="20"/>
+                            <input type="hidden" name="_charset_"/>
+                            <input type="hidden" name="numreq" value="20"/>
+                            <input type="hidden" name="firstrec" value="1"/>
+                            <input type="submit" name="submit" value="Go" class="submit"/>
+                        </fieldset>
+                    </xsl:element>
+                    </li>
+                </xsl:if>
                 <br />
             </ul>
             <p>Archives described on the Archives Hub are held in repositories across the UK</p>
