@@ -22,6 +22,7 @@ from cheshire3.exceptions import FileDoesNotExistException
 from cheshire3archives.commands.utils import WSGIAppArgumentParser
 from cheshire3archives.apps.ead.base import EADWsgiApplication 
 from cheshire3archives.apps.ead.base import listCollections
+from cheshire3archives.apps.ead.base import backwalkComponentTitles
 from cheshire3archives.apps.ead.base import config, session, db
 
 
@@ -231,6 +232,21 @@ class EADRecordWsgiApplication(EADWsgiApplication):
             else:
                 toc = None
             # Assemble real pages
+            # Context hierarchy?
+            try:
+                rec.process_xpath(session, '/c3component/@parent')[0]
+            except IndexError:
+                # Collection level
+                pass
+            else:
+                # OK, must be a component record
+                titles = backwalkComponentTitles(session, rec)
+                template = self.templateLookup.get_template('hierarchy.html')
+                func = template.get_def("hierarchyList")
+                d = self.defaultContext.copy()
+                d.update(titles=titles[:-1])
+                divs.insert(0, lxmlhtml.fragment_fromstring(func.render(**d)))
+            
             # Start a StringIO
             pageBuffer = StringIO()
             # Set page size bound
