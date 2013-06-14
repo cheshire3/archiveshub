@@ -1,4 +1,5 @@
 """EAD Record Resolver WSGI Application."""
+from __future__ import with_statement
 
 import sys
 import os
@@ -6,15 +7,23 @@ import re
 import webbrowser
 import mimetypes
 import textwrap
+import time
+import urllib
+import urllib2
 
-from foresite import conneg
-from lxml import etree
-from lxml import html as lxmlhtml
+from random import randint
+from string import Template as StrTemplate
 
 try:
     from cStringIO import StringIO
 except ImportError:
     from StringIO import StringIO
+
+# site-package
+from foresite import conneg
+from lxml import etree
+from lxml import html as lxmlhtml
+
 
 from cheshire3.exceptions import FileDoesNotExistException
 
@@ -154,6 +163,124 @@ class EADRecordWsgiApplication(EADWsgiApplication):
         with open(path, 'wb') as fh:
             fh.write(page.encode('utf-8'))
         return page
+
+    def _GA(self):
+        """Track using Google Analytics - intended for non-HTML files.
+
+        Ported from code at:
+        http://www.mjdigital.co.uk/blog
+            /track-xml-or-server-side-files-using-google-analytics/
+
+        #01    # Track using Google Analytics
+        // Enter your unique GA Urchin ID (utmac)
+        #02    $ga_uid='UA-XXXXXXX-X';
+        // Enter your domain name/host name (utmhn)
+        #03    $ga_domain='mydomain.com';
+        // Creates a random request number (utmn)
+        #04    $ga_randNum=rand(1000000000,9999999999);
+        // Creates a random cookie number (cookie)
+        #05    $ga_cookie=rand(10000000,99999999);
+        // Creates a random number below 2147483647 (random)
+        #06    $ga_rand=rand(1000000000,2147483647);
+        // Current Timestamp
+        #07    $ga_today=time();
+        // Referrer url
+        #08    $ga_referrer=$_SERVER['HTTP_REFERER'];
+        #09
+        // Enter any variable data you want to pass to GA or leave blank
+        #10    $ga_userVar='';
+        // Enter the page address you want to track
+        #11    $ga_hitPage='/blog/sitemap.xml';
+        #12
+        #13    $gaURL='http://www.google-analytics.com/__utm.gif?utmwv=1&
+        utmn='.$ga_randNum.'&utmsr=-&utmsc=-&utmul=-&utmje=0&utmfl=-&utmdt=-&
+        utmhn='.$ga_domain.'&utmr='.$ga_referrer.'&utmp='.$ga_hitPage.'&
+        utmac='.$ga_uid.'&utmcc=__utma%3D'.$ga_cookie.'.'.$ga_rand.'.'.
+        $ga_today.'.'.$ga_today.'.'.$ga_today.'.2%3B%2B__utmb%3D'.$ga_cookie.
+        '%3B%2B__utmc%3D'.$ga_cookie.'%3B%2B__utmz%3D'.$ga_cookie.'.'.
+        $ga_today.'.2.2.utmccn%3D(direct)%7Cutmcsr%3D(direct)%7Cutmcmd%3D(none)
+        %3B%2B__utmv%3D'.$ga_cookie.'.'.$ga_userVar.'%3B';
+        #14
+        // open the xml file
+        #15    $handle = @f open($gaURL, "r");
+        // get the XML data
+        #16    $fget = @f gets($handle);
+        // close the xml file
+        #17    @f close($handle);
+        #18
+        // set the document content type for the output
+        #19    header('Content-Type: text/xml;');
+        // get the actual file to output
+        #20    $xml = @file_get_contents('sitemap.xml');
+        // output the data
+        #21    echo $xml;
+        """
+        # Enter your unique GA Urchin ID (utmac)
+        if self.request.host_port == 80:
+            # Live Hub
+            ga_uid = 'UA-2834703-1'
+        else:
+            # Test / Beta / Development; use alternative tracking ID
+            ga_uid = 'UA-2834703-4'
+
+        # Enter your domain name/host name (utmhn)
+        ga_domain = 'archiveshub.ac.uk'
+        # Creates a random request number (utmn)
+        ga_randNum = randint(1000000000, 9999999999)
+        # Creates a random cookie number (cookie)
+        ga_cookie = randint(10000000, 99999999)
+        # Creates a random number below 2147483647 (random)
+        ga_rand = randint(1000000000, 2147483647)
+        # Current Timestamp
+        ga_today = time.time()
+        # Enter any variable data you want to pass to GA or leave blank
+        ga_referrer = self.request.http_referer
+        if self.request.urlvars:
+            ga_userVar = urllib.quote(self.request.urlvars)
+        else:
+            ga_userVar = ''
+        # Enter the page address you want to track
+        ga_hitPage = self.request.path
+        ga_url_tmpl = StrTemplate(
+            'http://www.google-analytics.com/__utm.gif?'
+            'utmwv=1&utmsr=-&utmsc=-&utmul=-&utmje=0&utmfl=-&utmdt=-&'
+            'utmn=${ga_randNum}&'
+            'utmhn=${ga_domain}&'
+            'utmr=${ga_referrer}&'
+            'utmp=${ga_hitPage}&'
+            'utmac=${ga_uid}&'
+            'utmcc=__utma%3D${ga_cookie}.${ga_rand}.${ga_today}.${ga_today}.'
+            '${ga_today}.2%3B%2B__utmb%3D${ga_cookie}%3B%2B__utmc%3D'
+            '${ga_cookie}%3B%2B__utmz%3D${ga_cookie}.${ga_today}.2.2.utmccn%3D'
+            '(direct)%7Cutmcsr%3D(direct)%7Cutmcmd%3D(none)%3B%2B__utmv%3D'
+            '${ga_cookie}.${ga_userVar}%3B'
+        )
+        ga_url = ga_url_tmpl.substitute(ga_uid=ga_uid,
+                                        ga_domain=ga_domain,
+                                        ga_randNum=ga_randNum,
+                                        ga_cookie=ga_cookie,
+                                        ga_rand=ga_rand,
+                                        ga_today=ga_today,
+                                        ga_referrer=ga_referrer,
+                                        ga_userVar=ga_userVar,
+                                        ga_hitPage=ga_hitPage)
+        # Try to pass the original User-Agent through to GA
+        headers = {
+            'User-Agent': self.request.headers.get('User-Agent',
+                                                   "AH-Record-Resolver"
+                                                   )
+        }
+        # Open the tracking request URL
+        gareq = urllib2.Request(ga_url, None, headers)
+        urlfh = urllib2.urlopen(gareq)
+        try:
+            # Read the data
+            urlfh.read()
+        finally:
+            # Close the remote file
+            urlfh.close()
+        # File will actually be returned by the calling method, so we're done!
+        return
 
     def html(self, rec, form):
         session = self.session
@@ -337,6 +464,8 @@ class EADRecordWsgiApplication(EADWsgiApplication):
                                          )
 
     def text(self, rec, form):
+        # Track in Google Analytics
+        self._GA()
         txt = self._textFromRecord(rec)
         # Wrap long lines
         return u'\n'.join([textwrap.fill(rawline, 78)
@@ -361,6 +490,8 @@ class EADRecordWsgiApplication(EADWsgiApplication):
                                      )
 
     def xml(self, rec, form):
+        # Track in Google Analytics
+        self._GA()
         # Fix mimetype modules incorrect text/xml
         self.response.content_type = 'application/xml'
         session = self.session
