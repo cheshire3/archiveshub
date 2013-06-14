@@ -243,7 +243,7 @@ def main(argv=None):
     except (EnvironmentError, ObjectDoesNotExistException):
         return 1
     # Set Logger
-    with db.get_object(session, 'loadLogger') as session.logger:
+    with db.get_object(session, 'indexLogger') as session.logger:
         mp = db.get_path(session, 'metadataPath')
         lock = FileLock(mp)
         if lock.is_locked() and args.unlock:
