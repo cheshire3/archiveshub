@@ -209,22 +209,13 @@ class EADWsgiApplication(object):
         doc_uc = self._transformRecord(rec, "textTxr")
         # Resolve link to parent if a component
         try:
-            parentId = rec.process_xpath(session,
-                                         '/c3:component/@c3:parent', 
-                                         namespaceUriHash)[0]
+            rec.process_xpath(session,
+                              '/c3:component/@c3:parent|/c3component/@parent', 
+                              namespaceUriHash)[0]
         except IndexError:
             return doc_uc
         else:
-            parentId = parentId.split('/')[-1]
-            try:
-                parentPath = rec.process_xpath(session, 
-                                               '/c3component/@xpath')[0]
-            except IndexError:
-                parentPath = rec.process_xpath(session, 
-                                               '/c3:component/@c3:xpath', 
-                                               namespaceUriHash)[0]
-            parentRec = self._fetch_record(session, parentId)
-            titles = self._backwalkTitles(parentRec, parentPath)
+            titles = backwalkComponentTitles(session, rec)
             hierarchy = [(' ' * 4 * x) + t[1] for x,t in enumerate(titles[:-1])]
             parentTitle = '\n'.join(hierarchy)
             txt = [u'In: {0}'.format(parentTitle),
