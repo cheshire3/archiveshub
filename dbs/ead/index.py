@@ -115,6 +115,50 @@ def _index_recordStore(recordStore):
             )
 
 
+def test_expectedResults(session, db):
+    """Check that searches return the expected results.
+
+    Check that pre-defined searches return at least a pre-defined number of
+    hits.
+    """
+    global session, db
+    lgr = session.logger
+    qf = db.get_object(session, 'defaultQueryFactory')
+    for qString, threshold in TEST_QUERIES:
+        q = qf.get_query(session, qString)
+        rs = db.search(session, q)
+        if len(rs) < threshold:
+            lgr.log_error(session,
+                          'Failed test for {0}; {1} hits < {2}'
+                          ''.format(qString, len(rs), threshold)
+                          )
+            return False
+    # After loop completes, i.e. all tests pass
+    return True
+
+
+def commit_backgroundIndexing(args):
+    """Commit new indexes in place of old."""
+    global session, db
+    lgr = session.logger
+    lgr.log_debug(session, 'Replacing existing live indexes')
+    indexStore = db.get_object(session, 'indexStore')
+    offlineIndexStore = db.get_object(session, 'offlineIndexStore')
+    livePath = indexStore.get_path(session, 'defaultPath')
+    offlinePath = offlineIndexStore.get_path(session, 'defaultPath')
+    for name in os.listdir(offlinePath):
+        fullPath = os.path.join(offlinePath, name)
+        fullLivePath = os.path.join(livePath, name)
+        if name in ['.gitignore', 'temp']:
+            continue
+        elif os.path.isdir(fullPath):
+            # Remove existing live index
+            shutil.rmtree(fullLivePath)
+            shutil.copytree(fullPath, fullLivePath)
+        elif os.path.isfile(fullPath):
+            shutil.copy2(fullPath, fullLivePath)
+
+
 def index(args):
     """Index pre-loaded EAD records."""
     global session, db
@@ -153,38 +197,10 @@ def index(args):
     if args.mode == 'background':
         allPassed = False
         if args.test:
-            # Test search new indexes
-            qf = db.get_object(session, 'defaultQueryFactory')
-            
-            for qString, threshold in TEST_QUERIES:
-                q = qf.get_query(session, qString)
-                rs = db.search(session, q)
-                if len(rs) < threshold:
-                    lgr.log_error(session,
-                                  'Failed test for {0}; {1} hits < {2}'
-                                  ''.format(qString, len(rs), threshold)
-                                  )
-                    break
-            else:
-                # Run after loop completes, i.e. all tests pass
-                allPassed = True
-
+            # Only conduct search testing if necessary
+            allPassed = test_expectedResults(args)
         if allPassed or not args.test:
-            # Commit new indexes in place of old
-            lgr.log_debug(session, 'Replacing existing indexes')
-            livePath = indexStore.get_path(session, 'defaultPath')
-            offlinePath = offlineIndexStore.get_path(session, 'defaultPath')
-            for name in os.listdir(offlinePath):
-                fullPath = os.path.join(offlinePath, name)
-                fullLivePath = os.path.join(livePath, name)
-                if name in ['.gitignore', 'temp']:
-                    continue 
-                elif os.path.isdir(fullPath):
-                    # Remove existing live index
-                    shutil.rmtree(fullLivePath)
-                    shutil.copytree(fullPath, fullLivePath)
-                elif os.path.isfile(fullPath):
-                    shutil.copy2(fullPath, fullLivePath)
+            commit_backgroundIndexing(args)
         else:
             offlinePath = offlineIndexStore.get_path(session, 'defaultPath')
             lgr.log_error(session,
