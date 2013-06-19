@@ -115,7 +115,7 @@ def _index_recordStore(recordStore):
             )
 
 
-def test_expectedResults(session, db):
+def test_expectedResults(args):
     """Check that searches return the expected results.
 
     Check that pre-defined searches return at least a pre-defined number of
