@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Script:    index.py
-# Date:      14 May 2013
+# Date:      20 June 2013
 # Copyright: &copy; University of Liverpool 2005-present
 # Author(s): JH - John Harrison <john.harrison@liv.ac.uk>
 # Language:  Python
@@ -18,15 +18,16 @@ optional arguments:
   -d DATABASE, --database DATABASE
                         identifier of Cheshire3 database
   -j, --subjects        load and index subject finder
-  -n, --no-test         skip testing new indexes when indexing in
-                        `--background` mode. By default, tests must pass
-                        before before new indexes replace live ones in this
-                        mode.
-  -b, --background      load into offline indexes, replace live indexes when
-                        complete (default)
-  -l, --live            load directly into the live indexes. not recommended
+  -u, --unlock          if the database is currently locked, force unlock it
+                        before proceeding to requested operation.
+
+Commands:
+  {background,live}
+    background          load into offline indexes, replace live indexes when
+                        complete
+    live                load directly into the live indexes. not recommended
                         for production use
-  -o, --offline         load into offline indexes for manual checking
+
 
 
 """
@@ -48,7 +49,7 @@ from archiveshub.commands.utils import BaseArgumentParser, getCheshire3Env
 TEST_QUERIES = [
    ('cql.anywhere all "papers"', 50000),
    ('cql.anywhere all "police"', 1000),
-   ('bath.name all "greene"', 100)
+   ('bath.name all "greene"', 10)
 ]
 
 
@@ -64,37 +65,13 @@ class IndexArgumentParser(BaseArgumentParser):
                           action="store_true", dest="clusters",
                           help="load and index subject finder"
                           )
-        self.add_argument("-n", "--no-test",
-                          action="store_false", dest="test",
-                          help=("skip testing new indexes when indexing in "
-                                "`--background` mode. By default, tests must "
-                                "pass before before new indexes replace live "
-                                "ones in this mode."
+        self.add_argument('-u', '--unlock', action='store_true',
+                          dest='unlock',
+                          help=("if the database is currently locked, force "
+                                "unlock it before proceeding to requested "
+                                "operation."
                                 )
                           )
-        group = self.add_mutually_exclusive_group()
-        group.set_defaults(mode='background')
-        group.add_argument("-b", "--background",
-                           action='store_const',
-                           dest='mode',
-                           const='background',
-                           help=("load into offline indexes, replace live "
-                                 "indexes when complete (default)")
-                           )
-        group.add_argument("-l", "--live",
-                           action='store_const',
-                           dest='mode',
-                           const='live',
-                           help=("load directly into the live indexes. "
-                                 "not recommended for production use")
-                           )
-        group.add_argument("-o", "--offline",
-                           action='store_const',
-                           dest='mode',
-                           const='offline',
-                           help=("load into offline indexes for manual "
-                                 "checking")
-                           )
 
 
 def _index_recordStore(recordStore):
@@ -161,62 +138,101 @@ def commit_backgroundIndexing(args):
             shutil.copy2(fullPath, fullLivePath)
 
 
-def index(args):
-    """Index pre-loaded EAD records."""
-    global session, db
-    global TEST_QUERIES
-    lgr = session.logger
-    lgr.log_info(session, "Indexing pre-loaded records...")
-    start = time.time()
-    if args.mode == "live":
-        # Clear the existing Indexes
-        db.clear_indexes(session)
-    else:
-        # Get the IndexStore and offlineIndexStore
-        indexStore = db.get_object(session, 'indexStore')
-        offlineIndexStore = db.get_object(session, 'offlineIndexStore')
-        # Make the offlineIndexStore think it's the main one for the purposes of
-        # file naming
-        offlineIndexStore.id = 'indexStore'
-        # Get the Indexes
-        if not db.indexes:
-            db._cacheIndexes(session)
-        for idx in db.indexes.itervalues():
-            # For those Indexes that will be added to
-            # i.e. not creation date / modification date
-            if not idx.get_setting(session, 'noIndexDefault', 0):
-                # Modify the in-memory Index objects to store into offline IndexStore
-                idx.indexStore = offlineIndexStore
-                idx.paths['indexStore'] = offlineIndexStore
-                # Make sure Index is empty
-                idx.clear(session)
+def _index(session, db):
     # Index Records
     db.begin_indexing(session)
     _index_recordStore(db.get_object(session, 'recordStore'))
     _index_recordStore(db.get_object(session, 'componentStore'))
     db.commit_indexing(session)
     db.commit_metadata(session)
-    if args.mode == 'background':
-        allPassed = False
-        if args.test:
-            # Only conduct search testing if necessary
-            allPassed = test_expectedResults(args)
-        if allPassed or not args.test:
-            commit_backgroundIndexing(args)
-        else:
-            offlinePath = offlineIndexStore.get_path(session, 'defaultPath')
-            lgr.log_error(session,
-                          'Not replacing existing indexes; new indexes remain'
-                          'in {0}'.format(offlinePath)
-                          )
+
+
+def background_index(args):
+    """Index pre-loaded EAD records in the background."""
+    global session, db
+    global TEST_QUERIES
+    lgr = session.logger
+    start = time.time()
+    # Get the IndexStore and offlineIndexStore
+    indexStore = db.get_object(session, 'indexStore')
+    offlineIndexStore = db.get_object(session, 'offlineIndexStore')
+    # Make the offlineIndexStore think it's the main one for the purposes of
+    # file naming
+    offlineIndexStore.id = 'indexStore'
+    # Get the Indexes
+    if not db.indexes:
+        db._cacheIndexes(session)
+    for idx in db.indexes.itervalues():
+        # For those Indexes that will be added to
+        # i.e. not creation date / modification date
+        if not idx.get_setting(session, 'noIndexDefault', 0):
+            # Modify the in-memory Index objects to store into offline
+            # IndexStore
+            idx.indexStore = offlineIndexStore
+            idx.paths['indexStore'] = offlineIndexStore
+            # Make sure Index is empty
+
+    if args.step == 'index':
+        # Clear existing indexes
+        for idx in db.indexes.itervalues():
+            if not idx.get_setting(session, 'noIndexDefault', 0):
+                idx.clear(session)
+
+        lgr.log_info(session,
+                     "Indexing pre-loaded records into background indexes..."
+                     )
+        _index(session, db)
+
+    allPassed = False
+    # Only conduct search testing if necessary
+    if args.step == 'test' or (args.step == 'index' and args.test):
+        lgr.log_info(session,
+                     "Testing background indexes..."
+                     )
+        allPassed = test_expectedResults(args)
+
+    if (args.step == 'finalize' or
+        (args.finalize and (allPassed or not args.test))
+    ):
+        lgr.log_info(session,
+                     "Finalizing background indexes (making them live)..."
+                     )
+        commit_backgroundIndexing(args)
+    else:
+        offlinePath = offlineIndexStore.get_path(session, 'defaultPath')
+        lgr.log_warning(session,
+                        'Not replacing existing indexes; new indexes remain '
+                        'in {0}'.format(offlinePath)
+                        )
     # Log completed message
     (mins, secs) = divmod(time.time() - start, 60)
     (hours, mins) = divmod(mins, 60)
     lgr.log_info(
         session, 
-        'Indexing complete ({0:.0f}h {1:.0f}m {2:.0f}s)'.format(hours,
-                                                                mins,
-                                                                secs)
+        'Background indexing complete ({0:.0f}h {1:.0f}m {2:.0f}s)'
+        ''.format(hours, mins, secs)
+    )
+    return 0
+
+
+def live_index(args):
+    """Index pre-loaded EAD records into live indexes."""
+    global session, db
+    lgr = session.logger
+    lgr.log_info(session,
+                 "Indexing pre-loaded records into live indexes..."
+                 )
+    start = time.time()
+    # Clear the existing Indexes
+    db.clear_indexes(session)
+    _index(session, db)
+    # Log completed message
+    (mins, secs) = divmod(time.time() - start, 60)
+    (hours, mins) = divmod(mins, 60)
+    lgr.log_info(
+        session, 
+        'Live indexing complete ({0:.0f}h {1:.0f}m {2:.0f}s)'
+        ''.format(hours, mins, secs)
     )
     return 0
 
@@ -269,7 +285,7 @@ def main(argv=None):
             session.logger.log_warning(session, "Unlocking Database")
             lock.break_lock()
         try:
-            lock.acquire(timeout=5)    # wait up to 30 seconds
+            lock.acquire(timeout=10)    # Wait up to 10 seconds
         except LockTimeout:
             msg = ("The database is locked. It is possible that another"
                    "user is currently indexing this database. Please wait at "
@@ -282,9 +298,9 @@ def main(argv=None):
             return 1
         try:
             if args.clusters:
-                return sum([index(args), clusters(args)])
+                return sum([args.func(args), clusters(args)])
             else:
-                return index(args)
+                return args.func(args)
         finally:
             lock.release()
 
@@ -294,13 +310,40 @@ docbits = __doc__.split('\n\n')
 argparser = IndexArgumentParser(conflict_handler='resolve',
                                 description=docbits[0]
                                 )
-argparser.add_argument('-u', '--unlock', action='store_true',
-                       dest='unlock',
-                       help=("if the database is currently locked, force "
-                             "unlock it before proceeding to requested "
-                             "operation."
-                            )
+# Subparsers for commands
+subparsers = argparser.add_subparsers(title='Commands')
+# index.py background
+parser_bg = subparsers.add_parser(
+    "background",
+    help=("load into offline indexes, replace live indexes when complete")
+)
+parser_bg.add_argument('--step',
+                       choices=['index', 'test', 'finalize'],
+                       default='index'
                        )
+parser_bg.add_argument("-T", "--no-test",
+                       action="store_false", dest="test",
+                       help=("skip testing new indexes when indexing in "
+                             "`--background` mode. By default, tests must "
+                             "pass before before new indexes replace live "
+                             "ones in this mode."
+                             )
+                       )
+parser_bg.add_argument("-F", "--no-finalize",
+                       action="store_false", dest="finalize",
+                       help=("skip finalizing offline indexes; make them live"
+                             )
+                       )
+parser_bg.set_defaults(func=background_index)
+# index.py live
+parser_live = subparsers.add_parser(
+    "live",
+    help=("load directly into the live indexes. not recommended for "
+          "production use"
+          )
+)
+parser_live.set_defaults(func=live_index)
+
 
 if __name__ == '__main__':
     sys.exit(main())
