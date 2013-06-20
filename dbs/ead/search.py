@@ -81,7 +81,7 @@ def doSearch(qString):
         rec = rsi.fetch_record(session)
         try:
             parId = rec.process_xpath(session, '/c3component/@parent')[0]
-            parId = parId.split('/')[-1]
+            parId = parId.partition('/')[2]
         except IndexError:
             titles = [rec.process_xpath(session, 
                                         '/*/*/did/unittitle/text()')[0]]
