@@ -2216,14 +2216,7 @@
                                     </xsl:choose>
                                 </xsl:attribute>
                             </xsl:element>
-                            
-                            <select name="fieldidx1">
-                                <option value="cql.anywhere||dc.description||dc.title" selected="selected">Keywords</option>
-                                <option value="dc.title">Titles</option>
-                                <option value="dc.creator">Creators</option>
-                                <option value="bath.name">Names</option>
-                                <option value="dc.subject">Subjects</option>
-                            </select>
+                            <input type="hidden" name="fieldidx1" value="cql.anywhere||dc.description||dc.title"/>
                             <input type="hidden" name="fieldrel1" value="all/relevant/proxinfo"/>
                             <input name="fieldcont1" type="text" size="20"/>
                             <input type="hidden" name="_charset_"/>
