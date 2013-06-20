@@ -2186,9 +2186,15 @@
                     <!--  Search within description -->
                     <li class="withinCollection">
                     <xsl:element name="form">
-                        <xsl:attribute name="name" value="withinsearchform"/>
-                        <xsl:attribute name="method" value="post"/>
-                        <xsl:attribute name="class" value="minisearchform"/>
+                        <xsl:attribute name="name">
+                            <xsl:text>withinsearchform</xsl:text>
+                        </xsl:attribute>
+                        <xsl:attribute name="method">
+                            <xsl:text>post</xsl:text>
+                        </xsl:attribute>
+                        <xsl:attribute name="class">
+                            <xsl:text>minisearch</xsl:text>
+                        </xsl:attribute>
                         <xsl:attribute name="action">
                             <xsl:value-of select="$script"/>
                             <xsl:text>/search.html</xsl:text>
