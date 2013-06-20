@@ -38,6 +38,8 @@ import time
 
 from lockfile import FileLock, LockTimeout
 
+from cheshire3.exceptions import ObjectDoesNotExistException
+
 from archiveshub.commands.utils import BaseArgumentParser, getCheshire3Env
 
 # Define some test queries. Each item in the list should be a pair of:
