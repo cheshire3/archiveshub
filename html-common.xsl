@@ -102,7 +102,7 @@
             <xsl:with-param name="unitid" select="normalize-space($unitid)" />
             <xsl:with-param name="digital" select="boolean(./dao|..//dao)" />
             <!-- Enable search withinCollection if is a component, or has components -->
-            <xsl:with-param name="withinCollection" select="true() or boolean(/c3component|/c3:component) or boolean(../c|../c01|../c02|../c03|../c04|../c05|../c06|../c07|../c08|../c09|../c10|../c11|../c12)"/>
+            <xsl:with-param name="withinCollection" select="boolean(/c3component|/c3:component) or boolean(//c|//c01|//c02|//c03|//c04|//c05|//c06|//c07|//c08|//c09|//c10|//c11|//c12)"/>
             <xsl:with-param name="repcode">
                 <!-- determine repository code -->
                 <xsl:choose>
