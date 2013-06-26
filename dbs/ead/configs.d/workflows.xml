@@ -175,9 +175,7 @@
                 <assign to="VAR_ctr" from="0" />
                 <for-each>
                     <!-- input type: Document -->
-                    <log level="debug">"preParsing"</log>
                     <object type="workflow" ref="preParserWorkflow" />
-                    <log level="debug">"parsing"</log>
                     <try>
                         <object type="parser" ref="LxmlParser" />
                     </try>
@@ -187,7 +185,6 @@
                         <continue />
                     </except>
                     <!-- input type: Record -->
-                    <log level="debug">"assigning id"</log>
                     <try>
                         <object type="workflow" ref="assignDataIdentifierWorkflow" />
                     </try>
