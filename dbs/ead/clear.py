@@ -73,6 +73,10 @@ def clear_indexes(args):
         if not idx.get_setting(session, 'noUnindexDefault', 0):
             idx.clear(session)
     db.commit_indexing(session)
+    # Clear database metadata
+    db.totalItems = 0
+    db.totalWordCount = db.minWordCount = db.maxWordCount = 0
+    db.totalByteCount = db.minByteCount = db.maxByteCount = 0
     db.commit_metadata(session)
     (mins, secs) = divmod(time.time() - start, 60)
     (hours, mins) = divmod(mins, 60)
@@ -96,6 +100,12 @@ def clear_clusters(args):
     # Clear clusterStore
     clusterStore = clusDb.get_object(session, 'eadClusterStore')
     clusterStore.clear(session)
+    # Clear database metadata
+    clusDb.totalItems = 0
+    clusDb.totalWordCount = clusDb.minWordCount = clusDb.maxWordCount = 0
+    clusDb.totalByteCount = clusDb.minByteCount = clusDb.maxByteCount = 0
+    clusDb.commit_metadata(session)
+    # Report time taken
     (mins, secs) = divmod(time.time() - start, 60)
     (hours, mins) = divmod(mins, 60)
     lgr.log_info(session, 

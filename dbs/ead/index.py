@@ -88,6 +88,8 @@ def _index_recordStore(recordStore):
                 'characters'.format(rec)
             )
         else:
+            # Assimilate metadata of Record
+            db.add_record(session, rec)
             lgr.log_info(
                 session, 
                 '{0.id:<40} [OK]'.format(rec)
