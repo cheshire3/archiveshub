@@ -226,9 +226,12 @@ def live_index(args):
                  "Indexing pre-loaded records into live indexes..."
                  )
     start = time.time()
-    # Clear the existing Indexes
-    db.clear_indexes(session)
-    _index(session, db)
+    if args.step == 'index':
+        # Clear the existing Indexes
+        db.clear_indexes(session)
+        _index(session, db)
+    if args.test:
+        test_expectedResults(args)
     # Log completed message
     (mins, secs) = divmod(time.time() - start, 60)
     (hours, mins) = divmod(mins, 60)
@@ -345,6 +348,15 @@ parser_live = subparsers.add_parser(
           "production use"
           )
 )
+parser_live.add_argument('--step',
+                         choices=['index', 'test'],
+                         default='index'
+                         )
+parser_live.add_argument("-T", "--no-test",
+                         action="store_false", dest="test",
+                         help=("skip testing new indexes"
+                               )
+                         )
 parser_live.set_defaults(func=live_index)
 
 
