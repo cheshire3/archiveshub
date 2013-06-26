@@ -60,7 +60,8 @@
 				<object type="input" function="get_raw" />
 				<!-- input type: string -->
 				<object type="workflow" ref="normalizeDataIdentifierWorkflow" />
-				<assign from="input" to="myRecord.id" />
+                <!-- Cause an IndexError to be raised if identifier is an empty string -->
+                <assign from="input[0] + input[1:]" to="myRecord.id" />
 				<assign from="myRecord" to="input" />
 			</workflow>
 		</subConfig>
@@ -110,7 +111,14 @@
                     <return />
                 </except>
                 <!-- type: Record -->
-                <object type="workflow" ref="assignDataIdentifierWorkflow" />
+                <try>
+                    <object type="workflow" ref="assignDataIdentifierWorkflow" />
+                </try>
+                <except>
+                    <log level="error">"Unable to assign persistent identifier"</log>
+                    <return/>
+                </except>
+                <!-- Proceed with storing -->
                 <try>
                     <object type="recordStore" ref="recordStore" function="store_record"/>
                 </try>
