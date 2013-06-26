@@ -121,6 +121,11 @@ def test_expectedResults(args):
                           ''.format(qString, len(rs), threshold)
                           )
             return False
+        else:
+            lgr.log_debug(session,
+                         'Passed test for {0}; {1} hits >= {2}'
+                         ''.format(qString, len(rs), threshold)
+                         )
     # After loop completes, i.e. all tests pass
     return True
 
@@ -150,7 +155,6 @@ def commit_backgroundIndexing(args):
 def background_index(args):
     """Index pre-loaded EAD records in the background."""
     global session, db
-    global TEST_QUERIES
     lgr = session.logger
     start = time.time()
     # Get the IndexStore and offlineIndexStore
@@ -170,7 +174,6 @@ def background_index(args):
             # IndexStore
             idx.indexStore = offlineIndexStore
             idx.paths['indexStore'] = offlineIndexStore
-            # Make sure Index is empty
 
     if args.step == 'index':
         # Clear existing indexes
@@ -324,9 +327,9 @@ parser_bg.add_argument('--step',
 parser_bg.add_argument("-T", "--no-test",
                        action="store_false", dest="test",
                        help=("skip testing new indexes when indexing in "
-                             "`--background` mode. By default, tests must "
-                             "pass before before new indexes replace live "
-                             "ones in this mode."
+                             "background mode. By default, tests must "
+                             "pass before new indexes replace live ones in "
+                             "this mode."
                              )
                        )
 parser_bg.add_argument("-F", "--no-finalize",
