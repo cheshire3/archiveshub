@@ -94,6 +94,15 @@ def _index_recordStore(recordStore):
             )
 
 
+def _index(session, db):
+    # Index Records
+    db.begin_indexing(session)
+    _index_recordStore(db.get_object(session, 'recordStore'))
+    _index_recordStore(db.get_object(session, 'componentStore'))
+    db.commit_indexing(session)
+    db.commit_metadata(session)
+
+
 def test_expectedResults(args):
     """Check that searches return the expected results.
 
@@ -133,18 +142,9 @@ def commit_backgroundIndexing(args):
         elif os.path.isdir(fullPath):
             # Remove existing live index
             shutil.rmtree(fullLivePath)
-            shutil.copytree(fullPath, fullLivePath)
+            shutil.move(fullPath, fullLivePath)
         elif os.path.isfile(fullPath):
-            shutil.copy2(fullPath, fullLivePath)
-
-
-def _index(session, db):
-    # Index Records
-    db.begin_indexing(session)
-    _index_recordStore(db.get_object(session, 'recordStore'))
-    _index_recordStore(db.get_object(session, 'componentStore'))
-    db.commit_indexing(session)
-    db.commit_metadata(session)
+            shutil.move(fullPath, fullLivePath)
 
 
 def background_index(args):
