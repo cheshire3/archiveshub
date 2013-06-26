@@ -83,6 +83,8 @@
             <objectType>cheshire3.workflow.CachingWorkflow</objectType>
             <workflow>
                 <!-- input type: DocumentStore / DocumentFactory -->
+                <!-- We'll index modification datetime -->
+                <object type="database" function="begin_indexing"/>
                 <object type="recordStore" ref="recordStore" function="begin_storing" />
                 <for-each>
                     <!-- input type: Document -->
@@ -90,6 +92,7 @@
                     <object type="workflow" ref="loadSingleWorkflow" />
                 </for-each>
                 <object type="recordStore" ref="recordStore" function="commit_storing" />
+                <object type="database" function="commit_indexing"/>
             </workflow>
         </subConfig>
 
@@ -119,6 +122,10 @@
                 <except>
                     <log level="error">"Record not stored: " + str(err)</log>
                 </except>
+                <else>
+                    <!-- Update modification date index -->
+                    <object type="index" ref="idx-modificationDate" function="index_record"/>
+                </else>
             </workflow>
         </subConfig>
 
@@ -195,6 +202,10 @@
                         <log level="error">"" + input.get_xml(session)</log>
                         <continue />
                     </except>
+                    <else>
+                        <!-- Update modification date index -->
+                        <object type="index" ref="idx-modificationDate" function="index_record"/>
+                    </else>
                 </for-each>
             </workflow>
         </subConfig>

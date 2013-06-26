@@ -1139,6 +1139,9 @@
                 </process>
             </source>
             <options>
+                <!-- don't index or unindex in db.[un]index_record() -->
+                <setting type="noIndexDefault">1</setting>
+                <setting type="noUnindexDefault">1</setting>
                 <!-- We need vectors to unindex these, current value cannot 
                     be recreated in the future -->
                 <setting type="vectors">1</setting>
