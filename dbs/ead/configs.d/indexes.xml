@@ -434,7 +434,6 @@
             </paths>
             <source>
                 <selector ref="titleSelector" />
-                <xpath>/*/*/did/unittitle</xpath>
                 <process>
                     <object type="extractor" ref="SimpleExtractor" />
                     <object type="workflow"
