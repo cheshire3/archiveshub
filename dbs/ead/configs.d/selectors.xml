@@ -37,6 +37,7 @@
 				<xpath>/ead//did/origination</xpath>
 				<xpath>/ead//scopecontent</xpath>
 				<xpath>/ead//controlaccess</xpath>
+                <!-- For components, do not descend to subsequent levels -->
 				<xpath>/c3component/*/did/unittitle</xpath>
 				<xpath>/c3component/*/did/origination</xpath>
 				<xpath>/c3component/*/scopecontent</xpath>
@@ -49,7 +50,8 @@
 			<source>
 				<xpath>/ead/eadheader/*</xpath>
 				<xpath>/ead/archdesc/*</xpath>
-				<xpath>/c3component</xpath>
+                <!-- For components, do not descend to subsequent levels -->
+				<xpath>/c3component/*/*[not(self::c|self::c02|self::c03|self::c04|self::c05|self::c06|self::c07|self::c08|self::c09|self::c10|self::c11|self::c12)]</xpath>
 			</source>
 		</subConfig>
 
