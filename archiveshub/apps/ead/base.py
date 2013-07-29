@@ -251,7 +251,6 @@ class EADWsgiApplication(object):
                                          form.getfirst('numreq', 25)))
         rp = int(form.getfirst('responsePosition', (maximumTerms + 1) / 2))
         qString = u'%s %s "%s"' % (idx, rel, scanTerm)
-        self._log('Browsing for "%s"' % (qString))
         try:
             scanClause = queryFactory.get_query(session,
                                                 qString,
