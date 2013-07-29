@@ -235,7 +235,7 @@ class EADRecordWsgiApplication(EADWsgiApplication):
         # Current Timestamp
         ga_today = time.time()
         # Enter any variable data you want to pass to GA or leave blank
-        ga_referrer = self.request.http_referer
+        ga_referrer = self.request.referer
         if self.request.urlvars:
             ga_userVar = urllib.quote(self.request.urlvars)
         else:
