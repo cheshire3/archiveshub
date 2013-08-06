@@ -63,7 +63,7 @@
                 <xsl:apply-templates select="unitid[@type='persistent'][1]" />
             </xsl:when>
             <xsl:when test="unitid[@label='Former Reference']">
-                <!-- we don't want to use Former Reference -->
+                <!-- we don't want to use Former Reference... -->
                 <xsl:choose>
                     <xsl:when
                         test="unitid[@label != 'Former Reference'][@countrycode and @repositorycode and @identifier]">
@@ -77,10 +77,15 @@
                         <xsl:apply-templates
                             select="unitid[@label != 'Former Reference'][@countrycode and @repositorycode][1]" />
                     </xsl:when>
-                    <xsl:otherwise>
+                    <xsl:when test="unitid[@label != 'Former Reference']">
                         <!-- take the first that isn't Former Reference -->
                         <xsl:apply-templates
                             select="unitid[@label != 'Former Reference'][1]" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <!-- ... but sometimes we have no choice but to use the Former Reference -->
+                        <!-- take the first unitid period -->
+                        <xsl:apply-templates select="unitid[1]" />
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:when>
