@@ -56,7 +56,7 @@
             </paths>
             <options>
                 <setting type="createSubDirs">1</setting>
-                <setting type="dateTimeLevel">month</setting>
+                <setting type="dateTimeLevel">day</setting>
                 <setting type="minLevel">20</setting>
             </options>
         </subConfig>
@@ -68,7 +68,7 @@
             </paths>
             <options>
                 <setting type="createSubDirs">1</setting>
-                <setting type="dateTimeLevel">month</setting>
+                <setting type="dateTimeLevel">day</setting>
                 <setting type="minLevel">20</setting>
             </options>
         </subConfig>
@@ -80,7 +80,7 @@
             </paths>
             <options>
                 <setting type="createSubDirs">1</setting>
-                <setting type="dateTimeLevel">month</setting>
+                <setting type="dateTimeLevel">day</setting>
                 <setting type="minLevel">20</setting>
             </options>
         </subConfig>
@@ -99,7 +99,7 @@
             </paths>
             <options>
                 <setting type="createSubDirs">1</setting>
-                <setting type="dateTimeLevel">month</setting>
+                <setting type="dateTimeLevel">day</setting>
                 <setting type="minLevel">20</setting>
             </options>
         </subConfig>
