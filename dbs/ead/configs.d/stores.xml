@@ -37,8 +37,8 @@
 			<objectType>cheshire3.recordStore.BdbRecordStore</objectType>
 			<paths>
 				<path type="defaultPath">stores</path>
-				<path type="databasePath">compStore.bdb</path>
-				<path type="metadataPath">compStoreMetadata.bdb</path>
+				<path type="databasePath">componentStore.bdb</path>
+				<path type="metadataPath">componentStoreMetadata.bdb</path>
 				<object type="inWorkflow" ref="XmlToLZ4Workflow" />
 	        	<object type="outWorkflow" ref="LZ4ToLxmlWorkflow" />
 			</paths>
