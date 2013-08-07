@@ -163,7 +163,13 @@
                     <return />
                 </except>
                 <!-- input type: Record -->
-                <object type="workflow" ref="assignDataIdentifierWorkflow" />
+                <try>
+                    <object type="workflow" ref="assignDataIdentifierWorkflow" />
+                </try>
+                <except>
+                    <log level="error">"Unable to determine persistent identifier"</log>
+                    <return/>
+                </except>
                 <!-- input is now identical to the Record stored in the RecordStore -->
                 <!-- put in recordStore for navigation from component to parent -->
                 <assign from="'recordStore'" to="input.recordStore"/>
@@ -192,7 +198,7 @@
                         <assign from="recid + '-' + str(VAR_ctr)" to="input.id" />
                     </except>
                     <assign from="VAR_ctr + 1" to="VAR_ctr" />
-                    <log level="debug">"storing " + input.id</log>
+                    <log level="debug">"Storing " + input.id</log>
                     <try>
                         <object type="recordStore" ref="componentStore" function="store_record" />
                     </try>
