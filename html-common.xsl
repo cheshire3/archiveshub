@@ -141,7 +141,8 @@
 
     <xsl:template match="did" mode="didtable">
         <table
-            summary="Descriptive Information - core information about the described material">
+            summary="Descriptive Information - core information about the described material"
+            class="did">
             <xsl:if test="repository">
                 <tr>
                     <td>
@@ -320,7 +321,8 @@
             </h2>
             <div id="eadheader" class="jshide">
                 <table
-                    summary="Cataloguing Information - core information about this record">
+                    summary="Cataloguing Information - core information about this record"
+                    class="eadheader">
                     <xsl:apply-templates select="filedesc" />
                     <xsl:apply-templates select="profiledesc" />
                     <xsl:apply-templates select="revisiondesc" />
@@ -1126,7 +1128,7 @@
             </xsl:otherwise>
         </xsl:choose>
 
-        <table>
+        <table class="controlaccess">
 
             <!-- Subjects -->
             <xsl:if test=".//subject">
