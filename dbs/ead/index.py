@@ -72,6 +72,16 @@ class IndexArgumentParser(BaseArgumentParser):
                                 "operation."
                                 )
                           )
+        self.add_argument("--descriptions-only", "--no-components",
+                          action='store_false',
+                          dest='components',
+                          help=("load only collection-level descriptions")
+                          )
+        self.add_argument("--no-descriptions", "--components-only",
+                          action='store_false',
+                          dest='main',
+                          help=("load only components")
+                          )
 
 
 def _index_recordStore(recordStore):
@@ -96,11 +106,14 @@ def _index_recordStore(recordStore):
             )
 
 
-def _index(session, db):
+def _index(session, db, args):
     # Index Records
     db.begin_indexing(session)
-    _index_recordStore(db.get_object(session, 'recordStore'))
-    _index_recordStore(db.get_object(session, 'componentStore'))
+    if args.main:
+        _index_recordStore(db.get_object(session, 'recordStore'))
+    if args.components:
+        _index_recordStore(db.get_object(session, 'componentStore'))
+
     db.commit_indexing(session)
     db.commit_metadata(session)
 
@@ -186,7 +199,7 @@ def background_index(args):
         lgr.log_info(session,
                      "Indexing pre-loaded records into background indexes..."
                      )
-        _index(session, db)
+        _index(session, db, args)
 
     allPassed = False
     # Only conduct search testing if necessary
@@ -231,7 +244,7 @@ def live_index(args):
     if args.step == 'index':
         # Clear the existing Indexes
         db.clear_indexes(session)
-        _index(session, db)
+        _index(session, db, args)
     if args.test:
         test_expectedResults(args)
     # Log completed message
@@ -295,7 +308,7 @@ def main(argv=None):
         try:
             lock.acquire(timeout=10)    # Wait up to 10 seconds
         except LockTimeout:
-            msg = ("The database is locked. It is possible that another"
+            msg = ("The database is locked. It is possible that another "
                    "user is currently indexing this database. Please wait at "
                    "least 10 minutes and then try again. If you continue to "
                    "get this message and you are sure no one is reindexing "
@@ -318,6 +331,7 @@ docbits = __doc__.split('\n\n')
 argparser = IndexArgumentParser(conflict_handler='resolve',
                                 description=docbits[0]
                                 )
+
 # Subparsers for commands
 subparsers = argparser.add_subparsers(title='Commands')
 # index.py background
