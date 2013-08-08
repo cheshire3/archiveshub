@@ -106,7 +106,7 @@ class EADSearchWsgiApplication(EADWsgiApplication):
             qString = self._fetch_query(session, rsid).toCQL()
         elif not qString:
             qString = generate_cqlQuery(form)
-        self._log(20, qString)
+        self._log(20, qString.encode('utf-8'))
         if filter_:
             if qString.strip('()'):
                 qString = '{0} and/relevant/proxinfo ({1})'.format(filter_,
@@ -174,7 +174,10 @@ class EADSearchWsgiApplication(EADWsgiApplication):
             if not isinstance(query, (CQLClause, CQLTriple)):
                 # Error message
                 return query
-            self._log(20, 'Searching CQL query: {0}'.format(query.toCQL()))
+            msg = (u'Searching CQL query: {0}'
+                   u''.format(query.toCQL())
+                   )
+            self._log(20, msg.encode('utf-8'))
             rs = db.search(session, query)
             self._log(20, '{0} Hits'.format(len(rs)))
             if len(rs):
