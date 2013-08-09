@@ -2,57 +2,57 @@
   xmlns="http://explain.z3950.org/dtd/2.0/"
   xmlns:c3="http://www.cheshire3.org/schemas/explain/">
 
-	<serverInfo protocol="oai-pmh" version="2.0" transport="http">
-	  <host>127.0.0.1</host>
-	  <port>8000</port>
-	  <database>api/oaipmh/2.0/ead</database>
-	</serverInfo>
+    <serverInfo protocol="oai-pmh" version="2.0" transport="http">
+        <host>127.0.0.1</host>
+        <port>8000</port>
+        <database>api/oaipmh/2.0/ead</database>
+    </serverInfo>
 
-	<databaseInfo>
-		<title lang="en" primary="true">EAD Finding Aid Database</title>
-		<description lang="en" primary="true">
-			A database containing Encoded Archival Data (EAD) records        
-		</description>
-		<contact>john.harrison@liv.ac.uk</contact>
-	</databaseInfo>
+    <databaseInfo>
+        <title lang="en" primary="true">EAD Finding Aid Database</title>
+        <description lang="en" primary="true">
+            A database containing Encoded Archival Data (EAD) records        
+        </description>
+        <contact>john.harrison@liv.ac.uk</contact>
+    </databaseInfo>
 
-	<metaInfo>
-		<dateModified>2007-10-02 09:40:00</dateModified>
-	</metaInfo>
+    <metaInfo>
+        <dateModified>2007-10-02 09:40:00</dateModified>
+    </metaInfo>
 
-	<schemaInfo>
-	
-		<schema identifier="http://www.openarchives.org/OAI/2.0/oai_dc/"
-		  location="http://www.openarchives.org/OAI/2.0/oai_dc.xsd"
-		  sort="false" retrieve="true" name="oai_dc"
-		  c3:transformer="OAIDublinCoreTransformer">
-		  	<title>OAI Unqualified Dublin Core</title>
-		</schema>
-	  
-	  	<schema identifier="info:srw/schema/1/dc-v1.1"
-		  location="http://www.loc.gov/zing/srw/dc.xsd"
-		  sort="false" retrieve="true" name="srw_dc"
-		  c3:transformer="eadDublinCoreTxr">
-			<title>SRW Unqualified Dublin Core</title>
-		</schema>
-	  
-	  	<schema identifier="http://www.loc.gov/ead/"
-		  location="http://www.loc.gov/ead/ead.xsd"
-		  sort="true" retrieve="true" name="ead"
-		  c3:transformer="sruOutgoingTxr">
-			<title>Encoded Archival Description (EAD)</title>
-		</schema>
-	  
-	</schemaInfo>
+    <schemaInfo>
+    
+        <schema identifier="http://www.openarchives.org/OAI/2.0/oai_dc/"
+          location="http://www.openarchives.org/OAI/2.0/oai_dc.xsd"
+          sort="false" retrieve="true" name="oai_dc"
+          c3:transformer="OAIDublinCoreTransformer">
+            <title>OAI Unqualified Dublin Core</title>
+        </schema>
+      
+        <schema identifier="info:srw/schema/1/dc-v1.1"
+          location="http://www.loc.gov/zing/srw/dc.xsd"
+          sort="false" retrieve="true" name="srw_dc"
+          c3:transformer="eadDublinCoreTxr">
+            <title>SRW Unqualified Dublin Core</title>
+        </schema>
+      
+        <schema identifier="http://www.loc.gov/ead/"
+          location="http://www.loc.gov/ead/ead.xsd"
+          sort="true" retrieve="true" name="ead"
+          c3:transformer="sruOutgoingTxr">
+            <title>Encoded Archival Description (EAD)</title>
+        </schema>
+      
+    </schemaInfo>
 
-	<configInfo>
-	  <default type="numberOfRecords">1</default>
-	  <default type="sortSchema">dc</default>
-	  <default type="retrieveSchema">dc</default>
-	  <default type="sortCaseSensitive">false</default>
-	  <default type="sortAscending">true</default>
-	  <default type="sortMissingValue">HighValue</default>
-	</configInfo>
+    <configInfo>
+        <default type="numberOfRecords">1</default>
+        <default type="sortSchema">dc</default>
+        <default type="retrieveSchema">dc</default>
+        <default type="sortCaseSensitive">false</default>
+        <default type="sortAscending">true</default>
+        <default type="sortMissingValue">HighValue</default>
+    </configInfo>
 
 </explain>
 

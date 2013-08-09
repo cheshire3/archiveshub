@@ -2,30 +2,30 @@
   xmlns="http://explain.z3950.org/dtd/2.0/"
   xmlns:c3="http://www.cheshire3.org/schemas/explain/">
 
-<!-- 
-	This file was produced, and released as part of Cheshire for Archives v3.x.
-	Copyright &#169; 2005-2009 the University of Liverpool
- -->
+    <!-- 
+    This file was produced, and released as part of Cheshire for Archives v3.x.
+    Copyright &#169; 2005-2009 the University of Liverpool
+    -->
 
-	<serverInfo protocol="srw/u" version="1.1" transport="http">
+    <serverInfo protocol="srw/u" version="1.1" transport="http">
         <host>138.253.50.191</host>
         <port>80</port>
         <database>api/sru/ead</database>
-	</serverInfo>
+    </serverInfo>
 
-	<databaseInfo>
+    <databaseInfo>
         <title lang="en" primary="true">EAD Finding Aid Database</title>
         <description lang="en" primary="true">
             A database containing Encoded Archival Data (EAD) records        
         </description>
-	</databaseInfo>
+    </databaseInfo>
 
-	<metaInfo>
-		<dateModified>2011-01-12T17:00:00</dateModified>
-	</metaInfo>
+    <metaInfo>
+        <dateModified>2011-01-12T17:00:00</dateModified>
+    </metaInfo>
 
-	<indexInfo>
-	
+    <indexInfo>
+    
         <set identifier="info:srw/cql-context-set/1/cql-v1.2" name="cql"/>
         <set identifier="info:srw/cql-context-set/1/cql-v1.1" name="cql1-1"/>
         <set identifier="info:srw/cql-context-set/1/dc-v1.1" name="dc"/>
@@ -35,11 +35,11 @@
         <set identifier="info:srw/cql-context-set/2/rec-1.1" name="rec"/>
         <set identifier="info:srw/cql-context-set/2/range-1.0" name="range"/>
         <set identifier="http://www.cheshire3.org/schemas/vdb" name="vdb"/>
-	
+    
         <index c3:index="idx-istoplevel">
             <title>Is a top level EAD record</title>
             <map>
-        	   <name set="ead">istoplevel</name>
+               <name set="ead">istoplevel</name>
             </map>
             <configInfo>
                 <supports type="relation">exact</supports>
@@ -117,7 +117,7 @@
                 <supports type="relationModifier" c3:index="idx-unitidword">stem</supports>
             </configInfo>
         </index>
-	
+    
         <index c3:index="idx-title">
             <title>Title</title>
             <map>
@@ -133,7 +133,7 @@
                 <supports type="relationModifier" c3:index="idx-titleword">stem</supports>
             </configInfo>
         </index>
-	
+    
         <index c3:index="idx-creator">
             <title>Creator</title>
             <map>
@@ -147,7 +147,7 @@
                 <supports type="relationModifier">string</supports>
             </configInfo>
         </index>
-	
+    
         <index c3:index="idx-description">
             <title>Description Proximity Keywords</title>
             <map>
@@ -162,7 +162,7 @@
                 <supports type="relationModifier">stem</supports>
             </configInfo>
         </index>
-	
+    
         <index c3:index="idx-all">
             <title>Full-text Proximity Keywords</title>
             <map>
@@ -177,7 +177,7 @@
                 <supports type="relationModifier">stem</supports>
             </configInfo>
         </index>
-	
+    
         <index c3:index="idx-subject">
             <title>Subject</title>
             <map>
@@ -193,7 +193,7 @@
                 <supports type="relationModifier" c3:index="idx-subjectword">stem</supports>
             </configInfo>
         </index>
-	
+    
         <index c3:index="idx-name">
             <title>Name</title>
             <map>
@@ -208,12 +208,12 @@
                 <supports type="relationModifier" c3:index="idx-nameword">word</supports>
             </configInfo>
         </index>
-	
+    
         <index c3:index="idx-persname">
-	       <title>Personal Name</title>
-    	    <map>
-    	       <name set="bath">personalName</name>
-    	    </map>
+           <title>Personal Name</title>
+            <map>
+               <name set="bath">personalName</name>
+            </map>
             <configInfo>
                 <supports type="relation">exact</supports>
                 <supports type="relation">=</supports>
@@ -224,7 +224,7 @@
                 <!--<supports type="relationModifier" c3:index="idx-persnameword">=</supports>-->
             </configInfo>
         </index>
-	  
+      
         <index c3:index="idx-persnameepithet">
             <title>Personal Name</title>
             <map>
@@ -239,7 +239,7 @@
                 <supports type="relationModifier" c3:index="idx-persnameepithetword">word</supports>
             </configInfo>
         </index>
-        	  
+              
         <index c3:index="idx-famname">
             <title>Family Name</title>
             <map>
@@ -281,22 +281,22 @@
                 <supports type="relationModifier" c3:index="idx-geognameword">word</supports>
             </configInfo>
         </index>
-	
+    
         <index c3:index="idx-genreform">
-    	    <title>Genreform (e.g. Photograph)</title>
-    	    <map>
+            <title>Genreform (e.g. Photograph)</title>
+            <map>
                 <name set="bath">genreForm</name>
-    	    </map>
-    	    <configInfo>
+            </map>
+            <configInfo>
                 <supports type="relation" c3:index="idx-genreform">exact</supports>
                 <supports type="relation" c3:index="idx-genreform">=</supports>
                 <supports type="relation" c3:index="idx-genreformword">all</supports>
                 <supports type="relation" c3:index="idx-genreformword">any</supports>
                 <supports type="relationModifier" c3:index="idx-genreform">string</supports>
                 <supports type="relationModifier" c3:index="idx-genreformword">word</supports>
-    	    </configInfo>
+            </configInfo>
         </index>
-	  
+      
         <index c3:index="idx-date">
             <title>Material Date</title>
             <map>
@@ -319,76 +319,76 @@
               <supports type="relation" c3:index="idx-dateRange">&gt;=&lt;</supports>
             </configInfo>
         </index>
-	  
-		<index c3:index="idx-creationDate">
-			<title>Record Creation Date</title>
-			<map>
-				<name set="rec">creationDate</name>
-			</map>
-			<configInfo>
+      
+        <index c3:index="idx-creationDate">
+            <title>Record Creation Date</title>
+            <map>
+                <name set="rec">creationDate</name>
+            </map>
+            <configInfo>
                 <supports type="relation">exact</supports>
-				<supports type="relation">=</supports>
-				<supports type="relation">&lt;</supports>
-				<supports type="relation">&lt;=</supports>
-				<supports type="relation">&gt;</supports>
-				<supports type="relation">&gt;=</supports>
+                <supports type="relation">=</supports>
+                <supports type="relation">&lt;</supports>
+                <supports type="relation">&lt;=</supports>
+                <supports type="relation">&gt;</supports>
+                <supports type="relation">&gt;=</supports>
                 <supports type="relation">within</supports>
-			</configInfo>
-		</index>
-		
-		<index c3:index="idx-modificationDate">
-			<title>Record Last Modification Date</title>
-			<map>
-				<name set="rec">lastModificationDate</name>
-			</map>
-			<configInfo>
-                <supports type="relation">exact</supports>
-				<supports type="relation">=</supports>
-				<supports type="relation">&lt;</supports>
-				<supports type="relation">&lt;=</supports>
-				<supports type="relation">&gt;</supports>
-				<supports type="relation">&gt;=</supports>
-                <supports type="relation">within</supports>
-			</configInfo>
-		</index>
-		
-		<index c3:index="idx-recid">
-			<title>Record Identifier</title>
-			<map>
-				<name set="rec">identifier</name>
-			</map>
-			<configInfo>
-				<supports type="relation">=</supports>
-				<supports type="relation">&lt;</supports>
-				<supports type="relation">&lt;=</supports>
-				<supports type="relation">&gt;</supports>
-				<supports type="relation">&gt;=</supports>
-				<supports type="relation">any</supports>
-				<supports type="relation">all</supports>
-				<supports type="relation">exact</supports>
-			</configInfo>
-		</index>
+            </configInfo>
+        </index>
         
-	</indexInfo>
+        <index c3:index="idx-modificationDate">
+            <title>Record Last Modification Date</title>
+            <map>
+                <name set="rec">lastModificationDate</name>
+            </map>
+            <configInfo>
+                <supports type="relation">exact</supports>
+                <supports type="relation">=</supports>
+                <supports type="relation">&lt;</supports>
+                <supports type="relation">&lt;=</supports>
+                <supports type="relation">&gt;</supports>
+                <supports type="relation">&gt;=</supports>
+                <supports type="relation">within</supports>
+            </configInfo>
+        </index>
+        
+        <index c3:index="idx-recid">
+            <title>Record Identifier</title>
+            <map>
+                <name set="rec">identifier</name>
+            </map>
+            <configInfo>
+                <supports type="relation">=</supports>
+                <supports type="relation">&lt;</supports>
+                <supports type="relation">&lt;=</supports>
+                <supports type="relation">&gt;</supports>
+                <supports type="relation">&gt;=</supports>
+                <supports type="relation">any</supports>
+                <supports type="relation">all</supports>
+                <supports type="relation">exact</supports>
+            </configInfo>
+        </index>
+        
+    </indexInfo>
 
-	<schemaInfo>
-		<schema identifier="info:srw/schema/1/ead-2002"
+    <schemaInfo>
+        <schema identifier="info:srw/schema/1/ead-2002"
                 sort="true" retrieve="true" name="ead"
                 c3:transformer="sruOutgoingTxr">
             <title>Encoded Archival Description (EAD) DTD Version 2002</title>
-		</schema>
-		<schema identifier="info:srw/schema/1/dc-v1.1"
+        </schema>
+        <schema identifier="info:srw/schema/1/dc-v1.1"
                 location="http://www.loc.gov/zing/srw/dc.xsd"
                 sort="false" retrieve="true" name="dc"
                 c3:transformer="eadDublinCoreTxr">
             <title>Unqualified Dublin Core</title>
-		</schema>
-		<schema identifier="http://www.openarchives.org/OAI/2.0/oai_dc/"
+        </schema>
+        <schema identifier="http://www.openarchives.org/OAI/2.0/oai_dc/"
                         location="http://www.openarchives.org/OAI/2.0/oai_dc.xsd"
                         sort="false" retrieve="true" name="oai_dc"
                         c3:transformer="OAIDublinCoreTransformer">
             <title>OAI Unqualified Dublin Core</title>
-		</schema>
+        </schema>
         <schema identifier="http://cheshire3.org/ns/highlight/ead-2002"
                 sort="true" retrieve="true" name="ead-highlight"
                 c3:transformer="sruHighlightingTxr">
@@ -403,7 +403,7 @@
                 interoperable EAD, use default ead info:srw/schema/1/ead-2002
             </title>
         </schema>
-	</schemaInfo>
+    </schemaInfo>
 
     <configInfo>
         <default type="numberOfRecords">1</default>
@@ -422,7 +422,7 @@
         <supports type="relationModifier">relevant</supports>
         <supports type="relationModifier">stem</supports>
         <supports type="relationModifier">word</supports>
-	    
+
         <supports type="extension"
             c3:type="record"
             c3:function="recordMetadataHandler"
