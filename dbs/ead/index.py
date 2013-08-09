@@ -114,7 +114,10 @@ def _index(session, db, args):
     if args.components:
         _index_recordStore(db.get_object(session, 'componentStore'))
 
-    db.commit_indexing(session)
+    for idx in db.indexes.itervalues():
+        if not idx.get_setting(session, 'noIndexDefault', 0):
+            idx.commit_indexing(session)
+
     db.commit_metadata(session)
 
 
