@@ -58,19 +58,30 @@ def main(argv=None):
         }
     }
     cherrypy.tree.mount(None, '/', config=config)
-    def signal_handler(signal, frame):
-        cherrypy.engine.stop()
-        sys.exit(0)
-    signal.signal(signal.SIGINT, signal_handler)
-    cherrypy.engine.start()
+    # Write startup message to stdout
     sys.stdout.write("Starting CherryPy HTTP server for ArchivesHub.\n")
     sys.stdout.write("If running in foreground Ctrl-C will stop the server.\n")
     sys.stdout.write("You will be able to access the applications from:\n")
     sys.stdout.write("http://{0}:{1}\n""".format(args.hostname, args.port))
     sys.stdout.flush()
+    # Register signal handler for shutdown
+    def signal_handler(signal, frame):
+        cherrypy.engine.stop()
+        sys.exit(0)
+    signal.signal(signal.SIGINT, signal_handler)
+    # Daemonize the process?
+    if args.daemonic:
+        sys.stdout.write("Daemonizing...\n""")
+        sys.stdout.flush()
+        cherrypy.process.plugins.Daemonizer(
+            cherrypy.engine,
+            stdout='/home/cheshire/git/archiveshub/www/ead/logs/access.log',
+            stderr='/home/cheshire/git/archiveshub/www/ead/logs/error.log'
+        ).subscribe()
+    cherrypy.engine.start()
     cherrypy.engine.block()
-    
-    
+
+
 c3_session = None
 c3_server = None
 
@@ -79,6 +90,14 @@ argparser = WSGIAppArgumentParser(
     conflict_handler='resolve',
     description=__doc__.splitlines()[0]
 )
+argparser.add_argument('--fg', '--foreground', '--non-daemonic',
+                       dest='daemonic',
+                       action='store_false',
+                       help=("Start the server in non-daemonic mode, useful "
+                             "for development and debugging. Default is to "
+                             "start a daemon process.")
+)
+
 
 
 if __name__ == '__main__':
