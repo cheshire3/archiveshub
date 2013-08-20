@@ -12,6 +12,8 @@ import signal
 
 from os.path import expanduser
 
+from pkg_resources import Requirement, resource_filename
+
 from cheshire3.server import SimpleServer
 from cheshire3.session import Session
 from cheshire3.web.sruWsgi import SRUWsgiHandler, get_configsFromServer
@@ -73,10 +75,18 @@ def main(argv=None):
     if args.daemonic:
         sys.stdout.write("Daemonizing...\n""")
         sys.stdout.flush()
+        access_log = resource_filename(
+            Requirement.parse('archiveshub'),
+            'www/ead/logs/access.log'
+        )
+        error_log = resource_filename(
+            Requirement.parse('archiveshub'),
+            'www/ead/logs/error.log'
+        )
         cherrypy.process.plugins.Daemonizer(
             cherrypy.engine,
-            stdout='/home/cheshire/git/archiveshub/www/ead/logs/access.log',
-            stderr='/home/cheshire/git/archiveshub/www/ead/logs/error.log'
+            stdout=access_log,
+            stderr=error_log
         ).subscribe()
     cherrypy.engine.start()
     cherrypy.engine.block()
