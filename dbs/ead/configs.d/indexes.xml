@@ -83,7 +83,14 @@
                 <path type="stoplist">stopwords.txt</path>
             </paths>
         </subConfig>
-        
+
+        <subConfig type="normalizer" id="LeadingZeroNormalizer">
+            <objectType>cheshire3.normalizer.RegexpNormalizer</objectType>
+            <options>
+                <setting type="regexp">^(0+)</setting>
+            </options>
+        </subConfig>
+
         <subConfig type="normalizer" id="vbdidToArchonJSONNormalizer">
             <objectType>archiveshub.normalizer.JSONListFileLookupNormalizer</objectType>
             <paths>
@@ -94,7 +101,7 @@
                 <setting type="to">ids/archon</setting>
             </options>
         </subConfig>
-        
+
         <subConfig type="normalizer" id="archonToVdbNameJSONNormalizer">
             <objectType>archiveshub.normalizer.JSONListFileLookupNormalizer</objectType>
             <paths>
@@ -293,6 +300,8 @@
                 <xpath>/*/*/did/unitid/@repositorycode</xpath>
                 <process>
                     <object type="extractor" ref="SimpleExtractor" />
+                    <object type="normalizer" ref="SpaceNormalizer"/>
+                    <object type="normalizer" ref="LeadingZeroNormalizer"/>
                 </process>
             </source>
             <source mode="all|any|within">
@@ -307,7 +316,7 @@
                 <setting type="vectors">1</setting>
             </options>
         </subConfig>
-        
+
         <subConfig type="index" id="idx-vdbName">
             <docs>Contributor name</docs>
             <objectType>cheshire3.index.SimpleIndex</objectType>
