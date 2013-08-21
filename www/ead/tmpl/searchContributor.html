@@ -1,12 +1,13 @@
 <%!
     # Imports
+    from operator import itemgetter
     from archiveshub.apps.ead.base import iterContributors
 %>
 <div class="row">
     Search within: 
     <select name="withinContributor" id="withinContributor" title="Specify which repositories to search">
         <option value="allcontributors" selected="selected">All Repositories</option>
-        % for identifier, title in iterContributors(session):
+        % for identifier, title in sorted(iterContributors(session), key=itemgetter(1)):
             <option value="${identifier}">${(title[:72] + '...') if len(title) > 75 else title}</option>
         % endfor
     </select>
