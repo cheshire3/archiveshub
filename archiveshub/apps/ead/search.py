@@ -37,7 +37,6 @@ class EADSearchWsgiApplication(EADWsgiApplication):
             if operation is None:
                 # Filename based?
                 operation = os.path.splitext(path.split('/')[-1])[0]
-            
             # Check operation and act accordingly
             if not operation or operation == 'index':
                 self.response.body = self._render_template('index.html')
@@ -82,10 +81,15 @@ class EADSearchWsgiApplication(EADWsgiApplication):
                 else:
                     # Simple method of self
                     # May be a generator
-                    self.response.app_iter = fn(form)
-                    contentlen = sum([len(d) for d in self.response.app_iter])
+                    body = fn(form)
+                    if isinstance(body, basestring):
+                        self.response.body = body
+                        contentlen = len(body)
+                    else:
+                        self.response.app_iter = body
+                        contentlen = sum([len(d) for d in body])
                     self.response.content_length = contentlen
-            
+
             return self.response(environ, start_response)
         finally:
             try:
@@ -231,18 +235,18 @@ class EADSearchWsgiApplication(EADWsgiApplication):
             return [rs]
         facets = self.facets(rs)
         if len(rs):
-            return [self._render_template('searchResults.html',
-                                          resultSet=rs,
-                                          filtered='filter' in form,
-                                          sortBy=sortBy,
-                                          maximumRecords=maximumRecords,
-                                          startRecord=startRecord, 
-                                          facets=facets
-                                          )]
+            return self._render_template('searchResults.html',
+                                         resultSet=rs,
+                                         filtered='filter' in form,
+                                         sortBy=sortBy,
+                                         maximumRecords=maximumRecords,
+                                         startRecord=startRecord,
+                                         facets=facets
+                                         )
         else:
-            return [self._render_template('fail/noHits.html',
-                                          query=rs.query)
-                    ]
+            return self._render_template('fail/noHits.html',
+                                         query=rs.query
+                                         )
 
     def similar(self, form):
         raise NotImplementedError()
