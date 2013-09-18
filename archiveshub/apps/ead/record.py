@@ -39,7 +39,7 @@ from archiveshub.apps.ead.base import config, session, db
 
 
 class EADRecordWsgiApplication(EADWsgiApplication):
-    
+
     def __init__(self, session, database, config):
         # Constructor method
         super(EADRecordWsgiApplication, self).__init__(session,

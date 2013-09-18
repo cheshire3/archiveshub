@@ -229,7 +229,10 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         sortBy = form.getlist('sortBy')
         maximumRecords = int(form.getvalue('maximumRecords', 20))
         startRecord = int(form.getvalue('startRecord', 1))
-        rs = self._searchAndSort(form)
+        try:
+            rs = self._searchAndSort(form)
+        except ValueError as e:
+            return self._render_template('fail/noDocuments.html')
         if not isinstance(rs, ResultSet):
             # Error message
             return [rs]
