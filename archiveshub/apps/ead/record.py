@@ -24,8 +24,10 @@ from foresite import conneg
 from lxml import etree
 from lxml import html as lxmlhtml
 
-
-from cheshire3.exceptions import FileDoesNotExistException
+from cheshire3.exceptions import (
+    FileDoesNotExistException,
+    ObjectDoesNotExistException
+    )
 
 # Cheshire3 for Archives Imports
 from archiveshub.commands.utils import WSGIAppArgumentParser
@@ -449,15 +451,23 @@ class EADRecordWsgiApplication(EADWsgiApplication):
                                              maxPages=len(pages))
         if not toc:
             # Fetch most recent resultSet
-            rsdata = self._fetch_mostRecentResultSet()
-            rs, startRecord, maximumRecords, sortBy = rsdata
-            return self._render_template('detailed.html',
-                                         recid=recid,
-                                         page=page,
-                                         resultSet=rs,
-                                         startRecord=startRecord,
-                                         maximumRecords=maximumRecords,
-                                         sortBy=sortBy
+            try:
+                rsdata = self._fetch_mostRecentResultSet()
+            except ObjectDoesNotExistException:
+                return self._render_template('detailedWithToC.html',
+                                             recid=recid,
+                                             toc=toc,
+                                             page=page,
+                                             )
+            else:
+                rs, startRecord, maximumRecords, sortBy = rsdata
+                return self._render_template('detailed.html',
+                                             recid=recid,
+                                             page=page,
+                                             resultSet=rs,
+                                             startRecord=startRecord,
+                                             maximumRecords=maximumRecords,
+                                             sortBy=sortBy
                                          )
         else:
             return self._render_template('detailedWithToC.html',

@@ -35,21 +35,19 @@ from cheshire3.web.sru_utils import fetch_data
 from cheshire3.web.www_utils import html_encode
 
 
-
-
 class EADWsgiApplication(object):
     """Abstract Base Class for EAD search/retrieve applications.
     
     Sub-classes must define the special __call__ method to make their instances
     of this class callable. This method should always call start_response, and
     return an iterable of string objects (list or generator). 
-    
+
     NOTE: any method that does not return an iterable suitable for returning to
     the server, should be indicated as internal using a leading underscore,
     e.g. _fetch_record
-    
+
     """
-    
+
     def __init__(self, session, database, config):
         # Constructor method
         self.session = session
@@ -75,7 +73,7 @@ class EADWsgiApplication(object):
                                'apps',
                                'ead'
                                )
-        
+
         self.templateLookup = TemplateLookup(directories=[template_dir],
                                              output_encoding='utf-8',
                                              input_encoding='utf-8',
@@ -141,7 +139,6 @@ class EADWsgiApplication(object):
             d.update(kwargs)
             return template.render(**d)
         except:
-            
             return exceptions.html_error_template().render()
 
     def _set_cookie(self, name, value, **kwargs):
@@ -199,9 +196,18 @@ class EADWsgiApplication(object):
         # Return most recent resultSet, and values for startRecord,
         # maximumRecord and sortBy
         rsid = self._get_cookie('resultSet_id')
-        startRecord = int(self._get_cookie('resultSet_startRecord'))
-        maximumRecords = int(self._get_cookie('resultSet_maximumRecords'))
-        sortBy = self._get_cookie('resultSet_sortBy').split(',')
+        try:
+            startRecord = int(self._get_cookie('resultSet_startRecord'))
+        except TypeError:
+            startRecord = 1
+        try:
+            maximumRecords = int(self._get_cookie('resultSet_maximumRecords'))
+        except TypeError:
+            maximumRecords = 20
+        try:
+            sortBy = self._get_cookie('resultSet_sortBy').split(',')
+        except AttributeError:
+            sortBy = []
         rs = self._fetch_resultSet(self.session, rsid)
         return rs, startRecord, maximumRecords, sortBy
 
