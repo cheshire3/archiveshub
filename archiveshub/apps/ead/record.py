@@ -11,6 +11,7 @@ import time
 import urllib
 import urllib2
 
+from collections import OrderedDict
 from random import randint
 from string import Template as StrTemplate
 
@@ -20,7 +21,6 @@ except ImportError:
     from StringIO import StringIO
 
 # site-package
-from foresite import conneg
 from lxml import etree
 from lxml import html as lxmlhtml
 
@@ -49,13 +49,12 @@ class EADRecordWsgiApplication(EADWsgiApplication):
         self.logger = self.database.get_object(session,
                                                'recordTransactionLogger'
                                                )
-        self.mimetypeHash = mtHash = {'text/html': self.html,
-                                      'text/plain': self.text,
-                                      'application/xml': self.xml
-                                     }
-        # Fix for mimetypes module bug
-        mtHash.update({'text/xml': self.xml})
-        self.mimetypeList = conneg.parse(', '.join(mtHash.keys()))
+        self.mimetypeHash = mtHash = OrderedDict([
+            ('text/html', self.html),
+            ('application/xml', self.xml),
+            ('text/xml', self.xml),
+            ('text/plain', self.text)
+        ])
 
     def __call__(self, environ, start_response):
         # Method to make instances of this class callable
@@ -73,17 +72,18 @@ class EADRecordWsgiApplication(EADWsgiApplication):
                 else:
                     self.response.status = 403
                 return self.response(environ, start_response)
-    
+
             # Parse request to determine record, Internet (MIME) Type etc.
             recid, mimetype, encoding = self._parse_recSpec(path)
             form = self._get_params()
             # Content negotiation if not specified by file extension
             if mimetype is None:
-                mtrequested = environ.get('HTTP_ACCEPT', 'text/html')
-                mtc = conneg.parse(mtrequested)
-                mimetype = conneg.best(mtc, self.mimetypeList)
+                mimetype = self.request.accept.best_match(
+                    self.mimetypeHash.keys(),
+                    "text/html"
+                )
                 encoding = None
-    
+
             # Fetch the Record
             try:
                 rec = self._fetch_record(session, recid)
