@@ -6,7 +6,6 @@ import webbrowser
 import smtplib
 import textwrap
 
-from wsgiref.util import application_uri
 from webob.exc import *
 # Email modules
 from email import Message, MIMEMultipart, MIMEText
@@ -388,17 +387,17 @@ class EADSearchWsgiApplication(EADWsgiApplication):
 
     def full(self, form):
         recid = form.getfirst('recid')
-        url = application_uri(self.environ) + '/data/' + recid
-        self.response_headers.append(('Location', url))
-        self.response_code = "301 Moved Permanently"
+        url = self.request.relative_url('../data/' + recid)
+        self.response.location = url
+        self.response.status = "301 Moved Permanently"
         return ['<a href="{0}">{0}</a>'.format(url)]
 
     def toc(self, form):
         self._log(10, 'ToC only')
         recid = form.getfirst('recid')
-        url = application_uri(self.environ) + '/data/' + recid + '?page=toc'
-        self.response_headers.append(('Location', url))
-        self.response_code = "301 Moved Permanently"
+        url = self.request.relative_url('../data/' + recid + '?page=toc')
+        self.response.location = url
+        self.response.status = "301 Moved Permanently"
         return ['<a href="{0}">{0}</a>'.format(url)]
 
     def email(self, form):
