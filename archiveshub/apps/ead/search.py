@@ -271,7 +271,7 @@ class EADSearchWsgiApplication(EADWsgiApplication):
                 facets[(cqlIdx, humanName)] = idxObj.facets(session, rs)
             except:
                 self._log(40, "Couldn't get facets from {0}".format(cqlIdx))
-                raise
+                facets[(cqlIdx, humanName)] = {}
         return facets
 
     def browse(self, form):
