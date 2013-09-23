@@ -256,6 +256,9 @@
                     <object type="normalizer" ref="identifierZeroStripNormalizer" />
                 </process>
             </source>
+            <options>
+                <setting type="longSize">4</setting>
+            </options>
         </subConfig>
 
         <!-- docid index - for Z39.50 access -->
@@ -287,6 +290,9 @@
                     <object type="normalizer" ref="DataExistsNormalizer" />
                 </process>
             </source>
+            <options>
+                <setting type="longSize">4</setting>
+            </options>
         </subConfig>
 
         <!--  contributor -->
@@ -314,6 +320,7 @@
             </source>
             <options>
                 <setting type="vectors">1</setting>
+                <setting type="longSize">4</setting>
             </options>
         </subConfig>
 
@@ -339,6 +346,7 @@
             </source>
             <options>
                 <setting type="vectors">1</setting>
+                <setting type="longSize">4</setting>
             </options>
         </subConfig>
         
@@ -358,6 +366,7 @@
             </source>
             <options>
                 <setting type="vectors">1</setting>
+                <setting type="longSize">4</setting>
             </options>
         </subConfig>
         
@@ -377,6 +386,7 @@
             </source>
             <options>
                 <setting type="vectors">1</setting>
+                <setting type="longSize">4</setting>
             </options>
         </subConfig>
 
@@ -398,6 +408,7 @@
             <options>
                 <setting type="sortStore">1</setting>
                 <setting type="recordStoreSizes">1</setting>
+                <setting type="longSize">4</setting>
             </options>
         </subConfig>
 
@@ -432,6 +443,7 @@
             </source>
             <options>
                 <setting type="recordStoreSizes">1</setting>
+                <setting type="longSize">4</setting>
             </options>
         </subConfig>
 
@@ -453,6 +465,7 @@
                 <setting type="sortStore">1</setting>
                 <setting type="recordStoreSizes">1</setting>
                 <setting type="vectors">1</setting>
+                <setting type="longSize">4</setting>
             </options>
         </subConfig>
 
@@ -483,6 +496,7 @@
                 <setting type="recordStoreSizes">1</setting>
                 <setting type="nProxInts">3</setting>
                 <setting type="termIds">1</setting>
+                <setting type="longSize">4</setting>
             </options>
         </subConfig>
 
@@ -504,6 +518,7 @@
                 <setting type="sortStore">1</setting>
                 <setting type="recordStoreSizes">1</setting>
                 <setting type="vectors">1</setting>
+                <setting type="longSize">4</setting>
             </options>
         </subConfig>
 
@@ -540,6 +555,7 @@
             </source>
             <options>
                 <setting type="recordStoreSizes">1</setting>
+                <setting type="longSize">4</setting>
             </options>
         </subConfig>
 
@@ -568,6 +584,7 @@
             <options>
                 <setting type="sortStore">1</setting>
                 <setting type="recordStoreSizes">1</setting>
+                <setting type="longSize">4</setting>
             </options>
         </subConfig>
 
@@ -598,6 +615,7 @@
             <options>
                 <setting type="recordStoreSizes">1</setting>
                 <setting type="vectors">1</setting>
+                <setting type="longSize">4</setting>
             </options>
         </subConfig>
 
@@ -627,6 +645,7 @@
             </source>
             <options>
                 <setting type="recordStoreSizes">1</setting>
+                <setting type="longSize">4</setting>
             </options>
         </subConfig>
 
@@ -658,6 +677,7 @@
                 <setting type="recordStoreSizes">1</setting>
                 <setting type="nProxInts">3</setting>
                 <setting type="termIds">1</setting>
+                <setting type="longSize">4</setting>
             </options>
         </subConfig>
 
@@ -688,6 +708,7 @@
             <options>
                 <setting type="recordStoreSizes">1</setting>
                 <setting type="nProxInts">3</setting>
+                <setting type="longSize">4</setting>
             </options>
         </subConfig>
 
@@ -710,6 +731,7 @@
             <options>
                 <setting type="recordStoreSizes">1</setting>
                 <setting type="vectors">1</setting>
+                <setting type="longSize">4</setting>
             </options>
         </subConfig>
 
@@ -743,6 +765,7 @@
             </source>
             <options>
                 <setting type="recordStoreSizes">1</setting>
+                <setting type="longSize">4</setting>
             </options>
         </subConfig>
 
@@ -776,6 +799,7 @@
             <options>
                 <setting type="recordStoreSizes">1</setting>
                 <setting type="vectors">1</setting>
+                <setting type="longSize">4</setting>
             </options>
         </subConfig>
 
@@ -813,6 +837,7 @@
             </source>
             <options>
                 <setting type="recordStoreSizes">1</setting>
+                <setting type="longSize">4</setting>
             </options>
         </subConfig>
 
@@ -834,6 +859,7 @@
             <options>
                 <setting type="recordStoreSizes">1</setting>
                 <setting type="vectors">1</setting>
+                <setting type="longSize">4</setting>
             </options>
         </subConfig>
 
@@ -867,6 +893,7 @@
             </source>
             <options>
                 <setting type="recordStoreSizes">1</setting>
+                <setting type="longSize">4</setting>
             </options>
         </subConfig>
 
@@ -886,6 +913,7 @@
             </source>
             <options>
                 <setting type="recordStoreSizes">1</setting>
+                <setting type="longSize">4</setting>
             </options>
         </subConfig>
 
@@ -919,6 +947,7 @@
             </source>
             <options>
                 <setting type="recordStoreSizes">1</setting>
+                <setting type="longSize">4</setting>
             </options>
         </subConfig>
 
@@ -939,6 +968,7 @@
             </source>
             <options>
                 <setting type="recordStoreSizes">1</setting>
+                <setting type="longSize">4</setting>
             </options>
         </subConfig>
 
@@ -963,6 +993,7 @@
             </source>
             <options>
                 <setting type="recordStoreSizes">1</setting>
+                <setting type="longSize">4</setting>
             </options>
         </subConfig>
 
@@ -996,6 +1027,7 @@
             </source>
             <options>
                 <setting type="recordStoreSizes">1</setting>
+                <setting type="longSize">4</setting>
             </options>
         </subConfig>
 
@@ -1018,6 +1050,7 @@
             </source>
             <options>
                 <setting type="recordStoreSizes">1</setting>
+                <setting type="longSize">4</setting>
             </options>
         </subConfig>
 
@@ -1052,6 +1085,7 @@
             </source>
             <options>
                 <setting type="recordStoreSizes">1</setting>
+                <setting type="longSize">4</setting>
             </options>
         </subConfig>
 
@@ -1072,6 +1106,7 @@
             <options>
                 <setting type="recordStoreSizes">1</setting>
                 <setting type="vectors">1</setting>
+                <setting type="longSize">4</setting>
             </options>
         </subConfig>
 
@@ -1106,6 +1141,7 @@
             </source>
             <options>
                 <setting type="recordStoreSizes">1</setting>
+                <setting type="longSize">4</setting>
             </options>
         </subConfig>
 
@@ -1130,6 +1166,7 @@
                 <!-- We need vectors to unindex these, current value cannot 
                     be recreated in the future -->
                 <setting type="vectors">1</setting>
+                <setting type="longSize">4</setting>
             </options>
         </subConfig>
 
@@ -1153,6 +1190,7 @@
                 <!-- We need vectors to unindex these, current value cannot 
                     be recreated in the future -->
                 <setting type="vectors">1</setting>
+                <setting type="longSize">4</setting>
             </options>
         </subConfig>
 
