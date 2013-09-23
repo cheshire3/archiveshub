@@ -37,15 +37,15 @@ var listCount = 0;
 
 /* customisable display of icons in collapsible lists */
 /* file explorer style */
-var collapsedUrl = '/ead/img/folderClosed.gif';
-var expandedUrl = '/ead/img/folderOpen.gif';
-var itemUrl = '/ead/img/folderItem.jpg';
-var lastItemUrl = '/ead/img/folderItem.jpg';
+var collapsedUrl = '/images/search/folderClosed.png';
+var expandedUrl = '/images/search/folderOpen.png';
+var itemUrl = '/images/search/folderItem.jpg';
+var lastItemUrl = '/images/search/folderItem.jpg';
 /* skeletal style - uncomment/comment to replace the above defaults */
-//var collapsedUrl = '/ead/img/barPlus.gif';
-//var expandedUrl = '/ead/img/barMinus.gif';
-var itemUrl = '/ead/img/barT.gif'
-var lastItemUrl = '/ead/img/barLast.gif'
+//var collapsedUrl = '/images/barPlus.gif';
+//var expandedUrl = '/images/barMinus.gif';
+var itemUrl = '/images/search/barT.png'
+var lastItemUrl = '/images/search/barLast.png'
 
 
 function createTreeFromList(listId, treeState, collapseList, controlLevels) {
