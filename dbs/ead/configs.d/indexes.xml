@@ -94,7 +94,7 @@
         <subConfig type="normalizer" id="vbdidToArchonJSONNormalizer">
             <objectType>archiveshub.normalizer.JSONListFileLookupNormalizer</objectType>
             <paths>
-                <path type="json">~/mercurial/archiveshub/htdocs/contributorsmap/locations.json</path>
+                <path type="json">~/mercurial/archiveshub/htdocs/api/contributors.json</path>
             </paths>
             <options>
                 <setting type="from">ids/spoke</setting>
@@ -105,7 +105,7 @@
         <subConfig type="normalizer" id="archonToVdbNameJSONNormalizer">
             <objectType>archiveshub.normalizer.JSONListFileLookupNormalizer</objectType>
             <paths>
-                <path type="json">~/mercurial/archiveshub/htdocs/contributorsmap/locations.json</path>
+                <path type="json">~/mercurial/archiveshub/htdocs/api/contributors.json</path>
             </paths>
             <options>
                 <setting type="from">ids/archon</setting>
