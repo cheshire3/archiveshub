@@ -30,7 +30,7 @@ from cheshire3.exceptions import (
     )
 
 # Cheshire3 for Archives Imports
-from archiveshub.commands.utils import WSGIAppArgumentParser
+from archiveshub.deploy.utils import WSGIAppArgumentParser
 from archiveshub.apps.ead.base import EADWsgiApplication
 from archiveshub.apps.ead.base import listCollections
 from archiveshub.apps.ead.base import dataFromRecordXPaths, emailFromArchonCode

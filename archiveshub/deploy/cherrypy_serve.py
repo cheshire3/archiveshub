@@ -20,7 +20,7 @@ from cheshire3.web.sruWsgi import SRUWsgiHandler, get_configsFromServer
 from cheshire3.web.oaipmhWsgi import OAIPMHWsgiApplication
 from cheshire3.web.oaipmhWsgi import get_databasesAndConfigs
 
-from archiveshub.commands.utils import WSGIAppArgumentParser
+from archiveshub.deploy.utils import WSGIAppArgumentParser
 
 from archiveshub.apps.ead.search import application as ead_search_app
 from archiveshub.apps.ead.record import application as ead_data_app

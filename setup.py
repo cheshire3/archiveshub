@@ -47,7 +47,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'ah-serve = archiveshub.commands.serve:main'
+            'ah-serve = archiveshub.deploy.cherrypy_serve:main'
         ],
     },
     author = 'John Harrison',
