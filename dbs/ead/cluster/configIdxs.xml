@@ -32,6 +32,9 @@
                     <object type="normalizer" ref="EnglishStemNormalizer" />
                 </process>
             </source>
+            <options>
+                <setting type="longSize">4</setting>
+            </options>
         </subConfig>
 
         <subConfig type="index" id="ead-cluster-idx-key">
@@ -47,6 +50,9 @@
                     <object type="normalizer" ref="EnglishStemNormalizer" />
                 </process>
             </source>
+            <options>
+                <setting type="longSize">4</setting>
+            </options>
         </subConfig>
 
         <subConfig type="index" id="ead-cluster-idx-title">
@@ -62,6 +68,9 @@
                     <object type="normalizer" ref="EnglishStemNormalizer" />
                 </process>
             </source>
+            <options>
+	        <setting type="longSize">4</setting>
+            </options>
         </subConfig>
 
         <subConfig type="index" id="ead-cluster-idx-description">
@@ -77,6 +86,9 @@
                     <object type="normalizer" ref="EnglishStemNormalizer" />
                 </process>
             </source>
+            <options>
+	        <setting type="longSize">4</setting>
+            </options>
         </subConfig>
 
     </subConfigs>
