@@ -75,20 +75,16 @@ class ApacheModifier(object):
             with open(default_httpd_conf_path, 'a') as fh:
                 fh.write("Include conf.d/*.conf")
         if self.develop:
-            # Mod the file then create a sym-link to it
-            self._unpackcp(
-                join(distropath, 'www', 'conf.d', 'ead.conf.tmpl'),
-                join(distropath, 'www', 'conf.d', 'ead.conf')
-            )
+            # Create a soft link to the file
             os.symlink(
-                join(distropath, 'www', 'conf.d', 'ead.conf'),
-                join(confdir, 'ead.conf')
+                join(distropath, 'www', 'uwsgi', 'apache', 'archiveshub.conf'),
+                join(confdir, 'archiveshub.conf')
             )
         else:
             # Copy the file with mods
             self._unpackcp(
-                join(distropath, 'www', 'conf.d', 'ead.conf.tmpl'),
-                join(confdir, 'ead.conf')
+                join(distropath, 'www', 'uwsgi', 'apache', 'archiveshub.conf'),
+                join(confdir, 'archiveshub.conf')
             )
 
     def uninstall_apache_config(self):
@@ -101,7 +97,7 @@ class ApacheModifier(object):
         confdir = join(self.apache_base_path, 'conf.d')
         # Remove Apache configuration stub template
         if exists(confdir):
-            os.remove(join(confdir, 'ead.conf'))
+            os.remove(join(confdir, 'archiveshub.conf'))
 
 
 # Inspect to find current path
