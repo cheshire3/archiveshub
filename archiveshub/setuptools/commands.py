@@ -149,7 +149,10 @@ class c3_command(Command):
                                'cluster',
                                'config.xml')
                           )
-    
+        from archiveshub.apps.configuration import config
+        with open(join(distropath, 'www', 'ead', 'ead.conf'), 'w') as fh:
+            config.write(fh)
+
 
 class develop(_develop.develop, c3_command):
 

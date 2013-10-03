@@ -7,9 +7,10 @@ www/conf.d/ead.conf
 *.data
 *.data_*
 
-# De-Tempaltified configurations
+# De-Templatified configurations
 dbs/ead/config.xml
 dbs/ead/cluster/config.xml
+www/ead/ead.conf
 
 # Python compiled/optimized files
 *.py[co]
