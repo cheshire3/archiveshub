@@ -24,7 +24,7 @@ option.'''.format(apache_base_path)
 
 class ApacheModifier(object):
     """A class to modify an Apache HTTPD installation."""
-    
+
     def __init__(self, apache_base_path, develop=False):
         from cheshire3.internal import cheshire3Home
         self.cheshire3Home = cheshire3Home
@@ -43,7 +43,7 @@ class ApacheModifier(object):
             raise NoApacheException(apache_base_path)
         self.apache_base_path = apache_base_path
         self.develop = develop
-        
+
     def _unpackcp(self, source, destination):
         # Read in src
         with open(source, 'r') as fh:
@@ -55,10 +55,10 @@ class ApacheModifier(object):
         # Write to dest
         with open(destination, 'w') as fh:
             fh.write(out)
-            
+
     def install_apache_config(self):
         """Create and install an Apache HTTPD configuration stub file.
-        
+
         This tells the web server how to run the  web apps.
         """
         # We already established that self.apache_base_path exists at __init__
@@ -90,10 +90,10 @@ class ApacheModifier(object):
                 join(distropath, 'www', 'conf.d', 'ead.conf.tmpl'),
                 join(confdir, 'ead.conf')
             )
-        
+
     def uninstall_apache_config(self):
         """Uninstall an Apache HTTPD configuration stub file.
-        
+
         This stub file tells the web server how to run the  web apps, but we 
         want it to stop doing that.
         """
@@ -101,7 +101,7 @@ class ApacheModifier(object):
         confdir = join(self.apache_base_path, 'conf.d')
         # Remove Apache configuration stub template
         if exists(confdir):
-             os.remove(join(confdir, 'ead.conf'))
+            os.remove(join(confdir, 'ead.conf'))
 
 
 # Inspect to find current path

@@ -42,7 +42,7 @@ class unavailable_command(Command):
 
 class c3_command(Command):
     """Base Class for custom commands."""
-    
+
     user_options = [
         ("with-httpd=",
          None,
@@ -86,7 +86,7 @@ class c3_command(Command):
                               e.filename)
             else:
                 raise e
-        
+
     def uninstall_apache_mods(self):
         # Uninstall Apache HTTPD configuration plugin file
         am = ApacheModifier(self.with_httpd)
@@ -135,7 +135,7 @@ class c3_command(Command):
             # Write finished config file
             with open(path, 'w') as fh:
                 fh.write(config)
-                
+
         # EAD Database
         apply_config_tmpl(join(distropath,
                                'dbs',
@@ -152,9 +152,9 @@ class c3_command(Command):
     
 
 class develop(_develop.develop, c3_command):
-    
+
     user_options = _develop.develop.user_options + c3_command.user_options
-    
+
     def initialize_options(self):
         _develop.develop.initialize_options(self)
         c3_command.initialize_options(self)
@@ -162,7 +162,7 @@ class develop(_develop.develop, c3_command):
     def finalize_options(self):
         _develop.develop.finalize_options(self)
         c3_command.finalize_options(self)
-        
+
     def install_for_development(self):
         global distropath, server, session
         # Carry out normal procedure
@@ -193,7 +193,7 @@ class develop(_develop.develop, c3_command):
         if self.with_httpd is not None:
             # Install Apache HTTPD mods
             self.install_apache_mods(develop=True)
-        
+
     def uninstall_link(self):
         global server, session
         # Carry out normal procedure
@@ -225,9 +225,9 @@ class develop(_develop.develop, c3_command):
 
 
 class install(_install.install, c3_command):
-    
+
     user_options = _install.install.user_options + c3_command.user_options
-    
+
     def initialize_options(self):
         _install.install.initialize_options(self)
         c3_command.initialize_options(self)
@@ -235,7 +235,7 @@ class install(_install.install, c3_command):
     def finalize_options(self):
         _install.install.finalize_options(self)
         c3_command.finalize_options(self)
-        
+
     def run(self):
         # Carry out normal procedure
         _install.install.run(self)
@@ -269,11 +269,10 @@ class install(_install.install, c3_command):
 
 
 class upgrade(_install.install, c3_command):
-    
     # Extremely experimental and untested...
-    
+
     user_options = _install.install.user_options + c3_command.user_options
-    
+
     def initialize_options(self):
         _install.install.initialize_options(self)
         c3_command.initialize_options(self)
@@ -281,7 +280,7 @@ class upgrade(_install.install, c3_command):
     def finalize_options(self):
         _install.install.finalize_options(self)
         c3_command.finalize_options(self)
-        
+
     def run(self):
         # Carry out normal procedure
         _install.install.run(self)
@@ -321,7 +320,7 @@ class upgrade(_install.install, c3_command):
 class uninstall(c3_command):
 
     description = "Uninstall Cheshire3 for Archives"
-    
+
     def run(self):
         if self.with_httpd is not None:
             # Uninstall Apache HTTPD mods
@@ -358,5 +357,3 @@ serverConfig = os.path.join(cheshire3Root,
                             'serverConfig.xml')
 session = Session()
 server = SimpleServer(session, serverConfig)
-
-

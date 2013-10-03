@@ -409,7 +409,7 @@ def backwalkComponentTitles(session, record):
     xpath = record.process_xpath(session, '/c3component/@xpath')[0]
     # Get parent Record
     parentRec = collectionFromComponent(session, record)
-        
+
     def __processNode(node):
         t = node.xpath('string(./did/unittitle)')
         if not len(t):
@@ -423,7 +423,7 @@ def backwalkComponentTitles(session, record):
         else:
             id_ = None
         return [id_, t.strip()]
-        
+
 #    node = parentRec.get_dom(session).xpath(xpath)[0]
     node = parentRec.process_xpath(session, xpath)[0]
     titles = [__processNode(node)]
@@ -434,7 +434,7 @@ def backwalkComponentTitles(session, record):
             break
         else:
             titles.append(__processNode(n))
-    
+
     titles.reverse()
     # Top level id doesn't conform to pattern - is simply the top level
     # record id
@@ -445,7 +445,7 @@ def backwalkComponentTitles(session, record):
 
 def dataFromRecordXPaths(session, rec, xps, nTerms=1, joiner=u'; '):
     """Extract data from ``rec`` return a single unicode object.
-    
+
     Extract data from ``rec`` using multiple XPaths ``xps`` in priority order.
     Return a maximum of ``nTerms`` matches, joining any multiple values with
     `joiner``. 
