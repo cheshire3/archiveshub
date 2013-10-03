@@ -83,7 +83,6 @@ class EADWsgiApplication(object):
             'version': get_distribution("archiveshub").version,
             'config': config
         }
-        self.defaultContext.update(dict(config.items('brand')))
 
     def _setUp(self, environ):
         # Prepare application to handle a new request
@@ -486,7 +485,7 @@ def cleverTitleCase(txt):
                    word.strip('\'"(')[0].isdigit()
                    )
                   ):
-                
+
                 # 1st word always capitalized, unless starts with a number
                 word = word.title()
             elif (word not in always_lower and word[0].isalpha()):
@@ -532,11 +531,6 @@ except (TypeError, ValueError):
 config = SafeConfigParser()
 # Default configuration
 configDefaults = StringIO("""
-[brand]
-repository_name = Archives Hub
-repository_link = http://archiveshub.ac.uk
-repository_logo = /img/ah-logo.png
-
 [icons]
 base-url = /images
 forward-url = %(base-url)s/search/forward.png
@@ -565,8 +559,8 @@ always_upper = AA,BBC,BT,CNN,UK,US,USA
 roman_numeral_regex = ^M{{0,4}}(CM|CD|D?C{{0,3}})(XC|XL|L?X{{0,3}})(IX|IV|V?I{{0,3}})$
 
 [email]
-username = cheshire
-host = mail1.liv.ac.uk
+username = archiveshub
+host = mailrouter.example.com
 port = 25
 
 [facets]
