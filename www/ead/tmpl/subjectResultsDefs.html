@@ -5,13 +5,13 @@
 %>
 
 <%def name="back_links(resultSet, maximumRecords, startRecord)">
-    <a href="search.html?rsid=${resultSet.id|u}&amp;startRecord=1&amp;maximumRecords=${maximumRecords}#leftcol"
+    <a href="subject.html?query=${resultSet.query.toCQL()|u}&amp;startRecord=1&amp;maximumRecords=${maximumRecords}#leftcol"
       class="ajax">
         <button label="fast-rewind" class="rsNav">
             <img src="${config.get('icons', 'fast-rewind-url')}" alt="|&lt;&lt;">
         </button>
     </a>
-    <a href="search.html?rsid=${resultSet.id|u}&amp;startRecord=${max(startRecord - maximumRecords, 1)}&amp;maximumRecords=${maximumRecords}&amp;#leftcol"
+    <a href="subject.html?query=${resultSet.query.toCQL()|u}&amp;startRecord=${max(startRecord - maximumRecords, 1)}&amp;maximumRecords=${maximumRecords}&amp;#leftcol"
       class="ajax">
         <button label="rewind" class="rsNav">
             <img src="${config.get('icons', 'rewind-url')}" alt="&lt;&lt;">
@@ -20,13 +20,13 @@
 </%def>
 
 <%def name="forward_links(resultSet, maximumRecords, startRecord)">
-    <a href="search.html?rsid=${resultSet.id|u}&amp;startRecord=${min(startRecord + maximumRecords, len(resultSet))}&amp;maximumRecords=${maximumRecords}&amp;#leftcol"
+    <a href="subject.html?query=${resultSet.query.toCQL()|u}&amp;startRecord=${min(startRecord + maximumRecords, len(resultSet))}&amp;maximumRecords=${maximumRecords}&amp;#leftcol"
       class="ajax">
         <button label="forward" class="rsNav">
             <img src="${config.get('icons', 'forward-url')}" alt="&gt;&gt;">
         </button>
     </a>
-    <a href="search.html?rsid=${resultSet.id|u}&amp;startRecord=${((len(resultSet) / maximumRecords) * maximumRecords) + 1}&amp;maximumRecords=${maximumRecords}#leftcol"
+    <a href="subject.html?query=${resultSet.query.toCQL()|u}&amp;startRecord=${((len(resultSet) / maximumRecords) * maximumRecords) + 1}&amp;maximumRecords=${maximumRecords}#leftcol"
       class="ajax">
         <button label="fast-forward" class="rsNav">
             <img src="${config.get('icons', 'fast-forward-url')}"
@@ -39,13 +39,13 @@
     <div class="displaying">
         Displaying <strong>${startRecord}</strong>
         to <strong>${min(startRecord + maximumRecords - 1, len(resultSet))}</strong>
-        of <strong>${len(resultSet)}</strong> hits.
+        of <strong>${len(resultSet)}</strong> subjects.
     </div>
 </%def>
 
 <%def name="maximumRecordsSelectButton(resultSet, maximumRecords, startRecord, label=None)">
     <a 
-        href="search.html?rsid=${resultSet.id|u}&amp;startRecord=${startRecord}&amp;maximumRecords=${maximumRecords}#leftcol"
+        href="subject.html?query=${resultSet.query.toCQL()|u}&amp;startRecord=${startRecord}&amp;maximumRecords=${maximumRecords}#leftcol"
         class="ajax maximumRecords">
         % if label is not None:
             <button label="${label}">${label}</button>
@@ -136,7 +136,7 @@
     <%
     rec = resultSet[index].fetch_record(session)
     key = dataFromRecordXPaths(session, rec, ['/cluster/key'])
-    qString = 'dc.subject exact "{0}"'.format(key)
+    qString = 'dc.subject exact "{0}"'.format(key.replace('"', r'\"'))
     %>
     <a href="${SCRIPT}/search.html?query=${qString|u}&amp;startRecord=${1}&amp;maximumRecords=${maximumRecords}&amp;sortBy=dc.title">
         <strong>
