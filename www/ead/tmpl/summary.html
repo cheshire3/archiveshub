@@ -26,7 +26,7 @@
         ## Collection level
     % endtry
     <%
-    docstr = txr.process_record(session, rec).get_raw(session).decode('utf-8')
+    docstr = unicode(txr.process_record(session, rec).get_raw(session), 'utf-8')
     ## Add in the enquiries email
     archon_code = dataFromRecordXPaths(
         session,
@@ -36,7 +36,10 @@
          ]
     )
     email_address = emailFromArchonCode(archon_code)
-    docstr = docstr.replace(u'contributor_{0}@example.com'.format(archon_code), email_address)
+    try:
+        docstr = docstr.replace(u'contributor_{0}@example.com'.format(archon_code), email_address)
+    except TypeError:
+        pass
     %>
     ${docstr}
 </%block>
