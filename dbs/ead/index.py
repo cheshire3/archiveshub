@@ -41,7 +41,7 @@ from lockfile import FileLock, LockTimeout
 
 from cheshire3.exceptions import ObjectDoesNotExistException
 
-from archiveshub.commands.utils import BaseArgumentParser, getCheshire3Env
+from archiveshub.deploy.utils import BaseArgumentParser, getCheshire3Env
 
 # Define some test queries. Each item in the list should be a pair of:
 # (CQLQuery, threshold) where threshold is the mininum number of results the

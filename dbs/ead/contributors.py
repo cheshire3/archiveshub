@@ -16,7 +16,7 @@ from cheshire3.server import SimpleServer
 
 from cheshire3.commands.cmd_utils import identify_database
 
-from archiveshub.commands.utils import BaseArgumentParser
+from archiveshub.deploy.utils import BaseArgumentParser
 
 
 class ContribArgumentParser(BaseArgumentParser):
