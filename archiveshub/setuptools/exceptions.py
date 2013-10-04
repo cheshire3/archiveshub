@@ -3,7 +3,7 @@
 
 class SetupException(Exception):
     """Base Class for Exceptions raised during setup."""
-    
+
     def __init__(self, text="None"):
         self.message = text
 
@@ -13,7 +13,7 @@ class SetupException(Exception):
     def __repr__(self):
         return str(self.__class__) + ": " + self.message
 
-    
+
 class DevelopException(SetupException):
     """An Exception raised during ``python setup.py develop``."""
     pass

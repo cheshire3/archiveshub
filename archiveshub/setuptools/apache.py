@@ -6,6 +6,7 @@ import inspect
 from os.path import abspath, dirname, join, exists
 from string import Template
 
+
 class NoApacheException(EnvironmentError):
     """Exception raised when Apache HTTPD cannot be located."""
 
@@ -69,9 +70,10 @@ class ApacheModifier(object):
             os.mkdir(confdir)
             # If the dir wasn't there, we also need to tell the default httpd
             # config to include this directory
-            default_httpd_conf_path = join(self.apache_base_path, 
-                                           'conf', 
-                                           'httpd.conf') 
+            default_httpd_conf_path = join(self.apache_base_path,
+                                           'conf',
+                                           'httpd.conf'
+                                           )
             with open(default_httpd_conf_path, 'a') as fh:
                 fh.write("Include conf.d/*.conf")
         if self.develop:
@@ -90,7 +92,7 @@ class ApacheModifier(object):
     def uninstall_apache_config(self):
         """Uninstall an Apache HTTPD configuration stub file.
 
-        This stub file tells the web server how to run the  web apps, but we 
+        This stub file tells the web server how to run the  web apps, but we
         want it to stop doing that.
         """
         # We already established that self.apache_base_path exists at __init__

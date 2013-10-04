@@ -12,7 +12,7 @@ from cheshire3.commands.cmd_utils import Cheshire3ArgumentParser
 
 
 class BaseArgumentParser(Cheshire3ArgumentParser):
-    
+
     def __init__(self, *args, **kwargs):
         Cheshire3ArgumentParser.__init__(self, *args, **kwargs)
 
@@ -38,16 +38,16 @@ class WSGIAppArgumentParser(BaseArgumentParser):
         self.add_argument('--no-browser',
                           action='store_false', dest='browser',
                           default=True,
-                          help=("don't open a browser window/tab containing the "
-                                "app. useful if you want to deploy the app for "
-                                "other users"
+                          help=("don't open a browser window/tab containing "
+                                "the app. useful if you want to deploy the "
+                                "app for other users"
                                 )
                           )
 
 
 def getCheshire3Env(args):
     """Init and return Cheshire3 Session, Server and Database.
-    
+
     Intialize Cheshire3 Session, Server and Database objects based on
     ``args``.
     """
@@ -63,8 +63,9 @@ def getCheshire3Env(args):
             server.log_critical(session, e.message)
             raise
         server.log_debug(
-            session, 
-            "database identifier not specified, discovered: {0}".format(dbid))
+            session,
+            "database identifier not specified, discovered: {0}".format(dbid)
+        )
     else:
         dbid = args.database
     try:
@@ -78,5 +79,5 @@ Please provide a different database identifier using the --database option.
     else:
         # Attach a default Logger to the Session
         session.logger = db.get_path(session, 'defaultLogger')
-    
+
     return session, server, db

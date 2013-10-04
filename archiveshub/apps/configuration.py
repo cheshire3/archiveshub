@@ -35,7 +35,8 @@ always_lower = a,and,by,etc,for,in,is,of,on,or,s,th,that,the,to
 # Comma separate lists of words that should always appear in UPPER CASE
 always_upper = AA,BBC,BT,CNN,UK,US,USA
 # Regular expression for Roman numerals
-roman_numeral_regex = ^M{{0,4}}(CM|CD|D?C{{0,3}})(XC|XL|L?X{{0,3}})(IX|IV|V?I{{0,3}})$
+roman_numeral_regex = ^M{{0,4}}(CM|CD|D?C{{0,3}})(XC|XL|L?X{{0,3}})\
+(IX|IV|V?I{{0,3}})$
 
 [email]
 username = archiveshub
@@ -47,10 +48,10 @@ dc.subject = Subject
 dc.creator = Creator
 vdb.name = Contributor
 """.format(
-   html_cache_path=resource_filename(
-       Requirement.parse('archiveshub'),
-       'www/ead/html'
-   )
+    html_cache_path=resource_filename(
+        Requirement.parse('archiveshub'),
+        'www/ead/html'
+    )
 ))
 
 # App Configuration

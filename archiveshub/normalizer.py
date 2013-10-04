@@ -7,7 +7,7 @@ from cheshire3.normalizer import FileAssistedNormalizer
 
 class JSONListFileLookupNormalizer(FileAssistedNormalizer):
     """Normalize by looking up values in a JSON file.
-    
+
     Scan through a JSON file containing a list. If the ``from`` path for
     a particular entry matches the incoming value, normalize to the ``to``
     value.
@@ -31,7 +31,7 @@ class JSONListFileLookupNormalizer(FileAssistedNormalizer):
             'docs': ("Field within the JSON to lookup value to normalize to "
                      "(assuming incoming data matches ``from``.) Configured "
                      "like an XPath, e.g. field/sub-field/sub-sub-field"),
-           'required': True
+            'required': True
         }
     }
 
@@ -40,7 +40,7 @@ class JSONListFileLookupNormalizer(FileAssistedNormalizer):
         self._loadJSON(session)
         self.fromField = self.get_setting(session, 'from')
         self.toField = self.get_setting(session, 'to')
-        
+
     def _loadJSON(self, session):
         lines = self._processPath(session, 'json')
         self.json = json.loads('\n'.join(lines))

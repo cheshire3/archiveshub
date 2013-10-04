@@ -78,8 +78,8 @@ class c3_command(Command):
                               "\n\nPerhaps your account does not have write "
                               "access to this directory?  If the installation "
                               "directory is a system-owned directory, you may "
-                              "need to sign in as the administrator or \"root\" "
-                              "account.\n\n"
+                              "need to sign in as the administrator or "
+                              "\"root\" account.\n\n"
                               "HINT: you could try running\n\n    "
                               "su -c \"python setup.py %s\""
                               "" % self.__class__.__name__,
@@ -108,8 +108,8 @@ class c3_command(Command):
                               "\n\nPerhaps your account does not have write "
                               "access to this directory?  If the installation "
                               "directory is a system-owned directory, you may "
-                              "need to sign in as the administrator or \"root\" "
-                              "account.\n\n"
+                              "need to sign in as the administrator or "
+                              "\"root\" account.\n\n"
                               "HINT: you could try running\n\n    "
                               "su -c \"python setup.py %s\""
                               "" % self.__class__.__name__,
@@ -293,7 +293,7 @@ class upgrade(_install.install, c3_command):
         subpath = join('cheshire3',
                        'dbs',
                        'ead')
-        shutil.copytree(join(distropath, 'dbs', 'ead'), 
+        shutil.copytree(join(distropath, 'dbs', 'ead'),
                         join(cheshire3Home, subpath),
                         symlinks=False,
                         ignore=shutil.ignore_patterns(".git*",
@@ -303,17 +303,19 @@ class upgrade(_install.install, c3_command):
                                                       "*.log")
                         )
         # Upgrade to web app directory
-        subpath = join('cheshire3', 
-                       'www', 
-                       'ead')
-        shutil.copytree(join(distropath, 'www'), 
+        subpath = join('cheshire3',
+                       'www',
+                       'ead'
+                       )
+        shutil.copytree(join(distropath, 'www'),
                         join(cheshire3Home, subpath),
                         symlinks=False,
-                        ignore=shutil.ignore_patterns(".git*", 
-                                                      "*.pyc", 
-                                                      "PyZ3950_parsetab.py*", 
-                                                      "*.bdb", 
-                                                      "*.log")
+                        ignore=shutil.ignore_patterns(".git*",
+                                                      "*.pyc",
+                                                      "PyZ3950_parsetab.py*",
+                                                      "*.bdb",
+                                                      "*.log"
+                                                      )
                         )
         if self.with_httpd is not None:
             # Install Apache HTTPD mods

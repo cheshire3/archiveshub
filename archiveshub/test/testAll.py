@@ -33,7 +33,7 @@ def load_tests(loader, tests, pattern):
                 continue
             else:
                 modsuite = load_tests_fn(loader, tests, pattern)
-            
+
         suite.addTest(modsuite)
     # Return the complete test suite
     return suite

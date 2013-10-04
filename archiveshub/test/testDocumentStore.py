@@ -2,7 +2,7 @@ u"""Cheshire3 DocumentStore Unittests.
 
 DocumentStore configurations may be customized by the user. For the purposes of
 unittesting, configuration files will be ignored and DocumentStore instances
-will be instantiated using configurations defined within this testing module, 
+will be instantiated using configurations defined within this testing module,
 and tests carried out on those instances using data defined in this module.
 """
 
@@ -18,9 +18,11 @@ from datetime import datetime
 
 from cheshire3.document import Document, StringDocument
 from archiveshub.documentStore import MercurialDocumentStore
-from cheshire3.exceptions import ObjectAlreadyExistsException,\
-                                 ObjectDoesNotExistException,\
-                                 ObjectDeletedException
+from cheshire3.exceptions import (
+    ObjectAlreadyExistsException,
+    ObjectDoesNotExistException,
+    ObjectDeletedException
+)
 from cheshire3.test.testDocumentStore import DirectoryDocumentStoreTestCase
 
 

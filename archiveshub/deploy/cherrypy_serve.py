@@ -1,9 +1,9 @@
 """Start an HTTP server for Archives Hub
 
-Start an HTTP server to expose Cheshire3 databases via the web services and 
+Start an HTTP server to expose Cheshire3 databases via the web services and
 web application for development and demonstration purposes.
 
-The current implementation uses CherryPy. 
+The current implementation uses CherryPy.
 """
 import cherrypy
 import sys
@@ -52,24 +52,29 @@ def main(argv=None):
     cherrypy.tree.graft(oaipmh_app, '/api/oaipmh/2.0')
     cherrypy.tree.graft(ead_data_app, '/data')
     cherrypy.tree.graft(ead_search_app, '/search')
+    root_conf = {
+        'tools.staticdir.on': True,
+        'tools.staticdir.dir': expanduser('~/mercurial/archiveshub/htdocs'),
+        'tools.staticdir.index': 'index.html'
+    }
     config = {
-        '/': {
-            'tools.staticdir.on': True,
-            'tools.staticdir.dir': expanduser('~/mercurial/archiveshub/htdocs'),
-            'tools.staticdir.index': 'index.html'
-        }
+        '/': root_conf
     }
     cherrypy.tree.mount(None, '/', config=config)
     # Write startup message to stdout
-    sys.stdout.write("Starting CherryPy HTTP server for ArchivesHub.\n")
-    sys.stdout.write("If running in foreground Ctrl-C will stop the server.\n")
-    sys.stdout.write("You will be able to access the applications from:\n")
-    sys.stdout.write("http://{0}:{1}\n""".format(args.hostname, args.port))
+    sys.stdout.write(
+        "Starting CherryPy HTTP server for ArchivesHub.\n"
+        "If running in foreground Ctrl-C will stop the server.\n"
+        "You will be able to access the applications from:\n"
+        "http://{0}:{1}\n""".format(args.hostname, args.port)
+    )
     sys.stdout.flush()
     # Register signal handler for shutdown
+
     def signal_handler(signal, frame):
         cherrypy.engine.stop()
         sys.exit(0)
+
     signal.signal(signal.SIGINT, signal_handler)
     # Daemonize the process?
     if args.daemonic:
@@ -105,9 +110,9 @@ argparser.add_argument('--fg', '--foreground', '--non-daemonic',
                        action='store_false',
                        help=("Start the server in non-daemonic mode, useful "
                              "for development and debugging. Default is to "
-                             "start a daemon process.")
-)
-
+                             "start a daemon process."
+                             )
+                       )
 
 
 if __name__ == '__main__':

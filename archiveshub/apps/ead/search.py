@@ -19,12 +19,12 @@ from cheshire3.web.www_utils import generate_cqlQuery
 
 # Cheshire3 for Archives Imports
 from archiveshub.deploy.utils import WSGIAppArgumentParser
-from archiveshub.apps.ead.base import EADWsgiApplication 
+from archiveshub.apps.ead.base import EADWsgiApplication
 from archiveshub.apps.ead.base import config, session, db
 
 
 class EADSearchWsgiApplication(EADWsgiApplication):
-    
+
     def __call__(self, environ, start_response):
         # Method to make instances of this class callable
         try:
@@ -141,7 +141,7 @@ class EADSearchWsgiApplication(EADWsgiApplication):
             else:
                 qString = ('vdb.identifier exact "{0}"'
                            ''.format(withinContributor))
-            
+
         if not qString.strip('()'):
             self._log(40, '*** Unable to generate CQL query')
             return self._render_template('fail/invalidQuery.html')
@@ -205,14 +205,14 @@ class EADSearchWsgiApplication(EADWsgiApplication):
                     index = protocolMap.resolveIndex(session, sortClause)
                 except CQLDiagnostic:
                     index = None
-                        
+
                 if index:
                     rs.order(session, index)
                 elif spec:
                     # Not an index, maybe a ResultSetItem attribute, or XPath?
                     # Pass the string to ResultSet to see what it makes of it
                     rs.order(session, spec)
-                    
+
         # Set resultSet cookie
         self._set_cookie('resultSet_id', rs.id)
         self._set_cookie('resultSet_startRecord', startRecord)
@@ -334,7 +334,7 @@ class EADSearchWsgiApplication(EADWsgiApplication):
             content = [self._render_template('subjectResults.html',
                                              resultSet=rs,
                                              maximumRecords=maximumRecords,
-                                             startRecord=startRecord, 
+                                             startRecord=startRecord,
                                              )]
         session.database = 'db_ead'
         return content
@@ -373,7 +373,7 @@ class EADSearchWsgiApplication(EADWsgiApplication):
                                      filtered='filter' in form,
                                      sortBy=sortBy,
                                      maximumRecords=maximumRecords,
-                                     startRecord=startRecord, 
+                                     startRecord=startRecord,
                                      rec=rec,
                                      txr=summaryTxr
                                      )
@@ -418,16 +418,16 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         address = form.getfirst('address')
         rec = self._fetch_record(session, recid)
         docTxt = u'\n'.join([textwrap.fill(rawline, 78) + u'\n'
-                              for rawline
-                              in self._textFromRecord(rec).split(u'\n')]
-                             ).encode('utf-8')
+                             for rawline
+                             in self._textFromRecord(rec).split(u'\n')
+                             ]).encode('utf-8')
         mimemsg = MIMEMultipart.MIMEMultipart()
         mimemsg['Subject'] = 'Requested Finding Aid'
         mimemsg['From'] = 'noreply@cheshire3.org'
         mimemsg['To'] = address
-    
+
         # Guarantees the message ends in a newline
-        mimemsg.epilogue = '\n'        
+        mimemsg.epilogue = '\n'
         msg = MIMEText.MIMEText(docTxt)
         mimemsg.attach(msg)
 
@@ -469,7 +469,7 @@ def main(argv=None):
         print "If not, you should be able to access the application at:"
     else:
         print "You should be able to access the application at:"
-        
+
     print url
     return httpd.serve_forever()
 
@@ -485,4 +485,3 @@ argparser = WSGIAppArgumentParser(
 
 if __name__ == "__main__":
     sys.exit(main())
-

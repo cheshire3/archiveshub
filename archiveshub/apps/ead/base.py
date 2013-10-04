@@ -33,14 +33,15 @@ from archiveshub.apps.configuration import config
 
 class EADWsgiApplication(object):
     """Abstract Base Class for EAD search/retrieve applications.
-    
-    Sub-classes must define the special __call__ method to make their instances
-    of this class callable. This method should always call start_response, and
-    return an iterable of string objects (list or generator). 
 
-    NOTE: any method that does not return an iterable suitable for returning to
-    the server, should be indicated as internal using a leading underscore,
-    e.g. _fetch_record
+    Sub-classes must define the special __call__ method to make their
+    instances of this class callable. This method should always call
+    start_response, and return an iterable of string objects (list or
+    generator).
+
+    NOTE: any method that does not return an iterable suitable for returning
+    to the server, should be indicated as internal using a leading
+    underscore, e.g. _fetch_record
 
     """
 
@@ -84,7 +85,7 @@ class EADWsgiApplication(object):
         # Prepare application to handle a new request
         # Wrap environ in a Request object
         req = self.request = Request(environ, charset='utf8')
-        # Create a Response object with defaults for status, encoding etc. 
+        # Create a Response object with defaults for status, encoding etc.
         # Methods should over-ride these defaults as necessary
         self.response = Response()
         script = '/search'
@@ -208,7 +209,7 @@ class EADWsgiApplication(object):
 
     def _transformRecord(self, rec, txr_id):
         # Transform Record with Transformer, return unicode object
-        txr = self.database.get_object(self.session, txr_id) 
+        txr = self.database.get_object(self.session, txr_id)
         doc = txr.process_record(self.session, rec)
         self._log(10, "Transformed with {0}".format(txr_id))
         doc_uc = doc.get_raw(session).decode('utf-8')
@@ -223,13 +224,16 @@ class EADWsgiApplication(object):
         # Resolve link to parent if a component
         try:
             rec.process_xpath(session,
-                              '/c3:component/@c3:parent|/c3component/@parent', 
+                              '/c3:component/@c3:parent|/c3component/@parent',
                               namespaceUriHash)[0]
         except IndexError:
             return doc_uc
         else:
             titles = backwalkComponentTitles(session, rec)
-            hierarchy = [(' ' * 4 * x) + t[1] for x,t in enumerate(titles[:-1])]
+            hierarchy = [(' ' * 4 * x) + t[1]
+                         for x, t
+                         in enumerate(titles[:-1])
+                         ]
             parentTitle = '\n'.join(hierarchy)
             txt = [u'In: {0}'.format(parentTitle),
                    u'-' * 78,
@@ -275,20 +279,36 @@ class EADWsgiApplication(object):
             rp = 0
         scanTermNorm = scanTerm
         if (rp == 0):
-            scanData = db.scan(session, scanClause, maximumTerms, direction=">")
+            scanData = db.scan(session,
+                               scanClause,
+                               maximumTerms,
+                               direction=">"
+                               )
             if (len(scanData) < maximumTerms):
                 hitend = True
         elif (rp == 1):
-            scanData = db.scan(session, scanClause, maximumTerms, direction=">=")
+            scanData = db.scan(session,
+                               scanClause,
+                               maximumTerms,
+                               direction=">="
+                               )
             if (len(scanData) < maximumTerms):
                 hitend = True
         elif (rp == maximumTerms):
-            scanData = db.scan(session, scanClause, maximumTerms, direction="<=")
+            scanData = db.scan(session,
+                               scanClause,
+                               maximumTerms,
+                               direction="<="
+                               )
             scanData.reverse()
             if (len(scanData) < maximumTerms):
                 hitstart = True
         elif (rp == maximumTerms + 1):
-            scanData = db.scan(session, scanClause, maximumTerms, direction="<")
+            scanData = db.scan(session,
+                               scanClause,
+                               maximumTerms,
+                               direction="<"
+                               )
             scanData.reverse()
             if (len(scanData) < maximumTerms):
                 hitstart = True
@@ -297,7 +317,11 @@ class EADWsgiApplication(object):
             # are more terms (for navigation purposes)
             # Need to go up...
             try:
-                scanData = db.scan(session, scanClause, rp + 1, direction="<=")
+                scanData = db.scan(session,
+                                   scanClause,
+                                   rp + 1,
+                                   direction="<="
+                                   )
             except:
                 scanData = []
             if (len(scanData) < rp + 1):
@@ -309,10 +333,11 @@ class EADWsgiApplication(object):
                 scanData1 = db.scan(session,
                                     scanClause,
                                     (maximumTerms - rp + 1) + 1,
-                                    direction=">=")
+                                    direction=">="
+                                    )
             except:
                 scanData1 = []
-            
+
             if (len(scanData1) < (maximumTerms - rp + 1) + 1):
                 hitend = True
             else:
@@ -448,7 +473,7 @@ def dataFromRecordXPaths(session, rec, xps, nTerms=1, joiner=u'; '):
 
     Extract data from ``rec`` using multiple XPaths ``xps`` in priority order.
     Return a maximum of ``nTerms`` matches, joining any multiple values with
-    `joiner``. 
+    `joiner``.
     """
     global namespaceUriHash
     data = []

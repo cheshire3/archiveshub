@@ -14,6 +14,7 @@ import urllib2
 from collections import OrderedDict
 from random import randint
 from string import Template as StrTemplate
+import itertools
 
 try:
     from cStringIO import StringIO
@@ -27,7 +28,7 @@ from lxml import html as lxmlhtml
 from cheshire3.exceptions import (
     FileDoesNotExistException,
     ObjectDoesNotExistException
-    )
+)
 
 # Cheshire3 for Archives Imports
 from archiveshub.deploy.utils import WSGIAppArgumentParser
@@ -65,10 +66,12 @@ class EADRecordWsgiApplication(EADWsgiApplication):
             if path == "environ":
                 if self.request.remote_addr in ['127.0.0.1']:
                     self.response.content_type = 'text/plain'
-                    self.response.app_iter = [repr(i) + '\n'
-                                             for i
-                                             in self.request.environ.iteritems()
-                                             ]
+                    itertools.imap(repr, )
+                    self.response.app_iter = [
+                        repr(i) + '\n'
+                        for i
+                        in self.request.environ.iteritems()
+                    ]
                 else:
                     self.response.status = 403
                 return self.response(environ, start_response)
@@ -112,7 +115,7 @@ class EADRecordWsgiApplication(EADWsgiApplication):
                     # Set Content-Type now to allow method to over-ride
                     self.response.content_type = str(mimetype)
                     self.response.body = fn(rec, form)
-            
+
             return self.response(environ, start_response)
         finally:
             try:
@@ -139,7 +142,7 @@ class EADRecordWsgiApplication(EADWsgiApplication):
     def _outputPage(self, recid, page_number, page, anchorPageHash={}):
         # Make some global replacements
         page = page.replace(u'RECID', unicode(recid))
-        
+
         page = page.replace(u'SCRIPT', self.defaultContext['SCRIPT'])
         page = page.replace(u'DATAURL', self.defaultContext['DATAURL'])
         # Resolve anchors
@@ -318,10 +321,9 @@ class EADRecordWsgiApplication(EADWsgiApplication):
                             '{0}.1.html'.format(recid.replace('/', '_'))
                             )
         if os.path.exists(path):
-            path = os.path.join(self.config.get('cache', 'html_cache_path'),
-                                '{0}.{1}.html'.format(recid.replace('/', '_'),
-                                                      pagenum
-                                                      )
+            path = os.path.join(
+                self.config.get('cache', 'html_cache_path'),
+                '{0}.{1}.html'.format(recid.replace('/', '_'), pagenum)
             )
             try:
                 page = unicode(open(path, 'rb').read(), 'utf-8')
@@ -333,17 +335,16 @@ class EADRecordWsgiApplication(EADWsgiApplication):
                                              pagenum=pagenum)
             self._log(10, 'Retrieved {0} from cache'.format(path))
             # Retrieve toc
-            tocpath = os.path.join(self.config.get('cache', 'html_cache_path'),
-                                   '{0}.toc.html'.format(
-                                        recid.replace('/', '_')
-                                   )
+            tocpath = os.path.join(
+                self.config.get('cache', 'html_cache_path'),
+                '{0}.toc.html'.format(recid.replace('/', '_'))
             )
             try:
                 toc = unicode(open(tocpath, 'rb').read(), 'utf-8')
             except IOError:
                 # No ToC file
                 toc = None
-                
+
         else:
             # Transform the Record
             doc_uc = self._transformRecord(rec, 'htmlFullSplitTxr')
@@ -358,9 +359,9 @@ class EADRecordWsgiApplication(EADWsgiApplication):
             )
             email_address = emailFromArchonCode(archon_code)
             doc_uc = doc_uc.replace(
-                         u'contributor_{0}@example.com'.format(archon_code),
-                         email_address
-                     )
+                u'contributor_{0}@example.com'.format(archon_code),
+                email_address
+            )
             # Parse HTML fragments
             divs = lxmlhtml.fragments_fromstring(doc_uc)
             # Get Table of Contents
@@ -386,7 +387,7 @@ class EADRecordWsgiApplication(EADWsgiApplication):
                 d = self.defaultContext.copy()
                 d.update(titles=titles[:-1])
                 divs.insert(0, lxmlhtml.fragment_fromstring(func.render(**d)))
-            
+
             # Start a StringIO
             pageBuffer = StringIO()
             # Set page size bound
@@ -468,7 +469,7 @@ class EADRecordWsgiApplication(EADWsgiApplication):
                                              startRecord=startRecord,
                                              maximumRecords=maximumRecords,
                                              sortBy=sortBy
-                                         )
+                                             )
         else:
             return self._render_template('detailedWithToC.html',
                                          recid=recid,
@@ -500,10 +501,9 @@ class EADRecordWsgiApplication(EADWsgiApplication):
                            ]).encode('utf-8')
 
     def toc(self, rec, form):
-        path = os.path.join(self.config.get('cache', 'html_cache_path'),
-                            '{0}.toc.html'.format(
-                            rec.id.replace('/', '_')
-                            )
+        path = os.path.join(
+            self.config.get('cache', 'html_cache_path'),
+            '{0}.toc.html'.format(rec.id.replace('/', '_'))
         )
         try:
             doc_uc = unicode(open(path, 'rb').read(), 'utf-8')
@@ -559,7 +559,7 @@ def main(argv=None):
         print "If not, you should be able to access the application at:"
     else:
         print "You should be able to access the application at:"
-        
+
     print url
     return httpd.serve_forever()
 
