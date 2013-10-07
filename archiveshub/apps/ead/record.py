@@ -56,6 +56,9 @@ class EADRecordWsgiApplication(EADWsgiApplication):
             ('text/xml', self.xml),
             ('text/plain', self.text)
         ])
+        self.identifierMap = database.get_object(session,
+                                                 'oldToNewIdMapStore'
+                                                 )
 
     def __call__(self, environ, start_response):
         # Method to make instances of this class callable
@@ -97,11 +100,30 @@ class EADRecordWsgiApplication(EADWsgiApplication):
                 if not recid or recid == 'index':
                     self.response.app_iter = self.index(mimetype, form)
                 else:
-                    # Record specified but could not be found - 404!
-                    self.response.status = 404
-                    self.response.body = self._render_template('fail/404.html',
-                                                               resource=recid
-                                                               )
+                    # Attempt to redirect
+                    try:
+                        mapDoc = self.identifierMap.fetch_document(session,
+                                                                   recid
+                                                                   )
+                    except (FileDoesNotExistException,
+                            ObjectDoesNotExistException
+                    ):
+                        # Record specified but could not be found - 404!
+                        self.response.status = 404
+                        self.response.body = self._render_template(
+                            'fail/404.html',
+                            resource=recid
+                        )
+                    else:
+                        # Permanent Redirect
+                        url = self.request.relative_url(
+                            mapDoc.get_raw(session)
+                        )
+                        self.response.location = url
+                        self.response.status = "301 Moved Permanently"
+                        self.response.body = ('<a href="{0}">{0}</a>'
+                                              ''.format(url))
+
             else:
                 self._log(10, 'Retrieved record "{0}"'.format(recid))
                 fn = self.mimetypeHash.get(str(mimetype))
