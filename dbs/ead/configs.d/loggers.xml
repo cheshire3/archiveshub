@@ -33,7 +33,7 @@
         <subConfig type="logger" id="searchLogger">
             <objectType>cheshire3.logger.MultipleLogger</objectType>
             <paths>
-                <path type="loggerList">systemLogger loadFileLogger</path>
+                <path type="loggerList">systemLogger searchFileLogger</path>
             </paths>
         </subConfig>
 
