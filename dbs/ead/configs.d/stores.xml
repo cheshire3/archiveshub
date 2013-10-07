@@ -9,6 +9,17 @@
 
     <subConfigs>
 
+        <subConfig type="documentStore" id="oldToNewIdMapStore">
+          <docs>
+            This is a special store that maps old-style persistent identifier
+            to new-style ones e.g. gb141wyndham-1-2 -> gb141-wyndham/1/2
+          </docs>
+          <objectType>cheshire3.documentStore.BdbDocumentStore</objectType>
+          <paths>
+            <path type="databasePath">oldToNewIdMap.bdb</path>
+          </paths>
+        </subConfig>
+
         <subConfig type="objectStore" id="eadAuthStore">
             <objectType>cheshire3.objectStore.BdbObjectStore</objectType>
             <paths>
