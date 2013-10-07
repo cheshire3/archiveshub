@@ -5,6 +5,7 @@ import sys
 import mimetypes
 import re
 import json
+import time
 
 from hashlib import sha1
 from pkg_resources import Requirement, get_distribution
@@ -380,13 +381,28 @@ def emailFromArchonCode(code):
 def iterContributors(session):
     """Generator for Contributor Identifier, Contributor Name tuples."""
     # Get Database object
-    db = session.server.get_object(session, session.database)
-    identifierIdx = db.get_object(session, 'idx-vdbid')
-    nameIdx = db.get_object(session, 'idx-vdbName')
-    for rs in identifierIdx:
-        term = rs.queryTerm
-        titles = nameIdx.facets(session, rs)
-        yield (term, titles[0][0])
+    global contributorCache
+    index_filename = resource_filename(
+        Requirement.parse('archiveshub'),
+        'dbs/ead/indexes/idx-vdbid/idx-vdbid.index_TERMIDS'
+    )
+    if (
+        os.stat(index_filename).st_mtime < contributorCache[0] and
+        contributorCache[1]
+    ):
+        # Yield from the cached version
+        for k, v in contributorCache[1].iteritems():
+            yield k, v
+    else:
+        db = session.server.get_object(session, session.database)
+        identifierIdx = db.get_object(session, 'idx-vdbid')
+        nameIdx = db.get_object(session, 'idx-vdbName')
+        contributorCache[0] = time.time()
+        for rs in identifierIdx:
+            term = rs.queryTerm
+            titles = nameIdx.facets(session, rs)
+            contributorCache[1][term] = titles[0][0]
+            yield (term, titles[0][0])
 
 
 def listContributors(session):
@@ -573,6 +589,8 @@ namespaceUriHash = {
     'rs_c3': "http://www.cheshire3.org/srw/extension/2/resultSet-1.1",
     'rs_c3srw': "http://srw.cheshire3.org/extension/2/resultSet-1.1",
 }
+
+contributorCache = [0, {}]
 
 
 if __name__ == "__main__":
