@@ -86,10 +86,8 @@
 
         <!-- "what is this display?" help link -->
         <a href="http://archiveshub.ac.uk/utilitybarhelp/"
-            title="Help with online descriptions of archive collections"
             class="helplink tip utilitybarhelp">
             <xsl:text>About this page</xsl:text>
-            <img src="http://archiveshub.ac.uk/images/structure/form_tip.png" alt="" />
         </a>
 
         <h1 class="unittitle">
