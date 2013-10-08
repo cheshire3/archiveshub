@@ -564,7 +564,6 @@ try:
 except (TypeError, ValueError):
     contributorData = []
 
-
 app_config_path = resource_filename(
     Requirement.parse('archiveshub'),
     'www/ead/ead.cfg'
