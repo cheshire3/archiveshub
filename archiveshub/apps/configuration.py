@@ -51,9 +51,7 @@ vdb.name = Contributor
 [sortby]
 weight = Relevance
 dc.title = Title
-dc.creator = Creator
 dc.date = Date
-dc.identifier = Reference
 """.format(
     html_cache_path=resource_filename(
         Requirement.parse('archiveshub'),
