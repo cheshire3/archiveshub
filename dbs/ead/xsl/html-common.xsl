@@ -94,7 +94,7 @@
             <xsl:value-of select="normalize-space($unittitle)" />
         </h1>
 
-        <!-- utility bar -->
+        <!-- call utility bar -->
         <xsl:call-template name="utilitybar">
             <xsl:with-param name="unittitle" select="normalize-space($unittitle)" />
             <xsl:with-param name="unitid" select="normalize-space($unitid)" />
@@ -2152,9 +2152,9 @@
     </xsl:template>
 
     <!-- Template for creating utility bar -->
-    
+
     <xsl:template name="utilitybar">
-        
+
         <xsl:param name="unittitle" />
         <xsl:param name="unitid" />
         <xsl:param name="withinCollection" />
@@ -2182,7 +2182,10 @@
                             alt="[?]" />
                     </a>
                 </li>
-                <xsl:if test="$withinCollection">
+                <!-- NB to re-activate search within collection, remove the
+                    string "false() and " from the following line.
+                -->
+                <xsl:if test="false() and $withinCollection">
                     <!--  Search within description -->
                     <li class="withinCollection">
                     <xsl:element name="form">
