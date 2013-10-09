@@ -421,8 +421,18 @@ class EADRecordWsgiApplication(EADWsgiApplication):
             for div in divs:
                 # Convert to HTML (from XHTML)
                 lxmlhtml.xhtml_to_html(div)
-                if (pageBuffer.tell() > pageSizeBound * 1024):
+                # Check if we've reached the page size limit, and also that
+                # we have reached a soft-break
+                if (
+                    pageBuffer.tell() > pageSizeBound * 1024 and
+                    isinstance(div, etree._ProcessingInstruction)
+                ):
                     # Finish current page
+                    pageBuffer.write(etree.tostring(div,
+                                                    pretty_print=True,
+                                                    method="html"
+                                                    )
+                                     )
                     # Add completed page to final pages
                     pages.append(self._readBuffer(pageBuffer))
                     # Start new pageBuffer
