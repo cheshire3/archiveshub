@@ -916,7 +916,7 @@ var indexList = new Array(
                         'bath.personalName|||&nbsp;&nbsp;People',
                         'bath.corporateName|||&nbsp;&nbsp;Organizations',
                         'bath.geographicName|||&nbsp;&nbsp;Places',
-                        'bath.genreForm|||Genre'
+                        'bath.genreForm|||Media Types'
                     );
 var kwRelationList = new Array(
                         'all/relevant/proxinfo|||All', 

@@ -21,7 +21,7 @@
              <option value="bath.personalName">&nbsp;&nbsp;People</option>
              <option value="bath.corporateName">&nbsp;&nbsp;Organizations</option>
              <option value="bath.geographicName">&nbsp;&nbsp;Places</option>
-             <option value="bath.genreForm">Genre</option>
+             <option value="bath.genreForm">Media Types</option>
            </select>  
            <select name="fieldrel1" id="fieldrel1">
              <option value="all/relevant/proxinfo" selected="selected">All</option>
@@ -48,7 +48,7 @@
              <option value="bath.personalName">&nbsp;&nbsp;People</option>
              <option value="bath.corporateName">&nbsp;&nbsp;Organizations</option>
              <option value="bath.geographicName">&nbsp;&nbsp;Places</option>
-             <option value="bath.genreForm">Genre</option>
+             <option value="bath.genreForm">Media Types</option>
            </select>         
            <select name="fieldrel2">
              <option value="all/relevant/proxinfo" selected="selected">All</option>
@@ -73,7 +73,7 @@
              <option value="bath.personalName">&nbsp;&nbsp;People</option>
              <option value="bath.corporateName">&nbsp;&nbsp;Organizations</option>
              <option value="bath.geographicName">&nbsp;&nbsp;Places</option>
-             <option value="bath.genreForm">Genre</option>
+             <option value="bath.genreForm">Media Types</option>
            </select>
            <select name="fieldrel3">
              <option value="all/relevant/proxinfo" selected="selected">All</option>
@@ -82,28 +82,29 @@
            </select>
            <input name="fieldcont3" type="text" size="45"></input>
          </div>
- 
+
      </noscript>
- 
+
      <div id="addClauseP" class="row">
          <script type="text/javascript">
          <!--
-         document.write('<a href="javascript:addSearchClause(1)" id="addClauseLink" title="Add another search clause, like the one above - [requires JavaScript]"><img src="${config.get('icons', 'plus-url')}" alt="[+]">Add another search term</a>');
+         document.write('<a href="javascript:addSearchClause(1)" id="addClauseLink" title="Add another search row, like the one above"><img src="${config.get('icons', 'plus-url')}" alt="[+]"></a><label for="addClauseLink">Add another search term</label>&nbsp;');
          document.write('<a href="help.html#additionalclause" title="What is this?"><img src="${config.get('icons', 'what-url')}" alt="[What is this?]"/></a>');
          -->
          </script>
      </div>
-     
+
      <div class="row options">
+        <input type="checkbox" name="noComponents" id="noComponents"/>
          <label for="noComponents"  title="Only display hits for collections, NOT individual items.">
-             Only display collections:&nbsp;
+             Only display collection descriptions
          </label>
-         <input type="checkbox" name="noComponents" id="noComponents"/>
+        &nbsp;
          <a href="help.html#nocomponents" title="What is this?">
              <img src="${config.get('icons', 'what-url')}" alt="[What is this?]"/>
          </a>
      </div>
-     
+
      <div class="row buttons">
          <input type="submit" value="  Start Search  "/>
          <input type="reset" value="Reset Form" onclick="resetForm('eadsearchform');"/>
