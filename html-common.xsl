@@ -2171,7 +2171,7 @@
             <!-- Switch Version (Level of detail) -->
             <ul class="detail">
                 <li>
-                    See the:
+                    See the
                     <xsl:call-template name="switch-view-link" />
                     of this material
                     <xsl:text> </xsl:text>
