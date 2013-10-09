@@ -913,9 +913,9 @@ var indexList = new Array(
                         'dc.identifier|||Ref. Number', 
                         'dc.subject|||Subjects', 
                         'bath.name|||Names', 
-                        'bath.personalName|||&nbsp;&nbsp;Personal Names', 
-                        'bath.corporateName|||&nbsp;&nbsp;Corporate Names', 
-                        'bath.geographicName|||&nbsp;&nbsp;Geographical Names', 
+                        'bath.personalName|||&nbsp;&nbsp;People',
+                        'bath.corporateName|||&nbsp;&nbsp;Organizations',
+                        'bath.geographicName|||&nbsp;&nbsp;Places',
                         'bath.genreForm|||Genre'
                     );
 var kwRelationList = new Array(

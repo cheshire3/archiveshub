@@ -1,14 +1,14 @@
 <form name="searchform" method="post" action="${SCRIPT}/search.html"
         onsubmit="setCookie('eadsearchform', formToString());" id="hubsearchform">
     <fieldset class="paleblue">
-     
+
      <input type="hidden" name="_charset_"/>
      <input type="hidden" name="numreq" value="20" id="numreq"></input>
      <input type="hidden" name="firstrec" value="1" id="firstrec"></input>
      <input type="hidden" name="operation" value="search" id="operation"></input>
-     
+
      <%include file="searchContributor.html" args="session='session'"/>
-       
+
      <noscript>
          <div class="row searchClause">  
            <select name="fieldidx1" id="fieldidx1" onchange="updateSelects(1);">
@@ -18,9 +18,9 @@
              <option value="dc.identifier">Ref. Numbers</option>
              <option value="dc.subject">Subjects</option>
              <option value="bath.name">Names</option>
-             <option value="bath.personalName">&nbsp;&nbsp;Personal Names</option>
-             <option value="bath.corporateName">&nbsp;&nbsp;Corporate Names</option>
-             <option value="bath.geographicName">&nbsp;&nbsp;Geographical Names</option>
+             <option value="bath.personalName">&nbsp;&nbsp;People</option>
+             <option value="bath.corporateName">&nbsp;&nbsp;Organizations</option>
+             <option value="bath.geographicName">&nbsp;&nbsp;Places</option>
              <option value="bath.genreForm">Genre</option>
            </select>  
            <select name="fieldrel1" id="fieldrel1">
@@ -31,7 +31,7 @@
            </select>
            <input name="fieldcont1" id="fieldcont1" type="text" size="45" ></input>
          </div>
-         
+
          <div class="row boolOp">
            <input type="radio" name="fieldbool1" value="and/relevant/proxinfo" checked="checked" id="fieldbool1-and"/><label for="fieldbool1-and">AND&nbsp;&nbsp;</label>  
            <input type="radio" name="fieldbool1" value="or/relevant/proxinfo" id="fieldbool1-or"/><label for="fieldbool1-or">OR&nbsp;&nbsp;</label>
@@ -45,9 +45,9 @@
              <option value="dc.identifier">Ref. Numbers</option>
              <option value="dc.subject">Subjects</option>
              <option value="bath.name">Names</option>
-             <option value="bath.personalName">&nbsp;&nbsp;Personal Names</option>
-             <option value="bath.corporateName">&nbsp;&nbsp;Corporate Names</option>
-             <option value="bath.geographicName">&nbsp;&nbsp;Geographical Names</option>
+             <option value="bath.personalName">&nbsp;&nbsp;People</option>
+             <option value="bath.corporateName">&nbsp;&nbsp;Organizations</option>
+             <option value="bath.geographicName">&nbsp;&nbsp;Places</option>
              <option value="bath.genreForm">Genre</option>
            </select>         
            <select name="fieldrel2">
@@ -70,9 +70,9 @@
              <option value="dc.identifier">Ref. Numbers</option>
              <option value="dc.subject">Subjects</option>
              <option value="bath.name">Names</option>
-             <option value="bath.personalName">&nbsp;&nbsp;Personal Names</option>
-             <option value="bath.corporateName">&nbsp;&nbsp;Corporate Names</option>
-             <option value="bath.geographicName">&nbsp;&nbsp;Geographical Names</option>
+             <option value="bath.personalName">&nbsp;&nbsp;People</option>
+             <option value="bath.corporateName">&nbsp;&nbsp;Organizations</option>
+             <option value="bath.geographicName">&nbsp;&nbsp;Places</option>
              <option value="bath.genreForm">Genre</option>
            </select>
            <select name="fieldrel3">
