@@ -296,7 +296,7 @@
                 <supports type="relationModifier" c3:index="idx-genreformword">word</supports>
             </configInfo>
         </index>
-      
+
         <index c3:index="idx-date">
             <title>Material Date</title>
             <map>

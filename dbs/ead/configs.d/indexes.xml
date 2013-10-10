@@ -565,7 +565,7 @@
             <paths>
                 <object type="indexStore" ref="indexStore" />
             </paths>
-            <source mode="data|exactly|&lt;|&gt;|within|encloses">
+            <source mode="data|exact|&lt;|&gt;|within|encloses">
                 <xpath>/*/*/did/unitdate/@normal</xpath>
                 <process>
                     <object type="extractor" ref="SimpleExtractor" />
@@ -594,7 +594,7 @@
             <paths>
                 <object type="indexStore" ref="indexStore" />
             </paths>
-            <source mode="data|exactly|&lt;|&gt;|within|encloses">
+            <source mode="data|exact|&lt;|&gt;|within|encloses">
                 <xpath>/*/*/did/unitdate/@normal</xpath>
                 <process>
                     <object type="extractor" ref="SimpleExtractor" />
@@ -624,7 +624,7 @@
             <paths>
                 <object type="indexStore" ref="indexStore" />
             </paths>
-            <source mode="data|exactly|&lt;|&gt;|within|encloses">
+            <source mode="data|exact|&lt;|&gt;|within|encloses">
                 <xpath>/*/*/did/unitdate/@normal</xpath>
                 <process>
                     <object type="extractor" ref="SimpleExtractor" />
