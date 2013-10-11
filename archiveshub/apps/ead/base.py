@@ -566,7 +566,7 @@ except (TypeError, ValueError):
 
 app_config_path = resource_filename(
     Requirement.parse('archiveshub'),
-    'www/ead/ead.cfg'
+    'www/ead/ead.ini'
 )
 config.read([app_config_path])
 

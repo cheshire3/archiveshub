@@ -150,7 +150,7 @@ class c3_command(Command):
                                'config.xml')
                           )
         from archiveshub.apps.configuration import config
-        with open(join(distropath, 'www', 'ead', 'ead.conf'), 'w') as fh:
+        with open(join(distropath, 'www', 'ead', 'ead.ini'), 'w') as fh:
             config.write(fh)
 
 
