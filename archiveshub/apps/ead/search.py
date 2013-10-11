@@ -194,6 +194,17 @@ class EADSearchWsgiApplication(EADWsgiApplication):
                 pass
         if sortBy:
             for spec in reversed(sortBy):
+                # Check for ascending/descending sort
+                # N.B. sort ascending=None is not the same as ascending=False
+                # False => descending, None => do what's best for this spec
+                ascending = None
+                if spec.endswith('/ascending'):
+                    spec = spec[:-len('/ascending')]
+                    ascending=True
+                elif spec.endswith('/descending'):
+                    spec = spec[:-len('/descending')]
+                    ascending = False
+
                 # Check if the sort spec is an index
                 protocolMap = db.get_path(session, 'protocolMap')
                 try:
@@ -207,7 +218,10 @@ class EADSearchWsgiApplication(EADWsgiApplication):
                     index = None
 
                 if index:
-                    rs.order(session, index)
+                    rs.order(session,
+                             index,
+                             ascending=ascending
+                             )
                 elif spec:
                     # Not an index, maybe a ResultSetItem attribute, or XPath?
                     # Pass the string to ResultSet to see what it makes of it
