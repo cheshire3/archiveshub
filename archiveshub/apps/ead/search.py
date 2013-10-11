@@ -231,7 +231,11 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         try:
             rs = self._searchAndSort(form)
         except ValueError as e:
-            return self._render_template('fail/noDocuments.html')
+            if str(e).startswith("0 documents"):
+                return self._render_template('fail/noDocuments.html')
+            self._log(30, str(e))
+            raise
+
         if not isinstance(rs, ResultSet):
             # Error message
             return [rs]
