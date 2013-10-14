@@ -50,8 +50,11 @@ vdb.name = Contributor
 
 [sortby]
 weight = Relevance
-dc.title = Title
-dc.date = Date
+dc.title/ascending = Title
+dc.title/descending = Title (Z&rarr;A)
+dc.date/ascending = Date
+dc.date/descending = Date (new &rarr; old)
+
 """.format(
     html_cache_path=resource_filename(
         Requirement.parse('archiveshub'),
