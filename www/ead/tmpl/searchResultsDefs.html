@@ -220,8 +220,15 @@
     ## Check for potential component-level record
     ${parentLink(session, rec)}
     <a href="${SCRIPT}/summary.html?rsid=${resultSet.id|u}&amp;hit=${index}&amp;startRecord=${startRecord}&amp;maximumRecords=${maximumRecords}${sortByString(sortBy)}#rightcol">
+        <%
+        title = dataFromRecordXPaths(session, rec, titleXPaths)
+        %>
         <strong>
-            ${dataFromRecordXPaths(session, rec, titleXPaths)}
+            % if title.strip():
+            ${title}
+            % else:
+            (untitled)
+            % endif
         </strong>
     </a>
     <br/>
