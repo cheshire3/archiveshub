@@ -9,7 +9,7 @@ from lockfile import FileLock, LockTimeout
 
 from cheshire3.exceptions import ObjectDoesNotExistException
 
-from archiveshub.commands.utils import BaseArgumentParser, getCheshire3Env
+from archiveshub.deploy.utils import BaseArgumentParser, getCheshire3Env
 
 
 class ClearArgumentParser(BaseArgumentParser):
