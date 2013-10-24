@@ -8,18 +8,32 @@ import json
 import time
 
 from hashlib import sha1
-from pkg_resources import Requirement, get_distribution
-from pkg_resources import resource_filename, resource_stream, resource_string
-from webob import Request, Response
 from copy import deepcopy
+from tempfile import gettempdir
 
 from lxml import etree
 from lxml.builder import E
 
+from pkg_resources import Requirement, get_distribution
+from pkg_resources import resource_filename, resource_stream, resource_string
+
+# WebOb
+from webob import Request, Response
+
 # Mako
 from mako.lookup import TemplateLookup
 from mako import exceptions
-from tempfile import gettempdir
+
+# Fix HOME envvar before importing Cheshire3 to avoid incorrect expansion
+# from os.path.expanduser() see:
+# https://code.google.com/p/modwsgi/wiki/ApplicationIssues
+try:
+    import pwd
+except ImportError:
+    # Non-UNIX platform?
+    pass
+else:
+    os.environ["HOME"] = pwd.getpwuid(os.getuid()).pw_dir
 
 import cheshire3.exceptions as c3errors
 from cheshire3.baseObjects import Session
