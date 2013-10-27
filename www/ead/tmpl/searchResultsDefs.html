@@ -68,25 +68,14 @@
 </%def>
 
 <%def name="maximumRecordsSelectButton(resultSet, sortBy, maximumRecords, startRecord, label=None)">
-    % if len(resultSet) < 1000 or maximumRecords < 1000:
-        <a href="${SCRIPT}/search.html?rsid=${resultSet.id|u}&amp;startRecord=${startRecord}&amp;maximumRecords=${maximumRecords}${sortByString(sortBy)}#leftcol"
-            class="ajax maximumRecords">
-            % if label is not None:
-                <button label="${label}">${label}</button>
-            % else:
-                <button label="${maximumRecords}">${maximumRecords}</button>
-            % endif
-        </a>
-    % else:
-        <a href="#" disabled="disabled" title="Sorry, refusing to display ${maximumRecords} results on a single page - it would take too long!"
-            class="maximumRecords">
-            % if label is not None:
-                <button label="${label}">${label}</button>
-            % else:
-                <button label="${maximumRecords}">${maximumRecords}</button>
-            % endif
-        </a>
-    % endif
+    <a href="${SCRIPT}/search.html?rsid=${resultSet.id|u}&amp;startRecord=${startRecord}&amp;maximumRecords=${maximumRecords}${sortByString(sortBy)}#leftcol"
+        class="ajax maximumRecords">
+        % if label is not None:
+            <button label="${label}">${label}</button>
+        % else:
+            <button label="${maximumRecords}">${maximumRecords}</button>
+        % endif
+    </a>
 </%def>
 
 <%def name="maximumRecordsSelect(resultSet, sortBy, maximumRecords, startRecord)">
@@ -97,7 +86,6 @@
     % if len(resultSet) >= 200:
         ${maximumRecordsSelectButton(resultSet, sortBy, 100, startRecord)}
     % endif
-    ${maximumRecordsSelectButton(resultSet, sortBy, len(resultSet), startRecord, label="all")}
 </%def>
 
 <%def name="complex_query()">
