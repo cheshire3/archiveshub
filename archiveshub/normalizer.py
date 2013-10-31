@@ -1,6 +1,11 @@
 """Archives Hub Normalizer Implementations"""
 
-import json
+try:
+    import json
+except ImportError:
+    import simplejson as json
+
+from collections import OrderedDict
 
 from cheshire3.normalizer import FileAssistedNormalizer
 
@@ -37,35 +42,37 @@ class JSONListFileLookupNormalizer(FileAssistedNormalizer):
 
     def __init__(self, session, config, parent):
         FileAssistedNormalizer.__init__(self, session, config, parent)
-        self._loadJSON(session)
         self.fromField = self.get_setting(session, 'from')
         self.toField = self.get_setting(session, 'to')
+        self._loadJSON(session)
 
     def _loadJSON(self, session):
         lines = self._processPath(session, 'json')
-        self.json = json.loads('\n'.join(lines))
-
-    def process_string(self, session, data):
-        for entry in self.json:
-            field = entry
+        json_list = json.loads('\n'.join(lines))
+        self.lookup = OrderedDict()
+        for entry in json_list:
+            key = entry
             for part in self.fromField.split('/'):
                 try:
-                    field = field[part]
+                    key = key[part]
                 except KeyError:
                     # From field not in this entry
                     break
             else:
-                # We found the specified from field
-                if data == field:
-                    # It matches locate the field to normalize to
-                    field = entry
-                    for part in self.toField.split('/'):
-                        try:
-                            field = field[part]
-                        except KeyError:
-                            break
-                    else:
-                        # We found the specified from field
-                        return field
-        # Unable to complete the lookup
-        return data
+                # We found the specified `from` field
+                # Find the corresponding `to` field
+                value = entry
+                for part in self.toField.split('/'):
+                    try:
+                        value = value[part]
+                    except KeyError:
+                        break
+                else:
+                    # We found the specified `from` field
+                    self.lookup[key] = value
+
+    def process_string(self, session, data):
+        try:
+            return self.lookup[data]
+        except KeyError:
+            return data
