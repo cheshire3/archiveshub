@@ -19,7 +19,7 @@
                 <setting type="dirPerIndex">1</setting>
             </options>
         </subConfig>
-        
+
         <subConfig type="indexStore" id="offlineIndexStore">
             <objectType>cheshire3.indexStore.BdbIndexStore</objectType>
             <paths>
@@ -296,6 +296,8 @@
                 <xpath>/*/*/did/unitid/@repositorycode</xpath>
                 <process>
                     <object type="extractor" ref="SimpleExtractor" />
+                    <object type="normalizer" ref="SpaceNormalizer"/>
+                    <object type="normalizer" ref="LeadingZeroNormalizer"/>
                     <object type="normalizer" ref="archonToVdbNameJSONNormalizer" />
                 </process>
             </source>
@@ -311,7 +313,7 @@
                 <setting type="longSize">4</setting>
             </options>
         </subConfig>
-        
+
         <!-- parentid index -->
         <subConfig type="index" id="idx-collectionid">
             <objectType>cheshire3.index.SimpleIndex</objectType>
