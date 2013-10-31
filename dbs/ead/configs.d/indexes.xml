@@ -75,44 +75,6 @@
             </options>
         </subConfig>
 
-        <!-- Custom normalizers -->
-
-        <subConfig type="normalizer" id="StoplistNormalizer">
-            <objectType>cheshire3.normalizer.StoplistNormalizer</objectType>
-            <paths>
-                <path type="stoplist">stopwords.txt</path>
-            </paths>
-        </subConfig>
-
-        <subConfig type="normalizer" id="LeadingZeroNormalizer">
-            <objectType>cheshire3.normalizer.RegexpNormalizer</objectType>
-            <options>
-                <setting type="regexp">^(0+)</setting>
-            </options>
-        </subConfig>
-
-        <subConfig type="normalizer" id="vbdidToArchonJSONNormalizer">
-            <objectType>archiveshub.normalizer.JSONListFileLookupNormalizer</objectType>
-            <paths>
-                <path type="json">~/mercurial/archiveshub/htdocs/api/contributors.json</path>
-            </paths>
-            <options>
-                <setting type="from">ids/spoke</setting>
-                <setting type="to">ids/archon</setting>
-            </options>
-        </subConfig>
-
-        <subConfig type="normalizer" id="archonToVdbNameJSONNormalizer">
-            <objectType>archiveshub.normalizer.JSONListFileLookupNormalizer</objectType>
-            <paths>
-                <path type="json">~/mercurial/archiveshub/htdocs/api/contributors.json</path>
-            </paths>
-            <options>
-                <setting type="from">ids/archon</setting>
-                <setting type="to">label</setting>
-            </options>
-        </subConfig>
-
         <!-- mini-workflows for processing chains -->
 
         <subConfig type="workflow"
