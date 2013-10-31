@@ -50,6 +50,7 @@ setup(
             'ah-serve = archiveshub.deploy.cherrypy_serve:main'
         ],
     },
+    test_suite = "archiveshub.test.testAll",
     author = 'John Harrison',
     author_email = u'john.harrison@liv.ac.uk',
     maintainer = 'John Harrison',
