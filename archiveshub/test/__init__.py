@@ -1,3 +1,3 @@
 u"""Unittests for archiveshub."""
 
-__all__ = ['testDocumentStore']
+__all__ = ['testDocumentStore', 'testNormalizer']
