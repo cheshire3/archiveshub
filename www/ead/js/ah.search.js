@@ -9,6 +9,40 @@ var AH = {
         // Wrap any desired links or forms in AJAX requests
         //ajaxifyLinks(document);
         //ajaxifyForms(document);
+        AH.searchWithin();
+    },
+
+    searchWithin: function(){
+        // Make searchWithin stay within
+        $("div.withinCollection form").submit(function(event){
+            event.preventDefault();
+            $(this).fadeTo(100, 0.25).find("input").disabled = true;
+            // Remove any old error message
+            $("#leftcol div.withinCollection").find("div.error").remove()
+            // Set charset
+            $(this).find("input[name='_charset_']").val('utf8');
+            var postData = $(this).serializeArray();
+            var formURL = this.action;
+            $.ajax({
+                type: "POST",
+                url: formURL,
+                accepts: "text/html",
+                data: postData,
+                dataType: "html",
+                success: function(data, textStatus, jqXHR) {
+                    // Check for no hits
+                    if ($(data).find("#no-hits-img").length){
+                        // No hits - report and re-enable form
+                        $("#leftcol div.withinCollection").append($(data).find("p.hitreport"));
+                        $("p.hitreport").wrap('<div class="error">');
+                        $("#leftcol div.withinCollection").find("form").fadeTo(100, 1.0).find("button, input").prop("disabled", false);
+                    } else {
+                        // Update the leftcol
+                        $("#leftcol").html($(data).find("#leftcol").html());
+                    }
+                },
+            });
+        });
     }
 
 }
