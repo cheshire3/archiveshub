@@ -1,3 +1,18 @@
+
+var AH = {
+
+    init: function(){
+        // hide content that should be hidden
+        hideStuff();
+        // add validation to certain form elements
+        addFormValidation();
+        // Wrap any desired links or forms in AJAX requests
+        //ajaxifyLinks(document);
+        //ajaxifyForms(document);
+    }
+
+}
+
 /*
 // Script:      collapsibleLists.js
 // Version:     0.02
