@@ -136,7 +136,7 @@
     <%
     rec = resultSet[index].fetch_record(session)
     key = dataFromRecordXPaths(session, rec, ['/cluster/key'])
-    qString = 'dc.subject exact "{0}"'.format(key.replace('"', r'\"'))
+    qString = u'dc.subject exact "{0}"'.format(key.replace(u'"', ur'\"'))
     %>
     <a href="${SCRIPT}/search.html?query=${qString|u}&amp;startRecord=${1}&amp;maximumRecords=${maximumRecords}&amp;sortBy=dc.title">
         <strong>
