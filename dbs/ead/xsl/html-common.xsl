@@ -35,18 +35,18 @@
         <a>
             <xsl:attribute name="name">
                 <xsl:choose>
-                	<xsl:when test="@id">
+                    <xsl:when test="@id">
                         <xsl:value-of select="@id" />
-                	</xsl:when>
-                	<xsl:when test="unitid/@id">
+                    </xsl:when>
+                    <xsl:when test="unitid/@id">
                         <xsl:value-of select="./unitid/@id" />
-                	</xsl:when>
-                	<xsl:otherwise>
+                    </xsl:when>
+                    <xsl:otherwise>
                         <xsl:value-of select="generate-id(.)" />
-                	</xsl:otherwise>
+                    </xsl:otherwise>
                 </xsl:choose>
-        	</xsl:attribute>
-        	<xsl:text> </xsl:text>
+            </xsl:attribute>
+            <xsl:text> </xsl:text>
         </a>
 
         <xsl:variable name="unittitle">
@@ -189,7 +189,7 @@
                 </td>
             </tr>
 
-            <xsl:if test="unitid[@label='Former Reference'] or 
+            <xsl:if test="unitid[@label='Former Reference'] or
                           unitid[@label='alternative'] or
                           unitid[@label='altrefno']">
                 <tr>
@@ -455,8 +455,8 @@
         <span>
             <xsl:if test="./@label">
                 <xsl:attribute name="title">
-	               <xsl:value-of select="./@label" />
-	           </xsl:attribute>
+                   <xsl:value-of select="./@label" />
+               </xsl:attribute>
             </xsl:if>
             <xsl:apply-templates />
         </span>
@@ -1347,7 +1347,7 @@
     </xsl:template>
 
     <!-- COMPONENT -->
-    
+
     <xsl:template name="single-component">
         <a>
             <xsl:attribute name="name">
@@ -1546,29 +1546,29 @@
     <xsl:template name="image">
         <xsl:element name="img">
             <xsl:attribute name="src">
-				<xsl:value-of select="./@href" />
-			</xsl:attribute>
+                <xsl:value-of select="./@href" />
+            </xsl:attribute>
             <xsl:if test="./@title">
                 <xsl:attribute name="title">
-			      <xsl:value-of select="./@title" />
-			   	</xsl:attribute>
+                  <xsl:value-of select="./@title" />
+                   </xsl:attribute>
             </xsl:if>
             <xsl:attribute name="alt">
-				<xsl:choose>
-					<xsl:when test="./daodesc">
+                <xsl:choose>
+                    <xsl:when test="./daodesc">
                         <xsl:variable name="txt">
                             <xsl:value-of select="string(./daodesc)" />
                         </xsl:variable>
                         <xsl:value-of select="normalize-space($txt)" />
-					</xsl:when>
-					<xsl:when test="./@title">
-					      <xsl:value-of select="./@title" />
-					</xsl:when>
-				    <xsl:otherwise>
-						<xsl:value-of select="./@href" />
-					</xsl:otherwise>
-				</xsl:choose>
-			</xsl:attribute>
+                    </xsl:when>
+                    <xsl:when test="./@title">
+                          <xsl:value-of select="./@title" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="./@href" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:attribute>
         </xsl:element>
         <!-- caption -->
         <xsl:apply-templates select="./daodesc" />
@@ -1578,12 +1578,12 @@
     <xsl:template match="ref[@target]">
         <a>
             <xsl:attribute name="href">
-				<xsl:text>PAGE#</xsl:text>
-				<xsl:value-of select="./@target" />
-			</xsl:attribute>
+                <xsl:text>PAGE#</xsl:text>
+                <xsl:value-of select="./@target" />
+            </xsl:attribute>
             <xsl:attribute name="target">
-				<xsl:text>_top</xsl:text>
-			</xsl:attribute>
+                <xsl:text>_top</xsl:text>
+            </xsl:attribute>
             <xsl:apply-templates />
         </a>
     </xsl:template>
@@ -2329,7 +2329,7 @@
             <xsl:with-param name="original">
                 <xsl:call-template name="replace-substring">
                     <xsl:with-param name="original">
-                        <!-- following line contains a weird invisible character 
+                        <!-- following line contains a weird invisible character
                             propably a Windows \r\n or something! -->
                         <xsl:value-of
                             select="translate(normalize-space($text),'  ', '++')" />
@@ -2446,24 +2446,24 @@
         <xsl:param name="indexName" />
         <a>
             <xsl:attribute name="href">
-	        <xsl:value-of select="$script" />
-	        <xsl:text>/browse.html</xsl:text>
+            <xsl:value-of select="$script" />
+            <xsl:text>/browse.html</xsl:text>
             <xsl:text>?</xsl:text>
-	        <xsl:text>&amp;fieldidx1=</xsl:text>
-	        <xsl:value-of select="$index" />
-	        <xsl:text>&amp;fieldcont1=</xsl:text>
-	        <xsl:call-template name="cgiencode">
-	          <xsl:with-param name="text">
-	            <xsl:apply-templates select="." />
-	          </xsl:with-param>
-	        </xsl:call-template>
+            <xsl:text>&amp;fieldidx1=</xsl:text>
+            <xsl:value-of select="$index" />
+            <xsl:text>&amp;fieldcont1=</xsl:text>
+            <xsl:call-template name="cgiencode">
+              <xsl:with-param name="text">
+                <xsl:apply-templates select="." />
+              </xsl:with-param>
+            </xsl:call-template>
             <xsl:text>#leftcol</xsl:text>
-	      </xsl:attribute>
-	      <xsl:attribute name="title">
-	        <xsl:text>Browse </xsl:text>
-	        <xsl:value-of select="$indexName" />
-	        <xsl:text> index</xsl:text>
-	      </xsl:attribute>
+          </xsl:attribute>
+          <xsl:attribute name="title">
+            <xsl:text>Browse </xsl:text>
+            <xsl:value-of select="$indexName" />
+            <xsl:text> index</xsl:text>
+          </xsl:attribute>
           <xsl:attribute name="class">
             <xsl:text>ajax</xsl:text>
           </xsl:attribute>
@@ -2475,26 +2475,26 @@
         <a target="_new">
             <xsl:attribute name="href">
                 <xsl:value-of select="$amazon_search_url" />
-	  			<xsl:call-template name="cgiencode">
-		          <xsl:with-param name="text">
-		            <xsl:apply-templates select="." />
-		          </xsl:with-param>
-		        </xsl:call-template>
-			</xsl:attribute>
-			<xsl:attribute name="title">
-		        <xsl:text>Search Amazon</xsl:text>
-		    </xsl:attribute>
+                  <xsl:call-template name="cgiencode">
+                  <xsl:with-param name="text">
+                    <xsl:apply-templates select="." />
+                  </xsl:with-param>
+                </xsl:call-template>
+            </xsl:attribute>
+            <xsl:attribute name="title">
+                <xsl:text>Search Amazon</xsl:text>
+            </xsl:attribute>
             <img alt="Amazon">
                 <xsl:attribute name="src">
                     <xsl:value-of select="$amazon_search_icon" />
-		    	</xsl:attribute>
-		    </img>
-	  	</a>
-	</xsl:template>
-	
-	<xsl:template name="copaclink">
-	  	<a target="_new">
-	  		<xsl:attribute name="href">
+                </xsl:attribute>
+            </img>
+          </a>
+    </xsl:template>
+
+    <xsl:template name="copaclink">
+          <a target="_new">
+              <xsl:attribute name="href">
                 <xsl:value-of select="$copac_search_url"/>
                 <xsl:text>&amp;ti=</xsl:text>
                 <xsl:call-template name="cgiencode">
@@ -2518,30 +2518,30 @@
                     </xsl:call-template>
                 </xsl:if>
             </xsl:attribute>
-			<xsl:attribute name="title">
-		        <xsl:value-of select="$copac_search_link_title"/>
-		    </xsl:attribute>
-		    <!--
+            <xsl:attribute name="title">
+                <xsl:value-of select="$copac_search_link_title"/>
+            </xsl:attribute>
+            <!--
             <xsl:element name="img">
-		      <xsl:attribute name="alt">
+              <xsl:attribute name="alt">
                 <xsl:text></xsl:text>
               </xsl:attribute>
-		      <xsl:attribute name="src">
-		          <xsl:value-of select="$copac_search_icon"/>
-		      </xsl:attribute>
-		    </xsl:element>
+              <xsl:attribute name="src">
+                  <xsl:value-of select="$copac_search_icon"/>
+              </xsl:attribute>
+            </xsl:element>
             -->
-		    <xsl:text>Search for this book on Copac</xsl:text>
-	  	</a>
-	</xsl:template>
-	
-	<xsl:template name="googlemapslink">
-	  	<a target="_new">
-	  		<xsl:attribute name="href">
-	  			<xsl:value-of select="$googlemaps_search_url"/>
-	  			<xsl:call-template name="cgiencode">
-		          <xsl:with-param name="text">
-		            <xsl:choose>
+            <xsl:text>Search for this book on Copac</xsl:text>
+          </a>
+    </xsl:template>
+
+    <xsl:template name="googlemapslink">
+          <a target="_new">
+              <xsl:attribute name="href">
+                  <xsl:value-of select="$googlemaps_search_url"/>
+                  <xsl:call-template name="cgiencode">
+                  <xsl:with-param name="text">
+                    <xsl:choose>
                       <xsl:when test="./emph[@altrender='a']">
                           <xsl:apply-templates select="./emph[@altrender='a']"/>
                       </xsl:when>
@@ -2549,55 +2549,55 @@
                         <xsl:apply-templates select="."/>
                       </xsl:otherwise>
                     </xsl:choose>
-		          </xsl:with-param>
-		        </xsl:call-template>
-			</xsl:attribute>
-			<xsl:attribute name="title">
+                  </xsl:with-param>
+                </xsl:call-template>
+            </xsl:attribute>
+            <xsl:attribute name="title">
                 <xsl:value-of select="$googlemaps_search_link_title"/>
-		    </xsl:attribute>
-		    <img alt="Google Maps">
-		        <xsl:attribute name="src">
-                    <xsl:value-of select="$googlemaps_search_icon"/>		            
-		        </xsl:attribute>
-		    </img>
-	  	</a>
-	</xsl:template>
-  
-	<xsl:template name="wikipedialink">
-		<a target="_new">
-	  		<xsl:attribute name="href">
-	  			<xsl:value-of select="$wikipedia_search_url"/>
-	  			<xsl:call-template name="wikipediacgiencode">
-		          <xsl:with-param name="text">
-		            <xsl:apply-templates select="." />
-		          </xsl:with-param>
-		        </xsl:call-template>
-			</xsl:attribute>
-			<xsl:attribute name="title">
-		        <xsl:text>Search Wikipedia</xsl:text>
-		    </xsl:attribute>
-		    <img alt="Wikipedia">
-		    	<xsl:attribute name="src">
-		    		<xsl:value-of select="$wikipedia_search_icon"/>
-		    	</xsl:attribute>
-		    </img>
-	  	</a>
-	</xsl:template>
-  
-  	<xsl:template match="eadid" mode="tocFileName">
-		<xsl:param name="uc" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ'"/>
-		<xsl:param name="lc" select="'abcdefghijklmnopqrstuvwxyz'"/>
-		<xsl:param name="text">
-			<xsl:value-of select="."/>
-		</xsl:param>
-		<xsl:value-of select="translate(translate(normalize-space($text), ' ', ''), $uc, $lc)"/>
-	</xsl:template>
-    
+            </xsl:attribute>
+            <img alt="Google Maps">
+                <xsl:attribute name="src">
+                    <xsl:value-of select="$googlemaps_search_icon"/>
+                </xsl:attribute>
+            </img>
+          </a>
+    </xsl:template>
+
+    <xsl:template name="wikipedialink">
+        <a target="_new">
+              <xsl:attribute name="href">
+                  <xsl:value-of select="$wikipedia_search_url"/>
+                  <xsl:call-template name="wikipediacgiencode">
+                  <xsl:with-param name="text">
+                    <xsl:apply-templates select="." />
+                  </xsl:with-param>
+                </xsl:call-template>
+            </xsl:attribute>
+            <xsl:attribute name="title">
+                <xsl:text>Search Wikipedia</xsl:text>
+            </xsl:attribute>
+            <img alt="Wikipedia">
+                <xsl:attribute name="src">
+                    <xsl:value-of select="$wikipedia_search_icon"/>
+                </xsl:attribute>
+            </img>
+          </a>
+    </xsl:template>
+
+      <xsl:template match="eadid" mode="tocFileName">
+        <xsl:param name="uc" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ'"/>
+        <xsl:param name="lc" select="'abcdefghijklmnopqrstuvwxyz'"/>
+        <xsl:param name="text">
+            <xsl:value-of select="."/>
+        </xsl:param>
+        <xsl:value-of select="translate(translate(normalize-space($text), ' ', ''), $uc, $lc)"/>
+    </xsl:template>
+
     <xsl:template name="normalizeEadid">
         <xsl:param name="uc" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ'"/>
         <xsl:param name="lc" select="'abcdefghijklmnopqrstuvwxyz'"/>
         <xsl:param name="text"/>
         <xsl:value-of select="translate(translate(normalize-space($text), ' ', ''), $uc, $lc)"/>
     </xsl:template>
-    
+
 </xsl:stylesheet>
