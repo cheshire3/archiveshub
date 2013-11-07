@@ -1285,7 +1285,9 @@
                 </xsl:variable>
                 <tr>
                     <td colspan="2">
-                        <xsl:value-of select="$indexName" />
+                        <h3 class="fieldhead-auto">
+                            <xsl:value-of select="$indexName" />
+                        </h3>
                     </td>
                 </tr>
                 <xsl:for-each select=".//function">
@@ -1303,7 +1305,9 @@
                 </xsl:variable>
                 <tr>
                     <td colspan="2">
-                        <xsl:value-of select="$indexName" />
+                        <h3 class="fieldhead-auto">
+                            <xsl:value-of select="$indexName" />
+                        </h3>
                     </td>
                 </tr>
                 <xsl:for-each select=".//genreform">
@@ -1328,7 +1332,9 @@
                 </xsl:variable>
                 <tr>
                     <td colspan="2">
-                        <xsl:value-of select="$indexName" />
+                        <h3 class="fieldhead-auto">
+                            <xsl:value-of select="$indexName" />
+                        </h3>
                     </td>
                 </tr>
                 <xsl:for-each select=".//occupation">
