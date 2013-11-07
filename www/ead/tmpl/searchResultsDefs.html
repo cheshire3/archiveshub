@@ -79,13 +79,24 @@
 </%def>
 
 <%def name="maximumRecordsSelect(resultSet, sortBy, maximumRecords, startRecord)">
-    ${maximumRecordsSelectButton(resultSet, sortBy, 20, startRecord)}
-    % if len(resultSet) >= 100:
-        ${maximumRecordsSelectButton(resultSet, sortBy, 50, startRecord)}
-    % endif
-    % if len(resultSet) >= 200:
-        ${maximumRecordsSelectButton(resultSet, sortBy, 100, startRecord)}
-    % endif
+    <%
+    total = len(resultSet)
+    %>
+    % if total <= 20:
+        ${maximumRecordsSelectButton(resultSet, sortBy, total, startRecord)}
+    % else:
+        ${maximumRecordsSelectButton(resultSet, sortBy, 20, startRecord)}
+        % if total <= 50:
+            ${maximumRecordsSelectButton(resultSet, sortBy, total, startRecord)}
+        % else:
+            ${maximumRecordsSelectButton(resultSet, sortBy, 50, startRecord)}
+            % if total <= 100:
+                ${maximumRecordsSelectButton(resultSet, sortBy, total, startRecord)}
+            % else:
+                ${maximumRecordsSelectButton(resultSet, sortBy, 100, startRecord)}
+            % endif
+        % endif
+     % endif
 </%def>
 
 <%def name="complex_query()">
