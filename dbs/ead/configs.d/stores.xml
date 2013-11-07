@@ -50,8 +50,8 @@
                 <path type="defaultPath">stores</path>
                 <path type="databasePath">componentStore.bdb</path>
                 <path type="metadataPath">componentStoreMetadata.bdb</path>
-                <object type="inWorkflow" ref="XmlToLZ4Workflow" />
-                <object type="outWorkflow" ref="LZ4ToLxmlWorkflow" />
+                <object type="inTransformer" ref="XmlTransformer" />
+                <object type="outParser" ref="LxmlParser" />
             </paths>
             <options>
                 <setting type="digest">sha</setting>
