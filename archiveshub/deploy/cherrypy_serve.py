@@ -1,9 +1,12 @@
-"""Start an HTTP server for Archives Hub
+"""Start an HTTP server for Archives Hub.
 
-Start an HTTP server to expose Cheshire3 databases via the web services and
-web application for development and demonstration purposes.
+Start a CherryPy HTTP server to expose Cheshire3 databases via the web
+services and web application for development and demonstration purposes.
 
-The current implementation uses CherryPy.
+
+usage: cherrypy_serve [-h] [-s PATH] [--hostname HOSTNAME] [-p PORT]
+                      [--no-browser] [-d]
+
 """
 import cherrypy
 import sys
@@ -105,12 +108,12 @@ argparser = WSGIAppArgumentParser(
     conflict_handler='resolve',
     description=__doc__.splitlines()[0]
 )
-argparser.add_argument('--fg', '--foreground', '--non-daemonic',
+argparser.add_argument('-d', '--daemonic',
                        dest='daemonic',
-                       action='store_false',
-                       help=("Start the server in non-daemonic mode, useful "
-                             "for development and debugging. Default is to "
-                             "start a daemon process."
+                       action='store_true',
+                       help=("Start the server in daemon mode. Default is to "
+                             "start in the foreground of the current process "
+                             "for development and debugging."
                              )
                        )
 
