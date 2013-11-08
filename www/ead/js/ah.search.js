@@ -14,7 +14,7 @@ var AH = {
 
     searchWithin: function(){
         // Make searchWithin stay within
-        $("div.withinCollection form").submit(function(event){
+        $("div#leftcol div.withinCollection form").submit(function(event){
             event.preventDefault();
             $(this).fadeTo(100, 0.25).find("input").disabled = true;
             // Remove any old error message
