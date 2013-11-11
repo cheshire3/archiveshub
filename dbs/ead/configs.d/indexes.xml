@@ -748,12 +748,10 @@
                 <xpath>controlaccess/persname</xpath>
                 <xpath>controlaccess/famname</xpath>
                 <xpath>controlaccess/corpname</xpath>
-                <xpath>controlaccess/geogname</xpath>
                 <xpath>name/@normal</xpath>
                 <xpath>persname/@normal</xpath>
                 <xpath>famname/@normal</xpath>
                 <xpath>corpname/@normal</xpath>
-                <xpath>geogname/@normal</xpath>
                 <process>
                     <object type="extractor" ref="SimpleExtractor" />
                     <object type="workflow"
@@ -777,7 +775,6 @@
                 <xpath>persname</xpath>
                 <xpath>famname</xpath>
                 <xpath>corpname</xpath>
-                <xpath>geogname</xpath>
                 <process>
                     <object type="workflow" ref="KeywordExtractorWorkflow" />
                     <object type="workflow"
