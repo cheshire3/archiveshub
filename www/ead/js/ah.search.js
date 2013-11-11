@@ -964,7 +964,7 @@ var indexList = new Array(
                         'bath.name|||Names', 
                         'bath.personalName|||&nbsp;&nbsp;People',
                         'bath.corporateName|||&nbsp;&nbsp;Organizations',
-                        'bath.geographicName|||&nbsp;&nbsp;Places',
+                        'bath.geographicName|||Places',
                         'bath.genreForm|||Media Types'
                     );
 var kwRelationList = new Array(
