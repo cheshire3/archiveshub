@@ -3,7 +3,7 @@
 <%!
     # Imports
     from cheshire3.utils import flattenTexts
-    
+
     # Over-ride global attributes
     leftcol_class = "search"
     rightcol_class = "facets"
@@ -23,7 +23,7 @@
             ${queryString}
         </p>
     % endif
-    
+
     <div class="rsMod">
         <div class="displaying">
             ${displaying(resultSet, maximumRecords, startRecord)}
@@ -42,7 +42,7 @@
             </tr>
         % endfor
     </table>
-    
+
     <div class="rsMod">
         <div class="displaying">
             ${displaying(resultSet, maximumRecords, startRecord)}

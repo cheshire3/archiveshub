@@ -53,7 +53,7 @@
                         displayTerm = term
                     %>
                     <td class="term">
-                        <a href="search.html?fieldidx1=${idx}&amp;fieldrel1=${rel}&amp;fieldcont1=${term | u}&amp;sortBy=dc.title#leftcol"
+                        <a href="search.html?fieldidx1=${idx}&amp;fieldrel1=${rel}&amp;fieldcont1=${term | u}&amp;sortBy=dc.title/ascending#leftcol"
                             title="Find matching records">
                             % if term.lower() == scanTerm.lower():
                                 <b>${displayTerm | h}</b>

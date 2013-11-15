@@ -138,7 +138,7 @@
     key = dataFromRecordXPaths(session, rec, ['/cluster/key'])
     qString = u'dc.subject exact "{0}"'.format(key.replace(u'"', ur'\"'))
     %>
-    <a href="${SCRIPT}/search.html?query=${qString|u}&amp;startRecord=${1}&amp;maximumRecords=${maximumRecords}&amp;sortBy=dc.title">
+    <a href="${SCRIPT}/search.html?query=${qString|u}&amp;startRecord=${1}&amp;maximumRecords=${maximumRecords}&amp;sortBy=dc.title/ascending">
         <strong>
             ${cleverTitleCase(key)}
         </strong>

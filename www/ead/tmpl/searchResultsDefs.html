@@ -56,12 +56,11 @@
         -->
         <select name="sortBy">
             % for val, label in config.items('sortby'):
-                % if val in sortBy:
+                % if unicode(val, 'utf-8') in sortBy:
                 <option value="${val}" selected="selected">${label}</option>
                 % else:
                 <option value="${val}">${label}</option>
                 % endif
-                
             % endfor
         </select>
     </form>
