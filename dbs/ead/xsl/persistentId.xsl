@@ -4,7 +4,7 @@
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:c3="http://www.cheshire3.org"
     version="1.0">
-    
+
     <!--
     This file was produced for the Cheshire3 for Archives and the Archives Hub.
     Copyright &#169; 2005-2013 the University of Liverpool
@@ -13,11 +13,10 @@
     <xsl:output method="text" media-type="text/plain"
         encoding="utf-8" />
 
-    <xsl:template select="/">
-        <xsl:apply-templates select="ead" />
-        <xsl:apply-templates select="c3component" />
-        <xsl:apply-templates select="c3:component" />
-    </xsl:template>
+    <!--
+    A default catchall template to ignore anything not specifically included
+    -->
+    <xsl:template match="*"/>
 
     <xsl:template match="/ead">
         <xsl:apply-templates select="/ead/archdesc/did" />
@@ -203,5 +202,5 @@
         <xsl:param name="text" />
         <xsl:value-of select="translate(normalize-space($text), $uc, $lc)" />
     </xsl:template>
-    
+
 </xsl:stylesheet>
