@@ -114,10 +114,11 @@
                 <try>
                     <object type="workflow" ref="assignDataIdentifierWorkflow" />
                 </try>
-                <except>
+                <except type="IndexError">
                     <log level="error">"Unable to assign persistent identifier"</log>
                     <return/>
                 </except>
+                <log level="debug">"" + input.id</log>
                 <!-- Proceed with storing -->
                 <try>
                     <object type="recordStore" ref="recordStore" function="store_record"/>
@@ -166,7 +167,7 @@
                 <try>
                     <object type="workflow" ref="assignDataIdentifierWorkflow" />
                 </try>
-                <except>
+                <except type="IndexError">
                     <log level="error">"Unable to determine persistent identifier"</log>
                     <return/>
                 </except>
