@@ -23,12 +23,13 @@
             <xsl:call-template name="searchwithincollection"/>
         </div>
         <h2>
-            <xsl:text>Contents&#160;</xsl:text>
-            <span class="printlink">
-                <a href="SCRIPT/toc.html?recid=RECID">
-                    <xsl:text>[ printable ]</xsl:text>
-                </a>
-            </span>
+            <xsl:text>Contents</xsl:text>
+<!--             <xsl:text>&#160;</xsl:text> -->
+<!--             <span class="printlink"> -->
+<!--                 <a href="SCRIPT/toc.html?recid=RECID"> -->
+<!--                     <xsl:text>[ printable ]</xsl:text> -->
+<!--                 </a> -->
+<!--             </span> -->
         </h2>
         <div class="hierarchy">
             <strong>
