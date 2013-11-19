@@ -3,7 +3,7 @@
 <xsl:stylesheet
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     version="1.0">
-    
+
     <!--
     This file was produced for the Cheshire3 for Archives and the Archives Hub.
     Copyright &#169; 2005-2013 the University of Liverpool
@@ -329,7 +329,7 @@
         <xsl:apply-templates select="date" />
         <xsl:value-of select="$newline" />
         <xsl:for-each select="item">
-            <xsl:text>-</xsl:text>
+            <xsl:text>- </xsl:text>
             <xsl:apply-templates select="." />
         </xsl:for-each>
     </xsl:template>
@@ -348,6 +348,7 @@
             </xsl:when>
             <xsl:when test="@type='unordered'">
                 <xsl:for-each select="item">
+                    <xsl:text>- </xsl:text>
                     <xsl:apply-templates />
                     <xsl:value-of select="$newline" />
                 </xsl:for-each>
@@ -361,12 +362,14 @@
             </xsl:when>
             <xsl:when test="@type='simple'">
                 <xsl:for-each select="item">
+                    <xsl:text>- </xsl:text>
                     <xsl:apply-templates />
                     <xsl:value-of select="$newline" />
                 </xsl:for-each>
             </xsl:when>
             <xsl:otherwise>
                 <xsl:for-each select="item">
+                    <xsl:text>- </xsl:text>
                     <xsl:apply-templates />
                     <xsl:value-of select="$newline" />
                 </xsl:for-each>
@@ -714,7 +717,7 @@
     </xsl:template>
 
     <!-- ARCHREF -->
-    
+
     <xsl:template match="archref">
         <xsl:copy>
             <xsl:copy-of select="@title" />
@@ -743,14 +746,15 @@
     </xsl:template>
 
     <xsl:template match="extref[@href]">
+        <xsl:text>`</xsl:text>
         <xsl:apply-templates />
         <xsl:text> &lt;</xsl:text>
         <xsl:value-of select="./@href" />
-        <xsl:text>&gt; </xsl:text>
+        <xsl:text>&gt;' </xsl:text>
     </xsl:template>
-    
+
     <!--LINE BREAKS -->
-    
+
     <xsl:template match="//lb">
         <xsl:value-of select="$newline" />
     </xsl:template>
@@ -765,5 +769,5 @@
         <xsl:apply-templates/> 
     </xsl:template>
     -->
- 
+
 </xsl:stylesheet>
