@@ -1249,9 +1249,11 @@ function hideStuff() {
                 }
             });
             // make sure displayed is not off bottom of screen
+            /* FIXME: This is buggy
             if ($(div).is(":visible")) {
                 $(div).parents(".column:eq(0)").animate({scrollTop: $(div).offset().top}, 500);
             }
+            */
             return false;
         });
     });
