@@ -116,19 +116,27 @@
         <xsl:param name="lc" select="'abcdefghijklmnopqrstuvwxyz'" />
 
         <xsl:param name="prefix">
-            <xsl:if test="@countrycode and @repositorycode">
-                <!-- if they're not here, we have real problems can't realistically 
-                    pattern match in XSLT -->
-                <xsl:value-of select="@countrycode" />
-                <xsl:choose>
-                    <xsl:when test="string(number(@repositorycode)) = 'NaN'">
-                        <xsl:value-of select="@repositorycode" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="format-number(number(@repositorycode), '#')" />
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:if>
+            <xsl:choose>
+                <xsl:when test="@countrycode">
+                    <xsl:value-of select="@countrycode" />
+                </xsl:when>
+                <xsl:otherwise>
+                    <!-- Assume GB -->
+                    <xsl:text>GB</xsl:text>
+                </xsl:otherwise>
+            </xsl:choose>
+            <!--
+            if @repositorycode is not here, we have a real problems;
+            can't reliably pattern match in XSLT
+            -->
+            <xsl:choose>
+                <xsl:when test="string(number(@repositorycode)) = 'NaN'">
+                    <xsl:value-of select="@repositorycode" />
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="format-number(number(@repositorycode), '#')" />
+                </xsl:otherwise>
+            </xsl:choose>
         </xsl:param>
 
         <xsl:param name="constructed-identifier">
