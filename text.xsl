@@ -33,7 +33,7 @@
         <xsl:param name="cursor"/>
         <xsl:param name="char"/>
         <xsl:choose>
-            <xsl:when test="$cursor &lt; $length">
+            <xsl:when test="$cursor &lt; $length and $cursor &lt; 79">
                 <xsl:call-template name="underliner">
                     <xsl:with-param name="length" select="$length"/>
                     <xsl:with-param name="current" select="concat($current, $char)"/>
