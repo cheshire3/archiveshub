@@ -46,9 +46,23 @@
                 <object type="preParser" ref="eadSgmlPreParser" />
                 <object type="preParser" ref="emptyEmphTagStripPreParser" />
                 <object type="preParser" ref="AmpPreParser" />
+                <try>
+                    <!--
+                    attempt to strip XML namespaces.
+                    XML parse errors should fail silently here so that they
+                    are reported correctly later on.
+                    -->
+                    <object type="parser" ref="LxmlParser"/>
+                </try>
+                <except>
+                    <return/>
+                </except>
+                <else>
+                    <object type="transformer" ref="stripNamespacesTxr"/>
+                </else>
             </workflow>
         </subConfig>
-        
+
         <subConfig type="workflow" id="assignDataIdentifierWorkflow">
             <objectType>cheshire3.workflow.CachingWorkflow</objectType>
             <workflow>

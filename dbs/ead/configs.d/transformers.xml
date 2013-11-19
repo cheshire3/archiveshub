@@ -9,6 +9,14 @@
 
     <subConfigs>
 
+        <subConfig type="transformer" id="stripNamespacesTxr">
+            <docs>Transformer to strip all namespaces for internal compatibility</docs>
+            <objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
+            <paths>
+                <path type="xsltPath">xsl/stripNamespaces.xsl</path>
+            </paths>
+        </subConfig>
+
         <subConfig type="transformer" id="sruOutgoingTxr">
             <docs>Transformer for EAD sent via SRU</docs>
             <objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
