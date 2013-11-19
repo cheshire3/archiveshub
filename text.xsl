@@ -155,6 +155,10 @@
 
     </xsl:template>
 
+    <xsl:template match="dsc">
+        <xsl:apply-templates
+            select="./c|./c01|./c02|./c03|./c04|./c05|./c06|./c07|./c08|./c09|./c10|./c11" />
+    </xsl:template>
 
     <!-- did section -->
     <xsl:template match="did">
