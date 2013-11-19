@@ -5,6 +5,7 @@ import sys
 import mimetypes
 import re
 import json
+import textwrap
 import time
 
 from hashlib import sha1
@@ -236,13 +237,23 @@ class EADWsgiApplication(object):
         # Return a text representation of the Record
         global namespaceUriHash
         doc_uc = self._transformRecord(rec, "textTxr")
+        # Apply line wrapping
+        paras = []
+        for line in doc_uc.split('\n'):
+            if line.isspace() and not paras[-1]:
+                # Last item was paragraph break, no need to repeat
+                pass
+            elif len(line) < 80:
+                paras.append(line.strip())
+            else:
+                paras.extend(textwrap.wrap(line, 79))
         # Resolve link to parent if a component
         try:
             rec.process_xpath(session,
                               '/c3:component/@c3:parent|/c3component/@parent',
                               namespaceUriHash)[0]
         except IndexError:
-            return doc_uc
+            pass
         else:
             titles = backwalkComponentTitles(session, rec)
             hierarchy = [(' ' * 4 * x) + t[1]
@@ -250,12 +261,8 @@ class EADWsgiApplication(object):
                          in enumerate(titles[:-1])
                          ]
             parentTitle = '\n'.join(hierarchy)
-            txt = [u'In: {0}'.format(parentTitle),
-                   u'-' * 78,
-                   u'',
-                   doc_uc
-                   ]
-            return u'\n'.join(txt)
+            paras = [u'In: {0}'.format(parentTitle), u'-' * 79] + paras
+        return u'\n'.join(paras)
 
     def _scanIndex(self, form):
         session = self.session
