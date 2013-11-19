@@ -26,6 +26,29 @@
         <xsl:text>    </xsl:text>
     </xsl:variable>
 
+    <!-- underliner -->
+    <xsl:template name="underliner">
+        <xsl:param name="length"/>
+        <xsl:param name="current"/>
+        <xsl:param name="cursor"/>
+        <xsl:param name="char"/>
+        <xsl:choose>
+            <xsl:when test="$cursor &lt; $length">
+                <xsl:call-template name="underliner">
+                    <xsl:with-param name="length" select="$length"/>
+                    <xsl:with-param name="current" select="concat($current, $char)"/>
+                    <xsl:with-param name="cursor" select="$cursor + 1"/>
+                    <xsl:with-param name="char" select="$char"/>
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$current"/>
+                <xsl:value-of select="$newline" />
+                <xsl:value-of select="$newline" />
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+
     <xsl:template match="/">
         <xsl:apply-templates />
     </xsl:template>
@@ -37,10 +60,36 @@
         priority="100" />
 
     <xsl:template match="/ead">
+
+        <xsl:variable name="mytitle">
+            <xsl:choose>
+                <xsl:when test="/*/*/did/unittitle">
+                    <xsl:apply-templates select="/*/*/did/unittitle[1]" />
+                </xsl:when>
+                <xsl:when test="/*/*/unittitle">
+                    <xsl:apply-templates select="/*/*/unittitle[1]" />
+                </xsl:when>
+                <xsl:when test="/ead/eadheader/filedesc/titlestmt/titleproper">
+                    <xsl:apply-templates select="/ead/eadheader/filedesc/titlestmt/titleproper" />
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:text>(untitled)</xsl:text>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+
+        <!--  underlined title -->
+        <xsl:value-of select="$mytitle"/>
+        <xsl:value-of select="$newline" />
+        <xsl:call-template name="underliner">
+            <xsl:with-param name="length" select="string-length($mytitle)"/>
+            <xsl:with-param name="current" select="''"/>
+            <xsl:with-param name="cursor" select="0"/>
+            <xsl:with-param name="char" select="'='"/>
+        </xsl:call-template>
+
         <!-- Core information about described material from <did> -->
         <xsl:apply-templates select="/ead/archdesc/did" />
-
-        <xsl:value-of select="$newline" />
 
         <!-- finding aid metadata from <eadheader> - creator, revisions etc -->
         <xsl:if test="$finding_aid_metadata">
@@ -58,7 +107,6 @@
         <xsl:apply-templates select="/ead/archdesc/arrangement" />
 
         <xsl:if test="/ead/archdesc/admininfo">
-            <xsl:apply-templates select="/ead/archdesc/admininfo/head" />
             <xsl:apply-templates select="/ead/archdesc/admininfo/acqinfo" />
             <xsl:apply-templates select="/ead/archdesc/admininfo/accruals" />
             <xsl:apply-templates select="/ead/archdesc/admininfo/processinfo" />
@@ -73,7 +121,6 @@
         </xsl:if>
 
         <xsl:if test="/ead/archdesc/descgrp">
-            <xsl:apply-templates select="/ead/archdesc/descgrp/head" />
             <xsl:apply-templates select="/ead/archdesc/descgrp/accessrestrict" />
             <xsl:apply-templates select="/ead/archdesc/descgrp/accruals" />
             <xsl:apply-templates select="/ead/archdesc/descgrp/acqinfo" />
@@ -112,6 +159,8 @@
         <xsl:apply-templates select="/ead/archdesc/odd" />
         <xsl:apply-templates select="/ead/archdesc/controlaccess" />
 
+        <xsl:value-of select="$newline"/>
+
         <xsl:apply-templates select="/ead/archdesc/dsc" />
 
     </xsl:template>
@@ -119,6 +168,31 @@
 
     <!-- for component records -->
     <xsl:template match="/c3component">
+
+        <xsl:variable name="mytitle">
+            <xsl:choose>
+                <xsl:when test="/*/*/did/unittitle">
+                    <xsl:apply-templates select="/*/*/did/unittitle[1]" />
+                </xsl:when>
+                <xsl:when test="/*/*/unittitle">
+                    <xsl:apply-templates select="/*/*/unittitle[1]" />
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:text>(untitled)</xsl:text>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+
+        <!-- underlined title -->
+        <xsl:value-of select="$mytitle"/>
+        <xsl:value-of select="$newline" />
+        <xsl:call-template name="underliner">
+            <xsl:with-param name="length" select="string-length($mytitle)"/>
+            <xsl:with-param name="current" select="''"/>
+            <xsl:with-param name="cursor" select="0"/>
+            <xsl:with-param name="char" select="'='"/>
+        </xsl:call-template>
+
         <!-- Core information about described material from <did> -->
         <xsl:apply-templates select="./*/did[1]" />
 
@@ -162,26 +236,6 @@
 
     <!-- did section -->
     <xsl:template match="did">
-        <xsl:text>--- </xsl:text>
-        <xsl:choose>
-            <xsl:when test="unittitle">
-                <xsl:apply-templates select="unittitle[1]" />
-            </xsl:when>
-            <xsl:when test="/ead/archdesc/did/unittitle">
-                <xsl:apply-templates select="/ead/archdesc/did/unittitle" />
-            </xsl:when>
-            <xsl:when test="/ead/eadheader/filedesc/titlestmt/titleproper">
-                <xsl:apply-templates
-                    select="/ead/eadheader/filedesc/titlestmt/titleproper" />
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:text>(untitled)</xsl:text>
-            </xsl:otherwise>
-        </xsl:choose>
-        <xsl:text> ---</xsl:text>
-
-        <xsl:value-of select="$newline" />
-        <xsl:value-of select="$newline" />
 
         <xsl:text>Reference Number: </xsl:text>
         <xsl:choose>
@@ -242,6 +296,8 @@
             <xsl:value-of select="$newline" />
         </xsl:if>
 
+        <xsl:value-of select="$newline"/>
+
     </xsl:template>
 
 
@@ -300,13 +356,8 @@
         <xsl:value-of select="$newline" />
     </xsl:template>
 
-    <xsl:template match="//head">
-        <xsl:value-of select="$newline" />
-        <xsl:text>-    </xsl:text>
-        <xsl:apply-templates />
-        <xsl:text>    -</xsl:text>
-        <xsl:value-of select="$newline" />
-    </xsl:template>
+    <!-- HEAD - Not displayed! -->
+    <xsl:template match="//head"/>
 
     <xsl:template match="//title">
         <xsl:text>"</xsl:text>
@@ -389,35 +440,45 @@
     <xsl:template name="all-component"
         match="c|c01|c02|c03|c04|c05|c06|c07|c08|c09|c10|c11|c12">
         <xsl:value-of select="$newline" />
-        <xsl:text>--------------------</xsl:text>
+
+        <xsl:if test="$horizontal_rule_between_units">
+            <xsl:call-template name="underliner">
+                <xsl:with-param name="length" select="79"/>
+                <xsl:with-param name="current" select="''"/>
+                <xsl:with-param name="cursor" select="0"/>
+                <xsl:with-param name="char" select="'-'"/>
+            </xsl:call-template>
+        </xsl:if>
+
+        <xsl:variable name="mytitle">
+            <xsl:choose>
+                <xsl:when test="did/unittitle">
+                    <xsl:apply-templates select="did/unittitle[1]" />
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:text>(untitled)</xsl:text>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+
+        <xsl:value-of select="$mytitle"/>
         <xsl:value-of select="$newline" />
-        <xsl:text>--   </xsl:text>
-        <xsl:if test="did/unitid">
-            <xsl:apply-templates select="did/unitid" />
-            <xsl:text>  -  </xsl:text>
-        </xsl:if>
-        <xsl:apply-templates select="did/unittitle" />
-        <xsl:if test="did/unitdate/text()">
-            <xsl:text> (</xsl:text>
-            <xsl:value-of select="did/unitdate" />
-            <xsl:text>)</xsl:text>
-        </xsl:if>
-        <xsl:if test="did/origination">
-            <xsl:text>, </xsl:text>
-            <xsl:apply-templates select="did/origination" />
-        </xsl:if>
-        <xsl:text>   --</xsl:text>
-        <xsl:value-of select="$newline" />
+        <xsl:call-template name="underliner">
+            <xsl:with-param name="length" select="string-length($mytitle)"/>
+            <xsl:with-param name="current" select="''"/>
+            <xsl:with-param name="cursor" select="0"/>
+            <xsl:with-param name="char" select="'-'"/>
+        </xsl:call-template>
+
+        <xsl:apply-templates select="did"/>
+
         <xsl:if test="did/physloc">
             <xsl:value-of select="did/physloc" />
         </xsl:if>
-        <xsl:apply-templates select="did/physdesc" />
-        <xsl:apply-templates select="did/note" />
         <xsl:apply-templates select="bioghist" />
         <xsl:apply-templates select="scopecontent" />
         <xsl:apply-templates select="arrangement" />
         <xsl:if test="admininfo">
-            <xsl:apply-templates select="admininfo/head" />
             <xsl:apply-templates select="admininfo/acqinfo" />
             <xsl:apply-templates select="admininfo/accruals" />
             <xsl:apply-templates select="admininfo/processinfo" />
@@ -446,45 +507,83 @@
 
 
     <xsl:template match="bioghist">
-        <xsl:if test="not(head)">
-            <xsl:text>-    Biographical History     -</xsl:text>
-            <xsl:value-of select="$newline" />
-        </xsl:if>
+        <xsl:variable name="headstring">
+            <xsl:text>Administrative / Biographical History</xsl:text>
+        </xsl:variable>
+        <xsl:value-of select="$headstring" />
+        <xsl:value-of select="$newline" />
+        <xsl:call-template name="underliner">
+            <xsl:with-param name="length" select="string-length($headstring)"/>
+            <xsl:with-param name="current" select="''"/>
+            <xsl:with-param name="cursor" select="0"/>
+            <xsl:with-param name="char" select="'^'"/>
+        </xsl:call-template>
         <xsl:apply-templates />
         <xsl:value-of select="$newline" />
     </xsl:template>
 
 
     <xsl:template match="scopecontent">
-        <xsl:if test="not(head)">
-            <xsl:text>-    Scope and Content    -</xsl:text>
-            <xsl:value-of select="$newline" />
-        </xsl:if>
+        <xsl:variable name="headstring">
+            <xsl:text>Scope and Content</xsl:text>
+        </xsl:variable>
+        <xsl:value-of select="$headstring" />
+        <xsl:value-of select="$newline" />
+        <xsl:call-template name="underliner">
+            <xsl:with-param name="length" select="string-length($headstring)"/>
+            <xsl:with-param name="current" select="''"/>
+            <xsl:with-param name="cursor" select="0"/>
+            <xsl:with-param name="char" select="'^'"/>
+        </xsl:call-template>
         <xsl:apply-templates />
         <xsl:value-of select="$newline" />
     </xsl:template>
 
     <xsl:template match="arrangement">
-        <xsl:if test="not(head)">
-            <xsl:text>-    Arrangement    -</xsl:text>
-            <xsl:value-of select="$newline" />
-        </xsl:if>
+        <xsl:variable name="headstring">
+            <xsl:text>Arrangement</xsl:text>
+        </xsl:variable>
+        <xsl:value-of select="$headstring" />
+        <xsl:value-of select="$newline" />
+        <xsl:call-template name="underliner">
+            <xsl:with-param name="length" select="string-length($headstring)"/>
+            <xsl:with-param name="current" select="''"/>
+            <xsl:with-param name="cursor" select="0"/>
+            <xsl:with-param name="char" select="'^'"/>
+        </xsl:call-template>
         <xsl:apply-templates />
         <xsl:value-of select="$newline" />
     </xsl:template>
 
 
     <xsl:template match="acqinfo">
-        <xsl:if test="not(head)">
-            <xsl:text>-    Acquisition Information    -</xsl:text>
-            <xsl:value-of select="$newline" />
-        </xsl:if>
+        <xsl:variable name="headstring">
+            <xsl:text>Acquisition Information</xsl:text>
+        </xsl:variable>
+        <xsl:value-of select="$headstring" />
+        <xsl:value-of select="$newline" />
+        <xsl:call-template name="underliner">
+            <xsl:with-param name="length" select="string-length($headstring)"/>
+            <xsl:with-param name="current" select="''"/>
+            <xsl:with-param name="cursor" select="0"/>
+            <xsl:with-param name="char" select="'^'"/>
+        </xsl:call-template>
         <xsl:apply-templates />
         <xsl:value-of select="$newline" />
     </xsl:template>
 
     <xsl:template match="bibliography">
-        <xsl:apply-templates select="head" />
+        <xsl:variable name="headstring">
+            <xsl:text>Bibliography</xsl:text>
+        </xsl:variable>
+        <xsl:value-of select="$headstring" />
+        <xsl:value-of select="$newline" />
+        <xsl:call-template name="underliner">
+            <xsl:with-param name="length" select="string-length($headstring)"/>
+            <xsl:with-param name="current" select="''"/>
+            <xsl:with-param name="cursor" select="0"/>
+            <xsl:with-param name="char" select="'^'"/>
+        </xsl:call-template>
         <xsl:for-each select="bibref">
             <xsl:apply-templates select="." />
             <xsl:value-of select="$newline" />
@@ -496,126 +595,211 @@
     </xsl:template>
 
     <xsl:template match="accessrestrict">
-        <xsl:if test="not(head)">
-            <xsl:text>-    Conditions Governing Access    -</xsl:text>
-            <xsl:value-of select="$newline" />
-        </xsl:if>
+        <xsl:variable name="headstring">
+            <xsl:text>Conditions Governing Access</xsl:text>
+        </xsl:variable>
+        <xsl:value-of select="$headstring" />
+        <xsl:value-of select="$newline" />
+        <xsl:call-template name="underliner">
+            <xsl:with-param name="length" select="string-length($headstring)"/>
+            <xsl:with-param name="current" select="''"/>
+            <xsl:with-param name="cursor" select="0"/>
+            <xsl:with-param name="char" select="'^'"/>
+        </xsl:call-template>
         <xsl:apply-templates />
         <xsl:value-of select="$newline" />
     </xsl:template>
 
     <xsl:template match="custodhist">
-        <xsl:if test="not(head)">
-            <xsl:text>-    Custodial History</xsl:text>
-            <xsl:value-of select="$newline" />
-        </xsl:if>
+        <xsl:variable name="headstring">
+            <xsl:text>Custodial History</xsl:text>
+        </xsl:variable>
+        <xsl:value-of select="$headstring" />
+        <xsl:value-of select="$newline" />
+        <xsl:call-template name="underliner">
+            <xsl:with-param name="length" select="string-length($headstring)"/>
+            <xsl:with-param name="current" select="''"/>
+            <xsl:with-param name="cursor" select="0"/>
+            <xsl:with-param name="char" select="'^'"/>
+        </xsl:call-template>
         <xsl:apply-templates />
         <xsl:value-of select="$newline" />
     </xsl:template>
 
     <xsl:template match="appraisal">
-        <xsl:if test="not(head)">
-            <xsl:text>-    Appraisal Information    -</xsl:text>
-            <xsl:value-of select="$newline" />
-        </xsl:if>
+        <xsl:variable name="headstring">
+            <xsl:text>Appraisal Information</xsl:text>
+        </xsl:variable>
+        <xsl:value-of select="$headstring" />
+        <xsl:value-of select="$newline" />
+        <xsl:call-template name="underliner">
+            <xsl:with-param name="length" select="string-length($headstring)"/>
+            <xsl:with-param name="current" select="''"/>
+            <xsl:with-param name="cursor" select="0"/>
+            <xsl:with-param name="char" select="'^'"/>
+        </xsl:call-template>
         <xsl:apply-templates />
     </xsl:template>
 
 
     <xsl:template match="accruals">
-        <xsl:if test="not(head)">
-            <xsl:text>-    Accruals    -</xsl:text>
-            <xsl:value-of select="$newline" />
-        </xsl:if>
+        <xsl:variable name="headstring">
+            <xsl:text>Accruals</xsl:text>
+        </xsl:variable>
+        <xsl:value-of select="$headstring" />
+        <xsl:value-of select="$newline" />
+        <xsl:call-template name="underliner">
+            <xsl:with-param name="length" select="string-length($headstring)"/>
+            <xsl:with-param name="current" select="''"/>
+            <xsl:with-param name="cursor" select="0"/>
+            <xsl:with-param name="char" select="'^'"/>
+        </xsl:call-template>
         <xsl:apply-templates />
         <xsl:value-of select="$newline" />
     </xsl:template>
 
     <xsl:template match="processinfo">
-        <xsl:if test="not(head)">
-            <xsl:text>-    Archivist's Note    -</xsl:text>
-            <xsl:value-of select="$newline" />
-        </xsl:if>
+        <xsl:variable name="headstring">
+            <xsl:text>Archivist's Note</xsl:text>
+        </xsl:variable>
+        <xsl:value-of select="$headstring" />
+        <xsl:value-of select="$newline" />
+        <xsl:call-template name="underliner">
+            <xsl:with-param name="length" select="string-length($headstring)"/>
+            <xsl:with-param name="current" select="''"/>
+            <xsl:with-param name="cursor" select="0"/>
+            <xsl:with-param name="char" select="'^'"/>
+        </xsl:call-template>
         <xsl:apply-templates />
         <xsl:value-of select="$newline" />
     </xsl:template>
 
     <xsl:template match="accessrestrict">
-        <xsl:if test="not(head)">
-            <xsl:text>-    Conditions Governing Access    -</xsl:text>
-            <xsl:value-of select="$newline" />
-        </xsl:if>
+        <xsl:variable name="headstring">
+            <xsl:text>Conditions Governing Access</xsl:text>
+        </xsl:variable>
+        <xsl:value-of select="$headstring" />
+        <xsl:value-of select="$newline" />
+        <xsl:call-template name="underliner">
+            <xsl:with-param name="length" select="string-length($headstring)"/>
+            <xsl:with-param name="current" select="''"/>
+            <xsl:with-param name="cursor" select="0"/>
+            <xsl:with-param name="char" select="'^'"/>
+        </xsl:call-template>
         <xsl:apply-templates />
         <xsl:value-of select="$newline" />
     </xsl:template>
 
     <xsl:template match="admininfo">
-        <xsl:if test="not(head)">
-            <xsl:text>-    Administrative Information    -</xsl:text>
-            <xsl:value-of select="$newline" />
-        </xsl:if>
+        <xsl:variable name="headstring">
+            <xsl:text>Administrative Information</xsl:text>
+        </xsl:variable>
+        <xsl:value-of select="$headstring" />
+        <xsl:value-of select="$newline" />
+        <xsl:call-template name="underliner">
+            <xsl:with-param name="length" select="string-length($headstring)"/>
+            <xsl:with-param name="current" select="''"/>
+            <xsl:with-param name="cursor" select="0"/>
+            <xsl:with-param name="char" select="'^'"/>
+        </xsl:call-template>
         <xsl:apply-templates />
         <xsl:value-of select="$newline" />
     </xsl:template>
 
 
     <xsl:template match="userestrict">
-        <xsl:if test="not(head)">
-            <xsl:text>-    Conditions Governing Use    -</xsl:text>
-            <xsl:value-of select="$newline" />
-        </xsl:if>
+        <xsl:variable name="headstring">
+            <xsl:text>Conditions Governing Use</xsl:text>
+        </xsl:variable>
+        <xsl:value-of select="$headstring" />
+        <xsl:value-of select="$newline" />
+        <xsl:call-template name="underliner">
+            <xsl:with-param name="length" select="string-length($headstring)"/>
+            <xsl:with-param name="current" select="''"/>
+            <xsl:with-param name="cursor" select="0"/>
+            <xsl:with-param name="char" select="'^'"/>
+        </xsl:call-template>
         <xsl:apply-templates />
         <xsl:value-of select="$newline" />
     </xsl:template>
 
     <xsl:template match="otherfindaid">
-        <xsl:if test="not(head)">
-            <xsl:text>-    Other Finding Aid    -</xsl:text>
-            <xsl:value-of select="$newline" />
-        </xsl:if>
+        <xsl:variable name="headstring">
+            <xsl:text>Other Finding Aid</xsl:text>
+        </xsl:variable>
+        <xsl:value-of select="$headstring" />
+        <xsl:value-of select="$newline" />
+        <xsl:call-template name="underliner">
+            <xsl:with-param name="length" select="string-length($headstring)"/>
+            <xsl:with-param name="current" select="''"/>
+            <xsl:with-param name="cursor" select="0"/>
+            <xsl:with-param name="char" select="'^'"/>
+        </xsl:call-template>
         <xsl:apply-templates />
         <xsl:value-of select="$newline" />
     </xsl:template>
 
     <xsl:template match="relatedmaterial">
-        <xsl:if test="not(head)">
-            <xsl:text>-    Related Material    -</xsl:text>
-            <xsl:value-of select="$newline" />
-        </xsl:if>
+        <xsl:variable name="headstring">
+            <xsl:text>Related Material</xsl:text>
+        </xsl:variable>
+        <xsl:value-of select="$headstring" />
+        <xsl:value-of select="$newline" />
+        <xsl:call-template name="underliner">
+            <xsl:with-param name="length" select="string-length($headstring)"/>
+            <xsl:with-param name="current" select="''"/>
+            <xsl:with-param name="cursor" select="0"/>
+            <xsl:with-param name="char" select="'^'"/>
+        </xsl:call-template>
         <xsl:apply-templates />
         <xsl:value-of select="$newline" />
     </xsl:template>
 
     <xsl:template match="separatedmaterial">
-        <xsl:if test="not(head)">
-            <xsl:text>-    Separated Material    -</xsl:text>
-            <xsl:value-of select="$newline" />
-        </xsl:if>
+        <xsl:variable name="headstring">
+            <xsl:text>Separated Material</xsl:text>
+        </xsl:variable>
+        <xsl:value-of select="$headstring" />
+        <xsl:value-of select="$newline" />
+        <xsl:call-template name="underliner">
+            <xsl:with-param name="length" select="string-length($headstring)"/>
+            <xsl:with-param name="current" select="''"/>
+            <xsl:with-param name="cursor" select="0"/>
+            <xsl:with-param name="char" select="'^'"/>
+        </xsl:call-template>
         <xsl:apply-templates />
         <xsl:value-of select="$newline" />
     </xsl:template>
 
     <xsl:template match="originalsloc">
-        <xsl:if test="not(head)">
-            <xsl:text>-    Location of Originals</xsl:text>
-            <xsl:value-of select="$newline" />
-        </xsl:if>
+        <xsl:variable name="headstring">
+            <xsl:text>Location of Originals</xsl:text>
+        </xsl:variable>
+        <xsl:value-of select="$headstring" />
+        <xsl:value-of select="$newline" />
+        <xsl:call-template name="underliner">
+            <xsl:with-param name="length" select="string-length($headstring)"/>
+            <xsl:with-param name="current" select="''"/>
+            <xsl:with-param name="cursor" select="0"/>
+            <xsl:with-param name="char" select="'^'"/>
+        </xsl:call-template>
         <xsl:apply-templates />
         <xsl:value-of select="$newline" />
     </xsl:template>
 
     <!-- controlaccess -->
     <xsl:template match="//controlaccess">
-        <xsl:text>-   </xsl:text>
-        <xsl:choose>
-            <xsl:when test="head">
-                <xsl:value-of select="head" />
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:text>Access Points</xsl:text>
-            </xsl:otherwise>
-        </xsl:choose>
-        <xsl:text>   -</xsl:text>
+        <xsl:variable name="headstring">
+            <xsl:text>Access Points</xsl:text>
+        </xsl:variable>
+        <xsl:value-of select="$headstring" />
+        <xsl:value-of select="$newline" />
+        <xsl:call-template name="underliner">
+            <xsl:with-param name="length" select="string-length($headstring)"/>
+            <xsl:with-param name="current" select="''"/>
+            <xsl:with-param name="cursor" select="0"/>
+            <xsl:with-param name="char" select="'^'"/>
+        </xsl:call-template>
         <xsl:value-of select="$newline" />
 
         <!-- Subjects -->
