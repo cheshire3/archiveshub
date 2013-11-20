@@ -265,14 +265,14 @@
                 <object type="indexStore" ref="indexStore" />
             </paths>
             <source mode="data">
-                <xpath>/*/*/did/unitid/@repositorycode</xpath>
+                <xpath>/*/*/did/unitid[not(@label='Former Reference')]/@repositorycode</xpath>
                 <process>
                     <object type="extractor" ref="SimpleExtractor" />
                     <object type="normalizer" ref="SpaceNormalizer"/>
                     <object type="normalizer" ref="LeadingZeroNormalizer"/>
                 </process>
             </source>
-            <source mode="all|any|within">
+            <source mode="all|any|within|=|exact">
                 <process>
                     <object type="extractor" ref="SimpleExtractor" />
                     <object type="tokenizer" ref="RegexpFindTokenizer" />
@@ -293,7 +293,7 @@
                 <object type="indexStore" ref="indexStore" />
             </paths>
             <source mode="data">
-                <xpath>/*/*/did/unitid/@repositorycode</xpath>
+                <xpath>/*/*/did/unitid[not(@label='Former Reference')]/@repositorycode</xpath>
                 <process>
                     <object type="extractor" ref="SimpleExtractor" />
                     <object type="normalizer" ref="SpaceNormalizer"/>
