@@ -109,13 +109,17 @@
     session = context.get('session')
     db = session.server.get_object(session, session.database)
     normalizer = db.get_object(session, 'vbdidToArchonJSONNormalizer')
-    identifier = normalizer.process_string(session, identifier)
+    norm_identifier = normalizer.process_string(session, identifier)
     identifierIdx = db.get_object(session, 'idx-vdbid')
     nameIdx = db.get_object(session, 'idx-vdbName')
-    data = identifierIdx.fetch_term(session, identifier)
+    data = identifierIdx.fetch_term(session, norm_identifier)
     rs = identifierIdx.construct_resultSet(session, data)
     %>
-    ${nameIdx.facets(session, rs)[0][0]}
+    % try:
+        ${nameIdx.facets(session, rs)[0][0]}
+    % except IndexError:
+        ${identifier}
+    % endtry
 </%def>
 
 <%def name="format_query(query)">
