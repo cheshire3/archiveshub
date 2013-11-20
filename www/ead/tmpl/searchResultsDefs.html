@@ -108,6 +108,8 @@
     <%
     session = context.get('session')
     db = session.server.get_object(session, session.database)
+    normalizer = db.get_object(session, 'vbdidToArchonJSONNormalizer')
+    identifier = normalizer.process_string(session, identifier)
     identifierIdx = db.get_object(session, 'idx-vdbid')
     nameIdx = db.get_object(session, 'idx-vdbName')
     data = identifierIdx.fetch_term(session, identifier)
