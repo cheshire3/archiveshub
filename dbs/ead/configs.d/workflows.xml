@@ -2,17 +2,17 @@
 
     <!--
     Configuration for Workflows.
-    
+
     This file was produced, and released as part of Cheshire for Archives v3.x.
     Copyright &#169; 2005-2013 the University of Liverpool 
     -->
 
     <subConfigs>
-    
+
         <!--
         RecordStore in/out Workflows
         -->
-    
+
         <subConfig type="workflow" id="XmlToLZ4Workflow">
             <docs>Workflow to take a Record and compress the XML data with the lz4
                 algorithm</docs>
@@ -22,7 +22,7 @@
                 <object ref="LZ4CompressPreParser" type="preParser" />
             </workflow>
         </subConfig>
-    
+
         <subConfig type="workflow" id="LZ4ToLxmlWorkflow">
             <docs>Workflow to take a Document containing data compressed with the
                 lz4 algorithm, decompress and parse into an LxmlRecord</docs>
@@ -36,7 +36,7 @@
         <!--
         Ingest related Workflows
         -->
-        
+
         <subConfig type="workflow" id="preParserWorkflow">
             <objectType>cheshire3.workflow.CachingWorkflow</objectType>
             <workflow>
@@ -213,7 +213,6 @@
                         <assign from="recid + '-' + str(VAR_ctr)" to="input.id" />
                     </except>
                     <assign from="VAR_ctr + 1" to="VAR_ctr" />
-                    <log level="debug">"Storing " + input.id</log>
                     <try>
                         <object type="recordStore" ref="componentStore" function="store_record" />
                     </try>
@@ -251,11 +250,11 @@
                 </else>
             </workflow>
         </subConfig>
-        
+
         <!--
         Output/display related Workflows
         -->
-        
+
         <subConfig type="workflow" id="highlightSruFilterWorkflow">
             <objectType>cheshire3.workflow.CachingWorkflow</objectType>
             <workflow>
