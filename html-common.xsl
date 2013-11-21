@@ -2187,9 +2187,9 @@
                             <xsl:text>&amp;subject=Query via the Archives Hub about </xsl:text>
                             <xsl:value-of select="$unitid"/>
                         </xsl:attribute>
-                        <xsl:attribute name="title">
-                            <xsl:text>Email the repository for more information [opens your email program]</xsl:text>
-                        </xsl:attribute>
+<!--                         <xsl:attribute name="title"> -->
+<!--                             <xsl:text>Email the repository for more information [opens your email program]</xsl:text> -->
+<!--                         </xsl:attribute> -->
                         <xsl:text>Email</xsl:text>
                     </a>
                     the repository for more information
@@ -2201,9 +2201,9 @@
                             <xsl:value-of select="$hubmap_url" />
                             <xsl:value-of select="$repcode" />
                         </xsl:attribute>
-                        <xsl:attribute name="title">
-                            <xsl:text>View repository location in Archives Hub contributors map [opens new window]</xsl:text>
-                        </xsl:attribute>
+<!--                         <xsl:attribute name="title"> -->
+<!--                             <xsl:text>View repository location in Archives Hub contributors map [opens new window]</xsl:text> -->
+<!--                         </xsl:attribute> -->
                         <xsl:attribute name="target">
                             <xsl:text>_blank</xsl:text>
                         </xsl:attribute>
@@ -2217,9 +2217,9 @@
                         <xsl:attribute name="href">
                             <xsl:text>http://archiveshub.ac.uk/accesstomaterials</xsl:text>
                         </xsl:attribute>
-                        <xsl:attribute name="title">
-                            <xsl:text>Help on how to access these materials</xsl:text>
-                        </xsl:attribute>
+<!--                         <xsl:attribute name="title"> -->
+<!--                             <xsl:text>Help on how to access these materials</xsl:text> -->
+<!--                         </xsl:attribute> -->
                         <xsl:text>accessing these materials</xsl:text>
                     </a>
                 </li>
@@ -2252,9 +2252,9 @@
                             <xsl:value-of select="$recid" />
                             <xsl:text>#rightcol</xsl:text>
                         </xsl:attribute>
-                        <xsl:attribute name="title">
-                            <xsl:text>Send detailed description as text in an e-mail</xsl:text>
-                        </xsl:attribute>
+<!--                         <xsl:attribute name="title"> -->
+<!--                             <xsl:text>Send detailed description as text in an e-mail</xsl:text> -->
+<!--                         </xsl:attribute> -->
                         <xsl:text>Email</xsl:text>
                     </a>
                     this Description
@@ -2265,9 +2265,9 @@
                             <xsl:value-of select="$data_uri_base" />
                             <xsl:text>.xml</xsl:text>
                         </xsl:attribute>
-                        <xsl:attribute name="title">
-                            <xsl:text>View this description as XML (In EAD Schema)</xsl:text>
-                        </xsl:attribute>
+<!--                         <xsl:attribute name="title"> -->
+<!--                             <xsl:text>View this description as XML (In EAD Schema)</xsl:text> -->
+<!--                         </xsl:attribute> -->
                         <xsl:text>View XML</xsl:text>
                     </a>
                     <xsl:text>   |   </xsl:text>
@@ -2277,9 +2277,9 @@
                             <xsl:value-of select="$data_uri_base" />
                             <xsl:text>.txt</xsl:text>
                         </xsl:attribute>
-                        <xsl:attribute name="title">
-                            <xsl:text>View this description as Plain-Text</xsl:text>
-                        </xsl:attribute>
+<!--                         <xsl:attribute name="title"> -->
+<!--                             <xsl:text>View this description as Plain-Text</xsl:text> -->
+<!--                         </xsl:attribute> -->
                         <xsl:text>View Text</xsl:text>
                     </a>
                 </li>
