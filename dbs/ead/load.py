@@ -1,8 +1,7 @@
 #!/bin/env python
 # -*- coding: utf-8 -*-
-#
 # Script:    load.py
-# Date:      14 May 2013
+# Date:      21 November 2013
 # Copyright: &copy; University of Liverpool 2005-present
 # Author(s): JH - John Harrison <john.harrison@liv.ac.uk>
 # Language:  Python
@@ -17,7 +16,7 @@ positional arguments:
 optional arguments:
   -h, --help            show this help message and exit
   -s PATH, --server-config PATH
-                        path to Cheshire3 server configuration file. default: 
+                        path to Cheshire3 server configuration file. default:
                         /home/cheshire/cheshire3/cheshire3/configs/serverConfi
                         g.xml
   -d DATABASE, --database DATABASE

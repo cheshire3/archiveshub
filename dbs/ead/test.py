@@ -1,7 +1,7 @@
 #!/home/cheshire/install/bin/python
-#
-# Script:    run.py
-# Date:      5 April 2011
+# -*- coding: utf-8 -*-
+# Script:    test.py
+# Date:      21 November 2013
 # Copyright: &copy; University of Liverpool 2011
 # Author(s): JH - John Harrison <john.harrison@liv.ac.uk>
 # Language:  Python
@@ -33,16 +33,16 @@ import cheshire3.cqlParser as cql
 
 class Cheshire3TestCase(unittest.TestCase):
     """Abstract Base Class for testing a Cheshire3 Object."""
-    
+
     def setUp(self):
         self.session = Session()
         fp = os.path.join(cheshirePath, 'cheshire3', 'configs', 'serverConfig.xml')
         self.server = SimpleServer(self.session, fp)
-        
+
 
 class HighlightingTxrTestCase(Cheshire3TestCase):
     """Test Case Class for testing the Highlighting Transformer."""
-    
+
     def setUp(self):
         Cheshire3TestCase.setUp(self)
         self.database = self.server.get_object(self.session, 'db_ead')
@@ -55,13 +55,13 @@ class HighlightingTxrTestCase(Cheshire3TestCase):
         or/relevant/proxinfo 
         dc.title all/relevant/proxinfo "john sampson"''')
         self.resultSet = self.database.search(self.session, query) 
-        
+
     def _get_query(self, data, format='cql', codec=None, db=None):
         if db is None:
             db = self.database
         queryFactory = db.get_object(self.session, 'defaultQueryFactory')
         return queryFactory.get_query(self.session, data, format=format, codec=codec, db=db)
-        
+
     def test_01_without_proxinfo(self):
         "Output IS NOT affected in absence of proxInfo"
         session = self.session
@@ -74,12 +74,12 @@ class HighlightingTxrTestCase(Cheshire3TestCase):
                              doc.get_raw(session),
                              msg="highlightTxr alters record text even when no proxInfo available"
                              )
-            
+
     def test_02_has_proxinfo(self):
         "ResultSetItems have proxInfo"
         for rsi in self.resultSet:
             self.assertTrue(rsi.proxInfo is not None and len(rsi.proxInfo) > 0)
-            
+
     def test_03_with_proxinfo(self):
         "Output IS affected in presence of proxInfo"
         session = self.session
@@ -92,7 +92,7 @@ class HighlightingTxrTestCase(Cheshire3TestCase):
                                 doc.get_raw(session),
                                  msg="highlightTxr not highlighting {0}".format(rec.id)
                                 )
-            
+
     def test_04_text_unaffected(self):
         "Output plain text order is not altered"
         session = self.session

@@ -1,7 +1,7 @@
 #!/bin/env python
-#
+# -*- coding: utf-8 -*-
 # Script:    search.py
-# Date:      13 November 2012
+# Date:      21 November 2013
 # Copyright: &copy; University of Liverpool 2005-present
 # Author(s): JH - John Harrison <john.harrison@liv.ac.uk>
 # Language:  Python
@@ -41,9 +41,9 @@ def _backwalkTitles(rec, xpath):
                                            )[0]
                              )
             raise
-            
+
         xpathParts.pop(-1)
-        
+
     titles.reverse()
     return titles
 
@@ -66,7 +66,7 @@ def _backwalkTitles2(rec, xpath):
 #        else:
 #            t = flattenTexts(tn)
 #            titles.append(t.strip())
-    
+
     titles.reverse()
     return titles
 
@@ -89,7 +89,7 @@ def doSearch(qString):
             parRec = recordStore.fetch_record(session, parId)
             xpath = rec.process_xpath(session, '/c3component/@xpath')[0]
             titles = _backwalkTitles2(parRec, xpath)
-        
+
         print i,
         for y, t in enumerate(titles):
             if y:

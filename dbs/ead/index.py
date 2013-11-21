@@ -1,6 +1,7 @@
+#!/bin/env python
 # -*- coding: utf-8 -*-
 # Script:    index.py
-# Date:      20 June 2013
+# Date:      21 November 2013
 # Copyright: &copy; University of Liverpool 2005-present
 # Author(s): JH - John Harrison <john.harrison@liv.ac.uk>
 # Language:  Python
@@ -12,7 +13,7 @@ usage: index.py [-h] [-s PATH] [-d DATABASE] [-j] [-n] [-b | -l | -o]
 optional arguments:
   -h, --help            show this help message and exit
   -s PATH, --server-config PATH
-                        path to Cheshire3 server configuration file. default: 
+                        path to Cheshire3 server configuration file. default:
                         /home/cheshire/cheshire3/cheshire3/configs/serverConfi
                         g.xml
   -d DATABASE, --database DATABASE
@@ -336,7 +337,8 @@ argparser = IndexArgumentParser(conflict_handler='resolve',
                                 )
 
 # Subparsers for commands
-subparsers = argparser.add_subparsers(title='Commands')
+subparsers = argparser.add_subparsers(title='Commands',
+                                      help="Build live or background Indexes")
 # index.py background
 parser_bg = subparsers.add_parser(
     "background",
