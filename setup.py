@@ -11,9 +11,9 @@ import os
 from os.path import abspath, dirname, join, exists, expanduser
 import inspect
 
-# Import Distribute / Setuptools
-import distribute_setup
-distribute_setup.use_setuptools()
+# Import Setuptools
+from ez_setup import use_setuptools
+use_setuptools()
 
 from setuptools import setup
 from archiveshub.setuptools.commands import (develop,
