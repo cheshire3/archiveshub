@@ -61,25 +61,25 @@
             <xsl:when test="unitid[@type='persistent']">
                 <xsl:apply-templates select="unitid[@type='persistent'][1]" />
             </xsl:when>
-            <xsl:when test="unitid[@label='Former Reference']">
-                <!-- we don't want to use Former Reference... -->
+            <xsl:when test="unitid[@label]">
+                <!-- we don't want to use any Former Reference... -->
                 <xsl:choose>
                     <xsl:when
-                        test="unitid[@label != 'Former Reference'][@countrycode and @repositorycode and @identifier]">
+                        test="unitid[not(starts-with(@label, 'Former')) and not(starts-with(@label, 'former'))][@countrycode and @repositorycode and @identifier]">
                         <!-- when all 3 attributes are present -->
                         <xsl:apply-templates
-                            select="unitid[@label != 'Former Reference'][@countrycode and @repositorycode and @identifier][1]" />
+                            select="unitid[not(starts-with(@label, 'Former')) and not(starts-with(@label, 'former'))][@countrycode and @repositorycode and @identifier][1]" />
                     </xsl:when>
                     <xsl:when
-                        test="unitid[@label != 'Former Reference'][@countrycode and @repositorycode]">
+                        test="unitid[not(starts-with(@label, 'Former')) and not(starts-with(@label, 'former'))][@countrycode and @repositorycode]">
                         <!-- when code attributes are present are present -->
                         <xsl:apply-templates
-                            select="unitid[@label != 'Former Reference'][@countrycode and @repositorycode][1]" />
+                            select="unitid[not(starts-with(@label, 'Former')) and not(starts-with(@label, 'former'))][@countrycode and @repositorycode][1]" />
                     </xsl:when>
-                    <xsl:when test="unitid[@label != 'Former Reference']">
+                    <xsl:when test="unitid[not(starts-with(@label, 'Former')) and not(starts-with(@label, 'former'))]">
                         <!-- take the first that isn't Former Reference -->
                         <xsl:apply-templates
-                            select="unitid[@label != 'Former Reference'][1]" />
+                            select="unitid[not(starts-with(@label, 'Former')) and not(starts-with(@label, 'former'))][1]" />
                     </xsl:when>
                     <xsl:otherwise>
                         <!-- ... but sometimes we have no choice but to use the Former Reference -->
