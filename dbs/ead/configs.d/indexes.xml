@@ -265,7 +265,7 @@
                 <object type="indexStore" ref="indexStore" />
             </paths>
             <source mode="data">
-                <xpath>/*/*/did/unitid[not(@label='Former Reference')]/@repositorycode</xpath>
+                <xpath>/*/*/did/unitid[not(starts-with(@label, 'Former')) and not(starts-with(@label, 'former'))]/@repositorycode</xpath>
                 <process>
                     <object type="extractor" ref="SimpleExtractor" />
                     <object type="normalizer" ref="SpaceNormalizer"/>
@@ -293,7 +293,7 @@
                 <object type="indexStore" ref="indexStore" />
             </paths>
             <source mode="data">
-                <xpath>/*/*/did/unitid[not(@label='Former Reference')]/@repositorycode</xpath>
+                <xpath>/*/*/did/unitid[not(starts-with(@label, 'Former')) and not(starts-with(@label, 'former'))]/@repositorycode</xpath>
                 <process>
                     <object type="extractor" ref="SimpleExtractor" />
                     <object type="normalizer" ref="SpaceNormalizer"/>
