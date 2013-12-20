@@ -523,8 +523,6 @@ class EADRecordWsgiApplication(EADWsgiApplication):
                                          )
 
     def text(self, rec, form):
-        # Track in Google Analytics
-        self._GA()
         txt = self._textFromRecord(rec)
         # Wrap long lines
         return u'\n'.join([textwrap.fill(rawline, 78)
@@ -548,8 +546,6 @@ class EADRecordWsgiApplication(EADWsgiApplication):
                                      )
 
     def xml(self, rec, form):
-        # Track in Google Analytics
-        self._GA()
         # Fix mimetype modules incorrect text/xml
         self.response.content_type = 'application/xml'
         session = self.session
