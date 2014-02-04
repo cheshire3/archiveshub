@@ -161,6 +161,15 @@ class EADRecordWsgiApplication(EADWsgiApplication):
         buffer_.close()
         return data
 
+    def _get_cacheFilePath(self, identifier, page_number=1):
+        return os.path.join(
+            self.config.get('cache', 'html_cache_path'),
+            '{0}.{1}.html'.format(
+                urllib.quote(identifier, ""),
+                page_number
+            )
+        )
+
     def _outputPage(self, recid, page_number, page, anchorPageHash={}):
         # Make some global replacements
         page = page.replace(u'RECID', unicode(recid))
@@ -184,10 +193,7 @@ class EADRecordWsgiApplication(EADWsgiApplication):
                                        recid)
                             )
         # Get path of file
-        path = os.path.join(self.config.get('cache', 'html_cache_path'),
-                            '{0}.{1}.html'.format(recid.replace('/', '-'),
-                                                  page_number)
-                            )
+        path = self._get_cacheFilePath(recid, page_number)
         with open(path, 'wb') as fh:
             fh.write(page.encode('utf-8'))
         return page
@@ -339,14 +345,10 @@ class EADRecordWsgiApplication(EADWsgiApplication):
         self._log(10, 'Full-text requested for {0}: {1}'
                   ''.format(['record', 'component'][int(isComponent)], recid)
                   )
-        path = os.path.join(self.config.get('cache', 'html_cache_path'),
-                            '{0}.1.html'.format(recid.replace('/', '_'))
-                            )
+        # Check for first page
+        path = self._get_cacheFilePath(recid, 1)
         if os.path.exists(path):
-            path = os.path.join(
-                self.config.get('cache', 'html_cache_path'),
-                '{0}.{1}.html'.format(recid.replace('/', '_'), pagenum)
-            )
+            path = self._get_cacheFilePath(recid, pagenum)
             try:
                 page = unicode(open(path, 'rb').read(), 'utf-8')
             except IOError:
@@ -357,10 +359,7 @@ class EADRecordWsgiApplication(EADWsgiApplication):
                                              pagenum=pagenum)
             self._log(10, 'Retrieved {0} from cache'.format(path))
             # Retrieve toc
-            tocpath = os.path.join(
-                self.config.get('cache', 'html_cache_path'),
-                '{0}.toc.html'.format(recid.replace('/', '_'))
-            )
+            tocpath = self._get_cacheFilePath(recid, 'toc')
             try:
                 toc = unicode(open(tocpath, 'rb').read(), 'utf-8')
             except IOError:
@@ -535,10 +534,7 @@ class EADRecordWsgiApplication(EADWsgiApplication):
                            ]).encode('utf-8')
 
     def toc(self, rec, form):
-        path = os.path.join(
-            self.config.get('cache', 'html_cache_path'),
-            '{0}.toc.html'.format(rec.id.replace('/', '_'))
-        )
+        path = self._get_cacheFilePath(rec.id, 'toc')
         try:
             doc_uc = unicode(open(path, 'rb').read(), 'utf-8')
         except IOError:
