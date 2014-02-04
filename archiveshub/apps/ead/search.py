@@ -278,14 +278,29 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         if not pm:
             db._cacheProtocolMaps(session)
             pm = db.protocolMaps.get('http://www.loc.gov/zing/srw/')
+        try:
+            nTerms = self.config.getint('facets', 'truncate')
+        except ValueError:
+            if self.config.getboolean('facets', 'truncate'):
+                # Want truncation but value not specified - default 1000
+                nTerms = 1000
+            else:
+                nTerms = 0
+
         facets = {}
         for cqlIdx, humanName in self.config.items('facets'):
+            if not '.' in cqlIdx:
+                # Setting, not index
+                continue
             query = self.queryFactory.get_query(session,
                                                 '{0}="*"'.format(cqlIdx),
                                                 format='cql')
             idxObj = pm.resolveIndex(session, query)
             try:
-                facets[(cqlIdx, humanName)] = idxObj.facets(session, rs)
+                facets[(cqlIdx, humanName)] = idxObj.facets(session,
+                                                            rs,
+                                                            nTerms
+                                                            )
             except:
                 self._log(40, "Couldn't get facets from {0}".format(cqlIdx))
                 facets[(cqlIdx, humanName)] = {}

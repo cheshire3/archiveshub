@@ -44,6 +44,7 @@ host = mailrouter.example.com
 port = 25
 
 [facets]
+truncate = 1000
 dc.subject = Subject
 dc.creator = Creator
 vdb.name = Contributor
