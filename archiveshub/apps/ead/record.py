@@ -380,10 +380,14 @@ class EADRecordWsgiApplication(EADWsgiApplication):
                  ]
             )
             email_address = emailFromArchonCode(archon_code)
-            doc_uc = doc_uc.replace(
-                u'contributor_{0}@example.com'.format(archon_code),
-                email_address
-            )
+            try:
+                doc_uc = doc_uc.replace(
+                    u'contributor_{0}@example.com'.format(archon_code),
+                    email_address
+                )
+            except TypeError:
+                # No email address :(
+                pass
             # Parse HTML fragments
             divs = lxmlhtml.fragments_fromstring(doc_uc)
             # Get Table of Contents
