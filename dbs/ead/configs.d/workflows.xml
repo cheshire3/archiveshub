@@ -139,8 +139,8 @@
                 </try>
                 <except type="ObjectAlreadyExistsException">
                     <!-- Record already stored and has not changed.
-                         Log WARNING rather than  ERROR -->
-                    <log level="warning">"Record not stored: " + str(err)</log>
+                         Log INFO rather than WARNING or ERROR -->
+                    <log level="info">"Record not stored, no changes: " + input.id</log>
                 </except>
                 <except>
                     <log level="error">"Record not stored: " + str(err)</log>
@@ -218,8 +218,8 @@
                     </try>
                     <except type="ObjectAlreadyExistsException">
                         <!-- Record already stored and has not changed.
-                             Log WARNING rather than  ERROR -->
-                        <log level="warning">"Component not stored: " + str(err)</log>
+                         Log INFO rather than WARNING or ERROR -->
+                        <log level="info">"Component not stored, no changes: " + input.id</log>
                     </except>
                     <except>
                         <log level="error">"Component unstorable"</log>
