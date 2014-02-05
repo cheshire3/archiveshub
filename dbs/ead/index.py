@@ -33,6 +33,7 @@ Commands:
 
 """
 
+import math
 import os
 import shutil
 import sys
@@ -89,22 +90,25 @@ def _index_recordStore(recordStore):
     # Index all Records in a RecordStore
     global session, db
     lgr = session.logger
-    for rec in recordStore:
+    for ctr, rec in enumerate(recordStore):
         try:
             db.index_record(session, rec)
         except UnicodeDecodeError:
             lgr.log_error(
                 session, 
-                '{0.id:<40} [ERROR] - Some indexes not built; non unicode '
-                'characters'.format(rec)
+                'REC: {0:>10} {1.id:<40} [ERROR] - Some indexes not built; '
+                'non unicode characters'.format(ctr, rec)
             )
         else:
             # Assimilate metadata of Record
             db.add_record(session, rec)
-            lgr.log_info(
-                session, 
-                '{0.id:<40} [OK]'.format(rec)
-            )
+            # Do not log every record - causes terminal to bog down
+            # Log only at the current order of magnitude
+            if ctr > 0 and not(ctr % 10 ** int(math.log10(ctr))):
+                lgr.log_info(
+                    session,
+                    'REC: {0:>10} {1.id:<40} [OK]'.format(ctr, rec)
+                )
 
 
 def _index(session, db, args):
@@ -115,8 +119,14 @@ def _index(session, db, args):
     if args.components:
         _index_recordStore(db.get_object(session, 'componentStore'))
 
+    session.logger.log_info(session, 'Merging index terms')
+
     for idx in db.indexes.itervalues():
         if not idx.get_setting(session, 'noIndexDefault', 0):
+            session.logger.log_info(session,
+                                    'Merging index terms for {0}'
+                                    ''.format(idx.id)
+                                    )
             idx.commit_indexing(session)
 
     db.commit_metadata(session)
