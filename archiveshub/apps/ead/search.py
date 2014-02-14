@@ -466,9 +466,25 @@ class EADSearchWsgiApplication(EADWsgiApplication):
 
         # send message
         s = smtplib.SMTP()
-        s.connect(host=self.config.get('email', 'host'),
-                  port=self.config.getint('email', 'port')
-                  )
+        email_host = self.config.get('email', 'host')
+        email_port = self.config.getint('email', 'port')
+        try:
+            s.connect(host=email_host, port=email_port)
+        except:
+            self._log(40,
+                      'Failed to connect to email server: {0}:{1}'.format(
+                          email_host,
+                          email_port
+                      ))
+            return [self._render_template('fail/emailServer.html',
+                                          host=email_host,
+                                          port=email_port,
+                                          resultSet=rs,
+                                          startRecord=startRecord,
+                                          maximumRecords=maximumRecords,
+                                          sortBy=sortBy
+                                          )]
+
         try:
             from_addy = self.config.get('email', 'from')
         except:

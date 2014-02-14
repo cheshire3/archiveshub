@@ -1,0 +1,21 @@
+<%inherit file="../searchResults.html"/>
+<%!
+    # Over-ride global attributes
+    leftcol_class = "search"
+    rightcol_class = "error"
+%>
+
+<%block name="title">
+    Error
+</%block>
+
+<%block name="rightcol">
+    <h2>${title()}</h2>
+    <p class="error">
+    <%block name="error">
+        ${next.body()}
+    </%block>
+    </p>
+    <%block name="extra"/>
+    <%block name="retry"/>
+</%block>
