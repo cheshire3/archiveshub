@@ -52,7 +52,7 @@ from archiveshub.deploy.utils import BaseArgumentParser
 
 class ContribArgumentParser(BaseArgumentParser):
     """Custom option parser for Archives Hub contributor management."""
-    
+
     def __init__(self, *args, **kwargs):
         super(ContribArgumentParser, self).__init__(*args, **kwargs)
         self.add_argument('-d', '--database',
@@ -63,7 +63,7 @@ class ContribArgumentParser(BaseArgumentParser):
 
 def add_contributor(args):
     """Add data for contributor(s).
-    
+
     Add DocumentStore configuration(s) for named contributor(s) to the
     ConfigStore for this database. 
     """
@@ -79,6 +79,10 @@ def add_contributor(args):
         return 1
     for dbPath in args.dir:
         # Sanity checking
+        # Expand user and absolutize path
+        dbPath = os.path.abspath(
+            os.path.expanduser(dbPath)
+        )
         # Strip off trailing slash
         dbPath = dbPath.rstrip(os.pathsep)
         if os.path.exists(dbPath) and not os.path.isdir(dbPath):
