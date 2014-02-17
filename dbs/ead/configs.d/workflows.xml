@@ -103,7 +103,6 @@
                 <object type="recordStore" ref="recordStore" function="begin_storing" />
                 <for-each>
                     <!-- input type: Document -->
-                    <log level="info">" " + input.filename</log>
                     <object type="workflow" ref="loadSingleWorkflow" />
                 </for-each>
                 <object type="recordStore" ref="recordStore" function="commit_storing" />
@@ -115,24 +114,24 @@
             <objectType>cheshire3.workflow.CachingWorkflow</objectType>
             <workflow>
                 <!-- input type: Document -->
+                <assign from="input.filename" to="filename"/>
                 <object type="workflow" ref="preParserWorkflow" />
                 <try>
                     <object type="parser" ref="LxmlParser" />
                 </try>
                 <except>
-                    <assign from="'unparsable: ' + str(err)" to="input" />
-                    <log level="warning">"" + input</log>
+                    <assign from="filename + ' unparsable: ' + str(err)" to="error" />
+                    <log level="warning">"" + error</log>
                     <return />
                 </except>
                 <!-- type: Record -->
                 <try>
                     <object type="workflow" ref="assignDataIdentifierWorkflow" />
                 </try>
-                <except type="IndexError">
-                    <log level="error">"Unable to assign persistent identifier"</log>
+                <except>
+                    <log level="error">"Unable to assign persistent identifier: " + filename</log>
                     <return/>
                 </except>
-                <log level="debug">"" + input.id</log>
                 <!-- Proceed with storing -->
                 <try>
                     <object type="recordStore" ref="recordStore" function="store_record"/>
@@ -140,14 +139,15 @@
                 <except type="ObjectAlreadyExistsException">
                     <!-- Record already stored and has not changed.
                          Log INFO rather than WARNING or ERROR -->
-                    <log level="info">"Record not stored, no changes: " + input.id</log>
+                    <log level="info">"Record not stored, no changes: " + input.id + " ("+ filename + ")"</log>
                 </except>
                 <except>
-                    <log level="error">"Record not stored: " + str(err)</log>
+                    <log level="error">"Record not stored: " + str(err) + " (" + filename + ")"</log>
                 </except>
                 <else>
                     <!-- Update modification date index -->
                     <object type="index" ref="idx-modificationDate" function="index_record"/>
+                    <log level="info">"" + input.id + " (" + filename + ")"</log>
                 </else>
             </workflow>
         </subConfig>
@@ -173,15 +173,15 @@
                     <object type="parser" ref="LxmlParser" />
                 </try>
                 <except>
-                    <assign from="'unparsable: ' + str(err)" to="input" />
-                    <log level="warning">"" + input</log>
+                    <assign from="'unparsable: ' + str(err)" to="error" />
+                    <log level="warning">"" + error</log>
                     <return />
                 </except>
                 <!-- input type: Record -->
                 <try>
                     <object type="workflow" ref="assignDataIdentifierWorkflow" />
                 </try>
-                <except type="IndexError">
+                <except>
                     <log level="error">"Unable to determine persistent identifier"</log>
                     <return/>
                 </except>
