@@ -467,12 +467,16 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         # send message
         s = smtplib.SMTP()
         s.connect(host=self.config.get('email', 'host'),
-                  port=self.config.getint('email', 'port'))
-        s.sendmail('{0}@{1}'.format(self.config.get('email', 'username'),
-                                    self.environ['SERVER_NAME']),
-                   address,
-                   mimemsg.as_string()
-                   )
+                  port=self.config.getint('email', 'port')
+                  )
+        try:
+            from_addy = self.config.get('email', 'from')
+        except:
+            from_addy = '{0}@{1}'.format(
+                self.config.get('email', 'username'),
+                self.request.host
+            )
+        s.sendmail(from_addy, address, mimemsg.as_string())
         s.quit()
         self._log(20, 'Record {0} emailed to {1}'.format(recid, address))
         return [self._render_template('emailSent.html',
