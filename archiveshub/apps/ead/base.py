@@ -160,12 +160,12 @@ class EADWsgiApplication(object):
 
     def _set_cookie(self, name, value, **kwargs):
         # Prepend app name
-        fullname = "c3archives_{0}".format(name)
+        fullname = "archiveshub_{0}".format(name)
         self.response.set_cookie(fullname, str(value), **kwargs)
 
     def _get_cookie(self, name):
         # Prepend app name
-        fullname = "c3archives_{0}".format(name)
+        fullname = "archiveshub_{0}".format(name)
         return self.request.cookies.get(fullname)
 
     def _fetch_record(self, session, recid):

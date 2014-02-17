@@ -96,7 +96,7 @@
                 </xsl:choose>
             </xsl:attribute>
             <xsl:attribute name="onclick">
-                <xsl:text>setCookie('RECID-tocstate', stateToString('someId'))</xsl:text>
+                <xsl:text>setCookie('archiveshub_RECID_tocstate', stateToString('someId'), '/data/')</xsl:text>
             </xsl:attribute>
             <xsl:if test="$node/unitid">
                 <xsl:choose>
@@ -144,7 +144,7 @@
                 <xsl:value-of select="$script"/>
                 <xsl:text>/search.html</xsl:text>
             </xsl:attribute>
-            <xsl:attribute name="onsubmit" value="setCookie('hubsearchform', miniFormToString(this));"/>
+            <xsl:attribute name="onsubmit" value="setCookie('archiveshub_searchform', miniFormToString(this));"/>
             <fieldset class="paleblue">
                 <span>Search within this description</span><br/>
                 <xsl:element name="input">

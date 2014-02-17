@@ -2,7 +2,7 @@
 <%!
     # Imports
     from cheshire3.utils import flattenTexts
-    
+
     # Over-ride global attributes
     leftcol_class = "toc"
     rightcol_class = "ead"
@@ -17,7 +17,7 @@
     <script type="text/javascript">
     $(document).ready(function() {
         // Process Table of Contents
-        createTreeFromList('someId', getCookie('${recid}-tocstate'), true, true);
+        createTreeFromList('someId', getCookie('archiveshub_${recid}_tocstate'), true, true);
     });
     </script>
 </%block>
