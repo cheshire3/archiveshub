@@ -970,7 +970,7 @@ var indexList = new Array(
                         'cql.anywhere||dc.description||dc.title|||Keywords', 
                         'dc.title|||Titles', 
                         'dc.creator|||Creators', 
-                        'dc.date|||Dates', 
+                        //'dc.date|||Dates',
                         'dc.identifier|||Ref. Number', 
                         'dc.subject|||Subjects', 
                         'bath.name|||Names', 
