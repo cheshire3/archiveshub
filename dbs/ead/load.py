@@ -1,7 +1,7 @@
 #!/bin/env python
 # -*- coding: utf-8 -*-
 # Script:    load.py
-# Date:      21 November 2013
+# Date:      3 March 2014
 # Copyright: &copy; University of Liverpool 2005-present
 # Author(s): JH - John Harrison <john.harrison@liv.ac.uk>
 # Language:  Python
@@ -102,13 +102,14 @@ def _get_storeIterator(args):
                 storeIterator.append(store.fetch_object(session, storeId))
             except ObjectDoesNotExistException:
                 # Contributor with this id does not exist
-                session.logger.log_error(session,
-                              "Contributor with identifier {0} does not seem to "
-                              "exist. It's possible that the default identifier "
-                              "for the directory was over-ridden with the --id "
-                              "option - you'll need to specify the identifier "
-                              "instead of the directory name".format(contributorId)
-                              )
+                session.logger.log_error(
+                    session,
+                    "Contributor with identifier {0} does not seem to "
+                    "exist. It's possible that the default identifier "
+                    "for the directory was over-ridden with the --id "
+                    "option - you'll need to specify the identifier "
+                    "instead of the directory name".format(contributorId)
+                )
     else:
         storeIterator = store
     return storeIterator
@@ -130,15 +131,16 @@ def load(args):
         wf = db.get_object(session, 'loadWorkflow')
         wf.process(session, contributorStore)
         session.logger.log_info(session,
-                     "Documents for {0} have been loaded"
+                     "Description documents for {0} loaded"
                      "".format(contributorId)
         )
     (mins, secs) = divmod(time.time() - start, 60)
     (hours, mins) = divmod(mins, 60)
-    session.logger.log_info(session,
-                 ('Loading complete ({0:.0f}h {1:.0f}m {2:.0f}s)'
-                  ''.format(hours, mins, secs))
-                 )
+    session.logger.log_info(
+        session,
+        ('Description loading complete ({0:.0f}h {1:.0f}m {2:.0f}s)'
+         ''.format(hours, mins, secs))
+         )
     return 0
 
 
@@ -158,13 +160,13 @@ def load_components(args):
         wf = db.get_object(session, 'loadAllComponentsWorkflow')
         wf.process(session, contributorStore)
         session.logger.log_info(session,
-                     "Documents for {0} have been loaded"
+                     "Components for {0} loaded"
                      "".format(contributorId)
         )
     (mins, secs) = divmod(time.time() - start, 60)
     (hours, mins) = divmod(mins, 60)
     session.logger.log_info(session,
-                 'Components loaded ({0:.0f}h {1:.0f}m {2:.0f}s)'
+                 'Component loading completed ({0:.0f}h {1:.0f}m {2:.0f}s)'
                  ''.format(hours, mins, secs)
                  )
     return 0
