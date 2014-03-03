@@ -145,7 +145,8 @@
                     <log level="error">"Record not stored: " + str(err) + " (" + filename + ")"</log>
                 </except>
                 <else>
-                    <!-- Update modification date index -->
+                    <!-- Update identifier and modification date index -->
+                    <object type="index" ref="idx-recid" function="index_record"/>
                     <object type="index" ref="idx-modificationDate" function="index_record"/>
                     <log level="info">"" + input.id + " (" + filename + ")"</log>
                 </else>

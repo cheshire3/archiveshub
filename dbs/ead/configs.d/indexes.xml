@@ -220,6 +220,9 @@
             </source>
             <options>
                 <setting type="longSize">4</setting>
+                <!-- don't index or unindex in db.[un]index_record() -->
+                <setting type="noIndexDefault">1</setting>
+                <setting type="noUnindexDefault">1</setting>
             </options>
         </subConfig>
 
