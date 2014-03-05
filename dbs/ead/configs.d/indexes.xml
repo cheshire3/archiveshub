@@ -324,9 +324,7 @@
                 <object type="indexStore" ref="indexStore" />
             </paths>
             <source>
-                <!-- Load the parent record into memory -->
-                <preprocess ref="CollectionFromComponentWorkflow"/>
-                <xpath ref="identifierSelector" />
+                <xpath ref="parentIdentifierSelector" />
                 <process>
                     <object type="extractor" ref="SimpleExtractor" />
                 </process>
