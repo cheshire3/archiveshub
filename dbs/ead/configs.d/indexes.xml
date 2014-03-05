@@ -334,26 +334,6 @@
                 <setting type="longSize">4</setting>
             </options>
         </subConfig>
-        
-        <!-- parent titles -->
-        <subConfig type="index" id="idx-collectiontitle">
-            <objectType>cheshire3.index.SimpleIndex</objectType>
-            <paths>
-                <object type="indexStore" ref="indexStore" />
-            </paths>
-            <source>
-                <!-- Load the parent record into memory -->
-                <preprocess ref="CollectionFromComponentWorkflow" />
-                <selector ref="titleSelector" />
-                <process>
-                    <object type="extractor" ref="SimpleExtractor" />
-                </process>
-            </source>
-            <options>
-                <setting type="vectors">1</setting>
-                <setting type="longSize">4</setting>
-            </options>
-        </subConfig>
 
         <!-- reference numbers -->
         <subConfig type="index" id="idx-unitid">

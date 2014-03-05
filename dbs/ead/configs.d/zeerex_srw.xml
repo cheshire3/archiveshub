@@ -16,7 +16,7 @@
     <databaseInfo>
         <title lang="en" primary="true">EAD Finding Aid Database</title>
         <description lang="en" primary="true">
-            A database containing Encoded Archival Data (EAD) records        
+            A database containing Encoded Archival Data (EAD) records
         </description>
     </databaseInfo>
 
@@ -88,20 +88,7 @@
                 <supports type="relation">exact</supports>
             </configInfo>
         </index>
-        
-        <index c3:index="idx-collectiontitle">
-            <title>Title of parent document/collection</title>
-            <map>
-                <name set="rec">collectionName</name>
-            </map>
-            <configInfo>
-                <supports type="relation">=</supports>
-                <supports type="relation">any</supports>
-                <supports type="relation">all</supports>
-                <supports type="relation">exact</supports>
-            </configInfo>
-        </index>
-        
+
         <index c3:index="idx-unitid">
             <title>Unit Identifier / Reference Number</title>
             <map>

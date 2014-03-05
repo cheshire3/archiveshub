@@ -33,7 +33,6 @@ from cheshire3.exceptions import (
 # Cheshire3 for Archives Imports
 from archiveshub.deploy.utils import WSGIAppArgumentParser
 from archiveshub.apps.ead.base import EADWsgiApplication
-from archiveshub.apps.ead.base import listCollections
 from archiveshub.apps.ead.base import dataFromRecordXPaths, emailFromArchonCode
 from archiveshub.apps.ead.base import backwalkComponentTitles
 from archiveshub.apps.ead.base import config, session, db
@@ -97,32 +96,29 @@ class EADRecordWsgiApplication(EADWsgiApplication):
                 # IndexError can occur due to a 'feature' (bug) in Cheshire3
                 # which assumes that all search terms will be a string of 1 or
                 # more characters
-                if not recid or recid == 'index':
-                    self.response.app_iter = self.index(mimetype, form)
+                # Attempt to redirect
+                try:
+                    mapDoc = self.identifierMap.fetch_document(session,
+                                                               recid
+                                                               )
+                except (FileDoesNotExistException,
+                        ObjectDoesNotExistException
+                ):
+                    # Record specified but could not be found - 404!
+                    self.response.status = 404
+                    self.response.body = self._render_template(
+                        'fail/404.html',
+                        resource=recid
+                    )
                 else:
-                    # Attempt to redirect
-                    try:
-                        mapDoc = self.identifierMap.fetch_document(session,
-                                                                   recid
-                                                                   )
-                    except (FileDoesNotExistException,
-                            ObjectDoesNotExistException
-                    ):
-                        # Record specified but could not be found - 404!
-                        self.response.status = 404
-                        self.response.body = self._render_template(
-                            'fail/404.html',
-                            resource=recid
-                        )
-                    else:
-                        # Permanent Redirect
-                        url = self.request.relative_url(
-                            mapDoc.get_raw(session)
-                        )
-                        self.response.location = url
-                        self.response.status = "301 Moved Permanently"
-                        self.response.body = ('<a href="{0}">{0}</a>'
-                                              ''.format(url))
+                    # Permanent Redirect
+                    url = self.request.relative_url(
+                        mapDoc.get_raw(session)
+                    )
+                    self.response.location = url
+                    self.response.status = "301 Moved Permanently"
+                    self.response.body = ('<a href="{0}">{0}</a>'
+                                          ''.format(url))
 
             else:
                 self._log(10, 'Retrieved record "{0}"'.format(recid))
@@ -510,19 +506,6 @@ class EADRecordWsgiApplication(EADWsgiApplication):
                                          recid=recid,
                                          toc=toc,
                                          page=page,
-                                         )
-
-    def index(self, mimetype, form):
-        # Scan the rec.identifier index
-        # Return a display appropriate for the requested mimetype
-        collections = listCollections(self.session)
-        if str(mimetype).endswith('/xml'):
-            raise NotImplementedError()
-        elif str(mimetype) == 'text/plain':
-            raise NotImplementedError()
-        else:
-            return self._render_template('dataIndex.html',
-                                         collections=collections
                                          )
 
     def text(self, rec, form):
