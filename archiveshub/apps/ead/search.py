@@ -278,14 +278,29 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         if not pm:
             db._cacheProtocolMaps(session)
             pm = db.protocolMaps.get('http://www.loc.gov/zing/srw/')
+        try:
+            nTerms = self.config.getint('facets', 'truncate')
+        except ValueError:
+            if self.config.getboolean('facets', 'truncate'):
+                # Want truncation but value not specified - default 1000
+                nTerms = 1000
+            else:
+                nTerms = 0
+
         facets = {}
         for cqlIdx, humanName in self.config.items('facets'):
+            if not '.' in cqlIdx:
+                # Setting, not index
+                continue
             query = self.queryFactory.get_query(session,
                                                 '{0}="*"'.format(cqlIdx),
                                                 format='cql')
             idxObj = pm.resolveIndex(session, query)
             try:
-                facets[(cqlIdx, humanName)] = idxObj.facets(session, rs)
+                facets[(cqlIdx, humanName)] = idxObj.facets(session,
+                                                            rs,
+                                                            nTerms
+                                                            )
             except:
                 self._log(40, "Couldn't get facets from {0}".format(cqlIdx))
                 facets[(cqlIdx, humanName)] = {}
@@ -451,13 +466,33 @@ class EADSearchWsgiApplication(EADWsgiApplication):
 
         # send message
         s = smtplib.SMTP()
-        s.connect(host=self.config.get('email', 'host'),
-                  port=self.config.getint('email', 'port'))
-        s.sendmail('{0}@{1}'.format(self.config.get('email', 'username'),
-                                    self.environ['SERVER_NAME']),
-                   address,
-                   mimemsg.as_string()
-                   )
+        email_host = self.config.get('email', 'host')
+        email_port = self.config.getint('email', 'port')
+        try:
+            s.connect(host=email_host, port=email_port)
+        except:
+            self._log(40,
+                      'Failed to connect to email server: {0}:{1}'.format(
+                          email_host,
+                          email_port
+                      ))
+            return [self._render_template('fail/emailServer.html',
+                                          host=email_host,
+                                          port=email_port,
+                                          resultSet=rs,
+                                          startRecord=startRecord,
+                                          maximumRecords=maximumRecords,
+                                          sortBy=sortBy
+                                          )]
+
+        try:
+            from_addy = self.config.get('email', 'from')
+        except:
+            from_addy = '{0}@{1}'.format(
+                self.config.get('email', 'username'),
+                self.request.host
+            )
+        s.sendmail(from_addy, address, mimemsg.as_string())
         s.quit()
         self._log(20, 'Record {0} emailed to {1}'.format(recid, address))
         return [self._render_template('emailSent.html',

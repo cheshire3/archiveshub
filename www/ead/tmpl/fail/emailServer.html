@@ -1,0 +1,13 @@
+<%inherit file="baseWithResults.html"/>
+
+<%block name="title">
+    Error :: Email Not Sent
+</%block>
+
+<%block name="error">
+    Email Not Sent.
+</%block>
+
+<%block name="extra">
+    <p>Unable to connect to email server ${host}:${port}.</p>
+</%block>

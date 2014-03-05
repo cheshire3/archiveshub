@@ -12,6 +12,11 @@ from hashlib import sha1
 from copy import deepcopy
 from tempfile import gettempdir
 
+try:
+    import cPickle as pickle
+except ImportError:
+    import pickle
+
 from lxml import etree
 from lxml.builder import E
 
@@ -155,12 +160,12 @@ class EADWsgiApplication(object):
 
     def _set_cookie(self, name, value, **kwargs):
         # Prepend app name
-        fullname = "c3archives_{0}".format(name)
+        fullname = "archiveshub_{0}".format(name)
         self.response.set_cookie(fullname, str(value), **kwargs)
 
     def _get_cookie(self, name):
         # Prepend app name
-        fullname = "c3archives_{0}".format(name)
+        fullname = "archiveshub_{0}".format(name)
         return self.request.cookies.get(fullname)
 
     def _fetch_record(self, session, recid):
@@ -402,50 +407,46 @@ def emailFromArchonCode(code):
 def iterContributors(session):
     """Generator for Contributor Identifier, Contributor Name tuples."""
     # Get Database object
-    global contributorCache
+    db = session.server.get_object(session, session.database)
+    identifierIdx = db.get_object(session, 'idx-vdbid')
+    nameIdx = db.get_object(session, 'idx-vdbName')
+    contributorCache[0] = time.time()
+    for rs in identifierIdx:
+        term = rs.queryTerm
+        titles = nameIdx.facets(session, rs)
+        contributorCache[1][term] = titles[0][0]
+        yield (term, titles[0][0])
+
+
+def listContributors(session):
+    """Return a list of Contributor Identifier, Contributor Name tuples.
+
+    Pickle file caching equivalent of::
+
+        list(iterContributors(session))
+
+    """
     index_filename = resource_filename(
         Requirement.parse('archiveshub'),
         'dbs/ead/indexes/idx-vdbid/idx-vdbid.index_TERMIDS'
     )
-    if (
-        os.stat(index_filename).st_mtime < contributorCache[0] and
-        contributorCache[1]
+    pickle_filename = resource_filename(
+        Requirement.parse('archiveshub'),
+        'www/ead/html/searchContributors.pickle'
+    )
+    if (os.path.exists(pickle_filename) and
+        os.stat(index_filename).st_mtime < os.stat(pickle_filename).st_mtime
     ):
-        # Yield from the cached version
-        for k, v in contributorCache[1].iteritems():
-            yield k, v
-    else:
-        db = session.server.get_object(session, session.database)
-        identifierIdx = db.get_object(session, 'idx-vdbid')
-        nameIdx = db.get_object(session, 'idx-vdbName')
-        contributorCache[0] = time.time()
-        for rs in identifierIdx:
-            term = rs.queryTerm
-            titles = nameIdx.facets(session, rs)
-            contributorCache[1][term] = titles[0][0]
-            yield (term, titles[0][0])
-
-
-def listContributors(session):
-    "Return a list of Contributor Identifier, Contributor Name tuples."""
-    return list(iterContributors(session))
-
-
-def iterCollections(session):
-    "Generator for Collection Identifier, Collection Title tuples."""
-    # Get Database object
-    db = session.server.get_object(session, session.database)
-    identifierIdx = db.get_object(session, 'idx-collectionid')
-    titleIdx = db.get_object(session, 'idx-collectiontitle')
-    for rs in identifierIdx:
-        term = rs.queryTerm
-        titles = titleIdx.facets(session, rs)
-        yield (term, titles[0][0])
-
-
-def listCollections(session):
-    "Return a list of Collection Identifier, Collection Title tuples."""
-    return list(iterCollections)
+        with open(pickle_filename, 'rb') as pfh:
+            try:
+                return pickle.load(pfh)
+            except:
+                pass
+    # Generate and cache the list
+    contributorCache = list(iterContributors(session))
+    with open(pickle_filename, 'wb') as pfh:
+        pickle.dump(contributorCache, pfh)
+    return contributorCache
 
 
 def collectionFromComponent(session, record):

@@ -1,5 +1,36 @@
 #!/bin/env python
-u"""Manage Archives Hub Contributors."""
+# -*- coding: utf-8 -*-
+# Script:    contributors.py
+# Date:      21 November 2013
+# Copyright: &copy; University of Liverpool 2005-present
+# Author(s): JH - John Harrison <john.harrison@liv.ac.uk>
+# Language:  Python
+#
+u"""Manage Archives Hub Contributors.
+
+Commands:
+  {add,rm,list}         Actions
+    add                 Add data for contributor(s). Add DocumentStore
+                        configuration(s) for named contributor(s) to the
+                        ConfigStore for this database.
+    rm                  Remove named contributor(s). Remove DocumentStore
+                        configuration(s) for named contributor(s) in the
+                        ConfigStore for this database. This will not delete
+                        the data from directory nor have an immediate effect
+                        on the live database without further steps.
+    list                List registered contributors
+
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -s PATH, --server-config PATH
+                        path to Cheshire3 server configuration file. default:
+                        /home/cheshire/cheshire3/cheshire3/configs/serverConfi
+                        g.xml
+  -d DATABASE, --database DATABASE
+                        identifier of Cheshire3 database
+
+"""
 
 import os
 import sys
@@ -21,7 +52,7 @@ from archiveshub.deploy.utils import BaseArgumentParser
 
 class ContribArgumentParser(BaseArgumentParser):
     """Custom option parser for Archives Hub contributor management."""
-    
+
     def __init__(self, *args, **kwargs):
         super(ContribArgumentParser, self).__init__(*args, **kwargs)
         self.add_argument('-d', '--database',
@@ -32,7 +63,7 @@ class ContribArgumentParser(BaseArgumentParser):
 
 def add_contributor(args):
     """Add data for contributor(s).
-    
+
     Add DocumentStore configuration(s) for named contributor(s) to the
     ConfigStore for this database. 
     """
@@ -48,6 +79,10 @@ def add_contributor(args):
         return 1
     for dbPath in args.dir:
         # Sanity checking
+        # Expand user and absolutize path
+        dbPath = os.path.abspath(
+            os.path.expanduser(dbPath)
+        )
         # Strip off trailing slash
         dbPath = dbPath.rstrip(os.pathsep)
         if os.path.exists(dbPath) and not os.path.isdir(dbPath):
@@ -151,7 +186,7 @@ def add_contributor(args):
 
 def rm_contributor(args):
     """Remove named contributor(s).
-    
+
     Remove DocumentStore configuration(s) for named contributor(s) in the
     ConfigStore for this database. This will not delete the data from directory
     nor have an immediate effect on the live database without further steps.
@@ -242,7 +277,8 @@ docbits = __doc__.split('\n\n')
 argparser = ContribArgumentParser(conflict_handler='resolve',
                                description=docbits[0]
                                )
-subparsers = argparser.add_subparsers(help='Actions')
+subparsers = argparser.add_subparsers(title="Commands",
+                                      help='Actions')
 # Add a new contributor
 parser_add = subparsers.add_parser(
     'add',

@@ -1,7 +1,7 @@
 #!/bin/env python
-#
+# -*- coding: utf-8 -*-
 # Script:    users.py
-# Date:      20 March 2013
+# Date:      21 November 2013
 # Copyright: &copy; University of Liverpool 2005-present
 # Author(s): JH - John Harrison <john.harrison@liv.ac.uk>
 # Language:  Python

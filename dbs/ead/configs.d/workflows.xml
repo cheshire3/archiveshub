@@ -103,7 +103,6 @@
                 <object type="recordStore" ref="recordStore" function="begin_storing" />
                 <for-each>
                     <!-- input type: Document -->
-                    <log level="info">" " + input.filename</log>
                     <object type="workflow" ref="loadSingleWorkflow" />
                 </for-each>
                 <object type="recordStore" ref="recordStore" function="commit_storing" />
@@ -115,39 +114,41 @@
             <objectType>cheshire3.workflow.CachingWorkflow</objectType>
             <workflow>
                 <!-- input type: Document -->
+                <assign from="input.filename" to="filename"/>
                 <object type="workflow" ref="preParserWorkflow" />
                 <try>
                     <object type="parser" ref="LxmlParser" />
                 </try>
                 <except>
-                    <assign from="'unparsable: ' + str(err)" to="input" />
-                    <log level="warning">"" + input</log>
+                    <assign from="filename + ' unparsable: ' + str(err)" to="error" />
+                    <log level="warning">"" + error</log>
                     <return />
                 </except>
                 <!-- type: Record -->
                 <try>
                     <object type="workflow" ref="assignDataIdentifierWorkflow" />
                 </try>
-                <except type="IndexError">
-                    <log level="error">"Unable to assign persistent identifier"</log>
+                <except>
+                    <log level="error">"Unable to assign persistent identifier: " + filename</log>
                     <return/>
                 </except>
-                <log level="debug">"" + input.id</log>
                 <!-- Proceed with storing -->
                 <try>
                     <object type="recordStore" ref="recordStore" function="store_record"/>
                 </try>
                 <except type="ObjectAlreadyExistsException">
                     <!-- Record already stored and has not changed.
-                         Log WARNING rather than  ERROR -->
-                    <log level="warning">"Record not stored: " + str(err)</log>
+                         Log INFO rather than WARNING or ERROR -->
+                    <log level="info">"Record not stored, no changes: " + input.id + " ("+ filename + ")"</log>
                 </except>
                 <except>
-                    <log level="error">"Record not stored: " + str(err)</log>
+                    <log level="error">"Record not stored: " + str(err) + " (" + filename + ")"</log>
                 </except>
                 <else>
-                    <!-- Update modification date index -->
+                    <!-- Update identifier and modification date index -->
+                    <object type="index" ref="idx-recid" function="index_record"/>
                     <object type="index" ref="idx-modificationDate" function="index_record"/>
+                    <log level="info">"" + input.id + " (" + filename + ")"</log>
                 </else>
             </workflow>
         </subConfig>
@@ -156,11 +157,13 @@
             <objectType>cheshire3.workflow.CachingWorkflow</objectType>
             <workflow>
                 <!-- input type: DocumentStore / DocumentFactory -->
+                <object type="database" function="begin_indexing"/>
                 <object type="recordStore" ref="componentStore" function="begin_storing" />
                 <for-each>
                     <object type="workflow" ref="loadComponentsWorkflow" />
                 </for-each>
                 <object type="recordStore" ref="componentStore" function="commit_storing" />
+                <object type="database" function="begin_indexing"/>
             </workflow>
         </subConfig>
 
@@ -173,15 +176,15 @@
                     <object type="parser" ref="LxmlParser" />
                 </try>
                 <except>
-                    <assign from="'unparsable: ' + str(err)" to="input" />
-                    <log level="warning">"" + input</log>
+                    <assign from="'unparsable: ' + str(err)" to="error" />
+                    <log level="warning">"" + error</log>
                     <return />
                 </except>
                 <!-- input type: Record -->
                 <try>
                     <object type="workflow" ref="assignDataIdentifierWorkflow" />
                 </try>
-                <except type="IndexError">
+                <except>
                     <log level="error">"Unable to determine persistent identifier"</log>
                     <return/>
                 </except>
@@ -218,8 +221,8 @@
                     </try>
                     <except type="ObjectAlreadyExistsException">
                         <!-- Record already stored and has not changed.
-                             Log WARNING rather than  ERROR -->
-                        <log level="warning">"Component not stored: " + str(err)</log>
+                         Log INFO rather than WARNING or ERROR -->
+                        <log level="info">"Component not stored, no changes: " + input.id</log>
                     </except>
                     <except>
                         <log level="error">"Component unstorable"</log>
@@ -228,7 +231,8 @@
                         <continue />
                     </except>
                     <else>
-                        <!-- Update modification date index -->
+                        <!-- Update identifier and modification date index -->
+                        <object type="index" ref="idx-recid" function="index_record"/>
                         <object type="index" ref="idx-modificationDate" function="index_record"/>
                     </else>
                 </for-each>
@@ -236,19 +240,7 @@
         </subConfig>
 
         <subConfig type="workflow" id="CollectionFromComponentWorkflow">
-            <objectType>cheshire3.workflow.CachingWorkflow</objectType>
-            <workflow>
-                <try>
-                    <object type="transformer" ref="ComponentParentTransformer"/>
-                </try>
-                <except>
-                    <!-- Not a component -->
-                    <return/>
-                </except>
-                <else>
-                    <object type="parser" ref="LxmlParser"/>
-                </else>
-            </workflow>
+            <objectType>archiveshub.workflow.CollectionFromComponentWorkflow</objectType>
         </subConfig>
 
         <!--
