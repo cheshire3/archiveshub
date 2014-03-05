@@ -60,7 +60,7 @@
                 <supports type="relation">any</supports>
             </configInfo>
         </index>
-        
+
         <index c3:index="idx-vdbName">
             <title>Contributor Name</title>
             <map>
@@ -74,7 +74,7 @@
                 <supports type="relation">any</supports>
             </configInfo>
         </index>
-        
+
         <index c3:index="idx-collectionid">
             <title>ID of parent document/collection</title>
             <map>
@@ -117,7 +117,7 @@
                 <supports type="relationModifier" c3:index="idx-unitidword">stem</supports>
             </configInfo>
         </index>
-    
+
         <index c3:index="idx-title">
             <title>Title</title>
             <map>
