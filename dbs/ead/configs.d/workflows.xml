@@ -240,19 +240,7 @@
         </subConfig>
 
         <subConfig type="workflow" id="CollectionFromComponentWorkflow">
-            <objectType>cheshire3.workflow.CachingWorkflow</objectType>
-            <workflow>
-                <try>
-                    <object type="transformer" ref="ComponentParentTransformer"/>
-                </try>
-                <except>
-                    <!-- Not a component -->
-                    <return/>
-                </except>
-                <else>
-                    <object type="parser" ref="LxmlParser"/>
-                </else>
-            </workflow>
+            <objectType>archiveshub.workflow.CollectionFromComponentWorkflow</objectType>
         </subConfig>
 
         <!--
