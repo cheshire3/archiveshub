@@ -20,6 +20,6 @@ class ParentIdentifierSelector(Selector):
                 )[0]
             except IndexError:
                 # Not a component!
-                return [record.id]
+                return [[record.id]]
         _, parentId = parentId.split('/', 1)
-        return [parentId]
+        return [[parentId]]
