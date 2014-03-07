@@ -40,8 +40,10 @@ import time
 
 from lockfile import FileLock, LockTimeout
 
+from cheshire3.baseObjects import Record
 from cheshire3.exceptions import ObjectDoesNotExistException
 
+from archiveshub.apps.ead.base import cleverTitleCase
 from archiveshub.deploy.utils import BaseArgumentParser, getCheshire3Env
 
 
@@ -126,14 +128,45 @@ def load(args):
     start = time.time()
     storeIterator = _get_storeIterator(args)
     # Now iterate over the selected stores
+    wf = db.get_object(session, 'loadSingleWorkflow')
+    recordStore = db.get_object(session, 'recordStore')
+    title_idx = db.get_object(session, 'idx-title')
     for contributorStore in storeIterator:
         contributorId = contributorStore.id[:-len('DocumentStore')]
-        wf = db.get_object(session, 'loadWorkflow')
-        wf.process(session, contributorStore)
+        db.begin_indexing(session)
+        recordStore.begin_storing(session)
+        collections = []
+        for doc in contributorStore:
+            rec = wf.process(session, doc)
+            if not isinstance(rec, Record):
+                # Record not successfully stored - do not list
+                continue
+            title = title_idx.extract_data(session, rec) or '(untitled)'
+            collections.append((rec.id, cleverTitleCase(title)))
+        recordStore.commit_storing(session)
+        db.commit_indexing(session)
         session.logger.log_info(session,
                      "Description documents for {0} loaded"
                      "".format(contributorId)
         )
+        # Store a list of collections
+        fp = os.path.join(
+            os.path.expanduser('~/mercurial'),
+            'archiveshub',
+            'htdocs',
+            'permalinks',
+            '{0}.html'.format(contributorId)
+        )
+        with open(fp, 'w') as fh:
+            fh.write('<ul>\n')
+            fh.writelines([
+                u'<li><a href="/data/{0}">{1}</a></li>'.format(*c)
+                for c
+                in collections
+            ])
+        session.logger.log_info(session,
+                                "Collections listed in {0}".format(fp)
+                                )
     (mins, secs) = divmod(time.time() - start, 60)
     (hours, mins) = divmod(mins, 60)
     session.logger.log_info(
