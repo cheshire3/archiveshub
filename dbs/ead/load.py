@@ -157,13 +157,14 @@ def load(args):
             'permalinks',
             '{0}.html'.format(contributorId)
         )
+        lines = [
+            u'<li><a href="/data/{0}">{1}</a></li>'.format(*c).encode('utf-8')
+            for c
+            in collections
+        ]
         with open(fp, 'w') as fh:
             fh.write('<ul>\n')
-            fh.writelines([
-                u'<li><a href="/data/{0}">{1}</a></li>'.format(*c)
-                for c
-                in collections
-            ])
+            fh.writelines(lines)
         session.logger.log_info(session,
                                 "Collections listed in {0}".format(fp)
                                 )
