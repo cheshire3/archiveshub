@@ -42,6 +42,82 @@ class ArchivesHubOAIServer(Cheshire3OaiServer):
     of a simple set hierarchy for the contributors.
     """
 
+    def _listResults(self, metadataPrefix, set_=None, from_=None, until=None):
+        """Return a list of (datestamp, resultSet) tuples.
+
+        Suitable for use by:
+            - listIdentifiers
+            - listRecords
+        """
+        session = self.session
+        # Check set value
+        if set_ and not set_.startswith('contributor:'):
+            return []
+        elif set_:
+            set_ = set_.split(':', 1)[-1]
+
+        print set_
+        if until and until < self.earliestDatestamp:
+            raise BadArgumentError('until argument value is earlier than '
+                                   'earliestDatestamp.')
+        if not from_:
+            from_ = self.earliestDatestamp
+        if not until:
+            until = datetime.datetime.now()
+            #(from_ < self.earliestDatestamp)
+        if (until < from_):
+            raise BadArgumentError('until argument value is earlier than from '
+                                   'argument value.')
+        q = cqlparse('rec.lastModificationDate > "%s" and '
+                     'rec.lastModificationDate < "%s"' % (from_, until)
+                     )
+        # Actually need datestamp values as well as results - interact with
+        # indexes directly for efficiency
+        # Get CQL ProtocolMap
+        pm = self.db.get_path(session, 'protocolMap')
+        idx = pm.resolveIndex(session, q.leftOperand)
+        q.config = pm
+        res = {}
+        for src in idx.sources[u'data']:
+            res.update(src[1].process(session, [[str(from_)]]))
+            res.update(src[1].process(session, [[str(until)]]))
+        from_ = min(res.keys())
+        until = max(res.keys())
+        # Tweak until value to make it inclusive
+        until = until[:-1] + chr(ord(until[-1])+1)
+        termList = idx.fetch_termList(session, from_, 0, '>=', end=until)
+        # Create list of datestamp, resultSet tuples
+        tuples = []
+        for t in termList:
+            try:
+                datetime_obj = datetime.datetime.strptime(
+                    t[0],
+                    u'%Y-%m-%dT%H:%M:%S'
+                )
+            except ValueError:
+                datetime_obj = datetime.datetime.strptime(
+                    t[0],
+                    u'%Y-%m-%d %H:%M:%S'
+                )
+            datetime_rs = idx.construct_resultSet(session, t[1])
+            if not set_:
+                tuples.append((datetime_obj, datetime_rs))
+            else:
+                # Filter by set
+                set_q = cqlparse('vdb.identifier = {0}'.format(set_))
+                set_rs = self.db.search(session, set_q)
+                print len(set_rs)
+                full_rs = SimpleResultSet(session)
+                full_q = cqlparse('{0} and {1}'
+                                  ''.format(q.toCQL(), set_q.toCQL()))
+                tuples.append((datetime_obj,
+                               full_rs.combine(session,
+                                               [datetime_rs, set_rs],
+                                               full_q
+                                               )
+                               ))
+        return tuples
+
     def listIdentifiers(self, metadataPrefix, set=None, from_=None, until=None,
                         cursor=0, batch_size=10):
         """Return a list of Header objects for matching records.
