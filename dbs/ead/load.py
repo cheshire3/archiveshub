@@ -1,7 +1,6 @@
 #!/bin/env python
 # -*- coding: utf-8 -*-
 # Script:    load.py
-# Date:      3 March 2014
 # Copyright: &copy; University of Liverpool 2005-present
 # Author(s): JH - John Harrison <john.harrison@liv.ac.uk>
 # Language:  Python
