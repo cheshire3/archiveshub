@@ -138,11 +138,13 @@ def load(args):
         collections = []
         for doc in contributorStore:
             rec = wf.process(session, doc)
-            if not isinstance(rec, Record):
+            if not isinstance(rec, Record) or not rec.id:
                 # Record not successfully stored - do not list
                 continue
             title = title_idx.extract_data(session, rec) or '(untitled)'
-            collections.append((rec.id, cleverTitleCase(title)))
+            collections.append(
+                (unicode(rec.id, 'utf-8'), cleverTitleCase(title))
+            )
         recordStore.commit_storing(session)
         db.commit_indexing(session)
         session.logger.log_info(session,
@@ -157,11 +159,15 @@ def load(args):
             'permalinks',
             '{0}.html'.format(contributorId)
         )
-        lines = [
-            u'<li><a href="/data/{0}">{1}</a></li>'.format(*c).encode('utf-8')
-            for c
-            in collections
-        ]
+        lines = []
+        for c in collections:
+            try:
+                lines.append(u'<li><a href="/data/{0}">{1}</a></li>'
+                             ''.format(*c).encode('utf-8')
+                             )
+            except UnicodeDecodeError:
+                # We'll have to omit this from the list
+                pass
         with open(fp, 'w') as fh:
             fh.write('<ul>\n')
             fh.writelines(lines)
