@@ -147,7 +147,7 @@
                     <object type="workflow" ref="loadComponentsWorkflow" />
                 </for-each>
                 <object type="recordStore" ref="componentStore" function="commit_storing" />
-                <object type="database" function="begin_indexing"/>
+                <object type="database" function="commit_indexing"/>
             </workflow>
         </subConfig>
 
