@@ -1,0 +1,45 @@
+	<ul id="tagmenu" class="SimpleContextMenu">
+		<li onMouseOver="hideSubMenus(); this.style.cursor='pointer';" onclick="addTag('p')">paragraph</li>
+		<li onMouseOver="showSubMenu('link', 1, 'tagmenu')" class="tosubctxt"><img src="/img/right-mini.gif" alt="-&gt;"/>links</li>		
+		<li onMouseOver="showSubMenu('title', 2, 'tagmenu')"><img src="/img/right-mini.gif" alt="-&gt;"/>titles</li>
+		<li onMouseOver="showSubMenu('font', 3, 'tagmenu')"><img src="/img/right-mini.gif" alt="-&gt;"/>font</li>
+		<li onMouseOver="showSubMenu('list', 4, 'tagmenu')"><img src="/img/right-mini.gif" alt="-&gt;"/>list</li>
+		<li onMouseOver="hideSubMenus(); this.style.cursor='pointer';" onclick="addTag('comment')">comment</li>
+		<li onMouseOver="hideSubMenus(); this.style.cursor='pointer';" onclick="toggleKeyboard()">keyboard on/off</li>		
+    </ul>
+
+    <ul id="linkmenu" class="SimpleContextMenu">
+		<li onMouseOver="showSubMenu('archival', 0, 'linkmenu')"><img src="/img/right-mini.gif" alt="-&gt;"/>archival</li>
+		<li onMouseOver="hideSubMenu('archival'); this.style.cursor='pointer';" onclick="addTag('extref href=&quot; &quot;')">www</li>
+		<li onMouseOver="hideSubMenu('archival'); this.style.cursor='pointer';" onclick="addTag('extref href=&quot;mailto: &quot;')">email</li>   
+    </ul>
+    
+    <ul id="titlemenu" class="SimpleContextMenu">
+		<li onmouseover="this.style.cursor='pointer';" onclick="addTag('title')">plain</li>
+		<li onmouseover="this.style.cursor='pointer';" onclick="addTag('title render=&quot;bold&quot;')">bold</li>
+		<li onmouseover="this.style.cursor='pointer';" onclick="addTag('title render=&quot;italic&quot;')">italic</li>
+		<li onmouseover="this.style.cursor='pointer';" onclick="addTag('title render=&quot;doublequote&quot;')">quoted</li>
+		<li onmouseover="this.style.cursor='pointer';" onclick="addTag('title render=&quot;underline&quot;')">underline</li>    
+    </ul>
+ 
+    <ul id="fontmenu" class="SimpleContextMenu">
+		<li onmouseover="this.style.cursor='pointer';" onclick="addTag('emph render=&quot;bold&quot;')">bold</li>
+		<li onmouseover="this.style.cursor='pointer';" onclick="addTag('emph render=&quot;italic&quot;')">italic</li>   
+		<li onmouseover="this.style.cursor='pointer';" onclick="addTag('emph render=&quot;doublequote&quot;')">quoted</li>
+		<li onmouseover="this.style.cursor='pointer';" onclick="addTag('emph render=&quot;underline&quot;')">underline</li> 
+    </ul>
+    
+    <ul id="listmenu" class="SimpleContextMenu">
+		<li onmouseover="this.style.cursor='pointer';" onclick="addTag('list')">list</li>
+		<li onmouseover="this.style.cursor='pointer';" onclick="addTag('item')">item</li>
+    </ul>   
+    
+	<ul id="archivalmenu" class="SimpleContextMenu">
+		<li onmouseover="this.style.cursor='pointer';" onclick="addTag('archref role=&quot;http://www.archiveshub.ac.uk/apps/linkroles/related&quot; href=&quot; &quot;')">related</li>
+		<li onmouseover="this.style.cursor='pointer';" onclick="addTag('archref role=&quot;http://www.archiveshub.ac.uk/apps/linkroles/extended&quot; href=&quot; &quot;')">extended</li>
+		<li onmouseover="this.style.cursor='pointer';" onclick="addTag('archref role=&quot;http://www.archiveshub.ac.uk/apps/linkroles/child&quot; href=&quot; &quot;')">child</li>
+		<li onmouseover="this.style.cursor='pointer';" onclick="addTag('archref role=&quot;http://www.archiveshub.ac.uk/apps/linkroles/parent&quot; href=&quot; &quot;')">parent</li>
+		<li onmouseover="this.style.cursor='pointer';" onclick="addTag('archref role=&quot;http://www.archiveshub.ac.uk/apps/linkroles/descendant&quot; href=&quot; &quot;')">descendant</li>
+		<li onmouseover="this.style.cursor='pointer';" onclick="addTag('archref role=&quot;http://www.archiveshub.ac.uk/apps/linkroles/ancestor&quot; href=&quot; &quot;')">ancestor</li>
+	</ul>
+    

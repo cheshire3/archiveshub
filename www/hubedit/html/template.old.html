@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+	<title>Archives Hub v3.0 :: %TITLE%</title>
+    
+	<!-- generic CSS -->
+	<link rel="stylesheet" type="text/css" href="/css/all.css"></link>
+	<!-- screen CSS -->
+	<link rel="stylesheet" type="text/css" media="screen" href="/css/screen.css"></link>
+	<!--[if lt IE 7]>
+		<link rel="stylesheet" type="text/css" media="screen" href="/css/ie6.css">
+	<![endif]-->
+	<!--[if gte IE 7]>
+		<link rel="stylesheet" type="text/css"  media="screen" href="/css/ie7.css">
+	  <![endif]-->
+	<!-- printout CSS -->
+	<link rel="stylesheet" type="text/css" media="print" href="/css/print.css"></link>
+		
+	<!-- favourite icon -->
+	<link rel="favourite icon" href="http://www.archiveshub.ac.uk/favicon.ico"></link>
+    <script type="text/javascript" src="/js/hub.js"></script>
+    <script type="text/javascript" src="/js/visuals.js"></script>
+    <script type="text/javascript" src="/js/hijax.js"></script>
+    <script type="text/javascript" src="/js/cookies.js"></script>
+	
+  </head>
+  <body>
+    <div id="header">
+      	<div id="banner">
+       		<div id="logo">
+       			<a href="http://www.archiveshub.ac.uk" title="Archives Hub">
+    			  <img src="http://www.archiveshub.ac.uk/loopsmall2.gif" alt="Archives Hub"/>
+    			</a>
+       		</div>
+       		<div id="bannerextra">
+       			Helpdesk email: <a href="m&#97;ilto:&#97;rchiveshub&#64;mim&#97;s.&#97;c.uk" title="Email us">archiveshub&#64;mimas.ac.uk</a> <br/>
+    			Phone: +44 (0)161 275 6789<br/>
+    		<!--	<form name="minisearchform" method="post" action="SCRIPT/search.html"  onsubmit="setCookie('quicksearchform', formToString('quicksearchform'));">
+    			    <strong>Search</strong>: 
+    			    <select name="fieldidx1">
+    				<option value="cql.anywhere" selected="selected">Keywords</option>
+    				<option value="dc.title">Titles</option>
+    				<option value="dc.creator">Creators</option>
+    				<option value="bath.name">Names</option>
+    				<option value="dc.subject">Subjects</option>
+    			    </select>
+    			    <input type="hidden" name="fieldrel1" value="all/relevant/proxinfo"></input>  
+    			    <input name="fieldcont1" type="text" size="20" ></input>
+    			    <input type="hidden" name="_charset_"/>
+    			    <input type="hidden" name="numreq" value="20"></input>
+    			    <input type="hidden" name="firstrec" value="1"></input>
+    	    		    <input type="hidden" name="noComponents" value="0"></input>
+    			    <input type="submit" value=" Go "/>
+    			</form>  -->
+       		</div> <!-- /bannerextra -->
+       		<div id="titles">
+    			<h1>Archives Hub</h1>
+                <h2 class="tagline">Revolutionising access to the archives of UK universities and colleges</h2>
+                <!-- <h2>%TITLE%</h2> -->
+       		</div> <!-- /titles -->
+        </div> <!-- /banner -->
+   		
+   		<div id="navbar">
+   		    <ul id="navmenu">
+       			<li class="navtab"><a href="http://www.archiveshub.ac.uk" title="Home">Home</a></li>
+       		<!-- 	<li class="navtab"><a href="/hub/search.html" title="Search">Search</a>
+       				<ul class="subnav">
+       					<li class="subtab"><a href="/hub/search.html" title="Advanced Search">Advanced Search</a></li>
+       					<li class="subtab"><a href="/hub/browse.html" title="Browse by title, creator, subject etc.">Browse</a></li>
+       					<li class="subtab"><a href="/hub/subject.html" title="Find subjects">Subjects</a></li>
+       					<li class="subtab"><a href="/hub/help.html" title="Help on searching, browsing, viewing etc.">Help</a></li>
+       				</ul>
+       			</li>
+       			<li class="navtab"><a href="/hub/about.shtml" title="About the Archives Hub">About</a></li>
+       			<li class="navtab"><a href="/hub/arch/" title="For Archivists">For Archivists</a>
+       				<ul class="subnav">
+       					<li class="subtab"><a href="/hub/arch/index.html" title="Introduction">Intro</a></li>
+       					<li class="subtab"><a href="/hub/arch/contents.shtml" title="Introduction">Contents</a></li>
+       					<li class="subtab"><a href="/hub/arch/dc.shtml" title="Introduction">Data Creation</a></li>
+       					<li>...</li>
+       				</ul>
+       			</li>
+       			<li class="navtab"><a href="/hub/sitemap.shtml" title="Sitemap">Sitemap</a></li>
+       			<li class="navtab"><a href="/hub/links.shtml" title="Links">Links</a></li>-->
+       			%NAVBAR%
+                <!-- try to insert link back to last resultSet -->
+                <script type="text/javascript">
+                <!--
+              /*  var rsidCookie = getCookie('hubResultSetId');
+                var crumbs = rsidCookie.split('-');
+                if (crumbs.length == 4) {
+                    document.write('<li class="navtab"><a href="SCRIPT/search.html?rsid=' + crumbs[0] + '&startRecord=' + crumbs[1] + '&maximumRecords=' + crumbs[2] + '&highlight=' + crumbs[3] + '" title="Return to results of the last search you submitted">Back To Results</a></li>');
+                } */
+                -->
+                </script>
+   		    </ul>
+   		</div> <!-- /navbar -->
+   	</div> <!-- /header -->
+    <div id="content">
+	%CONTENT%
+    </div> <!-- /content -->
+  </body>
+</html>

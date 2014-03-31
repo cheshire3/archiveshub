@@ -1,0 +1,21 @@
+ 	<script type="text/javascript" src="/js/form.js"></script>
+ 		<div id="single">
+
+			<h3 class="bar">Email Request</h3>
+
+<div id="emaildiv">
+   
+    <p>
+        This form allows you to send a XML version of the selected EAD to yourself via email. The file will be sent as an attachment.
+    </p>
+    <p>
+        Please be sure to type in your email address correctly.
+    </p>
+    <form action="email.html" name="email" class="email" method="get" onsubmit="return validateEmail();">
+        <input type="hidden" name="operation" value="email"/>
+        %Details%
+        Email Address: <input type="text" size="40" name="address" id="email"/>
+        <input type="submit" name="submit" value="submit"/>
+    </form>
+</div>
+</div>

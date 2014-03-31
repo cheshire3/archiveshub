@@ -1,0 +1,104 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta name="ROBOTS" content="%ROBOTS%"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Cache-Control" content="no-cache"/>
+	<link rel="schema.DCTERMS" href="http://purl.org/dc/terms/" />
+    <meta name="DCTERMS.title" content="%TITLE%"/>
+	<title>%TITLE% - Archives Hub</title>
+	<!-- favourite icon embedded data for efficiency - do not edit! -->
+    <link rel="favourite icon" href="data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAD///8R//////////////////////rz2//+/Pf/////////////////////////////////
+//////////////8D//////////////////////Tms//brgv/5sdX//////////////////jw1v/3
+79X////////////////////////////////////////////y4aX/264L/960HP////////////z4
+7f/w4K3/8OCt//389v//////////////////////////////////////+PDR/9uuC//brgv/+/bl
+///////27M7/8OCt//Plu//////////////////////////+/+fIWf/ivj3/7daF//ftyf/brw7/
+264L//XpvP/+/vz/8eKy//Dgrf/48dr///////////////////////789v/csBL/264L/9uuC//b
+rgv/264L/9uuC//v25L/+fPg//Dgrf/w4K3/9+7T//fu0f/168n/+PDZ////////////9+7M/+rR
+dP/fuCn/264L/9uuC//brgv/6s9u//Towv/w4K3/8OCt//Dgrf/w4K3/8OCt//Dgrv///v7/////
+//////////////////jw0P/t1oX/5cVR//ftyP/27M7/8OCt//HjtP/z5rz/9OnE//bszP/69OH/
+//////7+/v/ZzM3/yLO0/7ien/+oiIr/l3Bz/5l0dv/18fH/xOT9/7je/f/1+v//////////////
+//////////////+8o6T/XCAk/1wgJP9cICT/XCAk/1wgJP9cICT/vrW9/ySZ+P8hmPj/KJv4/2K2
++v+m1vz/6fX+////////////zLm7/18kKP9mLjL/dkRH/204O/9cICT/Yyot//Lx8/8lmvj/IZj4
+/yGY+P8hmPj/IZj4/yOZ+P+u2vz///////////////////////////97S07/XCAk/5l0dv//////
+SKr5/yGY+P9ftfr/arr6/yud+P8hmPj/mtD8///////////////////////e09P/XCAk/1wgJP/Y
+ysv//////268+v8hmPj/cb36///////4/P//2e3+//7/////////////////////////pYSG/1wg
+JP91QkX///////////+Uzvz/IZj4/0ur+f//////////////////////////////////////////
+/8Cpqv9iKS3/wqut////////////vOD9/yGY+P81ofn///////////////////////////////8E
+//////////////////////////////////////z9//+f0vz/wuP9////////////////////////
+//9RgAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAgAEAAA=="></link>
+
+    <!-- Archives Hub Central CSS + JavaScript -->
+    <link href="/styles/ah.base.css" media="screen" rel="stylesheet" type="text/css"></link>
+    <!-- Editor App CSS -->
+    <link href="/styles/ah.editor.css" media="screen" rel="stylesheet" type="text/css"/>
+    <!--[if lte IE 6]><link href="/styles/ie6.css" rel="stylesheet" type="text/css" media="screen" /><![endif]-->
+    <!--[if IE 7]><link href="/styles/ie7.css" rel="stylesheet" type="text/css" media="screen" /><![endif]-->
+    <!-- printout CSS -->
+    <link rel="stylesheet" type="text/css" media="print" href="/styles/print.css"></link>
+    <!-- collision between prototype and Archives Hub appearance JS (jQuery) -->
+    <!-- tell curvyCorners to behave! -->
+    <script type="text/javascript">
+var curvyCornersVerbose = false;
+    </script> 
+    <!-- Too much work to remove dependence on prototype.js - sacrifice appearance -->
+<!--    <script type="text/javascript" src="/scripts/js/ah.libs.js"></script>-->
+<!--    <script type="text/javascript" src="/scripts/js/ah.text.js"></script>-->
+<!--    <script type="text/javascript" src="/scripts/js/ah.base.js"></script>-->
+    <!-- Editor JavaScript -->
+    <!--[if lt IE 7]>
+        <script type="text/javascript">
+            var ie6Cookie = getCookie('ie6warned');
+            if (!ie6Cookie) {
+                window.alert("We have detected that you are currently using a very old browser.\n\nThe Archives Hub Editor has been developed for more recent browsers (Microsoft Internet Explorer 7+, Firefox 2+, Opera 9+).\n\nYou will need to upgrade to one of these browsers in order to use the Archives Hub Editor.");
+                setCookie("ie6warned", "Yes");
+            }
+        </script>
+    <![endif]-->
+    <script type="text/javascript" src="/js/hub.js"></script>
+    <script type="text/javascript" src="/js/visuals.js"></script>
+    <script type="text/javascript" src="/js/cookies.js"></script>
+  </head>
+  <body id="%PAGECLASS%" class="splitscreen">
+    <!--  Hub appearance JS not imported - collision with prototype.js -->
+<!--    <script type="text/javascript">init();</script>-->
+    <div id="Accessibility">
+        <ul>
+            <li><a href="#content" accesskey="0">Skip to page content</a></li>
+            <li><a href="#navbar" accesskey="1">Skip to navigation</a></li>
+        </ul>
+    </div><!-- end accessibility -->
+
+    <div id="Header" class="splitscreen">
+      	<div id="banner">
+       		<div id="logo">
+       			<a href="http://archiveshub.ac.uk" id="Logo" title="Back to homepage">
+    			  <img src="/img/ah-logo.png" alt="Archives hub - at the centre of great research"/>
+    			</a>
+       		</div>
+       		<div id="bannerextra">
+    			<div id="login-status">
+                </div>
+       		</div> <!-- /bannerextra -->
+       		<h1 class="inbanner splitscreen">EAD Editor</h1>
+            <ul id="Sitewide" class="splitscreen toolmenu">
+                %NAVBAR%
+            </ul>
+        </div> <!-- /banner -->
+   	</div> <!-- /header -->
+<!--   	<div id="toolbar">-->
+<!--	    <ul id="toolmenu">-->
+<!--	    %TOOLS%-->
+<!--	    </ul>-->
+<!--	</div> -->
+<!-- /toolbar -->
+	<div id="content">
+        %CONTENT%
+    </div> <!-- /content -->
+    <div id="loadImg" class="loading">
+        <img src="/img/ajax-loader.gif" alt=""/>
+    </div>
+  </body>
+</html>

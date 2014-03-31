@@ -1,0 +1,452 @@
+<div id="single" class="help">
+	<h3 class="bar">Contents</h3>
+	<div id="contents">
+		<ul>
+			<li>
+				<a href="#menu" title="Jump to help on the data creation and editing menu">Data Creation and Editing Menu</a>
+				<ul>
+					<li>
+						<a href="#create" title="Jump to help on creating a new file">Creating a New File</a>
+					</li>
+					<li>
+						<a href="#localdir" title="Jump to help on editing files from the a local drive">Editing Files from a Local Drive</a>
+					</li>
+					<li>
+						<a href="#draft" title="Jump to help on editing files from the draft file store">Editing Files from the Draft File Store</a>					
+						<ul>
+							<li>
+								<a href="#draftops" title="Jump to help on the user operations in the draft file store">Draft File Store User Controls</a>
+								<li>	
+									<a href="#draftdel" title="Jump to help on deleting draft files">Deleting Draft Files</a>
+								</li>
+								<li>
+									<a href="#draftassign" title="Jump to help on reassigning draft files">Reassigning Draft Files (Administrative Users Only)</a>
+								</li>
+							</li>
+						</ul>
+					</li>
+				</ul>
+			</li>
+			
+			<li>
+				<a href="#form" title="Jump to help on using the form">Using the Editing and Creation Form</a>
+				<ul>
+					<li>
+						<a href="#file" title="Jump to help on file operations">File Operations</a>
+						<ul>
+							<li>
+								<a href="#save" title="Jump to help on saving the file">Save File</a>
+							</li>
+							<li>
+								<a href="#delete" title="Jump to help on deleting the file">Delete File</a>
+							</li>
+						</ul>
+					</li>
+					<li>
+						<a href="#preview" title="Jump to help on preview operations">Preview Operations</a>
+						<ul>
+							<li>
+								<a href="#xml" title="Jump to help on previewing the EAD">Preview EAD</a>
+							</li>
+							<li>
+								<a href="#online" title="Jump to help on previewing the on-line version">Preview On-line Version</a>
+							</li>
+						</ul>
+					</li>
+					<li>
+						<a href="#export" title="Jump to help on export operations">Export Operations</a>
+						<ul>
+							<li>
+								<a href="#disk" title="Jump to help on saving the description to your local machine">Save to Disk</a>
+							</li>
+							<li>
+								<a href="#email" title="Jump to help on emailing the description to an email account">Email</a>
+							</li>
+						</ul>
+					</li>
+					<li>
+						<a href="#navtree" title="Jump to help on navigating through a description">Navigating through a Description</a>
+					</li>
+					<li>
+						<a href="#complete" title="Jump to help on completing the form">Completing the Form</a>
+					</li>					
+					<li>
+						<a href="#addcomp" title="Jump to help on adding components">Adding Components</a>
+					</li>
+					<li>
+						<a href="#delcomp" title="Jump to help on deleting components">Deleting Components</a>
+					</li>
+					<li>
+						<a href="#dao" title="Jump to help on adding digital object links">Adding Digital Object Links</a>
+					</li>
+					<li>
+						<a href="#accesspoints" title="Jump to help on adding and editing access points">Adding and Editing Access Points</a>
+					</li>
+					<li>
+						<a href="#specialchar" title="Jump to help on adding special characters">Adding Special Characters</a>
+					</li>
+				</ul>
+			</li>
+		</ul>
+	</div>
+	<div id="help">
+		<div>
+			<a name="menu"></a>
+			<h3 class="bar">Data Creation and Editing Menu</h3>
+			<p>
+				The data creation and editing interface allows you to create new EAD descriptions from scratch,
+				to edit those already in your spoke database and to upload and edit a file stored in your local
+				file system. You must have <a href="http://www.archiveshub.ac.uk/arch/glossary.shtml#javascript">javascript</a> enabled in order to 
+				be able to use the editing interface. It is also recommended that you use Firefox 2 or higher 
+				although Internet Explorer 7 or higher should also be okay. The amount of javascript needed to
+				provide the functionality required by the editing interface means that lower versions of these
+				browsers should not be used and doing so may result in the loss of data.
+			</p>
+			<a name="create"> </a>
+			<h4>Creating a New File</h4>
+			<p>
+				If you are creating a new file you will be presented with an empty EAD creation form to complete.
+				You will notice that many of the buttons on the form are disabled. This is because it is not
+				possible to perform those operations until you have saved the file. In order to save the file 
+				you must have completed the Reference Code and the Title. There are some restrictions placed 
+				on the Reference Code. You are not able to save a Reference Code which is the same as one
+				indexed in your spoke database. If you try to save a Reference Code which is already present in the 
+				draft file store you will be given the opportunity to cancel the operation and change the details.
+			</p>
+			<a name="localdir"> </a>
+			<h4>Editing Files from a Local Drive</h4>
+			<p>
+				<b style="color: red;">Important Note:</b><b> Every effort has been made to ensure that no data is lost when loading in 
+				files for editing however due to the flexibility allowed within EAD this cannot be guaranteed. Please make sure that you
+				have a backup copy of any file you try to edit. If you do find that data is lost during the editing process
+				please send a copy of the EAD file and information on the data which was lost to <a href="mailto:archiveshub@mimas.ac.uk">archiveshub@mimas.ac.uk</a> 
+				and we will try to accommodate it in future releases.</b>
+			</p>
+				<p>
+					Using the browse button you can select a file from a local drive on the computer you are using.
+					When you click 'edit local file' the data is shown
+					in the editing form at the same time a copy will be saved in the draft file store. You are not
+					able to load a file for editing if there is already a copy assigned to your username in the 
+					draft file store. If you want to start editing a file again and overwrite the changes you have 
+					already made in the draft file store you must first delete the copy in the draft file store 
+					(see <a href="#draftdel">deleting a file from the draft file store</a>).						 
+				</p>			
+				<a name="draft"> </a>
+				<h4>Editing Files from the Draft File Store</h5>
+				<p>
+					The main editing menu provides a list of all the files currently in your draft file store.
+					They are listed by user and only Administrative users can edit files belonging to other users.
+				</p>
+			<a name="draftops"> </a>
+			<h5>Draft File Store User Controls</h5>
+			<p>
+				There are two types of user in the data creation and editing interface, the same as in the
+				administration interface (see <a href="/ead/admin/help.html#users">admin help</a>). General users can only
+				edit and export files from the draft files store which are 
+				assigned to them whereas Administrative users can edit and export files assigned to any user and can also 
+				switch files between users. All users can see the names of all the EAD descriptions in the process
+				of being edited or created by all users to help prevent problems with duplicate files.
+			</p>
+			<p>
+				It is recommended that each user of the editing and creating interface is given their own user name and that the majority
+				of users are general rather than administrative users.
+			</p>
+			<a name="draftdel"> </a>
+				<h5>Deleting Files from the Draft File Store</h5>
+				<p>
+					To delete a file from the draft file store in the data creation and editing menu select the file using the
+					radio button and click the delete button. You will be asked to confirm that you want to delete the file.
+					Once the file has been deleted the data is not recoverable. No changes will be made to the spoke database 
+					so if there is also a copy of the file in the database that will remain unchanged.
+				</p>
+				<p>
+					General users are only able to delete files assigned to their user name. Administrative users may delete any
+					files in the draft file store.
+				</p>
+			<a name="draftassign"> </a>
+				<h5>Reassigning Draft Files (Administrative Users Only)</h5>
+				<p>
+					Administrative users are able to change the assignment of files between users. To do this first select
+					the file to be reassigned using the radio button then select the user who you want to reassign the file to
+					from the drop down menu. Once you have done this click the 'confirm reassignment' button which will reassign
+					the file to the select user.
+				</p>
+			
+		</div>
+
+		<div>
+			<a name="form"></a>
+			<h3 class="bar">Using the Editing and Creation Form</h3>
+			<p>
+				This section describes many of the features of the editing and creation form for EAD descriptions. This information is relevant 
+				whether you are creating a brand new file or editing an existing EAD description. This help document is not intended to provide 
+				help with EAD itself but rather the use of the Archives Hub data creation tool. Each EAD element on the form has this icon 
+				<img src="/img/structure/form_tip.png" alt="[What is this?]"/> which will take you to specific help for that element of EAD.
+			</p>
+			<p>
+				The screen layout has several different sections as illustrated below. 			
+			</p>
+			<p>
+				<img style="width:800px;" src="/img/overview.png" alt="[screenshot unavailable]"/>				
+			</p>
+			<p>
+				<ul>
+					<li>A - <a href="#file">file</a>, <a href="#preview">preview</a> and <a href="#export">export</a> operations</li>
+					<li>B - <a href="#navtree">navigation tree</a></li>
+					<li>C - <a href="#complete">data creation and editing form</a></li>
+				</ul>
+			</p>
+			<a name="file"> </a>
+			<h4>File Operations</h4>
+			<a name="save"> </a>
+			<h5>Save File</h5>
+			<p>
+				Saving a file saves all changes to the draft editing store. If you are saving a collection level file then you must complete
+				the minimum requirement of reference code and title. If you are creating a new file there are also some restriction on the reference code 
+				(see <a href="#create"> creating a new file</a>). Once you have saved a new file the page will reload and the preview and export options will
+				become active, at this point you are also able to add components.
+			</p>
+			<p>
+				Saving also checks whether the displayed section of the description contains all the required fields and highlights any that are 
+				missing (see <a href="navtree">navigating through a description</a>)
+			</p>
+			<a name="delete"> </a>
+			<h5>Delete File</h5>
+			<p>
+				If you wish to delete the currently loaded file you can click the 'delete' button. This operation
+				will delete the file from the draft file store and the data will not be recoverable. It works in the
+				same way as the delete option in the file menu (see <a href="#draftdel">deleting files from the draft file store</a>) 
+				but deletes the file currently loaded into the data creation and editing interface and redirects you to the main menu.
+			</p>			
+			<a name="preview"> </a>
+			<h4>Preview Operations</h4>
+			<p>
+				These operations allow you to preview the description you are creating or editing in different formats.
+			</p>
+			<a name="xml"> </a>
+			<h5>Preview EAD</h5>
+			<p>
+				This will show the EAD XML for the current description in your web browser. The back button will return you to 
+				the data creation and editing interface and description you are working with. It will however return you to the
+				collection level for that description even if you were viewing a component when you previewed the EAD. Before
+				showing the EAD the description is saved so any changes to the current record are reflected.
+			</p>
+			<a name="online"> </a>
+			<h5>Preview On-line Version</h5>
+			<p>
+				This will show you how the description will look when it is displayed on your spoke and on the central hub. As with the
+				EAD preview the back button will return you to 
+				the data creation and editing interface and description you are working with. It will however return you to the
+				collection level for that description even if you were viewing a component when you previewed the online version. Before
+				showing the online version the description is saved so any changes to the current record are reflected.
+			</p>	
+			<a name="export"> </a>
+			<h4>Export Operations</h4>
+			<p>
+				These operations allow you to export you EAD by saving it to your local drive or emailing it to someone.
+			</p>
+			<a name="disk"> </a>
+			<h5>Save the file to Disk</h5>
+			<p>
+				This option allows you to save the description as an XML file to a local disk on the machine you are using.				
+			</p>
+			<a name="email"> </a>
+			<h5>Export to Database and File</h5>
+			<p>
+				This option allows you to specify an email address to which a copy of your EAD XML will be sent as a file attachment.
+			</p>	
+			<a name="navtree"> </a>
+			<h4>Navigating through a Description</h4>
+			<p>
+				The navigation tree presents a hierarchical view of your EAD description. Clicking on any 
+				part of the tree will display the relevant data in the form on the right. The part of the
+				tree highlighted in yellow is that displayed in the form. The colour of the text in the tree is
+				also relevant, black indicates that all of the fields required to submit the file to your database
+				are complete, red indicates that some required fields have not been completed. If you click on a 
+				component which is coloured red the missing fields will be indicated on the form with a red border.
+			</p>	
+			<p>
+				It is important to note that each time you navigate between different levels of the record the file is saved even if you
+				don't click the save button. 
+			</p>
+			<a name="complete"> </a>
+			<h4>Completing the Form</h4>
+			<p>
+				In order to create or description you just need to add the data into the relevant sections of the form or edit what is there.
+				For help on what each of the sections should contain you can click on the help links <img src="/img/structure/form_tip.png" alt="[What is this?]"/>
+				provided for each element of the form. The numbering of the form fields refers to the corresponding ISAD(G) rules.
+			</p>		
+			<p>
+				There are three different classifications for elements in the data creation and editing form. Required elements
+				(without which your description cannot be exported to the database) are indicated with a red border as below:
+			</p>
+				<img src="/ead/img/required.png" alt="[screenshot unavailable]"/>
+			<p>
+				 Recommended elements
+				are those whose text boxes are ready for data to be entered when the form is loaded as below (note if you are editing an existing record
+				any element containing data is presented in this way). 
+			</p>
+				<img src="/ead/img/recommended.png" alt="[screenshot unavailable]"/>		
+			<p>
+				Optional fields do not have a text box when the form is loaded but clicking on the 'add content' link will show the text box 
+				so that data can be entered. When the form is loaded and there is no content in the element it will look like this.
+			</p>
+				<img src="/ead/img/optional.png" alt="[screenshot unavailable]"/>	
+			<p>
+				Many of the EAD fields allow further XML tags within them, to specify lists, a title, or different paragraphs. Several features are built into
+				the form to help with entering these XML tags. You can enter tags either by typing them or using the right-click menu. If you right click on a field
+				the menu will appear. Some of the options also have sub-menus as illustrated below.
+			</p>
+				<img src="/ead/img/menu.png" alt="[screenshot unavailable]"/>
+			<p>
+				 Clicking on a tag type will enter the tag at the current cursor point or if an area of
+				text is selected it will enclose the selected text inside the tags.
+			</p>
+			<p>
+				If invalid XML is entered into a field, such as mismatched opening and closing tags, the background 
+				of the field will go red. If there is any invalid XML present in the form you will not be able to perform any
+				actions such as saving, previewing or adding a component and you will not be able to navigate to another part of the record.
+			</p>
+				<img src="/ead/img/invalidxml.png" alt="[screenshot unavailable]"/>
+			<p>
+				When the XML is corrected the field will go white again. This will take a few second after you have stopped typing.
+			</p>
+			<a name="addlang"> </a>
+			<h4>Adding and Editing Language of Material</h4>
+			<p>
+				This works in the same way as adding <a href="#accesspoints">access points</a>.
+			</p>				
+			<a name="addcomp"> </a>
+			<h4>Adding Components</h4>
+			<p>
+				Once the collection level description has been saved components can be added by clicking on the 
+				'Add Component' button. The component will be added to whichever section of the description is 
+				currently selected. The Reference Code will be filled in automatically based on the details
+				of the parent component but these details can all be edited if required. The Reference Code and
+				Title will be updated on the navigation tree as changes are made in the form.
+			</p>
+			<p>
+				Following the EAD tag library components may only be nested to a maximum level of 12.
+			</p>
+			<a name="delcomp"> </a>
+			<h4>Deleting Components</h4>
+			<p>
+				Components can be deleted by clicking on the delete icon <img src="/ead/img/delete.png" alt="[delete icon]"/>
+				next to the relevant component in the navigation tree. You will receive a warning message confirming the 
+				reference code and title of the component to be deleted. If you click 'ok' to delete the component
+				the data will be permanently lost. Only components which do not themselves have components can be deleted.
+			</p>	
+			<a name="dao"></a>
+			<h4>Adding Digital Object Links</h4>
+			<p>
+				To add a link to a digital object you need to first select what kind of link you want to create in the dropdown menu.
+				Once you have clicked the create button the correct form will appear for you to complete. You can delete a digital
+				object by clicking on its delete button. If you select the 'Link to multiple files' option you can add additional files
+				using the link in the form.
+			</p>
+			<p>
+				In each case the required fields are always the URI fields which provide the link to the location where
+				your digital object is hosted. Without these your digital object reference cannot be saved. You will receive a 
+				warning if you try to save a form which is missing URI's in the digital object.
+			</p>		
+			<a name="accesspoints"></a>
+			<h4>Adding and Editing Access Points</h4>
+			<p>
+				Access Points can be added to the record by completing the relevant section of the form. 
+			</p>
+			<p>	
+				There are two compulsory elements for each access point. 
+				<ul>
+					<li>The main content of the access point itself such as 'subject' for a subject 
+					access point or 'surname' for a personal or family name access point.</li>
+					<li>Either 'source' (or thesaurus in the case of subject) <b>or</b> 'rules'. Only one of 
+					these may be entered.</li>
+				</ul>
+			</p>
+			<p>
+				The source (or thesaurus) should be entered into the relevant text box and rules should be 
+				selected from the drop down menu. If a rule set is selected the source button will not be
+				visible. If you wish to add a source rather than a rule set then you must first select 'None' 
+				in the rules drop down menu and the source box will reappear. 
+			</p>	
+			<p>
+				Other information required by the source or rule set you are following can be added using the 
+				drop down menu underneath the compulsory boxes on the form. Select the kind of data you want to 
+				add, such as 'Dates', and then click on the 'Add Selected Field' link. This will add another 
+				text box to the form and the data can be entered. If you wish to delete any of this additional 
+				information you can click on the delete icon <img src="/ead/img/delete.png" alt="[delete icon]"/> 
+				next to the text box. If there are two of more pieces of additional information added to an access 
+				point they can be reordered if necessary by dragging the label to the correct position. At any 
+				stage the access point can be reset using the 'reset' button. This will delete all of the information
+				in the current text boxes and delete any added fields.		
+			</p>
+			<p>
+				Once the information is completed the access point needs to be added to the record. If this is
+				not done the details will not be added to your description and will be lost. To add the access point
+				click on the 'Add to Record' button. This will put the details of the access point in a grey box
+				underneath the access point heading and the details will be added to your record. Unwanted access 
+				points can be deleted using the delete icon or edited by clicking on the text. Clicking on the text
+				will return the details to the form so they can be edited. If you do this any details already in the 
+				form fields will be overwritten so if you have details in the form already which you want to keep they 
+				must be added to the record before you try to edit an existing access point.
+			</p>
+			<p>The following access points are supported by the form but any others present in descriptions 
+				being edited will not be lost:
+				<ul>
+					<li>Subject</li>
+					<li>Personal Name</li>
+					<li>Family Name</li>
+					<li>Corporate Name</li>
+					<li>Place Name</li>
+					<li>Book Title</li>
+					<li>Genre Form</li>
+					<li>Function</li>
+				</ul>
+			</p>
+			<p>
+				Punctuation is automatically added to the access points where relevant. It is therefore important
+				that you do not add punctuation at the beginning and end of the text boxes. If however the data
+				you are entering or the rule set you are following require punctuation in the middle of a field this should
+				be added.				
+			</p>
+			<p>
+				This is an example of an incorrectly entered Personal Name with the punctuation present at the beginning and end of the fields.
+			</p>
+				<img src="/ead/img/persnameincorrect.png" alt="[screenshot unavailable]"/>
+			<p>
+				This is an example of an correctly entered Personal Name with no puctuation other than the - between the dates.
+			</p>
+				<img src="/ead/img/persnamecorrect.png" alt="[screenshot unavailable]"/>
+			<p>
+				The latter example will appear like this when viewed on the spoke or the hub.
+			</p>
+				<img src="/ead/img/previewpersname.png" alt="[screenshot unavailable]"/>
+			
+			<p>
+				This is also correct as AACR2 requires all of the information for Place Name to be in the same field so punctuation is required.
+			</p>
+				<img src="/ead/img/placename.png" alt="[screenshot unavailable]"/>
+			<a name="specialchar"> </a>
+			<h4>Adding Special Characters</h4>
+			<p>
+				Special characters can either be added using their numerical code such as <b>&amp;#233;</b>
+				for <b>&#233;</b> or using the onscreen keyboard provided with the interface. Name codes 
+				such as <b>&amp;eacute;</b> cannot be used. The only exception to this is the use of <b>&amp;lt;</b>
+				for <b>&lt;</b> and <b>&amp;gt;</b> for <b>&gt;</b> which must always be used if the character are not part
+				of an XML tag. <b>&amp;amp;</b> may also be used for <b>&amp;</b> but is not necessary. 
+			</p>
+			<p>
+				The keyboard can be accessed by clicking on the 'Character Keyboard' link on the navigation
+				bar (clicking a second time will remove it) or the 'keyboard on/off' option on the right 
+				click menu in the form fields. Once the keyboard is visible on the screen it can be minimised,
+				maximised and closed using the icons in the top right corner. The 'Caps Lock' button switches
+				the characters between lower-case and upper-case. To enter a character into the form simply 
+				click on the field you wish to enter it into and then click the character on the keyboard.
+				To check which field the character will appear in click the 'Which field?' link.
+			</p>
+
+		</div>
+	</div>
+	
+	
+</div>

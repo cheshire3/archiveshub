@@ -1,0 +1,20 @@
+ 			<script type="text/javascript" src="/js/form.js"></script>
+ 		<div id="single">
+
+			<h3 class="bar">Send EAD to the Hub Team</h3>
+
+<div id="emaildiv">
+   
+
+    <form action="email.html" name="email" class="email" method="get" onsubmit="return validateEmail();">
+    <p>Please supply a contact email address in case the hub team need to get in touch with you about this record.</p>
+    	<input type="text" size="50" name="contact" id="email"/><br /><br />
+    	<p>If you want to send any message to the hub with your EAD please enter it in the box below.</p>
+    	<textarea cols="80" rows="10" name="message"></textarea><br/>
+        <input type="hidden" name="operation" value="emailhub"/>
+        %Details%      
+        <input type="hidden" name="address" value="true"/>
+        <input class="menubutton" type="submit" name="submit" value="submit"/>
+    </form>
+</div>
+</div>
