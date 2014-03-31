@@ -1,0 +1,11 @@
+<config type="user" id="%USERNAME%">
+  <objectType>cheshire3.user.SimpleUser</objectType>
+  <username>%USERNAME%</username>
+  %password% %realName% %email%
+  <flags>
+    <flag>
+      <object/>
+      <value>c3r:administrator</value>
+    </flag>
+  </flags>
+</config>
