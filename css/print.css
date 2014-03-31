@@ -1,0 +1,96 @@
+body {
+    color: black;
+	background-color: white;
+	font-family: Times, serif;
+}
+
+div#banner {
+	top: 0;
+	width: 100%;
+	background: none;
+}
+
+div#banner div { padding: 5px 15px 5px 15px; }
+
+div#crest { float: left; }
+div#c3logo { display: none }
+div#banner div#navbar {
+	padding-top: 0;
+	padding-bottom:0;
+	clear: both;
+}
+
+div#navbar,
+div#toolbar,
+div.pagenav
+{
+	display: none;
+}
+
+div#leftcol {
+	display: none;
+	float:left;
+	height: 0;
+}
+
+div#rightcol {
+	page-break-inside: auto;
+	top: 0;
+	width: auto;
+}
+
+div#footer { 
+	display: none;
+	position: static;
+	height: 6em;
+	background: white;
+	border-top: 2px solid silver;
+	clear: both;
+}
+
+div.component {
+	page-break-inside: avoid;
+}
+
+div.heading,
+h3.cheshireaddedheading,
+h3.bar,
+h3.ead
+{
+	background-color: white;
+	border:0;
+}
+
+a,
+a:link,
+a:hover,
+a:visited {
+	color: black;
+	text-decoration: none;
+}
+
+a.helplink { display: none; }
+
+ul.hierarchy,
+ul.unmarked {
+  list-style-type: none;
+  list-style-position: outside;
+  padding-left: 10px;
+}
+
+tr.headrow {
+	border-bottom: 2px solid black;	
+}
+tr.resultdisplaylinks a {
+	display: none;
+}
+
+div#full-link,
+div.pagenav,
+div.forwardlinks,
+div.backlinks,
+form,
+span.printlink
+{
+	display: none;	
+}
