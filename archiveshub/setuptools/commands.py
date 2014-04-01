@@ -177,7 +177,8 @@ class develop(_develop.develop, c3_command):
             server.register_databaseConfigFile(session, join(distropath,
                                                              'dbs',
                                                              'ead',
-                                                             'config.xml'))
+                                                             'config.xml')
+                                               )
         except ConfigFileException as e:
             if e.reason.startswith("Database with id 'db_ead' is already "
                                    "registered."):
@@ -190,7 +191,8 @@ class develop(_develop.develop, c3_command):
                                                              'dbs',
                                                              'ead',
                                                              'cluster',
-                                                             'config.xml'))
+                                                             'config.xml')
+                                               )
         # New version runs from unpacked / checked out directory
         # No need to install database or web app
         if self.with_httpd is not None:
@@ -206,25 +208,8 @@ class develop(_develop.develop, c3_command):
             self.uninstall_apache_mods()
         # Unregister the database by deleting
         # Cheshire3 database config plugin
-        serverDefaultPath = server.get_path(session,
-                                            'defaultPath',
-                                            cheshire3Root)
-        userSpecificPath = join(expanduser('~'), '.cheshire3-server')
-        pluginPath = os.path.join('configs', 'databases', 'db_ead.xml')
-        if exists(join(serverDefaultPath, pluginPath)):
-            os.remove(join(serverDefaultPath, pluginPath))
-            os.remove(join(serverDefaultPath,
-                           'configs',
-                           'databases',
-                           'db_ead_cluster.xml'))
-        elif exists(os.path.join(userSpecificPath, pluginPath)):
-            os.remove(os.path.join(userSpecificPath, pluginPath))
-            os.remove(join(userSpecificPath,
-                           'configs',
-                           'databases',
-                           'db_ead_cluster.xml'))
-        else:
-            server.log_error(session, "No database plugin file")
+        server.unregister_databaseConfig(session, 'db_ead')
+        server.unregister_databaseConfig(session, 'db_ead_cluster')
 
 
 class install(_install.install, c3_command):
@@ -332,25 +317,8 @@ class uninstall(c3_command):
             self.uninstall_apache_mods()
         # Unregister the database by deleting
         # Cheshire3 database config plugin
-        serverDefaultPath = server.get_path(session,
-                                            'defaultPath',
-                                            cheshire3Root)
-        userSpecificPath = join(expanduser('~'), '.cheshire3-server')
-        pluginPath = os.path.join('configs', 'databases', 'db_ead.xml')
-        if exists(join(serverDefaultPath, pluginPath)):
-            os.remove(join(serverDefaultPath, pluginPath))
-            os.remove(join(serverDefaultPath,
-                           'configs',
-                           'databases',
-                           'db_ead_cluster.xml'))
-        elif exists(os.path.join(userSpecificPath, pluginPath)):
-            os.remove(os.path.join(userSpecificPath, pluginPath))
-            os.remove(join(userSpecificPath,
-                           'configs',
-                           'databases',
-                           'db_ead_cluster.xml'))
-        else:
-            server.log_error(session, "No database plugin file")
+        server.unregister_databaseConfig(session, 'db_ead')
+        server.unregister_databaseConfig(session, 'db_ead_cluster')
 
 
 # Inspect to find current path
