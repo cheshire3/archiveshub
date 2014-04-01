@@ -45,19 +45,24 @@
 #
 import os
 
+from pkg_resources import Requirement, resource_filename
+
 # Preference switches - True => ON, False => OFF
 result_graphics = True
 display_relevance = True
 graphical_relevance = False
 
-# Path to Cheshire Root - i.e. where Cheshire3 was installed
-cheshirePath = os.environ.get('C3HOME', 
-                              os.environ.get('HOME',
-                                             '/home/cheshire')
-                             )
+# Path to Cheshire Root - i.e. where archiveshub was installed
+try:
+    cheshirePath = resource_filename(Requirement.parse('archiveshub'), '')
+except:
+    # Cheshire3 not yet installed; maybe in a source distro/repo checkout
+    # Assume local directory
+    cheshirePath = os.path.expanduser('~/archiveshub')
+
 
 # Institutionally specific configurables
-repository_name = "Cheshire for Archives v3.4 Development"
+repository_name = "Archives Hub v3.3 Development"
 repository_link = "http://www.archiveshub.ac.uk"                        # must begin http://
 repository_logo = "/hubedit/img/loopsmall2.gif"             # should begin http:// unless on this server
 

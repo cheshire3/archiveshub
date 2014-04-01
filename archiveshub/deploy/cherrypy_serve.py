@@ -27,7 +27,7 @@ from archiveshub.deploy.utils import WSGIAppArgumentParser
 
 from archiveshub.apps.ead.search import application as ead_search_app
 from archiveshub.apps.ead.record import application as ead_data_app
-
+from archiveshub.apps.editor.admin import application as admin_app
 
 def main(argv=None):
     """Start up a CherryPy server to serve the SRU application."""
@@ -55,6 +55,7 @@ def main(argv=None):
     cherrypy.tree.graft(oaipmh_app, '/api/oaipmh/2.0')
     cherrypy.tree.graft(ead_data_app, '/data')
     cherrypy.tree.graft(ead_search_app, '/search')
+    cherrypy.tree.graft(admin_app, '/admin')
     root_conf = {
         'tools.staticdir.on': True,
         'tools.staticdir.dir': expanduser('~/mercurial/archiveshub/htdocs'),
