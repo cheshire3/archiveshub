@@ -1,0 +1,220 @@
+<config type="database" id="db_hubedit">
+
+<!--
+    This file was produced, and released as part of Cheshire for Archives v3.x.
+    Copyright &#169; 2005-2008 the University of Liverpool
+ -->
+
+  <objectType>cheshire3.database.SimpleDatabase</objectType>
+
+  <options>
+    <setting type="srw">0</setting>
+    <setting type="z3950">0</setting>
+    <setting type="oai-pmh">0</setting>
+  </options>
+
+  <paths>
+    <path type="defaultPath">~/archiveshub/dbs/hubedit</path>
+    <path type="metadataPath">stores/metadata.bdb</path>
+    <object type="protocolMap" ref="eadCqlProtocolMap"/>
+  </paths>
+
+  <subConfigs>
+
+    <!-- protocol map -->
+    <subConfig type="protocolMap" id="eadCqlProtocolMap">
+        <objectType>cheshire3.protocolMap.CQLProtocolMap</objectType>
+        <paths>
+            <path type="zeerexPath">zeerex_srw.xml</path>
+        </paths>
+    </subConfig>
+
+    <subConfig type="objectStore" id="hubAuthStore">
+          <objectType>cheshire3.sql.postgres.PostgresObjectStore</objectType>
+          <paths>
+            <path type="databaseName">db_hubedit</path>
+            <path type="tableName">hubAuthStore</path>
+            <object type="inTransformer" ref="XmlTransformer" />
+            <object type="outParser" ref="LxmlParser" />
+        </paths>
+        <relations>
+            <relation name="linkAuthInst">
+                <object>hubAuthStore</object>
+                <field name="institutionId">integer</field>
+            </relation>
+        </relations>
+    </subConfig>
+
+     <subConfig type="recordStore" id="editingStore">
+          <objectType>cheshire3.sql.postgres.PostgresRecordStore</objectType>
+          <paths>
+            <path type="databaseName">db_hubedit</path>
+            <path type="tableName">editingStore</path>
+            <object type="inTransformer" ref="XmlTransformer" />
+            <object type="outParser" ref="LxmlParser" />
+          </paths>
+          <relations>
+            <relation name="linkRecInst">
+                <object>editingStore</object>
+                <field name="institutionId">integer</field>
+            </relation>
+         </relations>
+          <options>
+          </options>
+    </subConfig>
+
+    <subConfig type="recordStore" id="templateStore">
+          <objectType>cheshire3.sql.postgres.PostgresRecordStore</objectType>
+          <paths>
+            <path type="databaseName">db_hubedit</path>
+            <path type="tableName">templateStore</path>
+            <object type="inTransformer" ref="XmlTransformer" />
+            <object type="outParser" ref="LxmlParser" />
+          </paths>
+          <relations>
+            <relation name="linkTempInst">
+                <object>templateStore</object>
+                <field name="institutionId">integer</field>
+            </relation>
+         </relations>
+          <options>
+          </options>
+    </subConfig>
+
+    <subConfig type="documentStore" id="institutionStore">
+        <objectType>cheshire3.sql.postgres.PostgresRecordStore</objectType>
+        <paths>
+            <path type="databaseName">db_hubedit</path>
+            <path type="tableName">institutionStore</path>
+            <object type="inTransformer" ref="XmlTransformer" />
+            <object type="outParser" ref="LxmlParser" />
+          </paths>
+    </subConfig>
+
+    <subConfig type="authStore" id="hubSuperAuthStore">
+        <objectType>cheshire3.objectStore.BdbObjectStore</objectType>
+        <paths>
+            <path type="databasePath">hubSuperAuthStore.bdb</path>
+        </paths>
+    </subConfig>
+
+    <subConfig type="workflow" id="assignDataIdentifierWorkflow">
+        <objectType>cheshire3.workflow.CachingWorkflow</objectType>
+        <workflow>
+            <!-- input type: record -->
+            <!-- first put record aside so we can re-assign it later -->
+            <assign from="input" to="myRecord"/>
+            <object type="transformer" ref="persistentIdTxr"/>
+            <!-- input type: document -->
+            <object type="input" function="get_raw"/>
+            <object type="workflow" ref="normalizeDataIdentifierWorkflow" />
+            <assign from="input" to="myRecord.id"/>
+            <assign from="myRecord" to="input"/>
+        </workflow>
+    </subConfig>
+
+    <subConfig type="transformer" id="htmlFullTxr">
+          <objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
+          <paths>
+             <path type="xsltPath">xsl/full.xsl</path>
+          </paths>
+        </subConfig>
+
+        <subConfig type="transformer" id="htmlFullSplitTxr">
+          <objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
+          <paths>
+             <path type="xsltPath">xsl/fullSplit.xsl</path>
+          </paths>
+    </subConfig>
+
+    <subConfig type="transformer" id="persistentIdTxr">
+        <docs>Transformer to return simply the persistent identifier as a string</docs>
+        <objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
+        <paths>
+            <path type="xsltPath">xsl/persistentId.xsl</path>
+        </paths>
+    </subConfig>
+
+    <subConfig type="workflow" id="normalizeDataIdentifierWorkflow">
+        <objectType>cheshire3.workflow.CachingWorkflow</objectType>
+        <workflow>
+            <!-- input type: String -->
+            <object type="normalizer" ref="DiacriticNormalizer" function="process_string"/>
+            <object type="normalizer" ref="CaseNormalizer" function="process_string"/>
+            <object type="normalizer" ref="SpaceNormalizer" function="process_string"/>
+            <assign from="input.replace(' ', '').replace('/', '-').replace('\\', '-').replace('\'', '')" to="input" />
+        </workflow>
+    </subConfig>
+
+    <subConfig type="workflow" id="preParserWorkflow">
+        <objectType>cheshire3.workflow.CachingWorkflow</objectType>
+        <workflow>
+            <!-- input type:  document -->
+            <object type="preParser" ref="PrintableOnlyPreParser"/>
+            <object type="preParser" ref="CharacterEntityPreParser"/>
+            <object type="preParser" ref="eadSgmlPreParser"/>
+            <object type="preParser" ref="emptyEmphTagStripPreParser"/>
+            <object type="preParser" ref="XMLDefaultNamespaceStripPreParser"/>
+            <object type="preParser" ref="AmpPreParser"/>
+        </workflow>
+    </subConfig>
+
+        <subConfig type="preParser" id="emptyEmphTagStripPreParser">
+            <objectType>cheshire3.preParser.RegexpSmashPreParser</objectType>
+            <options>
+                <setting type="regexp">&lt;emph altrender="[a-z]"/&gt;</setting>
+            </options>
+        </subConfig>
+
+        <subConfig type="preParser" id="XMLDefaultNamespaceStripPreParser">
+            <objectType>cheshire3.preParser.RegexpSmashPreParser</objectType>
+            <options>
+                <setting type="regexp">\s+xmlns=".+?"</setting>
+            </options>
+        </subConfig>
+
+        <subConfig type="preParser" id="eadSgmlPreParser">
+            <objectType>cheshire3.preParser.SgmlPreParser</objectType>
+            <options>
+                <setting type="emptyElements"> lb arc ptr prtloc extptr extptrloc colspec </setting>
+            </options>
+        </subConfig>
+
+        <subConfig type="transformer" id="formCreationTxr">
+          <objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
+          <paths>
+             <path type="xsltPath">xsl/form.xsl</path>
+          </paths>
+        </subConfig>
+
+        <subConfig type="transformer" id="interoperableEadOutgoingTxr">
+            <objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
+            <paths>
+                <path type="xsltPath">xsl/interopXmlOut.xsl</path>
+            </paths>
+        </subConfig>
+
+        <subConfig type="transformer" id="orderingTxr">
+            <objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
+          <paths>
+             <path type="xsltPath">xsl/ead_order.xsl</path>
+          </paths>
+        </subConfig>
+
+        <subConfig type="transformer" id="indentingTxr">
+            <objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
+          <paths>
+             <path type="xsltPath">xsl/reindent.xsl</path>
+          </paths>
+        </subConfig>
+
+        <subConfig type="transformer" id="editingTocTxr">
+            <objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
+          <paths>
+             <path type="xsltPath">xsl/contents-editing.xsl</path>
+          </paths>
+        </subConfig>
+
+  </subConfigs>
+
+</config>

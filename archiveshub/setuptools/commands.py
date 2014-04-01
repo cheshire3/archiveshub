@@ -149,6 +149,12 @@ class c3_command(Command):
                                'cluster',
                                'config.xml')
                           )
+        # EAD Editor Database
+        apply_config_tmpl(join(distropath,
+                               'dbs',
+                               'hubedit',
+                               'config.xml')
+                          )
         from archiveshub.apps.configuration import config
         with open(join(distropath, 'www', 'ead', 'ead.ini'), 'w') as fh:
             config.write(fh)
@@ -193,6 +199,11 @@ class develop(_develop.develop, c3_command):
                                                              'cluster',
                                                              'config.xml')
                                                )
+            server.register_databaseConfigFile(session, join(distropath,
+                                                             'dbs',
+                                                             'hubedit',
+                                                             'config.xml')
+                                               )
         # New version runs from unpacked / checked out directory
         # No need to install database or web app
         if self.with_httpd is not None:
@@ -210,6 +221,7 @@ class develop(_develop.develop, c3_command):
         # Cheshire3 database config plugin
         server.unregister_databaseConfig(session, 'db_ead')
         server.unregister_databaseConfig(session, 'db_ead_cluster')
+        server.unregister_databaseConfig(session, 'db_hubedit')
 
 
 class install(_install.install, c3_command):
@@ -319,6 +331,7 @@ class uninstall(c3_command):
         # Cheshire3 database config plugin
         server.unregister_databaseConfig(session, 'db_ead')
         server.unregister_databaseConfig(session, 'db_ead_cluster')
+        server.unregister_databaseConfig(session, 'db_hubedit')
 
 
 # Inspect to find current path
