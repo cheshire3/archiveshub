@@ -31,11 +31,13 @@ import traceback
 
 from crypt import crypt
 from getpass import getpass
-    
+
+
 cheshirePath = os.environ.get('C3HOME', '/home/cheshire/')
 sys.path.insert(1, os.path.join(cheshirePath, 'cheshire3', 'code'))
 
 from cheshire3.baseObjects import Session
+from cheshire3.internal import cheshire3Root
 from cheshire3.server import SimpleServer
 from cheshire3.document import StringDocument
 from cheshire3 import exceptions as c3errors
@@ -50,14 +52,14 @@ debug = False
 
 class Error(Exception):
     """Base class for exceptions in this module.
-    
+
     Attributes:
         msg  -- explanation of the error
     """
-    
+
     def __init__(self, msg):
         self.msg = msg
-        
+
     def __str__(self):
         return repr(self.msg)
 
@@ -71,7 +73,7 @@ class InputError(Error):
     """Exception raised for errors in the input."""
     pass
 
-   
+
 class InputMissingError(InputError):
     """Exception raised for errors relating to missing input."""
     pass
@@ -86,7 +88,7 @@ class DatabaseOperationError(Error):
     """Exception raised when database operations do not go as intended."""
     pass
 
-    
+
 def getUserInfoFromPrompt():
     userInfo = {}
     un = raw_input('Please enter a username: ')
@@ -98,16 +100,26 @@ def getUserInfoFromPrompt():
         raise InputMissingError('You must enter a password for this user.')
     pw2 = getpass('Please re-enter the password to confirm: ')
     if pw != pw2:
-        raise InputIncorrectError('The two passwords submitted did not match. Please try again.')
+        raise InputIncorrectError('The two passwords submitted did not '
+                                  'match. Please try again.'
+                                  )
     else:
         userInfo['password'] = crypt(pw, un[:2])
-    userInfo['realName'] = raw_input('Real name of this user (not mandatory): ')
-    userInfo['email'] = raw_input('Email address for this user (not mandatory): ') 
+    userInfo['realName'] = raw_input(
+        'Real name of this user (not mandatory): '
+    )
+    userInfo['email'] = raw_input(
+        'Email address for this user (not mandatory): '
+    )
     return userInfo
 
 
 def addSuperUser(userInfo={}):
-    if not userInfo or ('username' not in userInfo) or not (userInfo['username']):
+    if not all(
+        userInfo,
+        'username' in userInfo,
+        userInfo['username']
+    ):
         userInfo = getUserInfoFromPrompt()
     xml = read_file('admin.xml')
     xml = xml.replace('%USERNAME%', userInfo.pop('username'))
@@ -127,7 +139,9 @@ def addSuperUser(userInfo={}):
     try:
         user = superAuthStore.fetch_object(session, id)
     except c3errors.ObjectDoesNotExistException:
-        raise DatabaseOperationError('User not successfully created. Please try again.')
+        raise DatabaseOperationError(
+            'User not successfully created. Please try again.'
+        )
     print 'OK: Username and passwords set for this user'
     return 0
 
@@ -136,7 +150,10 @@ def parseArgs(argv):
     if argv is None:
         argv = sys.argv
     try:
-        return getopt.getopt(argv[1:], "?h", ["help", "options", "addsuperuser"])
+        return getopt.getopt(argv[1:],
+                             "?h",
+                             ["help", "options", "addsuperuser"]
+                             )
     except getopt.error, msg:
         raise UsageError(msg)
 
@@ -150,7 +167,7 @@ def main(argv=None):
                 return 0
             elif (o == '--addsuperuser'):
                 return addSuperUser()
-    except UsageError:
+    except UsageError as err:
         sys.stderr.write(str(err) + '\n')
         sys.stderr.write("for help use --help\n")
         sys.stderr.flush()
@@ -164,7 +181,13 @@ def main(argv=None):
 
 # Build environment...
 session = Session()
-serv = SimpleServer(session, os.path.join(cheshirePath, 'cheshire3', 'configs', 'serverConfig.xml'))
+serv = SimpleServer(
+    session,
+    os.path.join(cheshire3Root,
+                 'configs',
+                 'serverConfig.xml'
+                 )
+)
 session.database = 'db_hubedit'
 
 db = serv.get_object(session, 'db_hubedit')
@@ -173,7 +196,6 @@ authStore = db.get_object(session, 'hubAuthStore')
 superAuthStore = db.get_object(session, 'hubSuperAuthStore')
 
 xmlp = db.get_object(session, 'LxmlParser')
-
 
 if __name__ == "__main__":
     sys.exit(main())
