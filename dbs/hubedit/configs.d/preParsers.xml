@@ -1,0 +1,39 @@
+<config xmlns="http://www.cheshire3.org/schemas/config/">
+    <subConfigs>
+
+        <subConfig type="workflow" id="preParserWorkflow">
+            <objectType>cheshire3.workflow.CachingWorkflow</objectType>
+            <workflow>
+                <!-- input type:  document -->
+                <object type="preParser" ref="PrintableOnlyPreParser"/>
+                <object type="preParser" ref="CharacterEntityPreParser"/>
+                <object type="preParser" ref="eadSgmlPreParser"/>
+                <object type="preParser" ref="emptyEmphTagStripPreParser"/>
+                <object type="preParser" ref="XMLDefaultNamespaceStripPreParser"/>
+                <object type="preParser" ref="AmpPreParser"/>
+            </workflow>
+        </subConfig>
+
+        <subConfig type="preParser" id="emptyEmphTagStripPreParser">
+            <objectType>cheshire3.preParser.RegexpSmashPreParser</objectType>
+            <options>
+                <setting type="regexp">&lt;emph altrender="[a-z]"/&gt;</setting>
+            </options>
+        </subConfig>
+
+        <subConfig type="preParser" id="XMLDefaultNamespaceStripPreParser">
+            <objectType>cheshire3.preParser.RegexpSmashPreParser</objectType>
+            <options>
+                <setting type="regexp">\s+xmlns=".+?"</setting>
+            </options>
+        </subConfig>
+
+        <subConfig type="preParser" id="eadSgmlPreParser">
+            <objectType>cheshire3.preParser.SgmlPreParser</objectType>
+            <options>
+                <setting type="emptyElements"> lb arc ptr prtloc extptr extptrloc colspec </setting>
+            </options>
+        </subConfig>
+
+    </subConfigs>
+</config>

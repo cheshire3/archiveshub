@@ -1,0 +1,41 @@
+<config xmlns="http://www.cheshire3.org/schemas/config/">
+    <subConfigs>
+
+        <subConfig type="recordStore" id="editingStore">
+            <objectType>cheshire3.sql.postgres.PostgresRecordStore</objectType>
+            <paths>
+            <path type="databaseName">db_hubedit</path>
+            <path type="tableName">editingStore</path>
+            <object type="inTransformer" ref="XmlTransformer" />
+            <object type="outParser" ref="LxmlParser" />
+            </paths>
+            <relations>
+                <relation name="linkRecInst">
+                    <object>editingStore</object>
+                    <field name="institutionId">integer</field>
+                </relation>
+            </relations>
+            <options>
+            </options>
+        </subConfig>
+
+        <subConfig type="recordStore" id="templateStore">
+            <objectType>cheshire3.sql.postgres.PostgresRecordStore</objectType>
+            <paths>
+                <path type="databaseName">db_hubedit</path>
+                <path type="tableName">templateStore</path>
+                <object type="inTransformer" ref="XmlTransformer" />
+                <object type="outParser" ref="LxmlParser" />
+            </paths>
+            <relations>
+                <relation name="linkTempInst">
+                    <object>templateStore</object>
+                    <field name="institutionId">integer</field>
+                </relation>
+            </relations>
+            <options>
+            </options>
+        </subConfig>
+
+    </subConfigs>
+</config>
