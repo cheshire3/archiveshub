@@ -13,19 +13,23 @@
 # Language:  Python
 # Required externals:
 #            cheshire3-base, cheshire3-web
-#            Py: 
-#            HTML: 
-#            CSS: 
-#            Javascript: 
-#            Images: 
+#            Py:
+#            HTML:
+#            CSS:
+#            Javascript:
+#            Images:
 #
 # Version History: # left as example
 # 0.01 - 06/12/2008 - JH - Basic administration navigations and menus
-# 0.02 - 21/10/2010 - JH - New branding applied 
-# 0.03 - xx/06/2011 - JH - Institutions and their users listed in alphabetical order
-#                        - Bug fix enabling deletion of Institutional administative users
-#                        - Redirect to admin/ to prevent URL collisions from relative links
-#                        - New feature enables editing (including resetting password) of any EAD Editor user
+# 0.02 - 21/10/2010 - JH - New branding applied
+# 0.03 - xx/06/2011 - JH - Institutions and their users listed in alphabetical
+#                          order
+#                        - Bug fix enabling deletion of Institutional
+#                          administative users
+#                        - Redirect to admin/ to prevent URL collisions from
+#                          relative links
+#                        - New feature enables editing (including resetting
+#                          password) of any EAD Editor user
 #
 
 import sys
@@ -37,7 +41,6 @@ import smtplib
 import datetime
 
 from lxml import etree
-from copy import deepcopy
 from crypt import crypt
 
 from mod_python import apache, Cookie
@@ -70,15 +73,16 @@ class HubeditAdminHandler:
                                     'template.html'
                                     )
 
-    def __init__(self, lgr): 
+    def __init__(self, lgr):
         self.htmlTitle = ['Administration']
-        self.htmlNav = ['''<li class="navtab">
-                            <a href="/edit/menu.html" title="Edit/Create Menu">
-                                <img src="/img/icon-list.png" alt=""/>
-                                Edit/Create Menu
-                            </a>
-                        </li>''']
-#        self.htmlNav = ['<li class="navtab"><a href="edit/menu.html" title="Edit/Create Menu">Edit/Create Menu</a></li>']       
+        self.htmlNav = [
+            '<li class="navtab">'
+            '<a href="/edit/menu.html" title="Edit/Create Menu">'
+            '<img src="/img/icon-list.png" alt=""/>'
+            'Edit/Create Menu'
+            '</a>'
+            '</li>'
+        ]
         self.logger = lgr
 
     def send_response(self, data, req, content_type=None, code=200):
@@ -124,11 +128,16 @@ class HubeditAdminHandler:
         return multiReplace(page, values)
 
     def edit_user(self, form):
+        global userStore
         userid = form.get('userid', None)
         try:
             user = userStore.fetch_object(session, userid)
         except c3errors.ObjectDoesNotExistException:
-            return self.show_adminMenu(None, '<p class="error">Unable to edit user - user does not exist.</p>')
+            return self.show_adminMenu(
+                None,
+                '<p class="error">Unable to edit user - '
+                'user does not exist.</p>'
+            )
         values = {'%USERNAME%': userid,
                   '%realName%': user.realName,
                   '%email%': user.email,
@@ -142,32 +151,48 @@ class HubeditAdminHandler:
             for f in user.simpleNodes:
                 val = form.getfirst(f, None)
                 if val is not None:
-                    newHash[f] = val 
+                    newHash[f] = val
                     values["%{0}%".format(f)] = val
             passwd = form.get('passwd', None)
             # check hubedit admin user password confirmation
             if (passwd and not session.user.check_password(session, passwd)):
-                return self.show_userEdit(values, '<p class="error">Unable to edit user - incorrect password confirmation.</p>')
+                return self.show_userEdit(
+                    values,
+                    '<p class="error">Unable to edit user - '
+                    'incorrect password confirmation.</p>'
+                )
             elif not passwd:
-                return self.show_userEdit(values, '<p class="error">Unable to edit user - missing password confirmation.</p>')
+                return self.show_userEdit(
+                    values,
+                    '<p class="error">Unable to edit user - '
+                    'missing password confirmation.</p>'
+                )
             # check for new passwords
             passwd1 = form.get('passwd1', None)
             if passwd1:
                 passwd2 = form.get('passwd2', None)
                 if (passwd1 != passwd2):
-                    return self.show_userEdit(values, '<p class="error">Unable to update details - new passwords did not match.</p>')
+                    return self.show_userEdit(
+                        values,
+                        '<p class="error">Unable to update details - '
+                        'new passwords did not match.</p>'
+                    )
                 else:
                     # continue with editing
                     newHash['password'] = crypt(passwd1, userid)
             userRec = userStore.fetch_record(session, userid)
             userNode = userRec.get_dom(session)
             # update DOM
-            userNode = self._modify_userLxml(userNode, newHash)  
+            userNode = self._modify_userLxml(userNode, newHash)
             self._submit_userLxml(userid, userNode)
-            return self.show_adminMenu(None, '<p class="ok">User details successfully updated.</p>')
+            return self.show_adminMenu(
+                None,
+                '<p class="ok">User details successfully updated.</p>'
+            )
         #- end edit_user()
 
     def list_usersByInst(self):
+        global userStore
         out = []
         # get list of institutions for sorting
         institutions = []
@@ -175,41 +200,54 @@ class HubeditAdminHandler:
             instName = instRec.process_xpath(session, '//name/text()')[0]
             institutions.append((instName, instRec))
         for instName, instRec in sorted(institutions):
-            sqlQ = "SELECT hubauthstore FROM hubauthstore_linkauthinst WHERE institutionid='{0}' ORDER BY hubauthstore".format(instRec.id)
-            res = userStore._query(sqlQ)
-            result = res.dictresult()
+            sqlQ = ("SELECT eadAuthStore FROM eadAuthStore_linkauthinst "
+                    "WHERE institutionid=%s ORDER BY eadAuthStore"
+                    )
+            result = userStore._query(sqlQ, (instRec.id,))
             quota = instRec.process_xpath(session, '//quota/text()')[0]
-            instUsers = [u'<li title="{0}"><span>{0} [{1}]</span>'.format(instName, quota)]
+            instUsers = [u'<li title="{0}">'.format(instName),
+                         u'<span>{0} [{1}]</span>'.format(instName, quota)
+                         ]
             if len(result):
                 instUsers.append(u'<ul class="hierarchy">')
                 for r in result:
-                    username = r['hubauthstore']
+                    username = r[0]
                     user = userStore.fetch_object(session, username)
-                    if user.has_flag(session, 'info:srw/operation/1/create', 'hubAuthStore'):
+                    if user.has_flag(
+                        session,
+                        'info:srw/operation/1/create',
+                        'eadAuthStore'
+                    ):
                         userText = '{0} (Administrator)'.format(username)
                     else:
                         userText = username
                     instUsers.append(u'''\
                     <li>
-                        <a href="users.html?operation=edit&amp;userid={0}">{1}</a>
-                        <a onclick="deleteUser(\'{0}\')">
-                            <img src="/img/delete.png" 
-                                 alt="[X]" class="deletelogo"
-                                 onmouseover="this.src=\'/img/delete-hover.png\'" 
-                                 onmouseout="this.src=\'/img/delete.png\'"
-                                 title="Delete user '{1}'"/>
-                        </a>
-                    </li>'''.format(username, userText))
+                      <a href="users.html?operation=edit&amp;userid={0}">
+                      {1}
+                      </a>
+                      <a onclick="deleteUser(\'{0}\')">
+                        <img
+                          src="/img/delete.png"
+                          alt="[&times;]" class="deletelogo"
+                          onmouseover="this.src=\'/img/delete-hover.png\'"
+                          onmouseout="this.src=\'/img/delete.png\'"
+                          title="Delete user '{1}'"/>
+                      </a>
+                    </li>'''.format(username, userText)
+                    )
                 instUsers.append(u'</ul>')
             else:
-                instUsers.extend([u'''<a onclick="deleteInst(\'{0}\')">
-                                  <img src="/img/delete.png" 
-                                       alt="[X]" class="deletelogo" 
-                                       onmouseover="this.src=\'/img/delete-hover.png\'" 
-                                       onmouseout="this.src=\'/img/delete.png\'"
-                                       title="Delete institution '{1}'"/>
-                                  </a>'''.format(instRec.id, instName),
-                                  u'<ul class="hierarchy"></ul>'])
+                instUsers.extend([
+                    u'''<a onclick="deleteInst(\'{0}\')">
+                    <img src="/img/delete.png"
+                    alt="[X]" class="deletelogo"
+                    onmouseover="this.src=\'/img/delete-hover.png\'"
+                    onmouseout="this.src=\'/img/delete.png\'"
+                    title="Delete institution '{1}'"/>
+                    </a>'''.format(instRec.id, instName),
+                    u'<ul class="hierarchy"></ul>'
+                ])
             instUsers.append(u'</li>')
             out.extend(instUsers)
         return u''.join(out)
@@ -217,7 +255,14 @@ class HubeditAdminHandler:
     def get_institutions(self):
         optionList = []
         for rec in instStore:
-            option = '<option value="%s|%s|%s">%s</option>' % (rec.id, rec.process_xpath(session, '//name/text()')[0], rec.process_xpath(session, '//quota/text()')[0], rec.process_xpath(session, '//name/text()')[0])            
+            option = ('<option value="{0}|{1}|{2}">{3}</option>'
+                      ''.format(
+                          rec.id,
+                          rec.process_xpath(session, '//name/text()')[0],
+                          rec.process_xpath(session, '//quota/text()')[0],
+                          rec.process_xpath(session, '//name/text()')[0]
+                          )
+                      )
             optionList.append(option)
         return ''.join(optionList)
 
@@ -225,7 +270,10 @@ class HubeditAdminHandler:
         optionList = []
         optionList.append('<option value="null">Select</option>')
         for i in instStore:
-            optionList.append('<option value="%s">%s</option>' % (i.id, i.process_xpath(session, '//name/text()')[0]))
+            optionList.append(
+                '<option value="{0}">{1}</option>'
+                ''.format(i.id, i.process_xpath(session, '//name/text()')[0])
+            )
         return ''.join(optionList)
 
     def add_user(self, form):
@@ -242,13 +290,20 @@ class HubeditAdminHandler:
             usertype = form.get('usertype', 'user')
             if not (userid and userid.isalnum()):
                 if not userid:
-                    message = 'Unable to add user - you MUST supply a username'
+                    message = ('Unable to add user - '
+                               'you MUST supply a username'
+                               )
                 else:
-                    message = 'Unable to add user - username may include only alphanumeric characters.'
+                    message = ('Unable to add user - username may include '
+                               'only alphanumeric characters.'
+                               )
                 values['%USERNAME%'] = ''
                 values['%USER%'] = ''
                 values['%SUPERUSER%'] = 'checked="checked"'
-                return self.show_adminMenu(values, '<p class="error">%s</p>' % message)
+                return self.show_adminMenu(
+                    values,
+                    '<p class="error">{0}</p>'.format(message)
+                )
             try:
                 user = userStore.fetch_object(session, userid)
             except c3errors.ObjectDoesNotExistException:
@@ -257,15 +312,26 @@ class HubeditAdminHandler:
                 values['%USERNAME%'] = ''
                 values['%USER%'] = ''
                 values['%SUPERUSER%'] = 'checked="checked"'
-                return self.show_adminMenu(values, '<p class="error">User with username/id "%s" already exists! Please try again with a different username.</p>' % (userid))
+                return self.show_adminMenu(
+                    values,
+                    '<p class="error">User with username/id "{0}" already '
+                    'exists! Please try again with a different username.</p>'
+                    ''.format(userid)
+                )
             else:
                 # we do want to add this user
                 if (usertype == 'superuser'):
-                    userRec = xmlp.process_document(session, StringDocument(new_adminuser_template.replace('%USERNAME%', userid)))
+                    userDoc = StringDocument(
+                        new_adminuser_template.replace('%USERNAME%', userid)
+                    )
+                    userRec = xmlp.process_document(session, userDoc)
                     values['%SUPERUSER%'] = 'checked="checked"'
                     values['%USER%'] = ''
-                else :
-                    userRec = xmlp.process_document(session, StringDocument(new_user_template.replace('%USERNAME%', userid)))
+                else:
+                    userDoc = StringDocument(
+                        new_user_template.replace('%USERNAME%', userid)
+                    )
+                    userRec = xmlp.process_document(session, userDoc)
                     values['%USER%'] = 'checked="checked"'
                     values['%SUPERUSER%'] = ''
                 userNode = userRec.get_dom(session)
@@ -281,29 +347,49 @@ class HubeditAdminHandler:
                     if (passwd1 == passwd2):
                         newHash['password'] = crypt(passwd1, passwd1[:2])
                     else:
-                        return self.show_adminMenu(values, '<p class="error">Unable to add user - passwords did not match.</p>')
+                        return self.show_adminMenu(
+                            values,
+                            '<p class="error">Unable to add user - '
+                            'passwords did not match.</p>'
+                        )
                 else:
-                    return self.show_adminMenu(values, '<p class="error">Unable to add user - password not supplied.</p>')      
+                    return self.show_adminMenu(
+                        values,
+                        '<p class="error">Unable to add user - '
+                        'password not supplied.</p>'
+                    )
 
                 inst = form.get('institutionSelect', None)
                 if inst == None or inst == 'null':
-                    return self.show_adminMenu(values, '<p class="error">Unable to add user - institution not supplied.</p>')
+                    return self.show_adminMenu(
+                        values,
+                        '<p class="error">Unable to add user - '
+                        'institution not supplied.</p>'
+                    )
 
-                # update DOM
+                # Update DOM
                 userNode = self._modify_userLxml(userNode, newHash)
                 self._submit_userLxml(userid, userNode)
-                # need to fetch user as record in order for link function to work                
+                # Need to fetch user as record in order for link function to
+                # work
                 user = userStore.fetch_record(session, userid)
-                userStore.link(session, 'linkAuthInst', user, institutionId=inst.value)
+                userStore.link(session,
+                               'linkAuthInst',
+                               user,
+                               institutionId=inst.value
+                               )
                 values['%USERNAME%'] = ''
                 values['%FULLNAME%'] = ''
                 values['%EMAIL%'] = ''
                 values['%TELEPHONE%'] = ''
                 values['%USER%'] = ''
                 values['%SUPERUSER%'] = 'checked="true"'
-                return self.show_adminMenu(values, message='<p class="ok">User added.</p>')
+                return self.show_adminMenu(
+                    values,
+                    message='<p class="ok">User added.</p>'
+                )
         return self.show_adminMenu(values)
-        #- end add_user()    
+        #- end add_user()
 
     def delete_user(self, form):
         global userStore, rebuild
@@ -331,18 +417,22 @@ class HubeditAdminHandler:
                 except:
                     return self.show_adminMenu(
                         None,
-                        '''<p class="error">Unable to delete user '{0}' - '''
-                        '''user does not exist.</p>'''.format(userid)
+                        '<p class="error">Unable to delete user {0} - '
+                        'user does not exist.</p>'.format(userid)
                     )
                 else:
                     rebuild = True
                     return self.show_adminMenu(
                         None,
-                        '''<p class="ok">User '{0}' Deleted.</p>'''.format(userid)
+                        '<p class="ok">User {0} Deleted.</p>'.format(userid)
                     )
             else:
-                return self.show_adminMenu(None, 
-                                           '''<p class="error">Unable to delete user '{0}' - incorrect password.</p>'''.format(userid))
+                return self.show_adminMenu(
+                    None,
+                    '<p class="error">Unable to delete user {0} - '
+                    'incorrect password.</p>'
+                    ''.format(userid)
+                )
         #- end delete_user()
 
     def _modify_userLxml(self, userNode, updateHash):
@@ -355,7 +445,7 @@ class HubeditAdminHandler:
             el.text = v
 
         return userNode
-        #- end _modify_userLxml() 
+        #- end _modify_userLxml()
 
     def _submit_userLxml(self, id, userNode):
         rec = LxmlRecord(userNode)
@@ -365,13 +455,16 @@ class HubeditAdminHandler:
         #- end _submit_userLxml()
 
     def add_inst(self, form):
+        global instStore
         inst = form.get('institution', None)
         quota = form.get('quota', '50')
-        string = '<inst><name>%s</name><quota>%s</quota></inst>' % (inst, quota)
-        if inst != None:
-            doc = StringDocument(string)
+        docstr = ('<inst><name>{0}</name><quota>{1}</quota></inst>'
+                  ''.format(inst, quota)
+                  )
+        if inst is not None:
+            doc = StringDocument(docstr)
             rec = xmlp.process_document(session, doc)
-            id = instStore.create_record(session, rec)
+            _ = instStore.create_record(session, rec)
             return self.show_adminMenu()
         else:
             return self.show_adminMenu()
@@ -380,8 +473,10 @@ class HubeditAdminHandler:
         id = form.get('id', None)
         inst = form.get('institution', None)
         quota = form.get('quota', '50')
-        docstr = '<inst><name>{0}</name><quota>{1}</quota></inst>'.format(inst, quota)
-        if inst != None:
+        docstr = ('<inst><name>{0}</name><quota>{1}</quota></inst>'
+                  ''.format(inst, quota)
+                  )
+        if inst is not None:
             doc = StringDocument(docstr)
             rec = xmlp.process_document(session, doc)
             rec.id = id
@@ -398,34 +493,68 @@ class HubeditAdminHandler:
         confirm = form.get('confirm', None)
         passwd = form.get('passwd', None)
         #check again to see that this inst has no users.
-        sqlQ = "SELECT hubauthstore FROM hubauthstore_linkauthinst WHERE institutionid='%s'" % (instid)
-        res = userStore._query(sqlQ)
-        result = res.dictresult()
+        sqlQ = ("SELECT eadAuthStore FROM eadAuthStore_linkauthinst WHERE "
+                "institutionid=%s"
+                )
+        result = userStore._query(sqlQ, (instid,))
         if len(result):
-            return self.show_adminMenu(None, '<p class="error">Unable to delete institution - there are still %s users in this institution which must be deleted first.</p>' % (len(result)))
+            return self.show_adminMenu(
+                None,
+                '<p class="error">Unable to delete institution - '
+                'there are still {0} users in this institution which must be '
+                'deleted first.</p>'.format(len(result))
+            )
 
         if (confirm == 'true'):
-            sqlQ = "SELECT editingstore FROM editingstore_linkrecinst WHERE institutionid='%s'" % (instid)
-            res = userStore._query(sqlQ)
-            result = res.dictresult()
+            sqlQ = ("SELECT editingstore FROM editingstore_linkrecinst WHERE "
+                    "institutionid=%s"
+                    )
+            result = userStore._query(sqlQ, (instid,))
             if len(result):
-                fileinfo = '<b>This institution still has draft files linked to it - if you delete this institution the draft files linked to it will also be deleted</b>'
-                output = ['<div id="single"><h3 class="bar">Delete Institution Confirmation.</h3>', read_file('deleteinst.html').replace('%INSTID%', instid).replace('%%%FILEINFO%%%', fileinfo), '</div>']
+                fileinfo = ('<b>This institution still has draft files '
+                            'linked to it - if you delete this institution '
+                            'the draft files linked to it will also be '
+                            'deleted</b>'
+                            )
+                output = ['<div id="single"><h3 class="bar">Delete '
+                          'Institution Confirmation.</h3>',
+                          multiReplace(read_file('deleteinst.html'),
+                                       dict(['%INSTID%', instid,
+                                             '%%%FILEINFO%%%', fileinfo
+                                             ])
+                          ),
+                          '</div>'
+                          ]
             else:
-                output = ['<div id="single"><h3 class="bar">Delete Institution Confirmation.</h3>', read_file('deleteinst.html').replace('%INSTID%', instid).replace('%%%FILEINFO%%%', ''), '</div>']
-            return ''.join(output)      
+                output = ['<div id="single">',
+                          '<h3 class="bar">',
+                          'Delete Institution Confirmation.',
+                          '</h3>',
+                          multiReplace(read_file('deleteinst.html'),
+                                       dict([('%INSTID%', instid),
+                                             ('%%%FILEINFO%%%', '')
+                                             ])
+                                       ),
+                          '</div>'
+                          ]
+            return ''.join(output)
         elif (cancel == 'Cancel'):
             return self.show_adminMenu()
         else:
-            if (passwd and session.user.check_password(session, passwd)): 
+            if (passwd and session.user.check_password(session, passwd)):
                 try:
                     instStore.delete_record(session, instid)
                 except:
-                    return self.show_adminMenu(None, '<p class="error">Unable to delete institution - user does not exist.</p>')
+                    return self.show_adminMenu(
+                        None,
+                        '<p class="error">Unable to delete institution - '
+                        'user does not exist.</p>'
+                    )
                 else:
-                    sqlQ = "SELECT editingstore FROM editingstore_linkrecinst WHERE institutionid='{0}'".format(instid)
-                    res = userStore._query(sqlQ)
-                    result = res.dictresult()
+                    sqlQ = ("SELECT editingstore FROM "
+                            "editingstore_linkrecinst WHERE institutionid=%s"
+                            )
+                    result = userStore._query(sqlQ, (instid,))
                     for r in result:
                         recid = r['editingstore']
                         try:
@@ -435,7 +564,11 @@ class HubeditAdminHandler:
                     rebuild = True
                     return self.show_adminMenu()
             else :
-                return self.show_adminMenu(None, '<p class="error">Unable to delete institution - incorrect password.</p>')
+                return self.show_adminMenu(
+                    None,
+                    '<p class="error">Unable to delete institution - '
+                    'incorrect password.</p>'
+                )
         #- end delete_user()
 
     def get_contactDetails(self, form):
@@ -445,7 +578,7 @@ class HubeditAdminHandler:
                 user = userStore.fetch_object(session, un)
             except:
                 return '<p>There is no user with that username</p>'
-            else:               
+            else:
                 return '''<table>
                             <tr><td>Full Name: </td><td>%s</td></tr>
                             <tr><td>Email: </td><td>%s</td></tr>
@@ -487,9 +620,13 @@ class HubeditAdminHandler:
                 content = self.show_adminMenu()
         elif path == 'admin':
             # redirect to make sure later relative links work correctly
-            redirect(req, 'admin/', 
-                     permanent=False, # TODO: make me True 
-                     text="To prevent URL collisions caused by internal relative, this service must be accessed at admin/")
+            redirect(req, 'admin/',
+                     permanent=False, # TODO: make me True
+                     text=("To prevent URL collisions caused by internal "
+                           "relative, this service must be accessed at "
+                           "admin/"
+                           )
+                     )
         else:
             content = self.show_adminMenu()
         content = tmpl.replace('%CONTENT%', content)
@@ -498,7 +635,8 @@ class HubeditAdminHandler:
 
 
 def build_architecture(data=None):
-    global rebuild, session, serv, db, dbPath, qf, editStore, authStore, instStore, userStore, xmlp
+    global rebuild, session, serv, db, dbPath
+    global editStore, authStore, instStore, userStore, xmlp
 
     session = Session()
     session.database = 'db_hubedit'
@@ -515,7 +653,7 @@ def build_architecture(data=None):
     dbPath = db.get_path(session, 'defaultPath')
 
     editStore = db.get_object(session, 'editingStore')
-    userStore = db.get_object(session, 'hubAuthStore')
+    userStore = db.get_object(session, 'eadAuthStore')
     instStore = db.get_object(session, 'institutionStore')
 
     authStore = db.get_object(session, 'hubSuperAuthStore')
@@ -525,10 +663,12 @@ def build_architecture(data=None):
 
 
 def handler(req):
-    global rebuild, logfilepath, cheshirePath, db, editStore, xmlp, formTxr, script                # get the remote host's IP
+    global rebuild, logfilepath, cheshirePath
+    global db, editStore, xmlp, formTxr, script
     script = req.subprocess_env['SCRIPT_NAME']
     req.register_cleanup(build_architecture)
     try:
+        # Get the remote host's IP
         remote_host = req.get_remote_host(apache.REMOTE_NOLOOKUP)
         # initialise logger object
         lgr = FileLogger(
@@ -584,7 +724,6 @@ rebuild = True
 serv = None
 session = None
 db = None
-qf = None
 editStore = None
 authStore = None
 xmlp = None
