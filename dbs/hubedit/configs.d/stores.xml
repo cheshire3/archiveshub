@@ -4,7 +4,7 @@
         <subConfig type="recordStore" id="editingStore">
             <objectType>cheshire3.sql.postgres.PostgresRecordStore</objectType>
             <paths>
-            <path type="databaseName">db_hubedit</path>
+            <path type="databaseName">db_ead</path>
             <path type="tableName">editingStore</path>
             <object type="inTransformer" ref="XmlTransformer" />
             <object type="outParser" ref="LxmlParser" />
@@ -22,7 +22,7 @@
         <subConfig type="recordStore" id="templateStore">
             <objectType>cheshire3.sql.postgres.PostgresRecordStore</objectType>
             <paths>
-                <path type="databaseName">db_hubedit</path>
+                <path type="databaseName">db_ead</path>
                 <path type="tableName">templateStore</path>
                 <object type="inTransformer" ref="XmlTransformer" />
                 <object type="outParser" ref="LxmlParser" />

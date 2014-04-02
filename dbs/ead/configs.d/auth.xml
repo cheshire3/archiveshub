@@ -17,6 +17,16 @@
             </relations>
         </subConfig>
 
+        <subConfig type="objectStore" id="adminAuthStore">
+            <objectType>cheshire3.objectStore.BdbObjectStore</objectType>
+            <paths>
+                <path type="defaultPath">auth</path>
+                <path type="databasePath">adminAuthStore.bdb</path>
+                <object type="inTransformer" ref="XmlTransformer" />
+                <object type="outParser" ref="LxmlParser" />
+            </paths>
+        </subConfig>
+
         <subConfig type="documentStore" id="institutionStore">
             <objectType>cheshire3.sql.postgres.PostgresRecordStore</objectType>
             <paths>
@@ -24,14 +34,7 @@
                 <path type="tableName">institutionStore</path>
                 <object type="inTransformer" ref="XmlTransformer" />
                 <object type="outParser" ref="LxmlParser" />
-            </paths>
-        </subConfig>
-
-        <subConfig type="authStore" id="hubSuperAuthStore">
-            <objectType>cheshire3.objectStore.BdbObjectStore</objectType>
-            <paths>
-                <path type="databasePath">hubSuperAuthStore.bdb</path>
-            </paths>
+              </paths>
         </subConfig>
 
     </subConfigs>
