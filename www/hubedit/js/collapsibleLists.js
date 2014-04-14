@@ -31,10 +31,10 @@ var listCount = 0;
 
 /* customisable display of icons in collapsible lists */
 /* file explorer style */
-var collapsedUrl = '/img/folderClosed.gif';
-var expandedUrl = '/img/folderOpen.gif';
-var itemUrl = '/img/barT.gif'
-var lastItemUrl = '/img/barLast.gif'
+var collapsedUrl = '/images/search/folderClosed.png';
+var expandedUrl = '/images/search/folderOpen.png';
+var itemUrl = '/images/search/barT.png'
+var lastItemUrl = '/images/search/barLast.png'
 
 
 function createTreeFromList(listId, treeState, collapseList, controlLevels) {
@@ -251,7 +251,7 @@ function refreshSubTrees(listObj, level, rootListId, listTag){
 	      	if( nextSubList ) {    	      			
 	      		var image = listItems[i].getElementsByTagName('IMG')[0];
 	      		source = image.getAttribute('src');
-				if (source.substring(source.lastIndexOf('/')) == '/folderOpen.gif' || source.substring(source.lastIndexOf('/')) == '/folderClosed.gif'){
+				if (source.substring(source.lastIndexOf('/')) == '/folderOpen.png' || source.substring(source.lastIndexOf('/')) == '/folderClosed.png'){
 					var span = listItems[i].getElementsByTagName('SPAN')[0];
 					span.firstChild.nodeValue = ' {' + nextSubList.getElementsByTagName('li').length + ' entries}';			
 				}

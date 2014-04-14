@@ -39,7 +39,7 @@ linkHash = new Array();
 linkHash['text'] = new Array('[ show ]', '[ hide ]');
 linkHash['plusMinus'] = new Array('[+]', '[-]');
 linkHash['arrows'] = new Array('<img src="/icons/right.png" alt="&gt;"/>', '<img src="/icons/down.png" alt="V"/>');
-linkHash['folders'] = new Array('<img src="/img/folderClosed.gif" alt="[+]"/>', '<img src="/img/folderOpen.gif" alt="[-]"/>');
+linkHash['folders'] = new Array('<img src="/images/search/folderClosed.png" alt="[+]"/>', '<img src="/images/search/folderOpen.png" alt="[-]"/>');
 
 
 function hideStuff() {

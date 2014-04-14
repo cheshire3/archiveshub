@@ -773,9 +773,9 @@ function deleteComponent(id){
 			    deleteLink.onclick = new Function("javascript: deleteComponent('" + grandparentId + "')");
 			
 			    deleteImage = document.createElement('img');
-			    deleteImage.setAttribute('src', '/img/delete.png');
-			    deleteImage.setAttribute('onmouseover', 'this.src=\'/img/delete-hover.png\';')
-    			deleteImage.setAttribute('onmouseout', 'this.src=\'/img/delete.png\';')
+			    deleteImage.setAttribute('src', '/images/editor/delete.png');
+			    deleteImage.setAttribute('onmouseover', 'this.src=\'/images/editor/delete-hover.png\';')
+    			deleteImage.setAttribute('onmouseout', 'this.src=\'/images/editor/delete.png\';')
 			    deleteImage.className = 'deletelogo';
 			    
 			    deleteLink.appendChild(deleteImage);
@@ -1086,7 +1086,7 @@ function reassignToUser(){
 			         },
 			         onLoading: function(){
 			             $('storeDirForm').hide();
-                         $('userFileListDiv').insert("<p>Reassigning record to user: " + user + "</p>").insert(new Element('img', {src: '/img/ajax-loader.gif', alt: ''}));
+                         $('userFileListDiv').insert("<p>Reassigning record to user: " + user + "</p>").insert(new Element('img', {src: '/images/editor/ajax-loader.gif', alt: ''}));
 			         }
 			});
 		}

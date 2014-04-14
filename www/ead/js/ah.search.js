@@ -304,10 +304,10 @@ function refreshSubTrees(listObj, level, rootListId, listTag){
         // for each <li>
         if( listItems[i].tagName) {
             var nextSubList = listItems[i].getElementsByTagName( listTag )[0];
-            if( nextSubList ) {                     
+            if( nextSubList ) {
                 var image = listItems[i].getElementsByTagName('IMG')[0];
                 source = image.getAttribute('src');
-                if (source.substring(source.lastIndexOf('/')) == '/folderOpen.gif' || source.substring(source.lastIndexOf('/')) == '/folderClosed.gif'){
+                if (source.substring(source.lastIndexOf('/')) == '/folderOpen.png' || source.substring(source.lastIndexOf('/')) == '/folderClosed.png'){
                     var span = listItems[i].getElementsByTagName('SPAN')[0];
                     span.firstChild.nodeValue = ' {' + nextSubList.getElementsByTagName('li').length + ' entries}';         
                 }
@@ -1225,7 +1225,7 @@ linkHash = new Array();
 linkHash['text'] = new Array('[ show ]', '[ hide ]');
 linkHash['plusMinus'] = new Array('[+]', '[-]');
 linkHash['arrows'] = new Array('<img src="/icons/right.png" alt="&gt;"/>', '<img src="/icons/down.png" alt="V"/>');
-linkHash['folders'] = new Array('<img src="/ead/img/folderClosed.gif" alt="[+]"/>', '<img src="/ead/img/folderOpen.gif" alt="[-]"/>');
+linkHash['folders'] = new Array('<img src="/images/search/folderClosed.png" alt="[+]"/>', '<img src="/images/search/folderOpen.png" alt="[-]"/>');
 
 function hideStuff() {
     $('a[class|="jstoggle"]').each(function(i, el){

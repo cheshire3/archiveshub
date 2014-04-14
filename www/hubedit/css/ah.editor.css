@@ -107,7 +107,7 @@ a.delete-sprite {
     padding-left: 5px;
     height: 14px;
     width: 19px;
-    background: url('/img/delete-sprite.png') no-repeat 5px 0;
+    background: url('/images/editor/delete-sprite.png') no-repeat 5px 0;
     color: transparent;
 }
 
@@ -256,7 +256,7 @@ input[readonly] {
 div#formDiv .section {
     padding-bottom: 15px;
     border-bottom: 10px solid white;
-    background: white url('/img/structure/hr_chevron_paleblue.png') repeat-x;
+    background: white url('/images/structure/hr_chevron_paleblue.png') repeat-x;
     background-position: left bottom;
 }
 

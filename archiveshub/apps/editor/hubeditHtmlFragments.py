@@ -33,19 +33,19 @@
 
 # img tags for icons used in results
 # - N.B. These will only be displayed if the result_graphics switch is set to 1
-full_tag = u'<img src="/img/v3_full.gif" alt="Full"/>'
-email_tag = u'<img src="/img/v3_email.gif" alt="e-mail"/>'
-similar_tag = u'<img src="/img/v3_simlr.gif" alt="Similar"/>'
+full_tag = u'<img src="/images/search/v3_full.gif" alt="Full"/>'
+email_tag = u'<img src="/images/search/v3_email.gif" alt="e-mail"/>'
+similar_tag = u'<img src="/images/search/v3_simlr.gif" alt="Similar"/>'
 
-folder_closed_tag = u'<img src="/img/folderClosed.gif" alt="[+]"/>'
-folder_open_tag = u'<img src="/img/folderOpen.gif" alt="[-]"/>'
+folder_closed_tag = u'<img src="/images/search/folderClosed.png" alt="[+]"/>'
+folder_open_tag = u'<img src="/images/search/folderOpen.png" alt="[-]"/>'
 
-fback_tag = u'<img src="/img/fback.gif" alt="First"/>'
-back_tag = u'<img src="/img/back.gif" alt="Previous"/>'
-forward_tag = u'<img src="/img/forward.gif" alt="Next"/>'
-fforward_tag = u'<img src="/img/fforward.gif" alt="Final"/>'
+fback_tag = u'<img src="/images/search/fback.gif" alt="First"/>'
+back_tag = u'<img src="/images/search/back.gif" alt="Previous"/>'
+forward_tag = u'<img src="/images/search/forward.gif" alt="Next"/>'
+fforward_tag = u'<img src="/images/search/fforward.gif" alt="Final"/>'
 
-no_hits_image = u'<img src="/img/no_hits.png" alt=""/>'
+no_hits_image = u'<img src="/images/search/no_hits.png" alt=""/>'
 
 # Result rows
 browse_result_row = u'''
@@ -258,7 +258,7 @@ rename_notes = u'''
 keyboard_link = '''\
 <a onclick="toggleKeyboard();" 
    title="Show/Hide Character Keyboard">
-    <img src="/img/icon-keypad.png" alt=""/>
+    <img src="/images/editor/icon-keypad.png" alt=""/>
     Character Keyboard
 </a>
 '''

@@ -78,7 +78,7 @@ class HubeditAdminHandler:
         self.htmlNav = [
             '<li class="navtab">'
             '<a href="/edit/menu.html" title="Edit/Create Menu">'
-            '<img src="/img/icon-list.png" alt=""/>'
+            '<img src="/images/editor/icon-list.png" alt=""/>'
             'Edit/Create Menu'
             '</a>'
             '</li>'
@@ -226,25 +226,19 @@ class HubeditAdminHandler:
                       <a href="users.html?operation=edit&amp;userid={0}">
                       {1}
                       </a>
-                      <a onclick="deleteUser(\'{0}\')">
-                        <img
-                          src="/img/delete.png"
-                          alt="[&times;]" class="deletelogo"
-                          onmouseover="this.src=\'/img/delete-hover.png\'"
-                          onmouseout="this.src=\'/img/delete.png\'"
-                          title="Delete user '{1}'"/>
+                      <a onclick="deleteUser(\'{0}\')"
+                          class="delete-sprite">
+                          [&times;]
                       </a>
                     </li>'''.format(username, userText)
                     )
                 instUsers.append(u'</ul>')
             else:
                 instUsers.extend([
-                    u'''<a onclick="deleteInst(\'{0}\')">
-                    <img src="/img/delete.png"
-                    alt="[X]" class="deletelogo"
-                    onmouseover="this.src=\'/img/delete-hover.png\'"
-                    onmouseout="this.src=\'/img/delete.png\'"
-                    title="Delete institution '{1}'"/>
+                    u'''<a onclick="deleteInst(\'{0}\')"
+                        class="delete-sprite"
+                        title="Delete institution '{1}'">
+                        [&times;]
                     </a>'''.format(instRec.id, instName),
                     u'<ul class="hierarchy"></ul>'
                 ])
