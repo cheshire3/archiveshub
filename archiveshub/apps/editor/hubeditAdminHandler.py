@@ -90,7 +90,6 @@ class HubeditAdminHandler:
         if content_type is not None:
             req.content_type = content_type
         req.headers_out['Cache-Control'] = "no-cache, no-store"
-        req.content_length = len(data)
         req.send_http_header()
         if (type(data) == unicode):
             data = data.encode('utf-8')
