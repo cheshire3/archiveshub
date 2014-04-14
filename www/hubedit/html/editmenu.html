@@ -1,14 +1,11 @@
 <div id="leftcol" class="editmenu">
-    <script type="text/javascript" src="/js/prototype.js"></script>
-	<script type="text/javascript" src="/js/form.js"></script>
-    <script type="text/javascript" src="/js/collapsibleLists.js"></script>
-    <script type="text/javascript" src="/js/cookies.js"></script>
+    <script type="text/javascript" src="js/prototype.js"></script>
     <script type="text/javascript">
     <!--
         var olf = function loadPage() {
-        		enableMenuButtons();
-                createTreeFromList('storeDirTree', getCookie(''), true, false);
-            } ; 
+            enableMenuButtons();
+            createTreeFromList('storeDirTree', getCookie(''), true, false);
+        };
         if (addLoadEvent) {
           addLoadEvent(olf);
         } else {

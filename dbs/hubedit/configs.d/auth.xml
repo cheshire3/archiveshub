@@ -25,6 +25,9 @@
                 <object type="inTransformer" ref="XmlTransformer" />
                 <object type="outParser" ref="LxmlParser" />
             </paths>
+            <options>
+                <setting type="digest">sha</setting>
+            </options>
         </subConfig>
 
         <subConfig type="authStore" id="hubSuperAuthStore">

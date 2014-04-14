@@ -42,6 +42,7 @@ import datetime
 
 from lxml import etree
 from crypt import crypt
+from os.path import abspath
 
 from mod_python import apache, Cookie
 from mod_python.util import FieldStorage, redirect
@@ -194,7 +195,7 @@ class HubeditAdminHandler:
     def list_usersByInst(self):
         global userStore
         out = []
-        # get list of institutions for sorting
+        # Get list of institutions for sorting
         institutions = []
         for instRec in instStore:
             instName = instRec.process_xpath(session, '//name/text()')[0]
@@ -467,6 +468,7 @@ class HubeditAdminHandler:
         id = form.get('id', None)
         inst = form.get('institution', None)
         quota = form.get('quota', '50')
+        print id, inst, quota
         docstr = ('<inst><name>{0}</name><quota>{1}</quota></inst>'
                   ''.format(inst, quota)
                   )
@@ -474,7 +476,7 @@ class HubeditAdminHandler:
             doc = StringDocument(docstr)
             rec = xmlp.process_document(session, doc)
             rec.id = id
-            instStore.delete_record(session, id)
+#             instStore.delete_record(session, id)
             instStore.store_record(session, rec)
             return self.show_adminMenu()
         else:
@@ -589,7 +591,14 @@ class HubeditAdminHandler:
         path = path[path.rfind('/') + 1:]
         content = None
         operation = form.get('operation', None)
-        if path == 'users.html':
+        if path.endswith('.js'):
+            self.send_response(read_file(abspath('../js/{0}'.format(path))),
+                               req,
+                               content_type='text/javascript',
+                               code=200
+                               )
+            return apache.OK
+        elif path == 'users.html':
             if (operation):
                 if (operation == 'findcontacts'):
                     content = self.get_contactDetails(form)
