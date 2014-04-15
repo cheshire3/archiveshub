@@ -508,7 +508,7 @@
                 <object type="indexStore" ref="indexStore" />
             </paths>
             <source mode="data|exact|&lt;|&gt;|within|encloses">
-                <xpath>/*/*/did/unitdate/@normal</xpath>
+                <xpath>/*/*/did//unitdate/@normal</xpath>
                 <process>
                     <object type="extractor" ref="SimpleExtractor" />
                     <object type="tokenizer" ref="DateTokenizer" />
@@ -516,7 +516,7 @@
                 </process>
             </source>
             <source mode="data">
-                <xpath>/*/*/did/unitdate</xpath>
+                <xpath>/*/*/did//unitdate</xpath>
                 <process>
                     <object type="extractor" ref="SimpleExtractor" />
                     <object type="tokenizer" ref="FuzzyDateTokenizer" />
@@ -537,7 +537,7 @@
                 <object type="indexStore" ref="indexStore" />
             </paths>
             <source mode="data|exact|&lt;|&gt;|within|encloses">
-                <xpath>/*/*/did/unitdate/@normal</xpath>
+                <xpath>/*/*/did//unitdate/@normal</xpath>
                 <process>
                     <object type="extractor" ref="SimpleExtractor" />
                     <object type="tokenizer" ref="DateTokenizer" />
@@ -546,7 +546,7 @@
                 </process>
             </source>
             <source mode="data">
-                <xpath>/*/*/did/unitdate</xpath>
+                <xpath>/*/*/did//unitdate</xpath>
                 <process>
                     <object type="extractor" ref="SimpleExtractor" />
                     <object type="tokenizer" ref="FuzzyDateTokenizer" />
@@ -567,7 +567,7 @@
                 <object type="indexStore" ref="indexStore" />
             </paths>
             <source mode="data|exact|&lt;|&gt;|within|encloses">
-                <xpath>/*/*/did/unitdate/@normal</xpath>
+                <xpath>/*/*/did//unitdate/@normal</xpath>
                 <process>
                     <object type="extractor" ref="SimpleExtractor" />
                     <object type="tokenizer" ref="DateRangeTokenizer" />
@@ -575,10 +575,13 @@
                 </process>
             </source>
             <source mode="data">
-                <!-- ideally would be: <xpath>/*/*/did/unitdate[not (@normal)]</xpath> 
-                    however some normalized dates violate ISO 8601 and would cause false negatives. 
-                    IMO false positives are less bad than false negatives. -->
-                <xpath>/*/*/did/unitdate</xpath>
+                <!-- ideally would be: /*/*/did//unitdate[not (@normal)]
+                    however some normalized dates violate ISO 8601 and would
+                    cause false negatives. IMO false positives are less bad
+                    than false negatives, that is to say we sacrifice precision
+                    for increased recall
+                -->
+                <xpath>/*/*/did//unitdate</xpath>
                 <process>
                     <object type="extractor" ref="SimpleExtractor" />
                     <object type="tokenizer" ref="FuzzyDateRangeTokenizer" />
