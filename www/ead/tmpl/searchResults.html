@@ -87,7 +87,7 @@
             % endif
             ## Page skip
             ## Forward links
-            % if startRecord < len(resultSet) - maximumRecords:
+            % if startRecord <= len(resultSet) - maximumRecords:
                 <div class="forwardlinks">
                     ${forward_links(resultSet, sortBy, maximumRecords, startRecord)}
                 </div>
