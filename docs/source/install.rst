@@ -375,7 +375,7 @@ Accordingly, the ``master`` branch is stable and contains the most recent
 release of the software; development should take place in (or by creating a
 new ``feature/...`` branch from) the ``develop`` branch.
 
-We also highly recommend that you use virtualenv to isolate your protect
+We also highly recommend that you use virtualenv to isolate your project
 against dependency conflicts that may occur with other `Python`_ applications
 on your system (many Linux distributions use `Python`_ for user-interface
 tasks, including package management.)
