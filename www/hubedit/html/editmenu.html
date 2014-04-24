@@ -9,82 +9,82 @@
         if (addLoadEvent) {
           addLoadEvent(olf);
         } else {
-          window.onload = olf; 
+          window.onload = olf;
         }
     -->
     </script>
     <div id="editmenu">
-	    <noscript><h2 style="color:red;">Javascript must be enabled to use the Archives Hub Data Creation and Editing Tool</h2></noscript>
-	    <h3 class="bar">Create Description</h3>
-	     <form name="createform" action="edit.html" method="get">
-	    	<input type="hidden" name="operation" value="create"/>
-	    	<p>
-                Select ‘No Template’ for a completely empty form, or select a 
-	    	    template from the list (see below).<br/>
-	    	    Take care adding the reference, as this is used to create 
-	    	    the persistent web identifier, which cannot be changed later, 
-	    	    even if the reference is changed.<br/>
-	    	    You can add lower levels (components) to the description as 
-	    	    you go.<br/>
-	    	    You can cut and paste into a description from a 
-	    	    <a href="http://archiveshub.ac.uk/datacreation/#plaintext">
+        <noscript><h2 style="color:red;">Javascript must be enabled to use the Archives Hub Data Creation and Editing Tool</h2></noscript>
+        <h3 class="bar">Create Description</h3>
+         <form name="createform" action="edit.html" method="get">
+            <input type="hidden" name="operation" value="create"/>
+            <p>
+                Select ‘No Template’ for a completely empty form, or select a
+                template from the list (see below).<br/>
+                Take care adding the reference, as this is used to create
+                the persistent web identifier, which cannot be changed later,
+                even if the reference is changed.<br/>
+                You can add lower levels (components) to the description as
+                you go.<br/>
+                You can cut and paste into a description from a
+                <a href="http://archiveshub.ac.uk/datacreation/#plaintext">
                     plain text document
-	    	    </a>.
-	    	</p>  
-	    	%%%TMPLTSEL%%%
-	    	<input type="submit" value=" Create Description " disabled="true"/>
-	    	
-	    </form>
-	    <h3 class="bar">Create/Modify Template</h3>
-	    <form name="templateform" action="edit.html" method="get">
-	    	<input type="hidden" name="operation" value="createtemplate"/>
-	    	<p>
-                Pre-populate elements of your descriptions by creating a 
-                template. For example, a template that always includes the 
+                </a>.
+            </p>
+            %%%TMPLTSEL%%%
+            <input type="submit" value=" Create Description " disabled="true"/>
+
+        </form>
+        <h3 class="bar">Create/Modify Template</h3>
+        <form name="templateform" action="edit.html" method="get">
+            <input type="hidden" name="operation" value="createtemplate"/>
+            <p>
+                Pre-populate elements of your descriptions by creating a
+                template. For example, a template that always includes the
                 name of your repository and your repository code.
-            </p>  
-	    	<input type="submit" value=" Create Template " disabled="true"/>
-	    </form>
-	    %%%TMPLTMOD%%%
-	    <h3 class="bar">Edit</h3>
-	    <form id="localEditForm" name="localEditForm" action="edit.html" method="post" enctype="multipart/form-data">
-	    	<input type="hidden" name="operation" value="local"/>
-	    	<p>
+            </p>
+            <input type="submit" value=" Create Template " disabled="true"/>
+        </form>
+        %%%TMPLTMOD%%%
+        <h3 class="bar">Edit</h3>
+        <form id="localEditForm" name="localEditForm" action="edit.html" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="operation" value="local"/>
+            <p>
                 <b>Upload a description from your machine into the EAD Editor.</b>
             </p>
-	    	<p>
-	    		Description to edit:<br/>
-	    		<input id="localEdit" type="file" name="filepath" size="40" value="test"/>
-	    	</p>
-	    	<input type="submit" value=" Upload &amp; Edit Description " disabled="true"/>
-	    </form>
-    </div>  
+            <p>
+                Description to edit:<br/>
+                <input id="localEdit" type="file" name="filepath" size="40" value="test"/>
+            </p>
+            <input type="submit" value=" Upload &amp; Edit Description " disabled="true"/>
+        </form>
+    </div>
 </div>
 <div id="padder" class="editmenu">
     <div id="rightcol" class="editmenu">
-    	<h3 class="bar">Draft Files</h3>
-    	<p class="%%%CLASS%%%">Your institution is currently using 
-    	<strong>%%%TOTAL%%%</strong> of <strong>%%%QUOTA%%%</strong>
-    	of its allocated quota of draft files</p>
-    	<div id="userFileListDiv">
+        <h3 class="bar">Draft Files</h3>
+        <p class="%%%CLASS%%%">Your institution is currently using
+        <strong>%%%TOTAL%%%</strong> of <strong>%%%QUOTA%%%</strong>
+        of its allocated quota of draft files</p>
+        <div id="userFileListDiv">
             <p><b>Open a file to continue editing</b></p>
-	        <form name="storeDirForm" id="storeDirForm" action="edit.html" method="get">
-	            <input type="hidden" name="operation" value="load"/>
-	            <input type="submit" value=" Edit File "  disabled="true"/>
-	            <input type="button" onclick="deleteFromStore()" value=" Delete "  disabled="true"/>
-		       	%%%USROPTNS%%%
-		        <ul class="unmarked">
-		        	<li>
-			        	<img src="/images/search/folderOpen.png" alt=""/>
-			        	<span>User Files</span>
-			        	<ul id="storeDirTree" class="unmarked hierarchy">
-			        	%%%RECORDS%%%
-			        	</ul>
-		        	</li>
-		        </ul>
-		        <input type="submit" value=" Edit File "  disabled="true"/>
-		        <input type="button" onclick="deleteFromStore()" value=" Delete "  disabled="true"/>
-	        </form>
+            <form name="storeDirForm" id="storeDirForm" action="edit.html" method="get">
+                <input type="hidden" name="operation" value="load"/>
+                <input type="submit" value=" Edit File "  disabled="true"/>
+                <input type="button" onclick="deleteFromStore()" value=" Delete "  disabled="true"/>
+                   %%%USROPTNS%%%
+                <ul class="unmarked">
+                    <li>
+                        <img src="/images/search/folderOpen.png" alt=""/>
+                        <span>User Files</span>
+                        <ul id="storeDirTree" class="unmarked hierarchy">
+                        %%%RECORDS%%%
+                        </ul>
+                    </li>
+                </ul>
+                <input type="submit" value=" Edit File "  disabled="true"/>
+                <input type="button" onclick="deleteFromStore()" value=" Delete "  disabled="true"/>
+            </form>
         </div>
     </div>
 </div>

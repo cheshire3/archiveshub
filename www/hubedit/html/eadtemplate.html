@@ -17,37 +17,37 @@
 
     %MENUCODE%
 
-	<table title="operations" class="edit-ops">
-	    <tr>
-	        <td class=buttonlabel">File <a id="daohelp" name="daohelp" target="_new" href="help.html#file">
-			<img class="tip" src="/images/structure/form_tip.png" alt="[What is this?]"/>
-			</a></td>
-	        <td>
-	           <input type="button"
-	                  class="menubutton"
-	                  id="savetemplate-button"
-	                  onclick="saveTemplate('false')"
-	                  value="Save" title="Save the current changes to the Draft File Store"></input>
+    <table title="operations" class="edit-ops">
+        <tr>
+            <td class=buttonlabel">File <a id="daohelp" name="daohelp" target="_new" href="help.html#file">
+            <img class="tip" src="/images/structure/form_tip.png" alt="[What is this?]"/>
+            </a></td>
+            <td>
+               <input type="button"
+                      class="menubutton"
+                      id="savetemplate-button"
+                      onclick="saveTemplate('false')"
+                      value="Save" title="Save the current changes to the Draft File Store"></input>
             </td>
-	        <td>
-	           <input type="button" class="menubutton" 
-	                  id="deletetemplate-button" 
-	                  onclick="var cont = confirmOp('This operation will delete the template.\n\nAre you sure you want to delete this template?'); if (cont) {discardTemplate();}" 
-	                  value="Delete" title="Delete this template"></input>
+            <td>
+               <input type="button" class="menubutton"
+                      id="deletetemplate-button"
+                      onclick="var cont = confirmOp('This operation will delete the template.\n\nAre you sure you want to delete this template?'); if (cont) {discardTemplate();}"
+                      value="Delete" title="Delete this template"></input>
             </td>
-	    </tr>
-	</table>
-	
-	<br /><br />
+        </tr>
+    </table>
 
-	<div id="treeDiv">
+    <br /><br />
+
+    <div id="treeDiv">
 %TOC%
-	</div> <!-- /#treeDiv -->
+    </div> <!-- /#treeDiv -->
 </div><!-- /#leftcol -->
 <div id="padder">
-	<div id="rightcol" class="ead" onscroll="hideAllMenus()">
+    <div id="rightcol" class="ead" onscroll="hideAllMenus()">
 %FRM%
-	</div>
+    </div>
 </div><!-- /#padder -->
 
 %KYBDCODE%
