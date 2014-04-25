@@ -832,8 +832,8 @@ class HubEditingHandler(object):
 
         # Get the institution of the user performing the operation
         sqlQ = ("SELECT institutionid "
-                "FROM hubauthstore_linkauthinst "
-                "WHERE hubauthstore='%s'"
+                "FROM eadAuthStore_linkauthinst "
+                "WHERE eadAuthStore='%s'"
                 )
         res = authStore._query(sqlQ, (session.user.username,))
         result = res.dictresult()
@@ -864,8 +864,8 @@ class HubEditingHandler(object):
         recid = form.get('recid', None)
         # Get the institution of the user performing the operation
         sqlQ = ("SELECT institutionid "
-                "FROM hubauthstore_linkauthinst "
-                "WHERE hubauthstore='%s'")
+                "FROM eadAuthStore_linkauthinst "
+                "WHERE eadAuthStore='%s'")
         res = authStore._query(sqlQ, (session.user.username,))
         result = res.dictresult()
         if len(result) > 1:
@@ -1227,8 +1227,8 @@ class HubEditingHandler(object):
                 except:
                     # Get the institution of the user performing the operation
                     sqlQ = ("SELECT institutionid "
-                            "FROM hubauthstore_linkauthinst "
-                            "WHERE hubauthstore='{%s'"
+                            "FROM eadAuthStore_linkauthinst "
+                            "WHERE eadAuthStore='{%s'"
                             )
                     res = authStore._query(sqlQ, (un,))
                     result = res.dictresult()
@@ -1291,8 +1291,8 @@ class HubEditingHandler(object):
         """
         # Get the institution of the user performing the operation
         sqlQ = ("SELECT institutionid "
-                "FROM hubauthstore_linkauthinst "
-                "WHERE hubauthstore='%s'"
+                "FROM eadAuthStore_linkauthinst "
+                "WHERE eadAuthStore='%s'"
                 )
         res = authStore._query(sqlQ, (session.user.username,))
         result = res.dictresult()
@@ -1331,8 +1331,8 @@ class HubEditingHandler(object):
         # Get the institution of the user performing the operation
         templateStore = db.get_object(session, 'templateStore')
         sqlQ = ("SELECT institutionid "
-                "FROM hubauthstore_linkauthinst "
-                "WHERE hubauthstore='%s'"
+                "FROM eadAuthStore_linkauthinst "
+                "WHERE eadAuthStore='%s'"
                 )
         res = authStore._query(sqlQ, (session.user.username,))
         result = res.dictresult()
@@ -1443,8 +1443,8 @@ class HubEditingHandler(object):
             user = session.user.username
             # Get instId of user
             sqlQ = ("SELECT institutionid "
-                    "FROM hubauthstore_linkauthinst "
-                    "WHERE hubauthstore='%s'"
+                    "FROM eadAuthStore_linkauthinst "
+                    "WHERE eadAuthStore='%s'"
                     )
             res = authStore._query(sqlQ, (session.user.username,))
             result = res.dictresult()
@@ -1562,8 +1562,8 @@ class HubEditingHandler(object):
             rec.id = '%s-%s' % (rec.id, fileOwner)
             # Get the institution of the user performing the operation
             sqlQ = ("SELECT institutionid "
-                    "FROM hubauthstore_linkauthinst "
-                    "WHERE hubauthstore='%s'"
+                    "FROM eadAuthStore_linkauthinst "
+                    "WHERE eadAuthStore='%s'"
                     )
             res = authStore._query(sqlQ, (session.user.username,))
             result = res.dictresult()
@@ -2383,7 +2383,7 @@ class HubEditingHandler(object):
         if (
             session.user.has_flag(session,
                                   'info:srw/operation/1/create',
-                                  'hubAuthStore'
+                                  'eadAuthStore'
                                   ) and
             display is None
         ):
@@ -2445,7 +2445,7 @@ class HubEditingHandler(object):
             elif (
                 session.user.has_flag(session,
                                       'info:srw/operation/1/delete',
-                                      'hubAuthStore'
+                                      'eadAuthStore'
                                       )
             ):
                 cellstr = cellstr + ('<td><a href="users.html?'
@@ -2460,7 +2460,7 @@ class HubEditingHandler(object):
         if (
             session.user.has_flag(session,
                                   'info:srw/operation/1/create',
-                                  'hubAuthStore'
+                                  'eadAuthStore'
                                   )
         ):
             lines.extend(['<h3 class="bar">Add New User</h3>',
@@ -2484,7 +2484,7 @@ class HubEditingHandler(object):
             if (
                 session.user.has_flag(session,
                                       'info:srw/operation/1/create',
-                                      'hubAuthStore'
+                                      'eadAuthStore'
                                       )
             ):
                 return self.show_userMenu(
@@ -2522,7 +2522,7 @@ class HubEditingHandler(object):
                             session.user.has_flag(
                                 session,
                                 'info:srw/operation/1/create',
-                                'hubAuthStore'
+                                'eadAuthStore'
                             )
                         ):
                             return self.show_userMenu(
@@ -2547,7 +2547,7 @@ class HubEditingHandler(object):
                 if (
                     session.user.has_flag(session,
                                           'info:srw/operation/1/create',
-                                          'hubAuthStore'
+                                          'eadAuthStore'
                                           )
                 ):
                     values = {'%USERNAME%': '',
@@ -2566,7 +2566,7 @@ class HubEditingHandler(object):
                 if (
                     session.user.has_flag(session,
                                           'info:srw/operation/1/create',
-                                          'hubAuthStore'
+                                          'eadAuthStore'
                                           )
                 ):
                     return self.show_userMenu(
@@ -2612,7 +2612,7 @@ class HubEditingHandler(object):
                     self._canDelete(userid) and
                     session.user.has_flag(session,
                                           'info:srw/operation/1/delete',
-                                          'hubAuthStore'
+                                          'eadAuthStore'
                                           )
                 ):
                     try:
@@ -2646,8 +2646,8 @@ class HubEditingHandler(object):
     def _canDelete(self, userid):
         # Get the institution of the user performing the operation
         sqlQ = ("SELECT institutionid "
-                "FROM hubauthstore_linkauthinst "
-                "WHERE hubauthstore='%s'"
+                "FROM eadAuthStore_linkauthinst "
+                "WHERE eadAuthStore='%s'"
                 )
         res = authStore._query(sqlQ, (session.user.username,))
         result = res.dictresult()
@@ -2659,8 +2659,8 @@ class HubEditingHandler(object):
         else:
             authinst = result[0]['institutionid']
         sqlQ = ("SELECT institutionid "
-                "FROM hubauthstore_linkauthinst "
-                "WHERE hubauthstore='%s'"
+                "FROM eadAuthStore_linkauthinst "
+                "WHERE eadAuthStore='%s'"
                 )
         res = editStore._query(sqlQ, (userid,))
         result = res.dictresult()
@@ -2743,8 +2743,8 @@ class HubEditingHandler(object):
                          'password not supplied.</p>')
                     )
                 sqlQ = ("SELECT institutionid "
-                        "FROM hubauthstore_linkauthinst "
-                        "WHERE hubauthstore='%s'"
+                        "FROM eadAuthStore_linkauthinst "
+                        "WHERE eadAuthStore='%s'"
                         )
                 res = authStore._query(sqlQ, (session.user.id,))
                 result = res.dictresult()
@@ -2797,15 +2797,15 @@ class HubEditingHandler(object):
             self._hasPermission(recid) and
             session.user.has_flag(session,
                                   'info:srw/operation/1/create',
-                                  'hubAuthStore'
+                                  'eadAuthStore'
                                   )
         ):
             if rec.id[rec.id.rfind('-') + 1:] == newUser:
                 return recid
             else:
                 sqlQ = ("SELECT institutionid "
-                        "FROM hubauthstore_linkauthinst "
-                        "WHERE hubauthstore='%s'"
+                        "FROM eadAuthStore_linkauthinst "
+                        "WHERE eadAuthStore='%s'"
                         )
                 res = authStore._query(sqlQ, (newUser,))
                 result = res.dictresult()
@@ -2831,10 +2831,10 @@ class HubEditingHandler(object):
 
     def _get_usernamesByInst(self, institutionid):
         """Return usernames from institution in alphabetical order."""
-        sqlQ = ("SELECT hubauthstore "
-                "FROM hubauthstore_linkauthinst "
+        sqlQ = ("SELECT eadAuthStore "
+                "FROM eadAuthStore_linkauthinst "
                 "WHERE institutionid='%s' "
-                "ORDER BY hubauthstore ASC"
+                "ORDER BY eadAuthStore ASC"
                 )
         res = authStore._query(sqlQ, (institutionid,))
         result = res.getresult()
@@ -2846,8 +2846,8 @@ class HubEditingHandler(object):
         Return usernames from same institution as user in alphabetical order.
         """
         sqlQ = ("SELECT institutionid "
-                "FROM hubauthstore_linkauthinst "
-                "WHERE hubauthstore='%s'"
+                "FROM eadAuthStore_linkauthinst "
+                "WHERE eadAuthStore='%s'"
                 )
         res = authStore._query(sqlQ, (session.user.username,))
         result = res.dictresult()
@@ -2857,8 +2857,8 @@ class HubEditingHandler(object):
     def _get_templatesByInst(self):
         result = []
         sqlQ = ("SELECT institutionid "
-                "FROM hubauthstore_linkauthinst "
-                "WHERE hubauthstore='%s'"
+                "FROM eadAuthStore_linkauthinst "
+                "WHERE eadAuthStore='%s'"
                 )
         res = authStore._query(sqlQ, (session.user.username,))
         result = res.dictresult()
@@ -2906,7 +2906,7 @@ class HubEditingHandler(object):
         if (
             session.user.has_flag(session,
                                   'info:srw/operation/1/create',
-                                  'hubAuthStore')
+                                  'eadAuthStore')
         ):
             self.htmlNav[2] = '''\
             <li class="navtab">
@@ -2915,7 +2915,7 @@ class HubEditingHandler(object):
                     Manage Users
                 </a>
             </li>'''
-            userStore = db.get_object(session, 'hubAuthStore')
+            userStore = db.get_object(session, 'eadAuthStore')
             users = []
             for ctr, uid in enumerate(self._get_usernamesFromMyInst()):
                 user = userStore.fetch_object(session, uid)
@@ -2963,8 +2963,8 @@ class HubEditingHandler(object):
     def _get_totalDrafts(self):
         # Get the institution of the user performing the operation
         sqlQ = ("SELECT institutionid "
-                "FROM hubauthstore_linkauthinst "
-                "WHERE hubauthstore='%s'"
+                "FROM eadAuthStore_linkauthinst "
+                "WHERE eadAuthStore='%s'"
                 )
         res = authStore._query(sqlQ, (session.user.username,))
         result = res.dictresult()
@@ -2982,8 +2982,8 @@ class HubEditingHandler(object):
         #get the institution of the user performing the operation
         instStore = db.get_object(session, 'institutionStore')
         sqlQ = ("SELECT institutionid "
-                "FROM hubauthstore_linkauthinst "
-                "WHERE hubauthstore='%s'"
+                "FROM eadAuthStore_linkauthinst "
+                "WHERE eadAuthStore='%s'"
                 )
         res = authStore._query(sqlQ, (session.user.username,))
         result = res.dictresult()
@@ -2994,8 +2994,8 @@ class HubEditingHandler(object):
 
     def _walk_store(self, store, type='checkbox'):
         sqlQ = ("SELECT institutionid "
-                "FROM hubauthstore_linkauthinst "
-                "WHERE hubauthstore='%s'"
+                "FROM eadAuthStore_linkauthinst "
+                "WHERE eadAuthStore='%s'"
                 )
         res = authStore._query(sqlQ, (session.user.username,))
         result = res.dictresult()
@@ -3020,7 +3020,7 @@ class HubEditingHandler(object):
                 name == session.user.username or
                 session.user.has_flag(session,
                                       'info:srw/operation/1/create',
-                                      'hubAuthStore'
+                                      'eadAuthStore'
                                       )
             ):
                 disabled = ''
@@ -3063,7 +3063,7 @@ class HubEditingHandler(object):
             if (
                 session.user.has_flag(session,
                                       'info:srw/operation/1/create',
-                                      'hubAuthStore')
+                                      'eadAuthStore')
             ):
                 disabled = ''
             else:
@@ -3284,7 +3284,7 @@ def build_architecture(data=None):
                         )
     db = serv.get_object(session, 'db_hubedit')
     editStore = db.get_object(session, 'editingStore')
-    authStore = db.get_object(session, 'hubAuthStore')
+    authStore = db.get_object(session, 'eadAuthStore')
     assignDataIdFlow = db.get_object(session, 'assignDataIdentifierWorkflow')
 
     # transformers
