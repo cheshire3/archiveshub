@@ -68,13 +68,17 @@ sys.path.insert(1, os.path.join(cheshirePath, 'cheshire3', 'code'))
 
 # Cheshire3 stuff
 from cheshire3.baseObjects import Session, Record, ResultSet
-from cheshire3.server import SimpleServer
+
+
 from cheshire3.document import StringDocument
+from cheshire3.exceptions import ObjectDoesNotExistException
+from cheshire3.internal import cheshire3Root
+from cheshire3.record import LxmlRecord
+from cheshire3.server import SimpleServer
 from cheshire3.utils import flattenTexts
-from cheshire3 import exceptions as c3errors
+
 from cheshire3.web.www_utils import html_encode, read_file, multiReplace
 from cheshire3.web.www_utils import *
-from cheshire3.record import LxmlRecord
 
 
 DUMMY_EAD = '<ead><eadheader></eadheader><archdesc></archdesc></ead>'
@@ -2697,7 +2701,7 @@ class HubEditingHandler(object):
                                           )
             try:
                 user = authStore.fetch_object(session, userid)
-            except c3errors.ObjectDoesNotExistException:
+            except ObjectDoesNotExistException:
                 user = None
             if user is not None:
                 values['%USERNAME%'] = ''
@@ -3273,7 +3277,10 @@ def build_architecture(data=None):
     session.environment = 'apache'
     session.user = None
     serv = SimpleServer(session,
-                        cheshirePath + '/cheshire3/configs/serverConfig.xml'
+                        os.path.join(cheshire3Root,
+                                     'configs',
+                                     'serverConfig.xml'
+                                     )
                         )
     db = serv.get_object(session, 'db_hubedit')
     editStore = db.get_object(session, 'editingStore')
@@ -3352,7 +3359,7 @@ def authenhandler(req):
     un = req.user
     try:
         u = session.user = authStore.fetch_object(session, un)
-    except c3errors.ObjectDoesNotExistException:
+    except ObjectDoesNotExistException:
         return apache.HTTP_UNAUTHORIZED
     if u.check_password(session, pw):
         return apache.OK
