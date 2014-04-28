@@ -257,9 +257,15 @@ def live_index(args):
                  "Indexing pre-loaded records into live indexes..."
                  )
     start = time.time()
+    # Get the Indexes
+    if not db.indexes:
+        db._cacheIndexes(session)
     if args.step == 'index':
         # Clear the existing Indexes
-        db.clear_indexes(session)
+        for idx in db.indexes.itervalues():
+            if not idx.get_setting(session, 'noIndexDefault', 0):
+                idx.clear(session)
+        # Run indexing
         _index(session, db, args)
     if args.test:
         test_expectedResults(args)
