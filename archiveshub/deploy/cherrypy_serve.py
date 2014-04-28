@@ -52,7 +52,7 @@ def main(argv=None):
                             'tools.trailing_slash.missing': True,
                             'tools.trailing_slash.extra': True})
     cherrypy.tree.graft(sru_app, '/api/sru')
-    cherrypy.tree.graft(oaipmh_app, '/api/oaipmh/2.0')
+    cherrypy.tree.graft(oaipmh_app, '/api/OAI-PMH/2.0')
     cherrypy.tree.graft(ead_data_app, '/data')
     cherrypy.tree.graft(ead_search_app, '/search')
     root_conf = {
