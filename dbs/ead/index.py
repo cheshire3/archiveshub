@@ -1,7 +1,6 @@
 #!/bin/env python
 # -*- coding: utf-8 -*-
 # Script:    index.py
-# Date:      21 November 2013
 # Copyright: &copy; University of Liverpool 2005-present
 # Author(s): JH - John Harrison <john.harrison@liv.ac.uk>
 # Language:  Python
@@ -113,7 +112,10 @@ def _index_recordStore(recordStore):
 
 def _index(session, db, args):
     # Index Records
-    db.begin_indexing(session)
+    for idx in db.indexes.itervalues():
+        if not idx.get_setting(session, 'noIndexDefault', 0):
+            idx.begin_indexing(session)
+
     if args.main:
         _index_recordStore(db.get_object(session, 'recordStore'))
     if args.components:

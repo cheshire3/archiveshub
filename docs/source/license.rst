@@ -2,7 +2,7 @@
 LICENSE
 =======
 
-Copyright © 2005-2013, the `University of Liverpool`_.
+Copyright © 2005-2014, the `University of Liverpool`_.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without 

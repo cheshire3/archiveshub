@@ -220,7 +220,8 @@ class EADSearchWsgiApplication(EADWsgiApplication):
                 if index:
                     rs.order(session,
                              index,
-                             ascending=ascending
+                             ascending=ascending,
+                             missing=0
                              )
                 elif spec:
                     # Not an index, maybe a ResultSetItem attribute, or XPath?

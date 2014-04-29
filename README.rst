@@ -1,7 +1,7 @@
 Archives Hub
 ============
 
-21st November 2013 (2013-11-21)
+24th April 2014 (2014-04-24)
 
 .. image:: https://travis-ci.org/cheshire3/archiveshub.png?branch=master,release/3.2.0
    :target: https://travis-ci.org/cheshire3/archiveshub
@@ -95,25 +95,89 @@ release of the software; development should take place in (or by creating a
 new ``feature/...`` branch from) the ``develop`` branch.
 
 
-Installation
-------------
-
-TBC
-
-
 Requirements / Dependencies
 ---------------------------
 
-The Archives Hub requires a working installation of Cheshire3, with the
-optional web and sql feature packs - this requirement should be automatically
-resolved during installation.
+`archiveshub`_ requires a working installation of Cheshire3_, with the
+optional ``web`` and ``sql`` feature packs - this requirement should be
+automatically resolved during installation.
 
 Cheshire3_ requires Python_ 2.6.0 or later. It has not yet been verified as
 Python_ 3 compliant.
 
-`Archives Hub`_ should be compatible with any Unix-like O/S. At the  present
+`archiveshub`_ should be compatible with any Unix-like O/S. At the  present
 time it has not been tested on any Microsoft Windows O/S.
 
+
+Installation
+------------
+
+This section contains guidelines for setting up a demo/development
+installation. For production deployment it is recommended that you build and
+read the Sphinx `Documentation`_.
+
+
+Create And Activate A Virtual Environment
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+We highly recommend that you use virtualenv_ to isolate your project
+against dependency conflicts that may occur with other `Python`_ applications
+on your system (many Linux distributions use `Python`_ for user-interface
+tasks, including package management.)
+
+::
+
+    mkdir ~/ve/ah
+    virtualenv ~/ve/ah
+    ...
+    source ~/ve/ah/bin/activate
+
+
+Get The Source Code
+~~~~~~~~~~~~~~~~~~~
+
+1. Move to an appropriate place on your filesystem::
+
+    cd ~/cheshire3
+
+2. Clone the GitHub repository.::
+
+       git clone http://github.com/cheshire3/archiveshub
+
+   **Note**: If you intend to contribute back to the project, we recommend
+   `creating your own fork <https://help.github.com/articles/fork-a-repo>`_
+   and cloning from your fork instead, e.g.::
+
+       git clone http://github.com/<your-github-username>/archiveshub
+
+
+Install ``archiveshub``
+~~~~~~~~~~~~~~~~~~~~~~~
+
+1. Move into the repository::
+
+       cd archiveshub
+
+2. Install dependencies::
+
+       pip -r requirements.txt
+
+3. Install ``archiveshub`` in `develop` mode::
+
+       python setup.py develop
+
+
+Build the Archives Hub Database(s)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+See `Batch Loading`_
+
+Start The Test Server
+~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+    ah-serve
 
 Documentation
 -------------
@@ -141,7 +205,7 @@ Roadmap
 * Editable configurations in standard INI-like format
 
 
-**Version 3.3 – December 2013**
+**Version 3.3 – June 2014**
 
 * Administration Interface
 
@@ -160,7 +224,7 @@ TBC
 Licensing
 ---------
 
-Copyright &copy; 2005-2013, the `University of Liverpool`_.
+Copyright &copy; 2005-2014, the `University of Liverpool`_.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -196,25 +260,37 @@ Loading Data
 Batch Loading
 '''''''''''''
 
-TBC
+It's probably worth building and reading the Sphinx `Documentation`_ for full
+details on this subject, but in short:
+
+1. Go to the EAD database directory::
+
+       cd dbs/ead
+
+2. Add one or more contributors::
+
+       python contributors.py add /path/to/contributor/dir
+
+3. Load EAD files from the contributor(s)::
+
+       python load.py
+
+4. Index all loaded records::
+
+       python index.py live
+
+
+All Python_ scripts in the ``dbs/ead`` directory for managing the database
+will return help on their use if run with the ``-h`` or ``--help`` option.
+e.g.::
+
+    python contributors.py --help
 
 
 Using the Admin Console
 '''''''''''''''''''''''
 
-1. Create an administration account
-
-   1. Change directory to (repository-directory)/dbs/ead
-
-   2. Run the command::
-   
-       python run.py -adduser
-       
-   3. Follow the prompts for provide the required info
-    
-2. See the admin console help page at:
-
-   http://(your-host)/ead/admin/help.html#files_upload
+TBC
 
 
 Searching
@@ -331,6 +407,12 @@ ead
   info:srw/schema/1/ead-2002
   EAD 2002 – DTD Version
 
+ead-hub
+  info:srw/schema/2/raw/ead-2002
+  EAD 2002 - DTD Version 2002, raw internal data edition (e.g. including
+  ``<emph>`` subfields in ``<controlaccess>`` entries and without
+  inter-relational record links having been resolved.)
+
 dc, srw_dc
   info:srw/schema/1/dc-v1.1
   Simple Dublin Core Elements (inside an srw_dc wrapper)
@@ -338,7 +420,6 @@ dc, srw_dc
 oai_dc
   http://www.openarchives.org/OAI/2.0/oai_dc/
   Simple Dublin Core Elements (inside an oai_dc wrapper)
-
 
 
 Disabling SRU
@@ -426,6 +507,7 @@ It is possible to disable the OAI-PMH Interface:
 .. _`Cheshire3`: http://cheshire3.org
 .. _`Cheshire3 Information Framework`: http://cheshire3.org
 .. _`Cheshire3 for Archives`: https://github.com/cheshire3/cheshire3-archives
+.. _`archiveshub`: https://github.com/cheshire3/archiveshub
 .. _`Archives Hub`: http://archiveshub.ac.uk
 .. _`EAD Editor`: http://archiveshub.ac.uk/eadeditor/
 .. _WSGI: http://wsgi.org
@@ -436,3 +518,4 @@ It is possible to disable the OAI-PMH Interface:
 .. _`OAI-PMH`: http://www.openarchives.org/pmh/
 .. _`Mako`: http://www.makotemplates.org/
 .. _`XSLT`: http://www.w3.org/TR/xslt
+.. _virtualenv: http://www.virtualenv.org/en/latest/
