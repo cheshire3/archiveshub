@@ -63,12 +63,13 @@ class ContribArgumentParser(BaseArgumentParser):
 def add_contributor(args):
     """Add data for contributor(s).
 
-    Add DocumentStore configuration(s) for named contributor(s) to the
-    ConfigStore for this database. 
+    Add DocumentStore and RecordStore configuration(s) for named
+    contributor(s) to the Database.
     """
     global session, db, lgr
-    # Get ConfigStore in which to store DocumentStore
-    store = db.get_object(session, 'documentStoreConfigStore')
+    # Get ConfigStores in which to store DocumentStore(s) and RecordStore(s)
+    dsStore = db.get_object(session, 'documentStoreConfigStore')
+    rsStore = db.get_object(session, 'recordStoreConfigStore')
     # Sanity checking
     if len(args.dir) > 1 and args.identifier:
         lgr.log_critical(session,
@@ -117,21 +118,29 @@ def add_contributor(args):
                           )
             continue
         # Generate identifier for new DocumentStore
-        storeId = "{0}DocumentStore".format(contributorId)
+        dsStoreId = "{0}DocumentStore".format(contributorId)
+        rsStoreId = "{0}RecordStore".format(contributorId)
+        errorMsg = ("Contributor with identifier {0} has already been "
+                    "registered. If you're certain that you want to add "
+                    "this contributor, you can specify an alternative "
+                    "identifier using the --id option"
+                    "".format(contributorId)
+                    )
         # Check that DocumentStore does not already exists
         try:
-            store.fetch_object(session, storeId)
+            dsStore.fetch_object(session, dsStoreId)
         except ObjectDoesNotExistException:
             # This is what we want!
-            pass
+            try:
+                rsStore.fetch_object(session, rsStoreId)
+            except ObjectDoesNotExistException:
+                # This is what we want!
+                pass
+            else:
+                lgr.log_error(session, errorMsg)
+                continue
         else:
-            lgr.log_error(session,
-                          "Contributor with identifier {0} has already been "
-                          "registered. If you're certain that you want to add "
-                          "this contributor, you can specify an alternative "
-                          "identifier using the --id option"
-                          "".format(contributorId)
-                          )
+            lgr.log_error(session, errorMsg)
             continue
         # Create the directory if necessary
         if not os.path.exists(dbPath) and args.create:
@@ -149,9 +158,9 @@ def add_contributor(args):
             objType = "cheshire3.documentStore.DirectoryDocumentStore"
         else:
             objType = "archiveshub.documentStore.MercurialDocumentStore"
-        # Create config node for the new DocumentStore
-        config = CONF.config(
-            {'id': storeId,
+        # Create dsConfig node for the new DocumentStore
+        dsConfig = CONF.config(
+            {'id': dsStoreId,
              'type': 'documentStore'},
             CONF.docs("DocumentStore for contributor {0}"
                       "".format(contributorId)),
@@ -170,14 +179,52 @@ def add_contributor(args):
                 ),
             ),
         )
-        xml = etree.tostring(config)
+        xml = etree.tostring(dsConfig)
         # Store the configuration
-        rec = LxmlRecord(config, xml, docId=storeId, byteCount=len(xml))
-        store.begin_storing(session)
-        store.store_record(session, rec)
-        store.commit_storing(session)
+        rec = LxmlRecord(dsConfig, xml, docId=dsStoreId, byteCount=len(xml))
+        dsStore.begin_storing(session)
+        dsStore.store_record(session, rec)
+        dsStore.commit_storing(session)
         lgr.log_info(session, "DocumentStore for {0} located at {1} has been "
                               "added".format(contributorId, dbPath)
+        )
+        # Create rsConfig node for the new DocumentStore
+        rsConfig = CONF.config(
+            {'id': rsStoreId,
+             'type': 'recordStore'},
+            CONF.docs("RecordStore for contributor {0}"
+                      "".format(contributorId)),
+            CONF.objectType("cheshire3.recordStore.BdbRecordStore"),
+            # <paths>
+            CONF.paths(
+                CONF.path(
+                    {'type': "defaultPath"},
+                    'stores'
+                ),
+                CONF.path(
+                    {'type': "databasePath"},
+                    '{0}.bdb'.format(rsStoreId)
+                ),
+                CONF.path(
+                    {'type': "metadataPath"},
+                    '{0}Metadata.bdb'.format(rsStoreId)
+                ),
+                CONF.object(
+                    {'type': "inWorkflow", 'ref': "XmlToLZ4Workflow"}
+                ),
+                CONF.object(
+                    {'type': "outWorkflow", 'ref': "XmlToLZ4Workflow"}
+                ),
+            ),
+        )
+        xml = etree.tostring(rsConfig)
+        # Store the configuration
+        rec = LxmlRecord(rsConfig, xml, docId=rsStoreId, byteCount=len(xml))
+        rsStore.begin_storing(session)
+        rsStore.store_record(session, rec)
+        rsStore.commit_storing(session)
+        lgr.log_info(session, "RecordStore for contributor {0} has been "
+                              "added".format(contributorId)
         )
         # TODO: write new contributor into JSON
     return 0
@@ -192,7 +239,8 @@ def rm_contributor(args):
     """
     global session, db, lgr
     # Get ConfigStore where the DocumentStores are stored
-    store = db.get_object(session, 'documentStoreConfigStore')
+    dsStore = db.get_object(session, 'documentStoreConfigStore')
+    rsStore = db.get_object(session, 'recordStoreConfigStore')
     for contributorId in args.identifier:
         # Sanity checking
         if os.path.exists(contributorId) and os.path.isdir(contributorId):
@@ -200,9 +248,10 @@ def rm_contributor(args):
             contributorId.rstrip(os.pathsep)
             contributorId = os.path.basename(contributorId)
         # Generate identifier for new DocumentStore
-        storeId = "{0}DocumentStore".format(contributorId)
+        dsStoreId = "{0}DocumentStore".format(contributorId)
+        rsStoreId = "{0}RecordStore".format(contributorId)
         try:
-            store.fetch_object(session, storeId)
+            dsStore.fetch_object(session, dsStoreId)
         except ObjectDoesNotExistException:
             # Contributor with this id does not exist
             lgr.log_error(session,
@@ -214,10 +263,16 @@ def rm_contributor(args):
                           )
             continue
         else:
-            store.delete_object(session, storeId)
-            store.commit_storing(session)
+            dsStore.delete_object(session, dsStoreId)
+            dsStore.commit_storing(session)
             lgr.log_info(session,
                          "DocumentStore for {0} has been removed"
+                         "".format(contributorId)
+            )
+            rsStore.delete_object(session, rsStoreId)
+            rsStore.commit_storing(session)
+            lgr.log_info(session,
+                         "RecordStore for {0} has been removed"
                          "".format(contributorId)
             )
     return 0
