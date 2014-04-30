@@ -314,6 +314,26 @@
             </options>
         </subConfig>
 
+        <!-- contributor DocumentStore -->
+        <subConfig type="index" id="idx-documentStore">
+            <objectType>cheshire3.index.SimpleIndex</objectType>
+            <paths>
+                <object type="indexStore" ref="indexStore" />
+            </paths>
+            <source>
+                <xpath ref="documentStoreSelector" />
+                <process>
+                    <object type="extractor" ref="SimpleExtractor" />
+                </process>
+            </source>
+            <options>
+                <!-- don't index or unindex in db.[un]index_record() -->
+                <setting type="noIndexDefault">1</setting>
+                <setting type="noUnindexDefault">1</setting>
+                <setting type="longSize">4</setting>
+            </options>
+        </subConfig>
+
         <!-- parentid index -->
         <subConfig type="index" id="idx-collectionid">
             <objectType>cheshire3.index.SimpleIndex</objectType>

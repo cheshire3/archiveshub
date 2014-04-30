@@ -20,13 +20,20 @@
             </source>
         </subConfig>
 
+        <subConfig type="selector" id="documentStoreSelector">
+            <objectType>cheshire3.selector.MetadataSelector</objectType>
+            <source>
+                <xpath>documentStore</xpath>
+            </source>
+        </subConfig>
+
         <subConfig type="selector" id="nowTimeSelector">
             <objectType>cheshire3.selector.MetadataSelector</objectType>
             <source>
                 <xpath>now</xpath>
             </source>
         </subConfig>
-        
+
         <subConfig type="selector" id="titleSelector">
             <objectType>cheshire3.selector.XPathSelector</objectType>
             <source>
