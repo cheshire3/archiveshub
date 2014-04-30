@@ -4,7 +4,9 @@ import os
 import sys
 import hgapi
 
-
+from cheshire3.baseObjects import Session
+from cheshire3.baseStore import directoryStoreIter
+from cheshire3.document import StringDocument
 from cheshire3.documentStore import DirectoryDocumentStore
 
 
@@ -21,6 +23,9 @@ class MercurialDocumentStore(DirectoryDocumentStore):
     def __init__(self, session, config, parent):
         self.defaultUser = self._getUserString(session)
         DirectoryDocumentStore.__init__(self, session, config, parent)
+
+    def __iter__(self):
+        return mercurialDocumentStoreIter(self)
 
     def _getUserString(self, session):
         # Return a Mercurial-style user string
@@ -87,6 +92,13 @@ class MercurialDocumentStore(DirectoryDocumentStore):
             else:
                 raise e
 
+    def fetch_document(self, session, id_):
+        # Fetch the document
+        doc = DirectoryDocumentStore.fetch_document(self, session, id_)
+        # Assign the documentStore attribute
+        doc.documentStore = self.id
+        return doc
+
     def delete_document(self, session, id_):
         # Do standard delete for directory based store
         DirectoryDocumentStore.delete_document(self, session, id_)
@@ -108,3 +120,14 @@ class MercurialDocumentStore(DirectoryDocumentStore):
             self.repo.hg_commit('{0} deleted {1}'.format(self.id, normId),
                                 user=userString,
                                 files=[filepath])
+
+
+def mercurialDocumentStoreIter(store):
+    session = Session()
+    for id_, data in directoryStoreIter(store):
+        doc = StringDocument(data)
+        doc.id = id_
+        internalId = store._normalizeIdentifier(session, id_)
+        doc.filename = store._getFilePath(session, internalId)
+        doc.documentStore = store.id
+        yield doc
