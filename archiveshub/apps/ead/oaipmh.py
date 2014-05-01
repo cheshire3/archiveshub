@@ -15,12 +15,12 @@ from oaipmh.error import (
     DatestampError,
     BadArgumentError,
     CannotDisseminateFormatError
-    )
+)
 
 # Import Some necessary Cheshire3 bits
 from cheshire3.baseObjects import Session
 from cheshire3.cqlParser import parse as cqlparse
-from cheshire3.exceptions import C3Exception
+from cheshire3.exceptions import C3Exception, ObjectDeletedException
 from cheshire3.internal import cheshire3Root
 from cheshire3.server import SimpleServer
 from cheshire3.resultSet import SimpleResultSet
@@ -29,7 +29,7 @@ from cheshire3.web.oaipmhHandler import (
     MinimalOaiServer,
     Cheshire3OaiMetadataWriter,
     get_databasesAndConfigs
-    )
+)
 from cheshire3.web.oaipmhWsgi import OAIPMHWsgiApplication
 
 from .base import iterContributors
@@ -56,7 +56,6 @@ class ArchivesHubOAIServer(Cheshire3OaiServer):
         elif set_:
             set_ = set_.split(':', 1)[-1]
 
-        print set_
         if until and until < self.earliestDatestamp:
             raise BadArgumentError('until argument value is earlier than '
                                    'earliestDatestamp.')
@@ -106,7 +105,6 @@ class ArchivesHubOAIServer(Cheshire3OaiServer):
                 # Filter by set
                 set_q = cqlparse('vdb.identifier = {0}'.format(set_))
                 set_rs = self.db.search(session, set_q)
-                print len(set_rs)
                 full_rs = SimpleResultSet(session)
                 full_q = cqlparse('{0} and {1}'
                                   ''.format(q.toCQL(), set_q.toCQL()))
@@ -172,7 +170,12 @@ class ArchivesHubOAIServer(Cheshire3OaiServer):
                 for t in vec[2]:
                     vdbid = set_idx.fetch_termById(session, t[0])
                     sets.append('contributor:{0}'.format(vdbid))
-                headers.append(Header(identifier, datestamp, sets, None))
+                try:
+                    r.fetch_record(session)
+                except ObjectDeletedException as e:
+                    headers.append(Header(identifier, datestamp, sets, True))
+                else:
+                    headers.append(Header(identifier, datestamp, sets, None))
                 i += 1
                 if (len(headers) >= batch_size):
                     return headers
@@ -233,7 +236,6 @@ class ArchivesHubOAIServer(Cheshire3OaiServer):
                 if i < cursor:
                     i+=1
                     continue
-                rec = r.fetch_record(session)
                 # Handle non-ascii characters in identifier
                 identifier = unicode(r.id, 'utf-8')
                 identifier = identifier.encode('ascii', 'xmlcharrefreplace')
@@ -243,9 +245,18 @@ class ArchivesHubOAIServer(Cheshire3OaiServer):
                 for t in vec[2]:
                     vdbid = set_idx.fetch_termById(session, t[0])
                     sets.append('contributor:{0}'.format(vdbid))
-                records.append((Header(identifier, datestamp, sets, None),
-                                rec,
-                                None))
+                try:
+                    rec = r.fetch_record(session)
+                except ObjectDeletedException:
+                    records.append((Header(identifier, datestamp, sets, True),
+                                    None,
+                                    None
+                                    ))
+                else:
+                    records.append((Header(identifier, datestamp, sets, None),
+                                    rec,
+                                    None
+                                    ))
                 i+=1
                 if (len(records) == batch_size):
                     return records
