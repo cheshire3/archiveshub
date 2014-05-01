@@ -1,5 +1,6 @@
 <%!
     # Imports
+    from cheshire3.exceptions import ObjectDeletedException
     from archiveshub.apps.ead.base import dataFromRecordXPaths
     from archiveshub.apps.ead.base import collectionFromComponent
 %>
@@ -213,7 +214,10 @@
 <%def name="format_resultSetItem(resultSet, sortBy, maximumRecords, startRecord, index)">
     <td>
     <%
-    rec = resultSet[index].fetch_record(session)
+    try:
+        rec = resultSet[index].fetch_record(session)
+    except ObjectDeletedException:
+        rec = None
     titleXPaths = ['/*/*/did/unittitle',
                    '/ead/eadheader/filedesc/titlestmt/titleproper'
                    ]
@@ -221,6 +225,11 @@
                   '/*/*/did/unittitle/unitdate'
                   ]
     %>
+    % if not rec:
+    <span title="This record has been removed from the Archives Hub">
+        Record Deleted
+    </span>
+    % else:
     ## Check for potential component-level record
     ${parentLink(session, rec)}
     <a href="${SCRIPT}/summary.html?recid=${rec.id|u}&amp;rsid=${resultSet.id|u}&amp;hit=${index}&amp;startRecord=${startRecord}&amp;maximumRecords=${maximumRecords}${sortByString(sortBy)}#rightcol">
@@ -238,5 +247,6 @@
     <br/>
     ${dataFromRecordXPaths(session, rec, dateXPaths, nTerms=3)}
     ## Relevance
+    % endif
     </td>
 </%def>

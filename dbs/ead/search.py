@@ -44,7 +44,10 @@ import time
 from lxml import etree
 
 from cheshire3.document import StringDocument
-from cheshire3.exceptions import ObjectDoesNotExistException
+from cheshire3.exceptions import (
+    ObjectDeletedException,
+    ObjectDoesNotExistException
+)
 from cheshire3.utils import flattenTexts
 
 
@@ -122,18 +125,22 @@ def doSearch(qString):
     hits = len(rs)
     print hits, 'hits'
     for i, rsi in enumerate(rs[:min(5, hits)], start=1):
-        rec = rsi.fetch_record(session)
         try:
-            parId = rec.process_xpath(session, '/c3component/@parent')[0]
-            parId = parId.partition('/')[2]
-        except IndexError:
-            titles = [rec.process_xpath(session,
-                                        '/*/*/did/unittitle/text()')[0]
-                      ]
+            rec = rsi.fetch_record(session)
+        except ObjectDeletedException:
+            titles = ['This record has been deleted']
         else:
-            parRec = recordStore.fetch_record(session, parId)
-            xpath = rec.process_xpath(session, '/c3component/@xpath')[0]
-            titles = _backwalkTitles2(parRec, xpath)
+            try:
+                parId = rec.process_xpath(session, '/c3component/@parent')[0]
+                parId = parId.partition('/')[2]
+            except IndexError:
+                titles = [rec.process_xpath(session,
+                                            '/*/*/did/unittitle/text()')[0]
+                          ]
+            else:
+                parRec = recordStore.fetch_record(session, parId)
+                xpath = rec.process_xpath(session, '/c3component/@xpath')[0]
+                titles = _backwalkTitles2(parRec, xpath)
 
         print i,
         for y, t in enumerate(titles):
