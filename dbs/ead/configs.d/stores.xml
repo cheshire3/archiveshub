@@ -36,11 +36,12 @@
                 <path type="defaultPath">stores</path>
                 <path type="databasePath">recordStore.bdb</path>
                 <path type="metadataPath">recordStoreMetadata.bdb</path>
-                <object type="inWorkflow" ref="XmlToLZ4Workflow" />
-                <object type="outWorkflow" ref="LZ4ToLxmlWorkflow" />
+                <object type="inTransformer" ref="XmlTransformer" />
+                <object type="outParser" ref="LxmlParser" />
             </paths>
             <options>
                 <setting type="digest">sha</setting>
+                <setting type="storeDeletions">1</setting>
             </options>
         </subConfig>
 
@@ -55,6 +56,7 @@
             </paths>
             <options>
                 <setting type="digest">sha</setting>
+                <setting type="storeDeletions">1</setting>
             </options>
         </subConfig>
 
@@ -99,9 +101,9 @@
             <options>
             </options>
         </subConfig>
-        
+
         <!-- postgreSQL -->
-        
+
         <subConfig type="resultSetStore" id="eadResultSetStore">
             <objectType>cheshire3.sql.postgres.PostgresResultSetStore</objectType>
             <paths>
@@ -114,7 +116,7 @@
                 <setting type="overwriteOkay">1</setting>
             </options>
         </subConfig>
-        
+
         <subConfig type="queryStore" id="eadQueryStore">
             <objectType>cheshire3.sql.postgres.PostgresQueryStore</objectType>
             <paths>
