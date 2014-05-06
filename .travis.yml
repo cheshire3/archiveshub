@@ -1,10 +1,12 @@
 language: python
 python:
   - "2.7"
-virtualenv:
-  # Base virtualenv on Ubuntu package Python for bsddb dependency
-  - python: /usr/bin/python
 install:
+  - "MY_VIRTUAL_ENV=$VIRTUAL_ENV"
+  - "deactivate"
+  - "virtualenv --clear --python /usr/bin/python $MY_VIRTUAL_ENV"
+  - "source $MY_VIRTUAL_ENV/bin/activate"
+  - "pip install pytest nose mock"
   - "python ez_setup.py"
   - "pip install -r requirements.txt --find-links http://download.cheshire3.org/latest/reqs/ --allow-unverified PyZ3950 --allow-unverified ZSI"
   - "python setup.py install"
