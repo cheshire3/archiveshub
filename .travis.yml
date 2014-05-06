@@ -1,8 +1,14 @@
 language: python
 python:
   - "2.7"
-# Install dependencies
+before_install:
+  - "sudo apt-get install libdb-dev"
 install:
+  # Expect pip install to fail, so: or true
+  - "pip install --no-clean bsddb3 || true"
+  - "cd $VIRTUAL_ENV/build/bsddb3"
+  - "python setup.py --berkeley-db=/usr install"
+  - "cd -"
   - "python ez_setup.py"
   - "pip install -r requirements.txt --find-links http://download.cheshire3.org/latest/reqs/ --allow-unverified PyZ3950 --allow-unverified ZSI"
   - "python setup.py install"
