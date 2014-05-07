@@ -14,7 +14,10 @@ from email import Message, MIMEMultipart, MIMEText
 from cheshire3.cqlParser import Diagnostic as CQLDiagnostic
 from cheshire3.cqlParser import SearchClause as CQLClause, Triple as CQLTriple
 from cheshire3.baseObjects import ResultSet
-from cheshire3.exceptions import ObjectDoesNotExistException
+from cheshire3.exceptions import (
+    ObjectDeletedException,
+    ObjectDoesNotExistException
+)
 from cheshire3.web.www_utils import generate_cqlQuery
 
 # Cheshire3 for Archives Imports
@@ -392,7 +395,18 @@ class EADSearchWsgiApplication(EADWsgiApplication):
             # Error message
             return [rs]
         else:
-            rec = rs[hit].fetch_record(session)
+            try:
+                rec = rs[hit].fetch_record(session)
+            except ObjectDeletedException as e:
+                # Record has been deleted!
+                # 410 Gone status indicates that clients should purge the
+                # resource. Probably not necessary, so return 404 status...
+                self.response.status = 404
+                # ...but a different user message
+                return [self._render_template(
+                    'fail/410.html',
+                    resource=rs[hit].id
+                )]
         # Save rec.id now
         recid = rec.id
         # Highlight search terms
