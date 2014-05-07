@@ -27,6 +27,7 @@ from lxml import html as lxmlhtml
 
 from cheshire3.exceptions import (
     FileDoesNotExistException,
+    ObjectDeletedException,
     ObjectDoesNotExistException
 )
 
@@ -92,6 +93,16 @@ class EADRecordWsgiApplication(EADWsgiApplication):
             # Fetch the Record
             try:
                 rec = self._fetch_record(session, recid)
+            except ObjectDeletedException as e:
+                # Record has been deleted!
+                # 410 Gone status indicates that clients should purge the
+                # resource. Probably not necessary, so return 404 status...
+                self.response.status = 404
+                # ...but a different user message
+                self.response.body = self._render_template(
+                    'fail/410.html',
+                    resource=recid
+                )
             except (IndexError, FileDoesNotExistException) as e:
                 # IndexError can occur due to a 'feature' (bug) in Cheshire3
                 # which assumes that all search terms will be a string of 1 or
