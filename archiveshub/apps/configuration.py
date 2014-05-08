@@ -42,6 +42,7 @@ roman_numeral_regex = ^M{{0,4}}(CM|CD|D?C{{0,3}})(XC|XL|L?X{{0,3}})\
 username = archiveshub
 host = mailrouter.example.com
 port = 25
+from = archiveshub@mimas.ac.uk
 
 [facets]
 truncate = 1000
