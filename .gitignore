@@ -34,6 +34,9 @@ develop-eggs
 .metadata
 .settings
 
+# PyCharm
+.idea
+
 # PyZ3950 cruft
 PyZ3950_parsetab.*
 
