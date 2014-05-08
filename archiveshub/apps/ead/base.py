@@ -245,7 +245,8 @@ class EADWsgiApplication(object):
         # Apply line wrapping
         paras = []
         for line in doc_uc.split('\n'):
-            if line.isspace() and not paras[-1]:
+            # Wrap long lines
+            if (not line or line.isspace()) and not paras[-1]:
                 # Last item was paragraph break, no need to repeat
                 pass
             elif len(line) < 80:

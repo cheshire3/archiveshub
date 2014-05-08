@@ -521,11 +521,7 @@ class EADRecordWsgiApplication(EADWsgiApplication):
 
     def text(self, rec, form):
         txt = self._textFromRecord(rec)
-        # Wrap long lines
-        return u'\n'.join([textwrap.fill(rawline, 78)
-                           for rawline
-                           in txt.split(u'\n')
-                           ]).encode('utf-8')
+        return txt.encode('utf-8')
 
     def toc(self, rec, form):
         path = self._get_cacheFilePath(rec.id, 'toc')
