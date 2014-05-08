@@ -469,9 +469,16 @@ class EADSearchWsgiApplication(EADWsgiApplication):
                              for rawline
                              in self._textFromRecord(rec).split(u'\n')
                              ]).encode('utf-8')
+        try:
+            from_addy = self.config.get('email', 'from')
+        except:
+            from_addy = '{0}@{1}'.format(
+                self.config.get('email', 'username'),
+                self.request.host
+            )
         mimemsg = MIMEMultipart.MIMEMultipart()
         mimemsg['Subject'] = 'Requested Finding Aid'
-        mimemsg['From'] = 'noreply@cheshire3.org'
+        mimemsg['From'] = from_addy
         mimemsg['To'] = address
 
         # Guarantees the message ends in a newline
@@ -500,13 +507,6 @@ class EADSearchWsgiApplication(EADWsgiApplication):
                                           sortBy=sortBy
                                           )]
 
-        try:
-            from_addy = self.config.get('email', 'from')
-        except:
-            from_addy = '{0}@{1}'.format(
-                self.config.get('email', 'username'),
-                self.request.host
-            )
         s.sendmail(from_addy, address, mimemsg.as_string())
         s.quit()
         self._log(20, 'Record {0} emailed to {1}'.format(recid, address))
