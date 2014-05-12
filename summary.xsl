@@ -43,7 +43,8 @@
     	    <xsl:apply-templates select="./archdesc/scopecontent|./archdesc/descgrp/scopecontent"/>
     	    <xsl:apply-templates select="./archdesc/bioghist|./archdesc/descgrp/bioghist"/>
             <!--	    <xsl:apply-templates select="./archdesc/acqinfo|./archdesc/descgrp/acqinfo"/>-->
-    	    <xsl:apply-templates select="./archdesc/accessrestrict|./archdesc/descgrp/accessrestrict"/>
+            <xsl:apply-templates select="./archdesc/accessrestrict[*[not(local-name(.)='head')][not(local-name(.)='legalstatus')]]|./archdesc/descgrp/accessrestrict[*[not(local-name(.)='head')][not(local-name(.)='legalstatus')]]" />
+            <xsl:apply-templates select="./archdesc/accessrestrict/legalstatus|./archdesc/descgrp/accessrestrict/legalstatus" />
             <xsl:apply-templates select="./archdesc/userestrict|./archdesc/descgrp/userestrict"/>
             <!--	    <xsl:apply-templates select="./archdesc/otherfindaid|./archdesc/descgrp/otherfindaid"/>-->
             <!--	    <xsl:apply-templates select="./archdesc/relatedmaterial|./archdesc/descgrp/relatedmaterial"/>-->
