@@ -8,7 +8,7 @@
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:xhtml="http://www.w3.org/1999/xhtml"
     xmlns:addthis="http://www.addthis.com/help/api-spec"
-    exclude-result-prefixes="#all #default xhtml c3"
+    exclude-result-prefixes="#all"
     version="1.0">
 
     <!--
@@ -2172,7 +2172,9 @@
                             <xsl:value-of select="$script"/>
                             <xsl:text>/search.html</xsl:text>
                         </xsl:attribute>
-                        <xsl:attribute name="onsubmit" value="setCookie('hubsearchform', miniFormToString(this));"/>
+                        <xsl:attribute name="onsubmit">
+                            <xsl:text>setCookie('archiveshub_searchform', miniFormToString(this));</xsl:text>
+                        </xsl:attribute>
                         <fieldset>
                             <legend>Search within this description</legend>
                             <xsl:element name="input">
