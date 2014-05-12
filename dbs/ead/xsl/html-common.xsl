@@ -8,7 +8,7 @@
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:xhtml="http://www.w3.org/1999/xhtml"
     xmlns:addthis="http://www.addthis.com/help/api-spec"
-    exclude-result-prefixes="#all #default xhtml c3"
+    exclude-result-prefixes="#all"
     version="1.0">
 
     <!--
