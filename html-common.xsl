@@ -2144,7 +2144,9 @@
                             <xsl:value-of select="$script"/>
                             <xsl:text>/search.html</xsl:text>
                         </xsl:attribute>
-                        <xsl:attribute name="onsubmit" value="setCookie('hubsearchform', miniFormToString(this));"/>
+                        <xsl:attribute name="onsubmit">
+                            <xsl:text>setCookie('archiveshub_searchform', miniFormToString(this));</xsl:text>
+                        </xsl:attribute>
                         <fieldset>
                             <legend>Search within this description</legend>
                             <xsl:element name="input">
