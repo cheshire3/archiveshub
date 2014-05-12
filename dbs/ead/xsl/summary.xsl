@@ -5,7 +5,7 @@
     xmlns:c3="http://www.cheshire3.org"
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:xhtml="http://www.w3.org/1999/xhtml"
-    exclude-result-prefixes="#all #default xhtml c3"
+    exclude-result-prefixes="#all"
     version="1.0">
     
     <!--

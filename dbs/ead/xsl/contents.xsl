@@ -4,7 +4,7 @@
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:xhtml="http://www.w3.org/1999/xhtml"
-    exclude-result-prefixes="#all #default xhtml c3"
+    exclude-result-prefixes="#all"
     version="1.0">
 
     <!--
@@ -17,7 +17,7 @@
     <!-- <xsl:output method="html" indent="yes"/> -->
 
     <!-- templates for Table of Contents (toc) -->
-    <xsl:template match="/ead" name="toc" xsl:exclude-result-prefixes="#all #default xhtml c3">
+    <xsl:template match="/ead" name="toc">
         <!--  Search within description -->
         <div class="withinCollection">
             <xsl:call-template name="searchwithincollection"/>
