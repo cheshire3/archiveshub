@@ -8,14 +8,14 @@
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:xhtml="http://www.w3.org/1999/xhtml"
     xmlns:addthis="http://www.addthis.com/help/api-spec"
-    exclude-result-prefixes="#all #default xhtml c3"
+    exclude-result-prefixes="#all"
     version="1.0">
 
     <!--
      This file was produced for the Cheshire3 for Archives and the Archives Hub.
      Copyright &#169; 2005-2013 the University of Liverpool
     -->
-    
+
     <!--
     include configurations from external file - over-rideable locally
     (i.e. in this file)
@@ -35,18 +35,18 @@
         <a>
             <xsl:attribute name="name">
                 <xsl:choose>
-                	<xsl:when test="@id">
+                    <xsl:when test="@id">
                         <xsl:value-of select="@id" />
-                	</xsl:when>
-                	<xsl:when test="unitid/@id">
+                    </xsl:when>
+                    <xsl:when test="unitid/@id">
                         <xsl:value-of select="./unitid/@id" />
-                	</xsl:when>
-                	<xsl:otherwise>
+                    </xsl:when>
+                    <xsl:otherwise>
                         <xsl:value-of select="generate-id(.)" />
-                	</xsl:otherwise>
+                    </xsl:otherwise>
                 </xsl:choose>
-        	</xsl:attribute>
-        	<xsl:text> </xsl:text>
+            </xsl:attribute>
+            <xsl:text> </xsl:text>
         </a>
 
         <xsl:variable name="unittitle">
@@ -84,15 +84,23 @@
             </xsl:choose>
         </xsl:variable>
 
+        <!-- "what is this display?" help link -->
+        <a href="http://archiveshub.ac.uk/utilitybarhelp/"
+            class="helplink tip utilitybarhelp">
+            <xsl:text>About this page</xsl:text>
+        </a>
+
         <h1 class="unittitle">
             <xsl:value-of select="normalize-space($unittitle)" />
         </h1>
 
-        <!-- utility bar -->
+        <!-- call utility bar -->
         <xsl:call-template name="utilitybar">
             <xsl:with-param name="unittitle" select="normalize-space($unittitle)" />
             <xsl:with-param name="unitid" select="normalize-space($unitid)" />
             <xsl:with-param name="digital" select="boolean(./dao|..//dao)" />
+            <!-- Enable search withinCollection if is a component, or has components -->
+            <xsl:with-param name="withinCollection" select="boolean(/c3component|/c3:component) or boolean(//c|//c01|//c02|//c03|//c04|//c05|//c06|//c07|//c08|//c09|//c10|//c11|//c12)"/>
             <xsl:with-param name="repcode">
                 <!-- determine repository code -->
                 <xsl:choose>
@@ -131,7 +139,8 @@
 
     <xsl:template match="did" mode="didtable">
         <table
-            summary="Descriptive Information - core information about the described material">
+            summary="Descriptive Information - core information about the described material"
+            class="did">
             <xsl:if test="repository">
                 <tr>
                     <td>
@@ -180,7 +189,7 @@
                 </td>
             </tr>
 
-            <xsl:if test="unitid[@label='Former Reference'] or 
+            <xsl:if test="unitid[@label='Former Reference'] or
                           unitid[@label='alternative'] or
                           unitid[@label='altrefno']">
                 <tr>
@@ -310,7 +319,8 @@
             </h2>
             <div id="eadheader" class="jshide">
                 <table
-                    summary="Cataloguing Information - core information about this record">
+                    summary="Cataloguing Information - core information about this record"
+                    class="eadheader">
                     <xsl:apply-templates select="filedesc" />
                     <xsl:apply-templates select="profiledesc" />
                     <xsl:apply-templates select="revisiondesc" />
@@ -445,8 +455,8 @@
         <span>
             <xsl:if test="./@label">
                 <xsl:attribute name="title">
-	               <xsl:value-of select="./@label" />
-	           </xsl:attribute>
+                   <xsl:value-of select="./@label" />
+               </xsl:attribute>
             </xsl:if>
             <xsl:apply-templates />
         </span>
@@ -475,7 +485,8 @@
         </xsl:if>
 
         <!-- ACCESS + USE RESTRICTIONS -->
-        <xsl:apply-templates select="./accessrestrict|./descgrp/accessrestrict" />
+        <xsl:apply-templates select="./accessrestrict[*[not(local-name(.)='head')][not(local-name(.)='legalstatus')]]|./descgrp/accessrestrict[*[not(local-name(.)='head')][not(local-name(.)='legalstatus')]]" />
+        <xsl:apply-templates select="./accessrestrict/legalstatus|./descgrp/accessrestrict/legalstatus" />
         <xsl:apply-templates select="./userestrict|./descgrp/userestrict" />
         <xsl:apply-templates select="./phystech|./descgrp/phystech" />
 
@@ -532,23 +543,21 @@
                 <xsl:text> </xsl:text>
             </a>
         </xsl:if>
-        <xsl:if test="not(head/text())">
-            <xsl:variable name="headstring">
-                <xsl:text>Administrative / Biographical History</xsl:text>
-            </xsl:variable>
-            <xsl:choose>
-                <xsl:when test="../../archdesc or ../../../c3:component">
-                    <h2 class="fieldhead-auto">
-                        <xsl:value-of select="$headstring" />
-                    </h2>
-                </xsl:when>
-                <xsl:otherwise>
-                    <h3 class="fieldhead-auto">
-                        <xsl:value-of select="$headstring" />
-                    </h3>
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:if>
+        <xsl:variable name="headstring">
+            <xsl:text>Administrative / Biographical History</xsl:text>
+        </xsl:variable>
+        <xsl:choose>
+            <xsl:when test="../../archdesc or ../../../c3:component or ../../../c3component">
+                <h2 class="fieldhead-auto">
+                    <xsl:value-of select="$headstring" />
+                </h2>
+            </xsl:when>
+            <xsl:otherwise>
+                <h3 class="fieldhead-auto">
+                    <xsl:value-of select="$headstring" />
+                </h3>
+            </xsl:otherwise>
+        </xsl:choose>
         <xsl:apply-templates />
     </xsl:template>
 
@@ -558,23 +567,21 @@
                 <xsl:text> </xsl:text>
             </a>
         </xsl:if>
-        <xsl:if test="not(head/text())">
-            <xsl:variable name="headstring">
-                <xsl:text>Scope and Content</xsl:text>
-            </xsl:variable>
-            <xsl:choose>
-                <xsl:when test="../../archdesc or ../../../c3:component">
-                    <h2 class="fieldhead-auto">
-                        <xsl:value-of select="$headstring" />
-                    </h2>
-                </xsl:when>
-                <xsl:otherwise>
-                    <h3 class="fieldhead-auto">
-                        <xsl:value-of select="$headstring" />
-                    </h3>
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:if>
+        <xsl:variable name="headstring">
+            <xsl:text>Scope and Content</xsl:text>
+        </xsl:variable>
+        <xsl:choose>
+            <xsl:when test="../../archdesc or ../../../c3:component or ../../../c3component">
+                <h2 class="fieldhead-auto">
+                    <xsl:value-of select="$headstring" />
+                </h2>
+            </xsl:when>
+            <xsl:otherwise>
+                <h3 class="fieldhead-auto">
+                    <xsl:value-of select="$headstring" />
+                </h3>
+            </xsl:otherwise>
+        </xsl:choose>
         <xsl:apply-templates />
     </xsl:template>
 
@@ -584,51 +591,73 @@
                 <xsl:text> </xsl:text>
             </a>
         </xsl:if>
-        <xsl:if test="not(head/text())">
-            <xsl:variable name="headstring">
-                <xsl:text>Arrangement</xsl:text>
-            </xsl:variable>
-            <xsl:choose>
-                <xsl:when test="../../archdesc  or ../../../c3:component">
-                    <h2 class="fieldhead-auto">
-                        <xsl:value-of select="$headstring" />
-                    </h2>
-                </xsl:when>
-                <xsl:otherwise>
-                    <h3 class="fieldhead-auto">
-                        <xsl:value-of select="$headstring" />
-                    </h3>
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:if>
+        <xsl:variable name="headstring">
+            <xsl:text>Arrangement</xsl:text>
+        </xsl:variable>
+        <xsl:choose>
+            <xsl:when test="../../archdesc or ../../../c3:component or ../../../c3component">
+                <h2 class="fieldhead-auto">
+                    <xsl:value-of select="$headstring" />
+                </h2>
+            </xsl:when>
+            <xsl:otherwise>
+                <h3 class="fieldhead-auto">
+                    <xsl:value-of select="$headstring" />
+                </h3>
+            </xsl:otherwise>
+        </xsl:choose>
         <xsl:apply-templates />
     </xsl:template>
 
     <!-- ACCESS + USE RESTRICTIONS -->
-    <xsl:template match="accessrestrict">
+    <xsl:template match="accessrestrict[*[not(local-name(.)='head')][not(local-name(.)='legalstatus')]]">
         <xsl:if test="@id">
             <a name="{@id}">
                 <xsl:text> </xsl:text>
             </a>
         </xsl:if>
-        <xsl:if test="not(head/text())">
-            <xsl:variable name="headstring">
-                <xsl:text>Conditions Governing Access</xsl:text>
-            </xsl:variable>
-            <xsl:choose>
-                <xsl:when test="../../archdesc or ../../../c3:component">
-                    <h2 class="fieldhead-auto">
-                        <xsl:value-of select="$headstring" />
-                    </h2>
-                </xsl:when>
-                <xsl:otherwise>
-                    <h3 class="fieldhead-auto">
-                        <xsl:value-of select="$headstring" />
-                    </h3>
-                </xsl:otherwise>
-            </xsl:choose>
+        <xsl:variable name="headstring">
+            <xsl:text>Conditions Governing Access</xsl:text>
+        </xsl:variable>
+        <xsl:choose>
+            <xsl:when test="../../archdesc or ../../../c3:component or ../../../c3component">
+                <h2 class="fieldhead-auto">
+                    <xsl:value-of select="$headstring" />
+                </h2>
+            </xsl:when>
+            <xsl:otherwise>
+                <h3 class="fieldhead-auto">
+                    <xsl:value-of select="$headstring" />
+                </h3>
+            </xsl:otherwise>
+        </xsl:choose>
+   	<xsl:apply-templates select="*[not(local-name(.)='legalstatus')]"/>
+    </xsl:template>
+
+    <xsl:template match="accessrestrict/legalstatus">
+        <xsl:if test="@id">
+            <a name="{@id}">
+                <xsl:text> </xsl:text>
+            </a>
         </xsl:if>
-        <xsl:apply-templates />
+        <xsl:variable name="headstring">
+            <xsl:text>Legal Status</xsl:text>
+        </xsl:variable>
+        <xsl:choose>
+            <xsl:when test="../../../archdesc or ../../../../c3:component or ../../../../c3component">
+                <h2 class="fieldhead-auto">
+                    <xsl:value-of select="$headstring" />
+                </h2>
+            </xsl:when>
+            <xsl:otherwise>
+                <h3 class="fieldhead-auto">
+                    <xsl:value-of select="$headstring" />
+                </h3>
+            </xsl:otherwise>
+        </xsl:choose>
+        <p>
+	        <xsl:apply-templates />
+	</p>
     </xsl:template>
 
     <xsl:template match="userestrict">
@@ -637,23 +666,21 @@
                 <xsl:text> </xsl:text>
             </a>
         </xsl:if>
-        <xsl:if test="not(head/text())">
-            <xsl:variable name="headstring">
-                <xsl:text>Conditions Governing Use</xsl:text>
-            </xsl:variable>
-            <xsl:choose>
-                <xsl:when test="../../archdesc or ../../../c3:component">
-                    <h2 class="fieldhead-auto">
-                        <xsl:value-of select="$headstring" />
-                    </h2>
-                </xsl:when>
-                <xsl:otherwise>
-                    <h3 class="fieldhead-auto">
-                        <xsl:value-of select="$headstring" />
-                    </h3>
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:if>
+        <xsl:variable name="headstring">
+            <xsl:text>Conditions Governing Use</xsl:text>
+        </xsl:variable>
+        <xsl:choose>
+            <xsl:when test="../../archdesc or ../../../c3:component or ../../../c3component">
+                <h2 class="fieldhead-auto">
+                    <xsl:value-of select="$headstring" />
+                </h2>
+            </xsl:when>
+            <xsl:otherwise>
+                <h3 class="fieldhead-auto">
+                    <xsl:value-of select="$headstring" />
+                </h3>
+            </xsl:otherwise>
+        </xsl:choose>
         <xsl:apply-templates />
     </xsl:template>
 
@@ -663,23 +690,21 @@
                 <xsl:text> </xsl:text>
             </a>
         </xsl:if>
-        <xsl:if test="not(head/text())">
-            <xsl:variable name="headstring">
-                <xsl:text>Physical Characteristics and/or Technical Requirements</xsl:text>
-            </xsl:variable>
-            <xsl:choose>
-                <xsl:when test="../../archdesc or ../../../c3:component">
-                    <h2 class="fieldhead-auto">
-                        <xsl:value-of select="$headstring" />
-                    </h2>
-                </xsl:when>
-                <xsl:otherwise>
-                    <h3 class="fieldhead-auto">
-                        <xsl:value-of select="$headstring" />
-                    </h3>
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:if>
+        <xsl:variable name="headstring">
+            <xsl:text>Physical Characteristics and/or Technical Requirements</xsl:text>
+        </xsl:variable>
+        <xsl:choose>
+            <xsl:when test="../../archdesc or ../../../c3:component or ../../../c3component">
+                <h2 class="fieldhead-auto">
+                    <xsl:value-of select="$headstring" />
+                </h2>
+            </xsl:when>
+            <xsl:otherwise>
+                <h3 class="fieldhead-auto">
+                    <xsl:value-of select="$headstring" />
+                </h3>
+            </xsl:otherwise>
+        </xsl:choose>
         <xsl:apply-templates />
     </xsl:template>
 
@@ -691,23 +716,21 @@
                 <xsl:text> </xsl:text>
             </a>
         </xsl:if>
-        <xsl:if test="not(head/text())">
-            <xsl:variable name="headstring">
-                <xsl:text>Administrative Information</xsl:text>
-            </xsl:variable>
-            <xsl:choose>
-                <xsl:when test="../../archdesc or ../../../c3:component">
-                    <h2 class="fieldhead-auto">
-                        <xsl:value-of select="$headstring" />
-                    </h2>
-                </xsl:when>
-                <xsl:otherwise>
-                    <h3 class="fieldhead-auto">
-                        <xsl:value-of select="$headstring" />
-                    </h3>
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:if>
+        <xsl:variable name="headstring">
+            <xsl:text>Administrative Information</xsl:text>
+        </xsl:variable>
+        <xsl:choose>
+            <xsl:when test="../../archdesc or ../../../c3:component or ../../../c3component">
+                <h2 class="fieldhead-auto">
+                    <xsl:value-of select="$headstring" />
+                </h2>
+            </xsl:when>
+            <xsl:otherwise>
+                <h3 class="fieldhead-auto">
+                    <xsl:value-of select="$headstring" />
+                </h3>
+            </xsl:otherwise>
+        </xsl:choose>
         <xsl:apply-templates />
     </xsl:template>
 
@@ -718,23 +741,21 @@
                 <xsl:text> </xsl:text>
             </a>
         </xsl:if>
-        <xsl:if test="not(head/text())">
-            <xsl:variable name="headstring">
-                <xsl:text>Appraisal Information</xsl:text>
-            </xsl:variable>
-            <xsl:choose>
-                <xsl:when test="../../archdesc or ../../../c3:component">
-                    <h2 class="fieldhead-auto">
-                        <xsl:value-of select="$headstring" />
-                    </h2>
-                </xsl:when>
-                <xsl:otherwise>
-                    <h3 class="fieldhead-auto">
-                        <xsl:value-of select="$headstring" />
-                    </h3>
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:if>
+        <xsl:variable name="headstring">
+            <xsl:text>Appraisal Information</xsl:text>
+        </xsl:variable>
+        <xsl:choose>
+            <xsl:when test="../../archdesc or ../../../c3:component or ../../../c3component">
+                <h2 class="fieldhead-auto">
+                    <xsl:value-of select="$headstring" />
+                </h2>
+            </xsl:when>
+            <xsl:otherwise>
+                <h3 class="fieldhead-auto">
+                    <xsl:value-of select="$headstring" />
+                </h3>
+            </xsl:otherwise>
+        </xsl:choose>
         <xsl:apply-templates />
     </xsl:template>
 
@@ -744,23 +765,21 @@
                 <xsl:text> </xsl:text>
             </a>
         </xsl:if>
-        <xsl:if test="not(head/text())">
-            <xsl:variable name="headstring">
-                <xsl:text>Acquisition Information</xsl:text>
-            </xsl:variable>
-            <xsl:choose>
-                <xsl:when test="../../archdesc or ../../../c3:component">
-                    <h2 class="fieldhead-auto">
-                        <xsl:value-of select="$headstring" />
-                    </h2>
-                </xsl:when>
-                <xsl:otherwise>
-                    <h3 class="fieldhead-auto">
-                        <xsl:value-of select="$headstring" />
-                    </h3>
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:if>
+        <xsl:variable name="headstring">
+            <xsl:text>Acquisition Information</xsl:text>
+        </xsl:variable>
+        <xsl:choose>
+            <xsl:when test="../../archdesc or ../../../c3:component or ../../../c3component">
+                <h2 class="fieldhead-auto">
+                    <xsl:value-of select="$headstring" />
+                </h2>
+            </xsl:when>
+            <xsl:otherwise>
+                <h3 class="fieldhead-auto">
+                    <xsl:value-of select="$headstring" />
+                </h3>
+            </xsl:otherwise>
+        </xsl:choose>
         <xsl:apply-templates />
     </xsl:template>
 
@@ -770,23 +789,21 @@
                 <xsl:text> </xsl:text>
             </a>
         </xsl:if>
-        <xsl:if test="not(head/text())">
-            <xsl:variable name="headstring">
-                <xsl:text>Custodial History</xsl:text>
-            </xsl:variable>
-            <xsl:choose>
-                <xsl:when test="../../archdesc or ../../../c3:component">
-                    <h2 class="fieldhead-auto">
-                        <xsl:value-of select="$headstring" />
-                    </h2>
-                </xsl:when>
-                <xsl:otherwise>
-                    <h3 class="fieldhead-auto">
-                        <xsl:value-of select="$headstring" />
-                    </h3>
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:if>
+        <xsl:variable name="headstring">
+            <xsl:text>Custodial History</xsl:text>
+        </xsl:variable>
+        <xsl:choose>
+            <xsl:when test="../../archdesc or ../../../c3:component or ../../../c3component">
+                <h2 class="fieldhead-auto">
+                    <xsl:value-of select="$headstring" />
+                </h2>
+            </xsl:when>
+            <xsl:otherwise>
+                <h3 class="fieldhead-auto">
+                    <xsl:value-of select="$headstring" />
+                </h3>
+            </xsl:otherwise>
+        </xsl:choose>
         <xsl:apply-templates />
     </xsl:template>
 
@@ -796,23 +813,21 @@
                 <xsl:text> </xsl:text>
             </a>
         </xsl:if>
-        <xsl:if test="not(head/text())">
-            <xsl:variable name="headstring">
-                <xsl:text>Accruals</xsl:text>
-            </xsl:variable>
-            <xsl:choose>
-                <xsl:when test="../../archdesc or ../../../c3:component">
-                    <h2 class="fieldhead-auto">
-                        <xsl:value-of select="$headstring" />
-                    </h2>
-                </xsl:when>
-                <xsl:otherwise>
-                    <h3 class="fieldhead-auto">
-                        <xsl:value-of select="$headstring" />
-                    </h3>
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:if>
+        <xsl:variable name="headstring">
+            <xsl:text>Accruals</xsl:text>
+        </xsl:variable>
+        <xsl:choose>
+            <xsl:when test="../../archdesc or ../../../c3:component or ../../../c3component">
+                <h2 class="fieldhead-auto">
+                    <xsl:value-of select="$headstring" />
+                </h2>
+            </xsl:when>
+            <xsl:otherwise>
+                <h3 class="fieldhead-auto">
+                    <xsl:value-of select="$headstring" />
+                </h3>
+            </xsl:otherwise>
+        </xsl:choose>
         <xsl:apply-templates />
     </xsl:template>
 
@@ -822,23 +837,21 @@
                 <xsl:text> </xsl:text>
             </a>
         </xsl:if>
-        <xsl:if test="not(head/text())">
-            <xsl:variable name="headstring">
-                <xsl:text>Archivist's Note</xsl:text>
-            </xsl:variable>
-            <xsl:choose>
-                <xsl:when test="../../archdesc or ../../../c3:component">
-                    <h2 class="fieldhead-auto">
-                        <xsl:value-of select="$headstring" />
-                    </h2>
-                </xsl:when>
-                <xsl:otherwise>
-                    <h3 class="fieldhead-auto">
-                        <xsl:value-of select="$headstring" />
-                    </h3>
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:if>
+        <xsl:variable name="headstring">
+            <xsl:text>Archivist's Note</xsl:text>
+        </xsl:variable>
+        <xsl:choose>
+            <xsl:when test="../../archdesc or ../../../c3:component or ../../../c3component">
+                <h2 class="fieldhead-auto">
+                    <xsl:value-of select="$headstring" />
+                </h2>
+            </xsl:when>
+            <xsl:otherwise>
+                <h3 class="fieldhead-auto">
+                    <xsl:value-of select="$headstring" />
+                </h3>
+            </xsl:otherwise>
+        </xsl:choose>
         <xsl:apply-templates />
     </xsl:template>
 
@@ -851,23 +864,21 @@
                 <xsl:text> </xsl:text>
             </a>
         </xsl:if>
-        <xsl:if test="not(head/text())">
-            <xsl:variable name="headstring">
-                <xsl:text>Other Finding Aid</xsl:text>
-            </xsl:variable>
-            <xsl:choose>
-                <xsl:when test="../../archdesc or ../../../c3:component">
-                    <h2 class="fieldhead-auto">
-                        <xsl:value-of select="$headstring" />
-                    </h2>
-                </xsl:when>
-                <xsl:otherwise>
-                    <h3 class="fieldhead-auto">
-                        <xsl:value-of select="$headstring" />
-                    </h3>
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:if>
+        <xsl:variable name="headstring">
+            <xsl:text>Other Finding Aid</xsl:text>
+        </xsl:variable>
+        <xsl:choose>
+            <xsl:when test="../../archdesc or ../../../c3:component or ../../../c3component">
+                <h2 class="fieldhead-auto">
+                    <xsl:value-of select="$headstring" />
+                </h2>
+            </xsl:when>
+            <xsl:otherwise>
+                <h3 class="fieldhead-auto">
+                    <xsl:value-of select="$headstring" />
+                </h3>
+            </xsl:otherwise>
+        </xsl:choose>
         <xsl:apply-templates />
     </xsl:template>
 
@@ -878,23 +889,21 @@
                 <xsl:text> </xsl:text>
             </a>
         </xsl:if>
-        <xsl:if test="not(head/text())">
-            <xsl:variable name="headstring">
-                <xsl:text>Location of Originals</xsl:text>
-            </xsl:variable>
-            <xsl:choose>
-                <xsl:when test="../../archdesc or ../../../c3:component">
-                    <h2 class="fieldhead-auto">
-                        <xsl:value-of select="$headstring" />
-                    </h2>
-                </xsl:when>
-                <xsl:otherwise>
-                    <h3 class="fieldhead-auto">
-                        <xsl:value-of select="$headstring" />
-                    </h3>
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:if>
+        <xsl:variable name="headstring">
+            <xsl:text>Location of Originals</xsl:text>
+        </xsl:variable>
+        <xsl:choose>
+            <xsl:when test="../../archdesc or ../../../c3:component or ../../../c3component">
+                <h2 class="fieldhead-auto">
+                    <xsl:value-of select="$headstring" />
+                </h2>
+            </xsl:when>
+            <xsl:otherwise>
+                <h3 class="fieldhead-auto">
+                    <xsl:value-of select="$headstring" />
+                </h3>
+            </xsl:otherwise>
+        </xsl:choose>
         <xsl:apply-templates />
     </xsl:template>
 
@@ -904,23 +913,21 @@
                 <xsl:text> </xsl:text>
             </a>
         </xsl:if>
-        <xsl:if test="not(head/text())">
-            <xsl:variable name="headstring">
-                <xsl:text>Alternative Form Available</xsl:text>
-            </xsl:variable>
-            <xsl:choose>
-                <xsl:when test="../../archdesc or ../../../c3:component">
-                    <h2 class="fieldhead-auto">
-                        <xsl:value-of select="$headstring" />
-                    </h2>
-                </xsl:when>
-                <xsl:otherwise>
-                    <h3 class="fieldhead-auto">
-                        <xsl:value-of select="$headstring" />
-                    </h3>
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:if>
+        <xsl:variable name="headstring">
+            <xsl:text>Alternative Form Available</xsl:text>
+        </xsl:variable>
+        <xsl:choose>
+            <xsl:when test="../../archdesc or ../../../c3:component or ../../../c3component">
+                <h2 class="fieldhead-auto">
+                    <xsl:value-of select="$headstring" />
+                </h2>
+            </xsl:when>
+            <xsl:otherwise>
+                <h3 class="fieldhead-auto">
+                    <xsl:value-of select="$headstring" />
+                </h3>
+            </xsl:otherwise>
+        </xsl:choose>
         <xsl:apply-templates />
     </xsl:template>
 
@@ -931,23 +938,21 @@
                 <xsl:text> </xsl:text>
             </a>
         </xsl:if>
-        <xsl:if test="not(head/text())">
-            <xsl:variable name="headstring">
-                <xsl:text>Related Material</xsl:text>
-            </xsl:variable>
-            <xsl:choose>
-                <xsl:when test="../../archdesc or ../../../c3:component">
-                    <h2 class="fieldhead-auto">
-                        <xsl:value-of select="$headstring" />
-                    </h2>
-                </xsl:when>
-                <xsl:otherwise>
-                    <h3 class="fieldhead-auto">
-                        <xsl:value-of select="$headstring" />
-                    </h3>
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:if>
+        <xsl:variable name="headstring">
+            <xsl:text>Related Material</xsl:text>
+        </xsl:variable>
+        <xsl:choose>
+            <xsl:when test="../../archdesc or ../../../c3:component or ../../../c3component">
+                <h2 class="fieldhead-auto">
+                    <xsl:value-of select="$headstring" />
+                </h2>
+            </xsl:when>
+            <xsl:otherwise>
+                <h3 class="fieldhead-auto">
+                    <xsl:value-of select="$headstring" />
+                </h3>
+            </xsl:otherwise>
+        </xsl:choose>
         <xsl:apply-templates />
 
     </xsl:template>
@@ -958,23 +963,21 @@
                 <xsl:text> </xsl:text>
             </a>
         </xsl:if>
-        <xsl:if test="not(head/text())">
-            <xsl:variable name="headstring">
-                <xsl:text>Separated Material</xsl:text>
-            </xsl:variable>
-            <xsl:choose>
-                <xsl:when test="../../archdesc or ../../../c3:component">
-                    <h2 class="fieldhead-auto">
-                        <xsl:value-of select="$headstring" />
-                    </h2>
-                </xsl:when>
-                <xsl:otherwise>
-                    <h3 class="fieldhead-auto">
-                        <xsl:value-of select="$headstring" />
-                    </h3>
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:if>
+        <xsl:variable name="headstring">
+            <xsl:text>Separated Material</xsl:text>
+        </xsl:variable>
+        <xsl:choose>
+            <xsl:when test="../../archdesc or ../../../c3:component or ../../../c3component">
+                <h2 class="fieldhead-auto">
+                    <xsl:value-of select="$headstring" />
+                </h2>
+            </xsl:when>
+            <xsl:otherwise>
+                <h3 class="fieldhead-auto">
+                    <xsl:value-of select="$headstring" />
+                </h3>
+            </xsl:otherwise>
+        </xsl:choose>
         <xsl:apply-templates />
     </xsl:template>
 
@@ -990,10 +993,7 @@
             <xsl:text>Bibliography</xsl:text>
         </xsl:variable>
         <xsl:choose>
-            <xsl:when test="head/text()">
-                <xsl:apply-templates select="head" />
-            </xsl:when>
-            <xsl:when test="../../archdesc or ../../../c3:component">
+            <xsl:when test="../../archdesc or ../../../c3:component or ../../../c3component">
                 <h2 class="fieldhead-auto">
                     <xsl:value-of select="$headstring" />
                 </h2>
@@ -1026,23 +1026,21 @@
                 <xsl:text> </xsl:text>
             </a>
         </xsl:if>
-        <xsl:if test="not(head/text())">
-            <xsl:variable name="headstring">
-                <xsl:text>Preferred Citation</xsl:text>
-            </xsl:variable>
-            <xsl:choose>
-                <xsl:when test="../../archdesc or ../../../c3:component">
-                    <h2 class="fieldhead-auto">
-                        <xsl:value-of select="$headstring" />
-                    </h2>
-                </xsl:when>
-                <xsl:otherwise>
-                    <h3 class="fieldhead-auto">
-                        <xsl:value-of select="$headstring" />
-                    </h3>
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:if>
+        <xsl:variable name="headstring">
+            <xsl:text>Preferred Citation</xsl:text>
+        </xsl:variable>
+        <xsl:choose>
+            <xsl:when test="../../archdesc or ../../../c3:component or ../../../c3component">
+                <h2 class="fieldhead-auto">
+                    <xsl:value-of select="$headstring" />
+                </h2>
+            </xsl:when>
+            <xsl:otherwise>
+                <h3 class="fieldhead-auto">
+                    <xsl:value-of select="$headstring" />
+                </h3>
+            </xsl:otherwise>
+        </xsl:choose>
         <xsl:apply-templates />
     </xsl:template>
 
@@ -1068,23 +1066,21 @@
                 <xsl:text> </xsl:text>
             </a>
         </xsl:if>
-        <xsl:if test="not(head/text())">
-            <xsl:variable name="headstring">
-                <xsl:text>Other Descriptive Data</xsl:text>
-            </xsl:variable>
-            <xsl:choose>
-                <xsl:when test="../../archdesc or ../../../c3:component">
-                    <h2 class="fieldhead-auto">
-                        <xsl:value-of select="$headstring" />
-                    </h2>
-                </xsl:when>
-                <xsl:otherwise>
-                    <h3 class="fieldhead-auto">
-                        <xsl:value-of select="$headstring" />
-                    </h3>
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:if>
+        <xsl:variable name="headstring">
+            <xsl:text>Other Descriptive Data</xsl:text>
+        </xsl:variable>
+        <xsl:choose>
+            <xsl:when test="../../archdesc or ../../../c3:component or ../../../c3component">
+                <h2 class="fieldhead-auto">
+                    <xsl:value-of select="$headstring" />
+                </h2>
+            </xsl:when>
+            <xsl:otherwise>
+                <h3 class="fieldhead-auto">
+                    <xsl:value-of select="$headstring" />
+                </h3>
+            </xsl:otherwise>
+        </xsl:choose>
         <xsl:apply-templates />
     </xsl:template>
 
@@ -1101,10 +1097,7 @@
         </xsl:variable>
         <xsl:choose>
             <xsl:when test="local-name(..) = 'controlaccess'" />
-            <xsl:when test="head/text()">
-                <xsl:apply-templates select="head" />
-            </xsl:when>
-            <xsl:when test="../../archdesc or ../../../c3:component">
+            <xsl:when test="../../archdesc or ../../../c3:component or ../../../c3component">
                 <h2 class="fieldhead-auto">
                     <xsl:value-of select="$headstring" />
                 </h2>
@@ -1116,7 +1109,7 @@
             </xsl:otherwise>
         </xsl:choose>
 
-        <table>
+        <table class="controlaccess">
 
             <!-- Subjects -->
             <xsl:if test=".//subject">
@@ -1319,7 +1312,9 @@
                 </xsl:variable>
                 <tr>
                     <td colspan="2">
-                        <xsl:value-of select="$indexName" />
+                        <h3 class="fieldhead-auto">
+                            <xsl:value-of select="$indexName" />
+                        </h3>
                     </td>
                 </tr>
                 <xsl:for-each select=".//function">
@@ -1337,7 +1332,9 @@
                 </xsl:variable>
                 <tr>
                     <td colspan="2">
-                        <xsl:value-of select="$indexName" />
+                        <h3 class="fieldhead-auto">
+                            <xsl:value-of select="$indexName" />
+                        </h3>
                     </td>
                 </tr>
                 <xsl:for-each select=".//genreform">
@@ -1362,7 +1359,9 @@
                 </xsl:variable>
                 <tr>
                     <td colspan="2">
-                        <xsl:value-of select="$indexName" />
+                        <h3 class="fieldhead-auto">
+                            <xsl:value-of select="$indexName" />
+                        </h3>
                     </td>
                 </tr>
                 <xsl:for-each select=".//occupation">
@@ -1381,7 +1380,7 @@
     </xsl:template>
 
     <!-- COMPONENT -->
-    
+
     <xsl:template name="single-component">
         <a>
             <xsl:attribute name="name">
@@ -1436,7 +1435,8 @@
         </xsl:if>
 
         <!-- ACCESS + USE RESTRICTIONS -->
-        <xsl:apply-templates select="accessrestrict|descgrp/accessrestrict" />
+        <xsl:apply-templates select="accessrestrict[*[not(local-name(.)='head')][not(local-name(.)='legalstatus')]]|descgrp/accessrestrict[*[not(local-name(.)='head')][not(local-name(.)='legalstatus')]]" />
+        <xsl:apply-templates select="accessrestrict/legalstatus|descgrp/accessrestrict/legalstatus" />
         <xsl:apply-templates select="userestrict|descgrp/userestrict" />
         <xsl:apply-templates select="phystech|descgrp/phystech" />
         <!-- ADMINISTRATIVE INFORMATION / ARCHIVAL HISTORY -->
@@ -1466,22 +1466,8 @@
     </xsl:template>
 
 
-    <!-- HEAD-->
-    <xsl:template match="head">
-        <xsl:choose>
-            <xsl:when
-                test="../../head or not(../../../archdesc or ../../../../c3:component)">
-                <h3 class="fieldhead-ead">
-                    <xsl:apply-templates />
-                </h3>
-            </xsl:when>
-            <xsl:otherwise>
-                <h2 class="fieldhead-ead">
-                    <xsl:apply-templates />
-                </h2>
-            </xsl:otherwise>
-        </xsl:choose>
-    </xsl:template>
+    <!-- HEAD - Not displayed! -->
+    <xsl:template match="head"/>
 
     <xsl:template match="head" mode="inline">
         <b>
@@ -1510,44 +1496,38 @@
 
     <!-- NOTES -->
     <xsl:template match="bioghist/note">
-        <xsl:if test="not(head/text())">
-            <b>
-                <xsl:text>Bibliographic Sources</xsl:text>
-            </b>
-        </xsl:if>
+        <b>
+            <xsl:text>Bibliographic Sources</xsl:text>
+        </b>
         <xsl:apply-templates />
     </xsl:template>
 
     <xsl:template match="note">
         <xsl:text>[ </xsl:text>
-        <xsl:if test="not(head/text())">
-            <b>
-                <xsl:text>Note</xsl:text>
-            </b>
-            <xsl:text>: </xsl:text>
-        </xsl:if>
+        <b>
+            <xsl:text>Note</xsl:text>
+        </b>
+        <xsl:text>: </xsl:text>
         <xsl:apply-templates mode="inline" />
         <xsl:text> ]</xsl:text>
     </xsl:template>
 
     <xsl:template match="note" mode="own-section">
-        <xsl:if test="not(head/text())">
-            <xsl:variable name="headstring">
-                <xsl:text>Note</xsl:text>
-            </xsl:variable>
-            <xsl:choose>
-                <xsl:when test="../../archdesc or ../../../c3:component">
-                    <h2 class="ead">
-                        <xsl:value-of select="$headstring" />
-                    </h2>
-                </xsl:when>
-                <xsl:otherwise>
-                    <h3 class="ead">
-                        <xsl:value-of select="$headstring" />
-                    </h3>
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:if>
+        <xsl:variable name="headstring">
+            <xsl:text>Note</xsl:text>
+        </xsl:variable>
+        <xsl:choose>
+            <xsl:when test="../../archdesc or ../../../c3:component or ../../../c3component">
+                <h2 class="ead">
+                    <xsl:value-of select="$headstring" />
+                </h2>
+            </xsl:when>
+            <xsl:otherwise>
+                <h3 class="ead">
+                    <xsl:value-of select="$headstring" />
+                </h3>
+            </xsl:otherwise>
+        </xsl:choose>
         <xsl:apply-templates />
     </xsl:template>
 
@@ -1600,29 +1580,29 @@
     <xsl:template name="image">
         <xsl:element name="img">
             <xsl:attribute name="src">
-				<xsl:value-of select="./@href" />
-			</xsl:attribute>
+                <xsl:value-of select="./@href" />
+            </xsl:attribute>
             <xsl:if test="./@title">
                 <xsl:attribute name="title">
-			      <xsl:value-of select="./@title" />
-			   	</xsl:attribute>
+                  <xsl:value-of select="./@title" />
+                   </xsl:attribute>
             </xsl:if>
             <xsl:attribute name="alt">
-				<xsl:choose>
-					<xsl:when test="./daodesc">
+                <xsl:choose>
+                    <xsl:when test="./daodesc">
                         <xsl:variable name="txt">
                             <xsl:value-of select="string(./daodesc)" />
                         </xsl:variable>
                         <xsl:value-of select="normalize-space($txt)" />
-					</xsl:when>
-					<xsl:when test="./@title">
-					      <xsl:value-of select="./@title" />
-					</xsl:when>
-				    <xsl:otherwise>
-						<xsl:value-of select="./@href" />
-					</xsl:otherwise>
-				</xsl:choose>
-			</xsl:attribute>
+                    </xsl:when>
+                    <xsl:when test="./@title">
+                          <xsl:value-of select="./@title" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="./@href" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:attribute>
         </xsl:element>
         <!-- caption -->
         <xsl:apply-templates select="./daodesc" />
@@ -1632,12 +1612,12 @@
     <xsl:template match="ref[@target]">
         <a>
             <xsl:attribute name="href">
-				<xsl:text>PAGE#</xsl:text>
-				<xsl:value-of select="./@target" />
-			</xsl:attribute>
+                <xsl:text>PAGE#</xsl:text>
+                <xsl:value-of select="./@target" />
+            </xsl:attribute>
             <xsl:attribute name="target">
-				<xsl:text>_top</xsl:text>
-			</xsl:attribute>
+                <xsl:text>_top</xsl:text>
+            </xsl:attribute>
             <xsl:apply-templates />
         </a>
     </xsl:template>
@@ -2142,11 +2122,12 @@
     </xsl:template>
 
     <!-- Template for creating utility bar -->
-    
+
     <xsl:template name="utilitybar">
 
         <xsl:param name="unittitle" />
         <xsl:param name="unitid" />
+        <xsl:param name="withinCollection" />
         <xsl:param name="digital" />
         <xsl:param name="repcode" />
 
@@ -2157,29 +2138,70 @@
         </xsl:variable>
 
         <div id="utilitybar" class="bar utility">
-            <!-- utility bar help link -->
-            <a href="http://archiveshub.ac.uk/utilitybarhelp/"
-                title="Help with online descriptions of archive collections"
-                class="helplink tip utilitybarhelp">
-                <xsl:text>What is this?</xsl:text>
-                <!--
-                <img src="http://archiveshub.ac.uk/img/structure/form_tip.png" alt="?" />
-                -->
-            </a>
             <!-- Switch Version (Level of detail) -->
             <ul class="detail">
                 <li>
-                    See the:
+                    See the
                     <xsl:call-template name="switch-view-link" />
                     of this material
                     <xsl:text> </xsl:text>
                     <a href="http://archiveshub.ac.uk/archivedescriptions/#content"
                         title="Find out about Description" class="helplink tip">
                         <img
-                            src="http://archiveshub.ac.uk/img/structure/form_tip.png"
+                            src="http://archiveshub.ac.uk/images/structure/form_tip.png"
                             alt="[?]" />
                     </a>
                 </li>
+                <!-- NB to re-activate search within collection, remove the
+                    string "false() and " from the following line.
+                -->
+                <xsl:if test="false() and $withinCollection">
+                    <!--  Search within description -->
+                    <li class="withinCollection">
+                    <xsl:element name="form">
+                        <xsl:attribute name="name">
+                            <xsl:text>withinsearchform</xsl:text>
+                        </xsl:attribute>
+                        <xsl:attribute name="method">
+                            <xsl:text>post</xsl:text>
+                        </xsl:attribute>
+                        <xsl:attribute name="class">
+                            <xsl:text>minisearch</xsl:text>
+                        </xsl:attribute>
+                        <xsl:attribute name="action">
+                            <xsl:value-of select="$script"/>
+                            <xsl:text>/search.html</xsl:text>
+                        </xsl:attribute>
+                        <xsl:attribute name="onsubmit">
+                            <xsl:text>setCookie('archiveshub_searchform', miniFormToString(this));</xsl:text>
+                        </xsl:attribute>
+                        <fieldset>
+                            <legend>Search within this description</legend>
+                            <xsl:element name="input">
+                                <xsl:attribute name="type"><xsl:text>hidden</xsl:text></xsl:attribute>
+                                <xsl:attribute name="name"><xsl:text>withinCollection</xsl:text></xsl:attribute>
+                                <xsl:attribute name="value">
+                                    <xsl:choose>
+                                        <xsl:when test="substring-after(/c3component/@parent|/c3:component/@c3:parent, '/')">
+                                            <xsl:value-of select="substring-after(/c3component/@parent|/c3:component/@c3:parent, '/') "/>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:value-of select="$recid" />
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </xsl:attribute>
+                            </xsl:element>
+                            <input type="hidden" name="fieldidx1" value="cql.anywhere||dc.description||dc.title"/>
+                            <input type="hidden" name="fieldrel1" value="all/relevant/proxinfo"/>
+                            <input name="fieldcont1" type="text" size="20"/>
+                            <input type="hidden" name="_charset_"/>
+                            <input type="hidden" name="numreq" value="20"/>
+                            <input type="hidden" name="firstrec" value="1"/>
+                            <input type="submit" name="submit" value="Go" class="submit"/>
+                        </fieldset>
+                    </xsl:element>
+                    </li>
+                </xsl:if>
                 <br />
             </ul>
             <p>Archives described on the Archives Hub are held in repositories across the UK</p>
@@ -2195,9 +2217,9 @@
                             <xsl:text>&amp;subject=Query via the Archives Hub about </xsl:text>
                             <xsl:value-of select="$unitid"/>
                         </xsl:attribute>
-                        <xsl:attribute name="title">
-                            <xsl:text>Email the repository for more information [opens your email program]</xsl:text>
-                        </xsl:attribute>
+<!--                         <xsl:attribute name="title"> -->
+<!--                             <xsl:text>Email the repository for more information [opens your email program]</xsl:text> -->
+<!--                         </xsl:attribute> -->
                         <xsl:text>Email</xsl:text>
                     </a>
                     the repository for more information
@@ -2209,9 +2231,9 @@
                             <xsl:value-of select="$hubmap_url" />
                             <xsl:value-of select="$repcode" />
                         </xsl:attribute>
-                        <xsl:attribute name="title">
-                            <xsl:text>View repository location in Archives Hub contributors map [opens new window]</xsl:text>
-                        </xsl:attribute>
+<!--                         <xsl:attribute name="title"> -->
+<!--                             <xsl:text>View repository location in Archives Hub contributors map [opens new window]</xsl:text> -->
+<!--                         </xsl:attribute> -->
                         <xsl:attribute name="target">
                             <xsl:text>_blank</xsl:text>
                         </xsl:attribute>
@@ -2225,9 +2247,9 @@
                         <xsl:attribute name="href">
                             <xsl:text>http://archiveshub.ac.uk/accesstomaterials</xsl:text>
                         </xsl:attribute>
-                        <xsl:attribute name="title">
-                            <xsl:text>Help on how to access these materials</xsl:text>
-                        </xsl:attribute>
+<!--                         <xsl:attribute name="title"> -->
+<!--                             <xsl:text>Help on how to access these materials</xsl:text> -->
+<!--                         </xsl:attribute> -->
                         <xsl:text>accessing these materials</xsl:text>
                     </a>
                 </li>
@@ -2242,7 +2264,7 @@
                             href="http://archiveshub.ac.uk/displayhelp/#digitalmaterial"
                             title="Find out about Digital Material" class="helplink tip">
                             <img
-                                src="http://archiveshub.ac.uk/img/structure/form_tip.png"
+                                src="http://archiveshub.ac.uk/images/structure/form_tip.png"
                                 alt="[?]" />
                         </a>
                     </li>
@@ -2260,9 +2282,9 @@
                             <xsl:value-of select="$recid" />
                             <xsl:text>#rightcol</xsl:text>
                         </xsl:attribute>
-                        <xsl:attribute name="title">
-                            <xsl:text>Send detailed description as text in an e-mail</xsl:text>
-                        </xsl:attribute>
+<!--                         <xsl:attribute name="title"> -->
+<!--                             <xsl:text>Send detailed description as text in an e-mail</xsl:text> -->
+<!--                         </xsl:attribute> -->
                         <xsl:text>Email</xsl:text>
                     </a>
                     this Description
@@ -2273,9 +2295,9 @@
                             <xsl:value-of select="$data_uri_base" />
                             <xsl:text>.xml</xsl:text>
                         </xsl:attribute>
-                        <xsl:attribute name="title">
-                            <xsl:text>View this description as XML (In EAD Schema)</xsl:text>
-                        </xsl:attribute>
+<!--                         <xsl:attribute name="title"> -->
+<!--                             <xsl:text>View this description as XML (In EAD Schema)</xsl:text> -->
+<!--                         </xsl:attribute> -->
                         <xsl:text>View XML</xsl:text>
                     </a>
                     <xsl:text>   |   </xsl:text>
@@ -2285,9 +2307,9 @@
                             <xsl:value-of select="$data_uri_base" />
                             <xsl:text>.txt</xsl:text>
                         </xsl:attribute>
-                        <xsl:attribute name="title">
-                            <xsl:text>View this description as Plain-Text</xsl:text>
-                        </xsl:attribute>
+<!--                         <xsl:attribute name="title"> -->
+<!--                             <xsl:text>View this description as Plain-Text</xsl:text> -->
+<!--                         </xsl:attribute> -->
                         <xsl:text>View Text</xsl:text>
                     </a>
                 </li>
@@ -2343,7 +2365,7 @@
             <xsl:with-param name="original">
                 <xsl:call-template name="replace-substring">
                     <xsl:with-param name="original">
-                        <!-- following line contains a weird invisible character 
+                        <!-- following line contains a weird invisible character
                             propably a Windows \r\n or something! -->
                         <xsl:value-of
                             select="translate(normalize-space($text),'  ', '++')" />
@@ -2460,24 +2482,24 @@
         <xsl:param name="indexName" />
         <a>
             <xsl:attribute name="href">
-	        <xsl:value-of select="$script" />
-	        <xsl:text>/browse.html</xsl:text>
+            <xsl:value-of select="$script" />
+            <xsl:text>/browse.html</xsl:text>
             <xsl:text>?</xsl:text>
-	        <xsl:text>&amp;fieldidx1=</xsl:text>
-	        <xsl:value-of select="$index" />
-	        <xsl:text>&amp;fieldcont1=</xsl:text>
-	        <xsl:call-template name="cgiencode">
-	          <xsl:with-param name="text">
-	            <xsl:apply-templates select="." />
-	          </xsl:with-param>
-	        </xsl:call-template>
+            <xsl:text>&amp;fieldidx1=</xsl:text>
+            <xsl:value-of select="$index" />
+            <xsl:text>&amp;fieldcont1=</xsl:text>
+            <xsl:call-template name="cgiencode">
+              <xsl:with-param name="text">
+                <xsl:apply-templates select="." />
+              </xsl:with-param>
+            </xsl:call-template>
             <xsl:text>#leftcol</xsl:text>
-	      </xsl:attribute>
-	      <xsl:attribute name="title">
-	        <xsl:text>Browse </xsl:text>
-	        <xsl:value-of select="$indexName" />
-	        <xsl:text> index</xsl:text>
-	      </xsl:attribute>
+          </xsl:attribute>
+          <xsl:attribute name="title">
+            <xsl:text>Browse </xsl:text>
+            <xsl:value-of select="$indexName" />
+            <xsl:text> index</xsl:text>
+          </xsl:attribute>
           <xsl:attribute name="class">
             <xsl:text>ajax</xsl:text>
           </xsl:attribute>
@@ -2489,26 +2511,26 @@
         <a target="_new">
             <xsl:attribute name="href">
                 <xsl:value-of select="$amazon_search_url" />
-	  			<xsl:call-template name="cgiencode">
-		          <xsl:with-param name="text">
-		            <xsl:apply-templates select="." />
-		          </xsl:with-param>
-		        </xsl:call-template>
-			</xsl:attribute>
-			<xsl:attribute name="title">
-		        <xsl:text>Search Amazon</xsl:text>
-		    </xsl:attribute>
+                  <xsl:call-template name="cgiencode">
+                  <xsl:with-param name="text">
+                    <xsl:apply-templates select="." />
+                  </xsl:with-param>
+                </xsl:call-template>
+            </xsl:attribute>
+            <xsl:attribute name="title">
+                <xsl:text>Search Amazon</xsl:text>
+            </xsl:attribute>
             <img alt="Amazon">
                 <xsl:attribute name="src">
                     <xsl:value-of select="$amazon_search_icon" />
-		    	</xsl:attribute>
-		    </img>
-	  	</a>
-	</xsl:template>
-	
-	<xsl:template name="copaclink">
-	  	<a target="_new">
-	  		<xsl:attribute name="href">
+                </xsl:attribute>
+            </img>
+          </a>
+    </xsl:template>
+
+    <xsl:template name="copaclink">
+          <a target="_new">
+              <xsl:attribute name="href">
                 <xsl:value-of select="$copac_search_url"/>
                 <xsl:text>&amp;ti=</xsl:text>
                 <xsl:call-template name="cgiencode">
@@ -2532,30 +2554,30 @@
                     </xsl:call-template>
                 </xsl:if>
             </xsl:attribute>
-			<xsl:attribute name="title">
-		        <xsl:value-of select="$copac_search_link_title"/>
-		    </xsl:attribute>
-		    <!--
+            <xsl:attribute name="title">
+                <xsl:value-of select="$copac_search_link_title"/>
+            </xsl:attribute>
+            <!--
             <xsl:element name="img">
-		      <xsl:attribute name="alt">
+              <xsl:attribute name="alt">
                 <xsl:text></xsl:text>
               </xsl:attribute>
-		      <xsl:attribute name="src">
-		          <xsl:value-of select="$copac_search_icon"/>
-		      </xsl:attribute>
-		    </xsl:element>
+              <xsl:attribute name="src">
+                  <xsl:value-of select="$copac_search_icon"/>
+              </xsl:attribute>
+            </xsl:element>
             -->
-		    <xsl:text>Search for this book on Copac</xsl:text>
-	  	</a>
-	</xsl:template>
-	
-	<xsl:template name="googlemapslink">
-	  	<a target="_new">
-	  		<xsl:attribute name="href">
-	  			<xsl:value-of select="$googlemaps_search_url"/>
-	  			<xsl:call-template name="cgiencode">
-		          <xsl:with-param name="text">
-		            <xsl:choose>
+            <xsl:text>Search for this book on Copac</xsl:text>
+          </a>
+    </xsl:template>
+
+    <xsl:template name="googlemapslink">
+          <a target="_new">
+              <xsl:attribute name="href">
+                  <xsl:value-of select="$googlemaps_search_url"/>
+                  <xsl:call-template name="cgiencode">
+                  <xsl:with-param name="text">
+                    <xsl:choose>
                       <xsl:when test="./emph[@altrender='a']">
                           <xsl:apply-templates select="./emph[@altrender='a']"/>
                       </xsl:when>
@@ -2563,55 +2585,55 @@
                         <xsl:apply-templates select="."/>
                       </xsl:otherwise>
                     </xsl:choose>
-		          </xsl:with-param>
-		        </xsl:call-template>
-			</xsl:attribute>
-			<xsl:attribute name="title">
+                  </xsl:with-param>
+                </xsl:call-template>
+            </xsl:attribute>
+            <xsl:attribute name="title">
                 <xsl:value-of select="$googlemaps_search_link_title"/>
-		    </xsl:attribute>
-		    <img alt="Google Maps">
-		        <xsl:attribute name="src">
-                    <xsl:value-of select="$googlemaps_search_icon"/>		            
-		        </xsl:attribute>
-		    </img>
-	  	</a>
-	</xsl:template>
-  
-	<xsl:template name="wikipedialink">
-		<a target="_new">
-	  		<xsl:attribute name="href">
-	  			<xsl:value-of select="$wikipedia_search_url"/>
-	  			<xsl:call-template name="wikipediacgiencode">
-		          <xsl:with-param name="text">
-		            <xsl:apply-templates select="." />
-		          </xsl:with-param>
-		        </xsl:call-template>
-			</xsl:attribute>
-			<xsl:attribute name="title">
-		        <xsl:text>Search Wikipedia</xsl:text>
-		    </xsl:attribute>
-		    <img alt="Wikipedia">
-		    	<xsl:attribute name="src">
-		    		<xsl:value-of select="$wikipedia_search_icon"/>
-		    	</xsl:attribute>
-		    </img>
-	  	</a>
-	</xsl:template>
-  
-  	<xsl:template match="eadid" mode="tocFileName">
-		<xsl:param name="uc" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ'"/>
-		<xsl:param name="lc" select="'abcdefghijklmnopqrstuvwxyz'"/>
-		<xsl:param name="text">
-			<xsl:value-of select="."/>
-		</xsl:param>
-		<xsl:value-of select="translate(translate(normalize-space(translate($text, '/', '-')), ' ', ''), $uc, $lc)"/>
-	</xsl:template>
-    
+            </xsl:attribute>
+            <img alt="Google Maps">
+                <xsl:attribute name="src">
+                    <xsl:value-of select="$googlemaps_search_icon"/>
+                </xsl:attribute>
+            </img>
+          </a>
+    </xsl:template>
+
+    <xsl:template name="wikipedialink">
+        <a target="_new">
+              <xsl:attribute name="href">
+                  <xsl:value-of select="$wikipedia_search_url"/>
+                  <xsl:call-template name="wikipediacgiencode">
+                  <xsl:with-param name="text">
+                    <xsl:apply-templates select="." />
+                  </xsl:with-param>
+                </xsl:call-template>
+            </xsl:attribute>
+            <xsl:attribute name="title">
+                <xsl:text>Search Wikipedia</xsl:text>
+            </xsl:attribute>
+            <img alt="Wikipedia">
+                <xsl:attribute name="src">
+                    <xsl:value-of select="$wikipedia_search_icon"/>
+                </xsl:attribute>
+            </img>
+          </a>
+    </xsl:template>
+
+      <xsl:template match="eadid" mode="tocFileName">
+        <xsl:param name="uc" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ'"/>
+        <xsl:param name="lc" select="'abcdefghijklmnopqrstuvwxyz'"/>
+        <xsl:param name="text">
+            <xsl:value-of select="."/>
+        </xsl:param>
+        <xsl:value-of select="translate(translate(normalize-space($text), ' ', ''), $uc, $lc)"/>
+    </xsl:template>
+
     <xsl:template name="normalizeEadid">
         <xsl:param name="uc" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ'"/>
         <xsl:param name="lc" select="'abcdefghijklmnopqrstuvwxyz'"/>
         <xsl:param name="text"/>
-        <xsl:value-of select="translate(translate(normalize-space(translate($text, '/', '-')), ' ', ''), $uc, $lc)"/>
+        <xsl:value-of select="translate(translate(normalize-space($text), ' ', ''), $uc, $lc)"/>
     </xsl:template>
-    
+
 </xsl:stylesheet>

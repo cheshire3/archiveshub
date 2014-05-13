@@ -5,7 +5,7 @@
     xmlns:c3="http://www.cheshire3.org"
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:xhtml="http://www.w3.org/1999/xhtml"
-    exclude-result-prefixes="#all #default xhtml c3"
+    exclude-result-prefixes="#all"
     version="1.0">
     
     <!--
@@ -43,7 +43,8 @@
     	    <xsl:apply-templates select="./archdesc/scopecontent|./archdesc/descgrp/scopecontent"/>
     	    <xsl:apply-templates select="./archdesc/bioghist|./archdesc/descgrp/bioghist"/>
             <!--	    <xsl:apply-templates select="./archdesc/acqinfo|./archdesc/descgrp/acqinfo"/>-->
-    	    <xsl:apply-templates select="./archdesc/accessrestrict|./archdesc/descgrp/accessrestrict"/>
+            <xsl:apply-templates select="./archdesc/accessrestrict[*[not(local-name(.)='head')][not(local-name(.)='legalstatus')]]|./archdesc/descgrp/accessrestrict[*[not(local-name(.)='head')][not(local-name(.)='legalstatus')]]" />
+            <xsl:apply-templates select="./archdesc/accessrestrict/legalstatus|./archdesc/descgrp/accessrestrict/legalstatus" />
             <xsl:apply-templates select="./archdesc/userestrict|./archdesc/descgrp/userestrict"/>
             <!--	    <xsl:apply-templates select="./archdesc/otherfindaid|./archdesc/descgrp/otherfindaid"/>-->
             <!--	    <xsl:apply-templates select="./archdesc/relatedmaterial|./archdesc/descgrp/relatedmaterial"/>-->
@@ -74,7 +75,7 @@
     </xsl:template>
 
     <!-- for component records -->
-    <xsl:template match="c3:component">
+    <xsl:template match="c3:component|c3component">
         <!-- links to higher levels -->
         <xsl:text>LINKTOPARENT</xsl:text>
         <div id="record-head">

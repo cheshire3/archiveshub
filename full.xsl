@@ -7,7 +7,7 @@
     xmlns:c3="http://www.cheshire3.org"
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:xhtml="http://www.w3.org/1999/xhtml"
-    exclude-result-prefixes="#all #default xhtml c3"
+    exclude-result-prefixes="#all"
     version="1.0">
 
     <!--
@@ -57,7 +57,7 @@
     </xsl:template>
 
     <!-- for component records -->
-    <xsl:template match="c3:component">
+    <xsl:template match="c3:component|c3component">
         <!-- link to collection level -->
         <xsl:text>LINKTOPARENT</xsl:text>
         <div id="record-head">
@@ -74,7 +74,9 @@
                 select="./*/arrangement|./*/descgrp/arrangement" />
             <!-- ACCESS + USE RESTRICTIONS -->
             <xsl:apply-templates
-                select="./*/accessrestrict|./*/descgrp/accessrestrict" />
+                select="./*/accessrestrict|[*[not(local-name(.)='head')][not(local-name(.)='legalstatus')]]|./*/descgrp/accessrestrict[*[not(local-name(.)='head')][not(local-name(.)='legalstatus')]]" />
+            <xsl:apply-templates
+                select="./*/accessrestrict/legalstatus|./*/descgrp/accessrestrict/legalstatus" />
             <xsl:apply-templates
                 select="./*/userestrict|./*/descgrp/userestrict" />
             <xsl:apply-templates select="./*/phystech|./*/descgrp/phystech" />

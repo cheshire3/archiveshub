@@ -4,7 +4,7 @@
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:c3="http://www.cheshire3.org"
     version="1.0">
-    
+
     <!--
     This file was produced for the Cheshire3 for Archives and the Archives Hub.
     Copyright &#169; 2005-2013 the University of Liverpool
@@ -13,11 +13,10 @@
     <xsl:output method="text" media-type="text/plain"
         encoding="utf-8" />
 
-    <xsl:template select="/">
-        <xsl:apply-templates select="ead" />
-        <xsl:apply-templates select="c3component" />
-        <xsl:apply-templates select="c3:component" />
-    </xsl:template>
+    <!--
+    A default catchall template to ignore anything not specifically included
+    -->
+    <xsl:template match="*"/>
 
     <xsl:template match="/ead">
         <xsl:apply-templates select="/ead/archdesc/did" />
@@ -27,8 +26,14 @@
 
         <xsl:param name="parent-identifier">
             <xsl:choose>
+                <xsl:when test="local-name() = 'component' and starts-with(/*/@c3:parent, 'LxmlRecord-')">
+                    <xsl:value-of select="substring-after(/*/@c3:parent, 'LxmlRecord-')" />
+                </xsl:when>
                 <xsl:when test="local-name() = 'component'">
                     <xsl:value-of select="substring-after(/*/@c3:parent, '/')" />
+                </xsl:when>
+                <xsl:when test="local-name() = 'c3component' and starts-with(/*/@parent, 'LxmlRecord-')">
+                    <xsl:value-of select="substring-after(/*/@parent, 'LxmlRecord-')" />
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:value-of select="substring-after(/*/@parent, '/')" />
@@ -56,25 +61,30 @@
             <xsl:when test="unitid[@type='persistent']">
                 <xsl:apply-templates select="unitid[@type='persistent'][1]" />
             </xsl:when>
-            <xsl:when test="unitid[@label='Former Reference']">
-                <!-- we don't want to use Former Reference -->
+            <xsl:when test="unitid[@label]">
+                <!-- we don't want to use any Former Reference... -->
                 <xsl:choose>
                     <xsl:when
-                        test="unitid[@label != 'Former Reference'][@countrycode and @repositorycode and @identifier]">
+                        test="unitid[not(starts-with(@label, 'Former')) and not(starts-with(@label, 'former'))][@countrycode and @repositorycode and @identifier]">
                         <!-- when all 3 attributes are present -->
                         <xsl:apply-templates
-                            select="unitid[@label != 'Former Reference'][@countrycode and @repositorycode and @identifier][1]" />
+                            select="unitid[not(starts-with(@label, 'Former')) and not(starts-with(@label, 'former'))][@countrycode and @repositorycode and @identifier][1]" />
                     </xsl:when>
                     <xsl:when
-                        test="unitid[@label != 'Former Reference'][@countrycode and @repositorycode]">
+                        test="unitid[not(starts-with(@label, 'Former')) and not(starts-with(@label, 'former'))][@countrycode and @repositorycode]">
                         <!-- when code attributes are present are present -->
                         <xsl:apply-templates
-                            select="unitid[@label != 'Former Reference'][@countrycode and @repositorycode][1]" />
+                            select="unitid[not(starts-with(@label, 'Former')) and not(starts-with(@label, 'former'))][@countrycode and @repositorycode][1]" />
                     </xsl:when>
-                    <xsl:otherwise>
+                    <xsl:when test="unitid[not(starts-with(@label, 'Former')) and not(starts-with(@label, 'former'))]">
                         <!-- take the first that isn't Former Reference -->
                         <xsl:apply-templates
-                            select="unitid[@label != 'Former Reference'][1]" />
+                            select="unitid[not(starts-with(@label, 'Former')) and not(starts-with(@label, 'former'))][1]" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <!-- ... but sometimes we have no choice but to use the Former Reference -->
+                        <!-- take the first unitid period -->
+                        <xsl:apply-templates select="unitid[1]" />
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:when>
@@ -106,12 +116,27 @@
         <xsl:param name="lc" select="'abcdefghijklmnopqrstuvwxyz'" />
 
         <xsl:param name="prefix">
-            <xsl:if test="@countrycode and @repositorycode">
-                <!-- if they're not here, we have real problems can't realistically 
-                    pattern match in XSLT -->
-                <xsl:value-of select="@countrycode" />
-                <xsl:value-of select="@repositorycode" />
-            </xsl:if>
+            <xsl:choose>
+                <xsl:when test="@countrycode">
+                    <xsl:value-of select="@countrycode" />
+                </xsl:when>
+                <xsl:otherwise>
+                    <!-- Assume GB -->
+                    <xsl:text>GB</xsl:text>
+                </xsl:otherwise>
+            </xsl:choose>
+            <!--
+            if @repositorycode is not here, we have a real problems;
+            can't reliably pattern match in XSLT
+            -->
+            <xsl:choose>
+                <xsl:when test="string(number(@repositorycode)) = 'NaN'">
+                    <xsl:value-of select="@repositorycode" />
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="format-number(number(@repositorycode), '#')" />
+                </xsl:otherwise>
+            </xsl:choose>
         </xsl:param>
 
         <xsl:param name="constructed-identifier">
@@ -185,5 +210,5 @@
         <xsl:param name="text" />
         <xsl:value-of select="translate(normalize-space($text), $uc, $lc)" />
     </xsl:template>
-    
+
 </xsl:stylesheet>
