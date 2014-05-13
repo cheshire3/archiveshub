@@ -485,7 +485,8 @@
         </xsl:if>
 
         <!-- ACCESS + USE RESTRICTIONS -->
-        <xsl:apply-templates select="./accessrestrict|./descgrp/accessrestrict" />
+        <xsl:apply-templates select="./accessrestrict[*[not(local-name(.)='head')][not(local-name(.)='legalstatus')]]|./descgrp/accessrestrict[*[not(local-name(.)='head')][not(local-name(.)='legalstatus')]]" />
+        <xsl:apply-templates select="./accessrestrict/legalstatus|./descgrp/accessrestrict/legalstatus" />
         <xsl:apply-templates select="./userestrict|./descgrp/userestrict" />
         <xsl:apply-templates select="./phystech|./descgrp/phystech" />
 
@@ -609,7 +610,7 @@
     </xsl:template>
 
     <!-- ACCESS + USE RESTRICTIONS -->
-    <xsl:template match="accessrestrict">
+    <xsl:template match="accessrestrict[*[not(local-name(.)='head')][not(local-name(.)='legalstatus')]]">
         <xsl:if test="@id">
             <a name="{@id}">
                 <xsl:text> </xsl:text>
@@ -630,7 +631,33 @@
                 </h3>
             </xsl:otherwise>
         </xsl:choose>
-        <xsl:apply-templates />
+   	<xsl:apply-templates select="*[not(local-name(.)='legalstatus')]"/>
+    </xsl:template>
+
+    <xsl:template match="accessrestrict/legalstatus">
+        <xsl:if test="@id">
+            <a name="{@id}">
+                <xsl:text> </xsl:text>
+            </a>
+        </xsl:if>
+        <xsl:variable name="headstring">
+            <xsl:text>Legal Status</xsl:text>
+        </xsl:variable>
+        <xsl:choose>
+            <xsl:when test="../../../archdesc or ../../../../c3:component or ../../../../c3component">
+                <h2 class="fieldhead-auto">
+                    <xsl:value-of select="$headstring" />
+                </h2>
+            </xsl:when>
+            <xsl:otherwise>
+                <h3 class="fieldhead-auto">
+                    <xsl:value-of select="$headstring" />
+                </h3>
+            </xsl:otherwise>
+        </xsl:choose>
+        <p>
+	        <xsl:apply-templates />
+	</p>
     </xsl:template>
 
     <xsl:template match="userestrict">
@@ -1408,7 +1435,8 @@
         </xsl:if>
 
         <!-- ACCESS + USE RESTRICTIONS -->
-        <xsl:apply-templates select="accessrestrict|descgrp/accessrestrict" />
+        <xsl:apply-templates select="accessrestrict[*[not(local-name(.)='head')][not(local-name(.)='legalstatus')]]|descgrp/accessrestrict[*[not(local-name(.)='head')][not(local-name(.)='legalstatus')]]" />
+        <xsl:apply-templates select="accessrestrict/legalstatus|descgrp/accessrestrict/legalstatus" />
         <xsl:apply-templates select="userestrict|descgrp/userestrict" />
         <xsl:apply-templates select="phystech|descgrp/phystech" />
         <!-- ADMINISTRATIVE INFORMATION / ARCHIVAL HISTORY -->

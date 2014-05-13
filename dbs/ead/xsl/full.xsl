@@ -74,7 +74,9 @@
                 select="./*/arrangement|./*/descgrp/arrangement" />
             <!-- ACCESS + USE RESTRICTIONS -->
             <xsl:apply-templates
-                select="./*/accessrestrict|./*/descgrp/accessrestrict" />
+                select="./*/accessrestrict|[*[not(local-name(.)='head')][not(local-name(.)='legalstatus')]]|./*/descgrp/accessrestrict[*[not(local-name(.)='head')][not(local-name(.)='legalstatus')]]" />
+            <xsl:apply-templates
+                select="./*/accessrestrict/legalstatus|./*/descgrp/accessrestrict/legalstatus" />
             <xsl:apply-templates
                 select="./*/userestrict|./*/descgrp/userestrict" />
             <xsl:apply-templates select="./*/phystech|./*/descgrp/phystech" />
