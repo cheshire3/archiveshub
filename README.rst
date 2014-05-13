@@ -1,7 +1,7 @@
 Archives Hub
 ============
 
-24th April 2014 (2014-04-24)
+13th May 2014 (2014-05-13)
 
 .. image:: https://travis-ci.org/cheshire3/archiveshub.png?branch=master,release/3.2.0
    :target: https://travis-ci.org/cheshire3/archiveshub
