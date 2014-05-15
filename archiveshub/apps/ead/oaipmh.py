@@ -52,7 +52,7 @@ class ArchivesHubOAIServer(Cheshire3OaiServer):
         session = self.session
         # Check set value
         if set_ and not set_.startswith('contributor:'):
-            return []
+            raise StopIteration
         elif set_:
             set_ = set_.split(':', 1)[-1]
 
@@ -85,8 +85,7 @@ class ArchivesHubOAIServer(Cheshire3OaiServer):
         # Tweak until value to make it inclusive
         until = until[:-1] + chr(ord(until[-1]) + 1)
         termList = idx.fetch_termList(session, from_, 0, '>=', end=until)
-        # Create list of datestamp, resultSet tuples
-        tuples = []
+        # Generate sequence of datestamp, resultSet tuples
         for t in termList:
             try:
                 datetime_obj = datetime.datetime.strptime(
@@ -100,7 +99,7 @@ class ArchivesHubOAIServer(Cheshire3OaiServer):
                 )
             datetime_rs = idx.construct_resultSet(session, t[1])
             if not set_:
-                tuples.append((datetime_obj, datetime_rs))
+                yield (datetime_obj, datetime_rs)
             else:
                 # Filter by set
                 set_q = cqlparse('vdb.identifier = {0}'.format(set_))
@@ -108,13 +107,11 @@ class ArchivesHubOAIServer(Cheshire3OaiServer):
                 full_rs = SimpleResultSet(session)
                 full_q = cqlparse('{0} and {1}'
                                   ''.format(q.toCQL(), set_q.toCQL()))
-                tuples.append((datetime_obj,
-                               full_rs.combine(session,
-                                               [datetime_rs, set_rs],
-                                               full_q
-                                               )
-                               ))
-        return tuples
+                yield (datetime_obj, full_rs.combine(session,
+                                                     [datetime_rs, set_rs],
+                                                     full_q
+                                                     )
+                       )
 
     def listIdentifiers(self, metadataPrefix, set=None, from_=None, until=None,
                         cursor=0, batch_size=10):
