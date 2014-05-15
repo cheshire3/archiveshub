@@ -448,7 +448,8 @@ def listContributors(session):
         Requirement.parse('archiveshub'),
         'www/ead/html/searchContributors.pickle'
     )
-    if (os.path.exists(pickle_filename) and
+    if (
+        os.path.exists(pickle_filename) and
         os.stat(index_filename).st_mtime < os.stat(pickle_filename).st_mtime
     ):
         with open(pickle_filename, 'rb') as pfh:
