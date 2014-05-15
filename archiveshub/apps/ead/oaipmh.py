@@ -83,7 +83,7 @@ class ArchivesHubOAIServer(Cheshire3OaiServer):
         from_ = min(res.keys())
         until = max(res.keys())
         # Tweak until value to make it inclusive
-        until = until[:-1] + chr(ord(until[-1])+1)
+        until = until[:-1] + chr(ord(until[-1]) + 1)
         termList = idx.fetch_termList(session, from_, 0, '>=', end=until)
         # Create list of datestamp, resultSet tuples
         tuples = []
@@ -142,8 +142,10 @@ class ArchivesHubOAIServer(Cheshire3OaiServer):
         Should raise error.NoSetHierarchyError if the repository does not
         support sets.
         """
-        if (metadataPrefix and not
-            (metadataPrefix in self.protocolMap.recordNamespaces)):
+        if (
+            metadataPrefix and not
+            (metadataPrefix in self.protocolMap.recordNamespaces)
+        ):
             raise CannotDisseminateFormatError()
         # Get list of datestamp, resultSet tuples
         tuples = self._listResults(metadataPrefix, set, from_, until)
@@ -234,7 +236,7 @@ class ArchivesHubOAIServer(Cheshire3OaiServer):
         for (datestamp, rs) in tuples:
             for r in rs:
                 if i < cursor:
-                    i+=1
+                    i += 1
                     continue
                 # Handle non-ascii characters in identifier
                 identifier = unicode(r.id, 'utf-8')
@@ -257,7 +259,7 @@ class ArchivesHubOAIServer(Cheshire3OaiServer):
                                     rec,
                                     None
                                     ))
-                i+=1
+                i += 1
                 if (len(records) == batch_size):
                     return records
         return records

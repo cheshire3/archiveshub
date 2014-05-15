@@ -203,7 +203,7 @@ class EADSearchWsgiApplication(EADWsgiApplication):
                 ascending = None
                 if spec.endswith('/ascending'):
                     spec = spec[:-len('/ascending')]
-                    ascending=True
+                    ascending = True
                 elif spec.endswith('/descending'):
                     spec = spec[:-len('/descending')]
                     ascending = False

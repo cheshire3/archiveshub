@@ -112,8 +112,9 @@ class EADRecordWsgiApplication(EADWsgiApplication):
                     mapDoc = self.identifierMap.fetch_document(session,
                                                                recid
                                                                )
-                except (FileDoesNotExistException,
-                        ObjectDoesNotExistException
+                except (
+                    FileDoesNotExistException,
+                    ObjectDoesNotExistException
                 ):
                     # Record specified but could not be found - 404!
                     self.response.status = 404
