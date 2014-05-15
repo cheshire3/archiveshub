@@ -283,6 +283,19 @@ class EADWsgiApplication(object):
         maximumTerms = int(form.getfirst('maximumTerms',
                                          form.getfirst('numreq', 25)))
         rp = int(form.getfirst('responsePosition', (maximumTerms + 1) / 2))
+        if idx == 'c3.idx-dateYear':
+            # Allow for entry of a range as the scan term
+            scanTerm = scanTerm.replace('-', ' ')
+            idxObj = db.get_object(session, 'idx-dateYear')
+            res = {}
+            for src in idxObj.sources.get(rel, idxObj.sources[u'data']):
+                res.update(src[1].process(session, [[scanTerm]]))
+            terms = res.keys()
+            if terms:
+                scanTerm = min(terms)
+                if len(terms) > 1:
+                    rp = int(form.getfirst('responsePosition', 1))
+
         qString = u'%s %s "%s"' % (idx, rel, scanTerm)
         try:
             scanClause = queryFactory.get_query(session,
