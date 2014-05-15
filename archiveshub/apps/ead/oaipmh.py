@@ -20,7 +20,12 @@ from oaipmh.error import (
 # Import Some necessary Cheshire3 bits
 from cheshire3.baseObjects import Session
 from cheshire3.cqlParser import parse as cqlparse
-from cheshire3.exceptions import C3Exception, ObjectDeletedException
+from cheshire3.exceptions import (
+    C3Exception,
+    ObjectDeletedException,
+    ObjectDoesNotExistException,
+    FileDoesNotExistException
+)
 from cheshire3.internal import cheshire3Root
 from cheshire3.server import SimpleServer
 from cheshire3.resultSet import SimpleResultSet
@@ -171,7 +176,11 @@ class ArchivesHubOAIServer(Cheshire3OaiServer):
                     sets.append('contributor:{0}'.format(vdbid))
                 try:
                     r.fetch_record(session)
-                except ObjectDeletedException as e:
+                except (
+                    ObjectDeletedException,
+                    ObjectDoesNotExistException,
+                    FileDoesNotExistException
+                ) as e:
                     headers.append(Header(identifier, datestamp, sets, True))
                 else:
                     headers.append(Header(identifier, datestamp, sets, None))
@@ -246,7 +255,11 @@ class ArchivesHubOAIServer(Cheshire3OaiServer):
                     sets.append('contributor:{0}'.format(vdbid))
                 try:
                     rec = r.fetch_record(session)
-                except ObjectDeletedException:
+                except (
+                    ObjectDeletedException,
+                    ObjectDoesNotExistException,
+                    FileDoesNotExistException
+                ) as e:
                     records.append((Header(identifier, datestamp, sets, True),
                                     None,
                                     None
