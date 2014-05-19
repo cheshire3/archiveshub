@@ -163,6 +163,22 @@ class HubEditingHandler(object):
                                    '<hr>': '<hr/>'
                                    }
 
+    def _get_timeStamp(self):
+        return time.strftime('%Y-%m-%dT%H%M%S')
+
+    def _get_userInstitutionId(self, username):
+        # Return the institution id of the user performing the operation
+        global authStore
+        sqlQ = ("SELECT institutionid "
+                "FROM eadAuthStore_linkauthinst "
+                "WHERE eadAuthStore=%s")
+        res = authStore._query(sqlQ, (username,))
+        if len(res) > 1:
+            # We have two templates with the same id - should never happen
+            return None
+        else:
+            return res[0][0]
+
     def send_response(self, data, req, content_type=None, code=200):
         if content_type is not None:
             req.content_type = content_type
@@ -826,19 +842,8 @@ class HubEditingHandler(object):
         (templateXml, name) = self.build_ead(form, True)
         doc = StringDocument(etree.tostring(templateXml))
         rec = xmlp.process_document(session, doc)
-
         # Get the institution of the user performing the operation
-        sqlQ = ("SELECT institutionid "
-                "FROM eadAuthStore_linkauthinst "
-                "WHERE eadAuthStore='%s'"
-                )
-        res = authStore._query(sqlQ, (session.user.username,))
-        result = res.dictresult()
-        if len(result) > 1:
-            # We have two templates with the same id - should never happen
-            pass
-        else:
-            institutionid = result[0]['institutionid']
+        institutionid = self._get_userInstitutionId(session.user.username)
         rec.id = '%s-%s' % (name.strip(), institutionid)
         # Otherwise store in template store and create institution link
         templateStore.store_record(session, rec)
@@ -859,17 +864,7 @@ class HubEditingHandler(object):
         templateStore = db.get_object(session, 'templateStore')
         templateStore.begin_storing(session)
         recid = form.get('recid', None)
-        # Get the institution of the user performing the operation
-        sqlQ = ("SELECT institutionid "
-                "FROM eadAuthStore_linkauthinst "
-                "WHERE eadAuthStore='%s'")
-        res = authStore._query(sqlQ, (session.user.username,))
-        result = res.dictresult()
-        if len(result) > 1:
-            # We have two templates with the same id - should never happen
-            pass
-        else:
-            institutionid = result[0]['institutionid']
+        institutionid = self._get_userInstitutionName(session.user.username)
         if not recid is None:
             try:
                 templateStore.delete_record(session,
@@ -1223,18 +1218,9 @@ class HubEditingHandler(object):
                     rec1 = editStore.fetch_record(session, id_)
                 except:
                     # Get the institution of the user performing the operation
-                    sqlQ = ("SELECT institutionid "
-                            "FROM eadAuthStore_linkauthinst "
-                            "WHERE eadAuthStore='{%s'"
-                            )
-                    res = authStore._query(sqlQ, (un,))
-                    result = res.dictresult()
-                    if len(result) > 1:
-                        # We have two users with the same id
-                        # Should never happen...
-                        pass
-                    else:
-                        institutionid = result[0]['institutionid']
+                    institutionid = self._get_userInstitutionId(
+                        session.user.username
+                    )
                     # Otherwise store in editing store and create institution
                     # link
                     editStore.store_record(session, rec1)
@@ -1287,33 +1273,19 @@ class HubEditingHandler(object):
         permission to edit requested record.
         """
         # Get the institution of the user performing the operation
-        sqlQ = ("SELECT institutionid "
-                "FROM eadAuthStore_linkauthinst "
-                "WHERE eadAuthStore='%s'"
-                )
-        res = authStore._query(sqlQ, (session.user.username,))
-        result = res.dictresult()
-        if len(result) == 0:
-            return False
-        elif len(result) > 1:
-            # We have two users with the same id - should never happen
-            pass
-        else:
-            authinst = result[0]['institutionid']
-
+        authinst = self._get_userInstitutionId(session.user.username)
         sqlQ = ("SELECT institutionid "
                 "FROM editingstore_linkrecinst "
-                "WHERE editingstore='%s' LIMIT 1"
+                "WHERE editingstore=%s LIMIT 1"
                 )
         res = editStore._query(sqlQ, (recid,))
-        result = res.dictresult()
-        if len(result) == 0:
+        if len(res) == 0:
             return False
-        elif len(result) > 1:
+        elif len(res) > 1:
             # We have two records with the same id - should never happen
             pass
         else:
-            recinst = result[0]['institutionid']
+            recinst = result[0][0]
         if recinst == authinst:
             return True
         else:
@@ -1326,20 +1298,8 @@ class HubEditingHandler(object):
         permission to edit requested template.
         """
         # Get the institution of the user performing the operation
+        authinst = self._get_userInstitutionId(session.user.username)
         templateStore = db.get_object(session, 'templateStore')
-        sqlQ = ("SELECT institutionid "
-                "FROM eadAuthStore_linkauthinst "
-                "WHERE eadAuthStore='%s'"
-                )
-        res = authStore._query(sqlQ, (session.user.username,))
-        result = res.dictresult()
-        if len(result) == 0:
-            return False
-        elif len(result) > 1:
-            # We have two users with the same is - should never happen
-            pass
-        else:
-            authinst = result[0]['institutionid']
         sqlQ = ("SELECT institutionid "
                 "FROM templatestore_linktempinst "
                 "WHERE templatestore='%s'"
@@ -1357,9 +1317,6 @@ class HubEditingHandler(object):
             return True
         else:
             return False
-
-    def _get_timeStamp(self):
-        return time.strftime('%Y-%m-%dT%H%M%S')
 
     # Validation related functions   ========================================
 
@@ -1439,18 +1396,7 @@ class HubEditingHandler(object):
             rs = db.get_object(session, 'templateStore')
             user = session.user.username
             # Get instId of user
-            sqlQ = ("SELECT institutionid "
-                    "FROM eadAuthStore_linkauthinst "
-                    "WHERE eadAuthStore='%s'"
-                    )
-            res = authStore._query(sqlQ, (session.user.username,))
-            result = res.dictresult()
-            if len(result) > 1:
-                # We have two templates with the same id - should never happen
-                pass
-            else:
-                institutionid = result[0]['institutionid']
-
+            institutionid = self._get_userInstitutionId(user)
             id = '%s-%s' % (id, institutionid)
         if (id is not None and store is not None):
             exists = 'false'
@@ -1558,13 +1504,7 @@ class HubEditingHandler(object):
             recid = rec.id
             rec.id = '%s-%s' % (rec.id, fileOwner)
             # Get the institution of the user performing the operation
-            sqlQ = ("SELECT institutionid "
-                    "FROM eadAuthStore_linkauthinst "
-                    "WHERE eadAuthStore='%s'"
-                    )
-            res = authStore._query(sqlQ, (session.user.username,))
-            result = res.dictresult()
-            institutionid = result[0]['institutionid']
+            institutionid = self._get_userInstitutionId(session.user.username)
             editStore.store_record(session, rec)
             editStore.link(session,
                            'linkrecinst',
@@ -2641,33 +2581,10 @@ class HubEditingHandler(object):
                 )
 
     def _canDelete(self, userid):
+        global session
         # Get the institution of the user performing the operation
-        sqlQ = ("SELECT institutionid "
-                "FROM eadAuthStore_linkauthinst "
-                "WHERE eadAuthStore='%s'"
-                )
-        res = authStore._query(sqlQ, (session.user.username,))
-        result = res.dictresult()
-        if len(result) == 0:
-            return False
-        elif len(result) > 1:
-            # We have two users with the same id - should never happen
-            pass
-        else:
-            authinst = result[0]['institutionid']
-        sqlQ = ("SELECT institutionid "
-                "FROM eadAuthStore_linkauthinst "
-                "WHERE eadAuthStore='%s'"
-                )
-        res = editStore._query(sqlQ, (userid,))
-        result = res.dictresult()
-        if len(result) == 0:
-            return False
-        elif len(result) > 1:
-            # We have two records with the same id - should never happen
-            pass
-        else:
-            userinst = result[0]['institutionid']
+        authinst = self._get_userInstitutionId(session.user.username)
+        userinst = self._get_userInstitutionId(userid)
         if userinst == authinst:
             return True
         else:
@@ -2739,13 +2656,7 @@ class HubEditingHandler(object):
                         ('<p class="error">Unable to add user - '
                          'password not supplied.</p>')
                     )
-                sqlQ = ("SELECT institutionid "
-                        "FROM eadAuthStore_linkauthinst "
-                        "WHERE eadAuthStore='%s'"
-                        )
-                res = authStore._query(sqlQ, (session.user.id,))
-                result = res.dictresult()
-                inst = result[0]['institutionid']
+                inst = self._get_userInstitutionId(session.user.id)
                 # Update DOM
                 userNode = self._modify_userLxml(userNode, newHash)
                 self._submit_userLxml(userid, userNode)
@@ -2800,17 +2711,7 @@ class HubEditingHandler(object):
             if rec.id[rec.id.rfind('-') + 1:] == newUser:
                 return recid
             else:
-                sqlQ = ("SELECT institutionid "
-                        "FROM eadAuthStore_linkauthinst "
-                        "WHERE eadAuthStore='%s'"
-                        )
-                res = authStore._query(sqlQ, (newUser,))
-                result = res.dictresult()
-                if len(result) > 1:
-                    # We have two users with the same is - should never happen
-                    pass
-                else:
-                    institutionid = result[0]['institutionid']
+                institutionid = self._get_userInstitutionId(newUser)
                 rec.id = ('%s-%s') % (rec.id[:rec.id.rfind('-')], newUser)
                 editStore.delete_record(session, recid)
                 editStore.store_record(session, rec)
@@ -2830,43 +2731,29 @@ class HubEditingHandler(object):
         """Return usernames from institution in alphabetical order."""
         sqlQ = ("SELECT eadAuthStore "
                 "FROM eadAuthStore_linkauthinst "
-                "WHERE institutionid='%s' "
+                "WHERE institutionid=%s "
                 "ORDER BY eadAuthStore ASC"
                 )
         res = authStore._query(sqlQ, (institutionid,))
-        result = res.getresult()
-        return sorted([r[0] for r in result], key=str.lower)
+        return sorted([r[0] for r in res], key=str.lower)
 
     def _get_usernamesFromMyInst(self):
         """Get and return usernames from same institution.
 
         Return usernames from same institution as user in alphabetical order.
         """
-        sqlQ = ("SELECT institutionid "
-                "FROM eadAuthStore_linkauthinst "
-                "WHERE eadAuthStore='%s'"
-                )
-        res = authStore._query(sqlQ, (session.user.username,))
-        result = res.dictresult()
-        institutionid = result[0]['institutionid']
+        institutionid = self._get_userInstitutionId(session.user.username)
         return self._get_usernamesByInst(institutionid)
 
     def _get_templatesByInst(self):
         result = []
-        sqlQ = ("SELECT institutionid "
-                "FROM eadAuthStore_linkauthinst "
-                "WHERE eadAuthStore='%s'"
-                )
-        res = authStore._query(sqlQ, (session.user.username,))
-        result = res.dictresult()
-        institutionid = result[0]['institutionid']
+        institutionid = self._get_userInstitutionId(session.user.username)
         sqlQ = ("SELECT templatestore "
                 "FROM templatestore_linktempinst "
-                "WHERE institutionid='%s'"
+                "WHERE institutionid=%s"
                 )
         res = authStore._query(sqlQ, (institutionid,))
-        result = res.dictresult()
-        return result
+        return res
 
     def show_editMenu(self):
         page = read_file('editmenu.html')
@@ -2874,7 +2761,7 @@ class HubEditingHandler(object):
         templateStore = db.get_object(session, 'templateStore')
         options = []
         for ctr, r in enumerate(self._get_templatesByInst()):
-            id = r['templatestore']
+            id = r[0]
             options.append('<option value="{0}">{1}</option>'
                            ''.format(id, id[:id.rfind('-')])
                            )
@@ -2959,55 +2846,31 @@ class HubEditingHandler(object):
 
     def _get_totalDrafts(self):
         # Get the institution of the user performing the operation
-        sqlQ = ("SELECT institutionid "
-                "FROM eadAuthStore_linkauthinst "
-                "WHERE eadAuthStore='%s'"
-                )
-        res = authStore._query(sqlQ, (session.user.username,))
-        result = res.dictresult()
-        authinst = result[0]['institutionid']
+        authinst = self._get_userInstitutionId(session.user.username)
         countsql = ("SELECT COUNT(editingstore) as total "
                     "FROM editingstore_linkrecinst "
                     "WHERE institutionid = %s"
                     )
         res2 = editStore._query(countsql, (authinst,))
-        result2 = res2.dictresult()
-        total = result2[0]['total']
+        total = res2[0][0]
         return total
 
     def _get_quota(self):
-        #get the institution of the user performing the operation
+        # Get the institution of the user performing the operation
+        authinst = self._get_userInstitutionId(session.user.username)
         instStore = db.get_object(session, 'institutionStore')
-        sqlQ = ("SELECT institutionid "
-                "FROM eadAuthStore_linkauthinst "
-                "WHERE eadAuthStore='%s'"
-                )
-        res = authStore._query(sqlQ, (session.user.username,))
-        result = res.dictresult()
-        authinst = result[0]['institutionid']
         inst = instStore.fetch_record(session, authinst)
         quota = inst.process_xpath(session, '//quota/text()')[0]
         return int(quota)
 
     def _walk_store(self, store, type='checkbox'):
-        sqlQ = ("SELECT institutionid "
-                "FROM eadAuthStore_linkauthinst "
-                "WHERE eadAuthStore='%s'"
-                )
-        res = authStore._query(sqlQ, (session.user.username,))
-        result = res.dictresult()
-        if len(result) > 1:
-            # We have two users with the same id - should never happen
-            pass
-        else:
-            institutionid = result[0]['institutionid']
+        institutionid = self._get_userInstitutionId(session.user.username)
         sqlQ = ("SELECT DISTINCT editingstore "
                 "FROM editingstore_linkrecinst "
-                "WHERE institutionid='%s' "
+                "WHERE institutionid=%s "
                 "ORDER BY editingstore"
                 )
-        res = authStore._query(sqlQ, (institutionid,))
-        records = res.dictresult()
+        records = authStore._query(sqlQ, (institutionid,))
         out = []
         names = []
         total = 0
@@ -3029,7 +2892,7 @@ class HubEditingHandler(object):
                          '<ul class="hierarchy">'
                          ]
             for s in records:
-                recid = s['editingstore']
+                recid = s[0]
                 if recid[recid.rfind('-') + 1:] == name:
                     try:
                         displayId = recid[:recid.rindex('-')]
@@ -3049,11 +2912,10 @@ class HubEditingHandler(object):
             out.append(''.join(userFiles))
         sqlQ = ("SELECT DISTINCT editingstore "
                 "FROM editingstore_linkrecinst "
-                "WHERE institutionid='%s'"
+                "WHERE institutionid=%s"
                 )
         res = authStore._query(sqlQ, (institutionid,))
-        result = res.dictresult()
-        if total < len(result):
+        if total < len(res):
             out.extend(['<li title=deletedUsers><span>Deleted Users</span>',
                         '<ul class="hierarchy">'
                         ])
@@ -3065,8 +2927,8 @@ class HubEditingHandler(object):
                 disabled = ''
             else:
                 disabled = 'disabled="disabled"'
-            for r in result:
-                recid = r['editingstore']
+            for r in res:
+                recid = r[0]
                 if recid[recid.rfind('-') + 1:] not in names:
                     try:
                         displayId = recid[:recid.rindex('-')]
