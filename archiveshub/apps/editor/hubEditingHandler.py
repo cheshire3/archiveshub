@@ -63,9 +63,6 @@ from mod_python.util import FieldStorage, redirect
 # import customisable variables
 from hubeditLocalConfig import *
 
-# set sys paths
-sys.path.insert(1, os.path.join(cheshirePath, 'cheshire3', 'code'))
-
 # Cheshire3 stuff
 from cheshire3.baseObjects import Session, Record, ResultSet
 
@@ -3304,12 +3301,7 @@ def handler(req):
     try:
         remote_host = req.get_remote_host(apache.REMOTE_NOLOOKUP)
         # cd to where html fragments are
-        os.chdir(os.path.join(cheshirePath,
-                              'cheshire3',
-                              'www',
-                              'hubedit',
-                              'html')
-                 )
+        os.chdir(htmlPath)
         # Initialise logger object
         lgr = FileLogger(logfilepath, remote_host)
         hubEditingHandler.logger = lgr

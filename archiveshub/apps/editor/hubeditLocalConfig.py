@@ -81,14 +81,14 @@ outgoing_email_port = 25                           # 25 is the default for most 
 hubemailaddress = 'cjsmith@liv.ac.uk'        #email address for "send to hub team" function
 
 # Logfile paths
-logpath = os.path.join(cheshirePath, 'cheshire3', 'www', 'hubedit', 'logs')
+logpath = os.path.join(cheshirePath, 'www', 'hubedit', 'logs')
 searchlogfilepath = os.path.join(logpath, 'searchHandler.log')
 adminlogfilepath = os.path.join(logpath, 'adminHandler.log')
 editinglogfilepath = os.path.join(logpath, 'editingHandler.log')
 
 # Path where HTML fragments (browse.html, email.html, resolve.html, search.html)
 # and template.ssi are located
-htmlPath = os.path.join(cheshirePath, 'cheshire3', 'www', 'hubedit', 'html')
+htmlPath = os.path.join(cheshirePath, 'www', 'hubedit', 'html')
 templatePath = os.path.join(htmlPath, 'template.html')
 
 # The approximate maximum desired page size when displaying full records (in kB)
