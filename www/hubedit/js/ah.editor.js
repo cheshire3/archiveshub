@@ -3940,7 +3940,9 @@ function disableLinksByClass() {
     }
 }
 
-addLoadEvent(disableLinksByClass);/*
+addLoadEvent(disableLinksByClass);
+
+/*
 // Program:        keyboard.js
 // Version:       0.02
 // Description:

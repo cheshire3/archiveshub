@@ -67,6 +67,16 @@ def main(argv=None):
         '/': root_conf
     }
     cherrypy.tree.mount(None, '/', config=config)
+    edit_config = {
+        '/': {
+            'tools.staticdir.on': True,
+            'tools.staticdir.dir': resource_filename(
+                Requirement.parse('archiveshub'),
+                'www/hubedit/js'
+            )
+        }
+    }
+    cherrypy.tree.mount(None, '/edit/js', edit_config)
     # Write startup message to stdout
     sys.stdout.write(
         "Starting CherryPy HTTP server for ArchivesHub.\n"
