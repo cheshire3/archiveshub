@@ -124,7 +124,7 @@ function addField(s){
     else {
         cell2.innerHTML = '<input type="text" onfocus="parent.setCurrent(this);" name="' + value + '" id="' + value + '" size="35"></input>';
     }
-    cell3.innerHTML = '<img src="/img/delete.png" class="deletelogo" onmouseover="this.src=\'/img/delete-hover.png\';" onmouseout="this.src=\'/img/delete.png\';" onclick="deleteRow(this.parentNode.parentNode);" />';
+    cell3.innerHTML = '<img src="/images/editor/delete.png" class="deletelogo" onmouseover="this.src=\'/images/editor/delete-hover.png\';" onmouseout="this.src=\'/images/editor/delete.png\';" onclick="deleteRow(this.parentNode.parentNode);" />';
     newRow.appendChild(cell1);
     newRow.appendChild(cell2);
     newRow.appendChild(cell3);
@@ -256,7 +256,7 @@ function editSubject(s, type, number){
             newRow.appendChild(cell2);
 
             var cell3 = document.createElement('td');
-            cell3.innerHTML = '<img src="/img/delete.png" class="deletelogo" onmouseover="this.src=\'/img/delete-hover.png\';" onmouseout="this.src=\'/img/delete.png\';" onclick="deleteRow(this.parentNode.parentNode);" />';
+            cell3.innerHTML = '<img src="/images/editor/delete.png" class="deletelogo" onmouseover="this.src=\'/images/editor/delete-hover.png\';" onmouseout="this.src=\'/images/editor/delete.png\';" onclick="deleteRow(this.parentNode.parentNode);" />';
             newRow.appendChild(cell3);
               table.insertBefore(newRow, dropdownRow);
 
@@ -349,7 +349,7 @@ function editAccessPoint(s, number){
                         }
                         else {
                             var cell3 = document.createElement('td');
-                            cell3.innerHTML = '<img src="/img/delete.png" class="deletelogo" onmouseover="this.src=\'/img/delete-hover.png\';" onmouseout="this.src=\'/img/delete.png\';" onclick="deleteRow(this.parentNode.parentNode);" />';
+                            cell3.innerHTML = '<img src="/images/editor/delete.png" class="deletelogo" onmouseover="this.src=\'/images/editor/delete-hover.png\';" onmouseout="this.src=\'/images/editor/delete.png\';" onclick="deleteRow(this.parentNode.parentNode);" />';
                             newRow.appendChild(cell3);
                               table.insertBefore(newRow, dropdownRow);
                           }
@@ -390,7 +390,7 @@ function editAccessPoint(s, number){
                         }
                         else {
                             var cell3 = document.createElement('td');
-                            cell3.innerHTML = '<img src="/img/delete.png" class="deletelogo" onmouseover="this.src=\'/img/delete-hover.png\';" onmouseout="this.src=\'/img/delete.png\';" onclick="deleteRow(this.parentNode.parentNode);" />';
+                            cell3.innerHTML = '<img src="/images/editor/delete.png" class="deletelogo" onmouseover="this.src=\'/images/editor/delete-hover.png\';" onmouseout="this.src=\'/images/editor/delete.png\';" onclick="deleteRow(this.parentNode.parentNode);" />';
                             newRow.appendChild(cell3);
                               table.insertBefore(newRow, dropdownRow);
                           }
@@ -683,7 +683,7 @@ function createIcons(s){
    /* The delete icon */
    var d = "'" + s + nameCount + "'";
    var s = "'" + s + "'";
-   innerHTMLString = '<a onclick ="deleteAccessPoint(' + d + ');" title="delete entry"><img src="/img/delete.png" class="deletelogo" onmouseover="this.src=\'/img/delete-hover.png\';" onmouseout="this.src=\'/img/delete.png\';" id="delete' + nameCount + '"/></a>';
+   innerHTMLString = '<a onclick ="deleteAccessPoint(' + d + ');" title="delete entry"><img src="/images/editor/delete.png" class="deletelogo" onmouseover="this.src=\'/images/editor/delete-hover.png\';" onmouseout="this.src=\'/images/editor/delete.png\';" id="delete' + nameCount + '"/></a>';
 
    icondiv.innerHTML = innerHTMLString;
    return icondiv

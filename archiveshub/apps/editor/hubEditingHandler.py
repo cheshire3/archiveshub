@@ -2795,7 +2795,7 @@ class HubEditingHandler(object):
             self.htmlNav[2] = '''\
             <li class="navtab">
                 <a href="users.html" title="Manage User Accounts">
-                    <img src="/img/icon-user.png" alt=""/>
+                    <img src="/images/editor/icon-user.png" alt=""/>
                     Manage Users
                 </a>
             </li>'''
@@ -2819,7 +2819,7 @@ class HubEditingHandler(object):
             self.htmlNav[2] = '''\
             <li class="navtab">
                 <a href="users.html" title="Edit Account Details">
-                    <img src="/img/icon-user.png" alt=""/>
+                    <img src="/images/editor/icon-user.png" alt=""/>
                     Edit Account Details
                 </a>
             </li>'''
@@ -2959,7 +2959,7 @@ class HubEditingHandler(object):
         self.htmlNav = [
             '''<li class="navtab">
                 <a href="menu.html" target="_top" title="Edit/Create Menu">
-                    <img src="/img/icon-list.png" alt=""/>
+                    <img src="/images/editor/icon-list.png" alt=""/>
                     Edit/Create Menu
                 </a>
             </li>
@@ -2967,7 +2967,7 @@ class HubEditingHandler(object):
             '''<li class="navtab">
                 <a href="http://www.archiveshub.ac.uk/arch/eadeditorhelp.shtml"
                    target="_new" title="Edit/Create Help">
-                    <img src="/img/icon-help.png" alt=""/>
+                    <img src="/images/editor/icon-help.png" alt=""/>
                     Edit/Create Help
                 </a>
             </li>
