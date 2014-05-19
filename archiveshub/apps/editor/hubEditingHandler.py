@@ -187,7 +187,6 @@ class HubEditingHandler(object):
         req.headers_out['expires'] = time.strftime("%a, %d %b %Y %H:%M:%S %Z",
                                                    time.gmtime(0)
                                                    )
-        req.content_length = len(data)
         req.send_http_header()
         if (type(data) == unicode):
             data = data.encode('utf-8')
@@ -211,7 +210,6 @@ class HubEditingHandler(object):
         page = multiReplace(page, self.globalReplacements)
         req.content_type = 'text/html'
         req.headers_out['Cache-Control'] = "no-cache, no-store"
-        req.content_length = len(page)
         req.send_http_header()
         if (type(page) == unicode):
             page = page.encode('utf-8')
