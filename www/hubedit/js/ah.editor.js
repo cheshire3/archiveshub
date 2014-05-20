@@ -1126,6 +1126,7 @@ function isInArray(obj, array) {
       }
       return false;
 }
+
 /**
 *
 * Simple Context Menu
@@ -1383,6 +1384,7 @@ var SimpleContextMenu = {
     }
 
 }
+
 /*
 // Script:    cookies.js
 // Version:    0.02
@@ -3838,7 +3840,9 @@ function findContacts() {
 
         }});
     }
-}/*
+}
+
+/*
 // Program:   hub.js
 // Version:   0.02
 // Description:
