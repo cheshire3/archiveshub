@@ -1,5 +1,5 @@
 body {
-    color: black;
+	color: black;
 	background-color: white;
 	font-family: Times, serif;
 }
@@ -20,9 +20,14 @@ div#banner div#navbar {
 	clear: both;
 }
 
+div#Accessibility,
+ul#Sitewide,
 div#navbar,
+div#login-status,
 div#toolbar,
-div.pagenav
+div.pagenav,
+div#utilitybar,
+div#loadImg
 {
 	display: none;
 }
@@ -48,7 +53,12 @@ div#footer {
 	clear: both;
 }
 
-div.component {
+div.component,
+div.did,
+div.cataloguinginfo,
+table,
+p
+{
 	page-break-inside: avoid;
 }
 
