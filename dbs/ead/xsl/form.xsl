@@ -7,9 +7,11 @@
     version="1.0">
 
     <!--
-    This file was produced for the Cheshire3 for Archives and the Archives Hub.
-    Copyright &#169; 2005-2013 the University of Liverpool
+    This file was produced, and released as part of Cheshire for Archives
+    v3.x. Adapted for use in the Archives Hub EAD Editor. Copyright &#169;
+    2005-2013 the University of Liverpool
     -->
+
 
     <xsl:import href="contents-editing.xsl" />
 
@@ -57,6 +59,19 @@
         </xsl:choose>
     </xsl:variable>
 
+    <xsl:template name="addButton">
+        <xsl:element name="img">
+            <xsl:attribute name="src">
+            <xsl:text>/images/structure/form_add_row.png</xsl:text>
+        </xsl:attribute>
+            <xsl:attribute name="alt">
+            <xsl:text>[+]</xsl:text>
+        </xsl:attribute>
+            <xsl:attribute name="title">
+            <xsl:text>Add another</xsl:text>
+        </xsl:attribute>
+        </xsl:element>
+    </xsl:template>
 
 
     <xsl:template match="/">
@@ -65,25 +80,26 @@
                 <div id="formDiv" name="form" class="formDiv">
                     <form id="eadForm" name="eadForm" action="#">
                         <div class="float">
-                            <input type="button" class="formbutton"
-                                id="addC" onclick="javascript: addComponent()"
-                                value="Add Component"
+                            <input type="button" class="formbutton" id="addC"
+                                onclick="javascript: addComponent()" value="Add Component"
                                 title="Add a component to this level of the record"></input>
                         </div>
-                        <!-- <div class="float"> <input type="button" class="formbutton" 
-                            id="reset" onclick="javascript: resetForm()" value="Reset"></input> </div> -->
+                        <!--
+                            <div class="float"> <input type="button"
+                            class="formbutton" id="reset" onclick="javascript:
+                            resetForm()" value="Reset"></input> </div>
+                        -->
                         <div class="pui">
                             <strong>
                                 <xsl:text>Persistent Unique Identifier</xsl:text>
-                                <a
-                                    href="http://archiveshub.ac.uk/help/glossary/#identifier"
-                                    title="PUI help - opens in new window"
-                                    target="_new">
-                                    <img class="whatsthis"
-                                        src="/ead/img/whatisthis.png"
-                                        alt="[What is this?]" />
-                                </a>
                             </strong>
+                            <a
+                                href="http://archiveshub.ac.uk/help/glossary/#identifier"
+                                title="PUI help - opens in new window" class="tip"
+                                target="_new">
+                                <img src="/images/structure/form_tip.png"
+                                    alt="[?]" />
+                            </a>
                             %PUI%
                         </div>
 
@@ -91,8 +107,7 @@
                         <div class="section">
                             <xsl:choose>
                                 <xsl:when test="/ead/eadheader">
-                                    <h3>Collection Level Description
-                                    </h3>
+                                    <h3>Collection Level Description</h3>
                                     %RECID%
                                     <xsl:apply-templates
                                         select="/c|/c01|/c02|/c03|/c04|/c05|/c06|/c07|/c08|/c09|/c10|/c11|/c12|/ead/archdesc" />
@@ -165,18 +180,18 @@
                     <strong>
                         <span class="isadg">3.1.1: </span>
                         Reference Code
-                        <a href="http://archiveshub.ac.uk/help/refcode/"
-                            title="Reference Code help - opens in new window"
-                            target="_new">
-                            <img class="whatsthis" src="/ead/img/whatisthis.png"
-                                alt="[What is this?]" />
-                        </a>
                     </strong>
+                    <a href="http://archiveshub.ac.uk/help/refcode"
+                        class="tip" title="Reference Code help - opens in new window"
+                        target="_new">
+                        <img src="/images/structure/form_tip.png" alt="[?]" />
+                    </a>
                     Comprising
                     <a
-                        href="http://www.iso.org/iso/en/prods-services/iso3166ma/02iso-3166-code-lists/list-en1.html"
-                        target="_new"
-                        title="Further information on ISO Country Codes">ISO Country Code</a>
+                        href="http://www.iso.org/iso/country_codes/iso_3166_code_lists/country_names_and_code_elements.htm"
+                        target="_new" title="Further information on ISO Country Codes">
+                        ISO Country Code
+		            </a>
                     ,
                     <a href="http://www.nationalarchives.gov.uk/archon/"
                         target="_new" title="ARCHON Service">Archon Code</a>
@@ -187,37 +202,73 @@
                         <strong>all fields required</strong>
                         ]
                     </xsl:if>
-                    <br />
-                    <xsl:choose>
-                        <xsl:when test="did/unitid[1]">
-                            <xsl:apply-templates
-                                select="did/unitid[1]" />
-                        </xsl:when>
-                        <xsl:otherwise>
-                            <input type="text" onfocus="setCurrent(this);"
-                                name="did/unitid/@countrycode" id="countrycode"
-                                maxlength="2" size="3" value="GB"
-                                onblur="checkId(true)"></input>
-                            <input type="text" onfocus="setCurrent(this);"
-                                name="did/unitid/@repositorycode" id="archoncode"
-                                maxlength="4" size="5" onblur="checkId(true)"></input>
-                            <input type="text" onfocus="setCurrent(this);"
-                                name="did/unitid" id="unitid" size="50"
-                                onblur="checkId(true)"></input>
-                        </xsl:otherwise>
-                    </xsl:choose>
                 </p>
+                <xsl:choose>
+                    <xsl:when test="did/unitid">
+                        <xsl:for-each select="did/unitid">
+                            <xsl:call-template name="unitid">
+                                <xsl:with-param name="node"
+                                    select="." />
+                                <xsl:with-param name="position"
+                                    select="position()" />
+                            </xsl:call-template>
+                        </xsl:for-each>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <div class="clear">
+                            <div class="float">
+                                <input type="text" onfocus="setCurrent(this);"
+                                    name="did/unitid[1]/@countrycode" id="countrycode[1]"
+                                    maxlength="2" size="3" value="GB" onblur="updateId();"></input>
+                                <input type="text" onfocus="setCurrent(this);"
+                                    name="did/unitid[1]/@repositorycode" id="archoncode[1]"
+                                    maxlength="4" size="5" onblur="updateId();"></input>
+                                <input type="text" onfocus="setCurrent(this);"
+                                    name="did/unitid[1]" id="unitid[1]" size="40"
+                                    onblur="updateId();"></input>
+                                <select id="did/unitidlabel[1]" name="did/unitid[1]/@label">
+                                    <option>
+                                        <xsl:attribute name="value">
+                       <xsl:text>current</xsl:text>
+                   </xsl:attribute>
+                                        <xsl:attribute name="selected"
+                                            value="'selected'" />
+                                        <xsl:text>current</xsl:text>
+                                    </option>
+                                    <option>
+                                        <xsl:attribute name="value">
+                       <xsl:text>former</xsl:text>
+                   </xsl:attribute>
+                                        <xsl:text>former</xsl:text>
+                                    </option>
+                                    <option>
+                                        <xsl:attribute name="value">
+                       <xsl:text>alternative</xsl:text>
+                   </xsl:attribute>
+                                        <xsl:text>alternative</xsl:text>
+                                    </option>
+                                </select>
+                            </div> <!-- /.float -->
+                        </div> <!-- /.clear -->
+                    </xsl:otherwise>
+                </xsl:choose>
+                <span id="addUnitid">
+                    <xsl:attribute name="onclick">
+             <xsl:text>cloneField(this)</xsl:text>
+         </xsl:attribute>
+                    <xsl:call-template name="addButton" />
+                </span>
+                <div class="clear" />
             </xsl:if>
             <p>
                 <strong>
                     <span class="isadg">3.1.2: </span>
                     Title
-                    <a href="http://archiveshub.ac.uk/help/title"
-                        title="Title help - opens in new window" target="_new">
-                        <img class="whatsthis" src="/ead/img/whatisthis.png"
-                            alt="[What is this?]" />
-                    </a>
                 </strong>
+                <a href="http://archiveshub.ac.uk/help/title" class="tip"
+                    title="Title help - opens in new window" target="_new">
+                    <img src="/images/structure/form_tip.png" alt="[?]" />
+                </a>
                 <br />
                 <xsl:choose>
                     <xsl:when test="did/unittitle">
@@ -228,7 +279,7 @@
                             <xsl:when test="$formtype = 'ead'">
                                 <input class="menuField" type="text"
                                     onfocus="setCurrent(this);" name="did/unittitle"
-                                    id="did/unittitle" size="80"
+                                    id="did/unittitle" size="60"
                                     onchange="updateTitle(this)"
                                     onkeypress="validateFieldDelay(this, 'true');"
                                     onblur="validateField(this, 'true');"></input>
@@ -236,7 +287,7 @@
                             <xsl:otherwise>
                                 <input class="menuField" type="text"
                                     onfocus="setCurrent(this);" name="did/unittitle"
-                                    id="did/unittitle" size="80"
+                                    id="did/unittitle" size="60"
                                     onchange="validateField(this, 'true');"
                                     onkeypress="validateFieldDelay(this, 'true');"
                                     onblur="validateField(this, 'true');"></input>
@@ -245,87 +296,90 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </p>
-            <div class="float">
-                <p>
-                    <strong>
-                        <span class="isadg">3.1.3: </span>
-                        Dates of Creation
-                        <a href="http://archiveshub.ac.uk/help/dates"
-                            title="Dates of Creation help - opens in new window"
-                            target="_new">
-                            <img class="whatsthis" src="/ead/img/whatisthis.png"
-                                alt="[What is this?]" />
-                        </a>
-                    </strong>
-                    <br />
-                    <xsl:choose>
-                        <xsl:when test="did/unitdate">
-                            <xsl:apply-templates
-                                select="did/unitdate" />
-                        </xsl:when>
-                        <xsl:when test="did/unittitle/unitdate">
-                            <xsl:apply-templates
-                                select="did/unittitle/unitdate" />
-                        </xsl:when>
-                        <xsl:otherwise>
+            <xsl:choose>
+                <xsl:when test="did/unitdate">
+                    <xsl:for-each select="did/unitdate">
+                        <xsl:call-template name="unitdate">
+                            <xsl:with-param name="node" select="." />
+                            <xsl:with-param name="path"
+                                select="concat('did/unitdate[', position(), ']')" />
+                        </xsl:call-template>
+                    </xsl:for-each>
+                </xsl:when>
+                <xsl:when test="did/unittitle/unitdate">
+                    <xsl:for-each select="did/unittitle/unitdate">
+                        <xsl:call-template name="unitdate">
+                            <xsl:with-param name="node" select="." />
+                            <xsl:with-param name="path"
+                                select="concat('did/unittitle/unitdate[', position(), ']')" />
+                        </xsl:call-template>
+                    </xsl:for-each>
+                </xsl:when>
+                <xsl:otherwise>
+                    <div class="clear">
+                        <div class="float">
+                            <strong>
+                                <span class="isadg">3.1.3: </span>
+                                Dates of Creation
+                            </strong>
+                            <a href="http://archiveshub.ac.uk/help/dates"
+                                class="tip"
+                                title="Dates of Creation help - opens in new window"
+                                target="_new">
+                                <img src="/images/structure/form_tip.png"
+                                    alt="[?]" />
+                            </a>
+                            <br />
                             <input class="menuField" type="text"
                                 onfocus="setCurrent(this);"
                                 onkeypress="validateFieldDelay(this, 'true');"
                                 onchange="validateField(this, 'true');"
                                 onblur="validateField(this, 'true');"
-                                name="did/unitdate" id="did/unitdate"
+                                name="did/unitdate[1]" id="did/unitdate[1]"
                                 size="39"></input>
-                        </xsl:otherwise>
-                    </xsl:choose>
-                </p>
-            </div>
-            <div class="float">
-                <p>
-                    <strong>
-                        Normalised Date
-                        <a href="http://archiveshub.ac.uk/help/dates"
-                            title="Normalised Date help - opens in new window"
-                            target="_new">
-                            <img class="whatsthis" src="/ead/img/whatisthis.png"
-                                alt="[What is this?]" />
-                        </a>
-                    </strong>
-                    YYYY/YYYY or YYYYMMDD/YYYYMMDD
-                    <br />
-                    <xsl:choose>
-                        <xsl:when test="did/unitdate/@normal">
-                            <xsl:apply-templates
-                                select="did/unitdate/@normal" />
-                        </xsl:when>
-                        <xsl:when test="did/unittitle/unitdate/@normal">
-                            <xsl:apply-templates
-                                select="did/unittitle/unitdate/@normal" />
-                        </xsl:when>
-                        <xsl:otherwise>
+                        </div>
+                        <div class="float">
+                            <strong>
+                                <xsl:text>Normalised Date</xsl:text>
+                            </strong>
+                            <a href="http://archiveshub.ac.uk/help/dates"
+                                class="tip"
+                                title="Normalised Date help - opens in new window"
+                                target="_new">
+                                <img src="/images/structure/form_tip.png"
+                                    alt="[?]" />
+                            </a>
+                            YYYY/YYYY or YYYYMMDD/YYYYMMDD
+                            <br />
                             <input class="dateOK" type="text"
                                 onfocus="setCurrent(this);"
                                 onkeypress="validateNormdateDelay(this, 'true');"
                                 onchange="validateNormdate(this, 'true');"
                                 onblur="validateNormdate(this, 'true');"
-                                name="did/unitdate/@normal" id="did/unitdate/@normal"
+                                name="did/unitdate[1]/@normal" id="did/unitdate[1]/@normal"
                                 size="39" maxlength="21"></input>
-                        </xsl:otherwise>
-                    </xsl:choose>
-                </p>
-            </div>
+                        </div>
+                    </div>
+                </xsl:otherwise>
+            </xsl:choose>
+            <span id="addUnitdate">
+                <xsl:attribute name="onclick">
+             <xsl:text>cloneField(this)</xsl:text>
+         </xsl:attribute>
+                <xsl:call-template name="addButton" />
+            </span>
             <br />
             <p>
                 <!-- <xsl:if test="$leveltype = 'component'"> -->
                 <strong>
                     <span class="isadg">3.1.4: </span>
                     Level of Description
-                    <a href="http://archiveshub.ac.uk/help/level"
-                        title="Level of Description help - opens in new window"
-                        target="_new">
-                        <img class="whatsthis" src="/ead/img/whatisthis.png"
-                            alt="[What is this?]" />
-                    </a>
                 </strong>
+                <a href="http://archiveshub.ac.uk/help/level" class="tip"
+                    title="Level of Description help - opens in new window"
+                    target="_new">
+                    <img src="/images/structure/form_tip.png" alt="[?]" />
+                </a>
                 <xsl:if test="$leveltype = 'collection'">
                     <xsl:text>[mandatory]</xsl:text>
                 </xsl:if>
@@ -418,13 +472,12 @@
                 <strong>
                     <span class="isadg">3.1.5: </span>
                     Extent of Unit of Description
-                    <a href="http://archiveshub.ac.uk/help/extent"
-                        title="Extent help - opens in new window"
-                        target="_new">
-                        <img class="whatsthis" src="/ead/img/whatisthis.png"
-                            alt="[What is this?]" />
-                    </a>
                 </strong>
+                <a href="http://archiveshub.ac.uk/help/extent" class="tip"
+                    title="Extent help - opens in new window"
+                    target="_new">
+                    <img src="/images/structure/form_tip.png" alt="[?]" />
+                </a>
                 <br />
                 <xsl:choose>
                     <xsl:when test="did/physdesc/extent">
@@ -434,8 +487,9 @@
                         <input class="menuField" type="text"
                             onfocus="setCurrent(this);" onkeypress="validateFieldDelay(this, 'true');"
                             onchange="validateField(this, 'true');"
-                            onblur="validateField(this, 'true');" name="did/physdesc/extent"
-                            id="did/physdesc/extent" size="80"></input>
+                            onblur="validateField(this, 'true');"
+                            name="did/physdesc/extent" id="did/physdesc/extent"
+                            size="60"></input>
                     </xsl:otherwise>
                 </xsl:choose>
             </p>
@@ -443,11 +497,10 @@
                 test="$leveltype = 'collection' or $formtype = 'template'">
                 <p>
                     <strong>Repository</strong>
-                    <a id="repositoryhelp" name="repositoryhelp"
-                        target="_new"
-                        href="http://archiveshub.ac.uk/help/repository">
-                        <img class="whatsthis" src="/ead/img/whatisthis.png"
-                            alt="[What is this?]" />
+                    <a href="http://archiveshub.ac.uk/help/repository"
+                        id="repositoryhelp" name="repositoryhelp" class="tip"
+                        target="_new">
+                        <img src="/images/structure/form_tip.png" alt="[?]" />
                     </a>
                     <br />
                     <xsl:choose>
@@ -462,7 +515,7 @@
                                 onchange="validateField(this, 'true');"
                                 onblur="validateField(this, 'true');"
                                 name="did/repository" id="did/repository"
-                                size="80"></input>
+                                size="60"></input>
                         </xsl:otherwise>
                     </xsl:choose>
                 </p>
@@ -475,11 +528,11 @@
                         </xsl:when>
                         <xsl:otherwise>
                             <strong>Sponsor</strong>
-                            <a id="sponsorhelp" name="sponsorhelp"
-                                target="_new"
-                                href="http://archiveshub.ac.uk/help/sponsor">
-                                <img class="whatsthis" src="/ead/img/whatisthis.png"
-                                    alt="[What is this?]" />
+                            <a href="http://archiveshub.ac.uk/help/sponsor"
+                                class="tip" id="sponsorhelp" name="sponsorhelp"
+                                target="_new">
+                                <img src="/images/structure/form_tip.png"
+                                    alt="[?]" />
                             </a>
                             <a class="smalllink" id="linkfiledesc/titlestmt/sponsor"
                                 title="add sponsor"
@@ -491,8 +544,8 @@
                                 onchange="validateField(this, 'true');"
                                 onblur="validateField(this, 'true');"
                                 onfocus="setCurrent(this);" name="filedesc/titlestmt/sponsor"
-                                id="filedesc/titlestmt/sponsor" size="80"
-                                style="display:none"></input>
+                                id="filedesc/titlestmt/sponsor"
+                                size="60" style="display:none"></input>
                         </xsl:otherwise>
                     </xsl:choose>
                 </p>
@@ -509,13 +562,11 @@
                 <strong>
                     <span class="isadg">3.2.1: </span>
                     Name of Creator
-                    <a href="http://archiveshub.ac.uk/help/name"
-                        title="Name of Creator help - opens in new window"
-                        target="_new">
-                        <img class="whatsthis" src="/ead/img/whatisthis.png"
-                            alt="[What is this?]" />
-                    </a>
                 </strong>
+                <a href="http://archiveshub.ac.uk/help/name" class="tip"
+                    title="Name of Creator help - opens in new window" target="_new">
+                    <img src="/images/structure/form_tip.png" alt="[?]" />
+                    </a>
                 [
                 <strong>
                     also add manually as
@@ -525,16 +576,31 @@
                 <br />
                 <xsl:choose>
                     <xsl:when test="did/origination">
-                        <xsl:apply-templates select="did/origination" />
+                        <xsl:for-each select="did/origination">
+                            <xsl:call-template name="textfield">
+                                <xsl:with-param name="name"
+                                    select="concat('did/origination[', position(), ']')" />
+                                <xsl:with-param name="class"
+                                    select="'menuField'" />
+                            </xsl:call-template>
+                        </xsl:for-each>
+                        <!--                    <xsl:apply-templates select="did/origination"/>-->
                     </xsl:when>
                     <xsl:otherwise>
                         <input class="menuField" type="text"
                             onfocus="setCurrent(this);" onkeypress="validateFieldDelay(this, 'true');"
                             onchange="validateField(this, 'true');"
-                            onblur="validateField(this, 'true');" name="did/origination"
-                            id="did/origination" size="80"></input>
+                            onblur="validateField(this, 'true');"
+                            name="did/origination[1]" id="did/origination[1]"
+                            size="60"></input>
                     </xsl:otherwise>
                 </xsl:choose>
+                <span id="addOrigination">
+                    <xsl:attribute name="onclick">
+	                <xsl:text>cloneField(this)</xsl:text>
+	            </xsl:attribute>
+                    <xsl:call-template name="addButton" />
+                </span>
             </p>
             <!-- bioghist -->
             <p>
@@ -1039,8 +1105,7 @@
                 <a href="http://archiveshub.ac.uk/help/lang"
                     title="Language of Material help - opens in new window"
                     target="_new">
-                    <img class="whatsthis" src="/ead/img/whatisthis.png"
-                        alt="[What is this?]" />
+                    <img src="/images/structure/form_tip.png" alt="[?]" />
                 </a>
                 [Must include
                 <a
@@ -1088,7 +1153,7 @@
                                     <td>
                                         <input type="text" id="lang_name"
                                             onfocus="setCurrent(this);"
-                                            size="30"></input>
+                                            size="35"></input>
                                     </td>
                                 </tr>
                             </tbody>
@@ -1211,6 +1276,56 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </p>
+            <!-- prefercite -->
+            <p>
+                <xsl:variable name="content">
+                    <xsl:choose>
+                        <xsl:when test="prefercite">
+                            <xsl:text>true</xsl:text>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:text>false</xsl:text>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:variable>
+                <xsl:choose>
+                    <xsl:when test="$content = 'true'">
+                        <xsl:for-each select="prefercite">
+                            <xsl:call-template name="textarea">
+                                <xsl:with-param name="name"
+                                    select="concat('prefercite[', position(), ']')" />
+                                <xsl:with-param name="class"
+                                    select="'menuField'" />
+                                <xsl:with-param name="optional"
+                                    select="'true'" />
+                                <xsl:with-param name="content"
+                                    select="$content" />
+                                <xsl:with-param name="title"
+                                    select="'Preferred Citation'" />
+                                <xsl:with-param name="help"
+                                    select="'http://archiveshub.ac.uk/help/preferredcitation'" />
+                            </xsl:call-template>
+                        </xsl:for-each>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:call-template name="textarea">
+                            <xsl:with-param name="name"
+                                select="concat('prefercite[', position(), ']')" />
+                            <xsl:with-param name="class"
+                                select="'menuField'" />
+                            <xsl:with-param name="optional"
+                                select="'true'" />
+                            <xsl:with-param name="content"
+                                select="$content" />
+                            <xsl:with-param name="title"
+                                select="'Preferred Citation'" />
+                            <xsl:with-param name="help"
+                                select="'http://archiveshub.ac.uk/help/preferredcitation'" />
+                        </xsl:call-template>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </p>
+
         </div>
         <!-- -->
         <!-- ALLIED MATERIALS -->
@@ -1353,7 +1468,7 @@
                                 <xsl:with-param name="content"
                                     select="$content" />
                                 <xsl:with-param name="isadg"
-                                    select="'3.5.3.0: '" />
+                                    select="'3.5.3a: '" />
                                 <xsl:with-param name="title"
                                     select="'Separated Material'" />
                                 <xsl:with-param name="help"
@@ -1372,7 +1487,7 @@
                             <xsl:with-param name="content"
                                 select="$content" />
                             <xsl:with-param name="isadg"
-                                select="'3.5.3.0: '" />
+                                select="'3.5.3a: '" />
                             <xsl:with-param name="title"
                                 select="'Separated Material'" />
                             <xsl:with-param name="help"
@@ -1406,7 +1521,7 @@
                                 <xsl:with-param name="content"
                                     select="$content" />
                                 <xsl:with-param name="isadg"
-                                    select="'3.5.3.1: '" />
+                                    select="'3.5.3b: '" />
                                 <xsl:with-param name="title"
                                     select="'Related Material'" />
                                 <xsl:with-param name="help"
@@ -1425,7 +1540,7 @@
                             <xsl:with-param name="content"
                                 select="$content" />
                             <xsl:with-param name="isadg"
-                                select="'3.5.3.1: '" />
+                                select="'3.5.3b: '" />
                             <xsl:with-param name="title"
                                 select="'Related Material'" />
                             <xsl:with-param name="help"
@@ -1624,10 +1739,9 @@
         <div id="digitalobjectssection" class="section">
             <h3>
                 Digital Objects
-                <a id="daohelp" name="daohelp" target="_new"
-                    href="http://archiveshub.ac.uk/help/dao">
-                    <img class="whatsthis" src="/ead/img/whatisthis.png"
-                        alt="[What is this?]" />
+                <a href="http://archiveshub.ac.uk/help/dao" class="tip"
+                    id="daohelp" name="daohelp" target="_new">
+                    <img src="/images/structure/form_tip.png" alt="[?]" />
                 </a>
             </h3>
             <div id="daocontainer">
@@ -1863,8 +1977,7 @@
                         <option value="multiple">Link to multiple files
                         </option>
                     </select>
-                    <input type="button" value="Create"
-                        onclick="javascript: createDaoForm()" />
+                    <input type="button" value="Create" onclick="createDaoForm()" />
                 </div>
             </div>
         </div>
@@ -1875,10 +1988,9 @@
         <div id="accesspointssection" class="section">
             <h3>
                 Access Points
-                <a id="accesspoints" name="accesspoints" target="_new"
-                    href="http://archiveshub.ac.uk/help/access">
-                    <img class="whatsthis" src="/ead/img/whatisthis.png"
-                        alt="[What is this?]" />
+                <a href="http://archiveshub.ac.uk/help/access" class="tip"
+                    id="accesspoints" name="accesspoints" target="_new">
+                    <img src="/images/structure/form_tip.png" alt="[?]" />
                 </a>
             </h3>
 
@@ -1886,10 +1998,10 @@
             <div id="subject" class="apcontainer">
                 <p>
                     <strong>Subject</strong>
-                    <a id="subjecthelp" name="subjecthelp" target="_new"
-                        href="http://archiveshub.ac.uk/help/subject">
-                        <img class="whatsthis" src="/ead/img/whatisthis.png"
-                            alt="[What is this?]" />
+                    <a href="http://archiveshub.ac.uk/help/subject"
+                        class="tip" id="subjecthelp" name="subjecthelp"
+                        target="_new">
+                        <img src="/images/structure/form_tip.png" alt="[?]" />
                     </a>
                     <br />
                     <!-- <a class="extSearch" onclick="window.open('http://databases.unesco.org/thesaurus/', 
@@ -1901,6 +2013,14 @@
                         'new');">[Search LCSH]</a></p> -->
                     <a class="extSearch" target="_new"
                         href="http://authorities.loc.gov/cgi-bin/Pwebrecon.cgi?DB=local&amp;PAGE=First">[Search LCSH]</a>
+                    <xsl:text>  </xsl:text>
+                    <!--
+                        <a class="extSearch"
+                        onclick="window.open('http://www.ukat.org.uk/',
+                        'new');">[Search UKAT]</a>
+                    -->
+                    <a class="extSearch" target="_new" href="http://www.ukat.org.uk/">[Search UKAT]
+                    </a>
                 </p>
                 <xsl:choose>
                     <xsl:when test="controlaccess/subject">
@@ -1922,9 +2042,8 @@
                             <tr NoDrop="true" NoDrag="true">
                                 <td class="label">Subject:</td>
                                 <td>
-                                    <input type="text"
-                                        onfocus="setCurrent(this);" id="subject_subject"
-                                        size="40"></input>
+                                    <input type="text" onfocus="setCurrent(this);"
+                                        id="subject_subject" size="35"></input>
                                 </td>
                             </tr>
                             <tr NoDrop="true" NoDrag="true">
@@ -1985,16 +2104,19 @@
             <div id="persname" class="apcontainer">
                 <p>
                     <strong>Personal Name</strong>
-                    <a id="persnamehelp" name="persnamehelp" target="_new"
-                        href="http://archiveshub.ac.uk/help/persname">
-                        <img class="whatsthis" src="/ead/img/whatisthis.png"
-                            alt="[What is this?]" />
+                    <a href="http://archiveshub.ac.uk/help/persname"
+                        class="tip" title="What is this?" id="persnamehelp"
+                        name="persnamehelp" target="_new">
+                        <img src="/images/structure/form_tip.png" alt="[?]" />
                     </a>
                     <br />
                     <!-- <a class="extSearch" onclick="window.open('http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=P', 
                         'new');">[Search NRA]</a> -->
                     <a class="extSearch" target="_new"
-                        href="http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=P">[Search NRA]</a>
+                        href="http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=P"
+                        title="Search National Register of Archives">
+                        [Search NRA]
+                </a>
                 </p>
 
                 <xsl:choose>
@@ -2019,7 +2141,7 @@
                                 <td>
                                     <input type="text"
                                         onfocus="setCurrent(this);" id="persname_surname"
-                                        size="40"></input>
+                                        size="35"></input>
                                 </td>
                             </tr>
                             <tr NoDrop="true" NoDrag="true">
@@ -2027,7 +2149,7 @@
                                 <td>
                                     <input type="text"
                                         onfocus="setCurrent(this);" id="persname_forename"
-                                        size="40"></input>
+                                        size="35"></input>
                                 </td>
                             </tr>
                             <tr NoDrop="true" NoDrag="true">
@@ -2035,7 +2157,7 @@
                                 <td>
                                     <input type="text"
                                         onfocus="setCurrent(this);" id="persname_source"
-                                        size="40"></input>
+                                        size="35"></input>
                                 </td>
                             </tr>
                             <tr NoDrop="true" NoDrag="true">
@@ -2055,7 +2177,7 @@
                                 <td>
                                     <a class="addfield" onclick="addField('persname');">Add
                                         Selected Field</a><!-- <input type="text" 
-                                        onfocus="addField('persname')" size="40" value="Click to Add Selected Field" 
+                                        onfocus="addField('persname')" size="35" value="Click to Add Selected Field"
                                         style="background:#F2F2F2; color: grey;"></input> -->
                                 </td>
                             </tr>
@@ -2084,10 +2206,10 @@
             <div id="famname" class="apcontainer">
                 <p>
                     <strong>Family Name</strong>
-                    <a id="famnamehelp" name="famnamehelp" target="_new"
-                        href="http://archiveshub.ac.uk/help/famname">
-                        <img class="whatsthis" src="/ead/img/whatisthis.png"
-                            alt="[What is this?]" />
+                    <a href="http://archiveshub.ac.uk/help/famname"
+                        class="tip" title="What is this?" id="famnamehelp"
+                        name="famnamehelp" target="_new">
+                        <img src="/images/structure/form_tip.png" alt="[?]" />
                     </a>
                     <br />
                     <!-- <a class="extSearch" onclick="window.open('http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=F', 
@@ -2117,7 +2239,7 @@
                                 <td>
                                     <input type="text"
                                         onfocus="setCurrent(this);" id="famname_surname"
-                                        size="40"></input>
+                                        size="35"></input>
                                 </td>
                             </tr>
                             <tr NoDrop="true" NoDrag="true">
@@ -2125,7 +2247,7 @@
                                 <td>
                                     <input type="text"
                                         onfocus="setCurrent(this);" id="famname_source"
-                                        size="40"></input>
+                                        size="35"></input>
                                 </td>
                             </tr>
                             <tr NoDrop="true" NoDrag="true">
@@ -2147,7 +2269,7 @@
                                 <td>
                                     <a class="addfield" onclick="addField('famname');">Add
                                         Selected Field</a><!-- <input type="text" 
-                                        onfocus="addField('famname')" size="40" value="Click to Add Selected Field" 
+                                        onfocus="addField('famname')" size="35" value="Click to Add Selected Field"
                                         style="background:#F2F2F2; color: grey;"></input> -->
                                 </td>
                             </tr>
@@ -2176,10 +2298,10 @@
             <div id="corpname" class="apcontainer">
                 <p>
                     <strong>Corporate Name</strong>
-                    <a id="corpnamehelp" name="corpnamehelp" target="_new"
-                        href="http://archiveshub.ac.uk/help/corpname">
-                        <img class="whatsthis" src="/ead/img/whatisthis.png"
-                            alt="[What is this?]" />
+                    <a href="http://archiveshub.ac.uk/help/corpname"
+                        class="tip" title="What is this?" id="corpnamehelp"
+                        name="corpnamehelp" target="_new">
+                        <img src="/images/structure/form_tip.png" alt="[?]" />
                     </a>
                     <br />
                     <!-- <a class="extSearch" onclick="window.open('http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=O', 
@@ -2209,7 +2331,7 @@
                                 <td>
                                     <input type="text"
                                         onfocus="setCurrent(this);" id="corpname_organisation"
-                                        size="40"></input>
+                                        size="35"></input>
                                 </td>
                             </tr>
                             <tr NoDrop="true" NoDrag="true">
@@ -2217,7 +2339,7 @@
                                 <td>
                                     <input type="text"
                                         onfocus="setCurrent(this);" id="corpname_source"
-                                        size="40"></input>
+                                        size="35"></input>
                                 </td>
                             </tr>
                             <tr NoDrop="true" NoDrag="true">
@@ -2235,7 +2357,7 @@
                                 <td>
                                     <a class="addfield" onclick="addField('corpname');">Add
                                         Selected Field</a><!-- <input type="text" 
-                                        onfocus="addField('corpname')" size="40" value="Click to Add Selected Field" 
+                                        onfocus="addField('corpname')" size="35" value="Click to Add Selected Field"
                                         style="background:#F2F2F2; color: grey;"></input> -->
                                 </td>
                             </tr>
@@ -2264,16 +2386,23 @@
             <div id="geogname" class="apcontainer">
                 <p>
                     <strong>Place Name</strong>
-                    <a id="geognamehelp" name="geognamehelp" target="_new"
-                        href="http://archiveshub.ac.uk/help/geogname">
-                        <img class="whatsthis" src="/ead/img/whatisthis.png"
-                            alt="[What is this?]" />
+                    <a href="http://archiveshub.ac.uk/help/geogname"
+                        class="tip" title="What is this?" id="geognamehelp"
+                        name="geognamehelp" target="_new">
+                        <img src="/images/structure/form_tip.png" alt="[?]" />
                     </a>
                     <br />
                     <!-- <a class="extSearch" onclick="window.open('http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=PL', 
                         'new');">[Search NRA]</a> -->
                     <a class="extSearch" target="_new"
-                        href="http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=PL">[Search NRA]</a>
+                        href="http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=PL">
+                        [Search NRA]
+                    </a>
+                    <a class="extSearch" target="_new"
+                        href="http://www.getty.edu/research/tools/vocabularies/tgn/"
+                        title="Search the Getty Thesaurus">
+                        [Search Getty]
+                    </a>
                 </p>
                 <xsl:choose>
                     <xsl:when test="controlaccess/geogname">
@@ -2297,7 +2426,7 @@
                                 <td>
                                     <input type="text"
                                         onfocus="setCurrent(this);" id="geogname_location"
-                                        size="40"></input>
+                                        size="35"></input>
                                 </td>
                             </tr>
                             <tr NoDrop="true" NoDrag="true">
@@ -2305,7 +2434,7 @@
                                 <td>
                                     <input type="text"
                                         onfocus="setCurrent(this);" id="geogname_source"
-                                        size="40"></input>
+                                        size="35"></input>
                                 </td>
                             </tr>
                             <tr NoDrop="true" NoDrag="true">
@@ -2323,7 +2452,7 @@
                                 <td>
                                     <a class="addfield" onclick="addField('geogname');">Add
                                         Selected Field</a><!-- <input type="text" 
-                                        onfocus="addField('geogname')" size="40" value="Click to Add Selected Field" 
+                                        onfocus="addField('geogname')" size="35" value="Click to Add Selected Field"
                                         style="background:#F2F2F2; color: grey;"></input> -->
                                 </td>
                             </tr>
@@ -2352,10 +2481,10 @@
             <div id="title" class="apcontainer">
                 <p>
                     <strong>Book Title</strong>
-                    <a id="booktitlehelp" name="booktitlehelp" target="_new"
-                        href="http://archiveshub.ac.uk/help/booktitle">
-                        <img class="whatsthis" src="/ead/img/whatisthis.png"
-                            alt="[What is this?]" />
+                    <a href="http://archiveshub.ac.uk/help/booktitle"
+                        class="tip" title="What is this?" id="booktitlehelp"
+                        name="booktitlehelp" target="_new">
+                        <img src="/images/structure/form_tip.png" alt="[?]" />
                     </a>
                 </p>
                 <xsl:choose>
@@ -2380,7 +2509,7 @@
                                 <td>
                                     <input type="text"
                                         onfocus="setCurrent(this);" id="title_title"
-                                        size="40"></input>
+                                        size="35"></input>
                                 </td>
                             </tr>
                             <tr NoDrop="true" NoDrag="true">
@@ -2388,7 +2517,7 @@
                                 <td>
                                     <input type="text"
                                         onfocus="setCurrent(this);" id="title_source"
-                                        size="40"></input>
+                                        size="35"></input>
                                 </td>
                             </tr>
                             <tr NoDrop="true" NoDrag="true">
@@ -2402,7 +2531,7 @@
                                 <td>
                                     <a class="addfield" onclick="addField('title');">Add
                                         Selected Field</a><!-- <input type="text" 
-                                        onfocus="addField('title')" size="40" value="Click to Add Selected Field" 
+                                        onfocus="addField('title')" size="35" value="Click to Add Selected Field"
                                         style="background:#F2F2F2; color: grey;"></input> -->
                                 </td>
                             </tr>
@@ -2430,15 +2559,25 @@
             <div id="genreform" class="apcontainer">
                 <p>
                     <strong>Genre Form</strong>
-                    <a id="genreformhelp" name="genreformhelp" target="_new"
-                        href="http://archiveshub.ac.uk/help/genreform">
-                        <img class="whatsthis" src="/ead/img/whatisthis.png"
-                            alt="[What is this?]" />
+                    <a href="http://archiveshub.ac.uk/help/genreform"
+                        class="tip" title="What is this?" id="genreformhelp"
+                        name="genreformhelp" target="_new">
+                        <img src="/images/structure/form_tip.png" alt="[?]" />
                     </a>
                     <br />
+                    <!--
+                        <a class="extSearch"
+                        onclick="window.open('http://www.getty.edu/research/conducting_research/vocabularies/aat/',
+                        'new');">[Search AAT]</a>
+                    -->
                     <a class="extSearch" target="_new"
                         href="http://www.getty.edu/research/conducting_research/vocabularies/aat/">[Search AAT]</a>
                     <xsl:text> </xsl:text>
+                    <!--
+                        <a class="extSearch"
+                        onclick="window.open('http://www.loc.gov/rr/print/tgm2/',
+                        'new');">[Search TGM]</a>
+                    -->
                     <a class="extSearch" target="_new"
                         href="http://www.loc.gov/rr/print/tgm2/">[Search TGM]</a>
                 </p>
@@ -2464,7 +2603,7 @@
                                 <td>
                                     <input type="text"
                                         onfocus="setCurrent(this);" id="genreform_genre"
-                                        size="40"></input>
+                                        size="35"></input>
                                 </td>
                             </tr>
                             <tr NoDrop="true" NoDrag="true">
@@ -2472,7 +2611,7 @@
                                 <td>
                                     <input type="text"
                                         onfocus="setCurrent(this);" id="genreform_source"
-                                        size="40"></input>
+                                        size="35"></input>
                                 </td>
                             </tr>
                         </tbody>
@@ -2493,19 +2632,23 @@
             <div id="function" class="apcontainer">
                 <p>
                     <strong>Function</strong>
-                    <a id="functionhelp" name="functionhelp" target="_new"
-                        href="http://archiveshub.ac.uk/help/function">
-                        <img class="whatsthis" src="/ead/img/whatisthis.png"
-                            alt="[What is this?]" />
+                    <a href="http://archiveshub.ac.uk/help/function"
+                        class="tip" title="What is this?" id="functionhelp"
+                        name="functionhelp" target="_new">
+                        <img src="/images/structure/form_tip.png" alt="[?]" />
                     </a>
                     <br />
-                    <!-- <a class="extSearch" onclick="window.open('http://www.jisc.ac.uk/publications/publications/recordssrlstructure/fama.aspx', 
-                        'new');">[Search JISC]</a> -->
-                    <!-- <a class="extSearch" onclick="window.open('http://www.jisc.ac.uk/en/publications/generalpublications/2002/recordssrlstructure/fama.aspx', 
-                        'new');">[Search JISC]</a> -->
+                    <!--
+                        <a class="extSearch"
+                        onclick="window.open('http://www.jisc.ac.uk/publications/publications/recordssrlstructure/fama.aspx',
+                        'new');">[Search JISC]</a>
+                    -->
+                    <!--
                     <a class="extSearch" target="_new"
-                        href="http://vle.causeway.ac.uk/jisc_he/">[Search JISC]</a>
-                    <xsl:text> </xsl:text>
+                        href="http://vle.causeway.ac.uk/jisc_he/">[Search
+                        JISC]</a>
+                    -->
+                    <!--            <xsl:text> </xsl:text>-->
                     <!-- <a class="extSearch" onclick="window.open('http://www.getty.edu/research/conducting_research/vocabularies/aat/', 
                         'new');">[Search AAT]</a> -->
                     <a class="extSearch" target="_new"
@@ -2514,7 +2657,7 @@
                     <!-- <a class="extSearch" onclick="window.open('http://www.naa.gov.au/records-management/create-capture-describe/describe/agift/index.aspx', 
                         'new');">[Search AGIFT]</a> -->
                     <a class="extSearch" target="_new"
-                        href="http://www.naa.gov.au/records-management/create-capture-describe/describe/agift/index.aspx">[Search AGIFT]</a>
+                        href="http://www.naa.gov.au/records-management/publications/agift.aspx">[Search AGIFT]</a>
                 </p>
                 <xsl:choose>
                     <xsl:when test="controlaccess/function">
@@ -2538,7 +2681,7 @@
                                 <td>
                                     <input type="text"
                                         onfocus="setCurrent(this);" id="function_function"
-                                        size="40"></input>
+                                        size="35"></input>
                                 </td>
                             </tr>
                             <tr NoDrop="true" NoDrag="true">
@@ -2546,7 +2689,7 @@
                                 <td>
                                     <input type="text"
                                         onfocus="setCurrent(this);" id="function_source"
-                                        size="40"></input>
+                                        size="35"></input>
                                 </td>
                             </tr>
                         </tbody>
@@ -2611,12 +2754,13 @@
                             <xsl:attribute name="title">
 							<xsl:text>delete entry</xsl:text>
 						</xsl:attribute>
-                            <img src="/ead/img/delete.png" class="deletelogo">
+                            <img src="/images/editor/delete.png" class="deletelogo"
+                                alt="X">
                                 <xsl:attribute name="onmouseover">
-                                <xsl:text>this.src='/ead/img/delete-hover.png';</xsl:text>
+                                <xsl:text>this.src='/images/editor/delete-hover.png';</xsl:text>
                             </xsl:attribute>
                                 <xsl:attribute name="onmouseout">
-                                <xsl:text>this.src='/ead/img/delete.png';</xsl:text>
+                                <xsl:text>this.src='/images/editor/delete.png';</xsl:text>
                             </xsl:attribute>
                                 <xsl:attribute name="id">
     							<xsl:text>delete</xsl:text><xsl:number level="single"
@@ -2750,58 +2894,163 @@
         </xsl:choose>
     </xsl:template>
 
-
-
-    <xsl:template match="did/unitid[1]">
-        <input type="text" onfocus="setCurrent(this);" name="did/unitid/@countrycode"
-            id="countrycode" maxlength="2" size="3" onblur="checkId(true)">
+    <xsl:template name="unitid">
+        <xsl:param name="node" />
+        <xsl:param name="position" />
+        <xsl:variable name="input-name-prefix">
+            <xsl:text>did/unitid[</xsl:text>
+            <xsl:value-of select="$position" />
+            <xsl:text>]</xsl:text>
+        </xsl:variable>
+        <div class="clear">
+            <div class="float">
+                <!-- disabled? -->
+                <xsl:if test="@type = 'persistent'">
+                    <xsl:attribute name="title">
+                    <xsl:text>You may not edit this field; it has been designated as the persistent identifier</xsl:text>
+                </xsl:attribute>
+                </xsl:if>
+                <input type="text" onfocus="setCurrent(this);"
+                    maxlength="2" size="3" onblur="updateId();">
+                    <xsl:attribute name="id">
+                    <xsl:text>countrycode[</xsl:text>
+                    <xsl:value-of select="$position" />
+                    <xsl:text>]</xsl:text>
+                </xsl:attribute>
+                    <xsl:attribute name="name">
+	                <xsl:value-of select="$input-name-prefix" />
+	                <xsl:text>/@countrycode</xsl:text>
+	            </xsl:attribute>
+                    <!-- disabled? -->
+                    <xsl:if test="@type = 'persistent'">
+                        <xsl:attribute name="readonly" select="'readonly'" />
+                    </xsl:if>
+                    <!-- value -->
             <xsl:choose>
-                <xsl:when test="@countrycode">
+                        <xsl:when test="$node/@countrycode">
                     <xsl:attribute name="value">
-				<xsl:value-of select="@countrycode" />
+	                    <xsl:value-of select="$node/@countrycode" />
 			</xsl:attribute>
                 </xsl:when>
                 <xsl:when
-                    test="$leveltype='collection' and current()/ancestor::ead/eadheader/eadid/@countrycode">
+                            test="$leveltype='collection' and $node/ancestor::ead/eadheader/eadid/@countrycode">
                     <xsl:attribute name="value">
 				<xsl:value-of
-                        select="current()/ancestor::ead/eadheader/eadid/@countrycode" />
+                                select="$node/ancestor::ead/eadheader/eadid/@countrycode" />
 			</xsl:attribute>
                 </xsl:when>
             </xsl:choose>
         </input>
-        <input type="text" onfocus="setCurrent(this);" name="did/unitid/@repositorycode"
-            id="archoncode" maxlength="4" size="5" onblur="checkId(true)">
+
+                <input type="text" onfocus="setCurrent(this);"
+                    maxlength="4" size="5" onblur="updateId();">
+                    <xsl:attribute name="id">
+                    <xsl:text>archoncode[</xsl:text>
+                    <xsl:value-of select="$position" />
+                    <xsl:text>]</xsl:text>
+                </xsl:attribute>
+                    <xsl:attribute name="name">
+	                <xsl:value-of select="$input-name-prefix" />
+	                <xsl:text>/@repositorycode</xsl:text>
+	            </xsl:attribute>
+                    <!-- disabled? -->
+                    <xsl:if test="@type = 'persistent'">
+                        <xsl:attribute name="readonly" select="'readonly'" />
+                    </xsl:if>
+                    <!-- value -->
             <xsl:choose>
-                <xsl:when test="@repositorycode">
+                        <xsl:when test="$node/@repositorycode">
                     <xsl:attribute name="value">
-				<xsl:value-of select="@repositorycode" />
+	                    <xsl:value-of select="$node/@repositorycode" />
 			</xsl:attribute>
                 </xsl:when>
                 <xsl:when
-                    test="$leveltype='collection' and current()/ancestor::ead/eadheader/eadid/@mainagencycode">
+                            test="$leveltype='collection' and $node/ancestor::ead/eadheader/eadid/@mainagencycode">
                     <xsl:attribute name="value">
 				<xsl:value-of
-                        select="current()/ancestor::ead/eadheader/eadid/@mainagencycode" />
+                                select="$node/ancestor::ead/eadheader/eadid/@mainagencycode" />
 			</xsl:attribute>
                 </xsl:when>
             </xsl:choose>
         </input>
-        <input type="text" onfocus="setCurrent(this);" name="did/unitid"
-            id="unitid" size="50" onblur="checkId(true)">
+                <input type="text" onfocus="setCurrent(this);" size="25"
+                    onblur="updateId();">
+                    <xsl:attribute name="id">
+                    <xsl:text>unitid[</xsl:text>
+                    <xsl:value-of select="$position" />
+                    <xsl:text>]</xsl:text>
+                </xsl:attribute>
+                    <xsl:attribute name="name">
+	                <xsl:value-of select="$input-name-prefix" />
+	            </xsl:attribute>
+                    <!-- disabled? -->
+                    <xsl:if test="@type = 'persistent'">
+                        <xsl:attribute name="readonly" select="'readonly'" />
+                    </xsl:if>
+                    <!-- value -->
             <xsl:attribute name="value">
-			<xsl:value-of select="." />
+	                <xsl:value-of select="$node" />
 		</xsl:attribute>
         </input>
+                <strong>
+                    <xsl:text>Label: </xsl:text>
+                </strong>
+                <xsl:variable name="label">
+                    <xsl:value-of
+                        select="translate($node/@label, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')" />
+                </xsl:variable>
+                <select>
+                    <xsl:attribute name="id">
+                   <xsl:text>unitidlabel[</xsl:text>
+                   <xsl:value-of select="$position" />
+                   <xsl:text>]</xsl:text>
+               </xsl:attribute>
+                    <xsl:attribute name="name">
+                   <xsl:value-of select="$input-name-prefix" />
+                   <xsl:text>/@label</xsl:text>
+               </xsl:attribute>
+                    <option>
+                        <xsl:attribute name="value">
+	                   <xsl:text>current</xsl:text>
+	               </xsl:attribute>
+                        <xsl:if
+                            test="not(starts-with($label, 'former') or starts-with($label, 'alt'))">
+                            <xsl:attribute name="selected"
+                                value="'selected'" />
+                        </xsl:if>
+                        <xsl:text>current</xsl:text>
+                    </option>
+                    <option>
+                        <xsl:attribute name="value">
+                       <xsl:text>former</xsl:text>
+                   </xsl:attribute>
+                        <xsl:if test="starts-with($label, 'former')">
+                            <xsl:attribute name="selected"
+                                value="'selected'" />
+                        </xsl:if>
+                        <xsl:text>former</xsl:text>
+                    </option>
+                    <option>
+                        <xsl:attribute name="value">
+                       <xsl:text>alternative</xsl:text>
+                   </xsl:attribute>
+                        <xsl:if test="starts-with($label, 'alt')">
+                            <xsl:attribute name="selected"
+                                value="'selected'" />
+                        </xsl:if>
+                        <xsl:text>alternative</xsl:text>
+                    </option>
+                </select>
+            </div> <!-- /.float -->
+        </div> <!-- /.clear -->
     </xsl:template>
 
     <xsl:template match="did/unittitle">
         <xsl:choose>
             <xsl:when test="$formtype = 'ead'">
                 <input class="menuField" type="text" onfocus="setCurrent(this);"
-                    name="did/unittitle" id="did/unittitle" size="80"
-                    onchange="updateTitle(this)" onkeypress="validateFieldDelay(this, 'true');"
-                    onblur="validateField(this, 'true');">
+                    name="did/unittitle" id="did/unittitle" size="60"
+                    onchange="updateTitle(this);" onkeypress="validateFieldDelay(this, 'true');">
                     <xsl:attribute name="value">
 			  			<xsl:apply-templates />
 			  		</xsl:attribute>
@@ -2809,7 +3058,7 @@
             </xsl:when>
             <xsl:otherwise>
                 <input class="menuField" type="text" onfocus="setCurrent(this);"
-                    name="did/unittitle" id="did/unittitle" size="80"
+                    name="did/unittitle" id="did/unittitle" size="60"
                     onchange="validateField(this, 'true');" onkeypress="validateFieldDelay(this, 'true');">
                     <xsl:attribute name="value">
 			  			<xsl:apply-templates />
@@ -2819,33 +3068,76 @@
         </xsl:choose>
     </xsl:template>
 
-    <xsl:template match="unitdate">
-        <input class="menuField" type="text"
-            onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');"
-            onblur="validateField(this, 'true');" onfocus="setCurrent(this);"
-            name="did/unitdate" id="did/unitdate" size="39">
-            <xsl:attribute name="value">
-  		  <xsl:apply-templates />
-  		</xsl:attribute>
-        </input>
-    </xsl:template>
-
-    <xsl:template match="unitdate/@normal">
+    <xsl:template name="unitdate">
+        <xsl:param name="node" />
+        <xsl:param name="path" />
+        <div class="clear">
+            <div class="float">
+                <p>
+                    <strong>
+                        <span class="isadg">3.1.3: </span>
+                        Dates of Creation
+                    </strong>
+                    <a href="http://archiveshub.ac.uk/help/dates" class="tip"
+                        title="Dates of Creation help - opens in new window"
+                        target="_new">
+                        <img src="/img/structure/form_tip.png" alt="[?]" />
+                    </a>
+                    <br />
+                    <input class="menuField" type="text" onfocus="setCurrent(this);"
+                        onkeypress="validateFieldDelay(this, 'true');"
+                        onchange="validateField(this, 'true');" onblur="validateField(this, 'true');"
+                        size="39">
+                        <xsl:attribute name="name">
+		                    <xsl:value-of select="$path" />
+		                </xsl:attribute>
+                        <xsl:attribute name="id">
+		                    <xsl:value-of select="$path" />
+                        </xsl:attribute>
+                        <xsl:attribute name="value">
+                            <xsl:value-of select="$node" />
+                        </xsl:attribute>
+                    </input>
+                </p>
+            </div>
+            <div class="float">
+                <p>
+                    <strong>
+                        <xsl:text>Normalised Date</xsl:text>
+                    </strong>
+                    <a href="http://archiveshub.ac.uk/help/dates" class="tip"
+                        title="Normalised Date help - opens in new window"
+                        target="_new">
+                        <img src="/img/structure/form_tip.png" alt="[?]" />
+                    </a>
+                    YYYY/YYYY or YYYYMMDD/YYYYMMDD
+                    <br />
         <input class="dateOK" type="text" onfocus="setCurrent(this);"
-            onkeypress="validateNormdateDelay(this, 'true');" onchange="validateNormdate(this, 'true');"
-            onblur="validateNormdate(this, 'true');" name="did/unitdate/@normal"
-            id="did/unitdate/@normal" size="39" maxlength="21">
+                        onkeypress="validateNormdateDelay(this, 'true');"
+                        onchange="validateNormdate(this, 'true');" onblur="validateNormdate(this, 'true');"
+                        size="39" maxlength="21">
+                        <xsl:attribute name="name">
+		                <xsl:value-of select="$path" />
+		                <xsl:text>/@normal</xsl:text>
+		            </xsl:attribute>
+                        <xsl:attribute name="id">
+		                <xsl:value-of select="$path" />
+		                <xsl:text>/@normal</xsl:text>
+		            </xsl:attribute>
             <xsl:attribute name="value">
-  			<xsl:value-of select="." />
+                        <xsl:value-of select="$node/@normal" />
   		</xsl:attribute>
         </input>
+                </p>
+            </div>
+        </div>
     </xsl:template>
 
     <xsl:template match="did/repository">
         <input class="menuField" type="text"
             onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');"
             onblur="validateField(this, 'true');" onfocus="setCurrent(this);"
-            name="did/repository" id="did/repository" size="80">
+            name="did/repository" id="did/repository" size="60">
             <xsl:attribute name="value">
   			<xsl:apply-templates />
   		</xsl:attribute>
@@ -2854,10 +3146,9 @@
 
     <xsl:template match="/ead/eadheader/filedesc/titlestmt/sponsor">
         <strong>Sponsor</strong>
-        <a id="sponsorhelp" name="sponsorhelp" target="_new"
-            href="http://archiveshub.ac.uk/help/sponsor">
-            <img class="whatsthis" src="/ead/img/whatisthis.png"
-                alt="[What is this?]" />
+        <a href="http://archiveshub.ac.uk/help/sponsor" class="tip"
+            id="sponsorhelp" name="sponsorhelp" target="_new">
+            <img src="/images/structure/form_tip.png" alt="[?]" />
         </a>
         <a class="smalllink" id="linkspo" title="add sponsor"
             onclick="addElement('filedesc/titlestmt/sponsor')">hide content</a>
@@ -2865,9 +3156,8 @@
         <br />
         <input class="menuField" type="text"
             onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');"
-            onblur="validateField(this, 'true');" onfocus="setCurrent(this);"
-            name="filedesc/titlestmt/sponsor" id="filedesc/titlestmt/sponsor"
-            size="80">
+            onfocus="setCurrent(this);" name="filedesc/titlestmt/sponsor" id="filedesc/titlestmt/sponsor"
+            size="60">
             <xsl:attribute name="value">
   			<xsl:apply-templates />
   		</xsl:attribute>
@@ -2879,7 +3169,7 @@
         <input class="menuField" type="text"
             onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');"
             onblur="validateField(this, 'true');" onfocus="setCurrent(this);"
-            name="did/physdesc/extent" id="did/physdesc/extent" size="80">
+            name="did/physdesc/extent" id="did/physdesc/extent" size="60">
             <xsl:attribute name="value">
   			<xsl:apply-templates />
   		</xsl:attribute>
@@ -2890,7 +3180,7 @@
         <input class="menuField" type="text"
             onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');"
             onblur="validateField(this, 'true');" onfocus="setCurrent(this);"
-            name="did/origination" id="did/origination" size="80">
+            name="did/origination" id="did/origination" size="60">
             <xsl:attribute name="value">
   			<xsl:apply-templates />
   		</xsl:attribute>
@@ -2935,12 +3225,13 @@
                             <xsl:attribute name="title">
 							<xsl:text>delete entry</xsl:text>
 						</xsl:attribute>
-                            <img src="/ead/img/delete.png" class="deletelogo">
+                            <img src="/images/editor/delete.png" class="deletelogo"
+                                alt="X">
                                 <xsl:attribute name="onmouseover">
-                            <xsl:text>this.src='/ead/img/delete-hover.png';</xsl:text>
+	                            <xsl:text>this.src='/images/editor/delete-hover.png';</xsl:text>
                         </xsl:attribute>
                                 <xsl:attribute name="onmouseout">
-                            <xsl:text>this.src='/ead/img/delete.png';</xsl:text>
+	                            <xsl:text>this.src='/images/editor/delete.png';</xsl:text>
                         </xsl:attribute>
                                 <xsl:attribute name="id">
 							<xsl:text>delete</xsl:text><xsl:number level="single"
@@ -2993,6 +3284,26 @@
         </xsl:element>
     </xsl:template>
 
+    <xsl:template name="textfield">
+        <xsl:param name="name" />
+        <xsl:param name="class" />
+        <input type="text" onkeypress="validateFieldDelay(this, 'true');"
+            onchange="validateField(this, 'true');" onblur="validateField(this, 'true');"
+            onfocus="setCurrent(this);" size="60">
+            <xsl:attribute name="name">
+	            <xsl:value-of select="$name" />
+	        </xsl:attribute>
+            <xsl:attribute name="id">
+	            <xsl:value-of select="$name" />
+	        </xsl:attribute>
+            <xsl:attribute name="class">
+	            <xsl:value-of select="$class" />
+	        </xsl:attribute>
+            <xsl:attribute name="value">
+                <xsl:apply-templates select="./node()" />
+            </xsl:attribute>
+        </input>
+    </xsl:template>
 
 
     <xsl:template name="textarea">
@@ -3015,13 +3326,16 @@
         </xsl:call-template>
         <textarea onkeypress="validateFieldDelay(this, 'true');"
             onchange="validateField(this, 'true');" onblur="validateField(this, 'true');"
-            onfocus="setCurrent(this);" rows="5" cols="80">
-            <xsl:attribute name="name"><xsl:value-of
-                select="$name" /></xsl:attribute>
-            <xsl:attribute name="id"><xsl:value-of
-                select="$name" /></xsl:attribute>
-            <xsl:attribute name="class"><xsl:value-of
-                select="$class" /></xsl:attribute>
+            onfocus="setCurrent(this);" rows="5" cols="60">
+            <xsl:attribute name="name">
+  		    <xsl:value-of select="$name" />
+	    </xsl:attribute>
+            <xsl:attribute name="id">
+  		    <xsl:value-of select="$name" />
+        </xsl:attribute>
+            <xsl:attribute name="class">
+  		    <xsl:value-of select="$class" />
+        </xsl:attribute>
             <xsl:if test="$optional = 'true' and $content = 'false'">
                 <xsl:attribute name="style">display:none</xsl:attribute>
             </xsl:if>
@@ -3056,7 +3370,7 @@
             <xsl:value-of select="$title" />
         </strong>
         <xsl:if test="not($help='')">
-            <a>
+		<a class="tip">
                 <xsl:attribute name="href">
 			<xsl:value-of select="$help" />
 		</xsl:attribute>
@@ -3066,8 +3380,7 @@
                 <xsl:attribute name="target">
 			<xsl:text>_new</xsl:text>
 		</xsl:attribute>
-                <img class="whatsthis" src="/ead/img/whatisthis.png"
-                    alt="[What is this?]" />
+			<img src="/images/structure/form_tip.png" alt="[?]"/>
             </a>
         </xsl:if>
 
@@ -3137,7 +3450,7 @@
                 <tr>
                     <td class="label">File URI: </td>
                     <td>
-                        <input size="70" type="text" onfocus="setCurrent(this);">
+  				<input size="60" type="text" onfocus="setCurrent(this);">
                             <xsl:attribute name="value">
   						<xsl:value-of select="@href" />
   					</xsl:attribute>
@@ -3155,10 +3468,7 @@
                 <tr>
                     <td class="label">Description: </td>
                     <td>
-                        <input size="70" type="text" onfocus="setCurrent(this);"
-                            class="menuField" onkeypress="validateFieldDelay(this, 'true');"
-                            onchange="validateField(this, 'true');"
-                            onblur="validateField(this, 'true');">
+  				<input size="60" type="text" onfocus="setCurrent(this);" class="menuField" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onblur="validateField(this, 'true');">
                             <xsl:attribute name="name">
   						<xsl:text>daox</xsl:text><xsl:value-of select="$path" /><text>dao</text><xsl:value-of
                                 select="$number" /><xsl:text>|desc</xsl:text>
@@ -3207,7 +3517,7 @@
                 <tr>
                     <td class="label">Thumbnail URI: </td>
                     <td>
-                        <input size="70" type="text" onfocus="setCurrent(this);">
+  				<input size="60" type="text" onfocus="setCurrent(this);">
                             <xsl:attribute name="value">
   						<xsl:value-of select="daoloc[@role='thumb']/@href" />
   					</xsl:attribute>
@@ -3225,7 +3535,7 @@
                 <tr>
                     <td class="label">File URI: </td>
                     <td>
-                        <input size="70" type="text" onfocus="setCurrent(this);">
+  				        <input size="60" type="text" onfocus="setCurrent(this);">
                             <xsl:attribute name="value">
   						<xsl:value-of select="daoloc[@role='reference']/@href" />
   					</xsl:attribute>
@@ -3243,7 +3553,7 @@
                 <tr>
                     <td class="label">Description: </td>
                     <td>
-                        <input size="70" type="text" onfocus="setCurrent(this);"
+                        <input size="60" type="text" onfocus="setCurrent(this);"
                             class="menuField" onkeypress="validateFieldDelay(this, 'true');"
                             onchange="validateField(this, 'true');"
                             onblur="validateField(this, 'true');">
@@ -3319,7 +3629,7 @@
                             <xsl:text> URI: </xsl:text>
                         </td>
                         <td>
-                            <input type="text" size="70"
+                            <input type="text" size="60"
                                 onfocus="setCurrent(this);">
                                 <xsl:attribute name="name">
 						<xsl:text>daox</xsl:text><xsl:value-of select="$path" /><text>grp</text><xsl:value-of
@@ -3347,7 +3657,7 @@
                             <xsl:text> Title: </xsl:text>
                         </td>
                         <td>
-                            <input type="text" size="70"
+                            <input type="text" size="60"
                                 onfocus="setCurrent(this);">
                                 <xsl:attribute name="name">
 						<xsl:text>daox</xsl:text><xsl:value-of select="$path" /><text>grp</text><xsl:value-of
@@ -3394,7 +3704,7 @@
                 <tr>
                     <td class="label">Description of group: </td>
                     <td>
-                        <input size="70" type="text" onfocus="setCurrent(this);"
+                        <input size="60" type="text" onfocus="setCurrent(this);"
                             class="menuField" onkeypress="validateFieldDelay(this, 'true');"
                             onchange="validateField(this, 'true');"
                             onblur="validateField(this, 'true');">
