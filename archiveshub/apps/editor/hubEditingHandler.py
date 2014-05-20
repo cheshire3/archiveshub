@@ -1283,7 +1283,7 @@ class HubEditingHandler(object):
             # We have two records with the same id - should never happen
             pass
         else:
-            recinst = result[0][0]
+            recinst = res[0][0]
         if recinst == authinst:
             return True
         else:
