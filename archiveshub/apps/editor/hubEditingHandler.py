@@ -1248,7 +1248,7 @@ class HubEditingHandler(object):
                         '%PUI%',
                         ('<input type="text" onfocus="setCurrent(this);" '
                          'name="pui" id="pui" size="25" disabled="true" '
-                         'value="{0}"/>'.formet(recid.encode('ascii'))
+                         'value="{0}"/>'.format(recid.encode('ascii'))
                          )
                     )
                     page = page.replace(
