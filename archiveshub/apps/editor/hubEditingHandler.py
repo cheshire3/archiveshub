@@ -2898,7 +2898,7 @@ class HubEditingHandler(object):
                         displayId = recid
                     userFiles.extend([
                         '<li>',
-                        '<span class="fileops">'
+                        '<span class="fileops">',
                         ('<input type="{0}" name="recid" value="{1}" {2}/>'
                          '</span>'.format(type, recid, disabled)
                          ),
