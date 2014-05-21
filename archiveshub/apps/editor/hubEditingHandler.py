@@ -68,7 +68,7 @@ from cheshire3.baseObjects import Session, Record, ResultSet
 
 
 from cheshire3.document import StringDocument
-from cheshire3.exceptions import ObjectDoesNotExistException
+from cheshire3.exceptions import ObjectDoesNotExistException, XMLSyntaxError
 from cheshire3.internal import cheshire3Root
 from cheshire3.record import LxmlRecord
 from cheshire3.server import SimpleServer
@@ -1098,41 +1098,40 @@ class HubEditingHandler(object):
             # Repeat parse with correct line numbers
             try:
                 rec = xmlp.process_document(session, doc)
-            except:
+            except XMLSyntaxError:
                 self.htmlTitle.append('Error')
-                e = sys.exc_info()
-                self.log('*** %s: %s' % (repr(e[0]), e[1]))
+                if interface == 'admin':
+                    link = '<a href="files.html">Back to file page</a>'
+                else:
+                    link = ('<a href="edit.html">Back to edit/create '
+                            'menu</a>'
+                            )
+                exc_type, exc_value, _exc_tb = sys.exc_info()
+                self.log('*** %s: %s' % (repr(exc_type), exc_value))
                 # Try and highlight error in specified place
-                lines = doc.get_raw(session).split('\n')
+                docstr = doc.get_raw(session)
+                lines = docstr.split('\n')
                 positionRe = re.compile(':(\d+):(\d+):')
-                mo = positionRe.search(str(e[1]))
+                mo = positionRe.search(str(exc_value))
                 if mo is None:
                     positionRe = re.compile('line (\d+), column (\d+)')
-                    mo = positionRe.search(str(e[1]))
+                    mo = positionRe.search(str(exc_value))
                 line, posn = lines[int(mo.group(1)) - 1], int(mo.group(2))
+
                 try:
                     startspace = newlineRe.match(line).group(0)
                 except:
-                    if interface == 'admin':
-                        link = '<a href="files.html">Back to file page</a>'
-                    else:
-                        link = ('<a href="edit.html">Back to edit/create '
-                                'menu</a>'
-                                )
                     return ('<div id="single">'
                             '<p class="error">An error occured while '
-                            'parsing your file. Please check the file is a '
+                            'parsing your file.</p>\n'
+                            '<p class="error">{0}</p>'
+                            '<p>Please check the file is a '
                             'valid ead file and try again.</p>\n'
-                            '<p>{0}</p>\n'
-                            '</div>'.format(link)
+                            '<p>{1}</p>\n'
+                            '<code>{2}</code>'
+                            '</div>'.format(str(exc_value), link, docstr)
                             )
                 else:
-                    if interface == 'admin':
-                        link = '<a href="files.html">Back to file page</a>'
-                    else:
-                        link = ('<a href="edit.html">Back to edit/create '
-                                'menu</a>'
-                                )
                     message = ('<div id="single">'
                                '<p class="error">An error occured while '
                                'parsing your file. Please check the file at '
