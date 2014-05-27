@@ -481,17 +481,30 @@
                 <br />
                 <xsl:choose>
                     <xsl:when test="did/physdesc/extent">
-                        <xsl:apply-templates select="did/physdesc/extent" />
+                        <xsl:for-each select="did/physdesc/extent">
+                            <xsl:call-template name="textfield">
+                                <xsl:with-param name="name"
+                                    select="concat('did/physdesc/extent[', position(), ']')" />
+                                <xsl:with-param name="class"
+                                    select="'menuField'" />
+                            </xsl:call-template>
+                        </xsl:for-each>
                     </xsl:when>
                     <xsl:otherwise>
                         <input class="menuField" type="text"
                             onfocus="setCurrent(this);" onkeypress="validateFieldDelay(this, 'true');"
                             onchange="validateField(this, 'true');"
                             onblur="validateField(this, 'true');"
-                            name="did/physdesc/extent" id="did/physdesc/extent"
+                            name="did/physdesc/extent[1]" id="did/physdesc/extent[1]"
                             size="60"></input>
                     </xsl:otherwise>
                 </xsl:choose>
+                <span id="addExtent">
+                    <xsl:attribute name="onclick">
+                        <xsl:text>cloneField(this)</xsl:text>
+                    </xsl:attribute>
+                    <xsl:call-template name="addButton" />
+                </span>
             </p>
             <xsl:if
                 test="$leveltype = 'collection' or $formtype = 'template'">
@@ -3163,18 +3176,6 @@
         </input>
     </xsl:template>
 
-
-    <xsl:template match="did/physdesc/extent">
-        <input class="menuField" type="text"
-            onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');"
-            onblur="validateField(this, 'true');" onfocus="setCurrent(this);"
-            name="did/physdesc/extent" id="did/physdesc/extent" size="60">
-            <xsl:attribute name="value">
-  			<xsl:apply-templates />
-  		</xsl:attribute>
-        </input>
-    </xsl:template>
-
     <xsl:template match="did/origination">
         <input class="menuField" type="text"
             onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');"
@@ -3185,7 +3186,6 @@
   		</xsl:attribute>
         </input>
     </xsl:template>
-
 
     <xsl:template match="did/langmaterial">
         <div id="addedlanguages" style="display:block" class="added">
