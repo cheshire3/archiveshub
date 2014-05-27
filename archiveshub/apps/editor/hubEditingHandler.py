@@ -158,16 +158,6 @@ class HubEditingHandler(object):
         else:
             self.script = script
 
-        self.globalReplacements = {'%PAGECLASS%': '',
-                                   '%REP_NAME%': repository_name,
-                                   '%REP_LINK%': repository_link,
-                                   '%REP_LOGO%': repository_logo,
-                                   'SCRIPT': self.script,
-                                   '%SCRIPT%': self.script,
-                                   '<br>': '<br/>',
-                                   '<hr>': '<hr/>'
-                                   }
-
     def _get_timeStamp(self):
         return time.strftime('%Y-%m-%dT%H%M%S')
 
@@ -2833,7 +2823,6 @@ class HubEditingHandler(object):
                     Edit Account Details
                 </a>
             </li>'''
-
         # Check quotas
         quota = self._get_quota()
         total = self._get_totalDrafts()
@@ -2965,6 +2954,16 @@ class HubEditingHandler(object):
 
     def handle(self, req):
         global script, editStore
+        # Reset Global Replacements
+        self.globalReplacements = {'%PAGECLASS%': '',
+                                   '%REP_NAME%': repository_name,
+                                   '%REP_LINK%': repository_link,
+                                   '%REP_LOGO%': repository_logo,
+                                   'SCRIPT': self.script,
+                                   '%SCRIPT%': self.script,
+                                   '<br>': '<br/>',
+                                   '<hr>': '<hr/>'
+                                   }
         self.htmlTitle = ['Data Creation and Editing']
         self.htmlNav = [
             '''<li class="navtab">
