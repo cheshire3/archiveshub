@@ -88,16 +88,16 @@ var curvyCornersVerbose = false;
 	                var userCookie = getCookie('user');
 	                if (userCookie && (userCookie.split('-').length == 2)) {
 	                    var crumbs = userCookie.split('|-|');
-	                    document.write('Signed in as: ' + crumbs[0] + ' | <a href="SCRIPT/signout.html" title="Sign out user: ' + crumbs[0] + '">Sign out</a>');
+	                    document.write('Signed in as: ' + crumbs[0] + ' | <a href="${SCRIPT}/signout.html" title="Sign out user: ' + crumbs[0] + '">Sign out</a>');
 	                } else {
-	                    document.write('<a href="SCRIPT/signin.html">Sign in</a> | <a href="SCRIPT/register.html">Register</a>');
+	                    document.write('<a href="${SCRIPT}/signin.html">Sign in</a> | <a href="${SCRIPT}/register.html">Register</a>');
 	                }
 	                -->
 	                </script>
 	                <noscript>
-	                    <a href="SCRIPT/signin.html">Sign in </a> |
-	                    <a href="SCRIPT/signout.html" title="Sign out user">Sign out</a> |
-	                    <a href="SCRIPT/register.html">Register</a>
+	                    <a href="${SCRIPT}/signin.html">Sign in </a> |
+	                    <a href="${SCRIPT}/signout.html" title="Sign out user">Sign out</a> |
+	                    <a href="${SCRIPT}/register.html">Register</a>
 	                </noscript>
                 </div>
        		</div> <!-- /bannerextra -->
@@ -125,11 +125,11 @@ var rsidCookie = getCookie('resultSet');
 if (rsidCookie) {
     var crumbs = rsidCookie.split('-');
     if (crumbs.length == 3) {
-        document.write('<li><a href="SCRIPT/search.html?rsid=' + crumbs[0] + '&startRecord=' + crumbs[1] + '&maximumRecords=' + crumbs[2] + '" title="Back to results of your most recent search">Results</a></li>');
+        document.write('<li><a href="${SCRIPT}/search.html?rsid=' + crumbs[0] + '&startRecord=' + crumbs[1] + '&maximumRecords=' + crumbs[2] + '" title="Back to results of your most recent search">Results</a></li>');
     }
 }
 if (userCookie && (userCookie.split('-').length == 2)) {
-    document.write('<li><a href="SCRIPT/myhub.html">My Hub</a></li>');
+    document.write('<li><a href="${SCRIPT}/myhub.html">My Hub</a></li>');
 }
 					        -->
 				        </script>
@@ -166,11 +166,11 @@ if (userCookie && (userCookie.split('-').length == 2)) {
 	    if (rsidCookie) {
 	        var crumbs = rsidCookie.split('-');
 	        if (crumbs.length == 3) {
-	            document.write('<li><a href="SCRIPT/search.html?rsid=' + crumbs[0] + '&startRecord=' + crumbs[1] + '&maximumRecords=' + crumbs[2] + '" title="Back to results of your most recent search"><img src="/images/editor/list-icon-dark.png" alt=""/>results</a></li>');
+	            document.write('<li><a href="${SCRIPT}/search.html?rsid=' + crumbs[0] + '&startRecord=' + crumbs[1] + '&maximumRecords=' + crumbs[2] + '" title="Back to results of your most recent search"><img src="/images/editor/list-icon-dark.png" alt=""/>results</a></li>');
 	        }
 	    }
 	    if (userCookie && (userCookie.split('-').length == 2)) {
-	        document.write('<li><a href="SCRIPT/myhub.html"><img src="/images/editor/myhub-icon.png" alt=""/>my hub</a></li>');
+	        document.write('<li><a href="${SCRIPT}/myhub.html"><img src="/images/editor/myhub-icon.png" alt=""/>my hub</a></li>');
 	    }
 	    -->
 	    </script>

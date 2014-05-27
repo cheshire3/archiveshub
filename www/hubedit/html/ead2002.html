@@ -51,7 +51,7 @@
                        title="Save the current changes to the Draft File Store"></input>
             </td>
 	        <td>
-	           <input type="button" class="menubutton" id="delete-button" onclick="var cont = confirmOp('This operation will delete the current record from the Draft File Store and any changes made since it was last submitted to the database will be lost. If the record is also in the database that record will remain unchanged and will not be deleted.\n\nAre you sure you want to delete this record?'); if (cont) {discardRec($('pui').value);}" value="Delete" title="Delete this record from the editing data store"></input>
+	           <input type="button" class="menubutton" id="delete-button" onclick="var cont = confirmOp('WARNING: This operation will DELETE THIS ENTIRE DESCRIPTION from the EAD Editor.\n\n* If you have never submitted this description to the Archives Hub, it will not be retrievable.\n* Any changes made since you last submitted this description to the Archives Hub will be irretrievably lost.\n\nAre you sure you want to PERMANENTLY DELETE THIS DESCRIPTION?'); if (cont) {discardRec($('pui').value);}" value="Delete" title="Delete this record from the editing data store"></input>
 	        </td>
 	    </tr>
 	    	    <tr>

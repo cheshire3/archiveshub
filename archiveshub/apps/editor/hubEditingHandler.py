@@ -2959,7 +2959,7 @@ class HubEditingHandler(object):
                                    '%REP_NAME%': repository_name,
                                    '%REP_LINK%': repository_link,
                                    '%REP_LOGO%': repository_logo,
-                                   'SCRIPT': self.script,
+                                   '${SCRIPT}': self.script,
                                    '%SCRIPT%': self.script,
                                    '<br>': '<br/>',
                                    '<hr>': '<hr/>'

@@ -1635,7 +1635,7 @@ function deleteFromStore(){
         return;
     }
     else {
-        var ok = confirmOp('You are about to delete ' + recid.substring(0, recid.lastIndexOf('-')) + ' from the editing store. All changes made since it was last submitted to the database will be lost.\nAre you sure you want to continue?')
+        var ok = confirmOp('WARNING: This operation will DELETE THE ENTIRE DESCRIPTION ' + recid.substring(0, recid.lastIndexOf('-')) + ' from the EAD Editor.\n\n* If you have never submitted this description to the Archives Hub, it will not be retrievable.\n* Any changes made since you last submitted this description to the Archives Hub will be irretrievably lost.\n\nAre you sure you want to PERMANENTLY DELETE THIS DESCRIPTION?')
         if (ok){
             // disable save warning
             warn = false;
