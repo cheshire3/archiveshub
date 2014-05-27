@@ -2392,11 +2392,10 @@
                         <img src="/images/structure/form_tip.png" alt="[?]" />
                     </a>
                     <br />
-                    <!-- <a class="extSearch" onclick="window.open('http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=PL', 
-                        'new');">[Search NRA]</a> -->
                     <a class="extSearch" target="_new"
-                        href="http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=PL">
-                        [Search NRA]
+                        href="http://www.geonames.org/"
+                        title="Search the GeoNames geographical database">
+                        [Search GeoNames]
                     </a>
                     <a class="extSearch" target="_new"
                         href="http://www.getty.edu/research/tools/vocabularies/tgn/"
