@@ -2,8 +2,6 @@
 <!DOCTYPE xsl:stylesheet []>
 <xsl:stylesheet
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:exsl="http://exslt.org/common"
-    extension-element-prefixes="exsl"
     version="1.0">
 
     <!--
@@ -229,10 +227,11 @@
                                 <select id="did/unitidlabel[1]" name="did/unitid[1]/@label">
                                     <option>
                                         <xsl:attribute name="value">
-                       <xsl:text>current</xsl:text>
-                   </xsl:attribute>
-                                        <xsl:attribute name="selected"
-                                            value="'selected'" />
+                                            <xsl:text>current</xsl:text>
+                                        </xsl:attribute>
+                                        <xsl:attribute name="selected">
+                                            <xsl:text>selected</xsl:text>
+                                        </xsl:attribute>
                                         <xsl:text>current</xsl:text>
                                     </option>
                                     <option>
@@ -2720,80 +2719,94 @@
         </div>
     </xsl:template>
 
-
-
     <xsl:template name="accesspoint">
         <xsl:param name="aptype" />
         <div style="display:block" class="added">
             <xsl:attribute name="id">
-  		<xsl:text>added</xsl:text><xsl:value-of select="$aptype" /><xsl:text>s</xsl:text>
-  	</xsl:attribute>
+                <xsl:text>added</xsl:text>
+                <xsl:value-of select="$aptype" />
+                <xsl:text>s</xsl:text>
+            </xsl:attribute>
             <xsl:for-each select="controlaccess/*[name() = $aptype]">
                 <input type="hidden">
                     <xsl:attribute name="name">
-		 			<xsl:text>controlaccess/</xsl:text><xsl:value-of
-                        select="$aptype" />
-		 		</xsl:attribute>
+                        <xsl:text>controlaccess/</xsl:text>
+                        <xsl:value-of select="$aptype" />
+                    </xsl:attribute>
                     <xsl:attribute name="id">
-					<xsl:value-of select="$aptype" /><xsl:text>_formgen</xsl:text><xsl:number
-                        level="single" count="controlaccess/*[name() = $aptype]"
-                        format="1" /><xsl:text>xml</xsl:text>
-				</xsl:attribute>
+                        <xsl:value-of select="$aptype" />
+                        <xsl:text>_formgen</xsl:text>
+                        <xsl:number
+                            level="single" count="controlaccess/*[name() = $aptype]"
+                            format="1" />
+                        <xsl:text>xml</xsl:text>
+                    </xsl:attribute>
                     <xsl:attribute name="value">
-					<div class="accesspoint">					 
-						<xsl:call-template name="accesspointstring">					
-							<xsl:with-param name="aptype" select="$aptype" />
-							<xsl:with-param name="separater" select="' ||| '" />
-						</xsl:call-template>
-					</div>
-				</xsl:attribute>
+                        <!--<div class="accesspoint">-->
+                           <xsl:call-template name="accesspointstring">
+                              <xsl:with-param name="aptype" select="$aptype" />
+                               <xsl:with-param name="separater" select="' ||| '" />
+                            </xsl:call-template>
+                        <!--</div>-->
+                    </xsl:attribute>
                 </input>
                 <div>
                     <xsl:attribute name="id">
-					<xsl:value-of select="$aptype" /><xsl:text>_formgen</xsl:text><xsl:number
-                        level="single" count="controlaccess/*[name() = $aptype]"
-                        format="1" />				
-				</xsl:attribute>
+                        <xsl:value-of select="$aptype" />
+                        <xsl:text>_formgen</xsl:text>
+                        <xsl:number
+                            level="single" count="controlaccess/*[name() = $aptype]"
+                            format="1" />
+                    </xsl:attribute>
                     <div class="icons">
                         <a>
                             <xsl:attribute name="onclick">
-							<xsl:text>deleteAccessPoint('</xsl:text><xsl:value-of
-                                select="$aptype" /><xsl:text>_formgen</xsl:text><xsl:number
-                                level="single"
-                                count="controlaccess/*[name() = $aptype]"
-                                format="1" /><xsl:text>');</xsl:text>
-						</xsl:attribute>
+                                <xsl:text>deleteAccessPoint('</xsl:text>
+                                <xsl:value-of
+                                    select="$aptype" />
+                                <xsl:text>_formgen</xsl:text>
+                                <xsl:number
+                                    level="single"
+                                    count="controlaccess/*[name() = $aptype]"
+                                    format="1" />
+                                <xsl:text>');</xsl:text>
+                            </xsl:attribute>
                             <xsl:attribute name="title">
-							<xsl:text>delete entry</xsl:text>
-						</xsl:attribute>
+                                <xsl:text>delete entry</xsl:text>
+                            </xsl:attribute>
                             <img src="/images/editor/delete.png" class="deletelogo"
                                 alt="X">
                                 <xsl:attribute name="onmouseover">
-                                <xsl:text>this.src='/images/editor/delete-hover.png';</xsl:text>
-                            </xsl:attribute>
+                                    <xsl:text>this.src='/images/editor/delete-hover.png';</xsl:text>
+                                </xsl:attribute>
                                 <xsl:attribute name="onmouseout">
-                                <xsl:text>this.src='/images/editor/delete.png';</xsl:text>
-                            </xsl:attribute>
+                                    <xsl:text>this.src='/images/editor/delete.png';</xsl:text>
+                                </xsl:attribute>
                                 <xsl:attribute name="id">
-    							<xsl:text>delete</xsl:text><xsl:number level="single"
-                                    count="controlaccess/*[name() = $aptype]"
-                                    format="1" />
-    						</xsl:attribute>
+                                    <xsl:text>delete</xsl:text>
+                                    <xsl:number level="single"
+                                        count="controlaccess/*[name() = $aptype]"
+                                        format="1" />
+                                </xsl:attribute>
                             </img>
                         </a>
                     </div>
                     <div class="accesspoint">
                         <a>
                             <xsl:attribute name="onclick">
-						<xsl:text>editAccessPoint('</xsl:text><xsl:value-of
-                                select="$aptype" /><xsl:text>_formgen', </xsl:text><xsl:number
-                                level="single"
-                                count="controlaccess/*[name() = $aptype]"
-                                format="1" /><xsl:text>);</xsl:text>
-					</xsl:attribute>
+                                <xsl:text>editAccessPoint('</xsl:text>
+                                <xsl:value-of
+                                    select="$aptype" />
+                                <xsl:text>_formgen', </xsl:text>
+                                <xsl:number
+                                    level="single"
+                                    count="controlaccess/*[name() = $aptype]"
+                                    format="1" />
+                                <xsl:text>);</xsl:text>
+                            </xsl:attribute>
                             <xsl:attribute name="title">
-						<xsl:text>Click to edit</xsl:text>
-					</xsl:attribute>
+                                <xsl:text>Click to edit</xsl:text>
+                            </xsl:attribute>
                             <xsl:call-template name="accesspointstring">
                                 <xsl:with-param name="aptype"
                                     select="$aptype" />
@@ -2805,16 +2818,17 @@
                 </div>
                 <br>
                     <xsl:attribute name="id">
-					<xsl:value-of select="$aptype" /><xsl:text>_formgen</xsl:text><xsl:number
-                        level="single" count="controlaccess/*[name() = $aptype]"
-                        format="1" /><xsl:text>br</xsl:text>
-				</xsl:attribute>
+                        <xsl:value-of select="$aptype" />
+                        <xsl:text>_formgen</xsl:text>
+                        <xsl:number
+                            level="single" count="controlaccess/*[name() = $aptype]"
+                            format="1" />
+                        <xsl:text>br</xsl:text>
+                    </xsl:attribute>
                 </br>
             </xsl:for-each>
         </div>
     </xsl:template>
-
-
 
 
     <xsl:template name="accesspointstring">
@@ -2935,7 +2949,9 @@
 	            </xsl:attribute>
                     <!-- disabled? -->
                     <xsl:if test="@type = 'persistent'">
-                        <xsl:attribute name="readonly" select="'readonly'" />
+                        <xsl:attribute name="readonly">
+                            <xsl:text>readonly</xsl:text>
+                        </xsl:attribute>
                     </xsl:if>
                     <!-- value -->
             <xsl:choose>
@@ -2967,7 +2983,9 @@
 	            </xsl:attribute>
                     <!-- disabled? -->
                     <xsl:if test="@type = 'persistent'">
-                        <xsl:attribute name="readonly" select="'readonly'" />
+                        <xsl:attribute name="readonly">
+                            <xsl:text>readonly</xsl:text>
+                        </xsl:attribute>
                     </xsl:if>
                     <!-- value -->
             <xsl:choose>
@@ -2997,7 +3015,9 @@
 	            </xsl:attribute>
                     <!-- disabled? -->
                     <xsl:if test="@type = 'persistent'">
-                        <xsl:attribute name="readonly" select="'readonly'" />
+                        <xsl:attribute name="readonly">
+                            <xsl:text>readonly</xsl:text>
+                        </xsl:attribute>
                     </xsl:if>
                     <!-- value -->
             <xsl:attribute name="value">
@@ -3027,8 +3047,9 @@
 	               </xsl:attribute>
                         <xsl:if
                             test="not(starts-with($label, 'former') or starts-with($label, 'alt'))">
-                            <xsl:attribute name="selected"
-                                value="'selected'" />
+                            <xsl:attribute name="selected">
+                                <xsl:text>selected</xsl:text>
+                            </xsl:attribute>
                         </xsl:if>
                         <xsl:text>current</xsl:text>
                     </option>
@@ -3037,8 +3058,9 @@
                        <xsl:text>former</xsl:text>
                    </xsl:attribute>
                         <xsl:if test="starts-with($label, 'former')">
-                            <xsl:attribute name="selected"
-                                value="'selected'" />
+                            <xsl:attribute name="selected">
+                                <xsl:text>selected</xsl:text>
+                            </xsl:attribute>
                         </xsl:if>
                         <xsl:text>former</xsl:text>
                     </option>
@@ -3047,8 +3069,9 @@
                        <xsl:text>alternative</xsl:text>
                    </xsl:attribute>
                         <xsl:if test="starts-with($label, 'alt')">
-                            <xsl:attribute name="selected"
-                                value="'selected'" />
+                            <xsl:attribute name="selected">
+                                <xsl:text>selected</xsl:text>
+                            </xsl:attribute>
                         </xsl:if>
                         <xsl:text>alternative</xsl:text>
                     </option>
@@ -3351,8 +3374,6 @@
     </xsl:template>
 
 
-
-
     <xsl:template name="label">
         <xsl:param name="id" />
         <xsl:param name="optional" />
@@ -3369,17 +3390,17 @@
             <xsl:value-of select="$title" />
         </strong>
         <xsl:if test="not($help='')">
-		<a class="tip">
+            <a class="tip">
                 <xsl:attribute name="href">
-			<xsl:value-of select="$help" />
-		</xsl:attribute>
+                  <xsl:value-of select="$help" />
+                </xsl:attribute>
                 <xsl:attribute name="title">
-			<xsl:value-of select="$title" /><xsl:text> help - opens in new window</xsl:text>
-		</xsl:attribute>
+                    <xsl:value-of select="$title" /><xsl:text> help - opens in new window</xsl:text>
+                </xsl:attribute>
                 <xsl:attribute name="target">
-			<xsl:text>_new</xsl:text>
-		</xsl:attribute>
-			<img src="/images/structure/form_tip.png" alt="[?]"/>
+                    <xsl:text>_new</xsl:text>
+                </xsl:attribute>
+                <img src="/images/structure/form_tip.png" alt="[?]"/>
             </a>
         </xsl:if>
 
@@ -3391,17 +3412,18 @@
             <xsl:text> </xsl:text>
             <a class="smalllink">
                 <xsl:attribute name="title">
-  				<xsl:text>add content </xsl:text>
-  				<xsl:value-of select="$title" />
-  			</xsl:attribute>
+                   <xsl:text>add content </xsl:text>
+                   <xsl:value-of select="$title" />
+                </xsl:attribute>
                 <xsl:attribute name="id">
-  				<xsl:text>link</xsl:text>
-  				<xsl:value-of select="$id" />
-  			</xsl:attribute>
+                   <xsl:text>link</xsl:text>
+                   <xsl:value-of select="$id" />
+                </xsl:attribute>
                 <xsl:attribute name="onclick">
-  				<xsl:text>addElement('</xsl:text><xsl:value-of
-                    select="$id" /><xsl:text>')</xsl:text>
-  			</xsl:attribute>
+                    <xsl:text>addElement('</xsl:text>
+                    <xsl:value-of select="$id" />
+                    <xsl:text>')</xsl:text>
+                </xsl:attribute>
                 <xsl:choose>
                     <xsl:when test="$content = 'true'">
                         <xsl:text>hide content</xsl:text>
@@ -3449,43 +3471,54 @@
                 <tr>
                     <td class="label">File URI: </td>
                     <td>
-  				<input size="60" type="text" onfocus="setCurrent(this);">
+                        <input size="60" type="text" onfocus="setCurrent(this);">
                             <xsl:attribute name="value">
-  						<xsl:value-of select="@href" />
-  					</xsl:attribute>
+                                <xsl:value-of select="@href" />
+                            </xsl:attribute>
                             <xsl:attribute name="name">
-  						<xsl:text>daox</xsl:text><xsl:value-of select="$path" /><text>dao</text><xsl:value-of
-                                select="$number" /><xsl:text>|href</xsl:text>
-  					</xsl:attribute>
+                                <xsl:text>daox</xsl:text>
+                                <xsl:value-of select="$path" />
+                                <xsl:text>dao</xsl:text>
+                                <xsl:value-of select="$number" />
+                                <xsl:text>|href</xsl:text>
+                            </xsl:attribute>
                             <xsl:attribute name="id">
-  						<xsl:text>daox</xsl:text><xsl:value-of select="$path" /><text>dao</text><xsl:value-of
-                                select="$number" /><xsl:text>|href</xsl:text>
-  					</xsl:attribute>
+                                <xsl:text>daox</xsl:text>
+                                <xsl:value-of select="$path" />
+                                <xsl:text>dao</xsl:text>
+                                <xsl:value-of select="$number" /><xsl:text>|href</xsl:text>
+                            </xsl:attribute>
                         </input>
                     </td>
                 </tr>
                 <tr>
                     <td class="label">Description: </td>
                     <td>
-  				<input size="60" type="text" onfocus="setCurrent(this);" class="menuField" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onblur="validateField(this, 'true');">
+                        <input size="60" type="text" onfocus="setCurrent(this);" class="menuField" onkeypress="validateFieldDelay(this, 'true');" onchange="validateField(this, 'true');" onblur="validateField(this, 'true');">
                             <xsl:attribute name="name">
-  						<xsl:text>daox</xsl:text><xsl:value-of select="$path" /><text>dao</text><xsl:value-of
-                                select="$number" /><xsl:text>|desc</xsl:text>
-  					</xsl:attribute>
+                                <xsl:text>daox</xsl:text>
+                                <xsl:value-of select="$path" />
+                                <xsl:text>dao</xsl:text>
+                                <xsl:value-of select="$number" />
+                                <xsl:text>|desc</xsl:text>
+                            </xsl:attribute>
                             <xsl:attribute name="id">
-  						<xsl:text>daox</xsl:text><xsl:value-of select="$path" /><text>dao</text><xsl:value-of
-                                select="$number" /><xsl:text>|desc</xsl:text>
-  					</xsl:attribute>
+                                <xsl:text>daox</xsl:text>
+                                <xsl:value-of select="$path" />
+                                <xsl:text>dao</xsl:text>
+                                <xsl:value-of select="$number" />
+                                <xsl:text>|desc</xsl:text>
+                            </xsl:attribute>
                             <xsl:attribute name="value">
-  					  	<xsl:choose>
-  							<xsl:when test="daodesc">
-  								<xsl:apply-templates select="daodesc" />
-  							</xsl:when>
-  							<xsl:otherwise>
-  								<xsl:text>&lt;p&gt;&lt;/p&gt;</xsl:text>
-  							</xsl:otherwise>
-  						</xsl:choose>
-  					</xsl:attribute>
+                                <xsl:choose>
+                                    <xsl:when test="daodesc">
+                                        <xsl:apply-templates select="daodesc" />
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:text>&lt;p&gt;&lt;/p&gt;</xsl:text>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:attribute>
                         </input>
                     </td>
                 </tr>
@@ -3493,18 +3526,22 @@
         </table>
         <input type="hidden">
             <xsl:attribute name="value">
-  			<xsl:value-of select="$type" />
-  		</xsl:attribute>
+                <xsl:value-of select="$type" />
+            </xsl:attribute>
             <xsl:attribute name="name">
-			<xsl:text>daox</xsl:text><xsl:value-of select="$path" /><text>dao</text><xsl:value-of
-                select="$number" /><xsl:text>|</xsl:text><xsl:value-of
-                select="$type" />
-		</xsl:attribute>
+                <xsl:text>daox</xsl:text>
+                <xsl:value-of select="$path" />
+                <xsl:text>dao</xsl:text>
+                <xsl:value-of select="$number" />
+                <xsl:text>|</xsl:text>
+                <xsl:value-of select="$type" />
+            </xsl:attribute>
             <xsl:attribute name="id">
-			<xsl:text>daox</xsl:text><xsl:value-of select="$path" /><text>dao</text><xsl:value-of
-                select="$number" /><xsl:text>|</xsl:text><xsl:value-of
-                select="$type" />
-		</xsl:attribute>
+                <xsl:text>daox</xsl:text><xsl:value-of select="$path" />
+                <xsl:text>dao</xsl:text><xsl:value-of select="$number" />
+                <xsl:text>|</xsl:text>
+                <xsl:value-of select="$type" />
+            </xsl:attribute>
         </input>
     </xsl:template>
 
@@ -3516,36 +3553,48 @@
                 <tr>
                     <td class="label">Thumbnail URI: </td>
                     <td>
-  				<input size="60" type="text" onfocus="setCurrent(this);">
+                        <input size="60" type="text" onfocus="setCurrent(this);">
                             <xsl:attribute name="value">
-  						<xsl:value-of select="daoloc[@role='thumb']/@href" />
-  					</xsl:attribute>
+                                <xsl:value-of select="daoloc[@role='thumb']/@href" />
+                            </xsl:attribute>
                             <xsl:attribute name="name">
-						<xsl:text>daox</xsl:text><xsl:value-of select="$path" /><text>grp</text><xsl:value-of
-                                select="$number" /><xsl:text>|href1</xsl:text>
-					</xsl:attribute>
+                                <xsl:text>daox</xsl:text>
+                                <xsl:value-of select="$path" />
+                                <xsl:text>grp</xsl:text>
+                                <xsl:value-of select="$number" />
+                                <xsl:text>|href1</xsl:text>
+                            </xsl:attribute>
                             <xsl:attribute name="id">
-						<xsl:text>daox</xsl:text><xsl:value-of select="$path" /><text>grp</text><xsl:value-of
-                                select="$number" /><xsl:text>|href1</xsl:text>
-					</xsl:attribute>
+                                <xsl:text>daox</xsl:text>
+                                <xsl:value-of select="$path" />
+                                <xsl:text>grp</xsl:text>
+                                <xsl:value-of select="$number" />
+                                <xsl:text>|href1</xsl:text>
+                            </xsl:attribute>
                         </input>
                     </td>
                 </tr>
                 <tr>
                     <td class="label">File URI: </td>
                     <td>
-  				        <input size="60" type="text" onfocus="setCurrent(this);">
+                        <input size="60" type="text" onfocus="setCurrent(this);">
                             <xsl:attribute name="value">
-  						<xsl:value-of select="daoloc[@role='reference']/@href" />
-  					</xsl:attribute>
+                                <xsl:value-of select="daoloc[@role='reference']/@href" />
+                            </xsl:attribute>
                             <xsl:attribute name="name">
-						<xsl:text>daox</xsl:text><xsl:value-of select="$path" /><text>grp</text><xsl:value-of
-                                select="$number" /><xsl:text>|href2</xsl:text>
-					</xsl:attribute>
+                                <xsl:text>daox</xsl:text>
+                                <xsl:value-of select="$path" />
+                                <xsl:text>grp</xsl:text>
+                                <xsl:value-of select="$number" />
+                                <xsl:text>|href2</xsl:text>
+                            </xsl:attribute>
                             <xsl:attribute name="id">
-						<xsl:text>daox</xsl:text><xsl:value-of select="$path" /><text>grp</text><xsl:value-of
-                                select="$number" /><xsl:text>|href2</xsl:text>
-					</xsl:attribute>
+                                <xsl:text>daox</xsl:text>
+                                <xsl:value-of select="$path" />
+                                <xsl:text>grp</xsl:text>
+                                <xsl:value-of select="$number" />
+                                <xsl:text>|href2</xsl:text>
+                            </xsl:attribute>
                         </input>
                     </td>
                 </tr>
@@ -3557,23 +3606,28 @@
                             onchange="validateField(this, 'true');"
                             onblur="validateField(this, 'true');">
                             <xsl:attribute name="name">
-						<xsl:text>daox</xsl:text><xsl:value-of select="$path" /><text>grp</text><xsl:value-of
-                                select="$number" /><xsl:text>|desc</xsl:text>
-					</xsl:attribute>
+                                <xsl:text>daox</xsl:text>
+                                <xsl:value-of select="$path" />
+                                <xsl:text>grp</xsl:text>
+                                <xsl:value-of select="$number" /><xsl:text>|desc</xsl:text>
+                            </xsl:attribute>
                             <xsl:attribute name="id">
-						<xsl:text>daox</xsl:text><xsl:value-of select="$path" /><text>grp</text><xsl:value-of
-                                select="$number" /><xsl:text>|desc</xsl:text>
-					</xsl:attribute>
+                                <xsl:text>daox</xsl:text>
+                                <xsl:value-of select="$path" />
+                                <xsl:text>grp</xsl:text>
+                                <xsl:value-of select="$number" />
+                                <xsl:text>|desc</xsl:text>
+                            </xsl:attribute>
                             <xsl:attribute name="value">
-  						<xsl:choose>
-  							<xsl:when test="daodesc">
-  								<xsl:apply-templates select="daodesc" />
-  							</xsl:when>
-  							<xsl:otherwise>
-  								<xsl:text>&lt;p&gt;&lt;/p&gt;</xsl:text>
-  							</xsl:otherwise>
-  						</xsl:choose>
-  					</xsl:attribute>
+                                <xsl:choose>
+                                    <xsl:when test="daodesc">
+                                      <xsl:apply-templates select="daodesc" />
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:text>&lt;p&gt;&lt;/p&gt;</xsl:text>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:attribute>
                         </input>
                     </td>
                 </tr>
@@ -3581,23 +3635,32 @@
         </table>
         <input type="hidden" value="thumb">
             <xsl:attribute name="name">
-			<xsl:text>daox</xsl:text><xsl:value-of select="$path" /><text>grp</text><xsl:value-of
+                <xsl:text>daox</xsl:text><xsl:value-of select="$path" /><xsl:text>grp</xsl:text><xsl:value-of
                 select="$number" /><xsl:text>|thumb</xsl:text>
-		</xsl:attribute>
+            </xsl:attribute>
             <xsl:attribute name="id">
-			<xsl:text>daox</xsl:text><xsl:value-of select="$path" /><text>grp</text><xsl:value-of
-                select="$number" /><xsl:text>|thumb</xsl:text>
-		</xsl:attribute>
+                <xsl:text>daox</xsl:text>
+                <xsl:value-of select="$path" />
+                <xsl:text>grp</xsl:text>
+                <xsl:value-of select="$number" />
+                <xsl:text>|thumb</xsl:text>
+            </xsl:attribute>
         </input>
         <input type="hidden" value="reference">
             <xsl:attribute name="name">
-			<xsl:text>daox</xsl:text><xsl:value-of select="$path" /><text>grp</text><xsl:value-of
-                select="$number" /><xsl:text>|reference</xsl:text>
-		</xsl:attribute>
+                <xsl:text>daox</xsl:text>
+                <xsl:value-of select="$path" />
+                <xsl:text>grp</xsl:text>
+                <xsl:value-of select="$number" />
+                <xsl:text>|reference</xsl:text>
+            </xsl:attribute>
             <xsl:attribute name="id">
-			<xsl:text>daox</xsl:text><xsl:value-of select="$path" /><text>grp</text><xsl:value-of
-                select="$number" /><xsl:text>|reference</xsl:text>
-		</xsl:attribute>
+                <xsl:text>daox</xsl:text>
+                <xsl:value-of select="$path" />
+                <xsl:text>grp</xsl:text>
+                <xsl:value-of select="$number" />
+                <xsl:text>|reference</xsl:text>
+            </xsl:attribute>
         </input>
     </xsl:template>
 
@@ -3620,8 +3683,8 @@
                     </xsl:variable>
                     <tr>
                         <xsl:attribute name="class">
-  				<xsl:value-of select="$class" />
-  			</xsl:attribute>
+                            <xsl:value-of select="$class" />
+                        </xsl:attribute>
                         <td class="label">
                             <xsl:text>File </xsl:text>
                             <xsl:value-of select="position()" />
@@ -3631,25 +3694,31 @@
                             <input type="text" size="60"
                                 onfocus="setCurrent(this);">
                                 <xsl:attribute name="name">
-						<xsl:text>daox</xsl:text><xsl:value-of select="$path" /><text>grp</text><xsl:value-of
-                                    select="$number" /><xsl:text>|href</xsl:text><xsl:value-of
-                                    select="position()" />
-					</xsl:attribute>
+                                    <xsl:text>daox</xsl:text>
+                                    <xsl:value-of select="$path" />
+                                    <xsl:text>grp</xsl:text>
+                                    <xsl:value-of select="$number" />
+                                    <xsl:text>|href</xsl:text>
+                                    <xsl:value-of select="position()" />
+                                </xsl:attribute>
                                 <xsl:attribute name="id">
-						<xsl:text>daox</xsl:text><xsl:value-of select="$path" /><text>grp</text><xsl:value-of
-                                    select="$number" /><xsl:text>|href</xsl:text><xsl:value-of
-                                    select="position()" />
-					</xsl:attribute>
+                                    <xsl:text>daox</xsl:text>
+                                    <xsl:value-of select="$path" />
+                                    <xsl:text>grp</xsl:text>
+                                    <xsl:value-of select="$number" />
+                                    <xsl:text>|href</xsl:text>
+                                    <xsl:value-of select="position()" />
+                                </xsl:attribute>
                                 <xsl:attribute name="value">
-	  					<xsl:value-of select="@href" />
-	  				</xsl:attribute>
+                                    <xsl:value-of select="@href" />
+                                </xsl:attribute>
                             </input>
                         </td>
                     </tr>
                     <tr>
                         <xsl:attribute name="class">
-  				<xsl:value-of select="$class" />
-  			</xsl:attribute>
+                           <xsl:value-of select="$class" />
+                        </xsl:attribute>
                         <td class="label">
                             <xsl:text>File </xsl:text>
                             <xsl:value-of select="position()" />
@@ -3659,32 +3728,44 @@
                             <input type="text" size="60"
                                 onfocus="setCurrent(this);">
                                 <xsl:attribute name="name">
-						<xsl:text>daox</xsl:text><xsl:value-of select="$path" /><text>grp</text><xsl:value-of
-                                    select="$number" /><xsl:text>|title</xsl:text><xsl:value-of
-                                    select="position()" />
-					</xsl:attribute>
+                                    <xsl:text>daox</xsl:text>
+                                    <xsl:value-of select="$path" />
+                                    <xsl:text>grp</xsl:text>
+                                    <xsl:value-of select="$number" />
+                                    <xsl:text>|title</xsl:text>
+                                    <xsl:value-of select="position()" />
+                                </xsl:attribute>
                                 <xsl:attribute name="id">
-						<xsl:text>daox</xsl:text><xsl:value-of select="$path" /><text>grp</text><xsl:value-of
-                                    select="$number" /><xsl:text>|title</xsl:text><xsl:value-of
-                                    select="position()" />
-					</xsl:attribute>
+                                    <xsl:text>daox</xsl:text>
+                                    <xsl:value-of select="$path" />
+                                    <xsl:text>grp</xsl:text>
+                                    <xsl:value-of select="$number" />
+                                    <xsl:text>|title</xsl:text>
+                                    <xsl:value-of select="position()" />
+                                </xsl:attribute>
                                 <xsl:attribute name="value">
-	  					<xsl:value-of select="@title" />
-	  				</xsl:attribute>
+                                    <xsl:value-of select="@title" />
+                                </xsl:attribute>
                             </input>
                         </td>
                     </tr>
                     <input type="hidden" value="reference">
                         <xsl:attribute name="name">
-					<xsl:text>daox</xsl:text><xsl:value-of select="$path" /><text>grp</text><xsl:value-of
-                            select="$number" /><xsl:text>|role</xsl:text><xsl:value-of
-                            select="position()" />
-				</xsl:attribute>
+                            <xsl:text>daox</xsl:text>
+                            <xsl:value-of select="$path" />
+                            <xsl:text>grp</xsl:text>
+                            <xsl:value-of select="$number" />
+                            <xsl:text>|role</xsl:text>
+                            <xsl:value-of select="position()" />
+                        </xsl:attribute>
                         <xsl:attribute name="id">
-					<xsl:text>daox</xsl:text><xsl:value-of select="$path" /><text>grp</text><xsl:value-of
-                            select="$number" /><xsl:text>|role</xsl:text><xsl:value-of
-                            select="position()" />
-				</xsl:attribute>
+                            <xsl:text>daox</xsl:text>
+                            <xsl:value-of select="$path" />
+                            <xsl:text>grp</xsl:text>
+                            <xsl:value-of select="$number" />
+                            <xsl:text>|role</xsl:text>
+                            <xsl:value-of select="position()" />
+                        </xsl:attribute>
                     </input>
                 </xsl:for-each>
                 <tr>
@@ -3692,10 +3773,12 @@
                     <td>
                         <a class="smalllink">
                             <xsl:attribute name="onclick">
-  			<xsl:text>addFile('daoformx</xsl:text><xsl:value-of
-                                select="$path" /><xsl:text>grp</xsl:text><xsl:value-of
-                                select="$number" /><xsl:text>');</xsl:text>
-  		</xsl:attribute>
+                                <xsl:text>addFile('daoformx</xsl:text>
+                                <xsl:value-of select="$path" />
+                                <xsl:text>grp</xsl:text>
+                                <xsl:value-of select="$number" />
+                                <xsl:text>');</xsl:text>
+                            </xsl:attribute>
                             add another file
                         </a>
                     </td>
@@ -3708,31 +3791,35 @@
                             onchange="validateField(this, 'true');"
                             onblur="validateField(this, 'true');">
                             <xsl:attribute name="name">
-						<xsl:text>daox</xsl:text><xsl:value-of select="$path" /><text>grp</text><xsl:value-of
-                                select="$number" /><xsl:text>|desc</xsl:text>
-					</xsl:attribute>
+                                <xsl:text>daox</xsl:text>
+                                <xsl:value-of select="$path" />
+                                <xsl:text>grp</xsl:text>
+                                <xsl:value-of select="$number" />
+                                <xsl:text>|desc</xsl:text>
+                            </xsl:attribute>
                             <xsl:attribute name="id">
-						<xsl:text>daox</xsl:text><xsl:value-of select="$path" /><text>grp</text><xsl:value-of
-                                select="$number" /><xsl:text>|desc</xsl:text>
-					</xsl:attribute>
+                                <xsl:text>daox</xsl:text>
+                                <xsl:value-of select="$path" />
+                                <xsl:text>grp</xsl:text>
+                                <xsl:value-of select="$number" />
+                                <xsl:text>|desc</xsl:text>
+                            </xsl:attribute>
                             <xsl:attribute name="value">
-  					  	<xsl:choose>
-  							<xsl:when test="daodesc">
-  								<xsl:apply-templates select="daodesc" />
-  							</xsl:when>
-  							<xsl:otherwise>
-  								<xsl:text>&lt;p&gt;&lt;/p&gt;</xsl:text>
-  							</xsl:otherwise>
-  						</xsl:choose>
-  					</xsl:attribute>
+                                <xsl:choose>
+                                    <xsl:when test="daodesc">
+                                        <xsl:apply-templates select="daodesc" />
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:text>&lt;p&gt;&lt;/p&gt;</xsl:text>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:attribute>
                         </input>
                     </td>
                 </tr>
             </tbody>
         </table>
     </xsl:template>
-
-
 
 
     <xsl:template match="daodesc">
