@@ -232,7 +232,7 @@
     % else:
     ## Check for potential component-level record
     ${parentLink(session, rec)}
-    <a href="${SCRIPT}/summary.html?recid=${rec.id|u}&amp;rsid=${resultSet.id|u}&amp;hit=${index}&amp;startRecord=${startRecord}&amp;maximumRecords=${maximumRecords}${sortByString(sortBy)}#rightcol">
+    <a href="${SCRIPT}/summary.html?recid=${unicode(rec.id, 'utf-8')|u}&amp;rsid=${resultSet.id|u}&amp;hit=${index}&amp;startRecord=${startRecord}&amp;maximumRecords=${maximumRecords}${sortByString(sortBy)}#rightcol">
         <%
         title = dataFromRecordXPaths(session, rec, titleXPaths)
         %>
