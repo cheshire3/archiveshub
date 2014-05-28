@@ -8,7 +8,7 @@
     <select name="withinContributor" id="withinContributor" title="Specify which repositories to search">
         <option value="allcontributors" selected="selected">All Repositories</option>
         % for identifier, title in sorted(listContributors(session), key=itemgetter(1)):
-            <option value="${identifier}">${(title[:72] + '...') if len(title) > 75 else title}</option>
+            <option value="${identifier}">${(title[:72] + '&hellip;') if len(title) > 75 else title}</option>
         % endfor
     </select>
 </div>
