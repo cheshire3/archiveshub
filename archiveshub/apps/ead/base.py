@@ -173,7 +173,7 @@ class EADWsgiApplication(object):
         session = self.session
         db = self.database
         queryFactory = self.queryFactory
-        qString = 'rec.identifier exact "{0}"'.format(recid)
+        qString = u'rec.identifier exact "{0}"'.format(recid)
         q = queryFactory.get_query(session, qString)
         rs = db.search(session, q)
         try:
