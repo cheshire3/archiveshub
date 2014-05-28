@@ -1694,7 +1694,10 @@ class HubEditingHandler(object):
                         fieldval not in ['', ' ', '<p></p>'] and
                         re.sub('[\s]+', ' ', fieldval) != '<p> </p>'
                     ):
-                        target = self._create_path(node, field.name)
+                        try:
+                            target = self._create_path(node, field.name)
+                        except etree.XPathEvalError:
+                            continue
                         self._add_text(target, field.value)
                         try:
                             validList.remove(
