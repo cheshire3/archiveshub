@@ -1,0 +1,45 @@
+<%inherit file="searchResults.html"/>
+<%namespace file="hierarchy.html" import="hierarchyList"/>
+<%!
+    # Imports
+    from archiveshub.apps.ead.base import backwalkComponentTitles, dataFromRecordXPaths, emailFromArchonCode
+
+    # Over-ride global attributes
+    leftcol_class = "search"
+    rightcol_class = "brief"
+%>
+
+<%block name="title">
+    Display :: Brief
+</%block>
+
+<%block name="rightcol">
+    % try:
+        <%
+        parentId = rec.process_xpath(session,
+                                     '/c3component/@parent')[0]
+        titles = backwalkComponentTitles(session, rec)
+        %>
+        ## OK, must be a component record
+        ${hierarchyList(titles[:-1])}
+    % except IndexError:
+        ## Collection level
+    % endtry
+    <%
+    docstr = unicode(txr.process_record(session, rec).get_raw(session), 'utf-8')
+    ## Add in the enquiries email
+    archon_code = dataFromRecordXPaths(
+        session,
+        rec,
+        ['/*/*/did/unitid/@repositorycode',
+         '/ead/eadheader/eadid/@mainagencycode'
+         ]
+    )
+    email_address = emailFromArchonCode(archon_code)
+    try:
+        docstr = docstr.replace(u'contributor_{0}@example.com'.format(archon_code), email_address)
+    except TypeError:
+        pass
+    %>
+    ${docstr}
+</%block>

@@ -1,0 +1,82 @@
+% if maxPages > 1:
+    ${page_nav(recid, pagenum, maxPages)}
+% endif
+${page}
+% if maxPages > 1:
+    ${page_nav(recid, pagenum, maxPages)}
+% endif
+<script type="text/javascript">
+$(document).ready(function() {
+    $('select[name="page"]').change(function() {
+        $(this).closest("form").submit();
+    });
+});
+</script>
+
+<%def name="page_nav(recid, pagenum, maxPages)">
+    <div class="pagenav">
+        <div class="backlinks">
+        % if pagenum > 1:
+            ${back_links(recid, pagenum)}
+        % endif
+        </div>
+        <div class="forwardlinks">
+        % if pagenum < maxPages:
+            ${forward_links(recid, pagenum, maxPages)}
+        % endif
+        </div>
+        
+        ${num_nav(recid, pagenum, maxPages)}
+    </div>
+</%def>
+
+<%def name="num_nav(recid, pagenum, maxPages)">
+    <div class="pagenumnav">
+        <form action="${DATAURL}/${recid}.html">
+            Page:
+            <select name="page">
+            % for x in range(1, maxPages + 1):
+                % if x == pagenum:
+                    <option value="${x}" selected="selected">${x}</option>
+                % else:
+                    <option value="${x}">${x}</option>
+                % endif
+            % endfor
+            </select>
+            of
+            ${maxPages}
+            <input type="submit" name="submit" value="Go" class="submit"/>
+        </form>
+    </div>
+</%def>
+
+<%def name="back_links(recid, pagenum)">
+    <a href="${DATAURL}/${recid}.html?page=1" 
+        onclick="setCookie('archiveshub_${recid}_tocstate', stateToString('someId'))">
+        <button label="fast-rewind" class="pageNav">
+            <img src="${config.get('icons', 'fast-rewind-url')}" alt="|&lt;&lt;">
+        </button>
+    </a>
+    <a href="${DATAURL}/${recid}.html?page=${pagenum-1}" 
+        onclick="setCookie('archiveshub_${recid}_tocstate', stateToString('someId'))">
+        <button label="rewind" class="pageNav">
+            <img src="${config.get('icons', 'rewind-url')}" alt="&lt;&lt;">
+        </button>
+    </a>
+</%def>
+
+<%def name="forward_links(recid, pagenum, maxPages)">
+    <a href="${DATAURL}/${recid}.html?page=${pagenum + 1}"
+        onclick="setCookie('archiveshub_${recid}_tocstate', stateToString('someId'))">
+        <button label="forward" class="pageNav">
+            <img src="${config.get('icons', 'forward-url')}" alt="&gt;&gt;">
+        </button>
+    </a>
+    <a href="${DATAURL}/${recid}.html?page=${maxPages}"
+        onclick="setCookie('archiveshub_${recid}_tocstate', stateToString('someId'))">
+        <button label="fast-forward" class="pageNav">
+            <img src="${config.get('icons', 'fast-forward-url')}"
+            alt="&gt;&gt;|">
+        </button>
+    </a>
+</%def>

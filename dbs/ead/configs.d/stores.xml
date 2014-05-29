@@ -1,0 +1,130 @@
+<config xmlns="http://www.cheshire3.org/schemas/config/">
+
+    <!--
+    Configuration for data stores.
+
+    This file was produced, and released as part of Cheshire for Archives v3.x.
+    Copyright &#169; 2005-2013 the University of Liverpool 
+    -->
+
+    <subConfigs>
+
+        <subConfig type="documentStore" id="oldToNewIdMapStore">
+          <docs>
+            This is a special store that maps old-style persistent identifier
+            to new-style ones e.g. gb141wyndham-1-2 -> gb141-wyndham/1/2
+          </docs>
+          <objectType>cheshire3.documentStore.BdbDocumentStore</objectType>
+          <paths>
+            <path type="databasePath">oldToNewIdMap.bdb</path>
+          </paths>
+        </subConfig>
+
+        <subConfig type="objectStore" id="eadAuthStore">
+            <objectType>cheshire3.objectStore.BdbObjectStore</objectType>
+            <paths>
+                <path type="defaultPath">auth</path>
+                <path type="databasePath">eadAuthStore.bdb</path>
+                <object type="inTransformer" ref="XmlTransformer" />
+                <object type="outParser" ref="LxmlParser" />
+            </paths>
+        </subConfig>
+
+        <subConfig type="recordStore" id="recordStore">
+            <objectType>cheshire3.recordStore.BdbRecordStore</objectType>
+            <paths>
+                <path type="defaultPath">stores</path>
+                <path type="databasePath">recordStore.bdb</path>
+                <path type="metadataPath">recordStoreMetadata.bdb</path>
+                <object type="inTransformer" ref="XmlTransformer" />
+                <object type="outParser" ref="LxmlParser" />
+            </paths>
+            <options>
+                <setting type="digest">sha</setting>
+                <setting type="storeDeletions">1</setting>
+            </options>
+        </subConfig>
+
+        <subConfig type="recordStore" id="componentStore">
+            <objectType>cheshire3.recordStore.BdbRecordStore</objectType>
+            <paths>
+                <path type="defaultPath">stores</path>
+                <path type="databasePath">componentStore.bdb</path>
+                <path type="metadataPath">componentStoreMetadata.bdb</path>
+                <object type="inTransformer" ref="XmlTransformer" />
+                <object type="outParser" ref="LxmlParser" />
+            </paths>
+            <options>
+                <setting type="digest">sha</setting>
+                <setting type="storeDeletions">1</setting>
+            </options>
+        </subConfig>
+
+        <subConfig type="configStore" id="documentStoreConfigStore">
+            <docs>
+            A ConfigStore in which to store configurations for DocumentStores.
+            Additional DocumentStores will be added programmatically, one per
+            contributor. Documents will be loaded from these DocumentStores,
+            rather than by using a DocumentFactory.
+            </docs>
+            <objectType>cheshire3.objectStore.BdbObjectStore</objectType>
+            <paths>
+                <path type="defaultPath">stores</path>
+                <path type="databasePath">configStore.bdb</path>
+                <path type="metadataPath">configStoreMetadata.bdb</path>
+            </paths>
+            <options>
+                <setting type="digest">sha</setting>
+            </options>
+        </subConfig>
+
+        <subConfig type="recordStore" id="editingStore">
+            <objectType>cheshire3.sql.postgres.PostgresRecordStore</objectType>
+            <paths>
+                <path type="databaseName">db_ead</path>
+                <path type="tableName">editingStore</path>
+                <object type="inTransformer" ref="XmlTransformer" />
+                <object type="outParser" ref="LxmlParser" />
+            </paths>
+            <options>
+            </options>
+        </subConfig>
+
+        <subConfig type="recordStore" id="templateStore">
+            <objectType>cheshire3.sql.postgres.PostgresRecordStore</objectType>
+            <paths>
+                <path type="databaseName">db_ead</path>
+                <path type="tableName">templateStore</path>
+                <object type="inTransformer" ref="XmlTransformer" />
+                <object type="outParser" ref="LxmlParser" />
+            </paths>
+            <options>
+            </options>
+        </subConfig>
+
+        <!-- postgreSQL -->
+
+        <subConfig type="resultSetStore" id="eadResultSetStore">
+            <objectType>cheshire3.sql.postgres.PostgresResultSetStore</objectType>
+            <paths>
+                <path type="databaseName">db_ead</path>
+                <path type="tableName">eadResultSetStore</path>
+                <path type="recordStoreHash">recordStore componentStore</path>
+            </paths>
+            <options>
+                <default type="expires">3600</default>
+                <setting type="overwriteOkay">1</setting>
+            </options>
+        </subConfig>
+
+        <subConfig type="queryStore" id="eadQueryStore">
+            <objectType>cheshire3.sql.postgres.PostgresQueryStore</objectType>
+            <paths>
+                <path type="databaseName">db_ead</path>
+                <path type="tableName">eadQueryStore</path>
+            </paths>
+        </subConfig>
+
+    </subConfigs>
+
+</config>

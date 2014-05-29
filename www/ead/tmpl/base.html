@@ -1,0 +1,126 @@
+<%!
+    # Global attributes
+    body_class = ""
+    body_id = "home"
+    header_class = "cF"
+%>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title><%block name="title">Home</%block> - Archives Hub</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <!-- Digital Blah Blah CSS + JavaScript -->
+        <link rel="stylesheet" media="screen" type="text/css"
+            href="/styles/ah.base.css"></link>
+        <link rel="stylesheet" media="screen" type="text/css"
+            href="/styles/ah.search.css"></link>
+        <!--[if lte IE 6]><link href="/styles/ie6.css" rel="stylesheet" type="text/css" media="screen" /><![endif]-->
+        <!--[if IE 7]><link href="/styles/ie7.css" rel="stylesheet" type="text/css" media="screen" /><![endif]-->
+        <!-- tell curvyCorners to behave! -->
+        <script type="text/javascript">var curvyCornersVerbose = false;</script>
+        <script type="text/javascript" src="/scripts/js/ah.libs.js"></script>
+        <script type="text/javascript" src="/scripts/js/ah.text.js"></script>
+        <script type="text/javascript" src="/scripts/js/ah.base.js"></script>
+        <!-- printout CSS -->
+        <link rel="stylesheet" type="text/css" media="print"
+            href="/styles/print.css"></link>
+        <!-- Google Analytics code -->
+        <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-2834703-1']);
+        _gaq.push(['_trackPageview']);
+        (function() {
+          var ga = document.createElement('script');
+          ga.type = 'text/javascript';
+          ga.async = true;
+          ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+          var s = document.getElementsByTagName('script')[0];
+          s.parentNode.insertBefore(ga, s);
+        })();
+        </script>
+        <!-- favourite icon embedded data for efficiency - do not edit! -->
+    <link rel="favourite icon" href="data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAD///8R//////////////////////rz2//+/Pf/////////////////////////////////
+//////////////8D//////////////////////Tms//brgv/5sdX//////////////////jw1v/3
+79X////////////////////////////////////////////y4aX/264L/960HP////////////z4
+7f/w4K3/8OCt//389v//////////////////////////////////////+PDR/9uuC//brgv/+/bl
+///////27M7/8OCt//Plu//////////////////////////+/+fIWf/ivj3/7daF//ftyf/brw7/
+264L//XpvP/+/vz/8eKy//Dgrf/48dr///////////////////////789v/csBL/264L/9uuC//b
+rgv/264L/9uuC//v25L/+fPg//Dgrf/w4K3/9+7T//fu0f/168n/+PDZ////////////9+7M/+rR
+dP/fuCn/264L/9uuC//brgv/6s9u//Towv/w4K3/8OCt//Dgrf/w4K3/8OCt//Dgrv///v7/////
+//////////////////jw0P/t1oX/5cVR//ftyP/27M7/8OCt//HjtP/z5rz/9OnE//bszP/69OH/
+//////7+/v/ZzM3/yLO0/7ien/+oiIr/l3Bz/5l0dv/18fH/xOT9/7je/f/1+v//////////////
+//////////////+8o6T/XCAk/1wgJP9cICT/XCAk/1wgJP9cICT/vrW9/ySZ+P8hmPj/KJv4/2K2
++v+m1vz/6fX+////////////zLm7/18kKP9mLjL/dkRH/204O/9cICT/Yyot//Lx8/8lmvj/IZj4
+/yGY+P8hmPj/IZj4/yOZ+P+u2vz///////////////////////////97S07/XCAk/5l0dv//////
+SKr5/yGY+P9ftfr/arr6/yud+P8hmPj/mtD8///////////////////////e09P/XCAk/1wgJP/Y
+ysv//////268+v8hmPj/cb36///////4/P//2e3+//7/////////////////////////pYSG/1wg
+JP91QkX///////////+Uzvz/IZj4/0ur+f//////////////////////////////////////////
+/8Cpqv9iKS3/wqut////////////vOD9/yGY+P81ofn///////////////////////////////8E
+//////////////////////////////////////z9//+f0vz/wuP9////////////////////////
+//9RgAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAgAEAAA=="></link>
+        <!--Search App JavaScript -->
+        <script type="text/javascript" src="${BASE}/js/ah.search.js"></script>
+    </head>
+    <body id="${self.attr.body_id}" class="${self.attr.body_class}">
+        <div id="Container">
+        <div id="Accessibility">
+            <ul>
+                <li><a href="#Content" accesskey="0">Skip to page content</a></li>
+                <li><a href="#Navigation" accesskey="1">Skip to navigation</a></li>
+            </ul>
+        </div><!-- end accessibility -->
+        <div id="Header" class="${self.attr.header_class}">
+            <a href="/" class="r" id="Logo" title="Back to homepage">
+                Archives hub - at the centre of great research<span></span>
+            </a>
+            <div id="bannerextra">
+                <form name="minisearchform" class="minisearch" method="post" action="/search/search.html" onsubmit="setCookie('archiveshub_searchform', miniFormToString(this));">
+                <fieldset>
+                    <legend>Search</legend>
+                    <select name="fieldidx1">
+                        <option value="cql.anywhere||dc.description||dc.title" selected="selected">Keywords</option>
+                        <option value="dc.title">Titles</option>
+                        <option value="dc.creator">Creators</option>
+                        <option value="bath.name">Names</option>
+                        <option value="dc.subject">Subjects</option>
+                    </select>
+                    <input type="hidden" name="fieldrel1" value="all/relevant/proxinfo"/>
+                    <input name="fieldcont1" type="text" size="20"/>
+                    <input type="hidden" name="_charset_"/>
+                    <input type="hidden" name="numreq" value="20"/>
+                    <input type="hidden" name="firstrec" value="1"/>
+<!--                    <input type="hidden" name="noComponents" value="0"/>-->
+                    <input type="submit" name="submit" value="Go" class="submit"/>
+                </fieldset>
+                </form>
+            </div> <!-- /bannerextra -->
+            <!-- site navigation links -->
+            <%block name="navbar">
+            <ul id="Sitewide">
+                <li class="search">
+                    <a href="/search.html" title="Search page">
+                        Search</a>
+                </li>
+                <li class="explore">
+                    <a href="/explore.html" title="Explore: Browse Indexes, Find Subjects">
+                        Explore</a>
+                </li>
+                <li class="help">
+                    <a href="/searchhelp/" title="Search Help">
+                        Help</a>
+                </li>
+            </ul>
+            </%block>
+        </div> <!-- /Header -->
+            <!-- content here may be 1 or 2 column - div classes/ids determined by handler -->
+            ${next.body()}
+        </div><!-- /#Container -->
+        <script type="text/javascript">
+$(document).ready(function() {
+    AH.init();
+});
+        </script>
+    </body>
+</html>

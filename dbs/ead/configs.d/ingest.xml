@@ -1,0 +1,105 @@
+<config xmlns="http://www.cheshire3.org/schemas/config/">
+
+    <!--
+    Configuration for ingest phase - documentFactories, preParsers etc.
+
+    This file was produced, and released as part of Cheshire for Archives v3.x.
+    Copyright &#169; 2005-2013 the University of Liverpool 
+    -->
+
+    <subConfigs>
+
+        <subConfig type="documentFactory" id="baseDocumentFactory">
+            <objectType>cheshire3.documentFactory.SimpleDocumentFactory</objectType>
+            <options>
+                <default type="data">data</default>
+                <default type="format">dir</default>
+                <default type="tagName">ead</default>
+                <default type="cache">0</default>
+                <!-- default type="codec">latin1</default -->
+            </options>
+        </subConfig>
+
+        <subConfig type="documentFactory" id="componentDocumentFactory">
+            <objectType>cheshire3.documentFactory.ComponentDocumentFactory</objectType>
+            <source>
+                <!-- <xpath>*[regexp(name(), '^c([0-1][0-9])?$')]</xpath> -->
+                <xpath ref="componentXPath" />
+            </source>
+            <options>
+                <default type="cache">0</default>
+                <default type="format">component</default>
+                <default type="codec">utf-8</default>
+            </options>
+        </subConfig>
+
+        <subConfig type="extractor" id="StripSimpleExtracter">
+            <objectType>cheshire3.extractor.SimpleExtractor</objectType>
+            <options>
+                <setting type="stripWhitespace">1</setting>
+            </options>
+        </subConfig>
+
+        <!-- subject cluster extraction -->
+        <subConfig type="documentFactory" id="clusterDocumentFactory">
+            <objectType>cheshire3.documentFactory.ClusterExtractionDocumentFactory</objectType>
+            <paths>
+                <path type="tempPath">cluster/tempCluster.data</path>
+            </paths>
+            <options>
+                <default type="cache">0</default>
+                <default type="codec">utf-8</default>
+            </options>
+            <cluster>
+                <map type="key">
+                    <xpath>controlaccess/subject</xpath>
+                    <xpath>key</xpath>
+                    <process>
+                        <object type="extractor" ref="StripSimpleExtracter" />
+                        <object type="normalizer" ref="CaseNormalizer" />
+                    </process>
+                </map>
+                <map>
+                    <xpath>did/unittitle</xpath>
+                    <xpath>title</xpath>
+                    <process>
+                        <object type="extractor" ref="StripSimpleExtracter" />
+                        <object type="normalizer" ref="CaseNormalizer" />
+                    </process>
+                </map>
+                <map>
+                    <xpath>subject</xpath>
+                    <xpath>description</xpath>
+                    <process>
+                        <object type="extractor" ref="StripSimpleExtracter" />
+                        <object type="normalizer" ref="CaseNormalizer" />
+                    </process>
+                </map>
+            </cluster>
+        </subConfig>
+
+        <!-- pre-parsers -->
+        <subConfig type="preParser" id="emptyEmphTagStripPreParser">
+            <objectType>cheshire3.preParser.RegexpSmashPreParser</objectType>
+            <options>
+                <setting type="regexp">&lt;emph altrender="[a-z]"/&gt;</setting>
+            </options>
+        </subConfig>
+
+        <subConfig type="preParser" id="eadSgmlPreParser">
+            <objectType>archiveshub.preParser.EADSgmlPreParser</objectType>
+            <options>
+                <setting type="emptyElements"> lb arc ptr prtloc extptr extptrloc colspec </setting>
+            </options>
+        </subConfig>
+
+        <subConfig type="preParser" id="NormalisedDateXStripPreParser">
+            <objectType>cheshire3.preParser.RegexpSmashPreParser</objectType>
+            <options>
+                <setting type="regexp">(?&lt;=normal=")x+</setting>
+            </options>
+        </subConfig>
+
+    </subConfigs>
+
+</config>

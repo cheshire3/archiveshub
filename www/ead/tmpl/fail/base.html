@@ -1,0 +1,13 @@
+<%inherit file="../single.html"/>
+
+<%block name="title">
+    Error
+</%block>
+
+<p class="error">
+    <%block name="error">
+        ${next.body()}
+    </%block>
+</p>
+<%block name="extra"/>
+<%block name="retry"/>

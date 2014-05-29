@@ -1,0 +1,126 @@
+<explain id="172.20.252.2/services/ead/cluster" authoritative="true"
+  xmlns="http://explain.z3950.org/dtd/2.0/"
+  xmlns:c3="http://www.cheshire3.org/schemas/explain/">
+
+<!-- 
+    This file was produced, and released as part of Cheshire for Archives v3.x.
+    Copyright &#169; 2005-2009 the University of Liverpool
+ -->
+ 
+  <serverInfo protocol="srw/u" version="1.1" transport="http">
+    <host>172.20.252.2</host>
+    <port>80</port>
+    <database numRecs="1" lastUpdate="2005-03-10 15:00:00">api/sru/ead/cluster</database>
+  </serverInfo>
+
+  <databaseInfo>
+	<title lang="en" primary="true">EAD Finding Aid Subject Cluster Database</title>
+    <description lang="en" primary="true">
+	   A database containing subject cluster records derived from Encoded Archival Data (EAD) records
+    </description>
+  </databaseInfo>
+
+  <metaInfo>
+    <dateModified>2005-04-26 10:45:00</dateModified>
+  </metaInfo>
+
+  <indexInfo>
+    <set identifier="info:srw/cql-context-set/1/cql-v1.2" name="cql"/>
+    <set identifier="info:srw/cql-context-set/1/cql-v1.1" name="cql1-1"/>
+    <set identifier="info:srw/cql-context-set/1/dc-v1.1" name="dc"/>
+    <set identifier="info:srw/cql-context-set/2/rec-1.1" name="rec"/>
+
+    <index c3:index="ead-cluster-idx-id">
+        <title>Cluster ID Index</title>
+        <map>
+			<name set="rec">identifier</name>
+		</map>
+		<configInfo>
+			<supports type="relation">=</supports>
+			<supports type="relation">&lt;</supports>
+			<supports type="relation">&lt;=</supports>
+			<supports type="relation">any</supports>
+			<supports type="relation">all</supports>
+			<supports type="relation">exact</supports>
+		</configInfo>
+    </index>
+    
+    <index c3:index="ead-cluster-idx-all">
+      <title>Full-text Proximity Keywords</title>
+      <map>
+        <name set="cql">anywhere</name>
+        <name set="cql1-1">anywhere</name>
+      </map>
+      <configInfo>
+        <supports type="relation" c3:index="ead-cluster-idx-all">any</supports>
+        <supports type="relation" c3:index="ead-cluster-idx-all">all</supports>
+        <supports type="relationModifier" c3:index="ead-cluster-idx-all">stem</supports>
+      </configInfo>
+    </index>
+
+    <index c3:index="ead-cluster-idx-key">
+      <title>Key</title>
+      <map>
+        <name set="dc">key</name>
+      </map>
+      <configInfo>
+        <supports type="relation" c3:index="ead-cluster-idx-key">any</supports>
+        <supports type="relation" c3:index="ead-cluster-idx-key">all</supports>
+        <supports type="relationModifier" c3:index="ead-cluster-idx-key">stem</supports>
+      </configInfo>
+    </index>
+
+    <index c3:index="ead-cluster-idx-title">
+      <title>Title</title>
+      <map>
+        <name set="dc">title</name>
+      </map>
+      <configInfo>
+        <supports type="relation" c3:index="ead-cluster-idx-title">any</supports>
+        <supports type="relation" c3:index="ead-cluster-idx-title">all</supports>
+        <supports type="relationModifier" c3:index="ead-cluster-idx-title">stem</supports>
+      </configInfo>
+    </index>
+
+    <index c3:index="ead-cluster-idx-description">
+      <title>Description Proximity Keywords</title>
+      <map>
+        <name set="dc">description</name>
+      </map>
+      <configInfo>
+        <supports type="relation" c3:index="ead-cluster-idx-description">any</supports>
+        <supports type="relation" c3:index="ead-cluster-idx-description">all</supports>
+        <supports type="relationModifier" c3:index="ead-cluster-idx-description">stem</supports>
+      </configInfo>
+    </index>
+
+  </indexInfo>
+
+  <schemaInfo>
+    <schema identifier="http://www.cheshire3.org/schemas/cluster"
+	    sort="true" retrieve="true" name="cluster">
+      <title>Cheshire3 Cluster Schema</title>
+    </schema>
+  </schemaInfo>
+
+  <configInfo>
+    <default type="numberOfRecords">1</default>
+    <default type="contextSet">dc</default>
+    <default type="index">dc.title</default>
+    <default type="relation">all</default>
+    <default type="sortSchema">cluster</default>
+    <default type="retrieveSchema">cluster</default>
+    <default type="sortCaseSensitive">false</default>
+    <default type="sortAscending">true</default>
+    <default type="sortMissingValue">HighValue</default>
+    <setting type="maximumRecords">50</setting>
+    <supports type="proximity"/>
+    <supports type="resultSets"/>
+    <supports type="sort"/>
+    <supports type="relationModifier">relevant</supports>
+    <supports type="relationModifier">stem</supports>
+  </configInfo>
+
+</explain>
+
+

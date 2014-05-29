@@ -1,0 +1,30 @@
+<%inherit file="searchResults.html"/>
+<%!
+    # Over-ride global attributes
+    leftcol_class = "search"
+    rightcol_class = "email"
+%>
+
+<%block name="title">
+    Email
+</%block>
+
+<%block name="rightcol">
+<div id="email">
+    <h3>Send Email</h3>
+    <p>
+        This form allows you to send a text only version of the archive to
+        yourself via email. No graphics or other attachments are included,
+        although for long archives this may still involve a lot of text (and
+        consequently take a short while to process and send).
+    </p>
+    <p>
+        Please be sure to type in your email address correctly.
+    </p>
+    <form action="${SCRIPT}/email.html" name="email" class="email" method="post">
+        <input type="hidden" name="recid" value="${recid}"/>
+        Email Address: <input type="text" size="40" name="address"/>
+        <input type="submit" name="submit" value="send"/>
+    </form>
+</div>
+</%block>

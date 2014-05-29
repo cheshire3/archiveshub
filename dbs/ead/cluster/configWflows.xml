@@ -1,0 +1,61 @@
+<config>
+
+    <!--
+    Configuration for Subject Cluster Workflows.
+    
+    This file was produced, and released as part of Cheshire for Archives v3.x.
+    Copyright &#169; 2005-2013 the University of Liverpool
+    -->
+
+    <subConfigs>
+
+        <subConfig type="workflow" id="buildClusterWorkflow">
+            <objectType>cheshire3.workflow.CachingWorkflow</objectType>
+            <workflow>
+                <!-- input type: DocumentFactory -->
+                <log level="info">"Storing + Indexing Clusters"</log>
+                <object type="recordStore" function="begin_storing" />
+                <object type="database" function="begin_indexing" />
+                <for-each>
+                    <object type="workflow" ref="buildClusterSingleWorkflow" />
+                </for-each>
+                <object type="recordStore" function="commit_storing" />
+                <object type="database" function="commit_indexing" />
+                <object type="database" function="commit_metadata" />
+            </workflow>
+        </subConfig>
+
+
+        <subConfig type="workflow" id="buildClusterSingleWorkflow">
+            <objectType>cheshire3.workflow.CachingWorkflow</objectType>
+            <workflow>
+                <!-- input type: Document -->
+                <object type="preParser" ref="PrintableOnlyPreParser" />
+                <object type="preParser" ref="CharacterEntityPreParser" />
+                <object type="preParser" ref="AmpPreParser" />
+                <try>
+                    <object type="parser" ref="LxmlParser" />
+                </try>
+                <except>
+                    <log level="warning">"*** unparsable"</log>
+                    <return />
+                </except>
+                <!-- type: Record -->
+                <try>
+                    <object type="recordStore" ref="eadClusterStore"
+                        function="create_record" />
+                    <object type="database" function="add_record" />
+                    <object type="database" function="index_record" />
+                </try>
+                <except type="objectAlreadyExistsException">
+                    <log level="debug">"" + str(err)</log>
+                </except>
+                <except>
+                    <log level="error">"***" + str(err)</log>
+                </except>
+            </workflow>
+        </subConfig>
+
+    </subConfigs>
+
+</config>

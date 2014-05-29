@@ -1,0 +1,44 @@
+# Apache config file, created from teplate by install process
+www/conf.d/ead.conf
+
+# Cheshire3 BerkeleyDB based *Store files, metadata and indexes
+*Store.bdb
+*Store*.bdb
+*.data
+*.data_*
+
+# De-Templatified configurations
+dbs/ead/config.xml
+dbs/ead/cluster/config.xml
+www/ead/ead.ini
+
+# Python compiled/optimized files
+*.py[co]
+
+# Python packaging/distribution
+*.egg
+*.egg-info
+dist
+build
+eggs
+parts
+bin
+var
+sdist
+develop-eggs
+.installed.cfg
+
+# Eclipse
+*.pydevproject
+.project
+.metadata
+.settings
+
+# PyCharm
+.idea
+
+# PyZ3950 cruft
+PyZ3950_parsetab.*
+
+# O/S file buffers
+*~

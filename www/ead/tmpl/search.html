@@ -1,0 +1,28 @@
+<%inherit file="single.html"/>
+<%block name="title">
+Search
+</%block>
+<div class="grid-425-285 panel-search cF" id="PanelSearch">
+    <div id="search-panel" class="col-1">
+        <h1>${self.title()}</h1>
+        <%include file="searchForm.html"/>
+    </div><!-- /.col-1 -->
+    <div id="search-tip-panel" class="col-2 tip-panel">
+        <%include file="searchTips.html"/>
+    </div>
+</div>
+<div class="grid-425-285 panel-subject-finder cF">
+    <div  id="regionalsearch-panel" class="col-1">
+            <h1>Regional Search</h1>
+            <a href="/regionalsearch/"><img src="/images/content/regionalsearch-graphic.jpg" alt="Regional Search" /></a>
+            <a href="/regionalsearch/" style="margin-left:10px; margin-top:-15px; font-size:1.4em;">Search by region</a>        
+     </div>
+        <div id="regionalsearch-tip-panel" class="col-2 tip-panel">
+            <h2>About Regional Search</h2>
+             <p>Use this search to restrict your results to repositories within a geographical area.</p>
+             <p>
+                 For example: <br />
+                 <strong>industrial revolution</strong> as a search limited to archives held in the <strong>north-west</strong>.<br />          
+             </p>         
+    </div>        
+</div>

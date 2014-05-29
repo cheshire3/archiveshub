@@ -1,0 +1,59 @@
+<config xmlns="http://www.cheshire3.org/schemas/config/">
+
+    <!--
+    Configuration for Normalizers.
+
+    This file was produced, and released as part of Cheshire for Archives v3.x.
+    Copyright &#169; 2005-2013 the University of Liverpool 
+    -->
+
+    <subConfigs>
+
+        <subConfig type="normalizer" id="StoplistNormalizer">
+            <objectType>cheshire3.normalizer.StoplistNormalizer</objectType>
+            <paths>
+                <path type="stoplist">stopwords.txt</path>
+            </paths>
+        </subConfig>
+
+        <subConfig type="normalizer" id="LeadingZeroNormalizer">
+            <objectType>cheshire3.normalizer.RegexpNormalizer</objectType>
+            <options>
+                <setting type="regexp">^(0+)</setting>
+            </options>
+        </subConfig>
+
+        <subConfig type="normalizer" id="identifierZeroStripNormalizer">
+            <objectType>cheshire3.normalizer.RegexpNormalizer</objectType>
+            <options>
+                <setting type="regexp">^gb0+</setting>
+                <setting type="char">gb</setting>
+            </options>
+        </subConfig>
+
+        <!-- JSON based Normalizers -->
+
+        <subConfig type="normalizer" id="vbdidToArchonJSONNormalizer">
+            <objectType>archiveshub.normalizer.JSONListFileLookupNormalizer</objectType>
+            <paths>
+                <path type="json">~/mercurial/archiveshub/htdocs/api/contributors.json</path>
+            </paths>
+            <options>
+                <setting type="from">ids/spoke</setting>
+                <setting type="to">ids/archon</setting>
+            </options>
+        </subConfig>
+
+        <subConfig type="normalizer" id="archonToVdbNameJSONNormalizer">
+            <objectType>archiveshub.normalizer.JSONListFileLookupNormalizer</objectType>
+            <paths>
+                <path type="json">~/mercurial/archiveshub/htdocs/api/contributors.json</path>
+            </paths>
+            <options>
+                <setting type="from">ids/archon</setting>
+                <setting type="to">label</setting>
+            </options>
+        </subConfig>
+
+    </subConfigs>
+</config>

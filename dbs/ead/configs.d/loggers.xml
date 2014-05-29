@@ -1,0 +1,133 @@
+<config xmlns="http://www.cheshire3.org/schemas/config/">
+
+    <!--
+    Configuration for Loggers.
+
+    This file was produced, and released as part of Cheshire for Archives v3.x.
+    Copyright &#169; 2005-2013 the University of Liverpool
+    -->
+
+    <subConfigs>
+
+        <subConfig type="logger" id="systemLogger">
+            <objectType>cheshire3.logger.MultipleLogger</objectType>
+            <paths>
+                <path type="loggerList">stdoutLogger systemFileLogger</path>
+            </paths>
+        </subConfig>
+
+        <subConfig type="logger" id="loadLogger">
+            <objectType>cheshire3.logger.MultipleLogger</objectType>
+            <paths>
+                <path type="loggerList">systemLogger loadFileLogger</path>
+            </paths>
+        </subConfig>
+
+        <subConfig type="logger" id="indexLogger">
+            <objectType>cheshire3.logger.MultipleLogger</objectType>
+            <paths>
+                <path type="loggerList">systemLogger indexFileLogger</path>
+            </paths>
+        </subConfig>
+
+        <subConfig type="logger" id="searchLogger">
+            <objectType>cheshire3.logger.MultipleLogger</objectType>
+            <paths>
+                <path type="loggerList">systemLogger searchFileLogger</path>
+            </paths>
+        </subConfig>
+
+        <!-- File loggers -->
+
+        <subConfig type="logger" id="stdoutLogger">
+            <objectType>cheshire3.logger.SimpleLogger</objectType>
+            <paths>
+                <path type="filePath">stdout</path>
+            </paths>
+            <options>
+                <setting type="minLevel">10</setting>
+            </options>
+        </subConfig>
+
+        <subConfig type="logger" id="systemFileLogger">
+            <objectType>cheshire3.logger.DateTimeFileLogger</objectType>
+            <paths>
+                <path type="filePath">logs/system</path>
+            </paths>
+            <options>
+                <setting type="createSubDirs">1</setting>
+                <setting type="dateTimeLevel">day</setting>
+                <setting type="minLevel">20</setting>
+            </options>
+        </subConfig>
+
+        <subConfig type="logger" id="loadFileLogger">
+            <objectType>cheshire3.logger.DateTimeFileLogger</objectType>
+            <paths>
+                <path type="filePath">logs/load</path>
+            </paths>
+            <options>
+                <setting type="createSubDirs">1</setting>
+                <setting type="dateTimeLevel">day</setting>
+                <setting type="minLevel">20</setting>
+            </options>
+        </subConfig>
+
+        <subConfig type="logger" id="indexFileLogger">
+            <objectType>cheshire3.logger.DateTimeFileLogger</objectType>
+            <paths>
+                <path type="filePath">logs/index</path>
+            </paths>
+            <options>
+                <setting type="createSubDirs">1</setting>
+                <setting type="dateTimeLevel">day</setting>
+                <setting type="minLevel">20</setting>
+            </options>
+        </subConfig>
+
+        <subConfig type="logger" id="zeroResultFileLogger">
+            <objectType>cheshire3.logger.DateTimeFileLogger</objectType>
+            <paths>
+                <path type="filePath">logs/zeroResult</path>
+            </paths>
+        </subConfig>
+
+        <subConfig type="logger" id="searchFileLogger">
+            <objectType>cheshire3.logger.DateTimeFileLogger</objectType>
+            <paths>
+                <path type="filePath">logs/search</path>
+            </paths>
+            <options>
+                <setting type="createSubDirs">1</setting>
+                <setting type="dateTimeLevel">day</setting>
+                <setting type="minLevel">20</setting>
+            </options>
+        </subConfig>
+
+        <subConfig type="logger" id="searchTransactionLogger">
+            <objectType>cheshire3.web.logger.TransactionLogger</objectType>
+            <paths>
+                <path type="filePath">../../www/ead/logs/search.log</path>
+            </paths>
+            <options>
+                <setting type="separatorString">:: </setting>
+                <setting type="minLevel">0</setting>
+                <default type="level">20</default>
+            </options>
+        </subConfig>
+
+        <subConfig type="logger" id="recordTransactionLogger">
+            <objectType>cheshire3.web.logger.TransactionLogger</objectType>
+            <paths>
+                <path type="filePath">../../www/ead/logs/record.log</path>
+            </paths>
+            <options>
+                <setting type="separatorString">:: </setting>
+                <setting type="minLevel">0</setting>
+                <default type="level">20</default>
+            </options>
+        </subConfig>
+
+    </subConfigs>
+
+</config>

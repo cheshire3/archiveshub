@@ -1,0 +1,27 @@
+<%inherit file="dual.html"/>
+<%!
+    # Imports
+    from cheshire3.utils import flattenTexts
+
+    # Over-ride global attributes
+    leftcol_class = "toc"
+    rightcol_class = "ead"
+%>
+
+<%block name="title">
+    Detailed Description    
+</%block>
+
+<%block name="leftcol">
+    ${toc}
+    <script type="text/javascript">
+    $(document).ready(function() {
+        // Process Table of Contents
+        createTreeFromList('someId', getCookie('archiveshub_${recid}_tocstate'), true, true);
+    });
+    </script>
+</%block>
+
+<%block name="rightcol">
+	${page}
+</%block>

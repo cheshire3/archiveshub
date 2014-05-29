@@ -1,0 +1,15 @@
+<%def name="hierarchyList(titles)">
+    % if titles:
+        <div class="indent">
+            <img src="${config.get('icons', 'folder-open-url')}" alt="|/`/">
+            <%identifier, title = titles.pop(0)%>
+            
+            % if identifier:
+                <a href="${DATAURL}/${unicode(identifier, 'utf-8')}">${title|h}</a>
+            % else:
+                ${title}
+            % endif
+            ${hierarchyList(titles)}
+        </div>
+    % endif
+</%def>

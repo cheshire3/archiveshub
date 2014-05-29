@@ -1,0 +1,32 @@
+<div class="panel-form">
+    <form name="browseform" id="browseform" action="${SCRIPT}/browse.html" method="post">
+        <fieldset class="paleblue">
+            <input type="hidden" name="_charset_"/>
+            <input type="hidden" name="operation" value="browse"/>
+            <input type="hidden" name="numreq" value="25"/>
+            <div class="row cF">
+                <div class="input select cF">
+                    <select id="fieldidx1" name="fieldidx1">
+                        <option value="dc.title" selected="selected">Titles</option>
+                        <option value="dc.creator">Creators</option>
+                        <option value="dc.subject">Subjects</option>
+                        <option value="c3.idx-dateYear">Years</option>
+                        <option value="bath.name">Names</option>
+                        <option value="bath.personalName">&nbsp;&nbsp;People</option>
+                        <option value="ead.familyName">&nbsp;&nbsp;Families</option>
+                        <option value="ead.persnameEpithet">&nbsp;&nbsp;Occupations/Roles</option>
+                        <option value="bath.corporateName">&nbsp;&nbsp;Organizations</option>
+                        <option value="bath.geographicName">Places</option>
+                        <option value="dc.identifier">Ref. Numbers</option>
+                        <!--<option value="dc.date">Date</option>-->
+                    </select>
+                </div>
+                <input type="hidden" name="fieldrel1" value="exact"/>
+                <div class="input text cF">
+                    <input id="fieldcont1" name="fieldcont1" type="text" size="40"></input>
+                </div>
+                <input type="submit" value=" Go "/>
+            </div> <!-- /.row -->
+        </fieldset>
+    </form>
+</div>

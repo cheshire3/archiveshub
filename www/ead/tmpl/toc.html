@@ -1,0 +1,14 @@
+<%inherit file="single.html"/>
+
+<%block name="title">
+    Table of Contents
+</%block>
+
+${toc}
+
+<script type="text/javascript">
+$(document).ready(function() {
+    // Process Table of Contents
+    createTreeFromList('someId', getCookie('archiveshub_${recid}_tocstate'), true, true);
+});
+</script>

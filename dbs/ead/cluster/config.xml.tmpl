@@ -1,0 +1,98 @@
+<config type="database" id="db_ead_cluster">
+
+    <!--
+    Configuration for Subject Cluster Database.
+    
+    This file was produced, and released as part of Cheshire for Archives v3.x.
+    Copyright &#169; 2005-2013 the University of Liverpool 
+    -->
+    
+    <objectType>cheshire3.database.SimpleDatabase</objectType>
+
+    <options>
+        <setting type="srw">1</setting>
+        <setting type="z3950">1</setting>
+    </options>
+
+    <paths>
+        <path type="defaultPath">~/archiveshub/dbs/ead/cluster</path>
+        <path type="metadataPath">stores/metadata.bdb</path>
+        <path type="indexStoreList">eadClusterIndexStore</path>
+        <object type="recordStore" ref="eadClusterStore"/>
+        <object type="protocolMap" ref="eadClusterCQLProtocolMap"/>
+    </paths>
+
+  <subConfigs>
+    
+    <!-- protocol maps -->
+    <subConfig type="protocolMap" id="eadClusterCQLProtocolMap">
+      <objectType>cheshire3.protocolMap.CQLProtocolMap</objectType>
+      <paths>
+        <path type="zeerexPath">zeerex_srw.xml</path>
+      </paths>
+    </subConfig>
+    
+    <subConfig type="protocolMap" id="eadClusterZProtocolMap">
+      <objectType>cheshire3.web.protocolMap.Z3950ProtocolMap</objectType>
+      <paths>
+        <path type="zeerexPath">zeerex_z3950.xml</path>
+      </paths>
+    </subConfig>
+
+    <!-- recordStores -->
+    <subConfig type="recordStore" id="eadClusterStore">
+        <objectType>cheshire3.recordStore.BdbRecordStore</objectType>
+        <paths>
+            <path type="defaultPath">stores</path>
+            <path type="databasePath">clusterStore.bdb</path>
+            <object type="idNormalizer" ref="StringIntNormalizer"/>
+            <object type="inTransformer" ref="XmlTransformer" />
+            <object type="outParser" ref="LxmlParser" />
+        </paths>
+        <options>
+            <setting type="digest">sha</setting>
+        </options>
+    </subConfig>
+
+    <!-- indexes -->
+    <subConfig type="indexStore" id="eadClusterIndexStore">
+      <objectType>cheshire3.indexStore.BdbIndexStore</objectType>
+      <paths>
+         <path type="defaultPath">indexes</path>
+         <path type="tempPath">temp</path>
+        <path type="recordStoreHash">eadClusterStore</path>
+      </paths> 
+    </subConfig>
+    
+    <subConfig type="transformer" id="tpgrsTxr">
+		<objectType>cheshire3.web.transformer.GrsMapTransformer</objectType>
+		<transform>
+			<map>
+				<xpath>#RAWRELEVANCE#</xpath>
+				<xpath>10</xpath>
+			</map>
+			<map>
+				<xpath>#DOCID#</xpath>
+				<xpath>5</xpath>
+			</map>
+			<map>
+				<xpath>/cluster/key/text()</xpath>
+				<xpath>1</xpath>
+			</map>
+			<map>
+				<xpath>/cluster/subjects/text()</xpath>
+				<xpath>7</xpath>
+			</map>	
+		</transform>
+	</subConfig>
+
+    <!-- indexes -->
+    <path type="includeConfigs">configIdxs.xml</path>
+
+    <!-- workflows - override default workflows -->
+    <path type="includeConfigs">configWflows.xml</path>
+
+  </subConfigs>
+
+</config>
+

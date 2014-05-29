@@ -1,0 +1,90 @@
+<config xmlns="http://www.cheshire3.org/schemas/config/">
+
+    <!--
+    Configuration for XPaths.
+
+    This file was produced, and released as part of Cheshire for Archives v3.x.
+    Copyright &#169; 2005-2013 the University of Liverpool 
+    -->
+
+    <subConfigs>
+
+        <subConfig type="selector" id="parentIdentifierSelector">
+            <objectType>archiveshub.selector.ParentIdentifierSelector</objectType>
+        </subConfig>
+
+        <subConfig type="selector" id="identifierSelector">
+            <objectType>cheshire3.selector.MetadataSelector</objectType>
+            <source>
+                <xpath>id</xpath>
+            </source>
+        </subConfig>
+
+        <subConfig type="selector" id="documentStoreSelector">
+            <objectType>cheshire3.selector.MetadataSelector</objectType>
+            <source>
+                <xpath>documentStore</xpath>
+            </source>
+        </subConfig>
+
+        <subConfig type="selector" id="nowTimeSelector">
+            <objectType>cheshire3.selector.MetadataSelector</objectType>
+            <source>
+                <xpath>now</xpath>
+            </source>
+        </subConfig>
+
+        <subConfig type="selector" id="titleSelector">
+            <objectType>cheshire3.selector.XPathSelector</objectType>
+            <source>
+                <xpath>/*/*/did/unittitle</xpath>
+            </source>
+        </subConfig>
+
+        <subConfig type="selector" id="descriptionXPath">
+            <objectType>cheshire3.selector.XPathSelector</objectType>
+            <source>
+                <xpath>/ead//did/unittitle</xpath>
+                <xpath>/ead//did/origination</xpath>
+                <xpath>/ead//scopecontent</xpath>
+                <xpath>/ead//controlaccess</xpath>
+                <!-- For components, do not descend to subsequent levels -->
+                <xpath>/c3component/*/did/unittitle</xpath>
+                <xpath>/c3component/*/did/origination</xpath>
+                <xpath>/c3component/*/scopecontent</xpath>
+                <xpath>/c3component/*/controlaccess</xpath>
+            </source>
+        </subConfig>
+
+        <subConfig type="selector" id="anywhereXPath">
+            <objectType>cheshire3.selector.XPathSelector</objectType>
+            <source>
+                <xpath>/ead/eadheader/*</xpath>
+                <xpath>/ead/archdesc/*</xpath>
+                <!-- For components, do not descend to subsequent levels -->
+                <xpath>/c3component/*/*[not(self::c|self::c02|self::c03|self::c04|self::c05|self::c06|self::c07|self::c08|self::c09|self::c10|self::c11|self::c12)]</xpath>
+            </source>
+        </subConfig>
+
+        <subConfig type="selector" id="componentXPath">
+            <objectType>cheshire3.selector.XPathSelector</objectType>
+            <source>
+                <xpath>c</xpath>
+                <xpath>c01</xpath>
+                <xpath>c02</xpath>
+                <xpath>c03</xpath>
+                <xpath>c04</xpath>
+                <xpath>c05</xpath>
+                <xpath>c06</xpath>
+                <xpath>c07</xpath>
+                <xpath>c08</xpath>
+                <xpath>c09</xpath>
+                <xpath>c10</xpath>
+                <xpath>c11</xpath>
+                <xpath>c12</xpath>
+            </source>
+        </subConfig>
+
+    </subConfigs>
+
+</config>

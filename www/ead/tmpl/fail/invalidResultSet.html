@@ -1,0 +1,18 @@
+<%inherit file="base.html"/>
+
+<%block name="title">
+    Error :: Invalid Result Set
+</%block>
+
+<%block name="error">
+    Invalid resultSet.
+</%block>
+
+<%block name="extra">
+    <p>ResultSet "${rsid}" does not exist, or has expired.</p>
+</%block>
+
+<%block name="retry">
+    <hr>
+    <%include file="../searchForm.html"/>
+</%block>

@@ -1,0 +1,258 @@
+<config xmlns="http://www.cheshire3.org/schemas/config/">
+
+    <!--
+    Configuration for Workflows.
+
+    This file was produced, and released as part of Cheshire for Archives v3.x.
+    Copyright &#169; 2005-2013 the University of Liverpool 
+    -->
+
+    <subConfigs>
+
+        <!--
+        RecordStore in/out Workflows
+        -->
+
+        <subConfig type="workflow" id="XmlToLZ4Workflow">
+            <docs>Workflow to take a Record and compress the XML data with the lz4
+                algorithm</docs>
+            <objectType>cheshire3.workflow.CachingWorkflow</objectType>
+            <workflow>
+                <object ref="XmlTransformer" type="transformer" />
+                <object ref="LZ4CompressPreParser" type="preParser" />
+            </workflow>
+        </subConfig>
+
+        <subConfig type="workflow" id="LZ4ToLxmlWorkflow">
+            <docs>Workflow to take a Document containing data compressed with the
+                lz4 algorithm, decompress and parse into an LxmlRecord</docs>
+            <objectType>cheshire3.workflow.CachingWorkflow</objectType>
+            <workflow>
+                <object ref="LZ4DecompressPreParser" type="preParser" />
+                <object ref="LxmlParser" type="parser" />
+            </workflow>
+        </subConfig>
+
+        <!--
+        Ingest related Workflows
+        -->
+
+        <subConfig type="workflow" id="preParserWorkflow">
+            <objectType>cheshire3.workflow.CachingWorkflow</objectType>
+            <workflow>
+                <!-- input type: Document -->
+                <object type="preParser" ref="CharacterEntityPreParser" />
+                <object type="preParser" ref="eadSgmlPreParser" />
+                <object type="preParser" ref="emptyEmphTagStripPreParser" />
+                <object type="preParser" ref="AmpPreParser" />
+                <try>
+                    <!--
+                    attempt to strip XML namespaces.
+                    XML parse errors should fail silently here so that they
+                    are reported correctly later on.
+                    -->
+                    <object type="parser" ref="LxmlParser"/>
+                </try>
+                <except>
+                    <return/>
+                </except>
+                <else>
+                    <object type="transformer" ref="stripNamespacesTxr"/>
+                </else>
+            </workflow>
+        </subConfig>
+
+        <subConfig type="workflow" id="assignDataIdentifierWorkflow">
+            <objectType>cheshire3.workflow.CachingWorkflow</objectType>
+            <workflow>
+                <!-- input type: Record -->
+                <!-- first put record aside so we can re-assign it later -->
+                <assign from="input" to="myRecord" />
+                <object type="transformer" ref="persistentIdTxr" />
+                <!-- input type: Document -->
+                <object type="input" function="get_raw" />
+                <!-- input type: string -->
+                <object type="workflow" ref="normalizeDataIdentifierWorkflow" />
+                <!-- Cause an IndexError to be raised if identifier is an empty string -->
+                <assign from="input[0] + input[1:]" to="myRecord.id" />
+                <assign from="myRecord" to="input" />
+            </workflow>
+        </subConfig>
+
+        <subConfig type="workflow" id="normalizeDataIdentifierWorkflow">
+            <objectType>cheshire3.workflow.CachingWorkflow</objectType>
+            <workflow>
+                <!-- input type: string -->
+                <object type="normalizer" ref="DiacriticNormalizer" function="process_string" />
+                <object type="normalizer" ref="CaseNormalizer" function="process_string" />
+                <object type="normalizer" ref="SpaceNormalizer" function="process_string" />
+                <object type="normalizer" ref="identifierZeroStripNormalizer" function="process_string" />
+                <assign
+                    from="input.replace(' ', '').replace('\\', '-').replace('\'', '')"
+                    to="input" />
+            </workflow>
+        </subConfig>
+
+        <subConfig type="workflow" id="loadSingleWorkflow">
+            <objectType>cheshire3.workflow.CachingWorkflow</objectType>
+            <workflow>
+                <!-- input type: Document -->
+                <assign from="input.filename" to="filename"/>
+                <assign from="input.documentStore" to="documentStore"/>
+                <object type="workflow" ref="preParserWorkflow" />
+                <try>
+                    <object type="parser" ref="LxmlParser" />
+                </try>
+                <except>
+                    <assign from="filename + ' unparsable: ' + str(err)" to="error" />
+                    <log level="warning">"" + error</log>
+                    <return />
+                </except>
+                <!-- type: Record -->
+                <assign from="documentStore" to="input.documentStore"/>
+                <try>
+                    <object type="workflow" ref="assignDataIdentifierWorkflow" />
+                </try>
+                <except>
+                    <log level="error">"Unable to assign persistent identifier: " + filename</log>
+                    <return/>
+                </except>
+                <!-- Proceed with storing -->
+                <try>
+                    <object type="recordStore" ref="recordStore" function="store_record"/>
+                </try>
+                <except type="ObjectAlreadyExistsException">
+                    <!-- Record already stored and has not changed.
+                         Log INFO rather than WARNING or ERROR -->
+                    <log level="info">"Record not stored, no changes: " + input.id + " ("+ filename + ")"</log>
+                </except>
+                <except>
+                    <log level="error">"Record not stored: " + str(err) + " (" + filename + ")"</log>
+                </except>
+                <else>
+                    <!-- Update identifier and modification date index -->
+                    <object type="index" ref="idx-recid" function="index_record"/>
+                    <object type="index" ref="idx-documentStore" function="index_record"/>
+                    <object type="index" ref="idx-modificationDate" function="index_record"/>
+                    <log level="info">"" + input.id + " (" + filename + ")"</log>
+                </else>
+            </workflow>
+        </subConfig>
+
+        <subConfig type="workflow" id="loadAllComponentsWorkflow">
+            <objectType>cheshire3.workflow.CachingWorkflow</objectType>
+            <workflow>
+                <!-- input type: DocumentStore / DocumentFactory -->
+                <object type="database" function="begin_indexing"/>
+                <object type="recordStore" ref="componentStore" function="begin_storing" />
+                <for-each>
+                    <object type="workflow" ref="loadComponentsWorkflow" />
+                </for-each>
+                <object type="recordStore" ref="componentStore" function="commit_storing" />
+                <object type="database" function="commit_indexing"/>
+            </workflow>
+        </subConfig>
+
+        <subConfig type="workflow" id="loadComponentsWorkflow">
+            <objectType>cheshire3.workflow.CachingWorkflow</objectType>
+            <workflow>
+                <!-- input type: Document -->
+                <object type="workflow" ref="preParserWorkflow" />
+                <try>
+                    <object type="parser" ref="LxmlParser" />
+                </try>
+                <except>
+                    <assign from="'unparsable: ' + str(err)" to="error" />
+                    <log level="warning">"" + error</log>
+                    <return />
+                </except>
+                <!-- input type: Record -->
+                <try>
+                    <object type="workflow" ref="assignDataIdentifierWorkflow" />
+                </try>
+                <except>
+                    <log level="error">"Unable to determine persistent identifier"</log>
+                    <return/>
+                </except>
+                <!-- input is now identical to the Record stored in the RecordStore -->
+                <!-- put in recordStore for navigation from component to parent -->
+                <assign from="'recordStore'" to="input.recordStore"/>
+                <assign from="input.id" to="recid" />
+                <log level="info">"Loading components from record " + recid</log>
+                <object type="documentFactory" ref="componentDocumentFactory"
+                    function="load" />
+                <!-- input type: DocumentFactory -->
+                <assign to="VAR_ctr" from="0" />
+                <for-each>
+                    <!-- input type: Document -->
+                    <object type="workflow" ref="preParserWorkflow" />
+                    <try>
+                        <object type="parser" ref="LxmlParser" />
+                    </try>
+                    <except>
+                        <log level="warning">"Unparsable Components"</log>
+                        <log level="debug">"" + str(err)</log>
+                        <continue />
+                    </except>
+                    <!-- input type: Record -->
+                    <try>
+                        <object type="workflow" ref="assignDataIdentifierWorkflow" />
+                    </try>
+                    <except>
+                        <assign from="recid + '-' + str(VAR_ctr)" to="input.id" />
+                    </except>
+                    <assign from="VAR_ctr + 1" to="VAR_ctr" />
+                    <try>
+                        <object type="recordStore" ref="componentStore" function="store_record" />
+                    </try>
+                    <except type="ObjectAlreadyExistsException">
+                        <!-- Record already stored and has not changed.
+                         Log INFO rather than WARNING or ERROR -->
+                        <log level="info">"Component not stored, no changes: " + input.id</log>
+                    </except>
+                    <except>
+                        <log level="error">"Component unstorable"</log>
+                        <log level="error">"\n" + ''.join(traceback.format_exception(sys.exc_type,sys.exc_value,sys.exc_traceback))</log>
+                        <log level="error">"" + input.get_xml(session)</log>
+                        <continue />
+                    </except>
+                    <else>
+                        <!-- Update identifier and modification date index -->
+                        <object type="index" ref="idx-recid" function="index_record"/>
+                        <object type="index" ref="idx-modificationDate" function="index_record"/>
+                    </else>
+                </for-each>
+            </workflow>
+        </subConfig>
+
+        <subConfig type="workflow" id="CollectionFromComponentWorkflow">
+            <objectType>archiveshub.workflow.CollectionFromComponentWorkflow</objectType>
+        </subConfig>
+
+        <!--
+        Output/display related Workflows
+        -->
+
+        <subConfig type="workflow" id="highlightSruFilterWorkflow">
+            <objectType>cheshire3.workflow.CachingWorkflow</objectType>
+            <workflow>
+                <!-- input type: Record -->
+                <object type="transformer" ref="highlightTxr" />
+                <object type="parser" ref="LxmlParser" />
+                <object type="transformer" ref="sruOutgoingHubTxr" />
+            </workflow>
+        </subConfig>
+
+        <subConfig type="workflow" id="highlightSummaryTxrWorkflow">
+            <objectType>cheshire3.workflow.CachingWorkflow</objectType>
+            <workflow>
+                <!-- input type: Record -->
+                <object type="transformer" ref="highlightTxr" />
+                <object type="parser" ref="LxmlParser" />
+                <object type="transformer" ref="htmlSummaryTxr" />
+            </workflow>
+        </subConfig>
+
+    </subConfigs>
+
+</config>

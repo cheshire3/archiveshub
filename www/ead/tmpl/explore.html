@@ -1,0 +1,28 @@
+<%inherit file="single.html"/>
+<%block name="title">
+Explore Archives
+</%block>
+<h1>${self.title()}</h1>
+<div class="grid-425-285 panel-browse cF" id="PanelBrowse">
+    <div id="browse-panel" class="col-1">
+        <h2>Browse</h2>
+        <%include file="browseForm.html"/>
+        <div id="browse-preview"></div>
+    </div> <!-- end browseform div -->
+    <div id="browse-tip-panel" class="col-2 tip-panel">        
+        <%include file="browseTips.html"/>
+    </div>
+</div>
+<div class="grid-425-285 panel-subject-finder cF">
+    <div id="subject-panel" class="col-1">
+        <h2>Subject Finder</h2>
+        <%include file="subjectForm.html"/>
+    </div> <!-- /#subject-finder-panel -->
+    <div id="subject-tip-panel" class="col-2 tip-panel">        
+        <%include file="subjectTips.html"/>
+    </div>
+</div>
+<script type="text/javascript">
+liveSearch('fieldidx1', 'browse-preview', 'CHANGE');
+liveSearch('fieldcont1', 'browse-preview');
+</script>
