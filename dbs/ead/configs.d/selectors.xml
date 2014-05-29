@@ -9,10 +9,21 @@
 
     <subConfigs>
 
+        <subConfig type="selector" id="parentIdentifierSelector">
+            <objectType>archiveshub.selector.ParentIdentifierSelector</objectType>
+        </subConfig>
+
         <subConfig type="selector" id="identifierSelector">
             <objectType>cheshire3.selector.MetadataSelector</objectType>
             <source>
                 <xpath>id</xpath>
+            </source>
+        </subConfig>
+
+        <subConfig type="selector" id="documentStoreSelector">
+            <objectType>cheshire3.selector.MetadataSelector</objectType>
+            <source>
+                <xpath>documentStore</xpath>
             </source>
         </subConfig>
 
@@ -22,7 +33,7 @@
                 <xpath>now</xpath>
             </source>
         </subConfig>
-        
+
         <subConfig type="selector" id="titleSelector">
             <objectType>cheshire3.selector.XPathSelector</objectType>
             <source>

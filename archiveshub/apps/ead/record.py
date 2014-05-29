@@ -27,13 +27,13 @@ from lxml import html as lxmlhtml
 
 from cheshire3.exceptions import (
     FileDoesNotExistException,
+    ObjectDeletedException,
     ObjectDoesNotExistException
 )
 
 # Cheshire3 for Archives Imports
 from archiveshub.deploy.utils import WSGIAppArgumentParser
 from archiveshub.apps.ead.base import EADWsgiApplication
-from archiveshub.apps.ead.base import listCollections
 from archiveshub.apps.ead.base import dataFromRecordXPaths, emailFromArchonCode
 from archiveshub.apps.ead.base import backwalkComponentTitles
 from archiveshub.apps.ead.base import config, session, db
@@ -93,36 +93,44 @@ class EADRecordWsgiApplication(EADWsgiApplication):
             # Fetch the Record
             try:
                 rec = self._fetch_record(session, recid)
+            except ObjectDeletedException as e:
+                # Record has been deleted!
+                # 410 Gone status indicates that clients should purge the
+                # resource. Probably not necessary, so return 404 status...
+                self.response.status = 404
+                # ...but a different user message
+                self.response.body = self._render_template(
+                    'fail/410.html',
+                    resource=recid
+                )
             except (IndexError, FileDoesNotExistException) as e:
                 # IndexError can occur due to a 'feature' (bug) in Cheshire3
                 # which assumes that all search terms will be a string of 1 or
                 # more characters
-                if not recid or recid == 'index':
-                    self.response.app_iter = self.index(mimetype, form)
+                # Attempt to redirect
+                try:
+                    mapDoc = self.identifierMap.fetch_document(session,
+                                                               recid
+                                                               )
+                except (
+                    FileDoesNotExistException,
+                    ObjectDoesNotExistException
+                ):
+                    # Record specified but could not be found - 404!
+                    self.response.status = 404
+                    self.response.body = self._render_template(
+                        'fail/404.html',
+                        resource=recid
+                    )
                 else:
-                    # Attempt to redirect
-                    try:
-                        mapDoc = self.identifierMap.fetch_document(session,
-                                                                   recid
-                                                                   )
-                    except (FileDoesNotExistException,
-                            ObjectDoesNotExistException
-                    ):
-                        # Record specified but could not be found - 404!
-                        self.response.status = 404
-                        self.response.body = self._render_template(
-                            'fail/404.html',
-                            resource=recid
-                        )
-                    else:
-                        # Permanent Redirect
-                        url = self.request.relative_url(
-                            mapDoc.get_raw(session)
-                        )
-                        self.response.location = url
-                        self.response.status = "301 Moved Permanently"
-                        self.response.body = ('<a href="{0}">{0}</a>'
-                                              ''.format(url))
+                    # Permanent Redirect
+                    url = self.request.relative_url(
+                        mapDoc.get_raw(session)
+                    )
+                    self.response.location = url
+                    self.response.status = "301 Moved Permanently"
+                    self.response.body = ('<a href="{0}">{0}</a>'
+                                          ''.format(url))
 
             else:
                 self._log(10, 'Retrieved record "{0}"'.format(recid))
@@ -161,6 +169,15 @@ class EADRecordWsgiApplication(EADWsgiApplication):
         buffer_.close()
         return data
 
+    def _get_cacheFilePath(self, identifier, page_number=1):
+        return os.path.join(
+            self.config.get('cache', 'html_cache_path'),
+            '{0}.{1}.html'.format(
+                urllib.quote(identifier, ""),
+                page_number
+            )
+        )
+
     def _outputPage(self, recid, page_number, page, anchorPageHash={}):
         # Make some global replacements
         page = page.replace(u'RECID', unicode(recid))
@@ -184,10 +201,7 @@ class EADRecordWsgiApplication(EADWsgiApplication):
                                        recid)
                             )
         # Get path of file
-        path = os.path.join(self.config.get('cache', 'html_cache_path'),
-                            '{0}.{1}.html'.format(recid.replace('/', '-'),
-                                                  page_number)
-                            )
+        path = self._get_cacheFilePath(recid, page_number)
         with open(path, 'wb') as fh:
             fh.write(page.encode('utf-8'))
         return page
@@ -339,14 +353,10 @@ class EADRecordWsgiApplication(EADWsgiApplication):
         self._log(10, 'Full-text requested for {0}: {1}'
                   ''.format(['record', 'component'][int(isComponent)], recid)
                   )
-        path = os.path.join(self.config.get('cache', 'html_cache_path'),
-                            '{0}.1.html'.format(recid.replace('/', '_'))
-                            )
+        # Check for first page
+        path = self._get_cacheFilePath(recid, 1)
         if os.path.exists(path):
-            path = os.path.join(
-                self.config.get('cache', 'html_cache_path'),
-                '{0}.{1}.html'.format(recid.replace('/', '_'), pagenum)
-            )
+            path = self._get_cacheFilePath(recid, pagenum)
             try:
                 page = unicode(open(path, 'rb').read(), 'utf-8')
             except IOError:
@@ -357,10 +367,7 @@ class EADRecordWsgiApplication(EADWsgiApplication):
                                              pagenum=pagenum)
             self._log(10, 'Retrieved {0} from cache'.format(path))
             # Retrieve toc
-            tocpath = os.path.join(
-                self.config.get('cache', 'html_cache_path'),
-                '{0}.toc.html'.format(recid.replace('/', '_'))
-            )
+            tocpath = self._get_cacheFilePath(recid, 'toc')
             try:
                 toc = unicode(open(tocpath, 'rb').read(), 'utf-8')
             except IOError:
@@ -380,10 +387,14 @@ class EADRecordWsgiApplication(EADWsgiApplication):
                  ]
             )
             email_address = emailFromArchonCode(archon_code)
-            doc_uc = doc_uc.replace(
-                u'contributor_{0}@example.com'.format(archon_code),
-                email_address
-            )
+            try:
+                doc_uc = doc_uc.replace(
+                    u'contributor_{0}@example.com'.format(archon_code),
+                    email_address
+                )
+            except TypeError:
+                # No email address :(
+                pass
             # Parse HTML fragments
             divs = lxmlhtml.fragments_fromstring(doc_uc)
             # Get Table of Contents
@@ -509,34 +520,12 @@ class EADRecordWsgiApplication(EADWsgiApplication):
                                          page=page,
                                          )
 
-    def index(self, mimetype, form):
-        # Scan the rec.identifier index
-        # Return a display appropriate for the requested mimetype
-        collections = listCollections(self.session)
-        if str(mimetype).endswith('/xml'):
-            raise NotImplementedError()
-        elif str(mimetype) == 'text/plain':
-            raise NotImplementedError()
-        else:
-            return self._render_template('dataIndex.html',
-                                         collections=collections
-                                         )
-
     def text(self, rec, form):
-        # Track in Google Analytics
-        self._GA()
         txt = self._textFromRecord(rec)
-        # Wrap long lines
-        return u'\n'.join([textwrap.fill(rawline, 78)
-                           for rawline
-                           in txt.split(u'\n')
-                           ]).encode('utf-8')
+        return txt.encode('utf-8')
 
     def toc(self, rec, form):
-        path = os.path.join(
-            self.config.get('cache', 'html_cache_path'),
-            '{0}.toc.html'.format(rec.id.replace('/', '_'))
-        )
+        path = self._get_cacheFilePath(rec.id, 'toc')
         try:
             doc_uc = unicode(open(path, 'rb').read(), 'utf-8')
         except IOError:
@@ -548,8 +537,6 @@ class EADRecordWsgiApplication(EADWsgiApplication):
                                      )
 
     def xml(self, rec, form):
-        # Track in Google Analytics
-        self._GA()
         # Fix mimetype modules incorrect text/xml
         self.response.content_type = 'application/xml'
         session = self.session

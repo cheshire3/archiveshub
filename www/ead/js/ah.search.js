@@ -107,7 +107,7 @@ function createTreeFromList(listId, treeState, collapseList, controlLevels) {
     */
     if( !document.getElementsByTagName || !document.childNodes || !document.createElement ) {
         return;
-    }   
+    }
     var rootListObj = document.getElementById( listId ); 
     if( !rootListObj ) { 
         return; 
@@ -129,7 +129,7 @@ function createSubLists(listObj, level, rootListId, treeState, collapseList, con
         controlLevels -> bool - control Levels so that only one folder at each level can be open at any time
         listTag - str - tag used for root list 'ul' or 'ol' 
     */
- 
+
     var temp = listObj.childNodes;
     var listItems = []
     var j = 0;
@@ -137,7 +137,7 @@ function createSubLists(listObj, level, rootListId, treeState, collapseList, con
         if (temp[i].tagName == 'LI'){
             listItems[j] = temp[i];
             j++;
-        }   
+        }
     }
     tocLevels = treeState.split(':');
     if( !level ) { 
@@ -182,16 +182,16 @@ function createSubLists(listObj, level, rootListId, treeState, collapseList, con
                 }
 
                 newLink.appendChild(imgElem);
-                
+
                 listItems[i].insertBefore(newLink, listItems[i].childNodes[0]);
                 for (var j =0; j< listItems[i].childNodes.length; j++){
                     if (listItems[i].childNodes[j].tagName == 'UL'){
                         listItems[i].insertBefore(countElem, listItems[i].childNodes[j]);
                     }
-                }           
+                }
                 nextSubList.colListId = listCount++;
                 createSubLists( nextSubList, level + 1, rootListId, treeState, collapseList, controlLevels, listTag);
-            }       
+            }
             else {
 
                 var imgElem = document.createElement('img');
@@ -203,8 +203,8 @@ function createSubLists(listObj, level, rootListId, treeState, collapseList, con
                 imgElem.setAttribute( 'alt', '-');
                 listItems[i].insertBefore(imgElem, listItems[i].childNodes[0]);
             }
-        } 
-    } 
+        }
+    }
 }
 
 
@@ -216,7 +216,7 @@ function switchState( thisObj, level, rootListId, controlLevels, listTag ) {
         collapseChildren -> bool - keep sub-lists collapsed?
         listTag - str - tag used for root list 'ul' or 'ol' 
     */
-    
+
     if( thisObj.blur ) { 
         thisObj.blur(); 
     }
@@ -234,18 +234,18 @@ function switchState( thisObj, level, rootListId, controlLevels, listTag ) {
                     thisObj.style.display = 'block';
                 }
             }
-        }   
+        }
     }
     else {
         var imgElem = linkElem.getElementsByTagName( 'img' )[0];
         if (imgElem) {
             if (imgElem.getAttribute('src') == expandedUrl) {
                 imgElem.setAttribute( 'src', collapsedUrl);
-                
-            } 
+
+            }
             else {
                 imgElem.setAttribute( 'src', expandedUrl);
-                 
+
             }
         }
         for( var x = expandedLists[rootListId].length - 1; x >= level; x-=1 ) { 
@@ -278,7 +278,7 @@ function switchState( thisObj, level, rootListId, controlLevels, listTag ) {
 function refreshTree(listId){
     if( !document.getElementsByTagName || !document.childNodes || !document.createElement ) {
         return;
-    }   
+    }
     var rootListObj = document.getElementById( listId );
 
     if( !rootListObj ) { 
@@ -289,7 +289,7 @@ function refreshTree(listId){
 
 
 function refreshSubTrees(listObj, level, rootListId, listTag){
-    
+
     var temp = listObj.childNodes;
     var listItems = [];
     var j = 0;
@@ -332,19 +332,19 @@ function refreshSubTrees(listObj, level, rootListId, listTag){
 
                     imgElem.setAttribute( 'src', expandedUrl );
                     imgElem.setAttribute( 'alt', '[-]');
-    
+
                     newLink.appendChild(imgElem);
-                    
+
                     listItems[i].insertBefore(newLink, listItems[i].childNodes[0]);
                     for (var j =0; j< listItems[i].childNodes.length; j++){
                         if (listItems[i].childNodes[j].tagName == 'UL'){
                             listItems[i].insertBefore(countElem, listItems[i].childNodes[j]);
                         }
-                    }                               
+                    }
                 }
                 nextSubList.colListId = listCount++;
                 refreshSubTrees(nextSubList, level+1, rootListId, listObj.tagName.toLowerCase())
-            }       
+            }
             else {
                 //remove the straight images
                 if (listItems[i].childNodes[0].tagName == 'IMG'){
@@ -390,9 +390,9 @@ function stateToString(listId) {
         return '';
     }
 
-    var stateStr = ''
+    var stateStr = '';
     for (var level = 0; level < expandedLists[listId].length; level++) {
-        var listObj = expandedLists[listId][level]
+        var listObj = expandedLists[listId][level];
         if (listObj) {
             stateStr += listObj.colListId + ':';
         }
@@ -419,7 +419,7 @@ function truncateList(index, list) {
     if ($(list).children('li').length > 5) { 
         $(list).children('li:gt(2)').hide();
         // Add links to un-truncate
-        
+
         $(list).append('<li class="unmarked"><a href="javascript:void(0);" title="Show all ' + $(list).children('li').length + '">' + ($(list).children('li').length - 3) + ' more...</a></li>')
         // Add action for un-truncate
         $(list).children('li:last').children('a').click(
@@ -445,20 +445,32 @@ function truncateList(index, list) {
 //  functions to assist cookie management
 */
 
-function setCookie(name, val) {
+function unsetCookie(name) {
+    if (!name) {return false;}
+    // nullify any existing cookie crumb with this name
+    var cookieList = document.cookie.split(';');
+    for (var x = 0; x < cookieList.length; x++) {
+        var cookie = cookieList[x]
+        while(cookie.charAt(0) == ' '){cookie = cookie.substr(1, cookie.length)}
+        cookie = cookie.split('=');
+        if( cookie[0] == escape(name) || cookie[0] == name) {
+            cookieList[x] = null;
+        }
+    }
+    document.cookie = cookieList.join(';');
+}
+
+function setCookie(name, val, path) {
   if (!name) {return false;}
   // nullify any existing cookie crumb with this name
-  var cookieList = document.cookie.split(';');
-  for (var x = 0; x < cookieList.length; x++) {
-    var cookie = cookieList[x]
-    while(cookie.charAt(0) == ' '){cookie = cookie.substr(1, cookie.length)}
-    cookie = cookie.split('=');
-    if( cookie[0] == escape(name) || cookie[0] == name) {
-    	cookieList[x] = null;
-    }
+  unsetCookie(name);
+  if (!val) {return false;}
+  if (path==='undefined'){
+      var path = '/search/';
   }
   // add specified crumb to cookie
-  document.cookie = new Array(escape(name) + "=" + escape(val), 'path=/ead/').concat(cookieList).join(';');
+  var cookieList = document.cookie.split(';');
+  document.cookie = new Array(escape(name) + "=" + escape(val), 'path=' + path).concat(cookieList).join(';');
 }
 
 function getCookie(name) {
@@ -958,7 +970,7 @@ var indexList = new Array(
                         'cql.anywhere||dc.description||dc.title|||Keywords', 
                         'dc.title|||Titles', 
                         'dc.creator|||Creators', 
-                        'dc.date|||Dates', 
+                        //'dc.date|||Dates',
                         'dc.identifier|||Ref. Number', 
                         'dc.subject|||Subjects', 
                         'bath.name|||Names', 

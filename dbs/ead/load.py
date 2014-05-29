@@ -1,8 +1,6 @@
 #!/bin/env python
 # -*- coding: utf-8 -*-
-#
 # Script:    load.py
-# Date:      14 May 2013
 # Copyright: &copy; University of Liverpool 2005-present
 # Author(s): JH - John Harrison <john.harrison@liv.ac.uk>
 # Language:  Python
@@ -17,7 +15,7 @@ positional arguments:
 optional arguments:
   -h, --help            show this help message and exit
   -s PATH, --server-config PATH
-                        path to Cheshire3 server configuration file. default: 
+                        path to Cheshire3 server configuration file. default:
                         /home/cheshire/cheshire3/cheshire3/configs/serverConfi
                         g.xml
   -d DATABASE, --database DATABASE
@@ -41,8 +39,10 @@ import time
 
 from lockfile import FileLock, LockTimeout
 
+from cheshire3.baseObjects import Record
 from cheshire3.exceptions import ObjectDoesNotExistException
 
+from archiveshub.apps.ead.base import cleverTitleCase
 from archiveshub.deploy.utils import BaseArgumentParser, getCheshire3Env
 
 
@@ -103,13 +103,14 @@ def _get_storeIterator(args):
                 storeIterator.append(store.fetch_object(session, storeId))
             except ObjectDoesNotExistException:
                 # Contributor with this id does not exist
-                session.logger.log_error(session,
-                              "Contributor with identifier {0} does not seem to "
-                              "exist. It's possible that the default identifier "
-                              "for the directory was over-ridden with the --id "
-                              "option - you'll need to specify the identifier "
-                              "instead of the directory name".format(contributorId)
-                              )
+                session.logger.log_error(
+                    session,
+                    "Contributor with identifier {0} does not seem to "
+                    "exist. It's possible that the default identifier "
+                    "for the directory was over-ridden with the --id "
+                    "option - you'll need to specify the identifier "
+                    "instead of the directory name".format(contributorId)
+                )
     else:
         storeIterator = store
     return storeIterator
@@ -126,20 +127,59 @@ def load(args):
     start = time.time()
     storeIterator = _get_storeIterator(args)
     # Now iterate over the selected stores
+    wf = db.get_object(session, 'loadSingleWorkflow')
+    recordStore = db.get_object(session, 'recordStore')
+    title_idx = db.get_object(session, 'idx-title')
     for contributorStore in storeIterator:
         contributorId = contributorStore.id[:-len('DocumentStore')]
-        wf = db.get_object(session, 'loadWorkflow')
-        wf.process(session, contributorStore)
+        db.begin_indexing(session)
+        recordStore.begin_storing(session)
+        collections = []
+        for doc in contributorStore:
+            rec = wf.process(session, doc)
+            if not isinstance(rec, Record) or not rec.id:
+                # Record not successfully stored - do not list
+                continue
+            title = title_idx.extract_data(session, rec) or '(untitled)'
+            collections.append(
+                (unicode(rec.id, 'utf-8'), cleverTitleCase(title))
+            )
+        recordStore.commit_storing(session)
+        db.commit_indexing(session)
         session.logger.log_info(session,
-                     "Documents for {0} have been loaded"
+                     "Description documents for {0} loaded"
                      "".format(contributorId)
         )
+        # Store a list of collections
+        fp = os.path.join(
+            os.path.expanduser('~/mercurial'),
+            'archiveshub',
+            'htdocs',
+            'permalinks',
+            '{0}.html'.format(contributorId)
+        )
+        lines = []
+        for c in collections:
+            try:
+                lines.append(u'<li><a href="/data/{0}">{1}</a></li>'
+                             ''.format(*c).encode('utf-8')
+                             )
+            except UnicodeDecodeError:
+                # We'll have to omit this from the list
+                pass
+        with open(fp, 'w') as fh:
+            fh.write('<ul>\n')
+            fh.writelines(lines)
+        session.logger.log_info(session,
+                                "Collections listed in {0}".format(fp)
+                                )
     (mins, secs) = divmod(time.time() - start, 60)
     (hours, mins) = divmod(mins, 60)
-    session.logger.log_info(session,
-                 ('Loading complete ({0:.0f}h {1:.0f}m {2:.0f}s)'
-                  ''.format(hours, mins, secs))
-                 )
+    session.logger.log_info(
+        session,
+        ('Description loading complete ({0:.0f}h {1:.0f}m {2:.0f}s)'
+         ''.format(hours, mins, secs))
+         )
     return 0
 
 
@@ -159,13 +199,13 @@ def load_components(args):
         wf = db.get_object(session, 'loadAllComponentsWorkflow')
         wf.process(session, contributorStore)
         session.logger.log_info(session,
-                     "Documents for {0} have been loaded"
+                     "Components for {0} loaded"
                      "".format(contributorId)
         )
     (mins, secs) = divmod(time.time() - start, 60)
     (hours, mins) = divmod(mins, 60)
     session.logger.log_info(session,
-                 'Components loaded ({0:.0f}h {1:.0f}m {2:.0f}s)'
+                 'Component loading completed ({0:.0f}h {1:.0f}m {2:.0f}s)'
                  ''.format(hours, mins, secs)
                  )
     return 0

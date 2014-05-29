@@ -23,7 +23,7 @@
 
     <xsl:output method="xml" encoding="utf-8"
         omit-xml-declaration="no"
-        doctype-public="-//Society of American Archivists//DTD ead.dtd (Encoded Archival Description (EAD) Version 1.0)//EN" />
+        />
 
     <xsl:template match="/">
         <xsl:apply-templates />

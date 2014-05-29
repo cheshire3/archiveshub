@@ -3,6 +3,8 @@
 import os
 import socket
 
+from pkg_resources import get_distribution
+
 from cheshire3.baseObjects import Session
 from cheshire3.exceptions import ObjectDoesNotExistException
 from cheshire3.server import SimpleServer
@@ -15,7 +17,10 @@ class BaseArgumentParser(Cheshire3ArgumentParser):
 
     def __init__(self, *args, **kwargs):
         Cheshire3ArgumentParser.__init__(self, *args, **kwargs)
-
+        self.add_argument('--version',
+                          action='version',
+                          version=get_distribution('archiveshub').version
+                          )
 
 class WSGIAppArgumentParser(BaseArgumentParser):
 

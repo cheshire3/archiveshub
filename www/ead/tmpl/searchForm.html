@@ -1,5 +1,5 @@
 <form name="searchform" method="post" action="${SCRIPT}/search.html"
-        onsubmit="setCookie('eadsearchform', formToString());" id="hubsearchform">
+        onsubmit="setCookie('archiveshub_searchform', formToString());" id="hubsearchform">
     <fieldset class="paleblue">
 
      <input type="hidden" name="_charset_"/>
@@ -114,6 +114,6 @@
 <script>
 $(document).ready(function() {
     // re-construct form from cookie as appropriate
-    formFromString(getCookie('eadsearchform'));
+    formFromString(getCookie('archiveshub_searchform'));
 });
 </script>

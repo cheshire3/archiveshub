@@ -265,7 +265,7 @@
                 <object type="indexStore" ref="indexStore" />
             </paths>
             <source mode="data">
-                <xpath>/*/*/did/unitid[not(@label='Former Reference')]/@repositorycode</xpath>
+                <xpath>/*/*/did/unitid[not(starts-with(@label, 'Former')) and not(starts-with(@label, 'former'))]/@repositorycode</xpath>
                 <process>
                     <object type="extractor" ref="SimpleExtractor" />
                     <object type="normalizer" ref="SpaceNormalizer"/>
@@ -293,7 +293,7 @@
                 <object type="indexStore" ref="indexStore" />
             </paths>
             <source mode="data">
-                <xpath>/*/*/did/unitid[not(@label='Former Reference')]/@repositorycode</xpath>
+                <xpath>/*/*/did/unitid[not(starts-with(@label, 'Former')) and not(starts-with(@label, 'former'))]/@repositorycode</xpath>
                 <process>
                     <object type="extractor" ref="SimpleExtractor" />
                     <object type="normalizer" ref="SpaceNormalizer"/>
@@ -314,6 +314,26 @@
             </options>
         </subConfig>
 
+        <!-- contributor DocumentStore -->
+        <subConfig type="index" id="idx-documentStore">
+            <objectType>cheshire3.index.SimpleIndex</objectType>
+            <paths>
+                <object type="indexStore" ref="indexStore" />
+            </paths>
+            <source>
+                <xpath ref="documentStoreSelector" />
+                <process>
+                    <object type="extractor" ref="SimpleExtractor" />
+                </process>
+            </source>
+            <options>
+                <!-- don't index or unindex in db.[un]index_record() -->
+                <setting type="noIndexDefault">1</setting>
+                <setting type="noUnindexDefault">1</setting>
+                <setting type="longSize">4</setting>
+            </options>
+        </subConfig>
+
         <!-- parentid index -->
         <subConfig type="index" id="idx-collectionid">
             <objectType>cheshire3.index.SimpleIndex</objectType>
@@ -321,29 +341,7 @@
                 <object type="indexStore" ref="indexStore" />
             </paths>
             <source>
-                <!-- Load the parent record into memory -->
-                <preprocess ref="CollectionFromComponentWorkflow"/>
-                <xpath ref="identifierSelector" />
-                <process>
-                    <object type="extractor" ref="SimpleExtractor" />
-                </process>
-            </source>
-            <options>
-                <setting type="vectors">1</setting>
-                <setting type="longSize">4</setting>
-            </options>
-        </subConfig>
-        
-        <!-- parent titles -->
-        <subConfig type="index" id="idx-collectiontitle">
-            <objectType>cheshire3.index.SimpleIndex</objectType>
-            <paths>
-                <object type="indexStore" ref="indexStore" />
-            </paths>
-            <source>
-                <!-- Load the parent record into memory -->
-                <preprocess ref="CollectionFromComponentWorkflow" />
-                <selector ref="titleSelector" />
+                <xpath ref="parentIdentifierSelector" />
                 <process>
                     <object type="extractor" ref="SimpleExtractor" />
                 </process>
@@ -530,7 +528,7 @@
                 <object type="indexStore" ref="indexStore" />
             </paths>
             <source mode="data|exact|&lt;|&gt;|within|encloses">
-                <xpath>/*/*/did/unitdate/@normal</xpath>
+                <xpath>/*/*/did//unitdate/@normal</xpath>
                 <process>
                     <object type="extractor" ref="SimpleExtractor" />
                     <object type="tokenizer" ref="DateTokenizer" />
@@ -538,7 +536,7 @@
                 </process>
             </source>
             <source mode="data">
-                <xpath>/*/*/did/unitdate</xpath>
+                <xpath>/*/*/did//unitdate</xpath>
                 <process>
                     <object type="extractor" ref="SimpleExtractor" />
                     <object type="tokenizer" ref="FuzzyDateTokenizer" />
@@ -559,7 +557,7 @@
                 <object type="indexStore" ref="indexStore" />
             </paths>
             <source mode="data|exact|&lt;|&gt;|within|encloses">
-                <xpath>/*/*/did/unitdate/@normal</xpath>
+                <xpath>/*/*/did//unitdate/@normal</xpath>
                 <process>
                     <object type="extractor" ref="SimpleExtractor" />
                     <object type="tokenizer" ref="DateTokenizer" />
@@ -568,7 +566,7 @@
                 </process>
             </source>
             <source mode="data">
-                <xpath>/*/*/did/unitdate</xpath>
+                <xpath>/*/*/did//unitdate</xpath>
                 <process>
                     <object type="extractor" ref="SimpleExtractor" />
                     <object type="tokenizer" ref="FuzzyDateTokenizer" />
@@ -589,7 +587,7 @@
                 <object type="indexStore" ref="indexStore" />
             </paths>
             <source mode="data|exact|&lt;|&gt;|within|encloses">
-                <xpath>/*/*/did/unitdate/@normal</xpath>
+                <xpath>/*/*/did//unitdate/@normal</xpath>
                 <process>
                     <object type="extractor" ref="SimpleExtractor" />
                     <object type="tokenizer" ref="DateRangeTokenizer" />
@@ -597,10 +595,13 @@
                 </process>
             </source>
             <source mode="data">
-                <!-- ideally would be: <xpath>/*/*/did/unitdate[not (@normal)]</xpath> 
-                    however some normalized dates violate ISO 8601 and would cause false negatives. 
-                    IMO false positives are less bad than false negatives. -->
-                <xpath>/*/*/did/unitdate</xpath>
+                <!-- ideally would be: /*/*/did//unitdate[not (@normal)]
+                    however some normalized dates violate ISO 8601 and would
+                    cause false negatives. IMO false positives are less bad
+                    than false negatives, that is to say we sacrifice precision
+                    for increased recall
+                -->
+                <xpath>/*/*/did//unitdate</xpath>
                 <process>
                     <object type="extractor" ref="SimpleExtractor" />
                     <object type="tokenizer" ref="FuzzyDateRangeTokenizer" />

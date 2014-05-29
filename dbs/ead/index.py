@@ -1,6 +1,6 @@
+#!/bin/env python
 # -*- coding: utf-8 -*-
 # Script:    index.py
-# Date:      20 June 2013
 # Copyright: &copy; University of Liverpool 2005-present
 # Author(s): JH - John Harrison <john.harrison@liv.ac.uk>
 # Language:  Python
@@ -12,7 +12,7 @@ usage: index.py [-h] [-s PATH] [-d DATABASE] [-j] [-n] [-b | -l | -o]
 optional arguments:
   -h, --help            show this help message and exit
   -s PATH, --server-config PATH
-                        path to Cheshire3 server configuration file. default: 
+                        path to Cheshire3 server configuration file. default:
                         /home/cheshire/cheshire3/cheshire3/configs/serverConfi
                         g.xml
   -d DATABASE, --database DATABASE
@@ -32,6 +32,7 @@ Commands:
 
 """
 
+import math
 import os
 import shutil
 import sys
@@ -88,34 +89,46 @@ def _index_recordStore(recordStore):
     # Index all Records in a RecordStore
     global session, db
     lgr = session.logger
-    for rec in recordStore:
+    for ctr, rec in enumerate(recordStore):
         try:
             db.index_record(session, rec)
         except UnicodeDecodeError:
             lgr.log_error(
                 session, 
-                '{0.id:<40} [ERROR] - Some indexes not built; non unicode '
-                'characters'.format(rec)
+                'REC: {0:>10} {1.id:<40} [ERROR] - Some indexes not built; '
+                'non unicode characters'.format(ctr, rec)
             )
         else:
             # Assimilate metadata of Record
             db.add_record(session, rec)
-            lgr.log_info(
-                session, 
-                '{0.id:<40} [OK]'.format(rec)
-            )
+            # Do not log every record - causes terminal to bog down
+            # Log only at the current order of magnitude
+            if ctr > 0 and not(ctr % 10 ** int(math.log10(ctr))):
+                lgr.log_info(
+                    session,
+                    'REC: {0:>10} {1.id:<40} [OK]'.format(ctr, rec)
+                )
 
 
 def _index(session, db, args):
     # Index Records
-    db.begin_indexing(session)
+    for idx in db.indexes.itervalues():
+        if not idx.get_setting(session, 'noIndexDefault', 0):
+            idx.begin_indexing(session)
+
     if args.main:
         _index_recordStore(db.get_object(session, 'recordStore'))
     if args.components:
         _index_recordStore(db.get_object(session, 'componentStore'))
 
+    session.logger.log_info(session, 'Merging index terms')
+
     for idx in db.indexes.itervalues():
         if not idx.get_setting(session, 'noIndexDefault', 0):
+            session.logger.log_info(session,
+                                    'Merging index terms for {0}'
+                                    ''.format(idx.id)
+                                    )
             idx.commit_indexing(session)
 
     db.commit_metadata(session)
@@ -244,9 +257,15 @@ def live_index(args):
                  "Indexing pre-loaded records into live indexes..."
                  )
     start = time.time()
+    # Get the Indexes
+    if not db.indexes:
+        db._cacheIndexes(session)
     if args.step == 'index':
         # Clear the existing Indexes
-        db.clear_indexes(session)
+        for idx in db.indexes.itervalues():
+            if not idx.get_setting(session, 'noIndexDefault', 0):
+                idx.clear(session)
+        # Run indexing
         _index(session, db, args)
     if args.test:
         test_expectedResults(args)
@@ -336,7 +355,8 @@ argparser = IndexArgumentParser(conflict_handler='resolve',
                                 )
 
 # Subparsers for commands
-subparsers = argparser.add_subparsers(title='Commands')
+subparsers = argparser.add_subparsers(title='Commands',
+                                      help="Build live or background Indexes")
 # index.py background
 parser_bg = subparsers.add_parser(
     "background",

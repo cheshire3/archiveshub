@@ -1,5 +1,36 @@
 #!/bin/env python
-u"""Clear the Cheshire3 for Archives database(s)."""
+# -*- coding: utf-8 -*-
+# Script:    clear.py
+# Copyright: &copy; University of Liverpool 2005-present
+# Author(s): JH - John Harrison <john.harrison@liv.ac.uk>
+# Language:  Python
+#
+u"""Clear the Cheshire3 for Archives database(s).
+
+usage: clear.py [-h] [-s PATH] [-d DATABASE] [-u] {stores,indexes,
+                                                   subjects,results}
+
+Commands:
+  {stores,indexes,subjects,results}
+    stores              clear internal stores of EAD documents and components
+    indexes             clear indexes
+    subjects            clear subject finder
+    results             clear stored ResultSets
+
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -s PATH, --server-config PATH
+                        path to Cheshire3 server configuration file. default:
+                        /home/cheshire/cheshire3/cheshire3/configs/serverConfi
+                        g.xml
+  -d DATABASE, --database DATABASE
+                        identifier of Cheshire3 database
+  -u, --unlock          if the database is currently locked, force unlock it
+                        before proceeding to requested operation
+
+
+"""
 
 import sys
 import os

@@ -87,7 +87,7 @@
         </subConfig>
 
         <subConfig type="preParser" id="eadSgmlPreParser">
-            <objectType>cheshire3.preParser.SgmlPreParser</objectType>
+            <objectType>archiveshub.preParser.EADSgmlPreParser</objectType>
             <options>
                 <setting type="emptyElements"> lb arc ptr prtloc extptr extptrloc colspec </setting>
             </options>

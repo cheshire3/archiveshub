@@ -14,7 +14,10 @@ from email import Message, MIMEMultipart, MIMEText
 from cheshire3.cqlParser import Diagnostic as CQLDiagnostic
 from cheshire3.cqlParser import SearchClause as CQLClause, Triple as CQLTriple
 from cheshire3.baseObjects import ResultSet
-from cheshire3.exceptions import ObjectDoesNotExistException
+from cheshire3.exceptions import (
+    ObjectDeletedException,
+    ObjectDoesNotExistException
+)
 from cheshire3.web.www_utils import generate_cqlQuery
 
 # Cheshire3 for Archives Imports
@@ -200,7 +203,7 @@ class EADSearchWsgiApplication(EADWsgiApplication):
                 ascending = None
                 if spec.endswith('/ascending'):
                     spec = spec[:-len('/ascending')]
-                    ascending=True
+                    ascending = True
                 elif spec.endswith('/descending'):
                     spec = spec[:-len('/descending')]
                     ascending = False
@@ -220,7 +223,8 @@ class EADSearchWsgiApplication(EADWsgiApplication):
                 if index:
                     rs.order(session,
                              index,
-                             ascending=ascending
+                             ascending=ascending,
+                             missing=0
                              )
                 elif spec:
                     # Not an index, maybe a ResultSetItem attribute, or XPath?
@@ -278,14 +282,29 @@ class EADSearchWsgiApplication(EADWsgiApplication):
         if not pm:
             db._cacheProtocolMaps(session)
             pm = db.protocolMaps.get('http://www.loc.gov/zing/srw/')
+        try:
+            nTerms = self.config.getint('facets', 'truncate')
+        except ValueError:
+            if self.config.getboolean('facets', 'truncate'):
+                # Want truncation but value not specified - default 1000
+                nTerms = 1000
+            else:
+                nTerms = 0
+
         facets = {}
         for cqlIdx, humanName in self.config.items('facets'):
+            if not '.' in cqlIdx:
+                # Setting, not index
+                continue
             query = self.queryFactory.get_query(session,
                                                 '{0}="*"'.format(cqlIdx),
                                                 format='cql')
             idxObj = pm.resolveIndex(session, query)
             try:
-                facets[(cqlIdx, humanName)] = idxObj.facets(session, rs)
+                facets[(cqlIdx, humanName)] = idxObj.facets(session,
+                                                            rs,
+                                                            nTerms
+                                                            )
             except:
                 self._log(40, "Couldn't get facets from {0}".format(cqlIdx))
                 facets[(cqlIdx, humanName)] = {}
@@ -376,7 +395,18 @@ class EADSearchWsgiApplication(EADWsgiApplication):
             # Error message
             return [rs]
         else:
-            rec = rs[hit].fetch_record(session)
+            try:
+                rec = rs[hit].fetch_record(session)
+            except ObjectDeletedException as e:
+                # Record has been deleted!
+                # 410 Gone status indicates that clients should purge the
+                # resource. Probably not necessary, so return 404 status...
+                self.response.status = 404
+                # ...but a different user message
+                return [self._render_template(
+                    'fail/410.html',
+                    resource=rs[hit].id
+                )]
         # Save rec.id now
         recid = rec.id
         # Highlight search terms
@@ -439,9 +469,16 @@ class EADSearchWsgiApplication(EADWsgiApplication):
                              for rawline
                              in self._textFromRecord(rec).split(u'\n')
                              ]).encode('utf-8')
+        try:
+            from_addy = self.config.get('email', 'from')
+        except:
+            from_addy = '{0}@{1}'.format(
+                self.config.get('email', 'username'),
+                self.request.host
+            )
         mimemsg = MIMEMultipart.MIMEMultipart()
         mimemsg['Subject'] = 'Requested Finding Aid'
-        mimemsg['From'] = 'noreply@cheshire3.org'
+        mimemsg['From'] = from_addy
         mimemsg['To'] = address
 
         # Guarantees the message ends in a newline
@@ -451,13 +488,26 @@ class EADSearchWsgiApplication(EADWsgiApplication):
 
         # send message
         s = smtplib.SMTP()
-        s.connect(host=self.config.get('email', 'host'),
-                  port=self.config.getint('email', 'port'))
-        s.sendmail('{0}@{1}'.format(self.config.get('email', 'username'),
-                                    self.environ['SERVER_NAME']),
-                   address,
-                   mimemsg.as_string()
-                   )
+        email_host = self.config.get('email', 'host')
+        email_port = self.config.getint('email', 'port')
+        try:
+            s.connect(host=email_host, port=email_port)
+        except:
+            self._log(40,
+                      'Failed to connect to email server: {0}:{1}'.format(
+                          email_host,
+                          email_port
+                      ))
+            return [self._render_template('fail/emailServer.html',
+                                          host=email_host,
+                                          port=email_port,
+                                          resultSet=rs,
+                                          startRecord=startRecord,
+                                          maximumRecords=maximumRecords,
+                                          sortBy=sortBy
+                                          )]
+
+        s.sendmail(from_addy, address, mimemsg.as_string())
         s.quit()
         self._log(20, 'Record {0} emailed to {1}'.format(recid, address))
         return [self._render_template('emailSent.html',

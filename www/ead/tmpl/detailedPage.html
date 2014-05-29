@@ -52,15 +52,13 @@ $(document).ready(function() {
 
 <%def name="back_links(recid, pagenum)">
     <a href="${DATAURL}/${recid}.html?page=1" 
-        title="First page" 
-        onclick="setCookie('${recid}-tocstate', stateToString('someId'))">
+        onclick="setCookie('archiveshub_${recid}_tocstate', stateToString('someId'))">
         <button label="fast-rewind" class="pageNav">
             <img src="${config.get('icons', 'fast-rewind-url')}" alt="|&lt;&lt;">
         </button>
     </a>
     <a href="${DATAURL}/${recid}.html?page=${pagenum-1}" 
-        title="Previous page" 
-        onclick="setCookie('${recid}-tocstate', stateToString('someId'))">
+        onclick="setCookie('archiveshub_${recid}_tocstate', stateToString('someId'))">
         <button label="rewind" class="pageNav">
             <img src="${config.get('icons', 'rewind-url')}" alt="&lt;&lt;">
         </button>
@@ -69,15 +67,13 @@ $(document).ready(function() {
 
 <%def name="forward_links(recid, pagenum, maxPages)">
     <a href="${DATAURL}/${recid}.html?page=${pagenum + 1}"
-        title="Next page"
-        onclick="setCookie('{$recid}-tocstate', stateToString('someId'))">
+        onclick="setCookie('archiveshub_${recid}_tocstate', stateToString('someId'))">
         <button label="forward" class="pageNav">
             <img src="${config.get('icons', 'forward-url')}" alt="&gt;&gt;">
         </button>
     </a>
     <a href="${DATAURL}/${recid}.html?page=${maxPages}"
-        title="Final page"
-        onclick="setCookie('${recid}-tocstate', stateToString('someId'))">
+        onclick="setCookie('archiveshub_${recid}_tocstate', stateToString('someId'))">
         <button label="fast-forward" class="pageNav">
             <img src="${config.get('icons', 'fast-forward-url')}"
             alt="&gt;&gt;|">
