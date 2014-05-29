@@ -5,7 +5,7 @@
             <%identifier, title = titles.pop(0)%>
             
             % if identifier:
-                <a href="${DATAURL}/${unicode(identifier, 'utf-8')|u}">${title|h}</a>
+                <a href="${DATAURL}/${unicode(identifier, 'utf-8')}">${title|h}</a>
             % else:
                 ${title}
             % endif
