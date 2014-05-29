@@ -1792,7 +1792,7 @@ class HubEditingHandler(object):
         global session, xmlp, repository_name, repository_link
         global repository_logo
         global cache_path, cache_url, toc_cache_path, toc_cache_url
-        global toc_scripts, script, fullTxr, fullSplitTxr
+        global toc_scripts, script, fullSplitTxr
         self.htmlTitle.append('Preview File')
         recid = form.get('recid', None)
         fileOwner = form.get('owner', session.user.username)
@@ -2057,7 +2057,7 @@ class HubEditingHandler(object):
                     )
 
     def savetodisk(self, form, req):
-        global session, xmlp, cache_path, cache_url, fullTxr, fullSplitTxr
+        global session, xmlp, cache_path, cache_url, fullSplitTxr
         try:
             files = glob.glob(
                 '%s/files/%s*' % (cache_path, session.user.username)
@@ -3140,7 +3140,7 @@ logfilepath = editinglogfilepath
 
 def build_architecture(data=None):
     global session, serv, db, editStore, authStore, formTxr, tocTxr, xmlp
-    global assignDataIdFlow, ppFlow, fullTxr, fullSplitTxr
+    global assignDataIdFlow, ppFlow, fullSplitTxr
     global rebuild
     # Discover objects
     session = Session()
@@ -3164,7 +3164,6 @@ def build_architecture(data=None):
     tocTxr = db.get_object(session, 'editingTocTxr')
     ppFlow = db.get_object(session, 'preParserWorkflow')
     ppFlow.load_cache(session, db)
-    fullTxr = db.get_object(session, 'htmlFullTxr')
     fullSplitTxr = db.get_object(session, 'htmlFullSplitTxr')
     rebuild = False
 
