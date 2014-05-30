@@ -335,7 +335,7 @@
                                 onchange="validateField(this, 'true');"
                                 onblur="validateField(this, 'true');"
                                 name="did/unitdate[1]" id="did/unitdate[1]"
-                                size="39"></input>
+                                size="29"></input>
                         </div>
                         <div class="float">
                             <strong>
@@ -356,7 +356,7 @@
                                 onchange="validateNormdate(this, 'true');"
                                 onblur="validateNormdate(this, 'true');"
                                 name="did/unitdate[1]/@normal" id="did/unitdate[1]/@normal"
-                                size="39" maxlength="21"></input>
+                                size="29" maxlength="21"></input>
                         </div>
                     </div>
                 </xsl:otherwise>
@@ -3240,7 +3240,7 @@
                     <input class="menuField" type="text" onfocus="setCurrent(this);"
                         onkeypress="validateFieldDelay(this, 'true');"
                         onchange="validateField(this, 'true');" onblur="validateField(this, 'true');"
-                        size="39">
+                        size="29">
                         <xsl:attribute name="name">
 		                    <xsl:value-of select="$path" />
 		                </xsl:attribute>
@@ -3268,7 +3268,7 @@
         <input class="dateOK" type="text" onfocus="setCurrent(this);"
                         onkeypress="validateNormdateDelay(this, 'true');"
                         onchange="validateNormdate(this, 'true');" onblur="validateNormdate(this, 'true');"
-                        size="39" maxlength="21">
+                        size="29" maxlength="21">
                         <xsl:attribute name="name">
 		                <xsl:value-of select="$path" />
 		                <xsl:text>/@normal</xsl:text>
