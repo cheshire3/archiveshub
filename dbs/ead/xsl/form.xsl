@@ -2132,7 +2132,7 @@
                 </p>
 
                 <xsl:choose>
-                    <xsl:when test="controlaccess/persname">
+                    <xsl:when test="controlaccess/persname/emph[@altrender='a']">
                         <xsl:call-template name="accesspoint">
                             <xsl:with-param name="aptype"
                                 select="'persname'" />
@@ -2210,6 +2210,97 @@
                     <br />
                     <input class="apbutton" type="button"
                         onclick="resetAccessPoint('persname');" value="Reset"></input>
+                </div>
+                <br />
+            </div>
+            <br />
+            <!--persname (non-western) -->
+            <div id="persname-non-western" class="apcontainer">
+                <p>
+                    <strong>Personal Name (non-western name)</strong>
+                    <a href="http://archiveshub.ac.uk/help/persnamestring"
+                        class="tip" title="What is this?" id="persnamehelp"
+                        name="persnamehelp" target="_new">
+                        <img src="/images/structure/form_tip.png" alt="[?]" />
+                    </a>
+                    <br />
+                    <a class="extSearch" target="_new"
+                        href="http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=P"
+                        title="Search National Register of Archives">
+                        [Search NRA]
+                </a>
+                </p>
+
+                <xsl:choose>
+                    <!-- When there are no subfileds, or no surname subfield -->
+                    <xsl:when test="controlaccess/persname[not(*)] or controlaccess/persname[not(emph/@altrender='a')]">
+                        <xsl:call-template name="accesspoint">
+                            <xsl:with-param name="aptype"
+                                select="'persname-non-western'" />
+                        </xsl:call-template>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <div id="addedpersname-non-westerns" style="display:none"
+                            class="added">
+                            <xsl:text> </xsl:text>
+                        </div>
+                    </xsl:otherwise>
+                </xsl:choose>
+                <div id="persname-non-westerntable" class="tablecontainer">
+                    <table id="table_persname-non-western">
+                        <tbody>
+                            <tr NoDrop="true" NoDrag="true">
+                                <td class="label">Name:</td>
+                                <td>
+                                    <input type="text"
+                                        onfocus="setCurrent(this);" id="persname-non-western_name"
+                                        size="35"></input>
+                                </td>
+                            </tr>
+                            <tr NoDrop="true" NoDrag="true">
+                                <td class="label"> Source:</td>
+                                <td>
+                                    <input type="text"
+                                        onfocus="setCurrent(this);" id="persname-non-western_source"
+                                        size="35"></input>
+                                </td>
+                            </tr>
+                            <tr NoDrop="true" NoDrag="true">
+                                <td>
+                                    <select onfocus="setCurrent(this);"
+                                        id="persname-non-westerndropdown">
+                                        <option value="persname-non-western_dates">Dates
+                                        </option>
+                                        <option value="persname-non-western_title">Title
+                                        </option>
+                                        <option value="persname-non-western_epithet">Epithet
+                                        </option>
+                                        <option value="persname-non-western_other">Other
+                                        </option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <a class="addfield" onclick="addField('persname-non-western');">Add
+                                        Selected Field</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div id="persnamebuttons" class="buttoncontainer">
+                    <p class="apbutton">
+                        Rules:
+                        <select id="persname-non-western_rules" onchange="checkRules('persname-non-western')">
+                            <option value="none">None</option>
+                            <option value="ncarules">NCA Rules</option>
+                            <option value="aacr2">AACR2</option>
+                        </select>
+                    </p>
+                    <input class="apbutton" type="button"
+                        onclick="addAccessPoint('persname-non-western');" value="Add To Record"></input>
+                    <br />
+                    <input class="apbutton" type="button"
+                        onclick="resetAccessPoint('persname-non-western');" value="Reset"></input>
                 </div>
                 <br />
             </div>
@@ -2727,107 +2818,134 @@
                 <xsl:value-of select="$aptype" />
                 <xsl:text>s</xsl:text>
             </xsl:attribute>
-            <xsl:for-each select="controlaccess/*[name() = $aptype]">
-                <input type="hidden">
-                    <xsl:attribute name="name">
-                        <xsl:text>controlaccess/</xsl:text>
-                        <xsl:value-of select="$aptype" />
-                    </xsl:attribute>
-                    <xsl:attribute name="id">
-                        <xsl:value-of select="$aptype" />
-                        <xsl:text>_formgen</xsl:text>
-                        <xsl:number
-                            level="single" count="controlaccess/*[name() = $aptype]"
-                            format="1" />
-                        <xsl:text>xml</xsl:text>
-                    </xsl:attribute>
-                    <xsl:attribute name="value">
-                        <!--<div class="accesspoint">-->
-                           <xsl:call-template name="accesspointstring">
-                              <xsl:with-param name="aptype" select="$aptype" />
-                               <xsl:with-param name="separater" select="' ||| '" />
-                            </xsl:call-template>
-                        <!--</div>-->
-                    </xsl:attribute>
-                </input>
-                <div>
-                    <xsl:attribute name="id">
-                        <xsl:value-of select="$aptype" />
-                        <xsl:text>_formgen</xsl:text>
-                        <xsl:number
-                            level="single" count="controlaccess/*[name() = $aptype]"
-                            format="1" />
-                    </xsl:attribute>
-                    <div class="icons">
-                        <a>
-                            <xsl:attribute name="onclick">
-                                <xsl:text>deleteAccessPoint('</xsl:text>
-                                <xsl:value-of
-                                    select="$aptype" />
-                                <xsl:text>_formgen</xsl:text>
-                                <xsl:number
-                                    level="single"
-                                    count="controlaccess/*[name() = $aptype]"
-                                    format="1" />
-                                <xsl:text>');</xsl:text>
-                            </xsl:attribute>
-                            <xsl:attribute name="title">
-                                <xsl:text>delete entry</xsl:text>
-                            </xsl:attribute>
-                            <img src="/images/editor/delete.png" class="deletelogo"
-                                alt="X">
-                                <xsl:attribute name="onmouseover">
-                                    <xsl:text>this.src='/images/editor/delete-hover.png';</xsl:text>
-                                </xsl:attribute>
-                                <xsl:attribute name="onmouseout">
-                                    <xsl:text>this.src='/images/editor/delete.png';</xsl:text>
-                                </xsl:attribute>
-                                <xsl:attribute name="id">
-                                    <xsl:text>delete</xsl:text>
-                                    <xsl:number level="single"
-                                        count="controlaccess/*[name() = $aptype]"
-                                        format="1" />
-                                </xsl:attribute>
-                            </img>
-                        </a>
-                    </div>
-                    <div class="accesspoint">
-                        <a>
-                            <xsl:attribute name="onclick">
-                                <xsl:text>editAccessPoint('</xsl:text>
-                                <xsl:value-of
-                                    select="$aptype" />
-                                <xsl:text>_formgen', </xsl:text>
-                                <xsl:number
-                                    level="single"
-                                    count="controlaccess/*[name() = $aptype]"
-                                    format="1" />
-                                <xsl:text>);</xsl:text>
-                            </xsl:attribute>
-                            <xsl:attribute name="title">
-                                <xsl:text>Click to edit</xsl:text>
-                            </xsl:attribute>
-                            <xsl:call-template name="accesspointstring">
-                                <xsl:with-param name="aptype"
-                                    select="$aptype" />
-                                <xsl:with-param name="separater"
-                                    select="' '" />
-                            </xsl:call-template>
-                        </a>
-                    </div>
-                </div>
-                <br>
-                    <xsl:attribute name="id">
-                        <xsl:value-of select="$aptype" />
-                        <xsl:text>_formgen</xsl:text>
-                        <xsl:number
-                            level="single" count="controlaccess/*[name() = $aptype]"
-                            format="1" />
-                        <xsl:text>br</xsl:text>
-                    </xsl:attribute>
-                </br>
-            </xsl:for-each>
+            <xsl:choose>
+                <xsl:when test="$aptype = 'persname'">
+                    <xsl:for-each select="controlaccess/persname[emph/@altrender='a']">
+                        <xsl:call-template name="accesspointrow">
+                            <xsl:with-param name="aptype">
+                                <xsl:value-of select="$aptype"/>
+                            </xsl:with-param>
+                            <xsl:with-param name="position">
+                                <xsl:value-of select="position()"/>
+                            </xsl:with-param>
+                        </xsl:call-template>
+                    </xsl:for-each>
+                </xsl:when>
+                <xsl:when test="$aptype = 'persname-non-western'">
+                    <xsl:for-each select="controlaccess/persname[not(*)]|controlaccess/persname[not(emph/@altrender='a')]">
+                        <xsl:call-template name="accesspointrow">
+                            <xsl:with-param name="aptype">
+                                <xsl:value-of select="$aptype"/>
+                            </xsl:with-param>
+                            <xsl:with-param name="position">
+                                <xsl:value-of select="position()"/>
+                            </xsl:with-param>
+                        </xsl:call-template>
+                    </xsl:for-each>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:for-each select="controlaccess/*[name() = $aptype]">
+                        <xsl:call-template name="accesspointrow">
+                            <xsl:with-param name="aptype">
+                                <xsl:value-of select="$aptype"/>
+                            </xsl:with-param>
+                            <xsl:with-param name="position">
+                                <xsl:value-of select="position()"/>
+                            </xsl:with-param>
+                        </xsl:call-template>
+                    </xsl:for-each>
+                </xsl:otherwise>
+            </xsl:choose>
         </div>
+    </xsl:template>
+
+    <xsl:template name="accesspointrow">
+        <xsl:param name="aptype"/>
+        <xsl:param name="position"/>
+        <input type="hidden">
+            <xsl:attribute name="name">
+                <xsl:text>controlaccess/</xsl:text>
+                <xsl:value-of select="$aptype" />
+            </xsl:attribute>
+            <xsl:attribute name="id">
+                <xsl:value-of select="$aptype" />
+                <xsl:text>_formgen</xsl:text>
+                <xsl:value-of select="$position"/>
+                <xsl:text>xml</xsl:text>
+            </xsl:attribute>
+            <xsl:attribute name="value">
+                <!--<div class="accesspoint">-->
+                   <xsl:call-template name="accesspointstring">
+                      <xsl:with-param name="aptype" select="$aptype" />
+                       <xsl:with-param name="separater" select="' ||| '" />
+                    </xsl:call-template>
+                <!--</div>-->
+            </xsl:attribute>
+        </input>
+        <div>
+            <xsl:attribute name="id">
+                <xsl:value-of select="$aptype" />
+                <xsl:text>_formgen</xsl:text>
+                <xsl:value-of select="$position"/>
+            </xsl:attribute>
+            <div class="icons">
+                <a>
+                    <xsl:attribute name="onclick">
+                        <xsl:text>deleteAccessPoint('</xsl:text>
+                        <xsl:value-of
+                            select="$aptype" />
+                        <xsl:text>_formgen</xsl:text>
+                        <xsl:value-of select="$position"/>
+                        <xsl:text>');</xsl:text>
+                    </xsl:attribute>
+                    <xsl:attribute name="title">
+                        <xsl:text>delete entry</xsl:text>
+                    </xsl:attribute>
+                    <img src="/images/editor/delete.png" class="deletelogo"
+                        alt="X">
+                        <xsl:attribute name="onmouseover">
+                            <xsl:text>this.src='/images/editor/delete-hover.png';</xsl:text>
+                        </xsl:attribute>
+                        <xsl:attribute name="onmouseout">
+                            <xsl:text>this.src='/images/editor/delete.png';</xsl:text>
+                        </xsl:attribute>
+                        <xsl:attribute name="id">
+                            <xsl:text>delete</xsl:text>
+                            <xsl:value-of select="$position"/>
+                        </xsl:attribute>
+                    </img>
+                </a>
+            </div>
+            <div class="accesspoint">
+                <a>
+                    <xsl:attribute name="onclick">
+                        <xsl:text>editAccessPoint('</xsl:text>
+                        <xsl:value-of
+                            select="$aptype" />
+                        <xsl:text>_formgen', </xsl:text>
+                        <xsl:value-of select="$position"/>
+                        <xsl:text>);</xsl:text>
+                    </xsl:attribute>
+                    <xsl:attribute name="title">
+                        <xsl:text>Click to edit</xsl:text>
+                    </xsl:attribute>
+                    <xsl:call-template name="accesspointstring">
+                        <xsl:with-param name="aptype"
+                            select="$aptype" />
+                        <xsl:with-param name="separater"
+                            select="' '" />
+                    </xsl:call-template>
+                </a>
+            </div>
+        </div>
+        <br>
+            <xsl:attribute name="id">
+                <xsl:value-of select="$aptype" />
+                <xsl:text>_formgen</xsl:text>
+                <xsl:value-of select="$position"/>
+                <xsl:text>br</xsl:text>
+            </xsl:attribute>
+        </br>
     </xsl:template>
 
 
