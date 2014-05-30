@@ -42,6 +42,15 @@ var labelMapping = new Array();
     labelMapping['persname_x'] = 'Other';
     labelMapping['persname_source'] = 'Source';
 
+    labelMapping['persname-non-western_name'] = 'Name';
+    labelMapping['persname-non-western_dates'] = 'Dates';
+    labelMapping['persname-non-western_y'] = 'Dates';
+    labelMapping['persname-non-western_title'] = 'Title';
+    labelMapping['persname-non-western_epithet'] = 'Epithet';
+    labelMapping['persname-non-western_other'] = 'Other';
+    labelMapping['persname-non-western_x'] = 'Other';
+    labelMapping['persname-non-western_source'] = 'Source';
+
     labelMapping['famname_surname'] = 'Surname';
     labelMapping['famname_a'] = 'Surname';
     labelMapping['famname_other'] = 'Other';
@@ -275,68 +284,68 @@ function editAccessPoint(s, number){
      * between access points read in from existing xml and those created in the
      * current form, number is the number which forms part of the unique id
      */
-      var type = s.substring(0, s.indexOf('_formgen'));
-      if (type == '') {
-          type = s;
-      }
-      resetAccessPoint(type);
-      if (type == 'subject'){
-          editSubject(s, type, number);
-      }
-      else {
+    var type = s.substring(0, s.indexOf('_formgen'));
+    if (type == '') {
+        type = s;
+    }
+    resetAccessPoint(type);
+    if (type == 'subject'){
+        editSubject(s, type, number);
+    }
+    else {
 
-          var string = document.getElementById(s + number + 'xml').value;
-          var values = string.split(' ||| ');
+        var string = document.getElementById(s + number + 'xml').value;
+        var values = string.split(' ||| ');
 
-         var tableDiv = ($(type + 'table'));
+        var tableDiv = ($(type + 'table'));
 
-          var table = tableDiv.getElementsByTagName('tbody')[0];
-          var rows = table.getElementsByTagName('tr');
-          var inputs = table.getElementsByTagName('input');
-          if (type != 'language' && type != 'genreform' && type != 'function'){
-             var dropdown = document.getElementById(type + 'dropdown');
-                var dropdownRow = dropdown.parentNode.parentNode;
-          }
-          // Check to see if the existing access point has either rules or source
-          // - one is required - files being edited may not have one
-          var hasSource = false;
-          var hasRules = false;
+        var table = tableDiv.getElementsByTagName('tbody')[0];
+        var rows = table.getElementsByTagName('tr');
+        var inputs = table.getElementsByTagName('input');
+        if (type != 'language' && type != 'genreform' && type != 'function'){
+           var dropdown = document.getElementById(type + 'dropdown');
+            var dropdownRow = dropdown.parentNode.parentNode;
+        }
+        // Check to see if the existing access point has either rules or source
+        // - one is required - files being edited may not have one
+        var hasSource = false;
+        var hasRules = false;
         for (var i = 0; i< values.length-1; i++){
-              if (values[i].split(' | ')[0].split('_', 2)[1] == 'rules'){
-                  hasRules = true;
-              }
-              else if (values[i].split(' | ')[0].split('_', 2)[1] == 'source'){
-                  hasSource = true;
-              }
-          }
-          // Find all the values in the access point
-          for (var i = 0; i< values.length-1; i++){
-              value = values[i].split(' | ');
-              if (type == 'language'){
-                  inputs[i].value = value[1];
-              }
-              else if (type == 'persname') {
-                  if (value[0].split('_', 2)[1] == 'surname' || value[0].split('_', 2)[1] == 'a'){
-                      inputs[0].value = value[1];
-                  }
-                  else if (value[0].split('_', 2)[1] == 'forename'){
-                      inputs[1].value = value[1];
-                  }
-                  else {
-                      if (value[0].split('_', 2)[1] == 'rules'){
-                          var rules = document.getElementById(type + '_rules');
+            if (values[i].split(' | ')[0].split('_', 2)[1] == 'rules'){
+                hasRules = true;
+            }
+            else if (values[i].split(' | ')[0].split('_', 2)[1] == 'source'){
+                hasSource = true;
+            }
+        }
+        // Find all the values in the access point
+        for (var i = 0; i< values.length-1; i++){
+            value = values[i].split(' | ');
+            if (type == 'language'){
+                inputs[i].value = value[1];
+            }
+            else if (type == 'persname') {
+                if (value[0].split('_', 2)[1] == 'surname' || value[0].split('_', 2)[1] == 'a'){
+                    inputs[0].value = value[1];
+                }
+                else if (value[0].split('_', 2)[1] == 'forename'){
+                    inputs[1].value = value[1];
+                }
+                else {
+                    if (value[0].split('_', 2)[1] == 'rules'){
+                        var rules = document.getElementById(type + '_rules');
                         for (var j=0; j<rules.length; j++){
-                              if (rules.options[j].value == value[1]){
-                                   rules.options[j].selected = true;
-                              }
+                            if (rules.options[j].value == value[1]){
+                                rules.options[j].selected = true;
+                            }
                         }
                         if (value[1] != 'none'){
-                               table.removeChild(rows[2]);
-                          }
-                      }
-                      else if (value[0].split('_', 2)[0] != 'att') {
-                          var newRow = document.createElement('tr');
-                          var cell1 = document.createElement('td');
+                            table.removeChild(rows[2]);
+                        }
+                    }
+                    else if (value[0].split('_', 2)[0] != 'att') {
+                        var newRow = document.createElement('tr');
+                        var cell1 = document.createElement('td');
                         var cell2 = document.createElement('td');
                         cell1.innerHTML = '<td class="label">' + labelMapping[value[0]] + ': </td>';
                         cell2.innerHTML = '<input type="text" onfocus="setCurrent(this);" id="' + value[0] + '" value="' + value[1] + '" size="35"></input>';
@@ -351,33 +360,34 @@ function editAccessPoint(s, number){
                             var cell3 = document.createElement('td');
                             cell3.innerHTML = '<img src="/images/editor/delete.png" class="deletelogo" onmouseover="this.src=\'/images/editor/delete-hover.png\';" onmouseout="this.src=\'/images/editor/delete.png\';" onclick="deleteRow(this.parentNode.parentNode);" />';
                             newRow.appendChild(cell3);
-                              table.insertBefore(newRow, dropdownRow);
-                          }
-                      }
-
-                  }
-              }
-              else {
-                  // Fill in the lead for the access point
-                  if (i == 0){
-                      inputs[i].value = value[1];
-                  }
-
-                  else {
-                      if (value[0].split('_', 2)[1] == 'rules'){
-                          var rules = document.getElementById(type + '_rules');
-                        for (var j=0; j<rules.length; j++){
-                              if (rules.options[j].value == value[1]){
-                                   rules.options[j].selected = true;
-                                   if (value[1] != 'none'){
-                                       table.removeChild(rows[1]);
-                                   }
-                              }
+                            table.insertBefore(newRow, dropdownRow);
                         }
-                      }
-                      else if (value[0].split('_', 2)[0] != 'att') {
-                          var newRow = document.createElement('tr');
-                          var cell1 = document.createElement('td');
+                    }
+
+                }
+            }
+            else {
+                // Fill in the lead for the access point
+                if (i == 0){
+                    inputs[i].value = value[1];
+                }
+
+                else {
+                    console.log(value[0]);
+                    if (value[0].split('_', 2)[1] == 'rules'){
+                        var rules = document.getElementById(type + '_rules');
+                        for (var j=0; j<rules.length; j++){
+                            if (rules.options[j].value == value[1]){
+                                rules.options[j].selected = true;
+                                if (value[1] != 'none'){
+                                    table.removeChild(rows[1]);
+                                }
+                            }
+                        }
+                    }
+                    else if (value[0].split('_', 2)[0] != 'att') {
+                        var newRow = document.createElement('tr');
+                        var cell1 = document.createElement('td');
                         var cell2 = document.createElement('td');
                         cell1.innerHTML = '<td class="label">' + labelMapping[value[0]] + ': </td>';
                         cell2.innerHTML = '<input type="text" onfocus="setCurrent(this);" id="' + value[0] + '" value="' + value[1] + '" size="35"></input>';
@@ -392,18 +402,18 @@ function editAccessPoint(s, number){
                             var cell3 = document.createElement('td');
                             cell3.innerHTML = '<img src="/images/editor/delete.png" class="deletelogo" onmouseover="this.src=\'/images/editor/delete-hover.png\';" onmouseout="this.src=\'/images/editor/delete.png\';" onclick="deleteRow(this.parentNode.parentNode);" />';
                             newRow.appendChild(cell3);
-                              table.insertBefore(newRow, dropdownRow);
-                          }
+                            table.insertBefore(newRow, dropdownRow);
+                        }
                       }
-                  }
+                }
 
             }
 
-          }
-          // If the current access point does not have rules or source specified
-          // then add an empty source box in row 2
-          if (!hasSource && !hasRules && type != 'language'){
-              var newRow = document.createElement('tr');
+        }
+        // If the current access point does not have rules or source specified
+        // then add an empty source box in row 2
+        if (!hasSource && !hasRules && type != 'language'){
+            var newRow = document.createElement('tr');
             var cell1 = document.createElement('td');
             var cell2 = document.createElement('td');
             cell1.innerHTML = '<td class="label">' + labelMapping[type+'_source'] + ': </td>';
@@ -418,14 +428,14 @@ function editAccessPoint(s, number){
                 table.replaceChild(newRow, rows[1]);
             }
         }
-          // Delete the access point you are now editing
-          deleteAccessPoint(s + number);
+        // Delete the access point you are now editing
+        deleteAccessPoint(s + number);
 
-          // Initiate drag and drop reordering of cells
-          if (type != 'language' && type != 'genreform' && type != 'function'){
-              var tableDnD = new TableDnD();
-              tableDnD.init($('table_' + type));
-          }
+         // Initiate drag and drop reordering of cells
+        if (type != 'language' && type != 'genreform' && type != 'function'){
+            var tableDnD = new TableDnD();
+            tableDnD.init($('table_' + type));
+        }
     }
 }
 
@@ -458,6 +468,9 @@ function addAccessPoint(s){
      */
     if (s == 'persname'){
         var reqfields = new Array("persname_surname", "persname_forename");
+    }
+    else if (s == 'persname-non-western'){
+      var reqfields = new Array("persname-non-western_name");
     }
     else if (s == 'famname'){
       var reqfields = new Array("famname_surname");
@@ -507,8 +520,8 @@ function addAccessPoint(s){
           if (fm[reqfields[0]].value == "") {
             alert("You must give a " + reqfields[0].split('_', 2)[1] + " for this access point.");
             return;
-          }
       }
+          }
      if (document.getElementById(s + '_source') && document.getElementById(s + '_source').value == ""){
          if (s == 'subject'){
              alert("You must supply a thesaurus for this access point.");
