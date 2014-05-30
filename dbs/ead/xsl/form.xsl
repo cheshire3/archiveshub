@@ -3234,7 +3234,7 @@
                     <a href="http://archiveshub.ac.uk/help/dates" class="tip"
                         title="Dates of Creation help - opens in new window"
                         target="_new">
-                        <img src="/img/structure/form_tip.png" alt="[?]" />
+                        <img src="/images/structure/form_tip.png" alt="[?]" />
                     </a>
                     <br />
                     <input class="menuField" type="text" onfocus="setCurrent(this);"
@@ -3261,7 +3261,7 @@
                     <a href="http://archiveshub.ac.uk/help/dates" class="tip"
                         title="Normalised Date help - opens in new window"
                         target="_new">
-                        <img src="/img/structure/form_tip.png" alt="[?]" />
+                        <img src="/images/structure/form_tip.png" alt="[?]" />
                     </a>
                     YYYY/YYYY or YYYYMMDD/YYYYMMDD
                     <br />
