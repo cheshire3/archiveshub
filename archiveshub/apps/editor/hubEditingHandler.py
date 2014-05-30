@@ -117,39 +117,42 @@ class HubEditingHandler(object):
     # Dictionaries of punctuation
     # One string means that it goes after the values two strings are either
     # side first before second after
-    persnamePunct = {'a': (u',\u00A0',),
-                     'forename': (u'.\u00A0',),
-                     'y': (u'(', u')\u00A0'),
-                     'epithet': (u',\u00A0',)
-                     }
-
-    famnamePunct = {'a': (u'\u00A0family.\u00A0',),
-                    'x': (u'.\u00A0',),
-                    'title': (u'.\u00A0',),
-                    'y': (u'(', u')\u00A0'),
-                    'z': (u'.\u00A0',)
-                    }
-
-    corpnamePunct = {'x': (u'\u00A0--\u00A0', u'\u00A0'),
-                     'y': (u'(', u')\u00A0'),
-                     'z': (u'\u00A0--\u00A0', u'\u00A0')
-                     }
-
-    subjectPunct = {'x': (u'\u00A0--\u00A0', u'\u00A0'),
-                    'y': (u'\u00A0--\u00A0', u'\u00A0'),
-                    'z': (u'\u00A0--\u00A0', u'\u00A0')
-                    }
-
-    geognamePunct = {'x': (u'\u00A0--\u00A0', u'\u00A0'),
-                     'y': (u'\u00A0--\u00A0', u'\u00A0'),
-                     'z': (u'\u00A0--\u00A0', u'\u00A0')
-                     }
-
-    typeDict = {'persname': persnamePunct,
-                'famname': famnamePunct,
-                'corpname': corpnamePunct,
-                'subject': subjectPunct,
-                'geogname': geognamePunct}
+    typeDict = {
+        'persname': {
+            'a': (u',\u00A0',),
+            'forename': (u'.\u00A0',),
+            'y': (u'(', u')\u00A0'),
+            'epithet': (u',\u00A0',)
+        },
+        'persname-non-western': {
+            'name': (u',\u00A0',),
+            'forename': (u'.\u00A0',),
+            'y': (u'(', u')\u00A0'),
+            'epithet': (u',\u00A0',)
+        },
+        'famname': {
+            'a': (u'\u00A0family.\u00A0',),
+            'x': (u'.\u00A0',),
+            'title': (u'.\u00A0',),
+            'y': (u'(', u')\u00A0'),
+            'z': (u'.\u00A0',)
+        },
+        'corpname': {
+            'x': (u'\u00A0--\u00A0', u'\u00A0'),
+            'y': (u'(', u')\u00A0'),
+            'z': (u'\u00A0--\u00A0', u'\u00A0')
+        },
+        'subject': {
+            'x': (u'\u00A0--\u00A0', u'\u00A0'),
+            'y': (u'\u00A0--\u00A0', u'\u00A0'),
+            'z': (u'\u00A0--\u00A0', u'\u00A0')
+        },
+        'geogname': {
+            'x': (u'\u00A0--\u00A0', u'\u00A0'),
+            'y': (u'\u00A0--\u00A0', u'\u00A0'),
+            'z': (u'\u00A0--\u00A0', u'\u00A0')
+        }
+    }
 
     def __init__(self, lgr=None, myscript=None):
 
@@ -680,14 +683,18 @@ class HubEditingHandler(object):
             caNode = etree.Element('controlaccess')
             startNode.append(caNode)
         typeString = name[name.find('/') + 1:]
-        type_ = etree.Element(typeString)
+        if typeString == 'persname-non-western':
+            typeTag = 'persname'
+        else:
+            typeTag = typeString
+
+        type_ = etree.Element(typeTag)
         caNode.append(type_)
         fields = value.split(' ||| ')
         for i, f in enumerate(fields):
             if not (f == ''):
                 field = f.split(' | ')
-                typelabel = field[0].split('_')[0]
-                fieldlabel = field[0].split('_')[1]
+                typelabel, fieldlabel = field[0].split('_')
                 if (
                     fieldlabel == 'source' or
                     fieldlabel == 'rules' or
