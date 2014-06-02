@@ -1701,6 +1701,17 @@ class HubEditingHandler(object):
                         fieldval not in ['', ' ', '<p></p>'] and
                         re.sub('[\s]+', ' ', fieldval) != '<p> </p>'
                     ):
+                        if field.name.startswith('did/origination['):
+                            # Special handling for potential change of sub-tag
+                            origPath = field.name[:field.name.find(']') + 1]
+                            origNode = self._create_path(node, origPath)
+                            for child in origNode:
+                                origNode.remove(child)
+                            origNode.text = None;
+                            try:
+                                validList.remove('did/origination')
+                            except:
+                                pass
                         try:
                             target = self._create_path(node, field.name)
                         except etree.XPathEvalError:
