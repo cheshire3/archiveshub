@@ -570,7 +570,7 @@
             <span class="isadg">
                 <h3>3.2: Context Area</h3>
             </span>
-            <p>
+            <div class="subsection">
                 <strong>
                     <span class="isadg">3.2.1: </span>
                     Name of Creator
@@ -589,11 +589,11 @@
                 <xsl:choose>
                     <xsl:when test="did/origination">
                         <xsl:for-each select="did/origination">
-                            <xsl:call-template name="textfield">
-                                <xsl:with-param name="name"
-                                    select="concat('did/origination[', position(), ']')" />
-                                <xsl:with-param name="class"
-                                    select="'menuField'" />
+                            <xsl:call-template name="origination">
+                                <xsl:with-param name="node"
+                                    select="." />
+                                <xsl:with-param name="position"
+                                    select="position()" />
                             </xsl:call-template>
                         </xsl:for-each>
                         <!--                    <xsl:apply-templates select="did/origination"/>-->
@@ -609,11 +609,11 @@
                 </xsl:choose>
                 <span id="addOrigination">
                     <xsl:attribute name="onclick">
-	                <xsl:text>cloneField(this)</xsl:text>
-	            </xsl:attribute>
+                        <xsl:text>cloneField(this); initCreatorSelect()</xsl:text>
+                    </xsl:attribute>
                     <xsl:call-template name="addButton" />
                 </span>
-            </p>
+            </div> <!-- /.subsection -->
             <!-- bioghist -->
             <p>
                 <xsl:variable name="content">
@@ -3295,6 +3295,111 @@
   			<xsl:apply-templates />
   		</xsl:attribute>
         </input>
+    </xsl:template>
+
+    <xsl:template name="origination">
+        <xsl:param name="node" />
+        <xsl:param name="position" />
+        <xsl:variable name="input-name-prefix">
+            <xsl:text>did/origination[</xsl:text>
+            <xsl:value-of select="$position" />
+            <xsl:text>]</xsl:text>
+        </xsl:variable>
+        <xsl:for-each select="./*">
+            <xsl:variable name="input-name">
+                <xsl:value-of select="$input-name-prefix" />
+                <xsl:text>/</xsl:text>
+                <xsl:value-of select="local-name()" />
+                <xsl:text>[</xsl:text>
+                <xsl:value-of select="position()" />
+                <xsl:text>]</xsl:text>
+            </xsl:variable>
+            <div class="clear">
+                <div class="float">
+
+                    <select class="originationType">
+                        <!-- id required for cloning; need not be meaningful -->
+                        <xsl:attribute name="id">
+                            <xsl:value-of select="generate-id()"/>
+                        </xsl:attribute>
+                        <option>
+                            <xsl:attribute name="id">
+                                <xsl:value-of select="$input-name-prefix"/>
+                            </xsl:attribute>
+                            <xsl:attribute name="value">
+                                <xsl:value-of select="$input-name-prefix"/>
+                            </xsl:attribute>
+                            <xsl:text>Choose&#8230;</xsl:text>
+                        </option>
+                        <option>
+                            <!--
+                            id required for cloning; need not be meaningful
+                            but add a position predicate to trigger substitution
+                            in value
+                            -->
+                            <xsl:attribute name="id">
+                                <xsl:value-of select="$input-name-prefix"/>
+                                <xsl:text>/persname[</xsl:text>
+                                <xsl:value-of select="position()" />
+                                <xsl:text>]</xsl:text>
+                            </xsl:attribute>
+                            <xsl:attribute name="value">
+                                <xsl:value-of select="$input-name-prefix"/>
+                                <xsl:text>/persname[</xsl:text>
+                                <xsl:value-of select="position()" />
+                                <xsl:text>]</xsl:text>
+                            </xsl:attribute>
+                            <xsl:if test="local-name() = 'persname'">
+                                <xsl:attribute name="selected">
+                                    <xsl:text>selected</xsl:text>
+                                </xsl:attribute>
+                            </xsl:if>
+                            <xsl:text>Person</xsl:text>
+                        </option>
+                        <option>
+                            <!--
+                            id required for cloning; need not be meaningful
+                            but add a position predicate to trigger substitution
+                            in value
+                            -->
+                            <xsl:attribute name="id">
+                                <xsl:value-of select="$input-name-prefix"/>
+                                <xsl:text>/corpname[</xsl:text>
+                                <xsl:value-of select="position()" />
+                                <xsl:text>]</xsl:text>
+                            </xsl:attribute>
+                            <xsl:attribute name="value">
+                                <xsl:value-of select="$input-name-prefix"/>
+                                <xsl:text>/corpname[</xsl:text>
+                                <xsl:value-of select="position()" />
+                                <xsl:text>]</xsl:text>
+                            </xsl:attribute>
+                            <xsl:if test="local-name() = 'corpname'">
+                                <xsl:attribute name="selected">
+                                    <xsl:text>selected</xsl:text>
+                                </xsl:attribute>
+                            </xsl:if>
+                            <xsl:text>Organization</xsl:text>
+                        </option>
+                    </select>
+                    <input class="menuField" type="text" onfocus="setCurrent(this);"
+                        onkeypress="validateFieldDelay(this, 'true');"
+                        onchange="validateField(this, 'true');"
+                        onblur="validateField(this, 'true');"
+                        size="48">
+                        <xsl:attribute name="name">
+                            <xsl:value-of select="$input-name" />
+                        </xsl:attribute>
+                        <xsl:attribute name="id">
+                            <xsl:value-of select="$input-name" />
+                        </xsl:attribute>
+                        <xsl:attribute name="value">
+                            <xsl:value-of select="." />
+                        </xsl:attribute>
+                    </input>
+                </div> <!-- /.float -->
+            </div> <!-- /.clear -->
+        </xsl:for-each>
     </xsl:template>
 
     <xsl:template match="/ead/eadheader/filedesc/titlestmt/sponsor">
