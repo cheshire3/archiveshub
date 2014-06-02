@@ -780,6 +780,9 @@ function deleteRow(tr){
     var table = tr.parentNode;
     table.removeChild(tr);
 }
+
+
+
 /*
 // Script:       collapsibleLists.js
 // Version:       0.03
@@ -2643,20 +2646,39 @@ function cloneAndIncrement(donor){
         donorPos = new Number(donorPos.substr(1, donorPos.length-2));
         var clonePos = donorPos + 1;
         clone.id = donorid.replace(positionRegex, '[' + clonePos + ']');
-        clone.name = donor.name.replace(positionRegex, '[' + clonePos + ']');
-     } else {
-         // Add position predicate to donor and child
-         clone.id = donorid + '[2]';
-         clone.name = donor.name + '[2]'
-         donor.id = donorid + '[1]';
-         donor.name = donor.name + '[1]';
+        if (typeof donor.name !== 'undefined'){
+            clone.name = donor.name.replace(positionRegex, '[' + clonePos + ']');
+        }
+        if (donor.nodeName.toLowerCase() == 'option'){
+            // clone value too
+            clone.value = donor.value.replace(positionRegex, '[' + clonePos + ']');
+        }
+
+    } else {
+        // Add position predicate to donor and child
+        clone.id = donorid + '[2]';
+        donor.id = donorid + '[1]';
+        if (typeof donor.name !== 'undefined'){
+            clone.name = donor.name + '[2]';
+            donor.name = donor.name + '[1]';
+        }
+        if (donor.nodeName.toLowerCase() == 'option'){
+            // clone value too
+            clone.value =  donor.value + '[2]';
+            donor.value = donor.value + '[1]';
+        }
     }
     // clear the value and remove any disabled attributes
+    if (donor.nodeName.toLowerCase() != 'option'){
+        $(clone).writeAttribute({
+            value: null
+        });
+    }
     $(clone).writeAttribute({
-        value: null,
         disabled: false,
         readOnly: false
     });
+
     // Clone all children of donor
     // Use childNodes because it keeps text nodes, where childElements doesn't
     $A(donor.childNodes).each(function(item){clone.insert(cloneAndIncrement(item))});
@@ -2686,6 +2708,17 @@ function cloneField(cloner){
     container.insertBefore(clone, cloner);
 }
 
+
+function initCreatorSelect(){
+    /*
+     * Function to call onload to activate creator type selection
+     */
+     $$('.originationType').each(function(item){
+        item.observe('change', function(){
+            $(event.target).next().name = $(event.target).value
+        });
+     });
+}
 
 //================================================================================================
 // passive UI Functions to update left hand column navigation menu
