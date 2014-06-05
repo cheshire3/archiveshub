@@ -398,6 +398,13 @@ parser_live.add_argument("-T", "--no-test",
                          )
 parser_live.set_defaults(func=live_index)
 
+# index.py subjects
+parser_subjects = subparsers.add_parser(
+    "subjects",
+    help="index only the subject finder clusters."
+)
+parser_subjects.set_defaults(func=clusters)
+
 
 if __name__ == '__main__':
     sys.exit(main())
