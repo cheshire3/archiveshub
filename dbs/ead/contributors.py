@@ -1,4 +1,4 @@
-#!/bin/env python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # Script:    contributors.py
 # Copyright: &copy; University of Liverpool 2005-present
