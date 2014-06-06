@@ -2,6 +2,7 @@
 <%!
     # Imports
     from cheshire3.utils import flattenTexts
+    from archiveshub.apps.ead.base import titleFromRecordIdentifier
 
     # Over-ride global attributes
     leftcol_class = "toc"
@@ -9,7 +10,7 @@
 %>
 
 <%block name="title">
-    Detailed Description    
+    ${recid} - ${titleFromRecordIdentifier(session, recid)}
 </%block>
 
 <%block name="leftcol">
