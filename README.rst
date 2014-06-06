@@ -1,9 +1,9 @@
 Archives Hub
 ============
 
-29th May 2014 (2014-05-29)
+6th June 2014 (2014-06-06)
 
-.. image:: https://travis-ci.org/cheshire3/archiveshub.png?branch=master,release/3.2.0
+.. image:: https://travis-ci.org/cheshire3/archiveshub.png?branch=master,develop
    :target: https://travis-ci.org/cheshire3/archiveshub
    :alt: Build Status
 
