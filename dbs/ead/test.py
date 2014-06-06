@@ -1,4 +1,4 @@
-#!/home/cheshire/install/bin/python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # Script:    test.py
 # Copyright: &copy; University of Liverpool 2011

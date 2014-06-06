@@ -537,6 +537,18 @@ def dataFromRecordXPaths(session, rec, xps, nTerms=1, joiner=u'; '):
     return joiner.join([flattenTexts(d) for d in data[:nTerms]])
 
 
+def titleFromRecordIdentifier(session, identifier):
+    """Get and return a title for the given identifier."""
+    # Get Database object
+    db = session.server.get_object(session, session.database)
+    identifierIdx = db.get_object(session, 'idx-recid')
+    titleIdx = db.get_object(session, 'idx-title')
+    terms = identifierIdx.fetch_term(session, identifier, prox=False)
+    rsi = identifierIdx.construct_resultSetItem(session, terms[-3:])
+    title = titleIdx.fetch_sortValue(session, rsi)
+    return cleverTitleCase(title)
+
+
 def cleverTitleCase(txt):
     global config
     always_lower = config.get('casing', 'always_lower')
