@@ -8,7 +8,7 @@ install:
   - "source $MY_VIRTUAL_ENV/bin/activate"
   - "pip install pytest nose mock"
   - "python ez_setup.py"
-  - "pip install -r requirements.txt --find-links http://download.cheshire3.org/latest/reqs/ --allow-unverified PyZ3950 --allow-unverified ZSI"
+  - "pip install -r requirements.txt --find-links http://cheshire3.liv.ac.uk/download/latest/reqs/ --allow-unverified PyZ3950 --allow-unverified ZSI"
   - "python setup.py install"
 # Run tests
 script: python setup.py test
