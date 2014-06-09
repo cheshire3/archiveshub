@@ -3305,14 +3305,16 @@
             <xsl:value-of select="$position" />
             <xsl:text>]</xsl:text>
         </xsl:variable>
-        <xsl:for-each select="./*">
+        <xsl:for-each select="self::node()[not(*)]|./*">
             <xsl:variable name="input-name">
                 <xsl:value-of select="$input-name-prefix" />
-                <xsl:text>/</xsl:text>
-                <xsl:value-of select="local-name()" />
-                <xsl:text>[</xsl:text>
-                <xsl:value-of select="position()" />
-                <xsl:text>]</xsl:text>
+                <xsl:if test="local-name() != 'origination'">
+                    <xsl:text>/</xsl:text>
+                    <xsl:value-of select="local-name()" />
+                    <xsl:text>[</xsl:text>
+                    <xsl:value-of select="position()" />
+                    <xsl:text>]</xsl:text>
+                </xsl:if>
             </xsl:variable>
             <div class="clear">
                 <div class="float">
