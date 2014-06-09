@@ -1689,8 +1689,8 @@ function discardRec(id){
 
 
 function submit(index){
-    if (!checkRequiredData(NOT_ALL_REQUIRED_DATA_MESSAGE)){
-        alert ()
+    if (!checkRequiredData()){
+        alert (NOT_ALL_REQUIRED_DATA_MESSAGE)
         return;
     }
     if (currentEntryField != null && currentEntryField.value != ''){
