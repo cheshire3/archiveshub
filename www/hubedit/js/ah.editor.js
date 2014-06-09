@@ -1703,7 +1703,7 @@ function submit(index){
     }
     var errors = $$('.dateError');
     if (errors.length != 0){
-        alert('Please fix the error in the normalised date before submitting. This field can only contain numbers and the character /.');
+        alert('Please fix the error in the normalised date before submitting. This field can only contain numbers and the solidus character (/) to indicate a range.');
         return;
     }
     //check the daoform details
@@ -3178,7 +3178,26 @@ function validateNormdateDelay(field, asynch){
 
 function validateNormdate(field, asynch){
     clearTimeout(timeout);
-    validateDate(field, asynch);
+    var data = field.value;
+    var valid = true;
+    for (var i=0; i<data.strip().length; i++){
+        if (data.charAt(i) != '/' && data.charAt(i) != '-' && isNaN(parseInt(data.charAt(i)))){
+            valid = false;
+        }
+    }
+    if (data.length % 2){
+        // Odd length - logically must be a range
+        if (data.charAt(data.length / 2) != '/'){
+            valid = false;
+            field.title = "Ranges must be symmetrical and separated by a solidus (/)'";
+        }
+    }
+    if (valid == false){
+        field.className = 'dateError';
+    }
+    else {
+        field.className = 'dateOK';
+    }
 }
 
 function validateDate(field, asynch){
@@ -3288,6 +3307,13 @@ function checkRequiredData(){
     if (orig){
         return false;
     }
+
+    // Normalized Date
+    $$("input[name^='did/unitdate'][name$='@normal']").each(function(el, idx){
+        console.log(el);
+        validateNormdate(el, false)
+    });
+
 
     // All checks passed
     return true;
