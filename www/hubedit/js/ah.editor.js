@@ -1629,6 +1629,8 @@ function checkInstForm(type){
 
 /* basic user operations: submit, delete etc. */
 
+var NOT_ALL_REQUIRED_DATA_MESSAGE = 'the following fields must be entered before proceeding:\n - Reference Code \n - Title\n - Name of Creator (with type selected for each)'
+
 function deleteFromStore(){
 
     var recid = null;
@@ -1687,8 +1689,8 @@ function discardRec(id){
 
 
 function submit(index){
-    if (!checkRequiredData()){
-        alert ('the following fields must be entered before proceeding:\n  - Reference Code \n  - Title')
+    if (!checkRequiredData(NOT_ALL_REQUIRED_DATA_MESSAGE)){
+        alert ()
         return;
     }
     if (currentEntryField != null && currentEntryField.value != ''){
@@ -1767,7 +1769,7 @@ function save(){
     body.className = 'waiting';
     //validate and check id existence etc.
     if (!checkRequiredData()){
-        alert ('the following fields must be entered before proceeding:\n  - Reference Code \n  - Title');
+        alert (NOT_ALL_REQUIRED_DATA_MESSAGE);
         body.className = 'none';
         return;
     }
@@ -1970,7 +1972,7 @@ function displayForm(id, level, nosave){
     else {
         if (nosave == false){
             if (!checkRequiredData()){
-                alert ('the following fields must be entered before proceeding:\n  - Reference Code \n  - Title');
+                alert (NOT_ALL_REQUIRED_DATA_MESSAGE);
                 return;
             }
             var errors = $$('menuFieldError');
@@ -2041,7 +2043,7 @@ function addComponent(){
 
     //validate and check id existence etc.
     if (!checkRequiredData()){
-        alert ('the following fields must be entered before proceeding:\n  - Reference Code \n  - Title')
+        alert (NOT_ALL_REQUIRED_DATA_MESSAGE)
         body.className = 'none';
         return;
     }
@@ -2276,7 +2278,7 @@ function deleteComponent(id){
 
 function toDisk(){
     if (!checkRequiredData()){
-        alert ('the following fields must be entered before proceeding:\n  - Reference Code \n  - Title');
+        alert (NOT_ALL_REQUIRED_DATA_MESSAGE);
         return;
     }
     if (currentEntryField != null && currentEntryField.value != ''){
@@ -2326,7 +2328,7 @@ function toDisk(){
 
 function emailRec(){
     if (!checkRequiredData()){
-        alert ('the following fields must be entered before proceeding:\n  - Reference Code \n  - Title');
+        alert (NOT_ALL_REQUIRED_DATA_MESSAGE);
         return;
     }
     if (currentEntryField != null && currentEntryField.value != ''){
@@ -2375,7 +2377,7 @@ function emailRec(){
 
 function emailHub(){
     if (!checkRequiredData()){
-        alert ('the following fields must be entered before proceeding:\n  - Reference Code \n  - Title');
+        alert (NOT_ALL_REQUIRED_DATA_MESSAGE);
         return;
     }
     if (currentEntryField != null && currentEntryField.value != ''){
@@ -2423,7 +2425,7 @@ function emailHub(){
 
 function viewXml(){
     if (!checkRequiredData()){
-        alert ('the following fields must be entered before proceeding:\n  - Reference Code \n  - Title');
+        alert (NOT_ALL_REQUIRED_DATA_MESSAGE);
         return;
     }
     if (currentEntryField != null && currentEntryField.value != ''){
@@ -2473,7 +2475,7 @@ function viewXml(){
 
 function previewRec(){
     if (!checkRequiredData()){
-        alert ('the following fields must be entered before proceeding:\n  - Reference Code \n  - Title')
+        alert (NOT_ALL_REQUIRED_DATA_MESSAGE)
         return;
     }
     if (currentEntryField != null && currentEntryField.value != ''){
@@ -2817,7 +2819,7 @@ function updateId() {
 
 
 //================================================================================================
-//validation related functions
+// validation related functions
 
 
 function findRequiredFields(){
@@ -3113,6 +3115,27 @@ function validateField(field, asynch){
 }
 
 function validateXML(field, asynch){
+
+    if (field.name.match(/did\/origination/g)){
+        // Check for selection of creator type
+        if (!field.name.match(/persname|corpname/)){
+            // No creator type selected - bypass sending to server
+            var attrs = {
+                'class': 'menuFieldError',
+                'title': "You must select a creator type"
+            }
+            $(field).writeAttribute(attrs).previous().writeAttribute(attrs);
+            findRequiredFields();
+            return;
+        } else {
+            // Remove any error message from select
+            $(field).previous().writeAttribute({
+                'class': 'menuField',
+                'title': null
+            });
+        }
+
+    }
     var url = 'edit.html';
     var fieldvalue = field.value.replace(/%/g, '%25').replace(/&/g, '%26').replace(/#/g, '%23').replace(/;/g, '%3B');
     var data = 'operation=validate&field=' + field.name + '&text=' + fieldvalue;
@@ -3259,9 +3282,15 @@ function checkRequiredData(){
     else if (cc.value == '' && currentForm == 'collectionLevel'){
         return false;
     }
-    else {
-        return true;
+
+    // Creator (<origination>)
+    var orig = Prototype.Selector.find($$("input[name*='did/origination[']"), ":not(input[name*='/persname']):not(input[name*='/corpname'])");
+    if (orig){
+        return false;
     }
+
+    // All checks passed
+    return true;
 }
 
 
