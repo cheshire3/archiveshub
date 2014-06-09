@@ -1696,12 +1696,12 @@ function submit(index){
     if (currentEntryField != null && currentEntryField.value != ''){
         validateField(currentEntryField, false)
     }
-    errors = $$('menuFieldError');
+    errors = $$('.menuFieldError');
     if (errors.length != 0){
         alert('Please fix the errors in the xml before submitting. Errors will be marked with red shading in the text box.');
         return;
     }
-    var errors = $$('dateError');
+    var errors = $$('.dateError');
     if (errors.length != 0){
         alert('Please fix the error in the normalised date before submitting. This field can only contain numbers and the character /.');
         return;
@@ -1730,7 +1730,7 @@ function submit(index){
     }
 
     //validate whole record
-    invalid = $$('invalid');
+    invalid = $$('.invalid');
     if (invalid.length != 0){
         alert('Not all components of your record have the required fields completed. Please complete any components which are coloured red in the contents tree. The missing fields will also be indicated with a red border.');
         return;
@@ -1773,13 +1773,13 @@ function save(){
         body.className = 'none';
         return;
     }
-    var errors = $$('menuFieldError');
+    var errors = $$('.menuFieldError');
     if (errors.length != 0){
         alert('Please fix the errors in the xml before saving. Errors will be marked with red shading in the text box.');
         body.className = 'none';
         return;
     }
-    var errors = $$('dateError');
+    var errors = $$('.dateError');
     if (errors.length != 0){
         alert('Please fix the error in the normalised date before saving. This field can only contain numbers and the character /.');
         body.className = 'none';
@@ -1975,12 +1975,12 @@ function displayForm(id, level, nosave){
                 alert (NOT_ALL_REQUIRED_DATA_MESSAGE);
                 return;
             }
-            var errors = $$('menuFieldError');
+            var errors = $$('.menuFieldError');
             if (errors.length != 0){
                 alert('Please fix the errors in the xml before leaving this page. Errors will be marked with red shading in the text box.');
                 return;
             }
-            var errors = $$('dateError');
+            var errors = $$('.dateError');
             if (errors.length != 0){
                   alert('Please fix the error in the normalised date before leaving this page. This field can only contain numbers and the character /.');
                 return;
@@ -2050,13 +2050,13 @@ function addComponent(){
     if (currentEntryField != null && currentEntryField.value != ''){
         validateField(currentEntryField, false);
     }
-    errors = $$('menuFieldError');
+    errors = $$('.menuFieldError');
     if (errors.length != 0){
         alert('Please fix the errors in the xml before adding a component. Errors will be marked with red shading in the text box.');
         body.className = 'none';
         return;
     }
-    var errors = $$('dateError');
+    var errors = $$('.dateError');
     if (errors.length != 0){
         alert('Please fix the error in the normalised date before adding a component. This field can only contain numbers and the character /.');
         body.className = 'none';
@@ -2284,12 +2284,12 @@ function toDisk(){
     if (currentEntryField != null && currentEntryField.value != ''){
         validateField(currentEntryField, false);
     }
-    errors = $$('menuFieldError');
+    errors = $$('.menuFieldError');
     if (errors.length != 0){
         alert('Please fix the errors in the xml before saving. Errors will be marked with red shading in the text box.');
         return;
     }
-    var errors = $$('dateError');
+    var errors = $$('.dateError');
     if (errors.length != 0){
         alert('Please fix the error in the normalised date before saving. This field can only contain numbers and the character /.');
         return;
@@ -2334,12 +2334,12 @@ function emailRec(){
     if (currentEntryField != null && currentEntryField.value != ''){
         validateField(currentEntryField, false);
     }
-    var errors = $$('menuFieldError');
+    var errors = $$('.menuFieldError');
     if (errors.length != 0){
         alert('Please fix the errors in the xml before saving. Errors will be marked with red shading in the text box.');
         return;
     }
-    var errors = $$('dateError');
+    var errors = $$('.dateError');
     if (errors.length != 0){
         alert('Please fix the error in the normalised date before saving. This field can only contain numbers and the character /.');
         return;
@@ -2383,12 +2383,12 @@ function emailHub(){
     if (currentEntryField != null && currentEntryField.value != ''){
         validateField(currentEntryField, false);
     }
-    var errors = $$('menuFieldError');
+    var errors = $$('.menuFieldError');
     if (errors.length != 0){
         alert('Please fix the errors in the xml before saving. Errors will be marked with red shading in the text box.');
         return;
     }
-    var errors = $$('dateError');
+    var errors = $$('.dateError');
     if (errors.length != 0){
         alert('Please fix the error in the normalised date before saving. This field can only contain numbers and the character /.');
         return;
@@ -2431,12 +2431,12 @@ function viewXml(){
     if (currentEntryField != null && currentEntryField.value != ''){
         validateField(currentEntryField, false);
     }
-    errors = $$('menuFieldError');
+    errors = $$('.menuFieldError');
     if (errors.length != 0){
         alert('Please fix the errors in the xml before viewing. Errors will be marked with red shading in the text box.');
         return;
     }
-    var errors = $$('dateError');
+    var errors = $$('.dateError');
     if (errors.length != 0){
         alert('Please fix the error in the normalised date before viewing. This field can only contain numbers and the character /.');
         return;
@@ -2481,12 +2481,12 @@ function previewRec(){
     if (currentEntryField != null && currentEntryField.value != ''){
         validateField(currentEntryField, false);
     }
-    errors = $$('menuFieldError');
+    errors = $$('.menuFieldError');
     if (errors.length != 0){
         alert('Please fix the errors in the xml before viewing. Errors will be marked with red shading in the text box.');
         return;
     }
-    var errors = $$('dateError');
+    var errors = $$('.dateError');
     if (errors.length != 0){
         alert('Please fix the error in the normalised date before viewing. This field can only contain numbers and the character /.');
         return;
