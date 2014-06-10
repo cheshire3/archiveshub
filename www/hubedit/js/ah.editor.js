@@ -373,7 +373,6 @@ function editAccessPoint(s, number){
                 }
 
                 else {
-                    console.log(value[0]);
                     if (value[0].split('_', 2)[1] == 'rules'){
                         var rules = document.getElementById(type + '_rules');
                         for (var j=0; j<rules.length; j++){
@@ -3310,7 +3309,6 @@ function checkRequiredData(){
 
     // Normalized Date
     $$("input[name^='did/unitdate'][name$='@normal']").each(function(el, idx){
-        console.log(el);
         validateNormdate(el, false)
     });
 
