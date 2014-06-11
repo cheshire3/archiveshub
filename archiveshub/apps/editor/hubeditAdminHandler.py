@@ -658,7 +658,7 @@ def build_architecture(data=None):
     userStore = db.get_object(session, 'eadAuthStore')
     instStore = db.get_object(session, 'institutionStore')
 
-    authStore = db.get_object(session, 'hubSuperAuthStore')
+    authStore = db.get_object(session, 'adminAuthStore')
     xmlp = db.get_object(session, 'LxmlParser')
 
     rebuild = False
