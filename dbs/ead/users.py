@@ -164,6 +164,29 @@ def add_user(args):
         return 1
 
 
+def list_users(args):
+    global superAuthStore, authStore
+    if args.super:
+        for user in superAuthStore:
+            print user.username
+    else:
+        institutions = []
+        for instRec in instStore:
+            instName = instRec.process_xpath(session, '//name/text()')[0]
+            institutions.append((instName, instRec))
+        for instName, instRec in sorted(institutions):
+            sqlQ = ("SELECT eadAuthStore FROM eadAuthStore_linkauthinst "
+                    "WHERE institutionid=%s ORDER BY eadAuthStore"
+                    )
+            result = authStore._query(sqlQ, (instRec.id,))
+            quota = instRec.process_xpath(session, '//quota/text()')[0]
+            print '{0} {{{1}}}'.format(instName, quota)
+            if len(result):
+                for r in result:
+                    print '\t{0}'.format(*r)
+
+
+
 def remove_user(args):
     return 0
 
@@ -221,6 +244,16 @@ parser_add.add_argument('username',
                         type=str,
                         help='Username of the user to add')
 parser_add.set_defaults(func=add_user)
+# Create the parser for the "list" command
+parser_list = subparsers.add_parser('list',
+                                    help='List existing users')
+parser_list.add_argument('-a', '--admin',
+                         action='store_true',
+                         dest='super',
+                         help="List administrative users"
+                        )
+parser_list.set_defaults(func=list_users)
+
 # Create the parser for the "remove" command
 parser_remove = subparsers.add_parser('remove',
                                       help='Remove an existing user')
@@ -246,6 +279,7 @@ db = serv.get_object(session, 'db_ead')
 xmlp = db.get_object(session, 'LxmlParser')
 authStore = db.get_object(session, 'eadAuthStore')          # Editors
 superAuthStore = db.get_object(session, 'adminAuthStore')   # Hub Staff
+instStore = db.get_object(session, 'institutionStore')      # Institutions
 
 
 if __name__ == '__main__':
