@@ -271,7 +271,11 @@ class HubeditAdminHandler:
         return ''.join(optionList)
 
     def add_user(self, form):
-
+        field_names = {
+            'realName': 'Full Name',
+            'tel': 'Telephone',
+            'email': 'Email'
+        }
         values = {'%USERNAME%' : form.get('userid', ''),
                   '%FULLNAME%' : form.get('realName', ''),
                   '%EMAIL%' : form.get('email', ''),
@@ -329,12 +333,19 @@ class HubeditAdminHandler:
                     values['%USER%'] = 'checked="checked"'
                     values['%SUPERUSER%'] = ''
                 userNode = userRec.get_dom(session)
-                passwd = form.get('passwd', None)
-                # check password
                 newHash = {}
                 for f in session.user.simpleNodes:
                     if form.has_key(f):
                         newHash[f] = form.getfirst(f)
+                        if not newHash[f] and f != 'tel':
+                            return self.show_adminMenu(
+                                values,
+                                '<p class="error">Unable to add user. '
+                                '{0} not supplied.</p>'
+                                ''.format(field_names.get(f, f))
+                            )
+                passwd = form.get('passwd', None)
+                # Check password
                 passwd1 = form.get('passwd1', None)
                 if (passwd1 and passwd1 != ''):
                     passwd2 = form.get('passwd2', None)
@@ -343,24 +354,23 @@ class HubeditAdminHandler:
                     else:
                         return self.show_adminMenu(
                             values,
-                            '<p class="error">Unable to add user - '
-                            'passwords did not match.</p>'
+                            '<p class="error">Unable to add user. '
+                            'Passwords did not match.</p>'
                         )
                 else:
                     return self.show_adminMenu(
                         values,
-                        '<p class="error">Unable to add user - '
-                        'password not supplied.</p>'
+                        '<p class="error">Unable to add user. '
+                        'Password not supplied.</p>'
                     )
-
+                # Institution
                 inst = form.get('institutionSelect', None)
                 if inst == None or inst == 'null':
                     return self.show_adminMenu(
                         values,
-                        '<p class="error">Unable to add user - '
-                        'institution not supplied.</p>'
+                        '<p class="error">Unable to add user. '
+                        'Institution not supplied.</p>'
                     )
-
                 # Update DOM
                 userNode = self._modify_userLxml(userNode, newHash)
                 self._submit_userLxml(userid, userNode)
