@@ -114,11 +114,17 @@ def getUserInfoFromPrompt(args):
     else:
         userInfo['password'] = crypt(pw, args.username[:2])
     userInfo['realName'] = raw_input(
-        'Real name of this user (not mandatory): '
+        'Real name of this user: '
     )
+    if not userInfo['realName']:
+        raise InputMissingError('You must enter a real name for this user.')
     userInfo['email'] = raw_input(
-        'Email address for this user (not mandatory): '
+        'Email address for this user: '
     )
+    if not userInfo['email']:
+        raise InputMissingError('You must enter an email address for this user'
+                                '.'
+                                )
     return userInfo
 
 
