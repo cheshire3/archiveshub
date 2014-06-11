@@ -652,14 +652,14 @@ class HubEditingHandler(object):
         self._add_text(language, text)
 
     def _add_text(self, parent, textValue):
-        if not (textValue.find('&amp;') == -1):
-            textValue = textValue.replace('&amp;', '&#38;')
-        else:
-            if not (textValue.find('&') == -1):
-                regex = re.compile('&(?!#[0-9]+;)')
-                textValue = regex.sub('&#38;', textValue)
         textValue = textValue.lstrip()
         if isinstance(parent, etree._Element):
+            if '&amp;' in textValue:
+                textValue = textValue.replace('&amp;', '&#38;')
+            else:
+                if '&' in textValue:
+                    regex = re.compile('&(?!#[0-9]+;)')
+                    textValue = regex.sub('&#38;', textValue)
             for c in parent.getchildren():
                 parent.remove(c)
             value = '<foo>%s</foo>' % textValue
