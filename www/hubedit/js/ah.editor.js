@@ -3117,7 +3117,7 @@ function validateXML(field, asynch){
 
     if (field.name.match(/did\/origination/g)){
         // Check for selection of creator type
-        if (!field.name.match(/persname|corpname/)){
+        if (!field.name.match(/persname|famname|corpname/)){
             // No creator type selected - bypass sending to server
             var attrs = {
                 'class': 'menuFieldError',
@@ -3302,7 +3302,7 @@ function checkRequiredData(){
     }
 
     // Creator (<origination>)
-    var orig = Prototype.Selector.find($$("input[name*='did/origination[']"), ":not(input[name*='/persname']):not(input[name*='/corpname'])");
+    var orig = Prototype.Selector.find($$("input[name*='did/origination[']"), ":not(input[name*='/persname']):not(input[name*='/famname']):not(input[name*='/corpname'])");
     if (orig){
         return false;
     }

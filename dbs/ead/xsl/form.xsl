@@ -3366,6 +3366,31 @@
                             -->
                             <xsl:attribute name="id">
                                 <xsl:value-of select="$input-name-prefix"/>
+                                <xsl:text>/famname[</xsl:text>
+                                <xsl:value-of select="position()" />
+                                <xsl:text>]</xsl:text>
+                            </xsl:attribute>
+                            <xsl:attribute name="value">
+                                <xsl:value-of select="$input-name-prefix"/>
+                                <xsl:text>/famname[</xsl:text>
+                                <xsl:value-of select="position()" />
+                                <xsl:text>]</xsl:text>
+                            </xsl:attribute>
+                            <xsl:if test="local-name() = 'famname'">
+                                <xsl:attribute name="selected">
+                                    <xsl:text>selected</xsl:text>
+                                </xsl:attribute>
+                            </xsl:if>
+                            <xsl:text>Family</xsl:text>
+                        </option>
+                        <option>
+                            <!--
+                            id required for cloning; need not be meaningful
+                            but add a position predicate to trigger substitution
+                            in value
+                            -->
+                            <xsl:attribute name="id">
+                                <xsl:value-of select="$input-name-prefix"/>
                                 <xsl:text>/corpname[</xsl:text>
                                 <xsl:value-of select="position()" />
                                 <xsl:text>]</xsl:text>
