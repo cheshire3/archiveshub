@@ -1544,7 +1544,10 @@ class HubEditingHandler(object):
                                        'filedesc/titlestmt/titleproper'
                                        )
             # Strip all tags from titleproper
-            target.text = re.sub('</?.+?>', '', form.get('did/unittitle', ''))
+            self._add_text(
+                target,
+                re.sub('</?.+?>', '', form.get('did/unittitle', ''))
+            )
             # Add/delete sponsor
             sponsval = form.get('filedesc/titlestmt/sponsor', '').value
             if sponsval.strip() not in ['', ' ']:
