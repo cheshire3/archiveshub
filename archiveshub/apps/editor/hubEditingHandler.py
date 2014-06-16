@@ -3236,21 +3236,28 @@ def handler(req):
     #- end handler()
 
 
-def authenhandler(req):
+def check_password(username, password):
     global session, authStore, rebuild
     if (rebuild):
         # Build the architecture
         build_architecture()
+    try:
+        u = session.user = authStore.fetch_object(session, username)
+    except ObjectDoesNotExistException:
+        return None
+    if u.check_password(session, password):
+        return True
+    else:
+        return False
+
+
+def authenhandler(req):
     pw = req.get_basic_auth_pw()
     un = req.user
-    try:
-        u = session.user = authStore.fetch_object(session, un)
-    except ObjectDoesNotExistException:
-        return apache.HTTP_UNAUTHORIZED
-    if u.check_password(session, pw):
+    result = check_password(un, pw)
+    if result:
         return apache.OK
-    else:
-        return apache.HTTP_UNAUTHORIZED
+    return apache.HTTP_UNAUTHORIZED
     #- end authenhandler()
 
 
