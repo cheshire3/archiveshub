@@ -3192,6 +3192,11 @@ def build_architecture(data=None):
 def handler(req):
     global rebuild, logfilepath, cheshirePath, hubEditingHandler
     script = req.subprocess_env['SCRIPT_NAME']
+    req.register_cleanup(build_architecture)
+    if (rebuild):
+        # Build the architecture
+        build_architecture()
+    session.user = authStore.fetch_object(session, req.user)
     try:
         remote_host = req.get_remote_host(apache.REMOTE_NOLOOKUP)
         # cd to where html fragments are

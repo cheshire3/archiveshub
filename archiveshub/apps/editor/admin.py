@@ -4,13 +4,15 @@ from __future__ import absolute_import
 
 import sys
 
-from mod_python_wsgi.wrap import BasicAuthModPythonWSGIApp
+from mod_python_wsgi.wrap import ModPythonWSGIApp
 
 from archiveshub.deploy.utils import WSGIAppArgumentParser
 from archiveshub.apps.editor.hubeditAdminHandler import (
     handler,
-    authenhandler
-    )
+    check_password
+)
+
+from .auth import make_form_authenticated
 
 
 def main(argv=None):
@@ -36,8 +38,11 @@ def main(argv=None):
     return httpd.serve_forever()
 
 
-application = BasicAuthModPythonWSGIApp(handler, authenhandler)
-
+application = make_form_authenticated(
+    ModPythonWSGIApp(handler),
+    check_password,
+    cookie_name='archiveshub_authn_admin'
+)
 
 # Set up argument parser
 argparser = WSGIAppArgumentParser(

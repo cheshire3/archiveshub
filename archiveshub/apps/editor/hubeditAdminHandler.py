@@ -679,6 +679,10 @@ def handler(req):
     global db, editStore, xmlp, formTxr, script
     script = req.subprocess_env['SCRIPT_NAME']
     req.register_cleanup(build_architecture)
+    if (rebuild):
+        # Build the architecture
+        build_architecture()
+    session.user = authStore.fetch_object(session, req.user)
     try:
         # Get the remote host's IP
         remote_host = req.get_remote_host(apache.REMOTE_NOLOOKUP)
