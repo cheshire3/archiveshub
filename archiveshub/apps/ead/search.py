@@ -112,7 +112,6 @@ class EADSearchWsgiApplication(EADWsgiApplication):
             qString = self._fetch_query(session, rsid).toCQL()
         elif not qString:
             qString = generate_cqlQuery(form)
-        self._log(20, qString.encode('utf-8'))
         if filter_:
             if qString.strip('()'):
                 qString = '{0} and/relevant/proxinfo ({1})'.format(filter_,

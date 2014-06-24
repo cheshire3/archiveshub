@@ -1017,13 +1017,17 @@ function updateSelects(current){
 	}
 	// complex conditional to decide available relations
 	var relationList = new Array()
-	if (iSelIdx != 3) { var relationList = kwRelationList; }
+	if (idxSelect.options[iSelIdx].value != 'dc.date') {
+		var relationList = kwRelationList;
+	}
 	if (iSelIdx > 0) { var relationList = relationList.concat(exactRelationList); }
 	if (iSelIdx < 2) { var relationList = relationList.concat(proxRelationList); }
+	/* Commented because date search is currently disabled
 	if (iSelIdx == 3) {
 		//var rSelIdx = 4;
 		var relationList = dateRelationList; 
 	}
+	*/
 	// now replace existing relation select element
 	relSelect.parentNode.insertBefore(createSelect('fieldrel' + current, relationList, rSelIdx), relSelect);
 	relSelect.parentNode.removeChild(relSelect);

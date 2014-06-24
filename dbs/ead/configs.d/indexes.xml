@@ -70,8 +70,7 @@
                 queries.
             </docs>
             <options>
-                <setting type="regexp">([-.,'\")}\]]+((?=\s)|$)|(^|(?&lt;=\s))[-.,']+|[`~!@+=\#\&amp;\()\[\]{}\\\|\":;&lt;&gt;/]|\.\.\.)
-                </setting>
+                <setting type="regexp">((?&lt;!\s)'|[-.,]((?=\s)|$)|(^|(?&lt;=\s))[-.,']|[.,'-][.,'-]|[~`!@+=\#\&amp;()\[\]{}\\\|\":;&lt;&gt;/])</setting>
             </options>
         </subConfig>
 
