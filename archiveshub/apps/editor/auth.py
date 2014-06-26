@@ -10,6 +10,7 @@ from paste.auth.form import AuthFormHandler
 from paste.auth.auth_tkt import AuthTKTMiddleware
 from paste.request import construct_url, parse_formvars
 
+from archiveshub.apps.base import WSGIApplication
 from archiveshub.apps.configuration import config
 
 
@@ -52,6 +53,19 @@ class LoginWSGIMiddleware(AuthFormHandler):
         start_response("200 OK", [('Content-Type', 'text/html'),
                                   ('Content-Length', str(len(content)))])
         return [content]
+
+
+class LogoutWSGIApplication(WSGIApplication):
+    """Application to log out a user."""
+
+    def __init__(self, cookie_name):
+        self.cookie_name = cookie_name
+
+    def __call__(self, environ, start_response):
+        self._setUp(environ)
+        environ['paste.auth_tkt.logout_user']()
+        self.response.status = "302 Logged Out"
+        return self.response(environ, start_response)
 
 
 def get_login_form():
