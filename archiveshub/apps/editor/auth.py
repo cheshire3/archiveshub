@@ -7,9 +7,51 @@ from pkg_resources import Requirement, resource_filename, get_distribution
 from mako.lookup import TemplateLookup
 from mako import exceptions
 from paste.auth.form import AuthFormHandler
-from paste.auth.cookie import AuthCookieHandler
+from paste.auth.auth_tkt import AuthTKTMiddleware
+from paste.request import construct_url, parse_formvars
 
 from archiveshub.apps.configuration import config
+
+
+class LoginWSGIMiddleware(AuthFormHandler):
+    """Sub-class of ``paste.auth.form.AuthFormHandler`` with minor mods
+
+    Modifications for compatibility with
+    ``paste.auth.auth_tkt.AuthTKTMiddleware``.
+    """
+
+    def __call__(self, environ, start_response):
+        username = environ.get('REMOTE_USER', '')
+        if username:
+            return self.application(environ, start_response)
+
+        if 'POST' == environ['REQUEST_METHOD']:
+            formvars = parse_formvars(environ, include_get_vars=False)
+            username = formvars.get('username')
+            password = formvars.get('password')
+            if username and password:
+                if self.authfunc(environ, username, password):
+                    environ['AUTH_TYPE'] = 'form'
+                    environ['REMOTE_USER'] = username
+                    environ['REQUEST_METHOD'] = 'GET'
+                    environ['CONTENT_LENGTH'] = ''
+                    environ['CONTENT_TYPE'] = ''
+                    try:
+                        environ['paste.auth_tkt.set_user'](
+                            username.encode('utf-8'),
+                            tokens='',
+                            user_data=''
+                        )
+                    except KeyError:
+                        # Not AuthTKT
+                        pass
+                    del environ['paste.parsed_formvars']
+                    return self.application(environ, start_response)
+
+        content = self.template % construct_url(environ)
+        start_response("200 OK", [('Content-Type', 'text/html'),
+                                  ('Content-Length', str(len(content)))])
+        return [content]
 
 
 def get_login_form():
@@ -44,14 +86,15 @@ def make_form_authenticated(app, check_password, **kwargs):
     :arg check_password: function to check username, password pair
     :type app: callable
     """
-    wrapped = AuthCookieHandler(
-        AuthFormHandler(
+    wrapped = AuthTKTMiddleware(
+        LoginWSGIMiddleware(
             app,
             get_password_checker(check_password),
             template=get_login_form()
         ),
-        cookie_name=kwargs.get('cookie_name', 'archiveshub_auth'),
-        secret='test'
+        secret=kwargs.pop('secret', 'test'),
+        cookie_name=kwargs.pop('cookie_name', 'archiveshub_auth'),
+        **kwargs
     )
     return wrapped
 
@@ -89,6 +132,3 @@ defaultContext = {
     'config': config,
     'BASE': '/'
 }
-
-
-AUTH_FORM_TEMPLATE = ''''''
