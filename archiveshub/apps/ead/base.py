@@ -23,9 +23,6 @@ from lxml.builder import E
 from pkg_resources import Requirement, get_distribution
 from pkg_resources import resource_filename, resource_stream, resource_string
 
-# WebOb
-from webob import Request, Response
-
 # Mako
 from mako.lookup import TemplateLookup
 from mako import exceptions
@@ -49,10 +46,11 @@ from cheshire3.utils import flattenTexts
 from cheshire3.web.sru_utils import fetch_data
 from cheshire3.web.www_utils import html_encode
 
+from archiveshub.apps.base import WSGIApplication
 from archiveshub.apps.configuration import config
 
 
-class EADWsgiApplication(object):
+class EADWsgiApplication(WSGIApplication):
     """Abstract Base Class for EAD search/retrieve applications.
 
     Sub-classes must define the special __call__ method to make their
@@ -68,6 +66,7 @@ class EADWsgiApplication(object):
 
     def __init__(self, session, database, config):
         # Constructor method
+        super(EADWsgiApplication, self).__init__()
         self.session = session
         self.database = database
         self.config = config
@@ -104,11 +103,7 @@ class EADWsgiApplication(object):
 
     def _setUp(self, environ):
         # Prepare application to handle a new request
-        # Wrap environ in a Request object
-        req = self.request = Request(environ, charset='utf8')
-        # Create a Response object with defaults for status, encoding etc.
-        # Methods should over-ride these defaults as necessary
-        self.response = Response()
+        super(EADWsgiApplication, self)._setUp(environ)
         script = '/search'
         self.defaultContext['SCRIPT'] = script
         # Set the base URL of this family of apps
