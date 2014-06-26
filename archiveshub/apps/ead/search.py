@@ -542,7 +542,7 @@ def main(argv=None):
     return httpd.serve_forever()
 
 
-application = EADSearchWsgiApplication(session, db, config)
+application = EADSearchWsgiApplication(config, session, db)
 
 # Set up argument parser
 argparser = WSGIAppArgumentParser(
