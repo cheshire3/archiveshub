@@ -1,17 +1,17 @@
 <config xmlns="http://www.cheshire3.org/schemas/config/">
     <subConfigs>
 
-        <subConfig type="objectStore" id="eadAuthStore">
+        <subConfig type="objectStore" id="hubAuthStore">
             <objectType>cheshire3.sql.postgres.PostgresObjectStore</objectType>
             <paths>
                 <path type="databaseName">db_ead</path>
-                <path type="tableName">eadAuthStore</path>
+                <path type="tableName">hubAuthStore</path>
                 <object type="inTransformer" ref="XmlTransformer" />
                 <object type="outParser" ref="LxmlParser" />
             </paths>
             <relations>
                 <relation name="linkAuthInst">
-                    <object>eadAuthStore</object>
+                    <object>hubAuthStore</object>
                     <field name="institutionId">integer</field>
                 </relation>
             </relations>

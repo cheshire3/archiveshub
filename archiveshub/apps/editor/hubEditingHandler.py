@@ -168,8 +168,8 @@ class HubEditingHandler(object):
         # Return the institution id of the user performing the operation
         global authStore
         sqlQ = ("SELECT institutionid "
-                "FROM eadAuthStore_linkauthinst "
-                "WHERE eadAuthStore=%s")
+                "FROM hubAuthStore_linkauthinst "
+                "WHERE hubAuthStore=%s")
         res = authStore._query(sqlQ, (username,))
         if len(res) > 1:
             # We have two templates with the same id - should never happen
@@ -2344,7 +2344,7 @@ class HubEditingHandler(object):
         if (
             session.user.has_flag(session,
                                   'info:srw/operation/1/create',
-                                  'eadAuthStore'
+                                  'hubAuthStore'
                                   ) and
             display is None
         ):
@@ -2406,7 +2406,7 @@ class HubEditingHandler(object):
             elif (
                 session.user.has_flag(session,
                                       'info:srw/operation/1/delete',
-                                      'eadAuthStore'
+                                      'hubAuthStore'
                                       )
             ):
                 cellstr = cellstr + ('<td><a href="users.html?'
@@ -2421,7 +2421,7 @@ class HubEditingHandler(object):
         if (
             session.user.has_flag(session,
                                   'info:srw/operation/1/create',
-                                  'eadAuthStore'
+                                  'hubAuthStore'
                                   )
         ):
             lines.extend(['<h3 class="bar">Add New User</h3>',
@@ -2445,7 +2445,7 @@ class HubEditingHandler(object):
             if (
                 session.user.has_flag(session,
                                       'info:srw/operation/1/create',
-                                      'eadAuthStore'
+                                      'hubAuthStore'
                                       )
             ):
                 return self.show_userMenu(
@@ -2483,7 +2483,7 @@ class HubEditingHandler(object):
                             session.user.has_flag(
                                 session,
                                 'info:srw/operation/1/create',
-                                'eadAuthStore'
+                                'hubAuthStore'
                             )
                         ):
                             return self.show_userMenu(
@@ -2508,7 +2508,7 @@ class HubEditingHandler(object):
                 if (
                     session.user.has_flag(session,
                                           'info:srw/operation/1/create',
-                                          'eadAuthStore'
+                                          'hubAuthStore'
                                           )
                 ):
                     values = {'%USERNAME%': '',
@@ -2527,7 +2527,7 @@ class HubEditingHandler(object):
                 if (
                     session.user.has_flag(session,
                                           'info:srw/operation/1/create',
-                                          'eadAuthStore'
+                                          'hubAuthStore'
                                           )
                 ):
                     return self.show_userMenu(
@@ -2573,7 +2573,7 @@ class HubEditingHandler(object):
                     self._canDelete(userid) and
                     session.user.has_flag(session,
                                           'info:srw/operation/1/delete',
-                                          'eadAuthStore'
+                                          'hubAuthStore'
                                           )
                 ):
                     try:
@@ -2729,7 +2729,7 @@ class HubEditingHandler(object):
             self._hasPermission(recid) and
             session.user.has_flag(session,
                                   'info:srw/operation/1/create',
-                                  'eadAuthStore'
+                                  'hubAuthStore'
                                   )
         ):
             if rec.id[rec.id.rfind('-') + 1:] == newUser:
@@ -2753,10 +2753,10 @@ class HubEditingHandler(object):
 
     def _get_usernamesByInst(self, institutionid):
         """Return usernames from institution in alphabetical order."""
-        sqlQ = ("SELECT eadAuthStore "
-                "FROM eadAuthStore_linkauthinst "
+        sqlQ = ("SELECT hubAuthStore "
+                "FROM hubAuthStore_linkauthinst "
                 "WHERE institutionid=%s "
-                "ORDER BY eadAuthStore ASC"
+                "ORDER BY hubAuthStore ASC"
                 )
         res = authStore._query(sqlQ, (institutionid,))
         return sorted([r[0] for r in res], key=str.lower)
@@ -2814,7 +2814,7 @@ class HubEditingHandler(object):
         if (
             session.user.has_flag(session,
                                   'info:srw/operation/1/create',
-                                  'eadAuthStore')
+                                  'hubAuthStore')
         ):
             self.htmlNav[2] = '''\
             <li class="navtab">
@@ -2823,7 +2823,7 @@ class HubEditingHandler(object):
                     Manage Users
                 </a>
             </li>'''
-            userStore = db.get_object(session, 'eadAuthStore')
+            userStore = db.get_object(session, 'hubAuthStore')
             users = []
             for ctr, uid in enumerate(self._get_usernamesFromMyInst()):
                 user = userStore.fetch_object(session, uid)
@@ -2903,7 +2903,7 @@ class HubEditingHandler(object):
                 name == session.user.username or
                 session.user.has_flag(session,
                                       'info:srw/operation/1/create',
-                                      'eadAuthStore'
+                                      'hubAuthStore'
                                       )
             ):
                 disabled = ''
@@ -2945,7 +2945,7 @@ class HubEditingHandler(object):
             if (
                 session.user.has_flag(session,
                                       'info:srw/operation/1/create',
-                                      'eadAuthStore')
+                                      'hubAuthStore')
             ):
                 disabled = ''
             else:
@@ -3176,7 +3176,7 @@ def build_architecture(data=None):
                         )
     db = serv.get_object(session, 'db_hubedit')
     editStore = db.get_object(session, 'editingStore')
-    authStore = db.get_object(session, 'eadAuthStore')
+    authStore = db.get_object(session, 'hubAuthStore')
     assignDataIdFlow = db.get_object(session, 'assignDataIdentifierWorkflow')
 
     # transformers

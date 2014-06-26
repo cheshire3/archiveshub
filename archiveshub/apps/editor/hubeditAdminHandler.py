@@ -200,8 +200,8 @@ class HubeditAdminHandler:
             instName = instRec.process_xpath(session, '//name/text()')[0]
             institutions.append((instName, instRec))
         for instName, instRec in sorted(institutions):
-            sqlQ = ("SELECT eadAuthStore FROM eadAuthStore_linkauthinst "
-                    "WHERE institutionid=%s ORDER BY eadAuthStore"
+            sqlQ = ("SELECT hubAuthStore FROM hubAuthStore_linkauthinst "
+                    "WHERE institutionid=%s ORDER BY hubAuthStore"
                     )
             result = userStore._query(sqlQ, (instRec.id,))
             quota = instRec.process_xpath(session, '//quota/text()')[0]
@@ -216,7 +216,7 @@ class HubeditAdminHandler:
                     if user.has_flag(
                         session,
                         'info:srw/operation/1/create',
-                        'eadAuthStore'
+                        'hubAuthStore'
                     ):
                         userText = '{0} (Administrator)'.format(username)
                     else:
@@ -498,7 +498,7 @@ class HubeditAdminHandler:
         confirm = form.get('confirm', None)
         passwd = form.get('passwd', None)
         #check again to see that this inst has no users.
-        sqlQ = ("SELECT eadAuthStore FROM eadAuthStore_linkauthinst WHERE "
+        sqlQ = ("SELECT hubAuthStore FROM hubAuthStore_linkauthinst WHERE "
                 "institutionid=%s"
                 )
         result = userStore._query(sqlQ, (instid,))
@@ -665,7 +665,7 @@ def build_architecture(data=None):
     dbPath = db.get_path(session, 'defaultPath')
 
     editStore = db.get_object(session, 'editingStore')
-    userStore = db.get_object(session, 'eadAuthStore')
+    userStore = db.get_object(session, 'hubAuthStore')
     instStore = db.get_object(session, 'institutionStore')
 
     authStore = db.get_object(session, 'adminAuthStore')

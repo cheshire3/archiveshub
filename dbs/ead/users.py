@@ -181,8 +181,8 @@ def list_users(args):
             instName = instRec.process_xpath(session, '//name/text()')[0]
             institutions.append((instName, instRec))
         for instName, instRec in sorted(institutions):
-            sqlQ = ("SELECT eadAuthStore FROM eadAuthStore_linkauthinst "
-                    "WHERE institutionid=%s ORDER BY eadAuthStore"
+            sqlQ = ("SELECT hubAuthStore FROM hubAuthStore_linkauthinst "
+                    "WHERE institutionid=%s ORDER BY hubAuthStore"
                     )
             result = authStore._query(sqlQ, (instRec.id,))
             quota = instRec.process_xpath(session, '//quota/text()')[0]
@@ -283,7 +283,7 @@ serv = SimpleServer(
 session.database = 'db_ead'
 db = serv.get_object(session, 'db_ead')
 xmlp = db.get_object(session, 'LxmlParser')
-authStore = db.get_object(session, 'eadAuthStore')          # Editors
+authStore = db.get_object(session, 'hubAuthStore')          # Editors
 superAuthStore = db.get_object(session, 'adminAuthStore')   # Hub Staff
 instStore = db.get_object(session, 'institutionStore')      # Institutions
 
