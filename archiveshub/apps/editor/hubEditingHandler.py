@@ -2393,7 +2393,7 @@ class HubEditingHandler(object):
             else:
                 rowclass = 'even'
             cellstr = ('<td>{0}</td>'
-                       '<td>{1.realName</td>'
+                       '<td>{1.realName}</td>'
                        '<td>{1.email}</td>'
                        '<td>{1.tel}</td>'
                        ''.format(uid, user)
