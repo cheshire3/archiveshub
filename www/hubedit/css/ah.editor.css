@@ -1,0 +1,448 @@
+/* ---------------------------------------------------------------------------
+Archives Hub Search / Display CSS
+(i.e. not currently handled by consolidated CSS)
+
+Colours used by the main hub configurations
+orange:     f89821
+pale-grey:  f5f5f5
+dark-blue:  24205c
+mid-blue:   0baedb
+pale-blue:  b7e8f5
+
+--------------------------------------------------------------------------- */
+
+/* Conditional structure alterations
+--------------------------------------------------------------------------- */
+
+div#leftcol[class~=editmenu] {
+    width: 50%;
+}
+
+div#rightcol[class~=editmenu] {
+    width: 49%;
+    margin-left: 51%;
+}
+
+
+/* ELEMENTS
+--------------------------------------------------------------------------- */
+
+strong { font-weight: bolder; }
+
+em { font-style: italic; }
+
+h3, h4 {
+    font-weight: bolder;
+}
+
+h4 {
+    font-size: larger;
+}
+
+body.waiting,
+body.waiting textarea,
+body.waiting input,
+body.waiting a, 
+body.waiting select, 
+body.waiting .deletelogo {
+    cursor: wait;
+}
+
+
+.deletelogo {
+    padding-left: 5px;
+    cursor: pointer;
+}
+
+.readonly {
+    background: #e7e7e7;
+    color: #7f7f7f;
+}
+
+button,
+input[type=button],
+input[type=submit] {
+    font-size: 10pt;
+}
+
+
+/* Title
+--------------------------------------------------------------------------- */
+
+h1 {
+    font-weight: bolder;
+}
+
+h1.inbanner {
+    position: absolute;
+    top: 50px;
+    left: 321px;
+}
+
+
+/* Hierarchical Lists
+--------------------------------------------------------------------------- */
+
+ul.hierarchy {
+    padding-left: 10px;
+}
+
+    /* Table of Contents
+    ----------------------------------------------------------------------- */
+
+#treeDiv {
+    font-size: small;
+}
+
+a.valid {
+    color: black;
+}
+
+a.invalid {
+    color: red;
+}
+
+a.delete-sprite {
+    display: inline-block;
+    padding-left: 5px;
+    height: 14px;
+    width: 19px;
+    background: url('/images/editor/delete-sprite.png') no-repeat 5px 0;
+    color: transparent;
+}
+
+a.delete-sprite:hover {
+    background-position: 5px -14px
+}
+
+a.delete-sprite:active {
+    background-position: 5px -28px;
+}
+
+
+/* Operations Menu (Left Column)
+--------------------------------------------------------------------------- */
+
+div#leftcol {
+    /* no toolbar as in main hub, no need for extra padding */
+    padding-top: 0px;
+}
+
+table.edit-ops {
+    width: 330px;   
+}
+
+.buttonlabel {
+    font-weight: bold;
+    margin-top: 5px;
+    width: 75px;
+}
+
+.buttonlabel.file,
+.buttonlabel.view,
+.buttonlabel.export {
+    font-size: 10pt;
+}
+    
+.menubutton {
+    margin-top: 5px;
+    margin-left: 10px;
+    width: 95%;
+    font-size: 10pt;
+}
+
+#emailhub-button {
+    width: 97%  
+}
+
+.whatsthis,
+a.tip img {
+    padding-right: 5px;
+    padding-left: 5px;
+}
+
+
+
+/* Keyboard
+--------------------------------------------------------------------------- */
+
+#keyboard {
+    display: none;
+    border: solid black 1px;
+    position: fixed;
+    bottom: 0px;
+    left: 10px;
+    width: 10cm;
+    background-color: #b7e8f5;
+}
+
+#keyboardcontrolbar {
+    height: 18px;
+    margin-bottom: 2px;
+    color: white;
+    background-color: #24205c;
+}
+
+#keyboardtitle {
+    color: inherit;
+    background-color: inherit;
+    font-weight: normal; 
+    font-size: 11pt;
+    padding-left: 2px;
+    width: 63%; 
+    text-align: right;
+}
+
+#keyboardcontrols {
+    float: right;
+}
+
+.capslock {
+    float: left;
+    margin-left: 5px;
+    height: 15px;
+}
+
+#charlink, 
+#charlinkpressed {
+    font-size: 9pt;
+    float: left;
+    width: 100px;
+    padding: 4px;
+    margin-left: 3px;
+    margin-bottom: 4px;
+    }
+
+#keyboardlink, #extraslink {
+    font-size: 10pt;
+    float: right;
+}
+
+#keyboard td button {
+    width: 0.8cm;
+    height: 0.7cm;
+}
+
+/* Editing Form (Right Column)
+--------------------------------------------------------------------------- */
+
+.pui {
+    float: right;
+    padding: 10px;
+}
+
+.formbutton {
+    float: left;
+    margin-top: 5px;
+}
+
+div#formDiv .float {
+    float: left;
+}
+
+div#formDiv .float input[type="text"] {
+    margin-right: 7px;
+}
+
+.clear {
+    clear: both;
+}
+
+input[readOnly],
+input[readonly] {
+    background-color: #eee;
+}
+
+div#formDiv .section {
+    padding-bottom: 15px;
+    border-bottom: 10px solid white;
+    background: white url('/images/structure/hr_chevron_paleblue.png') repeat-x;
+    background-position: left bottom;
+}
+
+.extSearch{
+    cursor: pointer;
+}
+
+div#formDiv br {
+    clear: both;
+}
+
+.smalllink {
+    text-decoration: underline; 
+    cursor: pointer;    
+}
+
+    /* Text entry fields
+    ----------------------------------------------------------------------- */
+
+.menuFieldError {
+    background-color: #ffaaaa;
+}
+    
+.dateError {
+    background-color: #ffaaaa;
+}
+
+textarea, input {
+    font-family: arial, helvetica, gill, sans-serif;
+    font-size: 11pt; 
+}
+    
+textarea, input[type="text"], input[type="file"], select{
+    border: 2px inset white;    
+}
+
+.valid, .invalid {
+    cursor: pointer;    
+}
+
+
+    /* Repeatable fields - Languages, Access Points etc.
+    ----------------------------------------------------------------------- */
+
+.tablecontainer {
+    float: left;
+    margin-top: 8px;
+}
+
+.tablecontainer .label {
+    width: 75px;
+}
+
+.buttoncontainer {
+    float: right;
+    margin-top: 8px;
+}
+
+buttoncontainer p {
+    width: 150px;
+}
+
+.addfield {
+    padding-left: 5px;
+    color: blue;
+    text-decoration: underline; 
+    cursor: pointer;
+}
+
+.added {
+    float: left;
+    width: 563px;
+    background: #F2F2F2;
+    border: solid 1px #000000;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    margin-left: 0px;   
+}
+
+.icons {
+    float: left;
+    padding-right: 5px;
+    padding-left: 3px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+
+.langcontainer {
+    width: 563px;
+}
+
+.accesspoint {
+    margin-left: 105px;
+    cursor: pointer;
+}
+
+.accesspoint a {
+    color: black;
+}
+
+.apcontainer {
+    border-top: solid gray 1px;
+    width: 563px;
+}
+
+.apbutton {
+    font-size: 10pt;
+    margin-top: 5px;
+    margin-left: 5px;
+    width: 100px;
+}
+
+td .apbutton {
+    margin-left: 0px;   
+}
+
+
+    /* Digital Objects
+    ----------------------------------------------------------------------- */
+
+.odd {
+    background: #F2F2F2;
+}
+
+div#createnewdao {
+    padding-bottom: 20px;
+    padding-top: 20px;
+}
+
+.checked {
+    font-weight: bold;
+}
+
+.daooptions {
+    padding-top: 10px;
+    border-top: 1px solid gray;
+}
+
+#digitalobjectsform {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.daotable td.label{
+    width: 120px;   
+}
+
+.thumb, .multiple, .new, .embed {
+    padding-bottom: 20px;
+    border-bottom: 1px solid gray;
+    padding-top: 20px;
+}
+
+
+    /* Context Menus
+    ----------------------------------------------------------------------- */
+
+ul.SimpleContextMenu {
+    display: none;
+    position: absolute;
+    margin: -50px 0px 0px 0px;
+    padding: 0px;
+    font-family: arial;
+    font-size: 12px;
+    list-style-type: none;
+    border: 1px solid #000000;
+    z-index:100;
+}
+
+ul.SimpleContextMenu li {
+ /*   border-bottom: 1px solid #000000;*/
+    width: 100px;
+    margin: 0px;
+    padding: 2px 10px 3px 10px;
+    clear: both;
+    background-color: #eeeeee;
+    cursor: default;
+}
+
+ul.SimpleContextMenu li img {
+    float: right;
+}
+
+ul.SimpleContextMenu li:hover {
+    text-decoration: none;
+    color: black;
+    background: #aaffaa;
+}
+

@@ -41,11 +41,13 @@ from archiveshub.apps.ead.base import config, session, db
 
 class EADRecordWsgiApplication(EADWsgiApplication):
 
-    def __init__(self, session, database, config):
+    def __init__(self, config, session, database):
         # Constructor method
-        super(EADRecordWsgiApplication, self).__init__(session,
-                                                       database,
-                                                       config)
+        super(EADRecordWsgiApplication, self).__init__(
+            config,
+            session,
+            database
+        )
         # Fetch Logger
         self.logger = self.database.get_object(session,
                                                'recordTransactionLogger'
@@ -583,7 +585,7 @@ def main(argv=None):
     return httpd.serve_forever()
 
 
-application = EADRecordWsgiApplication(session, db, config)
+application = EADRecordWsgiApplication(config, session, db)
 
 # Set up argument parser
 argparser = WSGIAppArgumentParser(

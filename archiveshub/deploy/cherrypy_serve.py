@@ -27,6 +27,8 @@ from archiveshub.deploy.utils import WSGIAppArgumentParser
 
 from archiveshub.apps.ead.search import application as ead_search_app
 from archiveshub.apps.ead.record import application as ead_data_app
+from archiveshub.apps.editor.admin import application as admin_app
+from archiveshub.apps.editor.edit import application as edit_app
 
 
 def main(argv=None):
@@ -55,6 +57,8 @@ def main(argv=None):
     cherrypy.tree.graft(oaipmh_app, '/api/OAI-PMH/2.0')
     cherrypy.tree.graft(ead_data_app, '/data')
     cherrypy.tree.graft(ead_search_app, '/search')
+    cherrypy.tree.graft(admin_app, '/admin')
+    cherrypy.tree.graft(edit_app, '/edit')
     root_conf = {
         'tools.staticdir.on': True,
         'tools.staticdir.dir': expanduser('~/mercurial/archiveshub/htdocs'),
@@ -64,6 +68,16 @@ def main(argv=None):
         '/': root_conf
     }
     cherrypy.tree.mount(None, '/', config=config)
+    edit_config = {
+        '/': {
+            'tools.staticdir.on': True,
+            'tools.staticdir.dir': resource_filename(
+                Requirement.parse('archiveshub'),
+                'www/hubedit/js'
+            )
+        }
+    }
+    cherrypy.tree.mount(None, '/edit/js', edit_config)
     # Write startup message to stdout
     sys.stdout.write(
         "Starting CherryPy HTTP server for ArchivesHub.\n"

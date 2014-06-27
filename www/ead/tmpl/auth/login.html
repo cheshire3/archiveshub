@@ -1,0 +1,16 @@
+<%inherit file="../single.html"/>
+
+<%block name="title">
+    Sign In
+</%block>
+
+
+<div class="grid-425-285 panel-search cF" id="PanelSearch">
+    <div id="search-panel" class="col-1">
+        <h1>${self.title()}</h1>
+        <%include file="form.html"/>
+    </div><!-- /.col-1 -->
+    <div id="search-tip-panel" class="col-2 tip-panel">
+        <%include file="loginTips.html"/>
+    </div>
+</div>

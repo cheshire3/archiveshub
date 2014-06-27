@@ -1,0 +1,41 @@
+<div id="single">    
+    <h3 class="bar">Edit Account Details</h3>
+	%message%
+	<form action="users.html" method="post"  enctype="multipart/form-data">
+        <input type="hidden" name="operation" value="edituser"/>
+        <table id="usertable" summary="User details"><tbody>
+        
+			<tr>
+			  <td class="usertable">Username: </td>
+			  <td><input type="hidden" name="userid" value="%USERNAME%"/>%USERNAME%</td>
+			</tr>
+			<tr>
+			  <td class="usertable">Full Name: </td>
+			  <td><input type="text" name="realName" size="40" value="%realName%"/></td>
+			</tr>
+			<tr>
+			  <td class="usertable">Email: </td>
+			  <td><input type="text" name="email" size="40" value="%email%"/></td>
+			</tr>
+			<tr>
+			  <td class="usertable">Telephone: </td>
+			  <td><input type="text" name="tel" size="40" maxlength="15" value="%tel%"/></td>
+			</tr>
+			<tr title="Leave blank if you do not want to change your password.">
+			  <td class="usertable">New Password (if changing): </td>
+			  <td><input type="password" name="passwd1" size="40"/></td>
+			</tr>
+			<tr title="This MUST be the same as the New Password you just entered.">
+			  <td class="usertable">Re-enter New Password: </td>
+			  <td><input type="password" name="passwd2" size="40"/></td>
+			</tr>
+        </tbody></table>
+        <div title="You MUST confirm your existing password when making any changes.">
+        <strong>To make changes to this account you must confirm <em>your</em> password.</strong>
+        <p class="bar">
+			Password : <input type="password" name="passwd" size="40" value=""/>
+			<input type="submit" name="submit" value="Submit"/>
+        </p>
+        </div>
+	</form>
+</div>

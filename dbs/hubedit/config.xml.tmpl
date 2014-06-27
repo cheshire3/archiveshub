@@ -1,0 +1,67 @@
+<config
+    xmlns="http://www.cheshire3.org/schemas/config/"
+    type="database"
+    id="db_hubedit">
+
+<!--
+    This file was produced, and released as part of Cheshire for Archives v3.x.
+    Copyright &#169; 2005-2008 the University of Liverpool
+ -->
+
+  <objectType>cheshire3.database.SimpleDatabase</objectType>
+
+  <options>
+    <setting type="srw">0</setting>
+    <setting type="z3950">0</setting>
+    <setting type="oai-pmh">0</setting>
+  </options>
+
+  <paths>
+    <path type="defaultPath">~/archiveshub/dbs/ead</path>
+    <path type="metadataPath">stores/editorMetadata.bdb</path>
+    <object type="protocolMap" ref="eadCqlProtocolMap"/>
+  </paths>
+
+    <subConfigs>
+        <path type="includeConfigs">configs.d</path>
+    </subConfigs>
+
+  <subConfigs>
+
+    <!-- protocol map -->
+    <subConfig type="protocolMap" id="eadCqlProtocolMap">
+        <objectType>cheshire3.protocolMap.CQLProtocolMap</objectType>
+        <paths>
+            <path type="zeerexPath">zeerex_srw.xml</path>
+        </paths>
+    </subConfig>
+
+    <subConfig type="workflow" id="assignDataIdentifierWorkflow">
+        <objectType>cheshire3.workflow.CachingWorkflow</objectType>
+        <workflow>
+            <!-- input type: record -->
+            <!-- first put record aside so we can re-assign it later -->
+            <assign from="input" to="myRecord"/>
+            <object type="transformer" ref="persistentIdTxr"/>
+            <!-- input type: document -->
+            <object type="input" function="get_raw"/>
+            <object type="workflow" ref="normalizeDataIdentifierWorkflow" />
+            <assign from="input" to="myRecord.id"/>
+            <assign from="myRecord" to="input"/>
+        </workflow>
+    </subConfig>
+
+    <subConfig type="workflow" id="normalizeDataIdentifierWorkflow">
+        <objectType>cheshire3.workflow.CachingWorkflow</objectType>
+        <workflow>
+            <!-- input type: String -->
+            <object type="normalizer" ref="DiacriticNormalizer" function="process_string"/>
+            <object type="normalizer" ref="CaseNormalizer" function="process_string"/>
+            <object type="normalizer" ref="SpaceNormalizer" function="process_string"/>
+            <assign from="input.replace(' ', '').replace('/', '-').replace('\\', '-').replace('\'', '')" to="input" />
+        </workflow>
+    </subConfig>
+
+  </subConfigs>
+
+</config>

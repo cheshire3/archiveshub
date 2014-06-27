@@ -10,6 +10,7 @@ www/conf.d/ead.conf
 # De-Templatified configurations
 dbs/ead/config.xml
 dbs/ead/cluster/config.xml
+dbs/hubedit/config.xml
 www/ead/ead.ini
 
 # Python compiled/optimized files
