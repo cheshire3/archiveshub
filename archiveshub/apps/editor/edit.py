@@ -12,7 +12,7 @@ from archiveshub.apps.editor.hubEditingHandler import (
     check_password
 )
 
-from .auth import LogoutWSGIApplication, make_form_authenticated
+from .auth import make_form_authenticated
 
 
 def main(argv=None):
@@ -46,8 +46,6 @@ application = make_form_authenticated(
     include_ip=True,
     logout_path='logout'
 )
-
-logout_application = LogoutWSGIApplication('archiveshub_authn_edit')
 
 # Set up argument parser
 argparser = WSGIAppArgumentParser(

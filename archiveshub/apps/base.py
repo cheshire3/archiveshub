@@ -52,6 +52,9 @@ class WSGIApplication(object):
             'config': config
         }
 
+    def _log(self, lvl, msg):
+        print >> self.request.environ['wsgi.errors'], msg
+
     def _setUp(self, environ):
         # Prepare application to handle a new request
         # Wrap environ in a Request object

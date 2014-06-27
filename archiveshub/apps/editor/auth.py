@@ -14,16 +14,43 @@ from archiveshub.apps.base import WSGIApplication
 from archiveshub.apps.configuration import config
 
 
-class LoginWSGIMiddleware(AuthFormHandler):
-    """Sub-class of ``paste.auth.form.AuthFormHandler`` with minor mods
+class FormAuthenticatedWSGIMiddleware(WSGIApplication, AuthFormHandler):
+    """Middleware to handle login/logout vie HTML+Cookie.
 
-    Modifications for compatibility with
-    ``paste.auth.auth_tkt.AuthTKTMiddleware``.
+    Inherits from and includes some copy and paste code from
+    ``paste.auth.form.AuthFormHandler`` with minor modifications.
     """
 
+    def __init__(self, app, check_password, **kwargs):
+        global config
+        AuthFormHandler.__init__(
+            self,
+            app,
+            check_password,
+            template=get_login_form()
+        )
+        WSGIApplication.__init__(self, config)
+        self.logout_path = kwargs.pop('logout_path', 'logout')
+
+    def _setUp(self, environ):
+        super(FormAuthenticatedWSGIMiddleware, self)._setUp(environ)
+        script = self.request.script_name
+        self.defaultContext['SCRIPT'] = script
+        # Set the base URL of this family of apps
+        self.defaultContext['BASE'] = script
+        # Set the URL of the data resolver
+        self.defaultContext['DATAURL'] = '/data'
+
     def __call__(self, environ, start_response):
-        username = environ.get('REMOTE_USER', '')
-        if username:
+        self._setUp(environ)
+        if self.request.path_info_peek() == self.logout_path:
+            environ['paste.auth_tkt.logout_user']()
+            self.response.status = "302 Logged Out"
+            self.response.body = self._render_template(
+                'auth/login.html'
+            ) % construct_url(environ, path_info='')
+            return self.response(environ, start_response)
+        elif self.request.remote_user:
             return self.application(environ, start_response)
 
         if 'POST' == environ['REQUEST_METHOD']:
@@ -49,22 +76,9 @@ class LoginWSGIMiddleware(AuthFormHandler):
                     del environ['paste.parsed_formvars']
                     return self.application(environ, start_response)
 
-        content = self.template % construct_url(environ)
-        start_response("200 OK", [('Content-Type', 'text/html'),
-                                  ('Content-Length', str(len(content)))])
-        return [content]
-
-
-class LogoutWSGIApplication(WSGIApplication):
-    """Application to log out a user."""
-
-    def __init__(self, cookie_name):
-        self.cookie_name = cookie_name
-
-    def __call__(self, environ, start_response):
-        self._setUp(environ)
-        environ['paste.auth_tkt.logout_user']()
-        self.response.status = "302 Logged Out"
+        self.response.body = self.template % construct_url(environ)
+        self.response.status = '200 OK'
+        self.response.content_type = 'text/html'
         return self.response(environ, start_response)
 
 
@@ -101,7 +115,7 @@ def make_form_authenticated(app, check_password, **kwargs):
     :type app: callable
     """
     wrapped = AuthTKTMiddleware(
-        LoginWSGIMiddleware(
+        FormAuthenticatedWSGIMiddleware(
             app,
             get_password_checker(check_password),
             template=get_login_form()

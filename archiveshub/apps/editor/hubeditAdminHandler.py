@@ -595,7 +595,13 @@ class HubeditAdminHandler:
         tmpl = unicode(read_file(self.baseTemplatePath))
         title = ' :: '.join(self.htmlTitle)
         navbar = ' '.join(self.htmlNav)
-        tmpl = tmpl.replace("%TITLE%", title).replace("%NAVBAR%", navbar)
+        replaceAll = {
+            "%TITLE%": title,
+            "%NAVBAR%": navbar,
+            "%USERNAME%": session.user.username,
+            "%REALNAME%": session.user.realName
+        }
+        tmpl = multiReplace(tmpl, replaceAll)
         path = req.uri[1:]
         path = path[path.rfind('/') + 1:]
         content = None

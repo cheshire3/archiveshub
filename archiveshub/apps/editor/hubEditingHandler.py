@@ -2979,15 +2979,18 @@ class HubEditingHandler(object):
     def handle(self, req):
         global script, editStore
         # Reset Global Replacements
-        self.globalReplacements = {'%PAGECLASS%': '',
-                                   '%REP_NAME%': repository_name,
-                                   '%REP_LINK%': repository_link,
-                                   '%REP_LOGO%': repository_logo,
-                                   '${SCRIPT}': self.script,
-                                   '%SCRIPT%': self.script,
-                                   '<br>': '<br/>',
-                                   '<hr>': '<hr/>'
-                                   }
+        self.globalReplacements = {
+            '%PAGECLASS%': '',
+            '%REP_NAME%': repository_name,
+            '%REP_LINK%': repository_link,
+            '%REP_LOGO%': repository_logo,
+            '${SCRIPT}': self.script,
+            '%SCRIPT%': self.script,
+            "%USERNAME%": session.user.username,
+            "%REALNAME%": session.user.realName,
+            '<br>': '<br/>',
+            '<hr>': '<hr/>'
+        }
         self.htmlTitle = ['Data Creation and Editing']
         self.htmlNav = [
             '''<li class="navtab">
