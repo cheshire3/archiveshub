@@ -3015,7 +3015,15 @@ class HubEditingHandler(object):
         operation = form.get('operation', None)
         path = req.uri[1:]
         path = path[path.rfind('/') + 1:]
-        if path == 'users.html':
+        if path.endswith('.js'):
+            self.send_response(
+                read_file(os.path.abspath('../js/{0}'.format(path))),
+                req,
+                content_type='text/javascript',
+                code=200
+            )
+            return apache.OK
+        elif path == 'users.html':
             if (operation):
                 if (operation == 'edituser'):
                     content = self.edit_user(form)
