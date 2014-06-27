@@ -34,29 +34,24 @@
 
 import sys
 import os
-import urllib
 import time
 import smtplib
 import re
-import cgitb
 import traceback
-#import cProfile
-import codecs
 import datetime
 import glob
 
+from crypt import crypt
 try:
     from cStringIO import StringIO
 except ImportError:
     from StringIO import StringIO
 
-from pprint import pformat
-from copy import deepcopy
-from crypt import crypt
-from email import Message, MIMEMultipart, MIMEText  # email modules
-from lxml import etree  # Lxml tree manipulation
+# Lxml tree manipulation
+from lxml import etree
 from lxml import html as lxmlhtml
 
+# email modules
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
@@ -76,7 +71,6 @@ from cheshire3.exceptions import ObjectDoesNotExistException, XMLSyntaxError
 from cheshire3.internal import cheshire3Root
 from cheshire3.record import LxmlRecord
 from cheshire3.server import SimpleServer
-from cheshire3.utils import flattenTexts
 
 from cheshire3.web.www_utils import html_encode, read_file, multiReplace
 from cheshire3.web.www_utils import *
@@ -3217,11 +3211,6 @@ def handler(req):
         hubEditingHandler.logger = lgr
         # handle request
         try:
-            #cProfile.runctx('hubEditingHandler.handle(req)',
-            #                globals=globals(),
-            #                locals=locals(),
-            #                filename='../logs/menuloadstat'
-            #                )
             hubEditingHandler.handle(req)
         finally:
             try:

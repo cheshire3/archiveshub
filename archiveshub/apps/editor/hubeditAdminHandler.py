@@ -32,28 +32,21 @@
 #                          password) of any EAD Editor user
 #
 
-import sys
 import os
 import cgitb
-import time
-import re
-import smtplib
-import datetime
 
 from lxml import etree
 from crypt import crypt
 from os.path import abspath
 
-from mod_python import apache, Cookie
+from mod_python import apache
 from mod_python.util import FieldStorage, redirect
 
 from cheshire3.baseObjects import Session
 from cheshire3.server import SimpleServer
-from cheshire3.baseObjects import Session
 from cheshire3.utils import flattenTexts
 from cheshire3.document import StringDocument
 from cheshire3.record import LxmlRecord
-from cheshire3.web import www_utils
 
 from cheshire3 import exceptions as c3errors
 from cheshire3.internal import cheshire3Root
