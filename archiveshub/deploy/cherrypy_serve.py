@@ -29,6 +29,7 @@ from archiveshub.apps.ead.search import application as ead_search_app
 from archiveshub.apps.ead.record import application as ead_data_app
 from archiveshub.apps.editor.admin import application as admin_app
 from archiveshub.apps.editor.edit import application as edit_app
+from archiveshub.apps.ead.contribute import application as contrib_app
 
 
 def main(argv=None):
@@ -59,6 +60,7 @@ def main(argv=None):
     cherrypy.tree.graft(ead_search_app, '/search')
     cherrypy.tree.graft(admin_app, '/admin')
     cherrypy.tree.graft(edit_app, '/edit')
+    cherrypy.tree.graft(contrib_app, '/contribute')
     root_conf = {
         'tools.staticdir.on': True,
         'tools.staticdir.dir': expanduser('~/mercurial/archiveshub/htdocs'),
