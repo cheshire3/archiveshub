@@ -4,26 +4,33 @@
     body_id = "home"
     header_class = "cF"
 %>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="en">
     <head>
         <title><%block name="title">Home</%block> - Archives Hub</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <!-- Digital Blah Blah CSS + JavaScript -->
+        <%block name="css">
         <link rel="stylesheet" media="screen" type="text/css"
             href="/styles/ah.base.css"></link>
         <link rel="stylesheet" media="screen" type="text/css"
             href="/styles/ah.search.css"></link>
         <!--[if lte IE 6]><link href="/styles/ie6.css" rel="stylesheet" type="text/css" media="screen" /><![endif]-->
         <!--[if IE 7]><link href="/styles/ie7.css" rel="stylesheet" type="text/css" media="screen" /><![endif]-->
+        <!-- printout CSS -->
+        <link rel="stylesheet" type="text/css" media="print"
+            href="/styles/print.css"></link>
+        </%block>
+        <%block name="js">
         <!-- tell curvyCorners to behave! -->
         <script type="text/javascript">var curvyCornersVerbose = false;</script>
         <script type="text/javascript" src="/scripts/js/ah.libs.js"></script>
         <script type="text/javascript" src="/scripts/js/ah.text.js"></script>
         <script type="text/javascript" src="/scripts/js/ah.base.js"></script>
-        <!-- printout CSS -->
-        <link rel="stylesheet" type="text/css" media="print"
-            href="/styles/print.css"></link>
+        </%block>
+        <%block name="GA">
         <!-- Google Analytics code -->
         <script type="text/javascript">
         var _gaq = _gaq || [];
@@ -38,6 +45,7 @@
           s.parentNode.insertBefore(ga, s);
         })();
         </script>
+        </%block>
         <!-- favourite icon embedded data for efficiency - do not edit! -->
     <link rel="favourite icon" href="data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAD///8R//////////////////////rz2//+/Pf/////////////////////////////////
@@ -117,10 +125,13 @@ AAAAAAAAgAEAAA=="></link>
             <!-- content here may be 1 or 2 column - div classes/ids determined by handler -->
             ${next.body()}
         </div><!-- /#Container -->
+
+        <%block name="scripts">
         <script type="text/javascript">
 $(document).ready(function() {
     AH.init();
 });
         </script>
+        </%block>
     </body>
 </html>
