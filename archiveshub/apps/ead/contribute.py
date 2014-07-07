@@ -8,9 +8,11 @@ import webbrowser
 
 # Site packages
 
+from cheshire3.exceptions import ObjectDoesNotExistException
+
 from archiveshub.deploy.utils import WSGIAppArgumentParser
-from archiveshub.apps.ead.base import EADWsgiApplication
-from archiveshub.apps.ead.base import config, session, db
+from .auth import make_form_authenticated
+from .base import EADWsgiApplication, config, session, db
 
 
 class EADContributeWsgiApplication(EADWsgiApplication):
@@ -47,6 +49,19 @@ class EADContributeWsgiApplication(EADWsgiApplication):
                 pass
 
 
+def check_password(username, password):
+    global db, session
+    authStore = db.get_object(session, 'hubAuthStore')
+    try:
+        u = session.user = authStore.fetch_object(session, username)
+    except ObjectDoesNotExistException:
+        return None
+    if u.check_password(session, password):
+        return True
+    else:
+        return False
+
+
 def main(argv=None):
     """Start up a simple app server to serve the application."""
     global argparser, application
@@ -69,7 +84,14 @@ def main(argv=None):
     return httpd.serve_forever()
 
 
-application = EADContributeWsgiApplication(config, session, db)
+application = make_form_authenticated(
+    EADContributeWsgiApplication(config, session, db),
+    check_password,
+    cookie_name='archiveshub_authn_contribute',
+    httponly=True,
+    include_ip=True,
+    logout_path='logout'
+)
 
 # Set up argument parser
 argparser = WSGIAppArgumentParser(
