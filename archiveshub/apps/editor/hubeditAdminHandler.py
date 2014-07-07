@@ -638,6 +638,7 @@ class HubeditAdminHandler:
                            "admin/"
                            )
                      )
+            return
         else:
             content = self.show_adminMenu()
         content = tmpl.replace('%CONTENT%', content)
