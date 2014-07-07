@@ -5,14 +5,12 @@ from __future__ import absolute_import
 import sys
 
 from mod_python_wsgi.wrap import ModPythonWSGIApp
-
 from archiveshub.deploy.utils import WSGIAppArgumentParser
 from archiveshub.apps.editor.hubeditAdminHandler import (
     handler,
     check_password
 )
-
-from .auth import make_form_authenticated
+from ..ead.auth import make_form_authenticated
 
 
 def main(argv=None):
