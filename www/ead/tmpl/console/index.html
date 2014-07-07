@@ -1,7 +1,10 @@
+<%!
+    from os.path import basename
+%>
 <%inherit file="base.html"/>
 
 <%block name="title">
-    Contributor Console
+    Contributor Files
 </%block>
 
 <div class="row">
@@ -10,9 +13,15 @@
   </div>
   <div class="col-md-5">
     <h3>Contributor Folders</h3>
-    % for contributor in contributorStore:
-        <span class="glyphicon glyphicon-folder-close"></span>
-        ${contributor.id[:-len('DocumentStore')]}
+    <span class="glyphicon glyphicon-folder-close"></span>
+    ${contributorStore.id[:-len('DocumentStore')]}
+    <ul class="list-unstyled">
+    % for doc in contributorStore:
+        <li>
+            <span class="glyphicon glyphicon-file"></span>
+            ${basename(doc.filename)}
+        </li>
     % endfor
+    </ul>
   </div>
 </div>

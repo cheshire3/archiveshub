@@ -19,7 +19,12 @@ class EADContributeWsgiApplication(EADWsgiApplication):
 
     def __call__(self, environ, start_response):
         # Method to make instances of this class callable
-        global db, session
+        global db, session, authStore
+        self._setUp(environ)
+        session.user = authStore.fetch_object(
+            session,
+            self.request.remote_user
+        )
         try:
             # Prepare application to handle a new request
             self._setUp(environ)
@@ -31,9 +36,16 @@ class EADContributeWsgiApplication(EADWsgiApplication):
                 operation = os.path.splitext(path.split('/')[-1])[0]
             # Check operation and act accordingly
             if not operation or operation == 'index':
-                contributorStore = db.get_object(
+                institution_name = self._get_userInstitutionName(
+                    session.user.username
+                )
+                configStore = db.get_object(
                     session,
                     'documentStoreConfigStore'
+                )
+                contributorStore = configStore.fetch_object(
+                    session,
+                    '{0}DocumentStore'.format(institution_name)
                 )
                 self.response.body = self._render_template(
                     'console/index.html',
@@ -48,10 +60,30 @@ class EADContributeWsgiApplication(EADWsgiApplication):
                 # It's possible nothing was logged for this remote user
                 pass
 
+    def _get_userInstitutionId(self, username):
+        # Return the institution id of the user performing the operation
+        global authStore
+        sqlQ = ("SELECT institutionid "
+                "FROM hubAuthStore_linkauthinst "
+                "WHERE hubAuthStore=%s")
+        res = authStore._query(sqlQ, (username,))
+        if len(res) > 1:
+            # We have two templates with the same id - should never happen
+            return None
+        else:
+            return res[0][0]
+
+    def _get_userInstitutionName(self, username):
+        global authStore
+        # Get the institution of the user performing the operation
+        authinst = self._get_userInstitutionId(session.user.username)
+        instStore = db.get_object(session, 'institutionStore')
+        instRec = instStore.fetch_record(session, authinst)
+        return instRec.process_xpath(session, '//name/text()')[0]
+
 
 def check_password(username, password):
-    global db, session
-    authStore = db.get_object(session, 'hubAuthStore')
+    global db, session, authStore
     try:
         u = session.user = authStore.fetch_object(session, username)
     except ObjectDoesNotExistException:
@@ -83,6 +115,8 @@ def main(argv=None):
     print url
     return httpd.serve_forever()
 
+
+authStore = db.get_object(session, 'hubAuthStore')
 
 application = make_form_authenticated(
     EADContributeWsgiApplication(config, session, db),
