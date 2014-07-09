@@ -2669,16 +2669,25 @@ function cloneAndIncrement(donor){
             donor.value = donor.value + '[1]';
         }
     }
-    // clear the value and remove any disabled attributes
+    // clear the value
     if (donor.nodeName.toLowerCase() != 'option'){
-        $(clone).writeAttribute({
-            value: null
-        });
+        try {
+            $(clone).setValue('');
+        } catch(err) {
+            // Not a form element
+            $(clone).writeAttribute({
+                value: null
+            });
+        }
     }
+    // Remove any disabled attributes
     $(clone).writeAttribute({
         disabled: false,
         readOnly: false
     });
+    // Remove any validation errors, or mandatory field markers from clone
+    $(clone).removeClassName('menuFieldError');
+    $(clone).setStyle({'border-color': 'white'});
 
     // Clone all children of donor
     // Use childNodes because it keeps text nodes, where childElements doesn't
@@ -2716,7 +2725,8 @@ function initCreatorSelect(){
      */
      $$('.originationType').each(function(item){
         item.observe('change', function(){
-            $(event.target).next().name = $(event.target).value
+            $(event.target).next().name = $(event.target).value;
+            validateField($(event.target).next(), 'true');
         });
      });
 }
@@ -3302,7 +3312,7 @@ function checkRequiredData(){
     }
 
     // Creator (<origination>)
-    var orig = Prototype.Selector.find($$("input[name*='did/origination[']"), ":not(input[name*='/persname']):not(input[name*='/famname']):not(input[name*='/corpname'])");
+    var orig = Prototype.Selector.find($$("input[name*='did/origination[']"), ":not(input[name*='/persname']):not(input[name*='/famname']):not(input[name*='/corpname']):not(input[value=''])");
     if (orig){
         return false;
     }
