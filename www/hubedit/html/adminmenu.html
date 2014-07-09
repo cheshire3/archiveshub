@@ -55,30 +55,41 @@
 			</form>
 		</div>
 	    <h3 class="bar">Add Institution</h3>
-	    <div>
-	    	<form name="createform" action="users.html" method="post" onsubmit="return checkInstForm('add')">
-		    	<input type="hidden" name="operation" value="addinstitution"/>
-		    	<table>
-		    		<tr><td>
-		    		<span class="label">Institution Name: </span>
-		    		</td>
-		    		<td>
-				   <input type="text" name="institution" id="addname"></input>
-				   </td></tr>
-				   <tr><td>
-				   <span class="label">File Quota: </span>
-				   </td>
-				   	<td>
-				   	<input type="text" name="quota" value="50" id="addquota"></input>
-				   	</td>
-				   </tr>
-				   <tr>
-				   <td></td>
-				   <td><input type="submit" name="submit" value="Add Institution"/></td>
-				   </tr>
-				</table> 
-			</form>
-	    </div>
+        <div>
+          <form name="createform" action="users.html" method="post" onsubmit="return checkInstForm('add')">
+            <input type="hidden" name="operation" value="addinstitution"/>
+            <table>
+              <tr>
+                <td>
+                  <span class="label">Institution Name: </span>
+                </td>
+                <td>
+                  <input type="text" name="institution" id="addname"></input>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <span class="label">Editor Quota:</span>
+                </td>
+                <td>
+                  <input type="text" name="quota" value="50" id="addquota"></input>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <span class="label">Files Folder:</span>
+                </td>
+                <td>
+                  %DOCSTORESELECT%
+                </td>
+              </tr>
+              <tr>
+                <td></td>
+                <td><input type="submit" name="submit" value="Add Institution"/></td>
+              </tr>
+            </table>
+          </form>
+        </div>
 	    <h3 class="bar">Edit Institution</h3>
 	    <div>
 		    <form name="editchoice" action="users.html" method="post" onsubmit="return checkInstForm('edit')">

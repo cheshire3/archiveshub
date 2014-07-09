@@ -112,6 +112,7 @@ class HubeditAdminHandler:
         page = page.replace('%INSTSELECT%', self.create_select())
         page = page.replace('%INSTUSERLIST%', self.list_usersByInst())
         page = page.replace('%INSTSELECTOPTIONS%', self.get_institutions())
+        page = page.replace('%DOCSTORESELECT%', self.get_docStoreSelect())
         page = multiReplace(page, values)
         return page
 
@@ -262,6 +263,19 @@ class HubeditAdminHandler:
                 ''.format(i.id, i.process_xpath(session, '//name/text()')[0])
             )
         return ''.join(optionList)
+
+    def get_docStoreSelect(self):
+        global docStoreConfigStore
+        select_list = ['<select name="docstore">',
+                       '<option value="null">Select</option>'
+                       ]
+        for store in docStoreConfigStore:
+            select_list.append(
+                '<option value="{0}">{1}</option>'
+                ''.format(store.id, store.id[:-len('DocumentStore')])
+            )
+        select_list.append('</select>')
+        return ''.join(select_list)
 
     def add_user(self, form):
         field_names = {
@@ -452,16 +466,34 @@ class HubeditAdminHandler:
         #- end _submit_userLxml()
 
     def add_inst(self, form):
-        global instStore
+        global instStore, docStoreConfigStore
         inst = form.get('institution', None)
         quota = form.get('quota', '50')
-        docstr = ('<inst><name>{0}</name><quota>{1}</quota></inst>'
-                  ''.format(inst, quota)
-                  )
+        docstore = form.get('docstore')
+        doc_lines = [
+            '<inst>',
+            '<name>{0}</name>'.format(inst),
+            '<quota>{1}</quota>'.format(quota)
+        ]
+        if not docstore:
+            try:
+                docStoreConfigStore.fetch_object(
+                    session,
+                    '{0}DocumentStore'.format(inst)
+                )
+            except c3errors.ObjectDoesNotExistException:
+                pass
+            else:
+                docstore = '{0}DocumentStore'.format(inst)
+        if docstore and docstore != 'null':
+            doc_lines.append('<documentStore>{0}</documentStore>'
+                             ''.format(docstore)
+                             )
+        doc_lines.append('</inst>')
         if inst is not None:
-            doc = StringDocument(docstr)
+            doc = StringDocument(''.join(doc_lines))
             rec = xmlp.process_document(session, doc)
-            _ = instStore.create_record(session, rec)
+            rec = instStore.create_record(session, rec)
             return self.show_adminMenu()
         else:
             return self.show_adminMenu()
@@ -649,6 +681,7 @@ class HubeditAdminHandler:
 def build_architecture(data=None):
     global rebuild, session, serv, db, dbPath
     global editStore, authStore, instStore, userStore, xmlp
+    global docStoreConfigStore
 
     session = Session()
     session.database = 'db_hubedit'
@@ -667,7 +700,7 @@ def build_architecture(data=None):
     editStore = db.get_object(session, 'editingStore')
     userStore = db.get_object(session, 'hubAuthStore')
     instStore = db.get_object(session, 'institutionStore')
-
+    docStoreConfigStore = db.get_object(session, 'documentStoreConfigStore')
     authStore = db.get_object(session, 'adminAuthStore')
     xmlp = db.get_object(session, 'LxmlParser')
 
