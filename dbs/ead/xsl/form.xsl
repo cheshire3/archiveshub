@@ -2112,7 +2112,7 @@
             <!--persname -->
             <div id="persname" class="apcontainer">
                 <p>
-                    <strong>Personal Name</strong>
+                    <strong>Personal Name (structured; has surname/forename)</strong>
                     <a href="http://archiveshub.ac.uk/help/persname"
                         class="tip" title="What is this?" id="persnamehelp"
                         name="persnamehelp" target="_new">
@@ -2214,7 +2214,7 @@
             <!--persname (non-western) -->
             <div id="persname-non-western" class="apcontainer">
                 <p>
-                    <strong>Personal Name (non-western name)</strong>
+                    <strong>Personal Name (unstructured; no identified surname)</strong>
                     <a href="http://archiveshub.ac.uk/help/persnamestring"
                         class="tip" title="What is this?" id="persnamehelp"
                         name="persnamehelp" target="_new">
