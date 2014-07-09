@@ -97,15 +97,6 @@
 
     <%include file="footerMin.html"/>
 
-    <script type="text/javascript">
-    $(document).ready(function() {
-        $('select[name="sortBy"]').change(function() {
-            $(this).closest("form").submit();
-        });
-        $('.facet').each(truncateList);
-    });
-    </script>
-    
 </%block>
 
 <%block name="rightcol">
