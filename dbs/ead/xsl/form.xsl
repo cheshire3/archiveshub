@@ -599,12 +599,9 @@
                         <!--                    <xsl:apply-templates select="did/origination"/>-->
                     </xsl:when>
                     <xsl:otherwise>
-                        <input class="menuField" type="text"
-                            onfocus="setCurrent(this);" onkeypress="validateFieldDelay(this, 'true');"
-                            onchange="validateField(this, 'true');"
-                            onblur="validateField(this, 'true');"
-                            name="did/origination[1]" id="did/origination[1]"
-                            size="60"></input>
+                        <xsl:call-template name="origination">
+                            <xsl:with-param name="position" select="1" />
+                        </xsl:call-template>
                     </xsl:otherwise>
                 </xsl:choose>
                 <span id="addOrigination">
