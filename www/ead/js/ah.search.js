@@ -10,6 +10,17 @@ var AH = {
         //ajaxifyLinks(document);
         //ajaxifyForms(document);
         AH.searchWithin();
+        AH.checkEmailLinks();
+    },
+
+    checkEmailLinks: function(){
+        $('a.contact[href*="example.com"]').each(function(index){
+            $(this).bind('click', function(e){
+                e.preventDefault();
+                alert("Unable to determine contact details for the repository at this time.");
+                return false;
+            }).css('color', '#999');
+        });
     },
 
     searchWithin: function(){
