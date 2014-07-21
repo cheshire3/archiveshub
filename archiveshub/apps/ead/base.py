@@ -99,6 +99,7 @@ class EADWsgiApplication(object):
                                              strict_undefined=False)
         self.defaultContext = {
             'version': get_distribution("archiveshub").version,
+            'c3_version': get_distribution("cheshire3").version,
             'config': config
         }
 

@@ -525,6 +525,9 @@ class EADSearchWsgiApplication(EADWsgiApplication):
                                       sortBy=sortBy
                                       )]
 
+    def system(self, form):
+        return self._render_template('system.html')
+
 
 def main(argv=None):
     """Start up a simple app server to serve the application."""
