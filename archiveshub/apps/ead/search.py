@@ -1,5 +1,6 @@
 """EAD Search WSGI Application."""
 
+import inspect
 import sys
 import os
 import webbrowser
@@ -77,7 +78,13 @@ class EADSearchWsgiApplication(EADWsgiApplication):
                         self.response.status = 404
                         self.response.body = self._render_template(
                             'fail/invalidOperation.html',
-                            operation=operation
+                            operation=operation,
+                            available=[
+                                method[0]
+                                for method
+                                in inspect.getmembers(self, inspect.ismethod)
+                                if not method[0].startswith('_')
+                            ]
                         )
                     return self.response(environ, start_response)
                 else:
