@@ -92,7 +92,7 @@
                                 <xsl:text>Persistent Unique Identifier</xsl:text>
                             </strong>
                             <a
-                                href="http://archiveshub.ac.uk/help/glossary/#identifier"
+                                href="http://archiveshub.ac.uk/identifiers/"
                                 title="PUI help - opens in new window" class="tip"
                                 target="_new">
                                 <img src="/images/structure/form_tip.png"
