@@ -46,7 +46,6 @@ from cheshire3.baseObjects import Session
 from cheshire3.internal import cheshire3Root
 from cheshire3.server import SimpleServer
 from cheshire3.utils import flattenTexts
-from cheshire3.web.sru_utils import fetch_data
 from cheshire3.web.www_utils import html_encode
 
 from archiveshub.apps.configuration import config
@@ -99,6 +98,7 @@ class EADWsgiApplication(object):
                                              strict_undefined=False)
         self.defaultContext = {
             'version': get_distribution("archiveshub").version,
+            'c3_version': get_distribution("cheshire3").version,
             'config': config
         }
 
@@ -604,12 +604,17 @@ serv = SimpleServer(session, os.path.join(cheshire3Root,
 db = serv.get_object(session, 'db_ead')
 
 # Fetch repository data, email contacts etc.
+json_filepath = os.path.join(
+    os.path.expanduser('~'),
+    'mercurial',
+    'archiveshub',
+    'htdocs',
+    'api',
+    'contributors.json'
+)
 try:
-    contributorData = json.loads(
-        fetch_data(
-            'http://archiveshub.ac.uk/contributorsmap/locations.json'
-        )
-    )
+    with open(json_filepath) as fh:
+        contributorData = json.load(fh)
 except (TypeError, ValueError):
     contributorData = []
 
