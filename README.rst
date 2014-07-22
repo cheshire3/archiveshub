@@ -160,7 +160,7 @@ Install ``archiveshub``
 
 2. Install dependencies::
 
-       pip -r requirements.txt
+       pip install -r requirements.txt
 
 3. Install ``archiveshub`` in `develop` mode::
 
