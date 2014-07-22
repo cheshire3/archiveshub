@@ -2761,11 +2761,11 @@ function updateTitle(field) {
 
 
 function updateId() {
-      var link = document.getElementById(currentForm);
-      var title = (document.getElementById('did/unittitle')).value;
-      if (title.indexOf('<') != -1){
+    var link = document.getElementById(currentForm);
+    var title = (document.getElementById('did/unittitle')).value;
+    if (title.indexOf('<') != -1){
         title = title.replace(/<\/?\S+?>/g, '');
-      }
+    }
     var cc = Prototype.Selector.find($$("input[id*='countrycode[']"), "input[readOnly]");
     if (typeof(cc) == 'undefined'){
         // Fall back to first occurring
@@ -2781,14 +2781,14 @@ function updateId() {
         // Fall back to first occurring
         var uid = $("unitid[1]");
     }
-      var countryCode = cc.value.toLowerCase();
-      var repositoryCode = rc.value;
-      var id = uid.value;
+    var countryCode = cc.value.toLowerCase();
+    var repositoryCode = rc.value;
+    var id = uid.value;
 
-      if (title == '' && id == ''){
-          link.innerHTML = currentForm;
-      }
-      else {
+    if (title == '' && id == ''){
+        link.innerHTML = currentForm;
+    }
+    else {
         link.innerHTML = id + ' - ' + title;
     }
     var match = true;
@@ -2816,11 +2816,11 @@ function updateId() {
                     (document.getElementById('pui')).value = lowerCaseId;
                 }
                 else {
-                    (document.getElementById('pui')).value = countryCode + repositoryCode + lowerCaseId;
+                    (document.getElementById('pui')).value = countryCode + repositoryCode + '-' + lowerCaseId;
                 }
             }
             else {
-                (document.getElementById('pui')).value = countryCode + repositoryCode + lowerCaseId;
+                (document.getElementById('pui')).value = countryCode + repositoryCode + '-' + lowerCaseId;
             }
         }
     }
