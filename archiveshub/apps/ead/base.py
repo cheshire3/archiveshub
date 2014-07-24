@@ -96,6 +96,8 @@ class EADWsgiApplication(WSGIApplication):
 
     def _log(self, lvl, msg):
         # Log a message with the given level
+        if isinstance(msg, unicode):
+            msg = msg.encode('utf8')
         self.logger.log_lvl(self.session, lvl, msg, self.request.remote_addr)
         if lvl >= 30:
             print >> self.request.environ['wsgi.errors'], msg
@@ -142,7 +144,7 @@ class EADWsgiApplication(WSGIApplication):
 
     def _store_query(self, session, query):
         # Store a query, return its identifier
-        identifier = sha1(query.toCQL()).hexdigest()
+        identifier = sha1(query.toCQL().encode('utf8')).hexdigest()
         # The fist 7 characters should be OK; it's good enough for git...
         query.id = identifier[:7]
         return self.queryStore.store_query(session, query)

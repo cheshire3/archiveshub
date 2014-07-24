@@ -119,44 +119,50 @@ class EADSearchWsgiApplication(EADWsgiApplication):
             qString = self._fetch_query(session, rsid).toCQL()
         elif not qString:
             qString = generate_cqlQuery(form)
+        if not isinstance(qString, unicode):
+            qString = unicode(qString, 'utf-8')
         if filter_:
             if qString.strip('()'):
-                qString = '{0} and/relevant/proxinfo ({1})'.format(filter_,
-                                                                   qString)
+                qString = u'{0} and/relevant/proxinfo ({1})'.format(filter_,
+                                                                    qString
+                                                                    )
             else:
                 qString = filter_
 
         if (withinCollection and withinCollection != 'allcollections'):
-            if qString.strip('()'):
-                qString = ('(rec.collectionIdentifier exact "{0}") '
-                           'and/relevant/proxinfo '
-                           '({1})'.format(withinCollection,
-                                          qString)
+            if qString.strip(u'()'):
+                qString = (u'(rec.collectionIdentifier exact "{0}") '
+                           u'and/relevant/proxinfo '
+                           u'({1})'.format(withinCollection,
+                                           qString)
                            )
             else:
-                qString = ('rec.collectionIdentifier exact "{0}"'
-                           ''.format(withinCollection))
+                qString = (u'rec.collectionIdentifier exact "{0}"'
+                           u''.format(withinCollection))
         elif 'noComponents' in form:
-            qString = ('ead.istoplevel=1 and/relevant/proxinfo (%s)'
-                       '' % qString)
+            qString = (u'ead.istoplevel=1 and/relevant/proxinfo (%s)'
+                       u'' % qString)
 
         if (withinContributor and withinContributor != 'allcontributors'):
-            if qString.strip('()'):
-                qString = ('(vdb.identifier exact "{0}") '
-                           'and/relevant/proxinfo '
-                           '({1})'.format(withinContributor,
-                                          qString)
+            if qString.strip(u'()'):
+                qString = (u'(vdb.identifier exact "{0}") '
+                           u'and/relevant/proxinfo '
+                           u'({1})'.format(withinContributor,
+                                           qString)
                            )
             else:
-                qString = ('vdb.identifier exact "{0}"'
-                           ''.format(withinContributor))
+                qString = (u'vdb.identifier exact "{0}"'
+                           u''.format(withinContributor))
 
-        if not qString.strip('()'):
+        if not qString.strip(u'()'):
             self._log(40, '*** Unable to generate CQL query')
             return self._render_template('fail/invalidQuery.html')
 
         try:
-            return queryFactory.get_query(session, qString, format="cql")
+            return queryFactory.get_query(session,
+                                          qString.encode('utf-8'),
+                                          format="cql"
+                                          )
         except CQLDiagnostic:
             self._log(40, '*** Unparsable query: %s' % qString)
             if (qString.count('"') % 2):
