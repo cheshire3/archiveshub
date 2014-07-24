@@ -128,6 +128,8 @@ class EADWsgiApplication(object):
 
     def _log(self, lvl, msg):
         # Log a message with the given level
+        if isinstance(msg, unicode):
+            msg = msg.encode('utf8')
         self.logger.log_lvl(self.session, lvl, msg, self.request.remote_addr)
         if lvl >= 30:
             print >> self.request.environ['wsgi.errors'], msg
