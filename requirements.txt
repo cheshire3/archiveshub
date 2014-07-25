@@ -5,3 +5,4 @@ webob >= 1.2
 hgapi
 lockfile
 uwsgi
+git+https://github.com/bloomonkey/mod-python-wsgi
