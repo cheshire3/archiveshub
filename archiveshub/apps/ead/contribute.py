@@ -2,6 +2,7 @@
 
 from __future__ import with_statement
 
+import inspect
 import os
 import sys
 import webbrowser
@@ -17,17 +18,38 @@ from .base import EADWsgiApplication, config, session, db
 
 class EADContributeWsgiApplication(EADWsgiApplication):
 
+    ALLOWED_METHODS = ['DELETE', 'GET', 'HEAD', 'POST', 'PUT']
+
     def __call__(self, environ, start_response):
         # Method to make instances of this class callable
-        global db, session, authStore
         self._setUp(environ)
+        try:
+            func = getattr(self, self.request.method.lower())
+        except AttributeError:
+            if self.request.method.upper() == "HEAD":
+                # Do a GET but don't attach the body
+                _ = self.get()
+            else:
+                # Unsupported method
+                self.response.status = "405 Method Not Allowed"
+                self.response.allow = self.ALLOWED_METHODS
+        else:
+            body = func()
+            if body:
+                self.response.body = body
+        return self.response(environ, start_response)
+
+    def _setUp(self, environ):
+        super(EADContributeWsgiApplication, self)._setUp(environ)
         session.user = authStore.fetch_object(
             session,
             self.request.remote_user
         )
+
+    def get(self):
+        global db, session, authStore
         try:
             # Prepare application to handle a new request
-            self._setUp(environ)
             path = self.request.path_info.strip('/')
             form = self._get_params()
             operation = form.get('operation', None)
@@ -47,12 +69,16 @@ class EADContributeWsgiApplication(EADWsgiApplication):
                     session,
                     '{0}DocumentStore'.format(institution_name)
                 )
-                self.response.body = self._render_template(
+                return self._render_template(
                     'console/index.html',
                     contributorStore=contributorStore
                 )
-
-            return self.response(environ, start_response)
+            else:
+                self.request.status_code = 404
+                return self._render_template(
+                    'fail/404.html',
+                    resource=self.request.path_info
+                )
         finally:
             try:
                 self.logger.flush(self.session, 20, self.request.remote_addr)
