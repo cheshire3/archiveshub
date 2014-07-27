@@ -243,8 +243,8 @@ class HubeditAdminHandler:
     def get_institutions(self):
         optionList = []
         for rec in instStore:
-            option = ('<option value="{0}|{1}|{2}">{3}</option>'
-                      ''.format(
+            option = (u'<option value="{0}|{1}|{2}">{3}</option>'
+                      u''.format(
                           rec.id,
                           rec.process_xpath(session, '//name/text()')[0],
                           rec.process_xpath(session, '//quota/text()')[0],
@@ -252,17 +252,17 @@ class HubeditAdminHandler:
                           )
                       )
             optionList.append(option)
-        return ''.join(optionList)
+        return u''.join(optionList)
 
     def create_select(self):
         optionList = []
-        optionList.append('<option value="null">Select</option>')
+        optionList.append(u'<option value="null">Select</option>')
         for i in instStore:
             optionList.append(
-                '<option value="{0}">{1}</option>'
-                ''.format(i.id, i.process_xpath(session, '//name/text()')[0])
+                u'<option value="{0}">{1}</option>'
+                u''.format(i.id, i.process_xpath(session, '//name/text()')[0])
             )
-        return ''.join(optionList)
+        return u''.join(optionList)
 
     def get_docStoreSelect(self):
         global docStoreConfigStore

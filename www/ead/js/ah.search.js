@@ -9,7 +9,24 @@ var AH = {
         // Wrap any desired links or forms in AJAX requests
         //ajaxifyLinks(document);
         //ajaxifyForms(document);
+        AH.facets();
+        AH.sortBy();
         AH.searchWithin();
+        AH.checkEmailLinks();
+    },
+
+    checkEmailLinks: function(){
+        $('a.contact[href*="example.com"]').each(function(index){
+            $(this).bind('click', function(e){
+                e.preventDefault();
+                alert("Unable to determine contact details for the repository at this time.");
+                return false;
+            }).css('color', '#999');
+        });
+    },
+
+    facets: function(){
+        $('.facet').each(truncateList);
     },
 
     searchWithin: function(){
@@ -42,6 +59,13 @@ var AH = {
                     }
                 },
             });
+        });
+    },
+
+    sortBy: function(){
+        // Re-sort results when selector is changed
+        $('select[name="sortBy"]').change(function() {
+            $(this).closest("form").submit();
         });
     }
 

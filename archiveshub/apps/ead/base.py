@@ -38,7 +38,6 @@ from cheshire3.baseObjects import Session
 from cheshire3.internal import cheshire3Root
 from cheshire3.server import SimpleServer
 from cheshire3.utils import flattenTexts
-from cheshire3.web.sru_utils import fetch_data
 from cheshire3.web.www_utils import html_encode
 
 from archiveshub.apps.base import WSGIApplication
@@ -97,6 +96,8 @@ class EADWsgiApplication(WSGIApplication):
 
     def _log(self, lvl, msg):
         # Log a message with the given level
+        if isinstance(msg, unicode):
+            msg = msg.encode('utf8')
         self.logger.log_lvl(self.session, lvl, msg, self.request.remote_addr)
         if lvl >= 30:
             print >> self.request.environ['wsgi.errors'], msg
@@ -143,7 +144,7 @@ class EADWsgiApplication(WSGIApplication):
 
     def _store_query(self, session, query):
         # Store a query, return its identifier
-        identifier = sha1(query.toCQL()).hexdigest()
+        identifier = sha1(query.toCQL().encode('utf8')).hexdigest()
         # The fist 7 characters should be OK; it's good enough for git...
         query.id = identifier[:7]
         return self.queryStore.store_query(session, query)
@@ -564,12 +565,17 @@ serv = SimpleServer(session, os.path.join(cheshire3Root,
 db = serv.get_object(session, 'db_ead')
 
 # Fetch repository data, email contacts etc.
+json_filepath = os.path.join(
+    os.path.expanduser('~'),
+    'mercurial',
+    'archiveshub',
+    'htdocs',
+    'api',
+    'contributors.json'
+)
 try:
-    contributorData = json.loads(
-        fetch_data(
-            'http://archiveshub.ac.uk/contributorsmap/locations.json'
-        )
-    )
+    with open(json_filepath) as fh:
+        contributorData = json.load(fh)
 except (TypeError, ValueError):
     contributorData = []
 

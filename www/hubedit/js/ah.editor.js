@@ -1765,43 +1765,44 @@ window.onbeforeunload = function (evt) {
 
 function save(){
     var body = document.getElementsByTagName('body')[0];
-    body.className = 'waiting';
+    body.className = 'splitscreen waiting';
+
     //validate and check id existence etc.
     if (!checkRequiredData()){
         alert (NOT_ALL_REQUIRED_DATA_MESSAGE);
-        body.className = 'none';
+        body.className = 'splitscreen';
         return;
     }
     var errors = $$('.menuFieldError');
     if (errors.length != 0){
         alert('Please fix the errors in the xml before saving. Errors will be marked with red shading in the text box.');
-        body.className = 'none';
+        body.className = 'splitscreen';
         return;
     }
     var errors = $$('.dateError');
     if (errors.length != 0){
         alert('Please fix the error in the normalised date before saving. This field can only contain numbers and the character /.');
-        body.className = 'none';
+        body.className = 'splitscreen';
         return;
     }
     var values = checkEditStore();
     if (values[0] == 'error'){
         alert('A problem occurred when trying to perform this operation. Please contact the hub team..');
-        body.className = 'none';
+        body.className = 'splitscreen';
            return;
     }
     if (values[0]){
         if (values[1] == 'user'){
             var confirmbox = confirm('A file with this Reference code is already in the process of being created or edited. If you proceed with this operation the existing file will be overwritten with this one.\n\nAre you sure you want to continue with this operation?');
              if (confirmbox == false){
-                   body.className = 'none';
+                   body.className = 'splitscreen';
                    return;
                }
            }
            else if (values[1] == 'other'){
             var confirmbox = confirm('A file with this Reference code is already in the process of being created or edited by another user.\n\nAre you sure you want to continue with this operation?');
              if (confirmbox == false){
-                   body.className = 'none';
+                   body.className = 'splitscreen';
                    return;
                }
            }
@@ -1812,7 +1813,7 @@ function save(){
     if (daodetails[0] == true){
          var confirmbox = confirm('At least one of File URI values required for the digital object has not been completed. If you proceed with this operation any incomplete URIs will not be included and the title and/or description information relating to the missing URI will be lost. All other content will be saved.\n\nDo you want to continue?');
          if (confirmbox == false){
-             body.className = 'none';
+             body.className = 'splitscreen';
              return;
          }
          else {
@@ -1827,12 +1828,13 @@ function save(){
          }
     }
     findRequiredFields();
-    body.className = 'none';
+    body.className = 'splitscreen';
     if (saveForm(false)) {
         alert('This form is now saved as ' + recid + ' and can be reloaded from the admin menu for further editing at a later date.');
     } else {
         alert('Record could not be saved due to server error.');
     }
+
 }
 
 
@@ -2027,7 +2029,7 @@ function displayForm(id, level, nosave){
 
 function addComponent(){
     var body = document.getElementsByTagName('body')[0];
-    body.className = 'waiting';
+    body.className = 'splitscreen waiting';
     // check it does not exceed the c12 limit
     if (currentForm != 'collectionLevel'){
          var parent = document.getElementById(currentForm);
@@ -2035,7 +2037,7 @@ function addComponent(){
           var level = Number(listItem.parentNode.getAttribute('name'));
           if (level == 12){
               alert('You cannot add any more component levels to this description');
-              body.className = 'none';
+              body.className = 'splitscreen';
               return;
           }
     }
@@ -2669,16 +2671,25 @@ function cloneAndIncrement(donor){
             donor.value = donor.value + '[1]';
         }
     }
-    // clear the value and remove any disabled attributes
+    // clear the value
     if (donor.nodeName.toLowerCase() != 'option'){
-        $(clone).writeAttribute({
-            value: null
-        });
+        try {
+            $(clone).setValue('');
+        } catch(err) {
+            // Not a form element
+            $(clone).writeAttribute({
+                value: null
+            });
+        }
     }
+    // Remove any disabled attributes
     $(clone).writeAttribute({
         disabled: false,
         readOnly: false
     });
+    // Remove any validation errors, or mandatory field markers from clone
+    $(clone).removeClassName('menuFieldError');
+    $(clone).setStyle({'border-color': 'white'});
 
     // Clone all children of donor
     // Use childNodes because it keeps text nodes, where childElements doesn't
@@ -2716,7 +2727,8 @@ function initCreatorSelect(){
      */
      $$('.originationType').each(function(item){
         item.observe('change', function(){
-            $(event.target).next().name = $(event.target).value
+            $(event.target).next().name = $(event.target).value;
+            validateField($(event.target).next(), 'true');
         });
      });
 }
@@ -2751,11 +2763,11 @@ function updateTitle(field) {
 
 
 function updateId() {
-      var link = document.getElementById(currentForm);
-      var title = (document.getElementById('did/unittitle')).value;
-      if (title.indexOf('<') != -1){
+    var link = document.getElementById(currentForm);
+    var title = (document.getElementById('did/unittitle')).value;
+    if (title.indexOf('<') != -1){
         title = title.replace(/<\/?\S+?>/g, '');
-      }
+    }
     var cc = Prototype.Selector.find($$("input[id*='countrycode[']"), "input[readOnly]");
     if (typeof(cc) == 'undefined'){
         // Fall back to first occurring
@@ -2771,14 +2783,14 @@ function updateId() {
         // Fall back to first occurring
         var uid = $("unitid[1]");
     }
-      var countryCode = cc.value.toLowerCase();
-      var repositoryCode = rc.value;
-      var id = uid.value;
+    var countryCode = cc.value.toLowerCase();
+    var repositoryCode = rc.value;
+    var id = uid.value;
 
-      if (title == '' && id == ''){
-          link.innerHTML = currentForm;
-      }
-      else {
+    if (title == '' && id == ''){
+        link.innerHTML = currentForm;
+    }
+    else {
         link.innerHTML = id + ' - ' + title;
     }
     var match = true;
@@ -2806,11 +2818,11 @@ function updateId() {
                     (document.getElementById('pui')).value = lowerCaseId;
                 }
                 else {
-                    (document.getElementById('pui')).value = countryCode + repositoryCode + lowerCaseId;
+                    (document.getElementById('pui')).value = countryCode + repositoryCode + '-' + lowerCaseId;
                 }
             }
             else {
-                (document.getElementById('pui')).value = countryCode + repositoryCode + lowerCaseId;
+                (document.getElementById('pui')).value = countryCode + repositoryCode + '-' + lowerCaseId;
             }
         }
     }
@@ -3302,7 +3314,7 @@ function checkRequiredData(){
     }
 
     // Creator (<origination>)
-    var orig = Prototype.Selector.find($$("input[name*='did/origination[']"), ":not(input[name*='/persname']):not(input[name*='/famname']):not(input[name*='/corpname'])");
+    var orig = Prototype.Selector.find($$("input[name*='did/origination[']"), ":not(input[name*='/persname']):not(input[name*='/famname']):not(input[name*='/corpname']):not(input[value=''])");
     if (orig){
         return false;
     }

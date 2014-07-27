@@ -1897,10 +1897,11 @@ class HubEditingHandler(object):
              ]
         )
         email_address = emailFromArchonCode(archon_code)
-        doc_uc = doc_uc.replace(
-            u'contributor_{0}@example.com'.format(archon_code),
-            email_address
-        )
+        if email_address:
+            doc_uc = doc_uc.replace(
+                u'contributor_{0}@example.com'.format(archon_code),
+                email_address
+            )
         # Parse HTML fragments
         divs = lxmlhtml.fragments_fromstring(doc_uc)
         # Get Table of Contents

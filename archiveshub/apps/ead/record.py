@@ -71,7 +71,6 @@ class EADRecordWsgiApplication(EADWsgiApplication):
             if path == "environ":
                 if self.request.remote_addr in ['127.0.0.1']:
                     self.response.content_type = 'text/plain'
-                    itertools.imap(repr, )
                     self.response.app_iter = [
                         repr(i) + '\n'
                         for i

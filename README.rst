@@ -1,7 +1,7 @@
 Archives Hub
 ============
 
-23rd June 2014 (2014-06-23)
+24th July 2014 (2014-07-24)
 
 .. image:: https://travis-ci.org/cheshire3/archiveshub.png?branch=master,develop
    :target: https://travis-ci.org/cheshire3/archiveshub
@@ -160,7 +160,7 @@ Install ``archiveshub``
 
 2. Install dependencies::
 
-       pip -r requirements.txt
+       pip install -r requirements.txt
 
 3. Install ``archiveshub`` in `develop` mode::
 
