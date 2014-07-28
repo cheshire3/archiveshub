@@ -446,3 +446,12 @@ ul.SimpleContextMenu li:hover {
     background: #aaffaa;
 }
 
+div#loadSplash {
+    position: fixed;
+    top: 45%;
+    left: 40%;
+    z-index: 100;
+    padding: 50px 100px;
+    background-color: white;
+    border: 3px solid #0baedb;
+}

@@ -41,11 +41,13 @@ import traceback
 import datetime
 import glob
 
+
 from crypt import crypt
 try:
     from cStringIO import StringIO
 except ImportError:
     from StringIO import StringIO
+from xml.sax.saxutils import unescape as xmlunescape
 
 # Lxml tree manipulation
 from lxml import etree
@@ -565,7 +567,7 @@ class HubEditingHandler(object):
 
     def _add_attribute(self, parentNode, attribute):
         parentNode.attrib[attribute] = ""
-        return [parentNode, attribute]
+        return (parentNode, attribute)
 
     def _delete_currentControlaccess(
         self,
@@ -667,7 +669,7 @@ class HubEditingHandler(object):
                 for n in nodetree:
                     parent.append(n)
         else:
-            parent[0].attrib[parent[1]] = textValue
+            parent[0].attrib[parent[1]] = xmlunescape(textValue)
 
     def _create_controlaccess(self, startNode, name, value):
         # get the controlaccess node or create it
@@ -1735,8 +1737,9 @@ class HubEditingHandler(object):
                             identVal = field.value
                             # Strip off countrycode
                             try:
-                                ccxpath = field.name + '/@countrycode'
-                                mycc = node.xpath(ccxpath)[0]
+                                mycc = node.xpath(
+                                    field.name + '/@countrycode'
+                                )[0]
                             except:
                                 pass
                             else:
@@ -1747,14 +1750,17 @@ class HubEditingHandler(object):
                                     identVal = identVal.lstrip()
                             # Strip off repositorycode
                             try:
-                                rcxpath = field.name + '/@repositorycode'
-                                myrc = node.xpath(rcxpath)[0]
+                                myrc = node.xpath(
+                                    field.name + '/@repositorycode'
+                                )[0]
                             except:
                                 pass
                             else:
                                 if identVal.startswith(myrc):
                                     identVal = identVal[len(myrc):]
                                     identVal = identVal.lstrip(' -')
+
+                            # Set the value of @identifier
                             self._add_text(attr_target, identVal)
                             # Handle special case of first unitid
                             # (when there isn't already a persistent one)

@@ -1766,36 +1766,42 @@ window.onbeforeunload = function (evt) {
 function save(){
     var body = document.getElementsByTagName('body')[0];
     body.className = 'splitscreen waiting';
+    background('content');
 
     //validate and check id existence etc.
     if (!checkRequiredData()){
         alert (NOT_ALL_REQUIRED_DATA_MESSAGE);
         body.className = 'splitscreen';
+        foreground('content');
         return;
     }
     var errors = $$('.menuFieldError');
     if (errors.length != 0){
         alert('Please fix the errors in the xml before saving. Errors will be marked with red shading in the text box.');
         body.className = 'splitscreen';
+        foreground('content');
         return;
     }
     var errors = $$('.dateError');
     if (errors.length != 0){
         alert('Please fix the error in the normalised date before saving. This field can only contain numbers and the character /.');
         body.className = 'splitscreen';
+        foreground('content');
         return;
     }
     var values = checkEditStore();
     if (values[0] == 'error'){
         alert('A problem occurred when trying to perform this operation. Please contact the hub team..');
         body.className = 'splitscreen';
-           return;
+        foreground('content');
+        return;
     }
     if (values[0]){
         if (values[1] == 'user'){
             var confirmbox = confirm('A file with this Reference code is already in the process of being created or edited. If you proceed with this operation the existing file will be overwritten with this one.\n\nAre you sure you want to continue with this operation?');
              if (confirmbox == false){
                    body.className = 'splitscreen';
+                   foreground('content');
                    return;
                }
            }
@@ -1803,6 +1809,7 @@ function save(){
             var confirmbox = confirm('A file with this Reference code is already in the process of being created or edited by another user.\n\nAre you sure you want to continue with this operation?');
              if (confirmbox == false){
                    body.className = 'splitscreen';
+                   foreground('content');
                    return;
                }
            }
@@ -1814,6 +1821,7 @@ function save(){
          var confirmbox = confirm('At least one of File URI values required for the digital object has not been completed. If you proceed with this operation any incomplete URIs will not be included and the title and/or description information relating to the missing URI will be lost. All other content will be saved.\n\nDo you want to continue?');
          if (confirmbox == false){
              body.className = 'splitscreen';
+             foreground('content');
              return;
          }
          else {
@@ -1828,13 +1836,13 @@ function save(){
          }
     }
     findRequiredFields();
-    body.className = 'splitscreen';
     if (saveForm(false)) {
         alert('This form is now saved as ' + recid + ' and can be reloaded from the admin menu for further editing at a later date.');
     } else {
         alert('Record could not be saved due to server error.');
     }
-
+    body.className = 'splitscreen';
+    foreground('content');
 }
 
 
@@ -4396,10 +4404,35 @@ function hideStuff() {
     $('div[class*="jshide"]').hide();
 }
 
-function blankout(id) {
+function blankout(id, splash) {
     if (typeof id == 'undefined'){
         id = 'content';
     }
-    $('#'+id).hide();
-    $('#loadImg').show();
+    $(id).setOpacity(0.25);
+    if (typeof splash == 'undefined'){
+        splash = 'loadSplash';
+    }
+    try {
+        $(splash).show();
+    } catch(e) {}
 }
+
+function background(id, splash){
+    blankout(id, splash);
+}
+
+function foreground(id, splash){
+    if (typeof id == 'undefined'){
+        id = 'content';
+    }
+    if (typeof splash == 'undefined'){
+        splash = 'loadSplash';
+    }
+    try {
+        $(splash).hide();
+    } catch(e) {}
+
+    $(id).setOpacity(1.0);
+}
+
+

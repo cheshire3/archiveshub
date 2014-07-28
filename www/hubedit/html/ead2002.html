@@ -132,6 +132,10 @@
         findRequiredFields();
         checkButtons();
         initCreatorSelect();
+        // Fix up load splash DOM issue
+        var splash = $('loadSplash').remove();
+        $$('body')[0].insert(splash);
+        foreground('content');
     } );
 
     // activate save warning
