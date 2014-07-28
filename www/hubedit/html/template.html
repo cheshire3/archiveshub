@@ -104,5 +104,13 @@ var curvyCornersVerbose = false;
         <h3>Saving...</h3>
         <img src="/images/editor/ajax-loader.gif" alt=""/>
     </div>
+    <script type="text/javascript">
+addLoadEvent( function(){
+    // Fix up load splash DOM issue
+    var splash = $('loadSplash').remove();
+    $$('body')[0].insert(splash);
+    foreground('content');
+});
+    </script>
   </body>
 </html>
