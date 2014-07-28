@@ -473,7 +473,7 @@ class HubeditAdminHandler:
         doc_lines = [
             '<inst>',
             '<name>{0}</name>'.format(inst),
-            '<quota>{1}</quota>'.format(quota)
+            '<quota>{0}</quota>'.format(quota)
         ]
         if not docstore:
             try:
