@@ -58,21 +58,32 @@ class EADContributeWsgiApplication(EADWsgiApplication):
                 operation = os.path.splitext(path.split('/')[-1])[0]
             # Check operation and act accordingly
             if not operation or operation == 'index':
-                institution_name = self._get_userInstitutionName(
-                    session.user.username
-                )
                 configStore = db.get_object(
                     session,
                     'documentStoreConfigStore'
                 )
-                contributorStore = configStore.fetch_object(
-                    session,
-                    '{0}DocumentStore'.format(institution_name)
+                docStoreId = self._get_userInstitutionDocumentStoreId(
+                    session.user.username
                 )
-                return self._render_template(
-                    'console/index.html',
-                    contributorStore=contributorStore
-                )
+                if docStoreId is None:
+                    institution_name = self._get_userInstitutionName(
+                        session.user.username
+                    )
+                    docStoreId = '{0}DocumentStore'.format(institution_name)
+                try:
+                    contributorStore = configStore.fetch_object(
+                        session,
+                        docStoreId
+                    )
+                except ObjectDoesNotExistException:
+                    return self._render_template(
+                        'console/fail/noDocStore.html',
+                    )
+                else:
+                    return self._render_template(
+                        'console/index.html',
+                        contributorStore=contributorStore
+                    )
             else:
                 self.request.status_code = 404
                 return self._render_template(
@@ -85,6 +96,17 @@ class EADContributeWsgiApplication(EADWsgiApplication):
             except ValueError:
                 # It's possible nothing was logged for this remote user
                 pass
+
+    def _get_userInstitutionDocumentStoreId(self, username):
+        global authStore
+        # Get the institution of the user performing the operation
+        authinst = self._get_userInstitutionId(session.user.username)
+        instStore = db.get_object(session, 'institutionStore')
+        instRec = instStore.fetch_record(session, authinst)
+        try:
+            return instRec.process_xpath(session, '//documentStore/text()')[0]
+        except IndexError:
+            return None
 
     def _get_userInstitutionId(self, username):
         # Return the institution id of the user performing the operation

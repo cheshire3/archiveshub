@@ -4,24 +4,29 @@
 <%inherit file="base.html"/>
 
 <%block name="title">
-    Contributor Files
+    ${parent.title()} :: Contributor Files
 </%block>
 
 <div class="row">
-  <div class="col-md-5 col-md-offset-1">
-    <h3></h3>
-  </div>
-  <div class="col-md-5">
+  <div class="col-md-7 col-md-offset-1">
     <h3>Contributor Folders</h3>
-    <span class="glyphicon glyphicon-folder-close"></span>
-    ${contributorStore.id[:-len('DocumentStore')]}
-    <ul class="list-unstyled">
-    % for doc in contributorStore:
-        <li>
+    <ul class="list-group">
+        <li class="list-group-item disabled">
+            <span class="glyphicon glyphicon-folder-open"></span>
+            ${contributorStore.id[:-len('DocumentStore')]}
+            <!--<span class="badge">~ ${contributorStore.totalByteCount / 1024 / 1024} mb</span>-->
+            <span class="badge">${contributorStore.totalItems}</span>
+
+        </li>
+        % for doc in contributorStore:
+        <li class="list-group-item">
             <span class="glyphicon glyphicon-file"></span>
             ${basename(doc.filename)}
         </li>
-    % endfor
+        % endfor
     </ul>
+  </div>
+  <div class="col-md-4">
+    <h3></h3>
   </div>
 </div>
