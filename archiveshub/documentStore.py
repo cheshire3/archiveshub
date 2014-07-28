@@ -23,6 +23,15 @@ class MercurialDocumentStore(DirectoryDocumentStore):
     def __init__(self, session, config, parent):
         self.defaultUser = self._getUserString(session)
         DirectoryDocumentStore.__init__(self, session, config, parent)
+        databasePath = self.get_path(session, 'databasePath')
+        self.totalItems = 0
+        self.totalByteCount = 0
+        for root, dirs, files in os.walk(databasePath):
+            for name in files:
+                self.totalItems += 1
+                filepath = os.path.join(root, name)
+                self.totalByteCount += os.stat(filepath).st_size
+
 
     def __iter__(self):
         return mercurialDocumentStoreIter(self)
