@@ -7,8 +7,7 @@ as the installation method is followed.
 
 from __future__ import with_statement
 
-import os
-from os.path import abspath, dirname, join, exists, expanduser
+from os.path import dirname
 import inspect
 
 # Import Setuptools
@@ -16,23 +15,29 @@ from ez_setup import use_setuptools
 use_setuptools()
 
 from setuptools import setup
-from archiveshub.setuptools.commands import (develop,
-                                             install,
-                                             upgrade,
-                                             uninstall,
-                                             unavailable_command
-                                             ) 
+from pip.req import parse_requirements
+
+from archiveshub.setuptools.commands import (
+    develop,
+    install,
+    upgrade,
+    uninstall,
+    unavailable_command
+)
 
 _name = 'archiveshub'
 _version = '3.3.0'
 
 # Inspect to find current path
 setuppath = inspect.getfile(inspect.currentframe())
-setupdir = os.path.dirname(setuppath)
+setupdir = dirname(setuppath)
 
 # Requirements
-with open(os.path.join(setupdir, 'requirements.txt'), 'r') as fh:
-    _install_requires = fh.readlines()
+_install_requires = [str(req.req)
+                     for req
+                     in parse_requirements('requirements.txt')
+                     if req.req
+                     ]
 
 
 setup(
