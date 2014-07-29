@@ -20,6 +20,17 @@ class EADContributeWsgiApplication(EADWsgiApplication):
 
     ALLOWED_METHODS = ['DELETE', 'GET', 'HEAD', 'POST', 'PUT']
 
+    def __init__(self, config, session, database):
+        # Constructor method
+        super(EADContributeWsgiApplication, self).__init__(config,
+                                                           session,
+                                                           database
+                                                           )
+        self.docStoreStore = database.get_object(
+            session,
+            'documentStoreConfigStore'
+        )
+
     def __call__(self, environ, start_response):
         # Method to make instances of this class callable
         self._setUp(environ)
@@ -47,7 +58,6 @@ class EADContributeWsgiApplication(EADWsgiApplication):
         )
 
     def get(self):
-        global db, session, authStore
         try:
             # Prepare application to handle a new request
             path = self.request.path_info.strip('/')
@@ -58,32 +68,15 @@ class EADContributeWsgiApplication(EADWsgiApplication):
                 operation = os.path.splitext(path.split('/')[-1])[0]
             # Check operation and act accordingly
             if not operation or operation == 'index':
-                configStore = db.get_object(
-                    session,
-                    'documentStoreConfigStore'
-                )
-                docStoreId = self._get_userInstitutionDocumentStoreId(
-                    session.user.username
-                )
-                if docStoreId is None:
-                    institution_name = self._get_userInstitutionName(
-                        session.user.username
-                    )
-                    docStoreId = '{0}DocumentStore'.format(institution_name)
-                try:
-                    contributorStore = configStore.fetch_object(
-                        session,
-                        docStoreId
-                    )
-                except ObjectDoesNotExistException:
+                contributorDocStore = self._get_userDocumentStore(session.user.username)
+                if contributorDocStore is None:
                     return self._render_template(
                         'console/fail/noDocStore.html',
                     )
-                else:
-                    return self._render_template(
-                        'console/index.html',
-                        contributorStore=contributorStore
-                    )
+                return self._render_template(
+                    'console/index.html',
+                    contributorStore=contributorDocStore
+                )
             else:
                 self.request.status_code = 404
                 return self._render_template(
@@ -97,14 +90,36 @@ class EADContributeWsgiApplication(EADWsgiApplication):
                 # It's possible nothing was logged for this remote user
                 pass
 
+    # Utility functions
+
+    def _get_userDocumentStore(self, username):
+        docStoreId = self._get_userInstitutionDocumentStoreId(
+            username
+        )
+        if docStoreId is None:
+            institution_name = self._get_userInstitutionName(
+                username
+            )
+            docStoreId = '{0}DocumentStore'.format(institution_name)
+        try:
+            return self.docStoreStore.fetch_object(
+                self.session,
+                docStoreId
+            )
+        except ObjectDoesNotExistException:
+            return None
+
     def _get_userInstitutionDocumentStoreId(self, username):
         global authStore
         # Get the institution of the user performing the operation
-        authinst = self._get_userInstitutionId(session.user.username)
-        instStore = db.get_object(session, 'institutionStore')
-        instRec = instStore.fetch_record(session, authinst)
+        authinst = self._get_userInstitutionId(username)
+        instStore = self.database.get_object(self.session, 'institutionStore')
+        instRec = instStore.fetch_record(self.session, authinst)
         try:
-            return instRec.process_xpath(session, '//documentStore/text()')[0]
+            return instRec.process_xpath(
+                self.session,
+                '//documentStore/text()'
+            )[0]
         except IndexError:
             return None
 
@@ -124,10 +139,10 @@ class EADContributeWsgiApplication(EADWsgiApplication):
     def _get_userInstitutionName(self, username):
         global authStore
         # Get the institution of the user performing the operation
-        authinst = self._get_userInstitutionId(session.user.username)
-        instStore = db.get_object(session, 'institutionStore')
-        instRec = instStore.fetch_record(session, authinst)
-        return instRec.process_xpath(session, '//name/text()')[0]
+        authinst = self._get_userInstitutionId(username)
+        instStore = self.database.get_object(self.session, 'institutionStore')
+        instRec = instStore.fetch_record(self.session, authinst)
+        return instRec.process_xpath(self.session, '//name/text()')[0]
 
 
 def check_password(username, password):
