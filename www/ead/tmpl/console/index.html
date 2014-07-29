@@ -17,8 +17,10 @@
         </li>
         % for doc in contributorStore:
         <li class="list-group-item">
-            <span class="glyphicon glyphicon-file"></span>
-            ${basename(doc.filename)}
+            <a href="${basename(doc.id)|u}">
+                <span class="glyphicon glyphicon-file"></span>
+                ${basename(doc.filename)}
+            </a>
         </li>
         % endfor
     </ul>

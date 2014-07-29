@@ -1,0 +1,26 @@
+<%!
+    from datetime import datetime
+    from os.path import basename
+%>
+<%inherit file="base.html"/>
+
+<%block name="title">Contributor Files - ${basename(doc.filename)|h}</%block>
+
+<div class="row">
+  <div class="col-md-12">
+    <dl class="dl-horizontal">
+        <dt>Filename</dt>
+        <dd>${basename(doc.filename)|h}</dd>
+        <dt>Size</dt>
+        <dd>${doc.byteCount / 1024} kb</dd>
+        <dt>Last modified</dt>
+        <dd>${datetime.fromtimestamp(doc.metadata['lastModified']).strftime("%H:%M, %d %B %Y")}</dd>
+        <dt>Content</dt>
+        <dd>
+            <pre>
+                ${doc.get_raw(session)|h}
+            </pre>
+        </dd>
+    </dl>
+  </div>
+</div>

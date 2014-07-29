@@ -66,22 +66,33 @@ class EADContributeWsgiApplication(EADWsgiApplication):
             if operation is None:
                 # Filename based?
                 operation = os.path.splitext(path.split('/')[-1])[0]
+            contributorDocStore = self._get_userDocumentStore(session.user.username)
+            if contributorDocStore is None:
+                return self._render_template(
+                    'console/fail/noDocStore.html',
+                )
             # Check operation and act accordingly
             if not operation or operation == 'index':
-                contributorDocStore = self._get_userDocumentStore(session.user.username)
-                if contributorDocStore is None:
-                    return self._render_template(
-                        'console/fail/noDocStore.html',
-                    )
                 return self._render_template(
                     'console/index.html',
                     contributorStore=contributorDocStore
                 )
             else:
-                self.request.status_code = 404
+                try:
+                    doc = contributorDocStore.fetch_document(session, path)
+                except ObjectDoesNotExistException:
+                    self.request.status_code = 404
+                    return self._render_template(
+                        'fail/404.html',
+                        resource=self.request.path_info
+                    )
+                if operation == 'raw':
+                    self.response.content_type = 'application/xml'
+                    self.response.content_encoding = 'utf-8'
+                    return doc.get_raw(session)
                 return self._render_template(
-                    'fail/404.html',
-                    resource=self.request.path_info
+                    'console/view.html',
+                    doc=doc
                 )
         finally:
             try:
