@@ -6,10 +6,16 @@
 <%block name="title">Contributor Files</%block>
 
 <div class="row">
+    <div class="col-md-11 col-md-offset-1">
+        <h3>Contributor Folders</h3>
+    </div>
+</div>
+
+<div class="row">
   <div class="col-md-7 col-md-offset-1">
-    <h3>Contributor Folders</h3>
     <ul class="list-group">
         <li class="list-group-item disabled">
+
             <span class="glyphicon glyphicon-folder-open"></span>
             ${contributorStore.id[:-len('DocumentStore')]}
             <span class="badge">${contributorStore.totalItems}</span>
@@ -27,5 +33,54 @@
   </div>
   <div class="col-md-4">
     <h3></h3>
+    <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#uploadModal">
+        <span class="glyphicon glyphicon-upload"></span>
+        Upload file(s)
+    </button>
   </div>
+</div>
+
+<div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h3 class="modal-title" id="uploadModalTitle">Upload new file</h3>
+            </div>
+            <div class="modal-body">
+                <form id="upload-form">
+                    <input type="file" id="files" name="files[]" multiple>
+                </form>
+                <div>
+                    <output id="uploadStatus"></output>
+                    <output id="list">
+                        <table class="table">
+                            <tbody></tbody>
+                        </table>
+                    </output>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="abortButton" class="btn btn-default" data-dismiss="modal">
+                    <span class="glyphicon glyphicon-remove"></span>
+                    Abort
+                </button>
+                <button type="button" id="uploadButton" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-upload"></span>
+                    Upload
+                </button>
+                <button type="button" id="cancelButton" class="btn btn-default" data-dismiss="modal">
+                    <span class="glyphicon glyphicon-remove"></span>
+                    Cancel
+                </button>
+                <button type="button" id="doneButton" class="btn btn-default" data-dismiss="modal">
+                    <span class="glyphicon glyphicon-ok"></span>
+                    Done
+                </button>
+            </div>
+        </div>
+    </div>
 </div>

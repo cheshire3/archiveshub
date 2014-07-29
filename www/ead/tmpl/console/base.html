@@ -27,12 +27,18 @@
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
       <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+    <script src="${BASE}/js/ah.console.js"></script>
 </%block>
 
 <%block name="GA"></%block>
 
 <%block name="scripts">
     ${parent.scripts()}
+    <script type="text/javascript">
+$(document).ready(function() {
+    Console.init();
+});
+    </script>
 </%block>
 
 ${next.body()}

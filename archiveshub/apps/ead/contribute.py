@@ -116,6 +116,12 @@ class EADContributeWsgiApplication(EADWsgiApplication):
                 # It's possible nothing was logged for this remote user
                 pass
 
+    def post(self):
+        name = self.request.path_info
+        self.response.status = "201 Created"
+        _ = self.request.body_file.read()
+        return ""
+
     # Utility functions
 
     def _get_userDocumentStore(self, username):
