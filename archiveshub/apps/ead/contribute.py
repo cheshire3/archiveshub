@@ -9,6 +9,7 @@ import webbrowser
 
 # Site packages
 
+from cheshire3.document import StringDocument
 from cheshire3.exceptions import ObjectDoesNotExistException
 
 from archiveshub.deploy.utils import WSGIAppArgumentParser
@@ -117,9 +118,21 @@ class EADContributeWsgiApplication(EADWsgiApplication):
                 pass
 
     def post(self):
-        name = self.request.path_info
+        name = self.request.path_info.strip(' /')
+        data = self.request.body
+        # Create a Document
+        doc = StringDocument(
+            data,
+            creator=self.session.user.username,
+            filename=name,
+            tagName="ead"
+        )
+        # TODO: Validate
+        # Store document
+        doc.id = os.path.splitext(name)[0]
+        docStore = self._get_userDocumentStore(self.session.user.username)
+        docStore.store_document(session, doc)
         self.response.status = "201 Created"
-        _ = self.request.body_file.read()
         return ""
 
     # Utility functions
