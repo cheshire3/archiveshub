@@ -33,6 +33,7 @@ class EADContributeWsgiApplication(EADWsgiApplication):
 
     def __call__(self, environ, start_response):
         # Method to make instances of this class callable
+        # Prepare application to handle a new request
         self._setUp(environ)
         try:
             func = getattr(self, self.request.method.lower())
@@ -59,8 +60,22 @@ class EADContributeWsgiApplication(EADWsgiApplication):
 
     def get(self):
         try:
-            # Prepare application to handle a new request
             path = self.request.path_info.strip('/')
+            if self.request.path_info_peek() in ['css', 'img', 'js']:
+                self.response.app_iter = self._static_content(path)
+                contentlen = sum([len(d)
+                                  for d
+                                  in self.response.app_iter
+                                  ])
+                if contentlen:
+                    self.response.content_length = contentlen
+                else:
+                    self.response.status = 404
+                    self.response.body = self._render_template(
+                        'fail/404.html',
+                        resource=path
+                    )
+
             form = self._get_params()
             operation = form.get('operation', None)
             if operation is None:
