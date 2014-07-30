@@ -63,21 +63,25 @@ class EADContributeWsgiApplication(EADWsgiApplication):
             session,
             self.request.remote_user
         )
+        script = '/contribute'
+        self.defaultContext['SCRIPT'] = script
+        # Set the base URL of this family of apps
+        self.defaultContext['BASE'] = script
 
     def get(self):
         try:
             path = self.request.path_info.strip('/')
             if self.request.path_info_peek() in ['css', 'img', 'js']:
-                self.response.app_iter = self._static_content(path)
+                static_iter = self._static_content(path)
                 contentlen = sum([len(d)
                                   for d
-                                  in self.response.app_iter
+                                  in static_iter
                                   ])
                 if contentlen:
-                    self.response.content_length = contentlen
+                    return ''.join(static_iter)
                 else:
                     self.response.status = 404
-                    self.response.body = self._render_template(
+                    return self._render_template(
                         'fail/404.html',
                         resource=path
                     )

@@ -20,7 +20,11 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <!-- Latest compiled and minified JavaScript -->
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-    ${parent.js()}
+    <!-- tell curvyCorners to behave! -->
+    <script type="text/javascript">var curvyCornersVerbose = false;</script>
+    <script type="text/javascript" src="/scripts/js/ah.libs.js"></script>
+    <script type="text/javascript" src="/scripts/js/ah.text.js"></script>
+    <script type="text/javascript" src="/scripts/js/ah.base.js"></script>
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -33,7 +37,6 @@
 <%block name="GA"></%block>
 
 <%block name="scripts">
-    ${parent.scripts()}
     <script type="text/javascript">
 $(document).ready(function() {
     Console.init();
