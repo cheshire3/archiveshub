@@ -502,22 +502,24 @@ class HubeditAdminHandler:
             return self.show_adminMenu()
 
     def edit_inst(self, form):
-        id = form.get('id', None)
+        id_ = form.get('id', None)
         inst = form.get('institution', None)
         quota = form.get('quota', '50')
-        print id, inst, quota
-        docstr = ('<inst><name>{0}</name><quota>{1}</quota></inst>'
-                  ''.format(inst, quota)
-                  )
-        if inst is not None:
-            doc = StringDocument(docstr)
-            rec = xmlp.process_document(session, doc)
-            rec.id = id
-#             instStore.delete_record(session, id)
-            instStore.store_record(session, rec)
-            return self.show_adminMenu()
+        try:
+            rec = instStore.fetch_record(session, id_)
+        except c3errors.ObjectDoesNotExistException:
+            pass
         else:
-            return self.show_adminMenu()
+            inst_dom = rec.get_dom(session)
+            # Update quota
+            inst_dom.xpath('//quota')[0].text = quota
+            rec = LxmlRecord(
+                inst_dom,
+                etree.tostring(inst_dom),
+                docId=id_
+            )
+            instStore.store_record(session, rec)
+        return self.show_adminMenu()
 
     def delete_inst(self, form):
         global instStore, rebuild
