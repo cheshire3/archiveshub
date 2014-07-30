@@ -84,6 +84,7 @@ AAAAAAAAgAEAAA=="></link>
                 Archives hub - at the centre of great research<span></span>
             </a>
             <div id="bannerextra">
+                <%block name="bannerextra">
                 <form name="minisearchform" class="minisearch" method="post" action="/search/search.html" onsubmit="setCookie('archiveshub_searchform', miniFormToString(this));">
                 <fieldset>
                     <legend>Search</legend>
@@ -103,6 +104,7 @@ AAAAAAAAgAEAAA=="></link>
                     <input type="submit" name="submit" value="Go" class="submit"/>
                 </fieldset>
                 </form>
+                </%block>
             </div> <!-- /bannerextra -->
             <!-- site navigation links -->
             <%block name="navbar">

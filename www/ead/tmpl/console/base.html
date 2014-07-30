@@ -14,6 +14,11 @@
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
     ${parent.css()}
+    <style type="text/css">
+div#login-status {
+    display: block;
+}
+    </style>
 </%block>
 <%block name="js">
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
@@ -42,6 +47,15 @@ $(document).ready(function() {
     Console.init();
 });
     </script>
+</%block>
+
+<%block name="bannerextra">
+    <div id="login-status">
+        <form action="logout" method="POST">
+            Logged in as <b>${session.user.realName}</b> (${session.user.username})
+            <input type="submit" value="Sign out"/>
+        </form>
+    </div>
 </%block>
 
 ${next.body()}

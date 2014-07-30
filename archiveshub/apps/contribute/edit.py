@@ -39,7 +39,7 @@ def main(argv=None):
 application = make_form_authenticated(
     ModPythonWSGIApp(handler),
     check_password,
-    cookie_name='archiveshub_authn_edit',
+    cookie_name='archiveshub_authn_contribute',
     httponly=True,
     include_ip=True,
     logout_path='logout'
