@@ -3,6 +3,32 @@ var Console = {
 
     init: function() {
         Console.upload();
+        Console.delete();
+    },
+
+    delete: function() {
+
+        $('.deleteButton').click(function(evt) {
+            // Populate the filename in pop-up modal
+            $('#deleteFileName').html(this.name);
+            $('#deleteButton').attr({name: this.name});
+        });
+
+        $('#deleteButton').click(function(evt) {
+            $.ajax({
+                url: "/contribute/" + this.name,
+                type: "DELETE",
+                success: function(data, textStatus, jqXHR) {
+                },
+                error: function(jqXHR, textStatus, error) {
+                },
+                complete: function(jqXHR, textStatus) {
+                    $('#closeDeleteModal').click();
+                    // Refresh file list
+                    window.location.href="";
+                }
+            });
+        });
     },
 
     upload: function() {

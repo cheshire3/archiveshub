@@ -68,6 +68,15 @@ class EADContributeWsgiApplication(EADWsgiApplication):
         # Set the base URL of this family of apps
         self.defaultContext['BASE'] = script
 
+    def delete(self):
+        name = self.request.path_info.strip(' /')
+        # Delete document
+        docStore = self._get_userDocumentStore(self.session.user.username)
+        id_ = docStore.outIdNormalizer.process_string(session, name)
+        docStore.delete_document(session, id_)
+        self.response.status = "204 Deleted"
+        return ''
+
     def get(self):
         try:
             path = self.request.path_info.strip('/')
