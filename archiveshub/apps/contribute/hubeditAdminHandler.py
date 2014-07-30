@@ -32,6 +32,8 @@
 #                          password) of any EAD Editor user
 #
 
+from __future__ import absolute_import
+
 import os
 import cgitb
 
@@ -45,6 +47,7 @@ from mod_python.util import FieldStorage, redirect
 from cheshire3.baseObjects import Session
 from cheshire3.server import SimpleServer
 from cheshire3.utils import flattenTexts
+from cheshire3.baseStore import BdbIter
 from cheshire3.document import StringDocument
 from cheshire3.record import LxmlRecord
 
@@ -269,10 +272,10 @@ class HubeditAdminHandler:
         select_list = ['<select name="docstore">',
                        '<option value="null">Select</option>'
                        ]
-        for store in docStoreConfigStore:
+        for id_, _ in BdbIter(session, docStoreConfigStore):
             select_list.append(
                 '<option value="{0}">{1}</option>'
-                ''.format(store.id, store.id[:-len('DocumentStore')])
+                ''.format(id_, id_[:-len('DocumentStore')])
             )
         select_list.append('</select>')
         return ''.join(select_list)
