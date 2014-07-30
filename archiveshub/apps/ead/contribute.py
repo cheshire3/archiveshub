@@ -129,8 +129,8 @@ class EADContributeWsgiApplication(EADWsgiApplication):
         )
         # TODO: Validate
         # Store document
-        doc.id = os.path.splitext(name)[0]
         docStore = self._get_userDocumentStore(self.session.user.username)
+        doc.id = id_ = docStore.outIdNormalizer.process_string(session, name)
         docStore.store_document(session, doc)
         self.response.status = "201 Created"
         return ""
