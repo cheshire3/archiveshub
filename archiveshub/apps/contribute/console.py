@@ -2,7 +2,6 @@
 
 from __future__ import with_statement
 
-import inspect
 import os
 import sys
 import webbrowser
@@ -13,8 +12,8 @@ from cheshire3.document import StringDocument
 from cheshire3.exceptions import ObjectDoesNotExistException
 
 from archiveshub.deploy.utils import WSGIAppArgumentParser
-from .auth import make_form_authenticated
-from .base import EADWsgiApplication, config, session, db
+from ..ead.auth import make_form_authenticated
+from ..ead.base import EADWsgiApplication, config, session, db
 
 
 class EADContributeWsgiApplication(EADWsgiApplication):

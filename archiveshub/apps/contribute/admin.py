@@ -6,7 +6,7 @@ import sys
 
 from mod_python_wsgi.wrap import ModPythonWSGIApp
 from archiveshub.deploy.utils import WSGIAppArgumentParser
-from archiveshub.apps.editor.hubeditAdminHandler import (
+from .hubeditAdminHandler import (
     handler,
     check_password
 )
