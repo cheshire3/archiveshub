@@ -29,6 +29,18 @@ from archiveshub.apps.ead.base import config, session, db
 
 class EADSearchWsgiApplication(EADWsgiApplication):
 
+    def __init__(self, config, session, database):
+        super(EADSearchWsgiApplication, self).__init__(
+            config,
+            session,
+            database
+        )
+        # Fetch Logger
+        self.logger = database.get_object(
+            session,
+            'searchTransactionLogger'
+        )
+
     def __call__(self, environ, start_response):
         # Method to make instances of this class callable
         try:

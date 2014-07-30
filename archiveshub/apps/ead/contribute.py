@@ -23,10 +23,16 @@ class EADContributeWsgiApplication(EADWsgiApplication):
 
     def __init__(self, config, session, database):
         # Constructor method
-        super(EADContributeWsgiApplication, self).__init__(config,
-                                                           session,
-                                                           database
-                                                           )
+        super(EADContributeWsgiApplication, self).__init__(
+            config,
+            session,
+            database
+        )
+        # Fetch Logger
+        self.logger = database.get_object(
+            session,
+            'consoleTransactionLogger'
+        )
         self.docStoreStore = database.get_object(
             session,
             'documentStoreConfigStore'

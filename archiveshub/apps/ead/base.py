@@ -69,10 +69,6 @@ class EADWsgiApplication(WSGIApplication):
                                                    'eadQueryStore')
         self.resultSetStore = self.database.get_object(session,
                                                        'eadResultSetStore')
-        # Fetch Logger
-        self.logger = self.database.get_object(session,
-                                               'searchTransactionLogger'
-                                               )
 
     def _setUp(self, environ):
         # Prepare application to handle a new request
