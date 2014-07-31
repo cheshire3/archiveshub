@@ -12,140 +12,169 @@
     -->
     </script>
     <div id="adminmenu">
-	    <noscript><h2 class="error">Javascript must be enabled to use the Archives Hub Data Creation and Editing Tool</h2></noscript>
-	    %MESSAGE%
-	    <h3 class="bar">Add New Admin User</h3>
-	    <div id="adduser">
-			<form name="createform" action="users.html" method="post">
-			   <input type="hidden" name="operation" value="adduser"/>
-			   <input type="radio" name="usertype" value="user" id="user" %USER%><label for="user">General User</label></input>
-			   <input type="radio" name="usertype" value="superuser" id="superuser" %SUPERUSER%><label for="superuser">Administrative User</label></input>
-			   <table>
-			     <tr>
-			       <td>Username: </td>
-			       <td><input type="text" id="userid" name="userid" value="%USERNAME%"></input></td>
-			     </tr>
-			     <tr>
-			     	<td>Institution: </td>
-			     	<td><select name="institutionSelect">%INSTSELECT%</select></td>
-			     </tr>
-			     <tr>
-			       <td>Full Name: </td>
-			       <td><input type="text" name="realName" value="%FULLNAME%"></input></td>
-			     </tr>
-			     <tr>
-			       <td>Email: </td>
-			       <td><input type="text" name="email" value="%EMAIL%"></input></td>
-			     </tr>
-			     <tr>
-			       <td>Telephone: </td>
-			       <td><input type="text" name="tel" value="%TELEPHONE%"></input></td>
-			     </tr>
-			     <tr title="You MUST set a password for the new user.">
-			       <td>Password: </td>
-			       <td><input type="password" id="passwd1" name="passwd1"/></td>
-			     </tr>
-			     <tr title="This MUST be the same as the password you just entered.">
-			       <td>Re-enter Password: </td>
-			       <td><input type="password" id="passwd2" name="passwd2"/></td>
-			     </tr>
-			   </table>
-			   <input type="submit" name="submit" value="Submit"/>
-			</form>
-		</div>
-	    <h3 class="bar">Add Institution</h3>
-        <div>
-          <form name="createform" action="users.html" method="post" onsubmit="return checkInstForm('add')">
-            <input type="hidden" name="operation" value="addinstitution"/>
-            <table>
-              <tr>
-                <td>
-                  <span class="label">Institution Name: </span>
-                </td>
-                <td>
-                  <input type="text" name="institution" id="addname"></input>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <span class="label">Editor Quota:</span>
-                </td>
-                <td>
-                  <input type="text" name="quota" value="50" id="addquota"></input>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <span class="label">Files Folder:</span>
-                </td>
-                <td>
-                  %DOCSTORESELECT%
-                </td>
-              </tr>
-              <tr>
-                <td></td>
-                <td><input type="submit" name="submit" value="Add Institution"/></td>
-              </tr>
-            </table>
-          </form>
+        <noscript><h2 class="error">Javascript must be enabled to use the Archives Hub Data Creation and Editing Tool</h2></noscript>
+        %MESSAGE%
+        <h3 class="bar">Add New Admin User</h3>
+        <div id="adduser">
+            <form name="createform" action="users.html" method="post">
+                <input type="hidden" name="operation" value="adduser"></input>
+                <label for="user">
+                    <input type="radio" name="usertype" value="user" id="user" %USER%></input>
+                    General User
+                </label>
+                <label for="superuser">
+                    <input type="radio" name="usertype" value="superuser" id="superuser" %SUPERUSER%></input>
+                    Administrative User
+                </label>
+                <table>
+                    <tr>
+                        <td>Username:</td>
+                        <td>
+                            <input type="text" id="userid" name="userid" value="%USERNAME%"></input>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Institution:</td>
+                        <td>
+                            <select name="institutionSelect">%INSTSELECT%</select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Full Name:</td>
+                        <td>
+                            <input type="text" name="realName" value="%FULLNAME%"></input>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Email:</td>
+                        <td>
+                            <input type="text" name="email" value="%EMAIL%"></input>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Telephone:</td>
+                        <td>
+                            <input type="text" name="tel" value="%TELEPHONE%"></input>
+                        </td>
+                    </tr>
+                    <tr title="You MUST set a password for the new user.">
+                        <td>Password:</td>
+                        <td>
+                            <input type="password" id="passwd1" name="passwd1"></input>
+                        </td>
+                    </tr>
+                    <tr title="This MUST be the same as the password you just entered.">
+                        <td>Re-enter Password:</td>
+                        <td>
+                            <input type="password" id="passwd2" name="passwd2"></input>
+                        </td>
+                    </tr>
+                </table>
+                <input type="submit" name="submit" value="Submit"></input>
+            </form>
         </div>
-	    <h3 class="bar">Edit Institution</h3>
-	    <div>
-		    <form name="editchoice" action="users.html" method="post" onsubmit="return checkInstForm('edit')">
-		    	<input type="hidden" name="operation" value="editinstitution"/>
-		    	<input type="hidden" id="editid" name="id" value="none"/>
-		    	<table>
+        <h3 class="bar">Add Institution</h3>
+        <div>
+            <form name="createform" action="users.html" method="post"
+                  onsubmit="return checkInstForm('add')">
+                <input type="hidden" name="operation" value="addinstitution"></input>
+                <table>
+                    <tr>
+                        <td>
+                            <span class="label">Institution Name: </span>
+                        </td>
+                        <td>
+                            <input type="text" name="institution" id="addname"></input>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="label">Editor Quota:</span>
+                        </td>
+                        <td>
+                            <input type="text" name="quota" value="50" id="addquota"></input>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="label">Files Folder:</span>
+                        </td>
+                        <td>
+                            %DOCSTORESELECT%
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <input type="submit" name="submit" value="Add Institution"></input>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+        <h3 class="bar">Edit Institution</h3>
+        <div>
+            <form name="editchoice" action="users.html" method="post" onsubmit="return checkInstForm('edit')">
+                <input type="hidden" name="operation" value="editinstitution"/>
+                <input type="hidden" id="editid" name="id" value="none"/>
+                <table>
                 <tr>
                     <td></td>
                     <td>
-		    	         <select name="instselect" id="instselect"  onchange="populateInst()">
-			                 <option value="none">Select...</option>
-			                 %INSTSELECTOPTIONS%
-			             </select>
-			    	</td>
-	    		</tr>
-	    		<tr>
-                    <td><span class="label">Institution Name: </span></td>
-		    		<td><input type="text" name="institution" id="editname"></input></td>
-	    		</tr>
-				<tr>
-				    <td><span class="label">File Quota: </span></td>
-				   	<td><input type="text" name="quota" id="editquota"></input></td>
-				</tr>
-				<tr>
-				   <td></td>
-				   <td><input type="submit" value="Edit Institution"/></td>
+                         <select name="instselect" id="instselect"  onchange="populateInst()">
+                             <option value="none">Select...</option>
+                             %INSTSELECTOPTIONS%
+                         </select>
+                    </td>
                 </tr>
-				</table> 	    
-		    </form>
-	    </div>
-	    <h3 class="bar">Find Contact Details</h3>
-	    <div>
-		   	<input type="hidden" name="operation" value="findcontacts"/>
-		   	<input type="hidden" id="editid" name="id" value="none"/>
-		   	<table>
-				<tr>
-				    <td><span class="label">User Name: </span></td>
-				    <td><input type="textbox" id="usernameinput" /></td>
-			    </tr>    
-				<tr>
-				    <td></td>
+                <tr>
+                    <td><span class="label">Institution Name: </span></td>
+                    <td><input type="text" name="institution" id="editname"></input></td>
+                </tr>
+                <tr>
+                    <td><span class="label">File Quota: </span></td>
+                    <td>
+                        <input type="text" name="quota" id="editquota"></input>
+                    </td>
+                </tr>
+                <tr>
+                   <td></td>
+                   <td>
+                       <input type="submit" value="Edit Institution"></input>
+                   </td>
+                </tr>
+                </table>
+            </form>
+        </div>
+        <h3 class="bar">Find Contact Details</h3>
+        <div>
+            <input type="hidden" name="operation" value="findcontacts"></input>
+            <input type="hidden" id="editid" name="id" value="none"></input>
+            <table>
+                <tr>
+                    <td><span class="label">User Name: </span></td>
+                    <td><input type="textbox" id="usernameinput" /></td>
+                </tr>    
+                <tr>
+                    <td></td>
                     <td><input type="button" value="Find Contact Details" onclick="findContacts();"/></td>
-			   </tr>
-			</table>
-			<div id="placeholderdiv"></div>
-	    </div>
+                </tr>
+            </table>
+            <div id="placeholderdiv"></div>
+        </div>
     </div> <!-- #adminmenu -->
 </div> <!-- #leftcol -->
 <div id="padder">
     <div id="rightcol">
-	   <h3 class="bar">Existing Users</h3>
-	   <ul class="unmarked">
-        	<li><img src="/images/search/folderOpen.png" alt=""/><span>Contributors</span>
-        	<ul id="storeDirTree" class="unmarked">
-        	%INSTUSERLIST%
-        	</ul>
-        	</li>
+        <h3 class="bar">Existing Users</h3>
+        <ul class="unmarked">
+            <li>
+                <img src="/images/search/folderOpen.png" alt=""/>
+                <span>Contributors</span>
+                <ul id="storeDirTree" class="unmarked">
+                %INSTUSERLIST%
+                </ul>
+            </li>
         </ul>
     </div>
 </div>
