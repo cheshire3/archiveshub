@@ -137,6 +137,10 @@ class EADContributeWsgiApplication(EADWsgiApplication):
 
     def post(self):
         name = self.request.path_info.strip(' /')
+        if not name:
+            # Accidental re-submit of login form?
+            # Return index page
+            return self.get()
         data = self.request.body
         # Create a Document
         doc = StringDocument(
