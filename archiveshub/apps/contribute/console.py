@@ -163,11 +163,13 @@ class EADContributeWsgiApplication(EADWsgiApplication):
         docStoreId = self._get_userInstitutionDocumentStoreId(
             username
         )
-        if docStoreId is None:
-            institution_name = self._get_userInstitutionName(
-                username
-            )
-            docStoreId = '{0}DocumentStore'.format(institution_name)
+        # Disabled automatic guess of Mercurial folder - force selection in
+        # Admin console
+        # if docStoreId is None:
+        #     institution_name = self._get_userInstitutionName(
+        #         username
+        #     )
+        #     docStoreId = '{0}DocumentStore'.format(institution_name)
         try:
             return self.docStoreStore.fetch_object(
                 self.session,
