@@ -3137,7 +3137,7 @@ function validateXML(field, asynch){
 
     if (field.name.match(/did\/origination/g)){
         // Check for selection of creator type
-        if (!field.name.match(/persname|famname|corpname/)){
+        if (field.value && !field.name.match(/persname|famname|corpname/)){
             // No creator type selected - bypass sending to server
             var attrs = {
                 'class': 'menuFieldError',
