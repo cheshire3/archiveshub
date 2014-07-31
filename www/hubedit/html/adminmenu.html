@@ -74,7 +74,7 @@
             </form>
         </div>
         <h3 class="bar">Add Institution</h3>
-        <div>
+        <div id="addinst">
             <form name="createform" action="users.html" method="post"
                   onsubmit="return checkInstForm('add')">
                 <input type="hidden" name="operation" value="addinstitution"></input>
@@ -95,9 +95,9 @@
                             <input type="text" name="quota" value="50" id="addquota"></input>
                         </td>
                     </tr>
-                    <tr>
+                    <tr title="Select contributor's folder in Mercurial repository or 'None' to disable access to Mercurial">
                         <td>
-                            <span class="label">Files Folder:</span>
+                            <span class="label">Contributor Folder:</span>
                         </td>
                         <td>
                             %DOCSTORESELECT%
@@ -113,7 +113,7 @@
             </form>
         </div>
         <h3 class="bar">Edit Institution</h3>
-        <div>
+        <div id="editinst">
             <form name="editchoice" action="users.html" method="post" onsubmit="return checkInstForm('edit')">
                 <input type="hidden" name="operation" value="editinstitution"/>
                 <input type="hidden" id="editid" name="id" value="none"/>
@@ -135,6 +135,14 @@
                     <td><span class="label">File Quota: </span></td>
                     <td>
                         <input type="text" name="quota" id="editquota"></input>
+                    </td>
+                </tr>
+                <tr title="Select contributor's folder in Mercurial repository or 'None' to disable access to Mercurial">
+                    <td>
+                        <span class="label">Contributor Folder:</span>
+                    </td>
+                    <td>
+                        %DOCSTORESELECT%
                     </td>
                 </tr>
                 <tr>

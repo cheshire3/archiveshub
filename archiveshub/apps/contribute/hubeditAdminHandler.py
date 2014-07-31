@@ -270,7 +270,10 @@ class HubeditAdminHandler:
     def get_docStoreSelect(self):
         global docStoreConfigStore
         select_list = ['<select name="docstore">',
-                       '<option value="null">Select</option>'
+                       # This option does the same a s'None' when creating, but
+                       # doesn't squash existing value when editing quota
+                       '<option value="">--</option>',
+                       '<option value="null">None</option>'
                        ]
         for id_, _ in BdbIter(session, docStoreConfigStore):
             select_list.append(
@@ -505,6 +508,7 @@ class HubeditAdminHandler:
         id_ = form.get('id', None)
         inst = form.get('institution', None)
         quota = form.get('quota', '50')
+        docstore = form.get('docstore')
         try:
             rec = instStore.fetch_record(session, id_)
         except c3errors.ObjectDoesNotExistException:
@@ -513,6 +517,20 @@ class HubeditAdminHandler:
             inst_dom = rec.get_dom(session)
             # Update quota
             inst_dom.xpath('//quota')[0].text = quota
+            if docstore:
+                inst_el = inst_dom.xpath('//inst')[0]
+                # Remove any existing documentStore elements
+                for el in inst_dom.xpath('//documentStore'):
+                    try:
+                        inst_el.remove(el)
+                    except:
+                        pass
+                if docstore != 'null':
+                    # Add node with new documentStore value
+                    etree.SubElement(
+                        inst_dom.xpath('//inst')[0],
+                        'documentStore'
+                    ).text = docstore
             rec = LxmlRecord(
                 inst_dom,
                 etree.tostring(inst_dom),
