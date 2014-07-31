@@ -246,13 +246,17 @@ class HubeditAdminHandler:
     def get_institutions(self):
         optionList = []
         for rec in instStore:
-            option = (u'<option value="{0}|{1}|{2}">{3}</option>'
-                      u''.format(
-                          rec.id,
-                          rec.process_xpath(session, '//name/text()')[0],
-                          rec.process_xpath(session, '//quota/text()')[0],
-                          rec.process_xpath(session, '//name/text()')[0]
-                          )
+            name = rec.process_xpath(session, '//name/text()')[0]
+            quota = rec.process_xpath(session, '//quota/text()')[0]
+            try:
+                docstore = rec.process_xpath(
+                    session,
+                    '//documentStore/text()'
+                )[0]
+            except IndexError:
+                docstore = ''
+            option = (u'<option value="{0}|{1}|{2}|{3}">{1}</option>'
+                      u''.format(rec.id, name, quota, docstore)
                       )
             optionList.append(option)
         return u''.join(optionList)
