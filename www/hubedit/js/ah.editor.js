@@ -1631,7 +1631,11 @@ function checkInstForm(type){
 
 /* basic user operations: submit, delete etc. */
 
-var NOT_ALL_REQUIRED_DATA_MESSAGE = 'the following fields must be entered before proceeding:\n - Reference Code \n - Title\n - Name of Creator (with type selected for each)'
+var NOT_ALL_REQUIRED_DATA_MESSAGE = 'the following fields must be entered before proceeding:\n - Reference Code \n - Title';
+var CREATOR_TYPE_NOT_SELECTED = 'You must select the type of each Creator entered';
+var NORMALIZED_DATE_ERROR_MESSAGE = 'Please fix the error in the normalised date before saving. This field can only contain numbers and the character /.';
+var NOT_VALID_XML_MESSAGE = 'Please fix the errors in the xml before saving. Errors will be marked with red shading in the text box.';
+
 
 function deleteFromStore(){
 
@@ -1691,23 +1695,10 @@ function discardRec(id){
 
 
 function submit(index){
-    if (!checkRequiredData()){
-        alert (NOT_ALL_REQUIRED_DATA_MESSAGE)
+    if (!checkValidDescription()){
         return;
     }
-    if (currentEntryField != null && currentEntryField.value != ''){
-        validateField(currentEntryField, false)
-    }
-    errors = $$('.menuFieldError');
-    if (errors.length != 0){
-        alert('Please fix the errors in the xml before submitting. Errors will be marked with red shading in the text box.');
-        return;
-    }
-    var errors = $$('.dateError');
-    if (errors.length != 0){
-        alert('Please fix the error in the normalised date before submitting. This field can only contain numbers and the solidus character (/) to indicate a range.');
-        return;
-    }
+
     //check the daoform details
     var daodetails = checkDao();
     if (daodetails[0] == true){
@@ -1778,20 +1769,13 @@ function save(){
         foreground('content');
         return;
     }
-    var errors = $$('.menuFieldError');
-    if (errors.length != 0){
-        alert('Please fix the errors in the xml before saving. Errors will be marked with red shading in the text box.');
+
+    if (!checkValidDescription()) {
         body.className = 'splitscreen';
         foreground('content');
         return;
     }
-    var errors = $$('.dateError');
-    if (errors.length != 0){
-        alert('Please fix the error in the normalised date before saving. This field can only contain numbers and the character /.');
-        body.className = 'splitscreen';
-        foreground('content');
-        return;
-    }
+
     var values = checkEditStore();
     if (values[0] == 'error'){
         alert('A problem occurred when trying to perform this operation. Please contact the hub team..');
@@ -1987,14 +1971,7 @@ function displayForm(id, level, nosave){
                 alert (NOT_ALL_REQUIRED_DATA_MESSAGE);
                 return;
             }
-            var errors = $$('.menuFieldError');
-            if (errors.length != 0){
-                alert('Please fix the errors in the xml before leaving this page. Errors will be marked with red shading in the text box.');
-                return;
-            }
-            var errors = $$('.dateError');
-            if (errors.length != 0){
-                  alert('Please fix the error in the normalised date before leaving this page. This field can only contain numbers and the character /.');
+            if (!checkValidDescription()){
                 return;
             }
             //check the daoform details
@@ -2059,19 +2036,7 @@ function addComponent(){
         body.className = 'none';
         return;
     }
-    if (currentEntryField != null && currentEntryField.value != ''){
-        validateField(currentEntryField, false);
-    }
-    errors = $$('.menuFieldError');
-    if (errors.length != 0){
-        alert('Please fix the errors in the xml before adding a component. Errors will be marked with red shading in the text box.');
-        body.className = 'none';
-        return;
-    }
-    var errors = $$('.dateError');
-    if (errors.length != 0){
-        alert('Please fix the error in the normalised date before adding a component. This field can only contain numbers and the character /.');
-        body.className = 'none';
+    if (!checkValidDescription()){
         return;
     }
     else if (currentForm == 'collectionLevel' && recid == 'notSet'){
@@ -2293,17 +2258,7 @@ function toDisk(){
         alert (NOT_ALL_REQUIRED_DATA_MESSAGE);
         return;
     }
-    if (currentEntryField != null && currentEntryField.value != ''){
-        validateField(currentEntryField, false);
-    }
-    errors = $$('.menuFieldError');
-    if (errors.length != 0){
-        alert('Please fix the errors in the xml before saving. Errors will be marked with red shading in the text box.');
-        return;
-    }
-    var errors = $$('.dateError');
-    if (errors.length != 0){
-        alert('Please fix the error in the normalised date before saving. This field can only contain numbers and the character /.');
+    if (!checkValidDescription()){
         return;
     }
     //check the daoform details
@@ -2343,17 +2298,7 @@ function emailRec(){
         alert (NOT_ALL_REQUIRED_DATA_MESSAGE);
         return;
     }
-    if (currentEntryField != null && currentEntryField.value != ''){
-        validateField(currentEntryField, false);
-    }
-    var errors = $$('.menuFieldError');
-    if (errors.length != 0){
-        alert('Please fix the errors in the xml before saving. Errors will be marked with red shading in the text box.');
-        return;
-    }
-    var errors = $$('.dateError');
-    if (errors.length != 0){
-        alert('Please fix the error in the normalised date before saving. This field can only contain numbers and the character /.');
+    if (!checkValidDescription()){
         return;
     }
     //check the daoform details
@@ -2392,17 +2337,7 @@ function emailHub(){
         alert (NOT_ALL_REQUIRED_DATA_MESSAGE);
         return;
     }
-    if (currentEntryField != null && currentEntryField.value != ''){
-        validateField(currentEntryField, false);
-    }
-    var errors = $$('.menuFieldError');
-    if (errors.length != 0){
-        alert('Please fix the errors in the xml before saving. Errors will be marked with red shading in the text box.');
-        return;
-    }
-    var errors = $$('.dateError');
-    if (errors.length != 0){
-        alert('Please fix the error in the normalised date before saving. This field can only contain numbers and the character /.');
+    if (!checkValidDescription()){
         return;
     }
     //check the daoform details
@@ -2440,17 +2375,7 @@ function viewXml(){
         alert (NOT_ALL_REQUIRED_DATA_MESSAGE);
         return;
     }
-    if (currentEntryField != null && currentEntryField.value != ''){
-        validateField(currentEntryField, false);
-    }
-    errors = $$('.menuFieldError');
-    if (errors.length != 0){
-        alert('Please fix the errors in the xml before viewing. Errors will be marked with red shading in the text box.');
-        return;
-    }
-    var errors = $$('.dateError');
-    if (errors.length != 0){
-        alert('Please fix the error in the normalised date before viewing. This field can only contain numbers and the character /.');
+    if (!checkValidDescription()){
         return;
     }
     //check the daoform details
@@ -2490,17 +2415,7 @@ function previewRec(){
         alert (NOT_ALL_REQUIRED_DATA_MESSAGE)
         return;
     }
-    if (currentEntryField != null && currentEntryField.value != ''){
-        validateField(currentEntryField, false);
-    }
-    errors = $$('.menuFieldError');
-    if (errors.length != 0){
-        alert('Please fix the errors in the xml before viewing. Errors will be marked with red shading in the text box.');
-        return;
-    }
-    var errors = $$('.dateError');
-    if (errors.length != 0){
-        alert('Please fix the error in the normalised date before viewing. This field can only contain numbers and the character /.');
+    if (!checkValidDescription()){
         return;
     }
     //check the daoform details
@@ -3140,7 +3055,7 @@ function validateXML(field, asynch){
 
     if (field.name.match(/did\/origination/g)){
         // Check for selection of creator type
-        if (!field.name.match(/persname|famname|corpname/)){
+        if (field.value && !field.name.match(/persname|famname|corpname/)){
             // No creator type selected - bypass sending to server
             var attrs = {
                 'class': 'menuFieldError',
@@ -3294,7 +3209,6 @@ function checkEditStore(){
 }
 
 
-
 function checkRequiredData(){
     if (document.getElementById('did/unittitle').value == ''){
         return false;
@@ -3324,17 +3238,47 @@ function checkRequiredData(){
         return false;
     }
 
+    // All checks passed
+    return true;
+}
+
+function checkValidDescription() {
+
+    // Check basic required data
+    if (!checkRequiredData()){
+        alert(NOT_ALL_REQUIRED_DATA_MESSAGE);
+        return false
+    }
+
+    if (currentEntryField != null && currentEntryField.value != ''){
+        validateField(currentEntryField, false)
+    }
+
     // Creator (<origination>)
+    //validateField(Prototype.Selector.find($$("input[name*='did/origination[']"), "input[value='']"), 'true');
     var orig = Prototype.Selector.find($$("input[name*='did/origination[']"), ":not(input[name*='/persname']):not(input[name*='/famname']):not(input[name*='/corpname']):not(input[value=''])");
     if (orig){
+        alert(CREATOR_TYPE_NOT_SELECTED);
         return false;
     }
+
 
     // Normalized Date
     $$("input[name^='did/unitdate'][name$='@normal']").each(function(el, idx){
         validateNormdate(el, false)
     });
 
+    var errors = $$('.dateError');
+    if (errors.length != 0){
+        alert(NORMALIZED_DATE_ERROR_MESSAGE);
+        return false;
+    }
+
+    var errors = $$('.menuFieldError');
+    if (errors.length != 0){
+        alert(NOT_VALID_XML_MESSAGE);
+        return false;
+    }
 
     // All checks passed
     return true;
