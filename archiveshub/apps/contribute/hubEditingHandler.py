@@ -32,6 +32,8 @@
 # 
 #        24/04/2014 - JH - Version history superceded by version control
 
+from __future__ import absolute_import
+
 import sys
 import os
 import time
@@ -63,9 +65,6 @@ from email import encoders
 from mod_python import apache, Cookie
 from mod_python.util import FieldStorage, redirect
 
-# import customisable variables
-from hubeditLocalConfig import *
-
 # Cheshire3 stuff
 from cheshire3.baseObjects import Session, Record, ResultSet
 from cheshire3.document import StringDocument
@@ -77,7 +76,16 @@ from cheshire3.server import SimpleServer
 from cheshire3.web.www_utils import html_encode, read_file, multiReplace
 from cheshire3.web.www_utils import *
 
-from archiveshub.apps.ead.base import dataFromRecordXPaths, emailFromArchonCode
+# import customisable variables
+from .hubeditLocalConfig import *
+from .utils import (
+    get_userDocumentStore,
+    get_userInstitutionDocumentStoreId,
+    get_userInstitutionId,
+    get_userInstitutionName
+)
+from ..ead.base import dataFromRecordXPaths, emailFromArchonCode
+
 
 DUMMY_EAD = '<ead><eadheader></eadheader><archdesc></archdesc></ead>'
 
@@ -1163,6 +1171,98 @@ class HubEditingHandler(object):
         return rec
         # end _parse_upload()
 
+    def _ingest_xml(self, xml):
+        rec = self._parse_upload(xml, 'edit')
+        # TODO: handle file not successfully parsed
+        if not isinstance(rec, LxmlRecord):
+            return rec
+        rec = self._add_componentIds(rec)
+        if not rec.process_xpath(session, '/ead/eadheader'):
+            return ('<p>Your file is not compatible with the editing '
+                    'interface - it requires an eadheader element</p>'
+                    )
+        # Add necessary information to record and get id'
+        rec = self._add_revisionDesc(rec, '', True)
+        rec1 = assignDataIdFlow.process(session, rec)
+        recid = rec1.id
+        idCheck = self.checkExistingId(recid)
+        un = session.user.username
+        if idCheck[0] is True:
+            if idCheck[2] is True:
+                return ('<p>You already have this file open for '
+                        'editing as {0}.</p>\n'
+                        '<p><a href="edit.html?operation=load'
+                        '&user=null&recid={0}-{1}">click here</a> '
+                        'to continue editing the version of the file '
+                        'in the Draft File Store. If you reached '
+                        'this page by using the back button from a '
+                        'preview of the record then this will take '
+                        'you back to the record you were editing.'
+                        '<p>\n'
+                        '<p>To edit the version from your local file '
+                        'store please delete the file currently in '
+                        'the Draft File Store before reloading</p>\n'
+                        '<p><a href="menu.html">Back to Create/Edit '
+                        'Menu</a>'
+                        ''.format(recid, un.encode('ascii', 'ignore'))
+                        )
+
+        id_ = '{0}-{1}'.format(recid, un.encode('ascii', 'ignore'))
+        rec1.id = id_
+        # If the file exists in the record store load from there
+        # (fixes problems with back button)
+        try:
+            rec1 = editStore.fetch_record(session, id_)
+        except:
+            # Get the institution of the user performing the operation
+            institutionid = self._get_userInstitutionId(
+                session.user.username
+            )
+            # Otherwise store in editing store and create institution
+            # link
+            editStore.store_record(session, rec1)
+            editStore.link(session,
+                           'linkrecinst',
+                           rec1,
+                           institutionid=institutionid
+                           )
+
+        if not self._hasPermission(rec1.id):
+            return ('<p>You do not have permission to perform the '
+                    'action requested on the record requested</p>'
+                    )
+
+        li = '<li class="navtab">{0}</li>'.format(keyboard_link)
+        self.htmlNav[2] = li
+        structure = read_file('ead2002.html')
+        htmlDoc = formTxr.process_record(session, rec1)
+        htmlform = htmlDoc.get_raw(session)
+        page = structure.replace('%FRM%', htmlform)
+        page = page.replace(
+            '%RECID%',
+            ('<input type="hidden" id="recid" value="{0}"/>'
+             ''.format(recid.encode('ascii'))
+             )
+        )
+        page = page.replace(
+            '%PUI%',
+            ('<input type="text" onfocus="setCurrent(this);" '
+             'name="pui" id="pui" size="25" disabled="true" '
+             'value="{0}"/>'.format(recid.encode('ascii'))
+             )
+        )
+        page = page.replace(
+            '%TOC%',
+            tocTxr.process_record(session, rec1).get_raw(session)
+        )
+        page = page.replace('%MENUCODE%',
+                            read_file('contextMenu.html')
+                            )
+        page = page.replace('%KYBDCODE%',
+                            read_file('keyboard.html')
+                            )
+        return page
+
     def upload_local(self, form):
         """Take an uploaded file and put it into the draft file store."""
         f = form.get('filepath', None)
@@ -1177,97 +1277,25 @@ class HubEditingHandler(object):
                 return self.show_editMenu()
             ws = re.compile('[\s]+')
             xml = ws.sub(' ', f.value)
-            rec = self._parse_upload(xml, 'edit')
-            # TODO: handle file not successfully parsed
-            if not isinstance(rec, LxmlRecord):
-                return rec
-            rec = self._add_componentIds(rec)
-            if not rec.process_xpath(session, '/ead/eadheader'):
-                return ('<p>Your file is not compatible with the editing '
-                        'interface - it requires an eadheader element</p>'
-                        )
-            else:
-                # Add necessary information to record and get id'
-                rec = self._add_revisionDesc(rec, '', True)
-                rec1 = assignDataIdFlow.process(session, rec)
-                recid = rec1.id
-                idCheck = self.checkExistingId(recid)
-                un = session.user.username
-                if idCheck[0] is True:
-                    if idCheck[2] is True:
-                        return ('<p>You already have this file open for '
-                                'editing as {0}.</p>\n'
-                                '<p><a href="edit.html?operation=load'
-                                '&user=null&recid={0}-{1}">click here</a> '
-                                'to continue editing the version of the file '
-                                'in the Draft File Store. If you reached '
-                                'this page by using the back button from a '
-                                'preview of the record then this will take '
-                                'you back to the record you were editing.'
-                                '<p>\n'
-                                '<p>To edit the version from your local file '
-                                'store please delete the file currently in '
-                                'the Draft File Store before reloading</p>\n'
-                                '<p><a href="menu.html">Back to Create/Edit '
-                                'Menu</a>'
-                                ''.format(recid, un.encode('ascii', 'ignore'))
-                                )
+            return self._ingest_xml(xml)
 
-                id_ = '{0}-{1}'.format(recid, un.encode('ascii', 'ignore'))
-                rec1.id = id_
-                # If the file exists in the record store load from there
-                # (fixes problems with back button)
-                try:
-                    rec1 = editStore.fetch_record(session, id_)
-                except:
-                    # Get the institution of the user performing the operation
-                    institutionid = self._get_userInstitutionId(
-                        session.user.username
-                    )
-                    # Otherwise store in editing store and create institution
-                    # link
-                    editStore.store_record(session, rec1)
-                    editStore.link(session,
-                                   'linkrecinst',
-                                   rec1,
-                                   institutionid=institutionid
-                                   )
+    def import_contrib(self, form):
+        """Import a file from mercurial put it into the draft file store."""
+        quota = self._get_quota()
+        total = self._get_totalDrafts()
+        remaining_quota = quota - total
+        if remaining_quota < 1:
+            return read_file('quotafull.html')
+        fn = form.get('filename', None)
+        self.log('IMPORTing file {0}'.format(fn))
+        docStore = get_userDocumentStore(session.user.username)
+        id_ = docStore.outIdNormalizer.process_string(session, fn)
+        try:
+            doc = docStore.fetch_document(session, id_)
+        except ObjectDoesNotExistException:
+            return '<p>The file you requested to import is not available</p>'
 
-                if not self._hasPermission(rec1.id):
-                    return ('<p>You do not have permission to perform the '
-                            'action requested on the record requested</p>'
-                            )
-                else:
-                    li = '<li class="navtab">{0}</li>'.format(keyboard_link)
-                    self.htmlNav[2] = li
-                    structure = read_file('ead2002.html')
-                    htmlDoc = formTxr.process_record(session, rec1)
-                    htmlform = htmlDoc.get_raw(session)
-                    page = structure.replace('%FRM%', htmlform)
-                    page = page.replace(
-                        '%RECID%',
-                        ('<input type="hidden" id="recid" value="{0}"/>'
-                         ''.format(recid.encode('ascii'))
-                         )
-                    )
-                    page = page.replace(
-                        '%PUI%',
-                        ('<input type="text" onfocus="setCurrent(this);" '
-                         'name="pui" id="pui" size="25" disabled="true" '
-                         'value="{0}"/>'.format(recid.encode('ascii'))
-                         )
-                    )
-                    page = page.replace(
-                        '%TOC%',
-                        tocTxr.process_record(session, rec1).get_raw(session)
-                    )
-                    page = page.replace('%MENUCODE%',
-                                        read_file('contextMenu.html')
-                                        )
-                    page = page.replace('%KYBDCODE%',
-                                        read_file('keyboard.html')
-                                        )
-                    return page
+        return self._ingest_xml(doc.get_raw(session))
 
     def _hasPermission(self, recid):
         """Confirm/Deny user has permission to edit requested record.
@@ -3118,6 +3146,9 @@ class HubEditingHandler(object):
                 self.send_fullHtml(content, req)
             elif (operation == 'local'):
                 content = self.upload_local(form)
+                self.send_fullHtml(content, req)
+            elif (operation == 'import'):
+                content = self.import_contrib(form)
                 self.send_fullHtml(content, req)
             elif (operation == 'createtemplate'):
                 content = self.create_template(form)
