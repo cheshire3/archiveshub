@@ -14,6 +14,12 @@ from cheshire3.exceptions import ObjectDoesNotExistException
 from archiveshub.deploy.utils import WSGIAppArgumentParser
 from ..ead.auth import make_form_authenticated
 from ..ead.base import EADWsgiApplication, config, session, db
+from .utils import (
+    get_userDocumentStore,
+    get_userInstitutionDocumentStoreId,
+    get_userInstitutionId,
+    get_userInstitutionName
+)
 
 
 class EADContributeWsgiApplication(EADWsgiApplication):
@@ -71,7 +77,7 @@ class EADContributeWsgiApplication(EADWsgiApplication):
     def delete(self):
         name = self.request.path_info.strip(' /')
         # Delete document
-        docStore = self._get_userDocumentStore(self.session.user.username)
+        docStore = get_userDocumentStore(self.session.user.username)
         id_ = docStore.outIdNormalizer.process_string(session, name)
         docStore.delete_document(session, id_)
         self.response.status = "204 Deleted"
@@ -100,7 +106,7 @@ class EADContributeWsgiApplication(EADWsgiApplication):
             if operation is None:
                 # Filename based?
                 operation = os.path.splitext(path.split('/')[-1])[0]
-            contributorDocStore = self._get_userDocumentStore(session.user.username)
+            contributorDocStore = get_userDocumentStore(session.user.username)
             if contributorDocStore is None:
                 return self._render_template(
                     'console/fail/noDocStore.html',
@@ -151,67 +157,11 @@ class EADContributeWsgiApplication(EADWsgiApplication):
         )
         # TODO: Validate
         # Store document
-        docStore = self._get_userDocumentStore(self.session.user.username)
+        docStore = get_userDocumentStore(self.session.user.username)
         doc.id = id_ = docStore.outIdNormalizer.process_string(session, name)
         docStore.store_document(session, doc)
         self.response.status = "201 Created"
         return ""
-
-    # Utility functions
-
-    def _get_userDocumentStore(self, username):
-        docStoreId = self._get_userInstitutionDocumentStoreId(
-            username
-        )
-        # Disabled automatic guess of Mercurial folder - force selection in
-        # Admin console
-        # if docStoreId is None:
-        #     institution_name = self._get_userInstitutionName(
-        #         username
-        #     )
-        #     docStoreId = '{0}DocumentStore'.format(institution_name)
-        try:
-            return self.docStoreStore.fetch_object(
-                self.session,
-                docStoreId
-            )
-        except ObjectDoesNotExistException:
-            return None
-
-    def _get_userInstitutionDocumentStoreId(self, username):
-        global authStore
-        # Get the institution of the user performing the operation
-        authinst = self._get_userInstitutionId(username)
-        instStore = self.database.get_object(self.session, 'institutionStore')
-        instRec = instStore.fetch_record(self.session, authinst)
-        try:
-            return instRec.process_xpath(
-                self.session,
-                '//documentStore/text()'
-            )[0]
-        except IndexError:
-            return None
-
-    def _get_userInstitutionId(self, username):
-        # Return the institution id of the user performing the operation
-        global authStore
-        sqlQ = ("SELECT institutionid "
-                "FROM hubAuthStore_linkauthinst "
-                "WHERE hubAuthStore=%s")
-        res = authStore._query(sqlQ, (username,))
-        if len(res) > 1:
-            # We have two templates with the same id - should never happen
-            return None
-        else:
-            return res[0][0]
-
-    def _get_userInstitutionName(self, username):
-        global authStore
-        # Get the institution of the user performing the operation
-        authinst = self._get_userInstitutionId(username)
-        instStore = self.database.get_object(self.session, 'institutionStore')
-        instRec = instStore.fetch_record(self.session, authinst)
-        return instRec.process_xpath(self.session, '//name/text()')[0]
 
 
 def check_password(username, password):
