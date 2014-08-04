@@ -32,6 +32,12 @@
                       </a>
                   </td>
                   <td class="text-right">
+                      <a class="btn btn-warning btn-xs"
+                         target="_new"
+                         href="/edit/edit.html?operation=import&amp;filename=${basename(doc.filename)}">
+                          <span class="glyphicon glyphicon-edit"></span>
+                          Edit
+                      </a>
                       <button class="btn btn-danger btn-xs deleteButton"
                               name="${basename(doc.filename)}"
                               data-toggle="modal"
