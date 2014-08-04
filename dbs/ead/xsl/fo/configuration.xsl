@@ -8,5 +8,9 @@
     <xsl:variable name="contents-title">
         <xsl:text>Contents</xsl:text>
     </xsl:variable>
-    
+
+    <xsl:variable name="ah-logo-url">
+        <xsl:text>http://archiveshub.ac.uk/images/editor/ah-logo.png</xsl:text>
+    </xsl:variable>
+
 </xsl:stylesheet>

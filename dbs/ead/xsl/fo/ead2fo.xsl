@@ -145,9 +145,20 @@
                 <xsl:call-template name="fo-country"/>
                 <xsl:call-template name="fo-language"/>
                 <fo:flow flow-name="xsl-region-body">
-                    <fo:block 
+                    <fo:block text-align="center">
+                        <fo:external-graphic
+                            background-color="#ffffff">
+                            <xsl:attribute name="src">
+                                <xsl:text>url(</xsl:text>
+                                <xsl:value-of select="$ah-logo-url"/>
+                                <xsl:text>)</xsl:text>
+                            </xsl:attribute>
+                        </fo:external-graphic>
+                    </fo:block>
+                    <fo:block
+                        margin-top="1cm"
                         text-align="center"
-                        font-size="16pt"
+                        font-size="18pt"
                         font-weight="bold">
                         <xsl:choose>
 							<xsl:when test="/ead/archdesc/did/unittitle">
