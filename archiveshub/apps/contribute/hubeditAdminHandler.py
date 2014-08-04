@@ -32,6 +32,8 @@
 #                          password) of any EAD Editor user
 #
 
+from __future__ import absolute_import
+
 import os
 import cgitb
 
@@ -45,6 +47,7 @@ from mod_python.util import FieldStorage, redirect
 from cheshire3.baseObjects import Session
 from cheshire3.server import SimpleServer
 from cheshire3.utils import flattenTexts
+from cheshire3.baseStore import BdbIter
 from cheshire3.document import StringDocument
 from cheshire3.record import LxmlRecord
 
@@ -112,6 +115,7 @@ class HubeditAdminHandler:
         page = page.replace('%INSTSELECT%', self.create_select())
         page = page.replace('%INSTUSERLIST%', self.list_usersByInst())
         page = page.replace('%INSTSELECTOPTIONS%', self.get_institutions())
+        page = page.replace('%DOCSTORESELECT%', self.get_docStoreSelect())
         page = multiReplace(page, values)
         return page
 
@@ -242,13 +246,17 @@ class HubeditAdminHandler:
     def get_institutions(self):
         optionList = []
         for rec in instStore:
-            option = (u'<option value="{0}|{1}|{2}">{3}</option>'
-                      u''.format(
-                          rec.id,
-                          rec.process_xpath(session, '//name/text()')[0],
-                          rec.process_xpath(session, '//quota/text()')[0],
-                          rec.process_xpath(session, '//name/text()')[0]
-                          )
+            name = rec.process_xpath(session, '//name/text()')[0]
+            quota = rec.process_xpath(session, '//quota/text()')[0]
+            try:
+                docstore = rec.process_xpath(
+                    session,
+                    '//documentStore/text()'
+                )[0]
+            except IndexError:
+                docstore = ''
+            option = (u'<option value="{0}|{1}|{2}|{3}">{1}</option>'
+                      u''.format(rec.id, name, quota, docstore)
                       )
             optionList.append(option)
         return u''.join(optionList)
@@ -262,6 +270,22 @@ class HubeditAdminHandler:
                 u''.format(i.id, i.process_xpath(session, '//name/text()')[0])
             )
         return u''.join(optionList)
+
+    def get_docStoreSelect(self):
+        global docStoreConfigStore
+        select_list = ['<select name="docstore">',
+                       # This option does the same a s'None' when creating, but
+                       # doesn't squash existing value when editing quota
+                       '<option value="">--</option>',
+                       '<option value="null">None</option>'
+                       ]
+        for id_, _ in BdbIter(session, docStoreConfigStore):
+            select_list.append(
+                '<option value="{0}">{1}</option>'
+                ''.format(id_, id_[:-len('DocumentStore')])
+            )
+        select_list.append('</select>')
+        return ''.join(select_list)
 
     def add_user(self, form):
         field_names = {
@@ -452,37 +476,72 @@ class HubeditAdminHandler:
         #- end _submit_userLxml()
 
     def add_inst(self, form):
-        global instStore
+        global instStore, docStoreConfigStore
         inst = form.get('institution', None)
         quota = form.get('quota', '50')
-        docstr = ('<inst><name>{0}</name><quota>{1}</quota></inst>'
-                  ''.format(inst, quota)
-                  )
+        docstore = form.get('docstore')
+        doc_lines = [
+            '<inst>',
+            '<name>{0}</name>'.format(inst),
+            '<quota>{0}</quota>'.format(quota)
+        ]
+        if not docstore:
+            try:
+                docStoreConfigStore.fetch_object(
+                    session,
+                    '{0}DocumentStore'.format(inst)
+                )
+            except c3errors.ObjectDoesNotExistException:
+                pass
+            else:
+                docstore = '{0}DocumentStore'.format(inst)
+        if docstore and docstore != 'null':
+            doc_lines.append('<documentStore>{0}</documentStore>'
+                             ''.format(docstore)
+                             )
+        doc_lines.append('</inst>')
         if inst is not None:
-            doc = StringDocument(docstr)
+            doc = StringDocument(''.join(doc_lines))
             rec = xmlp.process_document(session, doc)
-            _ = instStore.create_record(session, rec)
+            rec = instStore.create_record(session, rec)
             return self.show_adminMenu()
         else:
             return self.show_adminMenu()
 
     def edit_inst(self, form):
-        id = form.get('id', None)
+        id_ = form.get('id', None)
         inst = form.get('institution', None)
         quota = form.get('quota', '50')
-        print id, inst, quota
-        docstr = ('<inst><name>{0}</name><quota>{1}</quota></inst>'
-                  ''.format(inst, quota)
-                  )
-        if inst is not None:
-            doc = StringDocument(docstr)
-            rec = xmlp.process_document(session, doc)
-            rec.id = id
-#             instStore.delete_record(session, id)
-            instStore.store_record(session, rec)
-            return self.show_adminMenu()
+        docstore = form.get('docstore')
+        try:
+            rec = instStore.fetch_record(session, id_)
+        except c3errors.ObjectDoesNotExistException:
+            pass
         else:
-            return self.show_adminMenu()
+            inst_dom = rec.get_dom(session)
+            # Update quota
+            inst_dom.xpath('//quota')[0].text = quota
+            if docstore:
+                inst_el = inst_dom.xpath('//inst')[0]
+                # Remove any existing documentStore elements
+                for el in inst_dom.xpath('//documentStore'):
+                    try:
+                        inst_el.remove(el)
+                    except:
+                        pass
+                if docstore != 'null':
+                    # Add node with new documentStore value
+                    etree.SubElement(
+                        inst_dom.xpath('//inst')[0],
+                        'documentStore'
+                    ).text = docstore
+            rec = LxmlRecord(
+                inst_dom,
+                etree.tostring(inst_dom),
+                docId=id_
+            )
+            instStore.store_record(session, rec)
+        return self.show_adminMenu()
 
     def delete_inst(self, form):
         global instStore, rebuild
@@ -649,6 +708,7 @@ class HubeditAdminHandler:
 def build_architecture(data=None):
     global rebuild, session, serv, db, dbPath
     global editStore, authStore, instStore, userStore, xmlp
+    global docStoreConfigStore
 
     session = Session()
     session.database = 'db_hubedit'
@@ -667,7 +727,7 @@ def build_architecture(data=None):
     editStore = db.get_object(session, 'editingStore')
     userStore = db.get_object(session, 'hubAuthStore')
     instStore = db.get_object(session, 'institutionStore')
-
+    docStoreConfigStore = db.get_object(session, 'documentStoreConfigStore')
     authStore = db.get_object(session, 'adminAuthStore')
     xmlp = db.get_object(session, 'LxmlParser')
 

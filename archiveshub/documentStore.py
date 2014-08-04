@@ -23,6 +23,7 @@ class MercurialDocumentStore(DirectoryDocumentStore):
     def __init__(self, session, config, parent):
         self.defaultUser = self._getUserString(session)
         DirectoryDocumentStore.__init__(self, session, config, parent)
+        self.totalItems = self.get_dbSize(session)
 
     def __iter__(self):
         return mercurialDocumentStoreIter(self)
@@ -97,6 +98,10 @@ class MercurialDocumentStore(DirectoryDocumentStore):
         doc = DirectoryDocumentStore.fetch_document(self, session, id_)
         # Assign the documentStore attribute
         doc.documentStore = self.id
+        # Assign byteCount and other useful metadata
+        stat = os.stat(doc.filename)
+        doc.byteCount = stat.st_size
+        doc.metadata['lastModified'] = stat.st_mtime
         return doc
 
     def delete_document(self, session, id_):
@@ -130,4 +135,8 @@ def mercurialDocumentStoreIter(store):
         internalId = store._normalizeIdentifier(session, id_)
         doc.filename = store._getFilePath(session, internalId)
         doc.documentStore = store.id
+        # Assign byteCount and other useful metadata
+        stat = os.stat(doc.filename)
+        doc.byteCount = stat.st_size
+        doc.metadata['lastModified'] = stat.st_mtime
         yield doc

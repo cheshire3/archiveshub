@@ -1,0 +1,61 @@
+<%!
+    # Global attributes
+    body_class = "console"
+    body_id = "console"
+    header_class = "cF"
+%>
+<%inherit file="../base.html"/>
+
+<%block name="title">Contributor Console - ${next.title()}</%block>
+
+<%block name="css">
+    ##<!-- Bootstrap -->
+    ##<link href="/styles/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    ${parent.css()}
+    <style type="text/css">
+div#login-status {
+    display: block;
+}
+    </style>
+</%block>
+<%block name="js">
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <!-- tell curvyCorners to behave! -->
+    <script type="text/javascript">var curvyCornersVerbose = false;</script>
+    <script type="text/javascript" src="/scripts/js/ah.libs.js"></script>
+    <script type="text/javascript" src="/scripts/js/ah.text.js"></script>
+    <script type="text/javascript" src="/scripts/js/ah.base.js"></script>
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script src="${BASE}/js/ah.console.js"></script>
+</%block>
+
+<%block name="GA"></%block>
+
+<%block name="scripts">
+    <script type="text/javascript">
+$(document).ready(function() {
+    Console.init();
+});
+    </script>
+</%block>
+
+<%block name="bannerextra">
+    <div id="login-status">
+        <form action="logout" method="POST">
+            Logged in as <b>${session.user.realName}</b> (${session.user.username})
+            <input type="submit" value="Sign out"/>
+        </form>
+    </div>
+</%block>
+
+${next.body()}

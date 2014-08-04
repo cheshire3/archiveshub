@@ -1,0 +1,38 @@
+<%!
+    from datetime import datetime
+    from os.path import basename
+    from pygments import highlight
+    from pygments.lexers import get_lexer_by_name
+    from pygments.formatters import HtmlFormatter
+    lexer = get_lexer_by_name('xml')
+    formatter = HtmlFormatter(
+        classprefix='pyg-',
+    )
+%>
+<%inherit file="base.html"/>
+
+<%block name="title">Contributor Files - ${basename(doc.filename)|h}</%block>
+
+<%block name="css">
+    ${parent.css()}
+    <style type="text/css">
+        ${formatter.get_style_defs()}
+    </style>
+</%block>
+
+<div class="row">
+  <div class="col-md-12">
+    <dl class="dl-horizontal">
+        <dt>Filename</dt>
+        <dd>${basename(doc.filename)|h}</dd>
+        <dt>Size</dt>
+        <dd>${doc.byteCount / 1024} kb</dd>
+        <dt>Last modified</dt>
+        <dd>${datetime.fromtimestamp(doc.metadata['lastModified']).strftime("%H:%M, %d %B %Y")}</dd>
+        <dt>Content</dt>
+        <dd>
+            ${highlight(doc.get_raw(session), lexer, formatter)}
+        </dd>
+    </dl>
+  </div>
+</div>

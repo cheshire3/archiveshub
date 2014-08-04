@@ -128,6 +128,18 @@
             </options>
         </subConfig>
 
+        <subConfig type="logger" id="consoleTransactionLogger">
+            <objectType>cheshire3.web.logger.TransactionLogger</objectType>
+            <paths>
+                <path type="filePath">../../www/ead/logs/console.log</path>
+            </paths>
+            <options>
+                <setting type="separatorString">:: </setting>
+                <setting type="minLevel">0</setting>
+                <default type="level">20</default>
+            </options>
+        </subConfig>
+
     </subConfigs>
 
 </config>

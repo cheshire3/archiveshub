@@ -176,10 +176,34 @@ def add_contributor(args):
         store.begin_storing(session)
         store.store_record(session, rec)
         store.commit_storing(session)
+        # Create a mapping for this contributor for Contribute + Editor
+        instStore = db.get_object(session, 'institutionStore')
+        # Check for existing Record
+        for inst_rec in instStore:
+            name = inst_rec.process_xpath(session, '//name/text()')[0]
+            if name == contributorId:
+                inst_dom = inst_rec.get_dom(session)
+                # Add node describing the new DocumentStore
+                inst_dom.append(E.documentStore(storeId))
+                rec = instStore.store_record(session, inst_rec)
+                break
+        else:
+            inst_dom = E.inst(
+                E.name(contributorId),
+                E.quota('0'),
+                E.documentStore(storeId)
+            )
+            rec = instStore.create_record(session, inst_rec)
+            inst_rec = LxmlRecord(
+                inst_dom,
+                etree.tostring(inst_dom),
+                docId=contributorId
+            )
+
         lgr.log_info(session, "DocumentStore for {0} located at {1} has been "
                               "added".format(contributorId, dbPath)
         )
-        # TODO: write new contributor into JSON
+        # TODO: write new contributor into JSON?
     return 0
 
 
@@ -324,9 +348,13 @@ parser_ls = subparsers.add_parser(
     help=ls_contributors.__doc__)
 parser_ls.set_defaults(func=ls_contributors)
 
-# Set up ElementMaker for Cheshire3 config and METS namespaces
-CONF = ElementMaker(namespace=CONFIG_NS,
-                    nsmap={'cfg': CONFIG_NS})
+
+# Set up basic ElementMaker and one for for Cheshire3 config namespace
+E = ElementMaker()
+CONF = ElementMaker(
+    namespace=CONFIG_NS,
+    nsmap={'cfg': CONFIG_NS}
+)
 
 
 if __name__ == '__main__':

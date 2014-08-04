@@ -1,0 +1,141 @@
+<%!
+    from os.path import basename
+%>
+<%inherit file="base.html"/>
+
+<%block name="title">Contributor Files</%block>
+
+<div class="row">
+    <div class="col-md-11 col-md-offset-1">
+        <h3>Contributor Folders</h3>
+    </div>
+</div>
+
+<div class="row">
+  <div class="col-md-7 col-md-offset-1">
+      <table class="table table-condensed">
+          <thead>
+                <tr>
+                    <th colspan="2"><span class="glyphicon glyphicon-folder-open"></span></th>
+                    <th>${contributorStore.id[:-len('DocumentStore')]}</th>
+                    <th class="text-right"><span class="badge">${contributorStore.totalItems}</span></th>
+                </tr>
+          </thead>
+          <tbody>
+          % for doc in contributorStore:
+              <tr>
+                  <td></td>
+                  <td><span class="glyphicon glyphicon-file"></span></td>
+                  <td>
+                      <a href="${basename(doc.id)|u}">
+                          ${basename(doc.filename)}
+                      </a>
+                  </td>
+                  <td class="text-right">
+                      <a class="btn btn-warning btn-xs"
+                         target="_new"
+                         href="/edit/edit.html?operation=import&amp;filename=${basename(doc.filename)}">
+                          <span class="glyphicon glyphicon-edit"></span>
+                          Edit
+                      </a>
+                      <button class="btn btn-danger btn-xs deleteButton"
+                              name="${basename(doc.filename)}"
+                              data-toggle="modal"
+                              data-target="#deleteModal">
+                          <span class="glyphicon glyphicon-remove"></span>
+                          Delete
+                      </button>
+                  </td>
+              </tr>
+          % endfor
+          </tbody>
+      </table>
+  </div>
+  <div class="col-md-4">
+    <h3></h3>
+    <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#uploadModal">
+        <span class="glyphicon glyphicon-upload"></span>
+        Upload file(s)
+    </button>
+  </div>
+</div>
+
+<div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h3 class="modal-title" id="uploadModalTitle">Upload new file</h3>
+            </div>
+            <div class="modal-body">
+                <form id="upload-form">
+                    <input type="file" id="files" name="files[]" multiple>
+                </form>
+                <div>
+                    <output id="uploadStatus"></output>
+                    <output id="list">
+                        <table class="table">
+                            <tbody></tbody>
+                        </table>
+                    </output>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="abortButton" class="btn btn-default" data-dismiss="modal">
+                    <span class="glyphicon glyphicon-remove"></span>
+                    Abort
+                </button>
+                <button type="button" id="uploadButton" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-upload"></span>
+                    Upload
+                </button>
+                <button type="button" id="cancelButton" class="btn btn-default" data-dismiss="modal">
+                    <span class="glyphicon glyphicon-remove"></span>
+                    Cancel
+                </button>
+                <button type="button" id="doneButton" class="btn btn-default" data-dismiss="modal">
+                    <span class="glyphicon glyphicon-ok"></span>
+                    Done
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" id="closeDeleteModal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h3 class="modal-title" id="deleteModalTitle">Delete a file</h3>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger">
+                    You are about to delete the file <strong id="deleteFileName"></strong> from the Archives Hub.
+                </div>
+                <p>Are you sure you want to delete this file?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button"
+                        id="deleteButton"
+                        class="btn btn-danger">
+                    <span class="glyphicon glyphicon-ok"></span>
+                    Delete the file.
+                </button>
+                <button type="button"
+                        id="cancelDeleteButton"
+                        class="btn btn-default"
+                        data-dismiss="modal">
+                    <span class="glyphicon glyphicon-remove"></span>
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

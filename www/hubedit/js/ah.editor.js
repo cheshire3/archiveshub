@@ -1585,7 +1585,10 @@ function populateInst(){
     document.getElementById('editid').value = list[0];
     document.getElementById('editname').value = list[1];
     document.getElementById('editquota').value = list[2];
-
+    $('editinst').select('select[name="docstore"]').each(function(sel, idx){
+        console.log('here');
+        sel.setValue(list[3])
+    });
     document.getElementById('instselect').value = 'none';
 }
 
