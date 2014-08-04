@@ -142,6 +142,7 @@
             
             <!-- front page -->
             <fo:page-sequence master-reference="title-sequence" format="i">
+                <xsl:attribute name="color"><xsl:text>#24205c</xsl:text></xsl:attribute>
                 <xsl:call-template name="fo-country"/>
                 <xsl:call-template name="fo-language"/>
                 <fo:flow flow-name="xsl-region-body">
@@ -177,6 +178,7 @@
             
             <!-- front-matter pages -->
             <fo:page-sequence master-reference="frontmatter-sequence" format="i">
+                <xsl:attribute name="color"><xsl:text>#24205c</xsl:text></xsl:attribute>
                 <xsl:call-template name="fo-country"/>
                 <xsl:call-template name="fo-language"/>
                 <fo:flow flow-name="xsl-region-body">
@@ -188,13 +190,14 @@
             
             <xsl:if test="/ead/archdesc/dsc">
 	            <fo:page-sequence master-reference="toc-sequence" format="i">
+                    <xsl:attribute name="color"><xsl:text>#24205c</xsl:text></xsl:attribute>
 	                <xsl:call-template name="fo-country"/>
 	                <xsl:call-template name="fo-language"/>
 	                <fo:title>
 	                    <xsl:value-of select="$contents-title"/>
 	                </fo:title>
 	                <fo:static-content flow-name="xsl-region-before">
-	                    <fo:block border-bottom="1px solid black">
+	                    <fo:block border-bottom="1px solid #0baedb">
 	                        <fo:block>
 	                            <xsl:value-of select="$contents-title"/>
 	                        </fo:block>
@@ -223,6 +226,7 @@
 	        <fo:page-sequence 
                 master-reference="archdesc-sequence"
                 initial-page-number="1">
+                <xsl:attribute name="color"><xsl:text>#24205c</xsl:text></xsl:attribute>
                 <xsl:call-template name="fo-country"/>
                 <xsl:call-template name="fo-language"/>
 	            <xsl:variable name="title">
@@ -233,7 +237,7 @@
 	            </fo:title>
 	            <fo:static-content flow-name="xsl-region-before">
 	                <fo:block 
-	                    border-bottom="1pt solid black">
+	                    border-bottom="1pt solid #0baedb">
 	                    <fo:block text-align-last="justify">
 	                        <xsl:value-of select="/ead/archdesc/did/unitid"/>
 	                        <xsl:text>: </xsl:text>
@@ -341,7 +345,7 @@
         <xsl:param name="url"/>
         <xsl:param name="content"/>
         <fo:basic-link
-            color="#000099">
+            color="#0baedb">
             <xsl:attribute name="external-destination">
                 <xsl:value-of select="$url"/>
             </xsl:attribute>
@@ -407,7 +411,7 @@
     <xsl:template match="eadheader">
         <fo:block
             width="100%"
-            border="1px solid black"
+            border="1px solid #0baedb"
             padding="10pt" 
             space-before="10pt"
             space-after="16pt">
@@ -685,7 +689,7 @@
                 </fo:title>
                     <fo:static-content flow-name="xsl-region-before">
                         <fo:block 
-                            border-bottom="1pt solid black"
+                            border-bottom="1pt solid #0baedb"
                             text-align-last="justify">
                             <fo:block>
                                 <xsl:value-of select="./did/unitid"/>
@@ -718,7 +722,7 @@
     <xsl:template name="single-unit">
         <xsl:param name="node"/>
         <fo:block
-            border-bottom="1pt solid black">
+            border-bottom="1pt solid #0baedb">
             <xsl:attribute name="id">
                 <xsl:value-of select="generate-id($node)"/>
             </xsl:attribute>
