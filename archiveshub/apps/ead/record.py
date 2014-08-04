@@ -54,6 +54,7 @@ class EADRecordWsgiApplication(EADWsgiApplication):
                                                )
         self.mimetypeHash = mtHash = OrderedDict([
             ('text/html', self.html),
+            ('application/pdf', self.pdf),
             ('application/xml', self.xml),
             ('text/xml', self.xml),
             ('text/plain', self.text)
@@ -520,6 +521,33 @@ class EADRecordWsgiApplication(EADWsgiApplication):
                                          toc=toc,
                                          page=page,
                                          )
+
+    def pdf(self, rec, form):
+        session = self.session
+        db = self.database
+        wf = db.get_object(session, 'PDFWorkflow')
+        try:
+            doc = wf.process(session, rec)
+        except Exception as e:
+            # Component record?
+            try:
+                parentId = rec.process_xpath(session, '/c3component/@parent')[0]
+            except IndexError:
+                raise e
+            else:
+                # PDF is only available for collection-level
+                # "See Other" -> parent
+                parentId = parentId.split('/', 1)[-1]
+                self.response.status = '303 See Other'
+                url = self.request.relative_url(
+                    '{0}.pdf'.format(parentId),
+                    to_application=True
+                )
+                self.response.location = url
+                return '<a href="{0}">{0}</a>'.format(url)
+
+        else:
+            return doc.get_raw(session)
 
     def text(self, rec, form):
         txt = self._textFromRecord(rec)
