@@ -42,7 +42,14 @@
           c3:transformer="sruOutgoingTxr">
             <title>Encoded Archival Description (EAD)</title>
         </schema>
-      
+
+        <schema identifier="info:srw/schema/2/xsl-fo"
+                location="https://svn.apache.org/repos/asf/xmlgraphics/fop/trunk/src/foschema/fop.xsd"
+                sort="true" retrieve="true" name="fo"
+                c3:transformer="foTxr">
+            <title>XSL-FO</title>
+        </schema>
+
     </schemaInfo>
 
     <configInfo>
