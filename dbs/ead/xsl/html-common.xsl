@@ -631,7 +631,7 @@
                 </h3>
             </xsl:otherwise>
         </xsl:choose>
-    <xsl:apply-templates select="*[not(local-name(.)='legalstatus')]"/>
+        <xsl:apply-templates select="*[not(local-name(.)='legalstatus')]"/>
     </xsl:template>
 
     <xsl:template match="accessrestrict/legalstatus">
