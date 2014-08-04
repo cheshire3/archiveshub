@@ -248,8 +248,22 @@
             <workflow>
                 <!-- input type: Record -->
                 <object type="transformer" ref="highlightTxr" />
+                <!-- input type: Document -->
                 <object type="parser" ref="LxmlParser" />
+                <!-- input type: Record -->
                 <object type="transformer" ref="htmlSummaryTxr" />
+            </workflow>
+        </subConfig>
+
+        <subConfig type="workflow" id="PDFWorkflow">
+            <docs>Workflow to transform an EAD record into a PDF Document</docs>
+            <objectType>cheshire3.workflow.CachingWorkflow</objectType>
+            <workflow>
+                <!-- input type: Record -->
+                <object type="transformer" ref="foTxr" />
+                <!-- input type: Document -->
+                <object type="preParser" ref="FOPPDFPreParser" />
+                <!-- input type: Document -->
             </workflow>
         </subConfig>
 
