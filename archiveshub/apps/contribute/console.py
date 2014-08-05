@@ -8,6 +8,11 @@ import webbrowser
 
 # Site packages
 
+try:
+    import uwsgi
+except ImportError:
+    uwsgi = None
+
 from cheshire3.document import StringDocument
 from cheshire3.exceptions import ObjectDoesNotExistException
 
@@ -81,6 +86,8 @@ class EADContributeWsgiApplication(EADWsgiApplication):
         id_ = docStore.outIdNormalizer.process_string(session, name)
         docStore.delete_document(session, id_)
         self.response.status = "204 Deleted"
+        if uwsgi:
+            uwsgi.reload()
         return ''
 
     def get(self):
@@ -165,6 +172,8 @@ class EADContributeWsgiApplication(EADWsgiApplication):
         doc.id = id_ = docStore.outIdNormalizer.process_string(session, name)
         docStore.store_document(session, doc)
         self.response.status = "201 Created"
+        if uwsgi:
+            uwsgi.reload()
         return ""
 
 
