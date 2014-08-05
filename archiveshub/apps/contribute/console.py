@@ -118,8 +118,12 @@ class EADContributeWsgiApplication(EADWsgiApplication):
                     contributorStore=contributorDocStore
                 )
             else:
+                id_ = contributorDocStore.outIdNormalizer.process_string(
+                    session,
+                    path
+                )
                 try:
-                    doc = contributorDocStore.fetch_document(session, path)
+                    doc = contributorDocStore.fetch_document(session, id_)
                 except ObjectDoesNotExistException:
                     self.request.status_code = 404
                     return self._render_template(

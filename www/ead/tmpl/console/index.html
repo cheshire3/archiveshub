@@ -1,13 +1,14 @@
-<%!
-    from os.path import basename
-%>
 <%inherit file="base.html"/>
 
 <%block name="title">Contributor Files</%block>
 
+<%def name="basename(filename)">
+    ${filename[len(contributorStore.get_path(session, 'databasePath')) + 1:]}
+</%def>
+
 <div class="row">
     <div class="col-md-11 col-md-offset-1">
-        <h3>Contributor Folders</h3>
+        <h3>${title()}</h3>
     </div>
 </div>
 
@@ -27,7 +28,7 @@
                   <td></td>
                   <td><span class="glyphicon glyphicon-file"></span></td>
                   <td>
-                      <a href="${basename(doc.id)|u}">
+                      <a href="${basename(doc.filename)}">
                           ${basename(doc.filename)}
                       </a>
                   </td>
