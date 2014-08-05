@@ -1,5 +1,6 @@
 <%!
     from datetime import datetime
+    import os.path
     from pygments import highlight
     from pygments.lexers import get_lexer_by_name
     from pygments.formatters import HtmlFormatter
@@ -30,8 +31,21 @@
 <div class="row">
   <div class="col-md-12">
     <dl class="dl-horizontal">
-        <dt>Filename</dt>
-        <dd>${basename|h}</dd>
+        <dt>Path</dt>
+        <dd>
+            <ol class="breadcrumb">
+                <li>
+                    <a href="${SCRIPT}/index.html">
+                        ${doc.documentStore[:-len('DocumentStore')]}
+                    </a>
+                </li>
+                % for part in basename.split(os.path.sep):
+                <li class="active">
+                    ${part}
+                </li>
+                % endfor
+            </ol>
+        </dd>
         <dt>Size</dt>
         <dd>${doc.byteCount / 1024} kb</dd>
         <dt>Last modified</dt>
