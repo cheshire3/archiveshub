@@ -50,6 +50,15 @@
         <dd>${doc.byteCount / 1024} kb</dd>
         <dt>Last modified</dt>
         <dd>${datetime.fromtimestamp(doc.metadata['lastModified']).strftime("%H:%M, %d %B %Y")}</dd>
+        <dt>Actions</dt>
+        <dd>
+            <a class="btn btn-warning btn-xs"
+               target="_new"
+               href="/edit/edit.html?operation=import&amp;filename=${basename}">
+                <span class="glyphicon glyphicon-edit"></span>
+                Edit
+            </a>
+        </dd>
         <dt>Content</dt>
         <dd>
             ${highlight(doc.get_raw(session), lexer, formatter)}
