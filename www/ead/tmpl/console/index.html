@@ -1,10 +1,11 @@
+<%!
+    def get_basename(session, doc, store):
+        return doc.filename[len(store.get_path(session, 'databasePath')) + 1:]
+%>
 <%inherit file="base.html"/>
 
 <%block name="title">Contributor Files</%block>
 
-<%def name="basename(filename)">
-    ${filename[len(contributorStore.get_path(session, 'databasePath')) + 1:]}
-</%def>
 
 <div class="row">
     <div class="col-md-11 col-md-offset-1">
@@ -24,23 +25,26 @@
           </thead>
           <tbody>
           % for doc in contributorStore:
+              <%
+                  basename = get_basename(session, doc, contributorStore)
+              %>
               <tr>
                   <td></td>
                   <td><span class="glyphicon glyphicon-file"></span></td>
                   <td>
-                      <a href="${basename(doc.filename)}">
-                          ${basename(doc.filename)}
+                      <a href="${basename}">
+                          ${basename}
                       </a>
                   </td>
                   <td class="text-right">
                       <a class="btn btn-warning btn-xs"
                          target="_new"
-                         href="/edit/edit.html?operation=import&amp;filename=${basename(doc.filename)}">
+                         href="/edit/edit.html?operation=import&amp;filename=${basename}">
                           <span class="glyphicon glyphicon-edit"></span>
                           Edit
                       </a>
                       <button class="btn btn-danger btn-xs deleteButton"
-                              name="${basename(doc.filename)}"
+                              name="${basename}"
                               data-toggle="modal"
                               data-target="#deleteModal">
                           <span class="glyphicon glyphicon-remove"></span>

@@ -1,6 +1,5 @@
 <%!
     from datetime import datetime
-    from os.path import basename
     from pygments import highlight
     from pygments.lexers import get_lexer_by_name
     from pygments.formatters import HtmlFormatter
@@ -8,10 +7,14 @@
     formatter = HtmlFormatter(
         classprefix='pyg-',
     )
+
+    def get_basename(session, doc, store):
+        return doc.filename[len(store.get_path(session, 'databasePath')) + 1:]
+
 %>
 <%inherit file="base.html"/>
 
-<%block name="title">Contributor Files - ${basename(doc.filename)|h}</%block>
+<%block name="title">Contributor Files - ${get_basename(session, doc, contributorStore)|h}</%block>
 
 <%block name="css">
     ${parent.css()}
@@ -20,11 +23,15 @@
     </style>
 </%block>
 
+<%
+    basename = get_basename(session, doc, contributorStore)
+%>
+
 <div class="row">
   <div class="col-md-12">
     <dl class="dl-horizontal">
         <dt>Filename</dt>
-        <dd>${basename(doc.filename)|h}</dd>
+        <dd>${basename|h}</dd>
         <dt>Size</dt>
         <dd>${doc.byteCount / 1024} kb</dd>
         <dt>Last modified</dt>

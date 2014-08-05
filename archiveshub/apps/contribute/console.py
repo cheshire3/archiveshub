@@ -143,7 +143,8 @@ class EADContributeWsgiApplication(EADWsgiApplication):
                     return doc.get_raw(session)
                 return self._render_template(
                     'console/view.html',
-                    doc=doc
+                    doc=doc,
+                    contributorStore=contributorDocStore
                 )
         finally:
             try:
