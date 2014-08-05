@@ -1699,24 +1699,6 @@ function submit(index){
         return;
     }
 
-    //check the daoform details
-    var daodetails = checkDao();
-    if (daodetails[0] == true){
-         var confirmbox = confirm('At least one of File URI values required for the digital object has not been completed. If you proceed with this operation any incomplete URIs will not be included and the title and/or description information relating to the missing URI will be lost. All other content will be saved.\n\nDo you want to continue?');
-         if (confirmbox == false){
-             return;
-         }
-         else {
-             var wipeids = daodetails[1];
-             var descids = daodetails[2];
-             for (var i=0; i< wipeids.length; i++){
-                 document.getElementById(wipeids[i]).value = '';
-             }
-             for (var i=0; i< descids.length; i++){
-                 document.getElementById(descids[i]).value = '<p></p>';
-             }
-         }
-    }
     if (!saveForm(false)) {
         alert('Record could not be saved due to server error.\n\nThis is probably caused by a recent change you\'ve made.');
         return false;
@@ -1802,26 +1784,6 @@ function save(){
            }
     }
 
-    //check the daoform details
-    var daodetails = checkDao();
-    if (daodetails[0] == true){
-         var confirmbox = confirm('At least one of File URI values required for the digital object has not been completed. If you proceed with this operation any incomplete URIs will not be included and the title and/or description information relating to the missing URI will be lost. All other content will be saved.\n\nDo you want to continue?');
-         if (confirmbox == false){
-             body.className = 'splitscreen';
-             foreground('content');
-             return;
-         }
-         else {
-             var wipeids = daodetails[1];
-             var descids = daodetails[2];
-             for (var i=0; i< wipeids.length; i++){
-                 document.getElementById(wipeids[i]).value = '';
-             }
-             for (var i=0; i< descids.length; i++){
-                 document.getElementById(descids[i]).value = '<p></p>';
-             }
-         }
-    }
     findRequiredFields();
     if (saveForm(false)) {
         alert('This form is now saved as ' + recid + ' and can be reloaded from the admin menu for further editing at a later date.');
@@ -1974,24 +1936,7 @@ function displayForm(id, level, nosave){
             if (!checkValidDescription()){
                 return;
             }
-            //check the daoform details
-            var daodetails = checkDao();
-            if (daodetails[0] == true){
-                 var confirmbox = confirm('At least one of File URI values required for the digital object has not been completed. If you proceed with this operation any incomplete URIs will not be included and the title and/or description information relating to the missing URI will be lost. All other content will be saved.\n\nDo you want to continue?');
-                 if (confirmbox == false){
-                     return;
-                 }
-                 else {
-                     var wipeids = daodetails[1];
-                     var descids = daodetails[2];
-                     for (var i=0; i< wipeids.length; i++){
-                         document.getElementById(wipeids[i]).value = '';
-                     }
-                     for (var i=0; i< descids.length; i++){
-                         document.getElementById(descids[i]).value = '<p></p>';
-                     }
-                 }
-            }
+
             if (!saveForm(false)) {
                 alert('Record could not be saved due to server error.');
                 return false;
@@ -2053,25 +1998,6 @@ function addComponent(){
            }
     }
 
-    //check the daoform details
-    var daodetails = checkDao();
-    if (daodetails[0] == true){
-         var confirmbox = confirm('At least one of File URI values required for the digital object has not been completed. If you proceed with this operation any incomplete URIs will not be included and the title and/or description information relating to the missing URI will be lost. All other content will be saved.\n\nDo you want to continue?');
-         if (confirmbox == false){
-             body.className = 'none';
-             return;
-         }
-         else {
-             var wipeids = daodetails[1];
-             var descids = daodetails[2];
-             for (var i=0; i< wipeids.length; i++){
-                 document.getElementById(wipeids[i]).value = '';
-             }
-             for (var i=0; i< descids.length; i++){
-                 document.getElementById(descids[i]).value = '<p></p>';
-             }
-         }
-    }
     //update the menu bar first
     if (currentForm == 'collectionLevel'){
           var parent = document.getElementById('collectionLevel');
@@ -2261,24 +2187,6 @@ function toDisk(){
     if (!checkValidDescription()){
         return;
     }
-    //check the daoform details
-    var daodetails = checkDao();
-    if (daodetails[0] == true){
-         var confirmbox = confirm('At least one of File URI values required for the digital object has not been completed. If you proceed with this operation any incomplete URIs will not be included and the title and/or description information relating to the missing URI will be lost. All other content will be saved.\n\nDo you want to continue?');
-         if (confirmbox == false){
-             return;
-         }
-         else {
-             var wipeids = daodetails[1];
-             var descids = daodetails[2];
-             for (var i=0; i< wipeids.length; i++){
-                 document.getElementById(wipeids[i]).value = '';
-             }
-             for (var i=0; i< descids.length; i++){
-                 document.getElementById(descids[i]).value = '<p></p>';
-             }
-         }
-    }
     if (!saveForm(false)) {
         alert('Record could not be saved due to server error.');
         return false;
@@ -2301,24 +2209,6 @@ function emailRec(){
     if (!checkValidDescription()){
         return;
     }
-    //check the daoform details
-    var daodetails = checkDao();
-    if (daodetails[0] == true){
-         var confirmbox = confirm('At least one of File URI values required for the digital object has not been completed. If you proceed with this operation any incomplete URIs will not be included and the title and/or description information relating to the missing URI will be lost. All other content will be saved.\n\nDo you want to continue?');
-         if (confirmbox == false){
-             return;
-         }
-         else {
-             var wipeids = daodetails[1];
-             var descids = daodetails[2];
-             for (var i=0; i< wipeids.length; i++){
-                 document.getElementById(wipeids[i]).value = '';
-             }
-             for (var i=0; i< descids.length; i++){
-                 document.getElementById(descids[i]).value = '<p></p>';
-             }
-         }
-    }
     if (!saveForm(false)) {
         alert('Record could not be saved due to server error.');
         return false;
@@ -2340,24 +2230,6 @@ function emailHub(){
     if (!checkValidDescription()){
         return;
     }
-    //check the daoform details
-    var daodetails = checkDao();
-    if (daodetails[0] == true){
-         var confirmbox = confirm('At least one of File URI values required for the digital object has not been completed. If you proceed with this operation any incomplete URIs will not be included and the title and/or description information relating to the missing URI will be lost. All other content will be saved.\n\nDo you want to continue?');
-         if (confirmbox == false){
-             return;
-         }
-         else {
-             var wipeids = daodetails[1];
-             var descids = daodetails[2];
-             for (var i=0; i< wipeids.length; i++){
-                 document.getElementById(wipeids[i]).value = '';
-             }
-             for (var i=0; i< descids.length; i++){
-                 document.getElementById(descids[i]).value = '<p></p>';
-             }
-         }
-    }
     if (!saveForm(false)) {
         alert('Record could not be saved due to server error.');
         return false;
@@ -2377,24 +2249,6 @@ function viewXml(){
     }
     if (!checkValidDescription()){
         return;
-    }
-    //check the daoform details
-    var daodetails = checkDao();
-    if (daodetails[0] == true){
-         var confirmbox = confirm('At least one of File URI values required for the digital object has not been completed. If you proceed with this operation any incomplete URIs will not be included and the title and/or description information relating to the missing URI will be lost. All other content will be saved.\n\nDo you want to continue?');
-         if (confirmbox == false){
-             return;
-         }
-         else {
-             var wipeids = daodetails[1];
-             var descids = daodetails[2];
-             for (var i=0; i< wipeids.length; i++){
-                 document.getElementById(wipeids[i]).value = '';
-             }
-             for (var i=0; i< descids.length; i++){
-                 document.getElementById(descids[i]).value = '<p></p>';
-             }
-         }
     }
     if (!saveForm(false)) {
         alert('Record could not be saved due to server error.');
@@ -2417,24 +2271,6 @@ function previewRec(){
     }
     if (!checkValidDescription()){
         return;
-    }
-    //check the daoform details
-    var daodetails = checkDao();
-    if (daodetails[0] == true){
-         var confirmbox = confirm('At least one of File URI values required for the digital object has not been completed. If you proceed with this operation any incomplete URIs will not be included and the title and/or description information relating to the missing URI will be lost. All other content will be saved.\n\nDo you want to continue?');
-         if (confirmbox == false){
-             return;
-         }
-         else {
-             var wipeids = daodetails[1];
-             var descids = daodetails[2];
-             for (var i=0; i< wipeids.length; i++){
-                 document.getElementById(wipeids[i]).value = '';
-             }
-             for (var i=0; i< descids.length; i++){
-                 document.getElementById(descids[i]).value = '<p></p>';
-             }
-         }
     }
     if (!saveForm(false)) {
         alert('Record could not be saved due to server error.');
@@ -3278,6 +3114,25 @@ function checkValidDescription() {
     if (errors.length != 0){
         alert(NOT_VALID_XML_MESSAGE);
         return false;
+    }
+
+    //check the daoform details
+    var daodetails = checkDao();
+    if (daodetails[0] == true){
+         var confirmbox = confirm('At least one of File URI values required for the digital object has not been completed. If you proceed with this operation any incomplete URIs will not be included and the title and/or description information relating to the missing URI will be lost. All other content will be saved.\n\nDo you want to continue?');
+         if (confirmbox == false){
+             return;
+         }
+         else {
+             var wipeids = daodetails[1];
+             var descids = daodetails[2];
+             for (var i=0; i< wipeids.length; i++){
+                 document.getElementById(wipeids[i]).value = '';
+             }
+             for (var i=0; i< descids.length; i++){
+                 document.getElementById(descids[i]).value = '<p></p>';
+             }
+         }
     }
 
     // All checks passed
@@ -4381,5 +4236,4 @@ function foreground(id, splash){
 
     $(id).setOpacity(1.0);
 }
-
 
