@@ -47,6 +47,8 @@ import os
 
 from pkg_resources import Requirement, resource_filename
 
+from archiveshub.apps.ead.base import config
+
 # Preference switches - True => ON, False => OFF
 result_graphics = True
 display_relevance = True
@@ -63,22 +65,29 @@ except:
 
 # Institutionally specific configurables
 repository_name = "Archives Hub v3.3 Development"
-repository_link = "http://www.archiveshub.ac.uk"                        # must begin http://
-repository_logo = "/hubedit/img/loopsmall2.gif"             # should begin http:// unless on this server
+repository_link = "http://archiveshub.ac.uk"                        # must begin http://
+repository_logo = "/images/editor/ah_logo.png"             # should begin http:// unless on this server
 
 title_separator = ' :: '
 navbar_separator = ' | '
 
-# URL of relevance graphic
-relevance_graphic = '/hubedit/img/star.gif'
-
 # server and email settings - you should check these with your computing services people.
-localhost = '172.20.252.2'
-outgoing_email_username = 'cheshire'
+requirement = Requirement.parse('archiveshub')
+config.read([
+    resource_filename(requirement, 'www/ead/edit.ini'),
+    resource_filename(requirement, 'www/hubedit/edit.ini')
+])
+
+localhost = 'editor.archiveshub.ac.uk'
+outgoing_email_username = config.get('email', 'username')
 outgoing_email_suffix = 'archiveshub.ac.uk'
-outgoing_email_host = "mail1.liv.ac.uk"
-outgoing_email_port = 25                           # 25 is the default for most mail servers
-hubemailaddress = 'cjsmith@liv.ac.uk'        #email address for "send to hub team" function
+outgoing_email_host = config.get('email', 'host')
+outgoing_email_port = config.getint('email', 'port')
+# email address for "send to hub team" function
+try:
+    hubemailaddress = config.getint('editor', 'dataaddress')
+except:
+    hubemailaddress = 'data-archiveshub@listserv.manchester.ac.uk'
 
 # Logfile paths
 logpath = os.path.join(cheshirePath, 'www', 'hubedit', 'logs')

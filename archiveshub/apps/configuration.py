@@ -57,6 +57,9 @@ dc.title/descending = Title (Z&rarr;A)
 dc.date/ascending = Date
 dc.date/descending = Date (new &rarr; old)
 
+[editor]
+dataaddress = data-archiveshub@listserv.manchester.ac.uk
+
 """.format(
     html_cache_path=resource_filename(
         Requirement.parse('archiveshub'),
