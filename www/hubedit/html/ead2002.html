@@ -86,24 +86,33 @@
 			     <input type="button" class="menubutton" id="disk-button" 
 			             value="Save to Disk" onclick="toDisk();" 
 			             title="Save this file to disk">
-	             </input>
+            </input>
             </td>
-	        <td>
+            <td>
                 <input type="button" class="menubutton" id="email-button" 
                         value="Email" onclick="emailRec();" 
                         title="Email this record as an attachment">
                 </input>
             </td>
-	    </tr>
-	    <tr>
-	    	<td class="buttonlabel"/>
-	    	<td colspan="2">
+        </tr>
+        <tr>
+            <td class="buttonlabel"/>
+            <td colspan="2">
                 <input type="button" class="menubutton" id="emailhub-button" 
-                        value="Send to Hub Team" onclick="emailHub();" 
-                        title="Email this record to the hub team">
+                        value="Email to Hub Team" onclick="emailHub();"
+                        title="Email this record to the Hub team for feedback">
                 </input>
             </td>
-	    </tr>
+        </tr>
+        <tr>
+            <td class="buttonlabel"/>
+            <td colspan="2">
+                <input type="button" class="menubutton" id="submithub-button"
+                        value="Submit to Hub" onclick="submitHub();"
+                        title="Submit this record for inclusion in the Archive Hub">
+                </input>
+            </td>
+        </tr>
 	</table>
 	<div id="treeDiv">
 	    %TOC%

@@ -2288,6 +2288,51 @@ class HubEditingHandler(object):
                     'operation on the requested record</p>'
                     )
 
+    def submit_hub(self, req, form):
+        recid = form.get('recid', None)
+        owner = form.get('owner', session.user.username)
+        if not self._hasPermission('%s-%s' % (recid, owner)):
+            return ('<p class="error">You do not have permission to perform the requested '
+                    'operation on the requested record</p>'
+                    )
+
+        if recid is not None and recid != 'null':
+            rec = editStore.fetch_record(session,
+                                         '%s-%s' % (recid, owner)
+                                         )
+            txr = db.get_object(session, 'orderingTxr')
+            rec = xmlp.process_document(
+                session,
+                txr.process_record(session, rec)
+            )
+            del txr
+            if not isinstance(rec, LxmlRecord):
+                return rec
+        if not isinstance(rec, LxmlRecord):
+            # Error message
+            return rec
+        txr = db.get_object(session, 'indentingTxr')
+        doc = txr.process_record(session, rec)
+        doc.id = recid
+        # Submit to Contributor DocumentStore
+        docStore = get_userDocumentStore(session.user.username)
+        try:
+            docStore.store_document(session, doc)
+        except:
+            return ('''\
+            <div id="single">
+                <h3 class="error">Failed to submit your file to the Archives Hub</h3>
+                <p>Please return to your file and check for errors highlighted in red.</p>
+                <p><a href="menu.html">Main Menu</a></p>
+            </div>''')
+        else:
+            return ('''\
+            <div id="single">
+                <h3>File submitted</h3>
+                <p>Your file has been submitted to the Archives Hub</p>
+                <p><a href="menu.html">Main Menu</a></p>
+            </div>''')
+
     def _get_filename(self, rec):
         tree = rec.get_dom(session)
         if tree.xpath('/ead/eadheader/revisiondesc'):
@@ -3107,6 +3152,9 @@ class HubEditingHandler(object):
                 self.send_fullHtml(content, req)
             elif (operation == 'emailhub'):
                 content = self.emailHub(form)
+                self.send_fullHtml(content, req)
+            elif (operation == 'submithub'):
+                content = self.submit_hub(req, form)
                 self.send_fullHtml(content, req)
             elif (operation == 'discard'):
                 content = self.discard_record(form)

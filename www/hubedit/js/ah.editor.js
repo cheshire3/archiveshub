@@ -2242,6 +2242,26 @@ function emailHub(){
 }
 
 
+function submitHub(){
+    if (!checkRequiredData()){
+        alert (NOT_ALL_REQUIRED_DATA_MESSAGE);
+        return;
+    }
+    if (!checkValidDescription()){
+        return;
+    }
+    if (!saveForm(false)) {
+        alert('Record could not be saved due to server error.');
+        return false;
+    }
+    var url = 'submithub.html?operation=submithub&recid=' + encodeURIComponent(recid);
+    if (fileOwner != null){
+        url += '&owner=' + encodeURIComponent(fileOwner);
+    }
+    window.location.href=url;
+}
+
+
 function viewXml(){
     if (!checkRequiredData()){
         alert (NOT_ALL_REQUIRED_DATA_MESSAGE);
