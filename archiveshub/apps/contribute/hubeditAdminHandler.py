@@ -37,6 +37,7 @@ from __future__ import absolute_import
 import os
 import cgitb
 
+from operator import itemgetter
 from lxml import etree
 from crypt import crypt
 from os.path import abspath
@@ -244,7 +245,7 @@ class HubeditAdminHandler:
         return u''.join(out)
 
     def get_institutions(self):
-        optionList = []
+        infolist = []
         for rec in instStore:
             name = rec.process_xpath(session, '//name/text()')[0]
             quota = rec.process_xpath(session, '//quota/text()')[0]
@@ -255,6 +256,10 @@ class HubeditAdminHandler:
                 )[0]
             except IndexError:
                 docstore = ''
+            infolist.append((rec, name, quota, docstore))
+
+        optionList = []
+        for rec, name, quota, docstore in sorted(infolist, key=itemgetter(1)):
             option = (u'<option value="{0}|{1}|{2}|{3}">{1}</option>'
                       u''.format(rec.id, name, quota, docstore)
                       )
