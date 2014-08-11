@@ -41,27 +41,28 @@ _install_requires = [str(req.req)
 
 
 setup(
-    name = _name,
-    version = _version,
-    description = 'Cheshire3 for Archives Hub',
+    name=_name,
+    version=_version,
+    description='Cheshire3 for Archives Hub',
     packages=[],
     requires=['cheshire3'],
     install_requires=_install_requires,
     extras_require={
-          'docs': ["sphinx"],
+        'docs': ["sphinx"],
+        'nlp': ['cheshire3[nlp]'],
     },
     entry_points={
         'console_scripts': [
             'ah-serve = archiveshub.deploy.cherrypy_serve:main'
         ],
     },
-    test_suite = "archiveshub.test.testAll",
-    author = 'John Harrison',
-    author_email = u'john.harrison@liv.ac.uk',
-    maintainer = 'John Harrison',
-    maintainer_email = u'john.harrison@liv.ac.uk',
-    license = "BSD",
-    classifiers = [
+    test_suite="archiveshub.test.testAll",
+    author='John Harrison',
+    author_email=u'john.harrison@liv.ac.uk',
+    maintainer='John Harrison',
+    maintainer_email=u'john.harrison@liv.ac.uk',
+    license="BSD",
+    classifiers=[
         "Intended Audience :: Developers",
         "Intended Audience :: Information Technology",
         "License :: OSI Approved :: BSD License",
@@ -73,13 +74,13 @@ setup(
         "Topic :: Text Processing :: Linguistic",
         "Topic :: Text Processing :: Markup"
     ],
-    cmdclass = {
-                'bdist_egg': unavailable_command,
-                'bdist_rpm': unavailable_command,
-                'bdist_wininst': unavailable_command,
-                'develop': develop,
-                'install': install,
-                'upgrade': upgrade,
-                'uninstall': uninstall
-                },
+    cmdclass={
+        'bdist_egg': unavailable_command,
+        'bdist_rpm': unavailable_command,
+        'bdist_wininst': unavailable_command,
+        'develop': develop,
+        'install': install,
+        'upgrade': upgrade,
+        'uninstall': uninstall
+    },
 )
