@@ -548,6 +548,16 @@ def titleFromRecordIdentifier(session, identifier):
     terms = identifierIdx.fetch_term(session, identifier, prox=False)
     rsi = identifierIdx.construct_resultSetItem(session, terms[-3:])
     title = titleIdx.fetch_sortValue(session, rsi)
+    if title is None:
+        rec = rsi.fetch_record(session)
+        sel = db.get_object(session, 'titleSelector')
+        ext = db.get_object(session, 'SimpleExtractor')
+        # Get titles
+        titles = sel.process_record(session, rec)
+        title = ext.process_xpathResult(session, titles)
+        # Return arbitrary, non-false title
+        return filter(None, title.keys())[0]
+
     return cleverTitleCase(title)
 
 
@@ -557,8 +567,12 @@ def cleverTitleCase(txt):
     always_upper = config.get('casing', 'always_upper')
     romanNumeralRe = re.compile(config.get('casing', 'roman_numeral_regex'),
                                 re.IGNORECASE)
+    try:
+        words_in = txt.split()
+    except (AttributeError):
+        words_in = []
     words = []
-    for word in txt.split():
+    for word in words_in:
         try:
             if word in always_upper or \
                     romanNumeralRe.match(word):
