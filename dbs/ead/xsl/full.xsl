@@ -2,14 +2,12 @@
 <!DOCTYPE xsl:stylesheet []>
 <xsl:stylesheet
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:exsl="http://exslt.org/common"
-    extension-element-prefixes="exsl"
     xmlns:c3="http://www.cheshire3.org"
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:xhtml="http://www.w3.org/1999/xhtml"
     exclude-result-prefixes="#all"
     version="1.0">
-
+    
     <!--
     This file was produced for the Cheshire3 for Archives and the Archives Hub.
     Copyright &#169; 2005-2013 the University of Liverpool
@@ -25,15 +23,12 @@
 
     <!-- root template - varies for each type of transformer -->
     <xsl:template match="/">
-        <xsl:apply-templates />
-        <xsl:if test="/ead/archdesc/dsc">
-            <exsl:document
-                href="file:///home/cheshire/cheshire3-archives/www/htdocs/ead/tocs/foo.bar"
-                method="xml" omit-xml-declaration="yes" indent="yes">
-                <!-- content for this document should go here -->
+        <div class="toclist" >
+            <xsl:if test="/ead/archdesc/dsc">
                 <xsl:call-template name="toc" />
-            </exsl:document>
-        </xsl:if>
+            </xsl:if>
+        </div>
+        <xsl:apply-templates />
     </xsl:template>
 
     <xsl:template match="ead">
@@ -45,15 +40,12 @@
             <xsl:apply-templates select="./archdesc" />
         </div>
         <!-- finding aid metadata from <eadheader> - creator, revisions etc -->
-        <!-- must go before dsc, otherwise would end up on final page, of 
-            maybe many! -->
         <xsl:if test="$finding_aid_metadata">
             <xsl:apply-templates select="./eadheader" />
         </xsl:if>
+        <xsl:processing-instruction name="soft-break"/>
         <!-- DSC -->
-        <div class="dsc">
-            <xsl:apply-templates select="./archdesc/dsc" />
-        </div>
+        <xsl:apply-templates select="./archdesc/dsc" />
     </xsl:template>
 
     <!-- for component records -->
@@ -73,10 +65,10 @@
             <xsl:apply-templates
                 select="./*/arrangement|./*/descgrp/arrangement" />
             <!-- ACCESS + USE RESTRICTIONS -->
-            <xsl:apply-templates
-                select="./*/accessrestrict|[*[not(local-name(.)='head')][not(local-name(.)='legalstatus')]]|./*/descgrp/accessrestrict[*[not(local-name(.)='head')][not(local-name(.)='legalstatus')]]" />
-            <xsl:apply-templates
-                select="./*/accessrestrict/legalstatus|./*/descgrp/accessrestrict/legalstatus" />
+            <xsl:apply-templates 
+            		select="./*/accessrestrict[*[not(local-name(.)='head')][not(local-name(.)='legalstatus')]]|./*/descgrp/accessrestrict[*[not(local-name(.)='head')][not(local-name(.)='legalstatus')]]" />
+            <xsl:apply-templates 
+            		select="./*/accessrestrict/legalstatus|./*/descgrp/accessrestrict/legalstatus" />
             <xsl:apply-templates
                 select="./*/userestrict|./*/descgrp/userestrict" />
             <xsl:apply-templates select="./*/phystech|./*/descgrp/phystech" />
@@ -110,24 +102,22 @@
             <xsl:apply-templates
                 select="./*/controlaccess|./*/descgrp/controlaccess" />
         </div>
-        <div class="dsc">
-            <!-- match all sub-levels -->
-            <xsl:apply-templates
-                select="./c/c|./c01/c02|./c02/c03|./c03/c04|./c04/c05|./c05/c06|./c06/c07|./c07/c08|./c08/c09|./c09/c10|./c10/c11|./c11/c12" />
-        </div>
+        <xsl:processing-instruction name="soft-break"/>
+        <!-- somehow match all sub-levels -->
+        <xsl:apply-templates
+            select="./c/c|./c01/c02|./c02/c03|./c03/c04|./c04/c05|./c05/c06|./c06/c07|./c07/c08|./c08/c09|./c09/c10|./c10/c11|./c11/c12" />
     </xsl:template>
 
-
-    <!-- SUBORDINATE COMPONENTS (DSC) -->
+    <!--DSC SECTION -->
+    
     <xsl:template name="all-component"
         match="c|c01|c02|c03|c04|c05|c06|c07|c08|c09|c10|c11|c12">
         <xsl:if test="not(@audience and @audience = 'internal')">
             <xsl:if test="$horizontal_rule_between_units">
                 <hr />
             </xsl:if>
-            <div class="component">
-                <xsl:call-template name="single-component" />
-            </div>
+            <xsl:processing-instruction name="soft-break"/>
+            <xsl:call-template name="single-component" />
         </xsl:if>
     </xsl:template>
 
