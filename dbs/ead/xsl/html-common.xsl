@@ -464,7 +464,6 @@
     <xsl:template match="archdesc">
         <!-- TEMPLATES FOR MAIN BODY-->
         <xsl:apply-templates select="./did/abstract" />
-        <xsl:apply-templates select="./did/note" mode="own-section" />
 
         <xsl:apply-templates select="./scopecontent|./descgrp/scopecontent" />
         <xsl:apply-templates select="./bioghist|./descgrp/bioghist" />
