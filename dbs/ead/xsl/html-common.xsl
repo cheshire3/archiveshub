@@ -2,8 +2,6 @@
 <!DOCTYPE xsl:stylesheet []>
 <xsl:stylesheet
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:exsl="http://exslt.org/common"
-    extension-element-prefixes="exsl"
     xmlns:c3="http://www.cheshire3.org"
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:xhtml="http://www.w3.org/1999/xhtml"
@@ -466,7 +464,6 @@
     <xsl:template match="archdesc">
         <!-- TEMPLATES FOR MAIN BODY-->
         <xsl:apply-templates select="./did/abstract" />
-        <xsl:apply-templates select="./did/note" mode="own-section" />
 
         <xsl:apply-templates select="./scopecontent|./descgrp/scopecontent" />
         <xsl:apply-templates select="./bioghist|./descgrp/bioghist" />
@@ -532,9 +529,11 @@
     </xsl:template>
 
     <xsl:template match="physdesc" mode="component">
-        <p>
-            <xsl:apply-templates />
-        </p>
+        <xsl:if test="not.[@audience='internal']">
+            <p>
+                <xsl:apply-templates />
+            </p>
+        </xsl:if>
     </xsl:template>
 
     <xsl:template match="bioghist">
@@ -1513,22 +1512,24 @@
     </xsl:template>
 
     <xsl:template match="note" mode="own-section">
-        <xsl:variable name="headstring">
-            <xsl:text>Note</xsl:text>
-        </xsl:variable>
-        <xsl:choose>
-            <xsl:when test="../../archdesc or ../../../c3:component or ../../../c3component">
-                <h2 class="ead">
-                    <xsl:value-of select="$headstring" />
-                </h2>
-            </xsl:when>
-            <xsl:otherwise>
-                <h3 class="ead">
-                    <xsl:value-of select="$headstring" />
-                </h3>
-            </xsl:otherwise>
-        </xsl:choose>
-        <xsl:apply-templates />
+        <xsl:if test="not.[@audience='internal']">
+            <xsl:variable name="headstring">
+                <xsl:text>Note</xsl:text>
+            </xsl:variable>
+            <xsl:choose>
+                <xsl:when test="../../archdesc or ../../../c3:component or ../../../c3component">
+                    <h2 class="ead">
+                        <xsl:value-of select="$headstring" />
+                    </h2>
+                </xsl:when>
+                <xsl:otherwise>
+                    <h3 class="ead">
+                        <xsl:value-of select="$headstring" />
+                    </h3>
+                </xsl:otherwise>
+            </xsl:choose>
+            <xsl:apply-templates />
+        </xsl:if>
     </xsl:template>
 
     <!-- Simple Link -->
@@ -1936,12 +1937,14 @@
     </xsl:template>
 
     <xsl:template match="p" mode="inline">
-        <xsl:if test="@id">
-            <a name="{@id}">
-                <xsl:text> </xsl:text>
-            </a>
+        <xsl:if test="not.[@audience='internal']">
+            <xsl:if test="@id">
+                <a name="{@id}">
+                    <xsl:text> </xsl:text>
+                </a>
+            </xsl:if>
+            <xsl:value-of select="." />
         </xsl:if>
-        <xsl:value-of select="." />
     </xsl:template>
 
     <xsl:template match="blockquote">
