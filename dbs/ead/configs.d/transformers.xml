@@ -81,13 +81,6 @@
             </paths>
         </subConfig>
 
-        <subConfig type="transformer" id="htmlFullSplitTxr">
-            <objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
-            <paths>
-                <path type="xsltPath">xsl/fullSplit.xsl</path>
-            </paths>
-        </subConfig>
-
         <subConfig type="transformer" id="htmlSummaryTxr">
             <objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
             <paths>
