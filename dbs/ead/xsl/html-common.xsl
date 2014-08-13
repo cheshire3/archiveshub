@@ -529,9 +529,11 @@
     </xsl:template>
 
     <xsl:template match="physdesc" mode="component">
-        <p>
-            <xsl:apply-templates />
-        </p>
+        <xsl:if test="not.[@audience='internal']">
+            <p>
+                <xsl:apply-templates />
+            </p>
+        </xsl:if>
     </xsl:template>
 
     <xsl:template match="bioghist">
@@ -1510,22 +1512,24 @@
     </xsl:template>
 
     <xsl:template match="note" mode="own-section">
-        <xsl:variable name="headstring">
-            <xsl:text>Note</xsl:text>
-        </xsl:variable>
-        <xsl:choose>
-            <xsl:when test="../../archdesc or ../../../c3:component or ../../../c3component">
-                <h2 class="ead">
-                    <xsl:value-of select="$headstring" />
-                </h2>
-            </xsl:when>
-            <xsl:otherwise>
-                <h3 class="ead">
-                    <xsl:value-of select="$headstring" />
-                </h3>
-            </xsl:otherwise>
-        </xsl:choose>
-        <xsl:apply-templates />
+        <xsl:if test="not.[@audience='internal']">
+            <xsl:variable name="headstring">
+                <xsl:text>Note</xsl:text>
+            </xsl:variable>
+            <xsl:choose>
+                <xsl:when test="../../archdesc or ../../../c3:component or ../../../c3component">
+                    <h2 class="ead">
+                        <xsl:value-of select="$headstring" />
+                    </h2>
+                </xsl:when>
+                <xsl:otherwise>
+                    <h3 class="ead">
+                        <xsl:value-of select="$headstring" />
+                    </h3>
+                </xsl:otherwise>
+            </xsl:choose>
+            <xsl:apply-templates />
+        </xsl:if>
     </xsl:template>
 
     <!-- Simple Link -->
@@ -1933,12 +1937,14 @@
     </xsl:template>
 
     <xsl:template match="p" mode="inline">
-        <xsl:if test="@id">
-            <a name="{@id}">
-                <xsl:text> </xsl:text>
-            </a>
+        <xsl:if test="not.[@audience='internal']">
+            <xsl:if test="@id">
+                <a name="{@id}">
+                    <xsl:text> </xsl:text>
+                </a>
+            </xsl:if>
+            <xsl:value-of select="." />
         </xsl:if>
-        <xsl:value-of select="." />
     </xsl:template>
 
     <xsl:template match="blockquote">
