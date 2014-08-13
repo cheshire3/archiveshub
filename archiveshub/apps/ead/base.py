@@ -557,8 +557,12 @@ def cleverTitleCase(txt):
     always_upper = config.get('casing', 'always_upper')
     romanNumeralRe = re.compile(config.get('casing', 'roman_numeral_regex'),
                                 re.IGNORECASE)
+    try:
+        words_in = txt.split()
+    except (AttributeError):
+        words_in = []
     words = []
-    for word in txt.split():
+    for word in words_in:
         try:
             if word in always_upper or \
                     romanNumeralRe.match(word):
