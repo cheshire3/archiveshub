@@ -24,7 +24,7 @@ from archiveshub.setuptools.commands import (develop,
                                              ) 
 
 _name = 'archiveshub'
-_version = '3.2.4'
+_version = '3.2.5'
 
 # Inspect to find current path
 setuppath = inspect.getfile(inspect.currentframe())
