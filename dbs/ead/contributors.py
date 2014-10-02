@@ -193,12 +193,12 @@ def add_contributor(args):
                 E.quota('0'),
                 E.documentStore(storeId)
             )
-            rec = instStore.create_record(session, inst_rec)
             inst_rec = LxmlRecord(
                 inst_dom,
                 etree.tostring(inst_dom),
                 docId=contributorId
             )
+            rec = instStore.create_record(session, inst_rec)
 
         lgr.log_info(session, "DocumentStore for {0} located at {1} has been "
                               "added".format(contributorId, dbPath)
