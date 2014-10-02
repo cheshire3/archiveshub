@@ -537,6 +537,11 @@ def cleverTitleCase(txt):
             elif word.endswith("'s"):
                 # Possessive - don't capitalize trailing s
                 word = word[:-2].title() + "'s"
+            elif word.endswith("\xe2\x80\x99s"):
+                # Possessive with right single quotation mark
+                # don't capitalize trailing s
+                #word = word[:-4].title() + u"\xe2\x80\x99s"
+                word = word[:-4].title() + "'s"
             elif (len(words) == 0 and not
                   (word[0].isdigit() or
                    word.strip('\'"(')[0].isdigit()
