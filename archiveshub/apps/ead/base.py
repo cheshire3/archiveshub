@@ -557,6 +557,9 @@ def cleverTitleCase(txt):
             elif (len(words) and words[-1][-1] in ":;"):
                 # Word following this punctuation always title-cased
                 word = word.title()
+            elif len(word) == 1 and word[0].isalpha:
+                # Put initials in uppercase
+                word = word.title()
         except IndexError:
             pass
         words.append(word)
