@@ -765,6 +765,27 @@
             </options>
         </subConfig>
 
+        <subConfig type="index" id="idx-name-nlp">
+            <objectType>cheshire3.index.SimpleIndex</objectType>
+            <paths>
+                <object type="indexStore" ref="indexStore" />
+            </paths>
+            <source>
+                <xpath>/*</xpath>
+                <process>
+                    <object type="extractor" ref="NamedEntityExtractor" />
+                    <object type="workflow"
+                        ref="Space-Diacritic-Case-Possessive-NormalizerWorkflow" />
+                </process>
+            </source>
+            <options>
+                <setting type="recordStoreSizes">1</setting>
+                <setting type="longSize">4</setting>
+                <setting type="noIndexDefault">1</setting>
+                <setting type="noUnindexDefault">1</setting>
+            </options>
+        </subConfig>
+
         <subConfig type="index" id="idx-nameword">
             <objectType>cheshire3.index.SimpleIndex</objectType>
             <paths>
@@ -821,6 +842,27 @@
                 <setting type="recordStoreSizes">1</setting>
                 <setting type="vectors">1</setting>
                 <setting type="longSize">4</setting>
+            </options>
+        </subConfig>
+
+        <subConfig type="index" id="idx-persname-nlp">
+            <objectType>cheshire3.index.SimpleIndex</objectType>
+            <paths>
+                <object type="indexStore" ref="indexStore" />
+            </paths>
+            <source>
+                <xpath>/*</xpath>
+                <process>
+                    <object type="extractor" ref="PersonNameExtractor" />
+                    <object type="workflow"
+                        ref="Space-Diacritic-Case-Possessive-NormalizerWorkflow" />
+                </process>
+            </source>
+            <options>
+                <setting type="recordStoreSizes">1</setting>
+                <setting type="longSize">4</setting>
+                <setting type="noIndexDefault">1</setting>
+                <setting type="noUnindexDefault">1</setting>
             </options>
         </subConfig>
 
@@ -958,6 +1000,27 @@
             </options>
         </subConfig>
 
+        <subConfig type="index" id="idx-corpname-nlp">
+            <objectType>cheshire3.index.SimpleIndex</objectType>
+            <paths>
+                <object type="indexStore" ref="indexStore" />
+            </paths>
+            <source>
+                <xpath>/*</xpath>
+                <process>
+                    <object type="extractor" ref="OrganizationNameExtractor" />
+                    <object type="workflow"
+                        ref="Space-Diacritic-Case-Possessive-NormalizerWorkflow" />
+                </process>
+            </source>
+            <options>
+                <setting type="recordStoreSizes">1</setting>
+                <setting type="longSize">4</setting>
+                <setting type="noIndexDefault">1</setting>
+                <setting type="noUnindexDefault">1</setting>
+            </options>
+        </subConfig>
+
         <subConfig type="index" id="idx-corpnameword">
             <objectType>cheshire3.index.SimpleIndex</objectType>
             <paths>
@@ -1012,6 +1075,27 @@
             <options>
                 <setting type="recordStoreSizes">1</setting>
                 <setting type="longSize">4</setting>
+            </options>
+        </subConfig>
+
+        <subConfig type="index" id="idx-geogname-nlp">
+            <objectType>cheshire3.index.SimpleIndex</objectType>
+            <paths>
+                <object type="indexStore" ref="indexStore" />
+            </paths>
+            <source>
+                <xpath>/*</xpath>
+                <process>
+                    <object type="extractor" ref="PlaceNameExtractor" />
+                    <object type="workflow"
+                        ref="Space-Diacritic-Case-Possessive-NormalizerWorkflow" />
+                </process>
+            </source>
+            <options>
+                <setting type="recordStoreSizes">1</setting>
+                <setting type="longSize">4</setting>
+                <setting type="noIndexDefault">1</setting>
+                <setting type="noUnindexDefault">1</setting>
             </options>
         </subConfig>
 

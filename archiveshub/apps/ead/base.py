@@ -10,7 +10,6 @@ import time
 
 from hashlib import sha1
 from copy import deepcopy
-from tempfile import gettempdir
 
 try:
     import cPickle as pickle
@@ -20,15 +19,8 @@ except ImportError:
 from lxml import etree
 from lxml.builder import E
 
-from pkg_resources import Requirement, get_distribution
+from pkg_resources import Requirement
 from pkg_resources import resource_filename, resource_stream, resource_string
-
-# WebOb
-from webob import Request, Response
-
-# Mako
-from mako.lookup import TemplateLookup
-from mako import exceptions
 
 # Fix HOME envvar before importing Cheshire3 to avoid incorrect expansion
 # from os.path.expanduser() see:
@@ -48,10 +40,11 @@ from cheshire3.server import SimpleServer
 from cheshire3.utils import flattenTexts
 from cheshire3.web.www_utils import html_encode
 
+from archiveshub.apps.base import WSGIApplication
 from archiveshub.apps.configuration import config
 
 
-class EADWsgiApplication(object):
+class EADWsgiApplication(WSGIApplication):
     """Abstract Base Class for EAD search/retrieve applications.
 
     Sub-classes must define the special __call__ method to make their
@@ -65,50 +58,21 @@ class EADWsgiApplication(object):
 
     """
 
-    def __init__(self, session, database, config):
+    def __init__(self, config, session, database):
         # Constructor method
+        super(EADWsgiApplication, self).__init__(config)
         self.session = session
         self.database = database
-        self.config = config
         self.queryFactory = self.database.get_object(session,
                                                      'defaultQueryFactory')
         self.queryStore = self.database.get_object(session,
                                                    'eadQueryStore')
         self.resultSetStore = self.database.get_object(session,
                                                        'eadResultSetStore')
-        # Fetch Logger
-        self.logger = self.database.get_object(session,
-                                               'searchTransactionLogger'
-                                               )
-        template_dir = resource_filename(
-            Requirement.parse('archiveshub'),
-            'www/ead/tmpl'
-        )
-        mod_dir = os.path.join(gettempdir(),
-                               'mako_modules',
-                               'archiveshub',
-                               'apps',
-                               'ead'
-                               )
-
-        self.templateLookup = TemplateLookup(directories=[template_dir],
-                                             output_encoding='utf-8',
-                                             input_encoding='utf-8',
-                                             module_directory=mod_dir,
-                                             strict_undefined=False)
-        self.defaultContext = {
-            'version': get_distribution("archiveshub").version,
-            'c3_version': get_distribution("cheshire3").version,
-            'config': config
-        }
 
     def _setUp(self, environ):
         # Prepare application to handle a new request
-        # Wrap environ in a Request object
-        req = self.request = Request(environ, charset='utf8')
-        # Create a Response object with defaults for status, encoding etc.
-        # Methods should over-ride these defaults as necessary
-        self.response = Response()
+        super(EADWsgiApplication, self)._setUp(environ)
         script = '/search'
         self.defaultContext['SCRIPT'] = script
         # Set the base URL of this family of apps
@@ -150,15 +114,6 @@ class EADWsgiApplication(object):
             if encoding is not None:
                 self.response.content_encoding = encoding
             return [content]
-
-    def _render_template(self, template_name, **kwargs):
-        try:
-            template = self.templateLookup.get_template(template_name)
-            d = self.defaultContext.copy()
-            d.update(kwargs)
-            return template.render(**d)
-        except:
-            return exceptions.html_error_template().render()
 
     def _set_cookie(self, name, value, **kwargs):
         # Prepend app name
@@ -573,6 +528,8 @@ def cleverTitleCase(txt):
         words_in = []
     words = []
     for word in words_in:
+        if isinstance(word, str):
+            word = unicode(word, "utf-8")
         try:
             if word in always_upper or \
                     romanNumeralRe.match(word):
@@ -599,6 +556,9 @@ def cleverTitleCase(txt):
                 word = word.title()
             elif (len(words) and words[-1][-1] in ":;"):
                 # Word following this punctuation always title-cased
+                word = word.title()
+            elif len(word) == 1 and word[0].isalpha:
+                # Put initials in uppercase
                 word = word.title()
         except IndexError:
             pass
@@ -640,7 +600,7 @@ app_config_path = resource_filename(
 )
 config.read([app_config_path])
 
-application = EADWsgiApplication(session, db, config)
+application = EADWsgiApplication(config, session, db)
 
 # Useful URIs
 namespaceUriHash = {

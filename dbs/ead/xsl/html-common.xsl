@@ -630,7 +630,7 @@
                 </h3>
             </xsl:otherwise>
         </xsl:choose>
-   	<xsl:apply-templates select="*[not(local-name(.)='legalstatus')]"/>
+        <xsl:apply-templates select="*[not(local-name(.)='legalstatus')]"/>
     </xsl:template>
 
     <xsl:template match="accessrestrict/legalstatus">
@@ -655,8 +655,8 @@
             </xsl:otherwise>
         </xsl:choose>
         <p>
-	        <xsl:apply-templates />
-	</p>
+            <xsl:apply-templates />
+        </p>
     </xsl:template>
 
     <xsl:template match="userestrict">
@@ -2302,6 +2302,18 @@
 <!--                             <xsl:text>View this description as XML (In EAD Schema)</xsl:text> -->
 <!--                         </xsl:attribute> -->
                         <xsl:text>View XML</xsl:text>
+                    </a>
+                    <xsl:text>   |   </xsl:text>
+
+                    <a class="bgimg tip text">
+                        <xsl:attribute name="href">
+                            <xsl:value-of select="$data_uri_base" />
+                            <xsl:text>.pdf</xsl:text>
+                        </xsl:attribute>
+<!--                         <xsl:attribute name="title"> -->
+<!--                             <xsl:text>View this description as PDF</xsl:text> -->
+<!--                         </xsl:attribute> -->
+                        <xsl:text>View PDF</xsl:text>
                     </a>
                     <xsl:text>   |   </xsl:text>
 

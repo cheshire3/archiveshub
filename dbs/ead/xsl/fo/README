@@ -1,0 +1,113 @@
+                                  ead2fo
+
+14th July 2011 (2011-07-14)
+
+Contents
+--------
+
+Description
+Author(s)
+Latest Version
+Copyright
+Requirements / Dependencies
+Documentation
+  Using the XSLT with Apache FOP
+Bug, Feature requests etc.
+File Manifest
+Licensing
+
+
+Description
+-----------
+
+ead2fo provides XSLT stylesheets to convert Encoded Archival Description 
+(EAD) XML documents to XSL-FO. XSL-FO can be used as input to a rendering 
+engine (e.g. Apache FOP) to generate print formatted (e.g. PDF) copies. 
+
+
+Current capability is to output a version with fairly minimal styling, to 
+enable users to create a clone/fork/branch that they can then customize to 
+apply their own institutional branding.
+
+
+Author(s)
+---------
+
+John Harrison <john.harrison@liv.ac.uk> at the University of Liverpool
+<http://www.liv.ac.uk>
+
+
+Latest Version
+--------------
+
+The latest version is available from:
+http://github.com/bloomonkey/ead2fo
+
+
+Requirements / Dependencies
+---------------------------
+
+An XSLT processing engine of your choice.
+
+OPTIONALLY: an XSL-FO rendering engine to create print formatted copies.
+
+N.B. The XSLT has been tested with Apache FOP, which includes both XSLT 
+and XSL-FO processing engines. Apache FOP is available from:
+<http://xmlgraphics.apache.org/fop>
+
+
+Documentation
+-------------
+
+Currently the only documentation that exists is contained within this 
+README file, and XML comments within the XSLT sheets themselves.
+
+
+	Using the XSLT with Apache FOP
+	------------------------------
+	
+EADFILE is the path to your EAD file, OUTFILE is the path to the file to 
+create. You should give the OUTFILE a file extension appropriate to output 
+type, as per the examples. Please note that the generate XSL-FO has been 
+optimized for PDF, which can lead to some odd behavior in plain and rich 
+text formats, particularly with very large input files.
+
+To create a PDF:
+fop -xsl ead2fo.xsl -xml EADFILE -pdf OUTFILE.pdf
+
+To create Rich-Text Format (RTF):
+fop -xsl ead2fo.xsl -xml EADFILE -rtf OUTFILE.rtf
+
+To create Plain-Text:
+fop -xsl ead2fo.xsl -xml EADFILE -txt OUTFILE.txt
+
+To create PostScript:
+fop -xsl ead2fo.xsl -xml EADFILE -ps OUTFILE.ps
+
+
+Bugs, Feature requests, etc.
+----------------------------
+
+Bug reports and feature requests can be submitted to the Github issue tracker:
+http://github.com/bloomonkey/ead2fo/issues
+
+If you'd like to contribute back to the project, please email the author.
+
+
+File Manifest
+-------------
+
+configuration.xsl
+ead2fo.xsl
+README
+
+
+Licensing
+---------
+
+This work is licensed under the Creative Commons
+Attribution-NonCommercial-ShareAlike 3.0 Unported License. To view a copy of
+this license, visit http://creativecommons.org/licenses/by-nc-sa/3.0 or send 
+a letter to Creative Commons, 171 Second Street, Suite 300, San Francisco,
+California, 94105, USA.
+

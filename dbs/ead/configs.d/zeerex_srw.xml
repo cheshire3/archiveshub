@@ -390,6 +390,13 @@
                 interoperable EAD, use default ead info:srw/schema/1/ead-2002
             </title>
         </schema>
+        <schema identifier="info:srw/schema/2/xsl-fo"
+                sort="true" retrieve="true" name="fo"
+                c3:transformer="foTxr">
+            <title>
+                XSL-FO
+            </title>
+        </schema>
     </schemaInfo>
 
     <configInfo>

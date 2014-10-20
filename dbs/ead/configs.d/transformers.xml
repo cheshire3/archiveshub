@@ -95,6 +95,13 @@
             </paths>
         </subConfig>
 
+        <subConfig type="transformer" id="foTxr">
+            <objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
+            <paths>
+                <path type="xsltPath">xsl/fo/ead2fo.xsl</path>
+            </paths>
+        </subConfig>
+
         <subConfig type="transformer" id="formCreationTxr">
             <objectType>cheshire3.transformer.LxmlXsltTransformer</objectType>
             <paths>

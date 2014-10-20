@@ -1,0 +1,147 @@
+<div class="toc" id="leftcol">
+    
+    <script type="text/javascript" src="js/tablednd.js"></script>
+
+	<table title="operations" class="edit-ops">
+        <tr>
+            <td class="buttonlabel markup">Markup
+                <a id="markuphelp" name="markuphelp" target="_new" class="tip"
+                    title="[Tell me more about this]" 
+                    href="http://archiveshub.ac.uk/eadeditoroperations/#markup">
+                    <img src="/images/structure/form_tip.png" alt="[?]"/>
+                </a>
+                <!-- This should link to a section on the target help page which reads something like:
+                
+                The Archives Hub uses some special markup in order to provide enchanced search features 
+                (particularly in Controlled Access fields, such as subjects and names.)
+                This special markup, while perfectly valid EAD, may cause problems if imported into 
+                other catalogue systems. If your file is intended for such a purpose, it's probably a 
+                good idea to select the Markup option labelled 'Interoperable'. Note however that this 
+                option is have no effect when saving, previewing the online version, and emailing a record 
+                directly to the Hub - the Editor and Archives Hub will always maintain the extra markup.
+                -->
+            </td>
+            <td>
+                <input type="radio" name="markup" value="hub" id="hubmarkup" checked="checked"/>
+                <label for="hubmarkup"
+                    title="Include Archives Hub specific markup">
+                    Archives Hub
+                </label>
+            </td>
+            <td>
+                <input type="radio" name="markup" value="interop" id="interopmarkup"/>
+                <label for="interopmarkup"
+                    title="Remove Archives Hub specific markup for interoperability with other systems">
+                    Interoperable
+                </label>
+            </td>
+        </tr>
+	    <tr>
+	        <td class="buttonlabel file">File 
+		        <a id="daohelp" name="daohelp" target="_new" class="tip"  
+		           title="[What is this?]"
+		           href="http://www.archiveshub.ac.uk/arch/eadeditorhelp.shtml#file">
+	                <img src="/images/structure/form_tip.png" alt="[?]"/>
+				</a>
+			</td>
+	        <td>
+	           <input type="button" class="menubutton" id="save-button" 
+	                   onclick="save()" value="Save" 
+                       title="Save the current changes to the Draft File Store"></input>
+            </td>
+	        <td>
+	           <input type="button" class="menubutton" id="delete-button" onclick="var cont = confirmOp('WARNING: This operation will DELETE THIS ENTIRE DESCRIPTION from the EAD Editor.\n\n* If you have never submitted this description to the Archives Hub, it will not be retrievable.\n* Any changes made since you last submitted this description to the Archives Hub will be irretrievably lost.\n\nAre you sure you want to PERMANENTLY DELETE THIS DESCRIPTION?'); if (cont) {discardRec($('pui').value);}" value="Delete" title="Delete this record from the editing data store"></input>
+	        </td>
+	    </tr>
+	    	    <tr>
+	        <td class="buttonlabel view">View 
+                <a id="daohelp" name="daohelp" target="_new"  class="tip"
+					title="[What is this?]"
+					href="http://www.archiveshub.ac.uk/arch/eadeditorhelp.shtml#preview">
+                <img src="/images/structure/form_tip.png" alt="[?]"/>
+                </a>
+			</td>
+	        <td>
+	           <input type="button" class="menubutton" id="xml-button" 
+                        onclick="viewXml();" value="EAD" 
+                        title="Preview the EAD XML for this record (opens in new window/tab)">
+               </input>
+            </td>
+	        <td>
+                <input type="button" class="menubutton" id="preview-button" 
+                        onclick="previewRec();" value="On-line Preview" 
+                        title="Preview the on-line version of this record (opens in new window/tab)">
+                </input>
+            </td>
+	    </tr>
+	    <tr>
+	        <td class="buttonlabel export">Export 
+                <a id="daohelp" name="daohelp" target="_new" class="tip"
+                    title="[What is this?]" 
+                    href="http://archiveshub.ac.uk/eadeditoroperations/#export">
+                    <img src="/images/structure/form_tip.png" alt="[?]"/>
+                </a>
+			</td>
+            <td>
+			     <input type="button" class="menubutton" id="disk-button" 
+			             value="Save to Disk" onclick="toDisk();" 
+			             title="Save this file to disk">
+            </input>
+            </td>
+            <td>
+                <input type="button" class="menubutton" id="email-button" 
+                        value="Email" onclick="emailRec();" 
+                        title="Email this record as an attachment">
+                </input>
+            </td>
+        </tr>
+        <tr>
+            <td class="buttonlabel"/>
+            <td colspan="2">
+                <input type="button" class="menubutton" id="emailhub-button" 
+                        value="Email to Hub Team" onclick="emailHub();"
+                        title="Email this record to the Hub team for feedback">
+                </input>
+            </td>
+        </tr>
+        <tr>
+            <td class="buttonlabel"/>
+            <td colspan="2">
+                <input type="button" class="menubutton" id="submithub-button"
+                        value="Submit to Hub" onclick="submitHub();"
+                        title="Submit this record for inclusion in the Archive Hub">
+                </input>
+            </td>
+        </tr>
+	</table>
+	<div id="treeDiv">
+	    %TOC%
+	</div>
+</div><!-- end of leftcol -->
+<div id="padder">
+<div id="rightcol" class="ead" onscroll="hideAllMenus()">
+
+    %FRM%
+
+</div>
+</div><!-- end of padder -->
+
+%KYBDCODE%
+
+%MENUCODE%
+
+<script type="text/javascript">
+    addLoadEvent( function(){
+        SimpleContextMenu.setup({'preventDefault': true, 'preventForms': true});
+        SimpleContextMenu.attach('menuField', 'tagmenu');
+        SimpleContextMenu.attach('menuFieldError', 'tagmenu');
+        createTreeFromList('someId', getCookie(''), false, false);
+        setRecid();
+        findRequiredFields();
+        checkButtons();
+        initCreatorSelect();
+    } );
+
+    // activate save warning
+    warn = true;
+</script>

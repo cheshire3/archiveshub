@@ -20,16 +20,6 @@
           </paths>
         </subConfig>
 
-        <subConfig type="objectStore" id="eadAuthStore">
-            <objectType>cheshire3.objectStore.BdbObjectStore</objectType>
-            <paths>
-                <path type="defaultPath">auth</path>
-                <path type="databasePath">eadAuthStore.bdb</path>
-                <object type="inTransformer" ref="XmlTransformer" />
-                <object type="outParser" ref="LxmlParser" />
-            </paths>
-        </subConfig>
-
         <subConfig type="recordStore" id="recordStore">
             <objectType>cheshire3.recordStore.BdbRecordStore</objectType>
             <paths>
@@ -86,6 +76,12 @@
                 <object type="inTransformer" ref="XmlTransformer" />
                 <object type="outParser" ref="LxmlParser" />
             </paths>
+            <relations>
+                <relation name="linkRecInst">
+                    <object>editingStore</object>
+                    <field name="institutionId">integer</field>
+                </relation>
+            </relations>
             <options>
             </options>
         </subConfig>
@@ -98,6 +94,12 @@
                 <object type="inTransformer" ref="XmlTransformer" />
                 <object type="outParser" ref="LxmlParser" />
             </paths>
+            <relations>
+                <relation name="linkTempInst">
+                    <object>templateStore</object>
+                    <field name="institutionId">integer</field>
+                </relation>
+            </relations>
             <options>
             </options>
         </subConfig>

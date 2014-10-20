@@ -1,0 +1,11 @@
+<form action="users.html" method="post" enctype="multipart/form-data">
+	<input type="hidden" name="operation" value="deleteinst"/>
+	<input type="hidden" name="inst" value="%INSTID%"/>
+	%%%FILEINFO%%%
+    <p>To delete this institution please confirm your password and click 'confirm' or click 'cancel' to return to the user page</p>
+    <div class="passwdconfirm" title="You MUST confirm your password to delete an institution.">
+		Password : <input type="password" name="passwd"/>
+		<input type="submit" name="submit" value="Confirm"/>
+		<input type="submit" name="cancel" value="Cancel"></input>
+    </div>
+</form>

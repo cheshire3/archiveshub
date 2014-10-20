@@ -10,6 +10,7 @@ install:
   - "python ez_setup.py"
   - "pip install -r requirements.txt --find-links http://cheshire3.liv.ac.uk/download/latest/reqs/ --allow-unverified PyZ3950 --allow-unverified ZSI"
   - "python setup.py install"
-# Run tests
-script: python setup.py test
-
+# Run tests for Cheshire3 and archiveshub
+script:
+  - python -m cheshire3.test.testAll
+  - python setup.py test

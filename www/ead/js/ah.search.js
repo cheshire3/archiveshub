@@ -9,6 +9,8 @@ var AH = {
         // Wrap any desired links or forms in AJAX requests
         //ajaxifyLinks(document);
         //ajaxifyForms(document);
+        AH.facets();
+        AH.sortBy();
         AH.searchWithin();
         AH.checkEmailLinks();
     },
@@ -21,6 +23,10 @@ var AH = {
                 return false;
             }).css('color', '#999');
         });
+    },
+
+    facets: function(){
+        $('.facet').each(truncateList);
     },
 
     searchWithin: function(){
@@ -53,6 +59,13 @@ var AH = {
                     }
                 },
             });
+        });
+    },
+
+    sortBy: function(){
+        // Re-sort results when selector is changed
+        $('select[name="sortBy"]').change(function() {
+            $(this).closest("form").submit();
         });
     }
 
@@ -318,7 +331,7 @@ function refreshSubTrees(listObj, level, rootListId, listTag){
             if( nextSubList ) {
                 var image = listItems[i].getElementsByTagName('IMG')[0];
                 source = image.getAttribute('src');
-                if (source.substring(source.lastIndexOf('/')) == '/folderOpen.gif' || source.substring(source.lastIndexOf('/')) == '/folderClosed.gif'){
+                if (source.substring(source.lastIndexOf('/')) == '/folderOpen.png' || source.substring(source.lastIndexOf('/')) == '/folderClosed.png'){
                     var span = listItems[i].getElementsByTagName('SPAN')[0];
                     span.firstChild.nodeValue = ' {' + nextSubList.getElementsByTagName('li').length + ' entries}';         
                 }
@@ -1252,7 +1265,7 @@ linkHash = new Array();
 linkHash['text'] = new Array('[ show ]', '[ hide ]');
 linkHash['plusMinus'] = new Array('[+]', '[-]');
 linkHash['arrows'] = new Array('<img src="/icons/right.png" alt="&gt;"/>', '<img src="/icons/down.png" alt="V"/>');
-linkHash['folders'] = new Array('<img src="/ead/img/folderClosed.gif" alt="[+]"/>', '<img src="/ead/img/folderOpen.gif" alt="[-]"/>');
+linkHash['folders'] = new Array('<img src="/images/search/folderClosed.png" alt="[+]"/>', '<img src="/images/search/folderOpen.png" alt="[-]"/>');
 
 function hideStuff() {
     $('a[class|="jstoggle"]').each(function(i, el){

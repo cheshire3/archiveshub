@@ -1,0 +1,68 @@
+<%!
+    from datetime import datetime
+    import os.path
+    from pygments import highlight
+    from pygments.lexers import get_lexer_by_name
+    from pygments.formatters import HtmlFormatter
+    lexer = get_lexer_by_name('xml')
+    formatter = HtmlFormatter(
+        classprefix='pyg-',
+    )
+
+    def get_basename(session, doc, store):
+        return doc.filename[len(store.get_path(session, 'databasePath')) + 1:]
+
+%>
+<%inherit file="base.html"/>
+
+<%block name="title">Contributor Files - ${get_basename(session, doc, contributorStore)|h}</%block>
+
+<%block name="css">
+    ${parent.css()}
+    <style type="text/css">
+        ${formatter.get_style_defs()}
+    </style>
+</%block>
+
+<%
+    basename = get_basename(session, doc, contributorStore)
+%>
+
+<div class="row">
+  <div class="col-md-12">
+    <dl class="dl-horizontal">
+        <dt>Path</dt>
+        <dd>
+            <ol class="breadcrumb">
+                <li>
+                    <a href="${SCRIPT}/index.html">
+                        ${doc.documentStore[:-len('DocumentStore')]}
+                    </a>
+                </li>
+                % for part in basename.split(os.path.sep):
+                <li class="active">
+                    ${part}
+                </li>
+                % endfor
+            </ol>
+        </dd>
+        <dt>Size</dt>
+        <dd>${doc.byteCount / 1024} kb</dd>
+        <dt>Last modified</dt>
+        <dd>${datetime.fromtimestamp(doc.metadata['lastModified']).strftime("%H:%M, %d %B %Y")}</dd>
+        <dt>Actions</dt>
+        <dd>
+            <a class="btn btn-warning btn-xs"
+               target="_new"
+               href="/edit/edit.html?operation=import&amp;filename=${basename}">
+                <span class="glyphicon glyphicon-edit"></span>
+                Edit
+            </a>
+        </dd>
+        <dt>Content</dt>
+        <dd>
+            ${highlight(doc.get_raw(session), lexer, formatter)}
+        </dd>
+    </dl>
+  </div>
+</div>
