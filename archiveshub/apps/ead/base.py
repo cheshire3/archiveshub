@@ -143,7 +143,11 @@ class EADWsgiApplication(WSGIApplication):
         identifier = sha1(query.toCQL().encode('utf8')).hexdigest()
         # The fist 7 characters should be OK; it's good enough for git...
         query.id = identifier[:7]
-        return self.queryStore.store_query(session, query)
+        # If query exists don't try to store it. Do we need to update it ?
+        try:
+            return self._fetch_query(session, query.id)
+        except ObjectDoesNotExistException:
+            return self.queryStore.store_query(session, query)
 
     def _fetch_query(self, session, identifier):
         # Fetch a Query
