@@ -146,7 +146,7 @@ class EADWsgiApplication(WSGIApplication):
         # If query exists don't try to store it. Do we need to update it ?
         try:
             return self._fetch_query(session, query.id)
-        except ObjectDoesNotExistException:
+        except c3errors.ObjectDoesNotExistException:
             return self.queryStore.store_query(session, query)
 
     def _fetch_query(self, session, identifier):
@@ -155,8 +155,13 @@ class EADWsgiApplication(WSGIApplication):
 
     def _store_resultSet(self, session, rs):
         # Store the ResultSet
+        print rs.id
         if rs.id:
-            return self.resultSetStore.store_resultSet(session, rs)
+            # If result set exists don't try to store it. Do we need to update it ?
+            try:
+                return self.resultSetStore.fetch_resultSet(session, rs.id)
+            except c3errors.ObjectDoesNotExistException:
+                return self.resultSetStore.store_resultSet(session, rs)
         else:
             return self.resultSetStore.create_resultSet(session, rs)
 
