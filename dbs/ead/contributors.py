@@ -182,10 +182,14 @@ def add_contributor(args):
         for inst_rec in instStore:
             name = inst_rec.process_xpath(session, '//name/text()')[0]
             if name == contributorId:
-                inst_dom = inst_rec.get_dom(session)
-                # Add node describing the new DocumentStore
-                inst_dom.append(E.documentStore(storeId))
-                rec = instStore.store_record(session, inst_rec)
+                # check that node isn't already present
+                xpath = '//documentStore/text()="%s"' % storeId
+                is_present = inst_rec.process_xpath(session, xpath)[0]
+                if not is_present:
+                    inst_dom = inst_rec.get_dom(session)
+                    # Add node describing the new DocumentStore
+                    inst_dom.append(E.documentStore(storeId))
+                    rec = instStore.store_record(session, inst_rec)
                 break
         else:
             inst_dom = E.inst(

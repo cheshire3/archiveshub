@@ -2927,7 +2927,9 @@ class HubEditingHandler(object):
         # If less than 10 of quota remain
 #        if quota - total <= 10:
         # If less than 20% of quota remain
-        if float(total) / quota >= 0.8:
+        if quota == 0:
+            classtype = 'error'
+        elif float(total) / quota >= 0.8:
             classtype = 'error'
         else:
             classtype = 'ok'

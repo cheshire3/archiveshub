@@ -2144,13 +2144,16 @@
                         <img src="/images/structure/form_tip.png" alt="[?]" />
                     </a>
                     <br />
-                    <!-- <a class="extSearch" onclick="window.open('http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=P', 
-                        'new');">[Search NRA]</a> -->
                     <a class="extSearch" target="_new"
-                        href="http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=P"
-                        title="Search National Register of Archives">
-                        [Search NRA]
-                </a>
+                        href="http://discovery.nationalarchives.gov.uk/advanced-search"
+                        title="Search The National Archives">
+                        [Search TNA]
+                    </a>
+                    <a class="extSearch" target="_new"
+                        href="http://www.archiveshub.ac.uk/ncarules/"
+                        title="Search The National Council on Archives">
+                        [NCA Rules]
+                    </a>
                 </p>
 
                 <xsl:choose>
@@ -2247,10 +2250,15 @@
                     </a>
                     <br />
                     <a class="extSearch" target="_new"
-                        href="http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=P"
-                        title="Search National Register of Archives">
-                        [Search NRA]
-                </a>
+                        href="http://discovery.nationalarchives.gov.uk/advanced-search"
+                        title="Search The National Archives">
+                        [Search TNA]
+                    </a>
+                    <a class="extSearch" target="_new"
+                        href="http://www.archiveshub.ac.uk/ncarules/"
+                        title="Search The National Council on Archives">
+                        [NCA Rules]
+                    </a>
                 </p>
 
                 <xsl:choose>
@@ -2337,10 +2345,16 @@
                         <img src="/images/structure/form_tip.png" alt="[?]" />
                     </a>
                     <br />
-                    <!-- <a class="extSearch" onclick="window.open('http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=F', 
-                        'new');">[Search NRA]</a> -->
                     <a class="extSearch" target="_new"
-                        href="http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=F">[Search NRA]</a>
+                        href="http://discovery.nationalarchives.gov.uk/advanced-search"
+                        title="Search The National Archives">
+                        [Search TNA]
+                    </a>
+                    <a class="extSearch" target="_new"
+                        href="http://www.archiveshub.ac.uk/ncarules/"
+                        title="Search The National Council on Archives">
+                        [NCA Rules]
+                    </a>
                 </p>
                 <xsl:choose>
                     <xsl:when test="controlaccess/famname">
@@ -2429,10 +2443,16 @@
                         <img src="/images/structure/form_tip.png" alt="[?]" />
                     </a>
                     <br />
-                    <!-- <a class="extSearch" onclick="window.open('http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=O', 
-                        'new');">[Search NRA]</a> -->
                     <a class="extSearch" target="_new"
-                        href="http://www.nationalarchives.gov.uk/nra/searches/simpleSearch.asp?subjectType=O">[Search NRA]</a>
+                        href="http://discovery.nationalarchives.gov.uk/advanced-search"
+                        title="Search The National Archives">
+                        [Search TNA]
+                    </a>
+                    <a class="extSearch" target="_new"
+                        href="http://www.archiveshub.ac.uk/ncarules/"
+                        title="Search The National Council on Archives">
+                        [NCA Rules]
+                    </a>
                 </p>
                 <xsl:choose>
                     <xsl:when test="controlaccess/corpname">
@@ -2526,6 +2546,11 @@
                         href="http://www.getty.edu/research/tools/vocabularies/tgn/"
                         title="Search the Getty Thesaurus">
                         [Search Getty]
+                    </a>
+                    <a class="extSearch" target="_new"
+                        href="http://www.archiveshub.ac.uk/ncarules/"
+                        title="Search The National Council on Archives">
+                        [NCA Rules]
                     </a>
                 </p>
                 <xsl:choose>
