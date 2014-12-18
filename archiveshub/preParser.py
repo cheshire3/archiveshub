@@ -7,6 +7,10 @@ from cheshire3.preParser import SgmlPreParser
 
 
 class EADSgmlPreParser(SgmlPreParser):
+    
+    def __init__(self, session, config, parent):
+        SgmlPreParser.__init__(self, session, config, parent)
+        self.doctype_re = (re.compile('<!DOCTYPE\s+?(.+?)["\'](.+?)["\']\s*>'))
 
     def process_document(self, session, doc):
         txt = doc.get_raw(session)
