@@ -59,7 +59,8 @@
     </xsl:template>
 
     <xsl:template match="did">
-        <xsl:apply-templates select="./unitid"/>
+        <!-- Already been inserted ? -->
+        <!--xsl:apply-templates select="./unitid"/-->
         <dc:title>
             <xsl:choose>
                 <xsl:when test="./unittitle">
@@ -87,6 +88,12 @@
         <dc:creator>
             <xsl:apply-templates />
         </dc:creator>
+    </xsl:template>
+
+    <xsl:template match="unitdate">
+        <dc:date>
+            <xsl:apply-templates />
+        </dc:date>
     </xsl:template>
 
     <xsl:template match="subject">
