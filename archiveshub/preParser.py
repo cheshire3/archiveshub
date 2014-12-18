@@ -4,6 +4,7 @@ import re
 
 from cheshire3.document import StringDocument
 from cheshire3.preParser import SgmlPreParser
+from cheshire3.baseObjects import PreParser
 
 
 class EADSgmlPreParser(SgmlPreParser):
@@ -37,3 +38,24 @@ class EADSgmlPreParser(SgmlPreParser):
         return StringDocument(txt, self.id, doc.processHistory,
                               mimeType=doc.mimeType, parent=doc.parent,
                               filename=doc.filename)
+
+
+class EADBOMPreParser(PreParser):
+    """Remove a BOM in a utf-8/utf-16 file"""
+
+    def process_document(self, session, doc):
+        data = doc.get_raw(session)
+        if data[0] in b'\xfe\xef\xff':
+            # likely a BOM, let's take a closer look
+            if (data[0] == b'\xef' and
+                data[1] == b'\xbb' and
+                data[2] == b'\xbf'):
+                data = data[3:] # UTF-8 BOM
+            elif (data[0] == b'\xfe' and data[1] == b'\xff' or
+                  data[0] == b'\xff' and data[1] == b'\xfe'):
+                # UTF-16 BE/LE
+                data = data[2:]
+        return StringDocument(data, self.id, doc.processHistory,
+                              mimeType=doc.mimeType, parent=doc.parent,
+                              filename=doc.filename)
+

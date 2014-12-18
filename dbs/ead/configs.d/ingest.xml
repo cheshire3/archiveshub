@@ -103,6 +103,10 @@
             </options>
         </subConfig>
 
+        <subConfig type="preParser" id="eadBOMPreParser">
+            <objectType>archiveshub.preParser.EADBOMPreParser</objectType>
+        </subConfig>
+
     </subConfigs>
 
 </config>

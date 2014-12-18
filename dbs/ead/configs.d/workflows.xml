@@ -41,6 +41,7 @@
             <objectType>cheshire3.workflow.CachingWorkflow</objectType>
             <workflow>
                 <!-- input type: Document -->
+                <object type="preParser" ref="eadBOMPreParser" />
                 <object type="preParser" ref="CharacterEntityPreParser" />
                 <object type="preParser" ref="eadSgmlPreParser" />
                 <object type="preParser" ref="emptyEmphTagStripPreParser" />
