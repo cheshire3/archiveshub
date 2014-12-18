@@ -199,7 +199,7 @@ class EADWsgiApplication(WSGIApplication):
         txr = self.database.get_object(self.session, txr_id)
         doc = txr.process_record(self.session, rec)
         self._log(10, "Transformed with {0}".format(txr_id))
-        doc_uc = doc.get_raw(session).decode('utf-8')
+        doc_uc = doc.get_raw(self.session).decode('utf-8')
         # Fix horrible Unicode space
         doc_uc = doc_uc.replace(u"\xa0", u" ")
         return doc_uc
