@@ -249,7 +249,9 @@ class EADWsgiApplication(WSGIApplication):
         maximumTerms = int(form.getfirst('maximumTerms',
                                          form.getfirst('numreq', 25)))
         rp = int(form.getfirst('responsePosition', (maximumTerms + 1) / 2))
-        if idx == 'c3.idx-dateYear':
+        if idx == 'c3.ead-idx-dateYear':
+            # Quick Fix
+            idx = 'c3.idx-dateYear'
             # Allow for entry of a range as the scan term
             scanTerm = scanTerm.replace('-', ' ')
             idxObj = db.get_object(session, 'idx-dateYear')
