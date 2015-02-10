@@ -1937,7 +1937,8 @@
     </xsl:template>
 
     <xsl:template match="p" mode="inline">
-        <xsl:if test="not.[@audience='internal']">
+        <!--xsl:if test="not.[@audience='internal']"-->
+        <xsl:if test="not(@audience='internal')">
             <xsl:if test="@id">
                 <a name="{@id}">
                     <xsl:text> </xsl:text>
