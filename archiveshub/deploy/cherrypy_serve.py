@@ -30,6 +30,7 @@ from archiveshub.apps.ead.record import application as ead_data_app
 from archiveshub.apps.contribute.admin import application as admin_app
 from archiveshub.apps.contribute.edit import application as edit_app
 from archiveshub.apps.contribute.console import application as console_app
+from archiveshub.apps.ead.oaipmh import application as oaipmh_app
 
 
 def main(argv=None):
@@ -47,7 +48,7 @@ def main(argv=None):
     sru_app = SRUWsgiHandler(c3_session, sru_configs)
     # Init OAI-PMH App
     dbs, oaipmh_configs = get_databasesAndConfigs(c3_session, c3_server)
-    oaipmh_app = OAIPMHWsgiApplication(c3_session, oaipmh_configs, dbs)
+    #oaipmh_app = OAIPMHWsgiApplication(c3_session, oaipmh_configs, dbs)
     # Prepare CherryPy Engine
     cherrypy.config.update({'server.socket_host': args.hostname,
                             'server.socket_port': args.port,
