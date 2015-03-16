@@ -20,7 +20,7 @@
     omit-xml-declaration="yes" 
     version="1.0" 
     indent="no"
-    doctype-public="-//Society of American Archivists//DTD ead.dtd (Encoded Archival Description (EAD) Version 1.0)//EN" 
+    doctype-public="+//ISBN 1-931666-00-8//DTD ead.dtd (Encoded Archival Description (EAD) Version 2002)//EN"
     encoding="ascii"/>
 
   <!--Accept an external parameter specifying whether to delete comments-->

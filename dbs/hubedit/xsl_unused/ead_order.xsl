@@ -9,9 +9,8 @@
 	   omit-xml-declaration="yes" 
 	   indent="yes" 
 	   encoding="ascii"
-	   doctype-public="-//Society of American Archivists//DTD ead.dtd (Encoded Archival Description (EAD) Version 1.0)//EN"
+	   doctype-public="+//ISBN 1-931666-00-8//DTD ead.dtd (Encoded Archival Description (EAD) Version 2002)//EN"
 	   />
-	
 
 	<xsl:template match="/">
 		<xsl:apply-templates/>
