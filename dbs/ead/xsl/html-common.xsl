@@ -2217,7 +2217,7 @@
                             <xsl:text>mailto:contributor_</xsl:text>
                             <xsl:value-of select="$repcode" />
                             <xsl:text>@example.com</xsl:text>
-                            <xsl:text>?cc=archiveshubqueries@archiveshub.ac.uk</xsl:text>
+                            <xsl:text>?cc=archiveshubqueries@jiscmail.ac.uk</xsl:text>
                             <xsl:text>&amp;subject=Query via the Archives Hub about </xsl:text>
                             <xsl:value-of select="$unitid"/>
                         </xsl:attribute>
