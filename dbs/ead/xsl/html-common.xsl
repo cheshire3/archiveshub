@@ -2306,7 +2306,7 @@
                     </a>
                     <xsl:text>   |   </xsl:text>
 
-                    <a class="bgimg tip text">
+                    <a class="bgimg tip text" rel="nofollow">
                         <xsl:attribute name="href">
                             <xsl:value-of select="$data_uri_base" />
                             <xsl:text>.pdf</xsl:text>
