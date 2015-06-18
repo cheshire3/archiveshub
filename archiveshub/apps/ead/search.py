@@ -340,6 +340,10 @@ class EADSearchWsgiApplication(EADWsgiApplication):
             return [self._render_template('browse.html')]
         self._log(10, 'browse')
         idx = form.getfirst('fieldidx1', None)
+        # Quick Fix for Ticket 903
+        if idx ==  u'c3.ead-idx-dateYear':
+            idx = u'c3.idx-dateYear'
+        ###
         rel = form.getfirst('fieldrel1', 'exact')
         scanTerm = form.getfirst('fieldcont1', '')
         startTerm = int(form.getfirst('startTerm',
