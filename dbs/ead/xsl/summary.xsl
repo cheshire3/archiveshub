@@ -46,8 +46,13 @@
             <xsl:apply-templates select="./archdesc/accessrestrict[*[not(local-name(.)='head')][not(local-name(.)='legalstatus')]]|./archdesc/descgrp/accessrestrict[*[not(local-name(.)='head')][not(local-name(.)='legalstatus')]]" />
             <xsl:apply-templates select="./archdesc/accessrestrict/legalstatus|./archdesc/descgrp/accessrestrict/legalstatus" />
             <xsl:apply-templates select="./archdesc/userestrict|./archdesc/descgrp/userestrict"/>
-            <!--	    <xsl:apply-templates select="./archdesc/otherfindaid|./archdesc/descgrp/otherfindaid"/>-->
             <!--	    <xsl:apply-templates select="./archdesc/relatedmaterial|./archdesc/descgrp/relatedmaterial"/>-->
+            <xsl:apply-templates select="./*/arrangement|./*/descgrp/arrangement" />
+            <xsl:apply-templates select="./archdesc/otherfindaid|./archdesc/descgrp/otherfindaid"/><br/>
+            <xsl:apply-templates select="./*/did/abstract" /><br/>
+            
+            <xsl:apply-templates select="./archdesc/note[@label='archiveshub']" />
+
             <xsl:apply-templates select="./archdesc/controlaccess|./archdesc/descgrp/controlaccess"/>
             
         </div>

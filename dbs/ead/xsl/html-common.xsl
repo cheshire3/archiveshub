@@ -504,7 +504,7 @@
         <xsl:apply-templates select="./prefercite|./descgrp/prefercite" />
         <!-- MISCELLANEOUS -->
         <xsl:apply-templates select="./odd" />
-        <xsl:apply-templates select="./note" mode="own-section" />
+        <xsl:apply-templates select="./note[@label!='archiveshub']" mode="own-section" />
 
         <!-- CONTROLACCESS -->
         <xsl:apply-templates select="./controlaccess|./descgrp/controlaccess" />
