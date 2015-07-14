@@ -48,8 +48,8 @@
             <xsl:apply-templates select="./archdesc/userestrict|./archdesc/descgrp/userestrict"/>
             <!--	    <xsl:apply-templates select="./archdesc/relatedmaterial|./archdesc/descgrp/relatedmaterial"/>-->
             <xsl:apply-templates select="./*/arrangement|./*/descgrp/arrangement" />
-            <xsl:apply-templates select="./archdesc/otherfindaid|./archdesc/descgrp/otherfindaid"/><br/>
-            <xsl:apply-templates select="./*/did/abstract" /><br/>
+            <xsl:apply-templates select="./archdesc/otherfindaid|./archdesc/descgrp/otherfindaid"/>
+            <p><xsl:apply-templates select="./*/did/abstract" /></p>
             
             <xsl:apply-templates select="./archdesc/note[@label='archiveshub']" />
 

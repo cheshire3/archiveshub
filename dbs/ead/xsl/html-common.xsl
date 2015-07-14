@@ -369,6 +369,15 @@
     </xsl:template>
 
 
+    <xsl:template match="physdesc">
+        <xsl:for-each select="*">
+            <xsl:value-of select="."/>
+            <xsl:if test="(position() != last()) and not(contains(.,';'))">
+                <xsl:text>; </xsl:text>
+            </xsl:if>
+        </xsl:for-each>
+    </xsl:template>
+
     <xsl:template match="did" mode="getid">
         <xsl:choose>
             <!-- look for a unitid with @type="persistent" -->
@@ -687,7 +696,8 @@
     <!-- ARCHDESC -->
     <xsl:template match="archdesc">
         <!-- TEMPLATES FOR MAIN BODY-->
-        <xsl:apply-templates select="./did/abstract" />
+
+        <p><xsl:apply-templates select="./did/abstract" /></p>
 
         <xsl:apply-templates select="./scopecontent|./descgrp/scopecontent" />
         <xsl:apply-templates select="./bioghist|./descgrp/bioghist" />
@@ -728,7 +738,8 @@
         <xsl:apply-templates select="./prefercite|./descgrp/prefercite" />
         <!-- MISCELLANEOUS -->
         <xsl:apply-templates select="./odd" />
-        <xsl:apply-templates select="./note[@label!='archiveshub']" mode="own-section" />
+        <!--xsl:apply-templates select="./note[@label!='archiveshub']" mode="own-section" /-->
+        <xsl:apply-templates select="./note" mode="own-section" />
 
         <!-- CONTROLACCESS -->
         <xsl:apply-templates select="./controlaccess|./descgrp/controlaccess" />
@@ -1290,7 +1301,15 @@
             </a>
         </xsl:if>
         <xsl:variable name="headstring">
-            <xsl:text>Other Descriptive Data</xsl:text>
+           <xsl:choose>
+                <xsl:when test="head">
+                    <xsl:value-of select="head" />
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:text>Other Descriptive Data</xsl:text>
+                </xsl:otherwise>
+            </xsl:choose>
+            
         </xsl:variable>
         <xsl:choose>
             <xsl:when test="../../archdesc or ../../../c3:component or ../../../c3component">
@@ -1736,7 +1755,7 @@
     </xsl:template>
 
     <xsl:template match="note" mode="own-section">
-        <xsl:if test="not.[@audience='internal']">
+        <xsl:if test="@audience!='internal' or not(@audience)">
             <xsl:variable name="headstring">
                 <xsl:text>Note</xsl:text>
             </xsl:variable>
