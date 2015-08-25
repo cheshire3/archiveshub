@@ -469,6 +469,7 @@ function truncateList(index, list) {
 //  functions to assist cookie management
 */
 
+/*
 function unsetCookie(name) {
     if (!name) {return false;}
     // nullify any existing cookie crumb with this name
@@ -482,8 +483,9 @@ function unsetCookie(name) {
         }
     }
     document.cookie = cookieList.join(';');
-}
+*/
 
+/*
 function setCookie(name, val, path) {
   if (!name) {return false;}
   // nullify any existing cookie crumb with this name
@@ -496,6 +498,20 @@ function setCookie(name, val, path) {
   var cookieList = document.cookie.split(';');
   document.cookie = new Array(escape(name) + "=" + escape(val), 'path=' + path).concat(cookieList).join(';');
 }
+*/
+
+function unsetCookie(name) {
+    if (!name) {return false;}
+    document.cookie = escape(name) + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC"; 
+}
+
+function setCookie(name, val, path) {
+  if (!name) { return false; }
+  if (!val) { return false; }
+  if (path==='undefined') { var path = '/search/'; }
+  document.cookie = escape(name) + "=" + escape(val) + ";path=" + path;
+}
+
 
 function getCookie(name) {
   var cookieList = document.cookie.split(';');
