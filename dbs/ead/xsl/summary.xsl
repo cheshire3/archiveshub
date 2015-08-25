@@ -49,9 +49,9 @@
             <!--	    <xsl:apply-templates select="./archdesc/relatedmaterial|./archdesc/descgrp/relatedmaterial"/>-->
             <xsl:apply-templates select="./*/arrangement|./*/descgrp/arrangement" />
             <xsl:apply-templates select="./archdesc/otherfindaid|./archdesc/descgrp/otherfindaid"/>
-            <p><xsl:apply-templates select="./*/did/abstract" /></p>
+            <xsl:apply-templates select="./*/did/abstract" />
             
-            <xsl:apply-templates select="./archdesc/note[@label='archiveshub']" />
+            <xsl:apply-templates select="./archdesc/note[@label='archiveshub']" mode="own-section" />
 
             <xsl:apply-templates select="./archdesc/controlaccess|./archdesc/descgrp/controlaccess"/>
             

@@ -697,7 +697,7 @@
     <xsl:template match="archdesc">
         <!-- TEMPLATES FOR MAIN BODY-->
 
-        <p><xsl:apply-templates select="./did/abstract" /></p>
+        <xsl:apply-templates select="./did/abstract" />
 
         <xsl:apply-templates select="./scopecontent|./descgrp/scopecontent" />
         <xsl:apply-templates select="./bioghist|./descgrp/bioghist" />
@@ -1089,6 +1089,11 @@
         <xsl:apply-templates />
     </xsl:template>
 
+    <xsl:template match="abstract">
+        <h2>About</h2>
+        <p><xsl:apply-templates /></p>
+    </xsl:template>
+    
 
     <!-- USER INFO -->
     <!-- OTHER FINDING AIDS -->
@@ -1099,7 +1104,7 @@
             </a>
         </xsl:if>
         <xsl:variable name="headstring">
-            <xsl:text>Other Finding Aid</xsl:text>
+            <xsl:text>Other Finding Aids</xsl:text>
         </xsl:variable>
         <xsl:choose>
             <xsl:when test="../../archdesc or ../../../c3:component or ../../../c3component">
@@ -1666,6 +1671,8 @@
 
         <!-- did for this component -->
         <xsl:apply-templates select="did" mode="didtable" />
+
+        <xsl:apply-templates select="./did/abstract" />
 
         <xsl:apply-templates select="did/note" mode="own-section" />
         <xsl:apply-templates select="scopecontent" />
