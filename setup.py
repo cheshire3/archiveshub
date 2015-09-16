@@ -15,7 +15,7 @@ from ez_setup import use_setuptools
 use_setuptools()
 
 from setuptools import setup
-from pip.req import parse_requirements
+
 
 from archiveshub.setuptools.commands import (
     develop,
@@ -33,11 +33,16 @@ setuppath = inspect.getfile(inspect.currentframe())
 setupdir = dirname(setuppath)
 
 # Requirements
-_install_requires = [str(req.req)
-                     for req
-                     in parse_requirements('requirements.txt')
-                     if req.req
-                     ]
+_install_requires = [
+    'cheshire3[web,sql]>=1.1.8',
+    'CherryPy<3.4,>=3.0.0',
+    'hgapi',
+    'lockfile',
+    'Mako>=0.7.3',
+    'Pygments==1.6',
+    'uwsgi',
+    'webob>=1.2'
+]
 
 
 setup(

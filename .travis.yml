@@ -6,11 +6,7 @@ install:
   - "deactivate"
   - "virtualenv --clear --python /usr/bin/python $MY_VIRTUAL_ENV"
   - "source $MY_VIRTUAL_ENV/bin/activate"
-  - "pip install pytest nose mock"
-  - "python ez_setup.py"
-  - "pip install -r requirements.txt --find-links http://cheshire3.liv.ac.uk/download/latest/reqs/ --allow-unverified PyZ3950 --allow-unverified ZSI"
-  - "python setup.py install"
+  - "bash make.sh"
 # Run tests for Cheshire3 and archiveshub
 script:
-  - python -m cheshire3.test.testAll
-  - python setup.py test
+  - "bash test.sh"
