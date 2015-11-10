@@ -41,12 +41,7 @@
         <oai_dc:dc>
             <!-- always insert identifier -->
             <dc:identifier>
-                <!--xsl:call-template name="strip_space_and_lowercase"-->
-                <xsl:call-template name="normalize">
-                    <xsl:with-param name="text">
-                        <xsl:value-of select="./*/did/unitid" />
-                    </xsl:with-param>
-                </xsl:call-template>
+                <xsl:apply-templates select="." mode="comp_id" />
             </dc:identifier>
             <xsl:apply-templates select="./*/did" />
             <xsl:apply-templates select="./*/controlaccess/subject" />
@@ -266,6 +261,39 @@
                         <xsl:value-of select="$constructed-identifier" />
                     </xsl:otherwise>
                 </xsl:choose>
+            </xsl:with-param>
+        </xsl:call-template>
+
+    </xsl:template>
+  
+    <xsl:template match="/c3component|/c3:component" mode="comp_id">
+
+        <xsl:param name="parent-identifier">
+            <xsl:choose>
+                <xsl:when test="local-name() = 'component' and starts-with(/*/@c3:parent, 'LxmlRecord-')">
+                    <xsl:value-of select="substring-after(/*/@c3:parent, 'LxmlRecord-')" />
+                </xsl:when>
+                <xsl:when test="local-name() = 'component'">
+                    <xsl:value-of select="substring-after(/*/@c3:parent, '/')" />
+                </xsl:when>
+                <xsl:when test="local-name() = 'c3component' and starts-with(/*/@parent, 'LxmlRecord-')">
+                    <xsl:value-of select="substring-after(/*/@parent, 'LxmlRecord-')" />
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="substring-after(/*/@parent, '/')" />
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:param>
+
+        <xsl:param name="component-identifier">
+            <xsl:apply-templates select="/*/*/did" mode="persistent" />
+        </xsl:param>
+
+        <!-- normalize the whole thing -->
+        <xsl:call-template name="normalize">
+            <xsl:with-param name="text">
+                <xsl:value-of
+                    select="concat($parent-identifier, '/', $component-identifier)" />
             </xsl:with-param>
         </xsl:call-template>
 
