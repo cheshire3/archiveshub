@@ -40,6 +40,7 @@
         </div>
         <div class="archdesc">
             <!-- TEMPLATES FOR MAIN BODY -->
+            <xsl:apply-templates select="./*/did/abstract" />
     	    <xsl:apply-templates select="./archdesc/scopecontent|./archdesc/descgrp/scopecontent"/>
     	    <xsl:apply-templates select="./archdesc/bioghist|./archdesc/descgrp/bioghist"/>
             <!--	    <xsl:apply-templates select="./archdesc/acqinfo|./archdesc/descgrp/acqinfo"/>-->
@@ -49,7 +50,6 @@
             <!--	    <xsl:apply-templates select="./archdesc/relatedmaterial|./archdesc/descgrp/relatedmaterial"/>-->
             <xsl:apply-templates select="./*/arrangement|./*/descgrp/arrangement" />
             <xsl:apply-templates select="./archdesc/otherfindaid|./archdesc/descgrp/otherfindaid"/>
-            <xsl:apply-templates select="./*/did/abstract" />
             
             <xsl:apply-templates select="./archdesc/note[@label='archiveshub']" mode="own-section" />
 
@@ -88,6 +88,7 @@
             <xsl:apply-templates select="./*/did[1]" />
         </div>
         <!-- TEMPLATES FOR MAIN BODY -->
+        <xsl:apply-templates select="./*/did/abstract" />
         <xsl:apply-templates select="./*/scopecontent|./*/descgrp/scopecontent"/>
         <xsl:apply-templates select="./*/bioghist|./*/descgrp/bioghist"/>
 <!--        <xsl:apply-templates select="./*/acqinfo|./*/descgrp/acqinfo"/>-->
